@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack -p --progress",
-    "start": "webpack-dev-server --open"
+    "start": "webpack-dev-server"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.10",
