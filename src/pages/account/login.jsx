@@ -6,14 +6,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUnlock, faUser } from '@fortawesome/free-solid-svg-icons';
 
 import { userActions } from '../../_actions';
-import Layout from '../../_components/Layout';
-import LoginAsync from '../../_components/asyncComponents/LoginAsync';
+import Layout from '../../_components/layout';
+import InputIcon from '../../_components/input-icon';
 import logo from '../../_assets/logo.jpg';
 import pdb from '../../_assets/pdb.jpg';
-import '../../_styles/login-page.css';
+import './login.css';
 
 
-class LoginPage extends React.Component {
+class Login extends React.Component {
     constructor(props) {
         super(props);
 
@@ -59,7 +59,7 @@ class LoginPage extends React.Component {
                             <img src={pdb} className="img-fluid" alt="Project Database" />
                             <hr />
                             <form name="form" onSubmit={this.handleSubmit}>
-                                <LoginAsync
+                                <InputIcon
                                     title="Email"
                                     name="email"
                                     type="email"
@@ -69,7 +69,7 @@ class LoginPage extends React.Component {
                                     icon={faUser}
                                     submitted={submitted}
                                 />
-                                <LoginAsync
+                                <InputIcon
                                     title="Password"
                                     name="password"
                                     type="password"
@@ -97,5 +97,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedLoginPage = connect(mapStateToProps)(LoginPage);
-export { connectedLoginPage as LoginPage }; 
+const connectedLogin = connect(mapStateToProps)(Login);
+export { connectedLogin as Login }; 

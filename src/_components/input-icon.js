@@ -1,33 +1,40 @@
 import React from 'react';
 import propTypes from 'prop-types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const InputAsync = (props) => (
+const InputIcon = (props) => (
     <div className={'form-group' + (props.submitted && !props.value ? ' has-error' : '')}>
-            <label htmlFor={props.name}>{props.title}</label>
+        <div className="input-group input-group-lg">
+            <div className="input-group-prepend">
+                <div className="input-group-text">
+                    <FontAwesomeIcon icon={props.icon} />
+                </div>
+            </div>
             <input
                 className="form-control"
                 name={props.name}
                 type={props.type}
                 value={props.value}
                 onChange={props.onChange}
-                placeholder={props.placeholder} 
+                placeholder={props.placeholder}
             />
+        </div>
         {props.submitted && !props.value &&
             <div className="help-block">{props.title} is required</div>
         }
     </div>
 );
 
-InputAsync.propTypes = {
+InputIcon.propTypes = {
     type: propTypes.oneOf(['text', 'number', 'email', 'password']).isRequired,
     title: propTypes.string.isRequired,
     name: propTypes.string.isRequired,
     onChange: propTypes.func.isRequired,
-    value:propTypes.oneOfType([
+    value: propTypes.oneOfType([
         propTypes.string,
         propTypes.number,
     ]).isRequired,
-    placeholder:propTypes.string,
+    placeholder: propTypes.string,
 };
 
-export default InputAsync;
+export default InputIcon;

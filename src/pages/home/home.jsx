@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 
 import { userActions } from '../../_actions';
 import { layer } from '@fortawesome/fontawesome-svg-core';
-import Layout from '../../_components/Layout';
+import Layout from '../../_components/layout';
 
-class HomePage extends React.Component {
+class Home extends React.Component {
     componentDidMount() {
         this.props.dispatch(userActions.getAll());
     }
@@ -57,5 +57,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedHomePage = connect(mapStateToProps)(HomePage);
-export { connectedHomePage as HomePage };
+const connectedHome = connect(mapStateToProps)(Home);
+export { connectedHome as Home };

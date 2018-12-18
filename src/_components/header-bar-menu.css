@@ -1,0 +1,43 @@
+    button {
+        margin-left: 10px;
+    }
+    .navbar {
+        padding: 15px;
+    }
+    .menu-item {
+        margin-left: 15px;
+        color: #c00a2b;
+    }
+    .icon {
+        position: relative;
+        height: 40px;
+        width: 40px;
+    }
+    .navbars {
+        transition: 0.3s transform;
+        color: #c00a2b;
+        cursor: pointer;
+    }
+    .navbars.collapsed {
+        transform: rotate(90deg);
+    }
+    .icon svg {
+        position: absolute;
+        top:0;
+        bottom:0;
+        right:0;
+        left:0;
+        margin:auto;
+        color: #c00a2b;
+    }
+    .icon:hover {
+        cursor: pointer;
+        background-color: #2a2a2a;
+        color: #c00a2b
+    }
+    .bordered {
+        border: 1px solid #c00a2b;
+    }
+    .round {
+        border-radius: 50%;
+    }

@@ -1,7 +1,7 @@
 import React from 'react';
 import propTypes from 'prop-types';
 
-const SelectAsync = (props) => (
+const Select = (props) => (
     <div className="form-group">
         <select
             name={props.name}
@@ -20,7 +20,7 @@ const SelectAsync = (props) => (
     </div>
 );
 
-SelectAsync.propTypes = {
+Select.propTypes = {
     name: propTypes.string.isRequired,
     options: propTypes.array.isRequired,
     selectOption: propTypes.string,
@@ -28,4 +28,4 @@ SelectAsync.propTypes = {
     placeholder: propTypes.string
 };
 
-export default SelectAsync;
+export default Select;

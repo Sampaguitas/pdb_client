@@ -1,7 +1,7 @@
 import React from 'react';
 import propTypes from 'prop-types';
 
-const CheckboxAsync = (props) => (
+const CheckBox = (props) => (
     <div>
         <label className="form-label">{props.title}</label>
         <div className="checkbox-group">
@@ -13,7 +13,7 @@ const CheckboxAsync = (props) => (
                         name={props.setName}
                         onChange={props.controlFunc}
                         value={opt}
-                        checked={props.selectedOptions.indexOf(opt) > - }
+                        checked={props.selectedOptions.indexOf(opt) > - 1}
                         type={props.type} 
                     /> {opt}
                 </label>
@@ -23,7 +23,7 @@ const CheckboxAsync = (props) => (
     </div>
 );
 
-CheckboxAsync.propTypes = {
+CheckBox.propTypes = {
     title: propTypes.string.isRequired,
     type:propTypes.oneOf(['checkbox', 'radio']).isRequired,
     setName: propTypes.string.isRequired,
@@ -32,4 +32,4 @@ CheckboxAsync.propTypes = {
     controlFunc: propTypes.func.isRequired
 };
 
-export default CheckboxAsync;
+export default CheckBox;

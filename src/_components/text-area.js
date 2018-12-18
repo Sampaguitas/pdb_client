@@ -1,7 +1,7 @@
 import React from 'react';
 import propTypes from 'prop-types';
 
-const TextAsync = (props) => (
+const TextArea = (props) => (
     <div className="form-group">
         <label className="form-label">{props.title}</label>
         <textarea
@@ -16,7 +16,7 @@ const TextAsync = (props) => (
     </div>
 );
 
-TextAsync.propTypes = {
+TextArea.propTypes = {
     title:propTypes.string.isRequired,
     rows:propTypes.number.isRequired,
     name: propTypes.string.isRequired,
@@ -26,4 +26,4 @@ TextAsync.propTypes = {
     controlFunc:propTypes.func.isRequired
 };
 
-export default TextAsync;
+export default TextArea;

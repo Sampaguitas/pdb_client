@@ -26,6 +26,7 @@
 }
 
 .btn-leeuwen:hover {
+  color: #fff;
   background-color: #980721;
   border-color:#980721;
 }

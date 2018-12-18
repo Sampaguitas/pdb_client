@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-// import "./bootstrap.min.css";
-import Header from "./Header"
+import Header from "./header-bar-menu.js"
 
-
+import "../_styles/bootstrap.min.css";
 class Layout extends Component {
     render() {
         return (
