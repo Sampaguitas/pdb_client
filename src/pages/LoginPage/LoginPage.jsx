@@ -10,7 +10,7 @@ import Layout from '../../_components/Layout';
 import LoginAsync from '../../_components/asyncComponents/LoginAsync';
 import logo from '../../_assets/logo.jpg';
 import pdb from '../../_assets/pdb.jpg';
-import '../../_styles/LoginPage.css';
+import '../../_styles/login-page.css';
 
 
 class LoginPage extends React.Component {
