@@ -9,7 +9,7 @@ import { HomePage } from '../pages/HomePage';
 import { LoginPage } from '../pages/LoginPage';
 import { RegisterPage } from '../pages/RegisterPage';
 import '../_styles/main.css';
-//import '../_styles/custom-bootsrap.scss';
+import '../_styles/custom-bootsrap.scss';
 import Layout from '../_components/Layout';
 
 class App extends React.Component {

@@ -21,6 +21,24 @@ module.exports = {
                 }
             },
             {
+                rules: [{
+                    test: /\.scss$/,
+                    use: [
+                        "style-loader", // creates style nodes from JS strings
+                        "css-loader", // translates CSS into CommonJS
+                        "sass-loader" // compiles Sass to CSS, using Node Sass by default
+                    ]
+                }]
+            },
+            {
+                rules: [
+                    {
+                        test: /\.css$/,
+                        use: ['style-loader', 'css-loader'],
+                    },
+                ],
+            },
+            {
                 test: /\.(png|jpg|gif)$/,
                 use: [
                     {
@@ -32,14 +50,6 @@ module.exports = {
             {
                 test: /\.svg$/,
                 loader: 'svg-inline-loader'
-            },
-            {
-                rules: [
-                    {
-                        test: /\.css$/,
-                        use: ['style-loader', 'css-loader'],
-                    },
-                ],
             }
         ]
     },
