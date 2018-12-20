@@ -10,7 +10,7 @@ import { faUser,faCog, faSignOutAlt, faBars } from '@fortawesome/free-solid-svg-
 function isLoggedIn() {
     return localStorage.getItem("user") !== null;
 }
-class Header extends Component {
+class HeaderBarMenu extends Component {
     constructor(props){
         super(props);
         this.toggleCollapse = this.toggleCollapse.bind(this)
@@ -25,7 +25,6 @@ class Header extends Component {
     toggleCollapse(){
         this.setState({ collapsed: !this.state.collapsed});
     }
-
 
     render() {
         return (
@@ -69,5 +68,5 @@ class Header extends Component {
             );
         }
     }
- export default Header;
+ export default HeaderBarMenu;
 

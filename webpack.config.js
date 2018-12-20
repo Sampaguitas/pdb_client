@@ -34,22 +34,30 @@ module.exports = {
                 rules: [
                     {
                         test: /\.css$/,
-                        use: ['style-loader', 'css-loader'],
+                        use: ['style-loader', 'css-loader'
+                            // to differenciate between scoped and global CSS
+                            // { 
+                            //     loader: 'style-loader'
+                            // },
+                            // { 
+                            //     loader: 'css-loader',
+                            //     options: {
+                            //         modules: true,
+                            //     },
+                            // },
+                        ],
+                        
                     },
                 ],
             },
             {
-                test: /\.(png|jpg|gif)$/,
+                test: /\.(png|jpg|gif|svg)$/,
                 use: [
                     {
                         loader: 'file-loader',
                         options: {}
                     }
                 ]
-            },
-            {
-                test: /\.svg$/,
-                loader: 'svg-inline-loader'
             }
         ]
     },

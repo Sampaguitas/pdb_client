@@ -8,8 +8,8 @@ import { faUnlock, faUser } from '@fortawesome/free-solid-svg-icons';
 import { userActions } from '../../_actions';
 import Layout from '../../_components/layout';
 import InputIcon from '../../_components/input-icon';
-import logo from '../../_assets/logo.jpg';
-import pdb from '../../_assets/pdb.jpg';
+import logo from '../../_assets/logo.svg';
+import pdb from '../../_assets/pdb.svg';
 import './login.css';
 
 

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Header from "./header-bar-menu.js"
+import HeaderBarMenu from "./header-bar-menu/header-bar-menu.js"
 
 import "../_styles/bootstrap.min.css";
 class Layout extends Component {
@@ -7,7 +7,7 @@ class Layout extends Component {
         return (
             <div>
                 <div className="container-fluid">
-                    <Header />
+                    <HeaderBarMenu />
                     {this.props.children}
                 </div>
             </div>
