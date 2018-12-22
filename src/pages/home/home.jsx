@@ -40,7 +40,7 @@ class Home extends React.Component {
                     </ul>
                 }
                 <p>
-                    <Link to="/login">Logout</Link>
+                        <Link to="/login">Logout</Link>
                 </p>
             </div>
             </Layout>

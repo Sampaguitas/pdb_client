@@ -12,7 +12,7 @@ import Item from './item.js'
 import SubItem from './sub-item.js'
 import MobileItem from './mobile-item.js'
 //Styles
-import '../../_styles/main.scss'
+import './side-bar-menu.scss'
 
 class SideBarMenu extends Component {
     constructor(props) {
