@@ -1,5 +1,7 @@
-    button {
+    .header-button {
         margin-left: 10px;
+        height: 40px;
+        width: 40px;
     }
     .navbar {
         padding: 15px;
@@ -38,6 +40,20 @@
     .bordered {
         border: 1px solid #c00a2b;
     }
-    .round {
+    /* .round {
         border-radius: 50%;
+    } */
+
+    .header-bar-menu {
+    transition: 0.3s margin-left;
+    margin-left: 350px;
+    }
+
+    .header-bar-menu.collapsed {
+    margin-left: 50px;
+    }
+
+    #dropdownMenuButton{
+     height: 40px;
+     width: 60px;
     }

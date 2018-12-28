@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUnlock, faUser } from '@fortawesome/free-solid-svg-icons';
 
 import { userActions } from '../../_actions';
 import Layout from '../../_components/layout';
@@ -52,7 +50,7 @@ class Login extends React.Component {
         return (
             <Layout>
             <div id="login-card" className='row justify-content-center align-self-center'>
-                    <div className="card">
+                    <div className="card card-login">
                         <div className="card-body">
                             <img src={logo} className="img-fluid" alt="Van Leeuwen Pipe and Tube" />
                             <br />
@@ -66,7 +64,7 @@ class Login extends React.Component {
                                     value={email}
                                     onChange={this.handleChange}
                                     placeholder="Email"
-                                    icon={faUser}
+                                    icon="user"
                                     submitted={submitted}
                                 />
                                 <InputIcon
@@ -76,11 +74,13 @@ class Login extends React.Component {
                                     value={password}
                                     onChange={this.handleChange}
                                     placeholder="Password"
-                                    icon={faUnlock}
+                                    icon="lock"
                                     submitted={submitted}
                                 />
                                 <hr />
-                                <button type="submit" className="btn btn-leeuwen btn-full btn-lg">Login</button>
+                                <button type="submit" className="btn btn-leeuwen btn-full btn-lg">
+                                    Login {this.props.loggingIn ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />: ''}
+                                </button>
                             </form>
                         </div>
                     </div>

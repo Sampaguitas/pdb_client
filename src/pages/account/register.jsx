@@ -4,14 +4,17 @@ import { connect } from 'react-redux';
 
 import { userActions } from '../../_actions';
 
+
+
 class Register extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
             user: {
-                firstname: '',
-                lastname: '',
+                firstName: '',
+                lastName: '',
+                phone:'',
                 email: '',
                 password: ''
             },
@@ -39,7 +42,7 @@ class Register extends React.Component {
         this.setState({ submitted: true });
         const { user } = this.state;
         const { dispatch } = this.props;
-        if (user.firstname && user.lastname && user.email && user.password) {
+        if (user.firstName && user.lastName && user.email && user.password) {
             dispatch(userActions.register(user));
         }
     }
@@ -51,18 +54,25 @@ class Register extends React.Component {
             <div className="col-md-6 col-md-offset-3">
                 <h2>Register</h2>
                 <form name="form" onSubmit={this.handleSubmit}>
-                    <div className={'form-group' + (submitted && !user.firstname ? ' has-error' : '')}>
-                        <label htmlFor="firstname">First Name</label>
-                        <input type="text" className="form-control" name="firstname" value={user.firstname} onChange={this.handleChange} />
-                        {submitted && !user.firstname &&
+                    <div className={'form-group' + (submitted && !user.firstName ? ' has-error' : '')}>
+                        <label htmlFor="firstName">First Name</label>
+                        <input type="text" className="form-control" name="firstName" value={user.firstName} onChange={this.handleChange} />
+                        {submitted && !user.firstName &&
                             <div className="help-block">First Name is required</div>
                         }
                     </div>
-                    <div className={'form-group' + (submitted && !user.lastname ? ' has-error' : '')}>
-                        <label htmlFor="lastname">Last Name</label>
-                        <input type="text" className="form-control" name="lastname" value={user.lastname} onChange={this.handleChange} />
-                        {submitted && !user.lastname &&
+                    <div className={'form-group' + (submitted && !user.lastName ? ' has-error' : '')}>
+                        <label htmlFor="lastName">Last Name</label>
+                        <input type="text" className="form-control" name="lastName" value={user.lastName} onChange={this.handleChange} />
+                        {submitted && !user.lastName &&
                             <div className="help-block">Last Name is required</div>
+                        }
+                    </div>
+                    <div className={'form-group' + (submitted && !user.phone ? ' has-error' : '')}>
+                        <label htmlFor="phone">phone</label>
+                        <input type="text" className="form-control" name="phone" value={user.phone} onChange={this.handleChange} />
+                        {submitted && !user.phone &&
+                            <div className="help-block">phone is required</div>
                         }
                     </div>
                     <div className={'form-group' + (submitted && !user.email ? ' has-error' : '')}>

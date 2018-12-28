@@ -1,0 +1,15 @@
+
+a {
+    color: #495057;
+}
+a:hover {
+    text-decoration: none;
+}
+.red-header {
+    background-color: #c00a2b;
+    color: #fff;
+}
+.blue-header {
+    background-color: #1658a6;
+    color: #fff;
+}

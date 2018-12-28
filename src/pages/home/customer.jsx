@@ -1,11 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { userActions } from '../../_actions';
 //Components
 import CheckBox from'../../_components/check-box';
 import Input from '../../_components/input';
 import Layout from '../../_components/layout';
+
 
 class Customer extends React.Component {
     constructor(props) {
@@ -34,6 +33,7 @@ class Customer extends React.Component {
         };
 
         this.handleChange = this.handleChange.bind(this);
+        this.handleCheck = this.handleCheck.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
     handleCheck(event){
@@ -80,9 +80,9 @@ class Customer extends React.Component {
             dispatch(customerActions.create(customer));
         }
     }
-    componentDidMount() {
-        this.getCustomer();
-    }
+    // componentDidMount() {
+    //     this.getCustomer();
+    // }
     handleDeleteCustomer(id) {
         return (event) => this.props.dispatch(customerActions.delete(id));
     }
@@ -93,7 +93,7 @@ class Customer extends React.Component {
             <Layout>
                 <h2>Add or Edit Customer</h2>
                 <hr/>
-                <form onSubmit={saveCustomer()} className="row">
+                <form onSubmit={this.handleSubmit} className="row">
                     <div className="col-md-6">
                     <h3>Address</h3>
                         <Input
@@ -102,7 +102,9 @@ class Customer extends React.Component {
                             type="text"
                             value={customer.code}
                             onChange={this.handleChange}
-                            submitted={submitted} 
+                            submitted={submitted}
+                            inline={true}
+                            required={true}
                         />
                         <Input
                             title="Name"
@@ -111,6 +113,8 @@ class Customer extends React.Component {
                             value={customer.name}
                             onChange={this.handleChange}
                             submitted={submitted}
+                            inline={true}
+                            required={true}
                         />
                         <Input
                             title="Address"
@@ -119,6 +123,8 @@ class Customer extends React.Component {
                             value={customer.address}
                             onChange={this.handleChange}
                             submitted={submitted}
+                            inline={true}
+                            required={true}
                         />
                         <Input
                             title="ZIP"
@@ -127,6 +133,8 @@ class Customer extends React.Component {
                             value={customer.zip}
                             onChange={this.handleChange}
                             submitted={submitted}
+                            inline={true}
+                            required={true}
                         />
                         <Input
                             title="City"
@@ -135,6 +143,8 @@ class Customer extends React.Component {
                             value={customer.city}
                             onChange={this.handleChange}
                             submitted={submitted}
+                            inline={true}
+                            required={true}
                         />
                         <Input
                             title="Country"
@@ -143,6 +153,8 @@ class Customer extends React.Component {
                             value={customer.country}
                             onChange={this.handleChange}
                             submitted={submitted}
+                            inline={true}
+                            required={true}
                         />
                         <Input
                             title="Phone"
@@ -151,6 +163,8 @@ class Customer extends React.Component {
                             value={customer.phone}
                             onChange={this.handleChange}
                             submitted={submitted}
+                            inline={true}
+                            required={true}
                         />
                         <Input
                             title="Email"
@@ -159,15 +173,18 @@ class Customer extends React.Component {
                             value={customer.email}
                             onChange={this.handleChange}
                             submitted={submitted}
+                            inline={true}
+                            required={true}
                         />
                     </div>
                     <div className="text-right">
                         {/* butons save and remove goes here*/}
                     </div>
-                    <div class="col-md-6">
+                    <div className="col-md-6">
                         <h3>Invoice Address</h3>
                         <CheckBox
                             title="Use the same address for invoices."
+                            id="copyAddress"
                             name="copyAddress"
                             checked={copyAddress}
                             onChange={this.handleCheck}
@@ -181,6 +198,8 @@ class Customer extends React.Component {
                                 value={customer.invoiceName}
                                 onChange={this.handleChange}
                                 submitted={submitted}
+                                inline={true}
+                                required={true}
                             />
                             <Input
                                 title="Address"
@@ -189,6 +208,8 @@ class Customer extends React.Component {
                                 value={customer.invoiceAddress}
                                 onChange={this.handleChange}
                                 submitted={submitted}
+                                inline={true}
+                                required={true}
                             />
                             <Input
                                 title="ZIP"
@@ -197,6 +218,8 @@ class Customer extends React.Component {
                                 value={customer.invoiceZip}
                                 onChange={this.handleChange}
                                 submitted={submitted}
+                                inline={true}
+                                required={true}
                             />
                             <Input
                                 title="City"
@@ -205,6 +228,8 @@ class Customer extends React.Component {
                                 value={customer.invoiceCity}
                                 onChange={this.handleChange}
                                 submitted={submitted}
+                                inline={true}
+                                required={true}
                             />
                             <Input
                                 title="Country"
@@ -213,6 +238,8 @@ class Customer extends React.Component {
                                 value={customer.invoicecountry}
                                 onChange={this.handleChange}
                                 submitted={submitted}
+                                inline={true}
+                                required={true}
                             />
                             <Input
                                 title="Phone"
@@ -221,6 +248,8 @@ class Customer extends React.Component {
                                 value={customer.invoicePhone}
                                 onChange={this.handleChange}
                                 submitted={submitted}
+                                inline={true}
+                                required={true}
                             />
                             <Input
                                 title="Email"
@@ -229,19 +258,20 @@ class Customer extends React.Component {
                                 value={customer.invoiceEmail}
                                 onChange={this.handleChange}
                                 submitted={submitted}
+                                inline={true}
+                                required={true}
                             />
                         </div>   
                         }
                     </div>
                 </form>
-
             </Layout>
         );
     }
 }
 
 function mapStateToProps(state) {
-    const { loading } = state.customerCreation;
+    const { loading } = state.customers;
     return {
         loading
     };

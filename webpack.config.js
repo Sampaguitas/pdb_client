@@ -61,11 +61,7 @@ module.exports = {
             }
         ]
     },
-    plugins: [new HtmlWebpackPlugin({
-        template: './src/index.html',
-        filename: 'index.html',
-        inject: 'body'
-    })],
+    plugins: [new HtmlWebpackPlugin({ template: './src/index.html', filename: 'index.html', inject: 'body' })],
     devServer: {
         historyApiFallback: true
     },
