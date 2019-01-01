@@ -68,10 +68,10 @@ class Opco extends React.Component {
         return (event) => this.props.dispatch(opcoActions.delete(id));
     }
     render() {
-        const { loading } = this.props;
+        const { alert, loading } = this.props;
         const { opco, submitted } = this.state;
         return (
-            <Layout>
+            <Layout alert={alert}>
                 <h2>Add or Edit Operating Company:</h2>
                 <hr />
                 <form onSubmit={this.handleSubmit}>
@@ -162,8 +162,10 @@ class Opco extends React.Component {
 }
 
 function mapStateToProps(state) {
+    const { alert } = state;
     const { loading } = state.opcos;
     return {
+        alert,
         loading
     };
 }

@@ -9,9 +9,9 @@ import Layout from '../../_components/layout';
 class User extends React.Component {
 
     render() {
-        const { user } = this.props;
+        const { user, alert } = this.props;
         return (
-            <Layout>
+            <Layout alert={alert}>
                 <div id="user">
                     <h2>User: { user.email }</h2>
                     <div className="row">
@@ -52,10 +52,11 @@ class User extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { authentication } = state;
+    const { authentication, alert } = state;
     const { user } = authentication;
     return {
-        user
+        user,
+        alert
     };
 }
 

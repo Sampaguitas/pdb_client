@@ -48,7 +48,7 @@ class Register extends React.Component {
     }
 
     render() {
-        const { registering  } = this.props;
+        const { alert, registering  } = this.props;
         const { user, submitted } = this.state;
         return (
             <div className="col-md-6 col-md-offset-3">
@@ -103,8 +103,10 @@ class Register extends React.Component {
 }
 
 function mapStateToProps(state) {
+    const { alert } = state;
     const { registering } = state.registration;
     return {
+        alert,
         registering
     };
 }

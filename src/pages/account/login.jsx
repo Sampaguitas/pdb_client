@@ -23,7 +23,6 @@ class Login extends React.Component {
             password: '',
             submitted: false
         };
-
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -35,7 +34,6 @@ class Login extends React.Component {
 
     handleSubmit(e) {
         e.preventDefault();
-
         this.setState({ submitted: true });
         const { email, password } = this.state;
         const { dispatch } = this.props;
@@ -45,10 +43,10 @@ class Login extends React.Component {
     }
 
     render() {
-        const { loggingIn } = this.props;
-        const { email, password, submitted } = this.state;
+        const { alert, loggingIn } = this.props;
+        const { email, password, submitted } = this.state; 
         return (
-            <Layout>
+            <Layout alert={alert}>
             <div id="login-card" className='row justify-content-center align-self-center'>
                     <div className="card card-login">
                         <div className="card-body">
@@ -79,7 +77,8 @@ class Login extends React.Component {
                                 />
                                 <hr />
                                 <button type="submit" className="btn btn-leeuwen btn-full btn-lg">
-                                    Login {this.props.loggingIn ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />: ''}
+                                    {loggingIn ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />: ''}
+                                    Login
                                 </button>
                             </form>
                         </div>
@@ -91,8 +90,10 @@ class Login extends React.Component {
 }
 
 function mapStateToProps(state) {
+    const { alert } = state;
     const { loggingIn } = state.authentication;
     return {
+        alert,
         loggingIn
     };
 }

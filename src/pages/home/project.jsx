@@ -65,10 +65,10 @@ class Project extends React.Component {
         return (event) => this.props.dispatch(projectActions.delete(id));
     }
     render() {
-        const { loading } = this.props;
+        const { alert, loading } = this.props;
         const { project, projectInspection, projectShipping, projectWarehouse, submitted } = this.state;
         return (
-            <Layout>
+            <Layout alert={alert}>
                 <h2>Add or Edit Project:</h2>
                 <hr />
                 <form onSubmit={this.handleSubmit}>
@@ -142,8 +142,10 @@ class Project extends React.Component {
 }
 
 function mapStateToProps(state) {
+    const { alert } = state;
     const { loading } = state.projects;
     return {
+        alert,
         loading
     };
 }

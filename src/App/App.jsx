@@ -24,8 +24,7 @@ import '../_styles/main.css';
 // Components
 import Layout from '../_components/layout';
 //Icons
-//faHome, faPlus, faTachometerAlt, faUpload, faClipboardList, faStopwatch, faSearch, faShip, faWarehouse, faCubes, faIndustry, faCog
- import { library } from '@fortawesome/fontawesome-svg-core';
+import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 library.add(fas)
 
@@ -42,12 +41,12 @@ class App extends React.Component {
     }
 
     render() {
-        const { alert } = this.props;
+        // const { alert } = this.props;
         return (
             <div>
-                {alert.message &&
+                {/* {alert.message &&
                     <div className={`alert ${alert.type}`}>{alert.message}</div>
-                }
+                } */}
                     <Router history={history}>
                         <div>
                             <PrivateRoute exact path="/" component={Home} />

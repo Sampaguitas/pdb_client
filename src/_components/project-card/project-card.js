@@ -3,7 +3,6 @@ import { NavLink, Link } from 'react-router-dom';
 
 // Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUser, faCog, faSignOutAlt, faBars, faPlus } from '@fortawesome/free-solid-svg-icons';
 import './project-card.css'
 
 class ProjectCard extends Component {
@@ -25,7 +24,7 @@ class ProjectCard extends Component {
                             </div>
                             <div className="col-4 text-right">
                                 <div className="modal-link">
-                                    <FontAwesomeIcon icon={faPlus} className="red fa-icon" />
+                                    <FontAwesomeIcon icon="plus" className="red fa-icon" />
                                 </div>
                             </div>
                         </div>

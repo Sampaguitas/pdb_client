@@ -9,7 +9,6 @@ import Layout from '../../_components/layout';
 import ProjectCard from '../../_components/project-card/project-card.js';
 // Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
 
 //Styles
 import './home.css';
@@ -45,33 +44,32 @@ class Home extends React.Component {
     }
 
     render() {
-        const { user, users } = this.props;
+        const { alert } = this.props;
         return (
-            <Layout>
+            <Layout alert={alert}>
                 <div id="homeIndex" className="row">
                     <div className="col-md-12">
                         <div className="input-group input-group-lg mb-3">
                             <input className="form-control text-center" v-model="filter" placeholder={"Filter " + this.state.view + "'s..."} />
                             <div className="input-group-append">
                                 <button className="btn btn-outline-secondary" type="button" id="button-addon2" onClick={this.switchView}>
-                                    <span><FontAwesomeIcon icon={faEye} className="fa-lg"/> Switch View</span>
+                                    <span><FontAwesomeIcon icon="eye" className="fa-lg"/> Switch View</span>
                                 </button>
                             </div>
                         </div>
                     </div>
                     {this.state.view == 'Customer' ? <ProjectCard /> : <div>Opco</div>}
                 </div >
+
             </Layout>
         );
     }
 }
 
 function mapStateToProps(state) {
-    const { users, authentication } = state;
-    const { user } = authentication;
+    const { alert } = state;
     return {
-        user,
-        users
+        alert
     };
 }
 

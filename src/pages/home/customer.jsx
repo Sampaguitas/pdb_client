@@ -117,10 +117,10 @@ class Customer extends React.Component {
         return (event) => this.props.dispatch(customerActions.delete(id));
     }
     render() {
-        const { loading } = this.props;
-        // const { customer, copyAddress, submitted } = this.state;
+        const { alert, loading } = this.props;
+        const { copyAddress, customer, submitted } = this.state;
         return (
-            <Layout>
+            <Layout alert={alert}>
                 <h2>Add or Edit Customer</h2>
                 <hr/>
                 <form onSubmit={this.handleSubmit} className="row">
@@ -130,9 +130,9 @@ class Customer extends React.Component {
                             title="Code"
                             name="code" 
                             type="text"
-                            value={this.state.customer.code}
+                            value={customer.code}
                             onChange={this.handleChange}
-                            submitted={this.state.submitted}
+                            submitted={submitted}
                             inline={true}
                             required={true}
                         />
@@ -140,9 +140,9 @@ class Customer extends React.Component {
                             title="Name"
                             name="name"
                             type="text"
-                            value={this.state.customer.name}
+                            value={customer.name}
                             onChange={this.handleChange}
-                            submitted={this.state.submitted}
+                            submitted={submitted}
                             inline={true}
                             required={true}
                         />
@@ -150,9 +150,9 @@ class Customer extends React.Component {
                             title="Address"
                             name="address"
                             type="text"
-                            value={this.state.customer.address}
+                            value={customer.address}
                             onChange={this.handleChange}
-                            submitted={this.state.submitted}
+                            submitted={submitted}
                             inline={true}
                             required={false}
                         />
@@ -160,9 +160,9 @@ class Customer extends React.Component {
                             title="ZIP"
                             name="zip"
                             type="text"
-                            value={this.state.customer.zip}
+                            value={customer.zip}
                             onChange={this.handleChange}
-                            submitted={this.state.submitted}
+                            submitted={submitted}
                             inline={true}
                             required={false}
                         />
@@ -170,9 +170,9 @@ class Customer extends React.Component {
                             title="City"
                             name="city"
                             type="text"
-                            value={this.state.customer.city}
+                            value={customer.city}
                             onChange={this.handleChange}
-                            submitted={this.state.submitted}
+                            submitted={submitted}
                             inline={true}
                             required={false}
                         />
@@ -180,9 +180,9 @@ class Customer extends React.Component {
                             title="Country"
                             name="country"
                             type="text"
-                            value={this.state.customer.country}
+                            value={customer.country}
                             onChange={this.handleChange}
-                            submitted={this.state.submitted}
+                            submitted={submitted}
                             inline={true}
                             required={false}
                         />
@@ -190,9 +190,9 @@ class Customer extends React.Component {
                             title="Phone"
                             name="phone"
                             type="tel"
-                            value={this.state.customer.phone}
+                            value={customer.phone}
                             onChange={this.handleChange}
-                            submitted={this.state.submitted}
+                            submitted={submitted}
                             inline={true}
                             required={false}
                         />
@@ -200,15 +200,15 @@ class Customer extends React.Component {
                             title="Email"
                             name="email"
                             type="email"
-                            value={this.state.customer.email}
+                            value={customer.email}
                             onChange={this.handleChange}
-                            submitted={this.state.submitted}
+                            submitted={submitted}
                             inline={true}
                             required={false}
                         />
                         <div className="text-right">
                             <button type="submit" className="btn btn-lg" onClick={this.handleSubmit}>
-                                {this.props.loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
+                                {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
                                 Save Customer
                             </button>
                         </div>
@@ -219,18 +219,18 @@ class Customer extends React.Component {
                             title="Use the same address for invoices."
                             id="copyAddress"
                             name="copyAddress"
-                            checked={this.state.copyAddress}
+                            checked={copyAddress}
                             onChange={this.handleCheck}
                         />
-                        {!this.state.copyAddress &&
+                        {!copyAddress &&
                         <div>
                             <Input
                                 title="Name"
                                 name="invoiceName"
                                 type="text"
-                                value={this.state.customer.invoiceName}
+                                value={customer.invoiceName}
                                 onChange={this.handleChange}
-                                submitted={this.state.submitted}
+                                submitted={submitted}
                                 inline={true}
                                 required={false}
                             />
@@ -238,9 +238,9 @@ class Customer extends React.Component {
                                 title="Address"
                                 name="invoiceAddress"
                                 type="text"
-                                value={this.state.customer.invoiceAddress}
+                                value={customer.invoiceAddress}
                                 onChange={this.handleChange}
-                                submitted={this.state.submitted}
+                                submitted={submitted}
                                 inline={true}
                                 required={false}
                             />
@@ -248,9 +248,9 @@ class Customer extends React.Component {
                                 title="ZIP"
                                 name="invoiceZip"
                                 type="text"
-                                value={this.state.customer.invoiceZip}
+                                value={customer.invoiceZip}
                                 onChange={this.handleChange}
-                                submitted={this.state.submitted}
+                                submitted={submitted}
                                 inline={true}
                                 required={false}
                             />
@@ -258,9 +258,9 @@ class Customer extends React.Component {
                                 title="City"
                                 name="invoiceCity"
                                 type="text"
-                                value={this.state.customer.invoiceCity}
+                                value={customer.invoiceCity}
                                 onChange={this.handleChange}
-                                submitted={this.state.submitted}
+                                submitted={submitted}
                                 inline={true}
                                 required={false}
                             />
@@ -268,9 +268,9 @@ class Customer extends React.Component {
                                 title="Country"
                                 name="invoiceCountry"
                                 type="text"
-                                value={this.state.customer.invoicecountry}
+                                value={customer.invoicecountry}
                                 onChange={this.handleChange}
-                                submitted={this.state.submitted}
+                                submitted={submitted}
                                 inline={true}
                                 required={false}
                             />
@@ -278,9 +278,9 @@ class Customer extends React.Component {
                                 title="Phone"
                                 name="invoicePhone"
                                 type="tel"
-                                value={this.state.customer.invoicePhone}
+                                value={customer.invoicePhone}
                                 onChange={this.handleChange}
-                                submitted={this.state.submitted}
+                                submitted={submitted}
                                 inline={true}
                                 required={false}
                             />
@@ -288,9 +288,9 @@ class Customer extends React.Component {
                                 title="Email"
                                 name="invoiceEmail"
                                 type="email"
-                                value={this.state.customer.invoiceEmail}
+                                value={customer.invoiceEmail}
                                 onChange={this.handleChange}
-                                submitted={this.state.submitted}
+                                submitted={submitted}
                                 inline={true}
                                 required={false}
                             />
@@ -304,8 +304,10 @@ class Customer extends React.Component {
 }
 
 function mapStateToProps(state) {
+    const { alert } = state
     const { loading } = state.customers;
     return {
+        alert,
         loading
     };
 }

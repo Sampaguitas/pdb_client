@@ -65,9 +65,9 @@ class Settings extends React.Component {
     // }
 
     render() {
-        const { user, users } = this.props;
+        const { users, alert } = this.props;
         return (
-            <Layout>
+            <Layout alert={alert}>
                 <div id="user">
                     <h2>User Settings</h2>
                     <div className="row">
@@ -165,10 +165,8 @@ class Settings extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { users, authentication } = state;
-    const { user } = authentication;
+    const { users, alert } = state;
     return {
-        user,
         users
     };
 }
