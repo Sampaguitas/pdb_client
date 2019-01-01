@@ -6,62 +6,70 @@ import { userActions } from '../../_actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 //Components
-import CheckBox from '../../_components/check-box';
+import TableCheckBox from '../../_components/table-check-box';
 import Input from '../../_components/input';
 import Layout from '../../_components/layout';
 import { users } from '../../_reducers/users.reducer';
 
 
 class Settings extends React.Component {
-    constructor(props) {
-        super(props);
-
-        // this.state = {
-        //     user: {
-        //         firstName: '',
-        //         lastName: '',
-        //         phone: '',
-        //         email: '',
-        //         password: ''
-        //     },
-        //     submitted: false
-        // };
-
-        // this.handleCheck = this.handleCheck.bind(this);
+     constructor(props) {
+         super(props);
+         this.state = {
+             show:false
+         };
+         this.showModal = this.showModal.bind(this);
+         this.hideModal = this.hideModal.bind(this);
     }
+    //         user: {
+    //             firstName: '',
+    //             lastName: '',
+    //             phone: '',
+    //             email: '',
+    //             password: ''
+    //         },
+    //         submitted: false
+    //     };
+
+    //     // this.handleCheck = this.handleCheck.bind(this);
     componentDidMount() {
-
         this.props.dispatch(userActions.getAll());
-
     }
-    handleChange(event) {
-        const { name, value } = event.target;
-        const { user } = this.state;
-        this.setState({
-            user: {
-                ...user,
-                [name]: value
-            }
-        });
+    showModal(){
+        this.setState({ show: true });
     }
-
-    handleSubmit(event) {
-        event.preventDefault();
-
-        this.setState({ submitted: true });
-        const { user } = this.state;
-        const { dispatch } = this.props;
-        if (user.firstName && user.lastName && user.email && user.phone && user.password) {
-            dispatch(userActions.register(user));
-        }
+    hideModal() {
+        this.setState({ show: false });
     }
+    // handleChange(event) {
+    //     const { name, value } = event.target;
+    //     const { user } = this.state;
+    //     this.setState({
+    //         user: {
+    //             ...user,
+    //             [name]: value
+    //         }
+    //     });
+    // }
+
+
+    // handleSubmit(event) {
+    //     event.preventDefault();
+
+    //     this.setState({ submitted: true });
+    //     const { user } = this.state;
+    //     const { dispatch } = this.props;
+    //     if (user.firstName && user.lastName && user.email && user.phone && user.password) {
+    //         dispatch(userActions.register(user));
+    //     }
+    // }
 
     render() {
         const { user, users } = this.props;
         return (
             <Layout>
                 <div id="user">
-                    <h2>Settings</h2>
+                    <h2>User Settings</h2>
                     <div className="row">
                         {/* <div className="col-md-4 mb-3">
                             <div className="card">
@@ -100,7 +108,16 @@ class Settings extends React.Component {
                         <div className="col-md-12">
                             <div className="card">
                                 <div className="card-header">
-                                    <h5>Users</h5>
+                                    <div className="row">
+                                        <div className="col-8">
+                                            <h5>Users</h5>
+                                        </div>
+                                        <div className="col-4 text-right">
+                                            <div className="modal-link">
+                                                <FontAwesomeIcon icon="plus" className="red fa-icon" />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="card-body table-responsive">
                                     <table className="table table-hover">
@@ -115,19 +132,20 @@ class Settings extends React.Component {
                                         {users.items &&
                                         <tbody>
                                             {
-                                                users.items.map((user, index) => 
+                                                users.items.map((u) => 
                                                 <tr
-                                                    key={user.id}
+                                                    key={u._id}
+                                                    
                                                 >
-                                                    <td>{user.firstName + ' ' + user.lastName}</td>
-                                                    <td>{user.email}</td>
-                                                    <td>{user.phone}</td>
+                                                    <td>{u.firstName + ' ' + u.lastName}</td>
+                                                    <td>{u.email}</td>
+                                                    <td>{u.phone}</td>
                                                     <td>
-                                                            {/* <TableCheckBox 
-                                                                id='isAdmin'
-                                                                checked={user.isAdmin}
-                                                                onChange={this.handleCheck}
-                                                            /> */}
+                                                            <TableCheckBox 
+                                                                id={u._id}
+                                                                checked={u.isAdmin}
+                                                                onChange={this.handleInputChange}
+                                                            />
                                                     </td>
                                                 </tr>
                                                ) 

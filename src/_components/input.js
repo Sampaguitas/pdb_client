@@ -1,28 +1,33 @@
-import React from 'react';
+import React, { Component } from 'react';
 import propTypes from 'prop-types';
 
-const Input = (props) => (
-    <div className={'form-group' + (props.inline ? ' row' : '') + (props.submitted && !props.value ? ' has-error' : '')}>
-            <label 
-                htmlFor={props.name} 
-                className={props.inline && "col-sm-2 col-form-label"}
-            >{props.title}</label>
-            <div className={props.inline && "col-sm-10"}>
-                <input
-                    className="form-control"
-                    id={props.name}
-                    name={props.name}
-                    type={props.type}
-                    value={props.value}
-                    onChange={props.onChange}
-                    placeholder={props.placeholder} 
-                />
+class Input extends Component{
+    render() {
+        return(
+            <div className={'form-group' + (this.props.inline ? ' row' : '') + (this.props.submitted && this.props.required && !this.props.value ? ' has-error' : '')}>
+                <label
+                    htmlFor={this.props.name}
+                    className={this.props.inline && "col-sm-2 col-form-label"}
+                >{this.props.title}</label>
+                <div className={this.props.inline && "col-sm-10"}>
+                    <input
+                        className="form-control"
+                        id={this.props.name}
+                        name={this.props.name}
+                        type={this.props.type}
+                        value={this.props.value}
+                        onChange={this.props.onChange}
+                        placeholder={this.props.placeholder}
+                    />
+                    {this.props.submitted && !this.props.value && this.props.required &&
+                        <div className="help-block">{this.props.title} is required</div>
+                    }
+                </div>
+
             </div>
-        {props.submitted && !props.value && props.required &&
-            <div className="help-block">{props.title} is required</div>
-        }
-    </div>
-);
+        );
+    }
+}
 
 Input.propTypes = {
     type: propTypes.oneOf(['text', 'number', 'email', 'tel','password']).isRequired,

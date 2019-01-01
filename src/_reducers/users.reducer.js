@@ -14,6 +14,36 @@ export function users(state = {}, action) {
       return { 
         error: action.error
       };
+    case userConstants.UPDATE_REQUEST:
+      // add 'updating:true' property to opco being updated
+      return {
+        ...state,
+        items: state.items.map(user =>
+          user.id === action.id
+            ? { ...user, updating: true }
+            : user
+        )
+      };
+    case userConstants.UPDATE_SUCCESS:
+      // update opco from state
+      return {
+        items: state.items.filter(user => user.id !== action.id)
+      };
+    case userConstants.UPDATE_FAILURE:
+      // remove 'updating:true' property and add 'updateError:[error]' property to opco 
+      return {
+        ...state,
+        items: state.items.map(user => {
+          if (user.id === action.id) {
+            // make copy of user without 'updating:true' property
+            const { updating, ...userCopy } = user;
+            // return copy of user with 'updateError:[error]' property
+            return { ...userCopy, updateError: action.error };
+          }
+
+          return user;
+        })
+      };   
     case userConstants.DELETE_REQUEST:
       // add 'deleting:true' property to user being deleted
       return {

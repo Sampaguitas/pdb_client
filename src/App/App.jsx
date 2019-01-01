@@ -44,7 +44,7 @@ class App extends React.Component {
     render() {
         const { alert } = this.props;
         return (
-            <div className="container-fluid">
+            <div>
                 {alert.message &&
                     <div className={`alert ${alert.type}`}>{alert.message}</div>
                 }
@@ -64,6 +64,7 @@ class App extends React.Component {
         );
     }
 }
+//<div className="container-fluid">
 
 function mapStateToProps(state) {
     const { alert } = state;

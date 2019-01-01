@@ -1,5 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { customerActions } from '../../_actions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import config from 'config';
+import { authHeader } from '../../_helpers';
 //Components
 import CheckBox from'../../_components/check-box';
 import Input from '../../_components/input';
@@ -9,7 +13,6 @@ import Layout from '../../_components/layout';
 class Customer extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             customer:{
                 code: '',
@@ -24,61 +27,88 @@ class Customer extends React.Component {
                 invoiceAddress: '',
                 invoiceZip: '',
                 invoiceCity: '',
-                invoicecountry: '',
+                invoiceCountry: '',
                 invoicePhone: '',
                 invoiceEmail: ''
             },
             copyAddress: true,
-            submitted: false
+            submitted: false,
+            loading:false
         };
-
-        this.handleChange = this.handleChange.bind(this);
         this.handleCheck = this.handleCheck.bind(this);
+        this.handleCopyAddress = this.handleCopyAddress.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleDeleteCustomer = this.handleDeleteCustomer.bind(this);
+        this.create = this.create.bind(this);
+        this.handleResponse = this.handleResponse.bind(this)
+        
     }
-    handleCheck(event){
-        const target = event.target;
-        const name = target.name;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
+    handleCheck(){
         this.setState({
-            [name]:value
-        });        
+            copyAddress: !this.state.copyAddress,
+        });
+        this.handleCopyAddress();
+        console.log(this.state);
     }
-    handleChange(event) {
-        const {name, value} = event.target;
-        const { customer } = this.state;
+    handleCopyAddress(){
         this.setState({
-            customer: {
-                ...customer,
-                [name]: value
+            customer:{
+                ...this.state.customer,
+                invoiceName: this.state.customer.name,
+                invoiceAddress: this.state.customer.address,
+                invoiceZip: this.state.customer.zip,
+                invoiceCity: this.state.customer.city,
+                invoicecountry: this.state.customer.country,
+                invoicePhone: this.state.customer.phone,
+                invoiceEmail: this.state.customer.email
             }
         });
+        
+    }
+
+    handleChange(event) {
+        const {name, value} = event.target;
+        this.setState({
+            customer:{
+                ...this.state.customer,
+                [name]: value
+            }
+
+        });
+        console.log(this.state);
     }
     handleSubmit(event) {
         event.preventDefault();
-
+        this.state.copyAddress && this.handleCopyAddress();
         this.setState({ submitted: true });
-        const { customer } = this.state;
-        const { dispatch } = this.props;
-        if (
-            customer.code && 
-            customer.name && 
-            customer.address && 
-            customer.zip && 
-            customer.city && 
-            customer.country &&
-            customer.phone &&
-            customer.email &&
-            customer.invoiceName &&
-            customer.invoiceAddress &&
-            customer.invoiceZip &&
-            customer.invoiceCity &&
-            customer.invoicecountry &&
-            customer.invoicePhone &&
-            customer.invoiceEmail
-            ) {
-            dispatch(customerActions.create(customer));
+        if (this.state.customer.code && this.state.customer.name) {
+            this.props.dispatch(customerActions.create(this.state.customer))
+            //this.create(this.state.customer);
         }
+    }
+    create(customer) {
+        const requestOptions = {
+            method: 'POST',
+            headers: { ...authHeader(), 'Content-Type': 'application/json' },
+            body: JSON.stringify(customer)
+        };
+        return fetch(`${config.apiUrl}/customer/create`, requestOptions).then(this.handleResponse);
+    }
+    handleResponse(response) {
+        return response.text().then(text => {
+            const data = text && JSON.parse(text);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    // auto logout if 401 response returned from api
+                    logout();
+                    location.reload(true);
+                }
+                const error = (data && data.message) || response.statusText;
+                return Promise.reject(error);
+            }
+            return data;
+        });
     }
     // componentDidMount() {
     //     this.getCustomer();
@@ -88,7 +118,7 @@ class Customer extends React.Component {
     }
     render() {
         const { loading } = this.props;
-        const { customer, copyAddress, submitted } = this.state;
+        // const { customer, copyAddress, submitted } = this.state;
         return (
             <Layout>
                 <h2>Add or Edit Customer</h2>
@@ -98,87 +128,90 @@ class Customer extends React.Component {
                     <h3>Address</h3>
                         <Input
                             title="Code"
-                            name="customerCode" 
+                            name="code" 
                             type="text"
-                            value={customer.code}
+                            value={this.state.customer.code}
                             onChange={this.handleChange}
-                            submitted={submitted}
+                            submitted={this.state.submitted}
                             inline={true}
                             required={true}
                         />
                         <Input
                             title="Name"
-                            name="customerName"
+                            name="name"
                             type="text"
-                            value={customer.name}
+                            value={this.state.customer.name}
                             onChange={this.handleChange}
-                            submitted={submitted}
+                            submitted={this.state.submitted}
                             inline={true}
                             required={true}
                         />
                         <Input
                             title="Address"
-                            name="customerAddress"
+                            name="address"
                             type="text"
-                            value={customer.address}
+                            value={this.state.customer.address}
                             onChange={this.handleChange}
-                            submitted={submitted}
+                            submitted={this.state.submitted}
                             inline={true}
-                            required={true}
+                            required={false}
                         />
                         <Input
                             title="ZIP"
-                            name="customerZIP"
+                            name="zip"
                             type="text"
-                            value={customer.zip}
+                            value={this.state.customer.zip}
                             onChange={this.handleChange}
-                            submitted={submitted}
+                            submitted={this.state.submitted}
                             inline={true}
-                            required={true}
+                            required={false}
                         />
                         <Input
                             title="City"
-                            name="customerCity"
+                            name="city"
                             type="text"
-                            value={customer.city}
+                            value={this.state.customer.city}
                             onChange={this.handleChange}
-                            submitted={submitted}
+                            submitted={this.state.submitted}
                             inline={true}
-                            required={true}
+                            required={false}
                         />
                         <Input
                             title="Country"
-                            name="customerCountry"
+                            name="country"
                             type="text"
-                            value={customer.country}
+                            value={this.state.customer.country}
                             onChange={this.handleChange}
-                            submitted={submitted}
+                            submitted={this.state.submitted}
                             inline={true}
-                            required={true}
+                            required={false}
                         />
                         <Input
                             title="Phone"
-                            name="customerPhone"
+                            name="phone"
                             type="tel"
-                            value={customer.phone}
+                            value={this.state.customer.phone}
                             onChange={this.handleChange}
-                            submitted={submitted}
+                            submitted={this.state.submitted}
                             inline={true}
-                            required={true}
+                            required={false}
                         />
                         <Input
                             title="Email"
-                            name="customerEmail"
+                            name="email"
                             type="email"
-                            value={customer.email}
+                            value={this.state.customer.email}
                             onChange={this.handleChange}
-                            submitted={submitted}
+                            submitted={this.state.submitted}
                             inline={true}
-                            required={true}
+                            required={false}
                         />
-                    </div>
-                    <div className="text-right">
-                        {/* butons save and remove goes here*/}
+                        <div className="text-right">
+                            <button type="submit" className="btn btn-lg" onClick={this.handleSubmit}>
+                                {this.props.loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
+                                Save Customer
+                            </button>
+                        </div>
                     </div>
                     <div className="col-md-6">
                         <h3>Invoice Address</h3>
@@ -186,80 +219,80 @@ class Customer extends React.Component {
                             title="Use the same address for invoices."
                             id="copyAddress"
                             name="copyAddress"
-                            checked={copyAddress}
+                            checked={this.state.copyAddress}
                             onChange={this.handleCheck}
                         />
-                        {!copyAddress &&
+                        {!this.state.copyAddress &&
                         <div>
                             <Input
                                 title="Name"
                                 name="invoiceName"
                                 type="text"
-                                value={customer.invoiceName}
+                                value={this.state.customer.invoiceName}
                                 onChange={this.handleChange}
-                                submitted={submitted}
+                                submitted={this.state.submitted}
                                 inline={true}
-                                required={true}
+                                required={false}
                             />
                             <Input
                                 title="Address"
                                 name="invoiceAddress"
                                 type="text"
-                                value={customer.invoiceAddress}
+                                value={this.state.customer.invoiceAddress}
                                 onChange={this.handleChange}
-                                submitted={submitted}
+                                submitted={this.state.submitted}
                                 inline={true}
-                                required={true}
+                                required={false}
                             />
                             <Input
                                 title="ZIP"
-                                name="invoiceZIP"
+                                name="invoiceZip"
                                 type="text"
-                                value={customer.invoiceZip}
+                                value={this.state.customer.invoiceZip}
                                 onChange={this.handleChange}
-                                submitted={submitted}
+                                submitted={this.state.submitted}
                                 inline={true}
-                                required={true}
+                                required={false}
                             />
                             <Input
                                 title="City"
                                 name="invoiceCity"
                                 type="text"
-                                value={customer.invoiceCity}
+                                value={this.state.customer.invoiceCity}
                                 onChange={this.handleChange}
-                                submitted={submitted}
+                                submitted={this.state.submitted}
                                 inline={true}
-                                required={true}
+                                required={false}
                             />
                             <Input
                                 title="Country"
                                 name="invoiceCountry"
                                 type="text"
-                                value={customer.invoicecountry}
+                                value={this.state.customer.invoicecountry}
                                 onChange={this.handleChange}
-                                submitted={submitted}
+                                submitted={this.state.submitted}
                                 inline={true}
-                                required={true}
+                                required={false}
                             />
                             <Input
                                 title="Phone"
                                 name="invoicePhone"
                                 type="tel"
-                                value={customer.invoicePhone}
+                                value={this.state.customer.invoicePhone}
                                 onChange={this.handleChange}
-                                submitted={submitted}
+                                submitted={this.state.submitted}
                                 inline={true}
-                                required={true}
+                                required={false}
                             />
                             <Input
                                 title="Email"
                                 name="invoiceEmail"
                                 type="email"
-                                value={customer.invoiceEmail}
+                                value={this.state.customer.invoiceEmail}
                                 onChange={this.handleChange}
-                                submitted={submitted}
+                                submitted={this.state.submitted}
                                 inline={true}
-                                required={true}
+                                required={false}
                             />
                         </div>   
                         }
