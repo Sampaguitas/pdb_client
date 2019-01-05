@@ -1,5 +1,6 @@
 var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
     entry: './src/index.jsx',
@@ -35,16 +36,6 @@ module.exports = {
                     {
                         test: /\.css$/,
                         use: ['style-loader', 'css-loader'
-                            // to differenciate between scoped and global CSS
-                            // { 
-                            //     loader: 'style-loader'
-                            // },
-                            // { 
-                            //     loader: 'css-loader',
-                            //     options: {
-                            //         modules: true,
-                            //     },
-                            // },
                         ],
                         
                     },
@@ -61,7 +52,14 @@ module.exports = {
             }
         ]
     },
-    plugins: [new HtmlWebpackPlugin({ template: './src/index.html', filename: 'index.html', inject: 'body' })],
+    plugins: [
+        new HtmlWebpackPlugin(
+            { template: './src/index.html', filename: 'index.html', inject: 'body' }
+        ),
+        // new CopyWebpackPlugin([
+        //     { from: './src/_assets', to: 'assets'}
+        // ])
+    ],
     devServer: {
         historyApiFallback: true
     },
