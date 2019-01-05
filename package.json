@@ -6,6 +6,7 @@
   "author": "",
   "license": "MIT",
   "scripts": {
+    "start": "./node_modules/webpack/bin/webpack.js -p --progress && node server.js",
     "build": "webpack -p --progress",
     "dev": "webpack-dev-server"
   },
