@@ -1,5 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { opcoActions } from '../../_actions';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 //Components
 import CheckBox from '../../_components/check-box';
 import Input from '../../_components/input';
@@ -12,14 +16,14 @@ class Opco extends React.Component {
 
         this.state = {
             opco: {
-                code: '', //ok
-                name: '', //ok
-                address: '', //ok
-                zip: '', //ok
-                city: '', //ok
-                country: '', //ok
-                phone: '', //ok
-                email: '' //ok
+                name: '',
+                address: '',
+                zip: '',
+                city: '',
+                country: '',
+                phone: '',
+                fax:'',
+                email: ''
             },
             submitted: false
         };
@@ -53,15 +57,25 @@ class Opco extends React.Component {
         const { opco } = this.state;
         const { dispatch } = this.props;
         if (
-            opco.code &&
             opco.name &&
             opco.address &&
-            opco.zip &&
             opco.city &&
-            opco.country &&
-            opco.phone
+            opco.country
         ) {
             dispatch(opcoActions.create(opco));
+            this.setState({
+                opco: {
+                    name: '',
+                    address: '',
+                    zip: '',
+                    city: '',
+                    country: '',
+                    phone: '',
+                    fax: '',
+                    email: ''
+                },
+                submitted: false   
+            })
         }
     }
     handleDeletOpco(id) {
@@ -71,23 +85,15 @@ class Opco extends React.Component {
         const { alert, loading } = this.props;
         const { opco, submitted } = this.state;
         return (
-            <Layout alert={alert}>
+            <Layout>
+                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+                <br />
                 <h2>Add or Edit Operating Company:</h2>
                 <hr />
                 <form onSubmit={this.handleSubmit}>
                     <Input
-                        title="Code"
-                        name="opcoCode"
-                        type="text"
-                        value={opco.code}
-                        onChange={this.handleChange}
-                        submitted={submitted}
-                        inline={true}
-                        required={true}
-                    />
-                    <Input
                         title="Name"
-                        name="opcoName"
+                        name="name"
                         type="text"
                         value={opco.name}
                         onChange={this.handleChange}
@@ -97,7 +103,7 @@ class Opco extends React.Component {
                     />
                     <Input
                         title="Address"
-                        name="opcoAddress"
+                        name="address"
                         type="text"
                         value={opco.address}
                         onChange={this.handleChange}
@@ -107,7 +113,7 @@ class Opco extends React.Component {
                     />
                     <Input
                         title="ZIP"
-                        name="opcoZIP"
+                        name="zip"
                         type="text"
                         value={opco.zip}
                         onChange={this.handleChange}
@@ -117,7 +123,7 @@ class Opco extends React.Component {
                     />
                     <Input
                         title="City"
-                        name="opcoCity"
+                        name="city"
                         type="text"
                         value={opco.city}
                         onChange={this.handleChange}
@@ -127,7 +133,7 @@ class Opco extends React.Component {
                     />
                     <Input
                         title="Country"
-                        name="opcoCountry"
+                        name="country"
                         type="text"
                         value={opco.country}
                         onChange={this.handleChange}
@@ -137,24 +143,40 @@ class Opco extends React.Component {
                     />
                     <Input
                         title="Phone"
-                        name="opcoPhone"
+                        name="phone"
                         type="tel"
                         value={opco.phone}
                         onChange={this.handleChange}
                         submitted={submitted}
                         inline={true}
-                        required={true}
+                        required={false}
+                    />
+                    <Input
+                        title="Fax"
+                        name="fax"
+                        type="tel"
+                        value={opco.fax}
+                        onChange={this.handleChange}
+                        submitted={submitted}
+                        inline={true}
+                        required={false}
                     />
                     <Input
                         title="Email"
-                        name="opcoEmail"
+                        name="email"
                         type="email"
                         value={opco.email}
                         onChange={this.handleChange}
                         submitted={submitted}
                         inline={true}
-                        required={true}
+                        required={false}
                     />
+                    <div className="text-right">
+                        <button type="submit" className="btn btn-lg btn-outline-leeuwen">
+                        {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
+                        Save OPCO
+                        </button>
+                    </div>
                 </form>
             </Layout>
         );

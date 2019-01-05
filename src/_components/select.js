@@ -1,31 +1,49 @@
-import React from 'react';
+import React, { Component } from 'react';
 import propTypes from 'prop-types';
 
-const Select = (props) => (
-    <div className="form-group">
-        <select
-            name={props.name}
-            value={props.selectedOption}
-            onChange={props.controlFunc}
-            className="from-select">
-            <option value="">{props.placeholder}</option>
-            {props.options.map(opt => {
-                return(
-                    <option
-                    key={opt}
-                    value={opt}>{opt}</option>
-                );
-            })}
-        </select>
-    </div>
-);
+class Select extends Component {
+    render() {
+        return (
+            <div className={'form-group' + (this.props.inline ? ' row' : '') + (this.props.submitted && this.props.required && !this.props.value ? ' has-error' : '')}>
+                <label 
+                    htmlFor={this.props.name} 
+                    className={this.props.inline ? "col-sm-2 col-form-label" : ''}
+                >{this.props.title}</label>
+                <div className={this.props.inline ? "col-sm-10" : ''}>
+                    <select
+                        className="form-control"
+                        type="text"
+                        id={this.props.name}
+                        name={this.props.name}
+                        value={this.props.value}
+                        onChange={this.props.onChange}
+                    >
+                        <option defaultValue="" disabled hidden>{this.props.placeholder}</option>
+                        {this.props.options && this.props.options.map(option => {
+                            return (
+                                <option
+                                    key={option._id}
+                                    value={option._id}>{option.name}
+                                </option>
+                            );
+                        })}
+                    </select>
+                </div>
+
+            </div>
+        );
+    }
+}
 
 Select.propTypes = {
+    title: propTypes.string.isRequired,
     name: propTypes.string.isRequired,
     options: propTypes.array.isRequired,
-    selectOption: propTypes.string,
-    controlFunc: propTypes.func.isRequired,
-    placeholder: propTypes.string
+    value: propTypes.string,
+    placeholder: propTypes.string,
+    onChange: propTypes.func.isRequired,
+    inline: propTypes.bool,
+    required: propTypes.bool
 };
 
 export default Select;

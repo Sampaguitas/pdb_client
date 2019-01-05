@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 //Redux
 import { connect } from 'react-redux';
-import { userActions } from '../../_actions';
+import { currencyActions, customerActions, opcoActions, projectActions } from '../../_actions';
 //Components
 import Layout from '../../_components/layout';
 import ProjectCard from '../../_components/project-card/project-card.js';
@@ -15,20 +15,25 @@ import './home.css';
 class Home extends React.Component {
     constructor(props) {
         super(props);
-        this.switchView = this.switchView.bind(this)
         this.state = {
-            filter: '',
-            erps: [],
-            opcos: [],
-            customers: [],
-            view: 'Customer',
+            filter:'',
+            view:'Customer',
+            opcos: this.props.opcos.items,
+            customers: this.props.customers.items,
             loading: true
         };
+        this.switchView = this.switchView.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.filterView = this.filterView.bind(this);
+
     }    
     
-    // componentDidMount() {
-    //     this.props.dispatch(userActions.getAll());
-    // }
+    componentDidMount() {
+        this.props.dispatch(currencyActions.getAll());
+        this.props.dispatch(customerActions.getAll());
+        this.props.dispatch(opcoActions.getAll());
+        this.props.dispatch(projectActions.getAll());
+    }
     switchView() {
         if (this.state.view == 'Customer') {
             this.setState({ view: 'Opco'});
@@ -36,21 +41,49 @@ class Home extends React.Component {
             this.setState({ view: 'Customer' });
         } 
     }
-    filteredCustomers() {
-        return this.customers.filter((c) => { return c.text.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0 });
+    handleChange(event) {
+        const { name, value } = event.target;
+        this.setState({
+            [name]: value
+        });
+        this.filterView(value, this.state.view);
     }
-    filteredOpcos() {
-        return this.opcos.filter((c) => { return c.text.toLowerCase().indexOf(this.filter.toLowerCase()) >= 0 });
+    filterView(value, view){
+        if (view == 'Customer'){
+            if (!value) {
+                this.setState({
+                    customers: this.props.customers.items 
+                });
+            } else {
+                value = value.replace(/\W/g, "");
+                this.setState({
+                    customers: this.props.customers.items.filter((customer) => !!customer.name.match(new RegExp(value, "i")))
+                }); 
+            }
+
+        } else {
+            if (!value) {
+                this.setState({
+                    opcos: this.props.opcos.items
+                });
+            } else {
+                this.setState({
+                    opcos: this.props.opcos.items.filter((opco) => !!opco.name.match(new RegExp(value, "i")))
+                });
+            }
+        }
     }
 
     render() {
-        const { alert } = this.props;
+        const { filter } = this.state;
+        const { alert, customers, opcos, projects } = this.props;
         return (
-            <Layout alert={alert}>
+            <Layout>
+                { alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div> }
                 <div id="homeIndex" className="row">
                     <div className="col-md-12">
                         <div className="input-group input-group-lg mb-3">
-                            <input className="form-control text-center" v-model="filter" placeholder={"Filter " + this.state.view + "'s..."} />
+                            <input className="form-control text-center" name="filter" value={filter} onChange={this.handleChange} placeholder={"Filter " + this.state.view + "'s..."} />
                             <div className="input-group-append">
                                 <button className="btn btn-outline-secondary" type="button" id="button-addon2" onClick={this.switchView}>
                                     <span><FontAwesomeIcon icon="eye" className="fa-lg"/> Switch View</span>
@@ -58,46 +91,31 @@ class Home extends React.Component {
                             </div>
                         </div>
                     </div>
-                    {this.state.view == 'Customer' ? <ProjectCard /> : <div>Opco</div>}
+                    {this.state.view == 'Customer' ?
+                        this.state.customers ?
+                            this.state.customers && this.state.customers.map((customer) => <ProjectCard property={customer} type="/customer" key={customer._id} />)
+                            : customers.items && customers.items.map((customer) => <ProjectCard property={customer} type="/customer" key={customer._id} />)
+                    :
+                        this.state.opcos ?
+                            this.state.opcos && this.state.opcos.map((opco) => <ProjectCard property={opco} type="/opco" key={opco._id} />)
+                            : opcos.items && opcos.items.map((opco) => <ProjectCard property={opco} type="/opco" key={opco._id} />)
+                    }
                 </div >
-
             </Layout>
         );
     }
 }
 
 function mapStateToProps(state) {
-    const { alert } = state;
+    const { alert, currencies, customers, opcos, projects } = state;
     return {
-        alert
+        alert,
+        currencies,
+        customers,
+        opcos,
+        projects
     };
 }
 
 const connectedHome = connect(mapStateToProps)(Home);
 export { connectedHome as Home };
-
-
-{/* <div className="col-md-6 col-md-offset-3">
-    <h1>Hi {user.firstName}!</h1>
-    <p>You're logged in with React!!</p>
-    <h3>All registered users:</h3>
-    {users.loading && <em>Loading users...</em>}
-    {users.error && <span className="text-danger">ERROR: {users.error}</span>}
-    {users.items &&
-        <ul>
-            {users.items.map((user, index) =>
-                <li key={user._id}>
-                    {user._id + ' ' + user.firstName + ' ' + user.lastName + ' ' + user.email}
-                    {
-                        user.deleting ? <em> - Deleting...</em>
-                            : user.deleteError ? <span className="text-danger"> - ERROR: {user.deleteError}</span>
-                                : <span> - <a onClick={this.handleDeleteUser(user._id)}>Delete</a></span>
-                    }
-                </li>
-            )}
-        </ul>
-    }
-    <p>
-        <Link to="/login">Logout</Link>
-    </p>
-</div> */}

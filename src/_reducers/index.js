@@ -1,21 +1,23 @@
 import { combineReducers } from 'redux';
 
+import { alert } from './alert.reducer';
 import { authentication } from './authentication.reducer';
-import { registration } from './registration.reducer';
-import { users } from './users.reducer';
+import { currencies } from './currencies.reducer';
 import { customers } from './customers.reducer';
 import { opcos } from './opcos.reducer';
 import { projects } from './projects.reducer';
-import { alert } from './alert.reducer';
+import { registration } from './registration.reducer';
+import { users } from './users.reducer';
 
 const rootReducer = combineReducers({
+  alert,
   authentication,
-  registration,
-  users,
+  currencies,
   customers,
   opcos,
   projects,
-  alert
+  registration,
+  users
 });
 
 export default rootReducer;

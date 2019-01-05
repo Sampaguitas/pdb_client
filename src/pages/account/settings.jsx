@@ -16,62 +16,55 @@ class Settings extends React.Component {
      constructor(props) {
          super(props);
          this.state = {
-             show:false
+             user: {
+                 firstName: '',
+                 lastName: '',
+                 phone: '',
+                 email: '',
+                 password: '',
+                 confirmPassword: ''
+             },
+             submitted: false
          };
-         this.showModal = this.showModal.bind(this);
-         this.hideModal = this.hideModal.bind(this);
+         this.handleChange = this.handleChange.bind(this);
+         this.handleSubmit = this.handleSubmit.bind(this);
     }
-    //         user: {
-    //             firstName: '',
-    //             lastName: '',
-    //             phone: '',
-    //             email: '',
-    //             password: ''
-    //         },
-    //         submitted: false
-    //     };
 
-    //     // this.handleCheck = this.handleCheck.bind(this);
     componentDidMount() {
         this.props.dispatch(userActions.getAll());
     }
-    showModal(){
-        this.setState({ show: true });
+
+    handleChange(event) {
+        const { name, value } = event.target;
+        const { user } = this.state;
+        this.setState({
+            user: {
+                ...user,
+                [name]: value
+            }
+        });
     }
-    hideModal() {
-        this.setState({ show: false });
+
+    handleSubmit(event) {
+        event.preventDefault();
+
+        this.setState({ submitted: true });
+        const { user } = this.state;
+        const { dispatch } = this.props;
+        if (user.firstName && user.lastName && user.email && user.phone && user.password && user.confirmPassword ) {
+            dispatch(userActions.register(user));
+        }
     }
-    // handleChange(event) {
-    //     const { name, value } = event.target;
-    //     const { user } = this.state;
-    //     this.setState({
-    //         user: {
-    //             ...user,
-    //             [name]: value
-    //         }
-    //     });
-    // }
-
-
-    // handleSubmit(event) {
-    //     event.preventDefault();
-
-    //     this.setState({ submitted: true });
-    //     const { user } = this.state;
-    //     const { dispatch } = this.props;
-    //     if (user.firstName && user.lastName && user.email && user.phone && user.password) {
-    //         dispatch(userActions.register(user));
-    //     }
-    // }
 
     render() {
-        const { users, alert } = this.props;
+        const { user, submitted } = this.state
+        const { users, registering, alert } = this.props;
         return (
-            <Layout alert={alert}>
+            <Layout>
                 <div id="user">
-                    <h2>User Settings</h2>
+                    <h2>Register new users</h2>
                     <div className="row">
-                        {/* <div className="col-md-4 mb-3">
+                        <div className="col-md-4 mb-3">
                             <div className="card">
                                 <div className="card-header">
                                     <h5>New User</h5>
@@ -79,10 +72,40 @@ class Settings extends React.Component {
                                 <div className="card-body">
                                     <form name="form" onSubmit={this.handleSubmit}>
                                         <Input
-                                            title="User Name"
-                                            name="userName"
+                                            title="First Name"
+                                            name="firstName"
+                                            type="text"
+                                            value={user.firstName}
+                                            onChange={this.handleChange}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Input
+                                            title="Last Name"
+                                            name="lastName"
+                                            type="text"
+                                            value={user.lastName}
+                                            onChange={this.handleChange}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Input
+                                            title="Email"
+                                            name="email"
                                             type="email"
                                             value={user.email}
+                                            onChange={this.handleChange}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Input
+                                            title="Phone"
+                                            name="phone"
+                                            type="tel"
+                                            value={user.phone}
                                             onChange={this.handleChange}
                                             submitted={submitted}
                                             inline={false}
@@ -98,26 +121,30 @@ class Settings extends React.Component {
                                             inline={false}
                                             required={true}
                                         />
+                                        <Input
+                                            title="Confirm Password"
+                                            name="confirmPassword"
+                                            type="password"
+                                            value={user.confirmPassword}
+                                            onChange={this.handleChange}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
                                         <button type="submit" className="btn btn-leeuwen btn-full btn-lg">
-                                            Register {registering ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
+                                            {registering && <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}
+                                            Register
                                         </button>
                                     </form>
+                                    <br />
+                                    {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                                 </div>
                             </div>
-                        </div> */}
-                        <div className="col-md-12">
+                        </div>
+                        <div className="col-md-8">
                             <div className="card">
                                 <div className="card-header">
-                                    <div className="row">
-                                        <div className="col-8">
-                                            <h5>Users</h5>
-                                        </div>
-                                        <div className="col-4 text-right">
-                                            <div className="modal-link">
-                                                <FontAwesomeIcon icon="plus" className="red fa-icon" />
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <h5>Users</h5>
                                 </div>
                                 <div className="card-body table-responsive">
                                     <table className="table table-hover">
@@ -165,8 +192,11 @@ class Settings extends React.Component {
 }
 
 function mapStateToProps(state) {
+    const { registering } = state.registration;
     const { users, alert } = state;
     return {
+        alert,
+        registering,
         users
     };
 }

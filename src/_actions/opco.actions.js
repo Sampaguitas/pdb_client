@@ -19,7 +19,7 @@ function create(opco) {
             .then(
                 opco => {
                     dispatch(success());
-                    history.push('/');
+                    // history.push('/');
                     dispatch(alertActions.success('successfully Created'));
                 },
                 error => {

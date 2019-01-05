@@ -32,7 +32,7 @@ class HeaderBarMenu extends Component {
                         <nav className={this.props.collapsed ? "navbar navbar-expand-lg navbar-light bg-light sticky-top collapsed" : "navbar navbar-expand-lg navbar-light bg-light sticky-top"} >
                             <div className="collapse navbar-collapse" id="navbarSupportedContent">
                                     <span className={this.props.collapsed ? 'navbars collapsed' : 'navbars'} onClick={this.props.toggleCollapse} >
-                                        <span><FontAwesomeIcon icon="bars" style={{width: '28', height: '32'}} /></span>
+                                    <span><FontAwesomeIcon icon="bars" className="fa-2x" /></span>
                                 </span>
                             
                                 <form className="form-inline ml-auto">

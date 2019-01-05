@@ -10,7 +10,6 @@ import { PrivateRoute } from '../_components';
 import { Home } from '../pages/home/home.jsx';
 
 import { Login } from '../pages/account/login.jsx';
-import { Register } from '../pages/account/register.jsx';
 import { User } from '../pages/account/user.jsx';
 import { Settings } from '../pages/account/settings.jsx';
 import { Customer } from '../pages/home/customer.jsx';
@@ -56,7 +55,6 @@ class App extends React.Component {
                             <PrivateRoute path="/opco" component={Opco} />
                             <PrivateRoute path="/project" component={Project} />
                             <Route path="/login" component={Login} />
-                            <Route path="/register" component={Register} />
                         </div>
                     </Router>
             </div>

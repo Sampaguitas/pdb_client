@@ -1,9 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { customerActions } from '../../_actions';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
 import { authHeader } from '../../_helpers';
+
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 //Components
 import CheckBox from'../../_components/check-box';
 import Input from '../../_components/input';
@@ -49,7 +51,6 @@ class Customer extends React.Component {
             copyAddress: !this.state.copyAddress,
         });
         this.handleCopyAddress();
-        console.log(this.state);
     }
     handleCopyAddress(){
         this.setState({
@@ -76,7 +77,6 @@ class Customer extends React.Component {
             }
 
         });
-        console.log(this.state);
     }
     handleSubmit(event) {
         event.preventDefault();
@@ -120,7 +120,7 @@ class Customer extends React.Component {
         const { alert, loading } = this.props;
         const { copyAddress, customer, submitted } = this.state;
         return (
-            <Layout alert={alert}>
+            <Layout>
                 <h2>Add or Edit Customer</h2>
                 <hr/>
                 <form onSubmit={this.handleSubmit} className="row">
@@ -207,7 +207,7 @@ class Customer extends React.Component {
                             required={false}
                         />
                         <div className="text-right">
-                            <button type="submit" className="btn btn-lg" onClick={this.handleSubmit}>
+                            <button type="submit" className="btn btn-lg btn-outline-leeuwen" onClick={this.handleSubmit}>
                                 {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
                                 Save Customer
                             </button>
@@ -297,6 +297,7 @@ class Customer extends React.Component {
                         </div>   
                         }
                     </div>
+                    {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 </form>
             </Layout>
         );

@@ -7,9 +7,9 @@ class Input extends Component{
             <div className={'form-group' + (this.props.inline ? ' row' : '') + (this.props.submitted && this.props.required && !this.props.value ? ' has-error' : '')}>
                 <label
                     htmlFor={this.props.name}
-                    className={this.props.inline && "col-sm-2 col-form-label"}
+                    className={this.props.inline ? "col-sm-2 col-form-label" : ''}
                 >{this.props.title}</label>
-                <div className={this.props.inline && "col-sm-10"}>
+                <div className={this.props.inline ? "col-sm-10" : ''}>
                     <input
                         className="form-control"
                         id={this.props.name}

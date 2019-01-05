@@ -12,7 +12,9 @@ const CheckBox = (props) => (
                 checked={props.checked}
                 onChange={props.onChange}
             />
-            {props.title}</label>
+            {props.title}
+            </label><br />
+            <small>{props.small}<strong>{props.strong}</strong></small>
     </div>
 );
 
@@ -20,6 +22,8 @@ CheckBox.propTypes = {
     title: propTypes.string.isRequired,
     id: propTypes.string.isRequired,
     name: propTypes.string.isRequired,
+    small: propTypes.string,
+    strong: propTypes.string,
     checked: propTypes.bool.isRequired,
     onChange: propTypes.func.isRequired
 };

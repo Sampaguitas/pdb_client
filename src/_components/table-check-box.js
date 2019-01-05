@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import propTypes from 'prop-types';
 import { userActions } from '../_actions';
 import config from 'config';
@@ -41,6 +42,7 @@ class TableCheckBox extends Component {
             return data;
         });
     }
+
     handleInputChange() {
         const temp_user = {
             id: this.props.id,
@@ -50,7 +52,7 @@ class TableCheckBox extends Component {
             user: {
                 id: temp_user.id,
                 isAdmin: temp_user.isAdmin
-            }  
+            }
 
         }));
     }
@@ -81,4 +83,5 @@ TableCheckBox.propTypes = {
     id:propTypes.string.isRequired,
     checked:propTypes.bool.isRequired
 };
+
 export default TableCheckBox;

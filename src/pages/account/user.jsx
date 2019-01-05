@@ -11,7 +11,7 @@ class User extends React.Component {
     render() {
         const { user, alert } = this.props;
         return (
-            <Layout alert={alert}>
+            <Layout>
                 <div id="user">
                     <h2>User: { user.email }</h2>
                     <div className="row">
@@ -41,6 +41,7 @@ class User extends React.Component {
                                 <div className="card-header">Change Password</div>
                                 <div className="card-body">
                                     <p className="red">To be implemented...</p>
+                                    {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                                 </div>
                             </div>
                         </div>

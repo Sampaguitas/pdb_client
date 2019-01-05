@@ -46,7 +46,7 @@ class Login extends React.Component {
         const { alert, loggingIn } = this.props;
         const { email, password, submitted } = this.state; 
         return (
-            <Layout alert={alert}>
+            <Layout>
             <div id="login-card" className='row justify-content-center align-self-center'>
                     <div className="card card-login">
                         <div className="card-body">
@@ -80,6 +80,8 @@ class Login extends React.Component {
                                     {loggingIn ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />: ''}
                                     Login
                                 </button>
+                                <br />
+                                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                             </form>
                         </div>
                     </div>
