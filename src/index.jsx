@@ -3,7 +3,7 @@ import { render } from 'react-dom';
 import { Provider } from 'react-redux';
 
 import { store } from './_helpers';
-import { App } from './app/app.jsx';
+import { App } from './app'; ///app.jsx
 
 // setup fake backend
 //import { configureFakeBackend } from './_helpers';
