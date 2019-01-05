@@ -9,7 +9,7 @@
     "dev": "webpack-dev-server --open",
     "__postinstall": "webpack -p",
     "start": "node server.js",
-    "heroku-postbuild": "webpack -p"
+    "heroku-postbuild": "webpack -p --display-error-details"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.12",
