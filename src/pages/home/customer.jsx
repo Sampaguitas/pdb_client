@@ -1,12 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { customerActions } from '../../_actions';
-import config from 'config';
-import { authHeader } from '../../_helpers';
-
+import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-//Components
+import config from 'config';
+import { customerActions } from '../../_actions';
+import { authHeader } from '../../_helpers';
 import CheckBox from'../../_components/check-box';
 import Input from '../../_components/input';
 import Layout from '../../_components/layout';
@@ -41,28 +39,38 @@ class Customer extends React.Component {
         this.handleCopyAddress = this.handleCopyAddress.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleDeleteCustomer = this.handleDeleteCustomer.bind(this);
-        this.create = this.create.bind(this);
-        this.handleResponse = this.handleResponse.bind(this)
-        
+        this.getById = this.getById.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+        this.handleResponse = this.handleResponse.bind(this);
     }
+
+    componentDidMount(){
+        var qs = queryString.parse(this.props.location.search);
+        if (qs.id) {
+            this.getById(qs.id);
+        }
+    }
+
     handleCheck(){
+        const { copyAddress } = this.state
         this.setState({
-            copyAddress: !this.state.copyAddress,
+            copyAddress: !copyAddress,
         });
         this.handleCopyAddress();
     }
+
     handleCopyAddress(){
+        const { customer } = this.state
         this.setState({
             customer:{
-                ...this.state.customer,
-                invoiceName: this.state.customer.name,
-                invoiceAddress: this.state.customer.address,
-                invoiceZip: this.state.customer.zip,
-                invoiceCity: this.state.customer.city,
-                invoicecountry: this.state.customer.country,
-                invoicePhone: this.state.customer.phone,
-                invoiceEmail: this.state.customer.email
+                ...customer,
+                invoiceName: customer.name,
+                invoiceAddress: customer.address,
+                invoiceZip: customer.zip,
+                invoiceCity: customer.city,
+                invoiceCountry: customer.country,
+                invoicePhone: customer.phone,
+                invoiceEmail: customer.email
             }
         });
         
@@ -70,31 +78,52 @@ class Customer extends React.Component {
 
     handleChange(event) {
         const {name, value} = event.target;
+        const { customer } = this.state;
         this.setState({
             customer:{
-                ...this.state.customer,
+                ...customer,
                 [name]: value
             }
 
         });
     }
+
     handleSubmit(event) {
         event.preventDefault();
-        this.state.copyAddress && this.handleCopyAddress();
+        const { copyAddress, customer } = this.state;
+        const { dispatch } = this.props;
+        copyAddress && this.handleCopyAddress();
         this.setState({ submitted: true });
-        if (this.state.customer.code && this.state.customer.name) {
-            this.props.dispatch(customerActions.create(this.state.customer))
-            //this.create(this.state.customer);
+        if (customer.code && customer.name) {
+            if(customer.id){
+                dispatch(customerActions.update(customer));
+            } else {
+                dispatch(customerActions.create(customer));
+            }
         }
     }
-    create(customer) {
+
+    getById(id) {
         const requestOptions = {
-            method: 'POST',
-            headers: { ...authHeader(), 'Content-Type': 'application/json' },
-            body: JSON.stringify(customer)
+            method: 'GET',
+            headers: authHeader()
         };
-        return fetch(`${config.apiUrl}/customer/create`, requestOptions).then(this.handleResponse);
+
+        return fetch(`${config.apiUrl}/customer/findOne/?id=${id}`, requestOptions)
+        .then(this.handleResponse)
+            .then(data => this.setState({ 
+                copyAddress: false, 
+                customer: data 
+            }));
     }
+
+    handleDelete(event) {
+        event.preventDefault();
+        const { dispatch } = this.props;
+        const { customer } = this.state;
+        dispatch(customerActions.delete(customer.id));
+    }
+
     handleResponse(response) {
         return response.text().then(text => {
             const data = text && JSON.parse(text);
@@ -110,17 +139,14 @@ class Customer extends React.Component {
             return data;
         });
     }
-    // componentDidMount() {
-    //     this.getCustomer();
-    // }
-    handleDeleteCustomer(id) {
-        return (event) => this.props.dispatch(customerActions.delete(id));
-    }
+
     render() {
         const { alert, loading } = this.props;
         const { copyAddress, customer, submitted } = this.state;
         return (
             <Layout>
+                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+                <br />
                 <h2>Add or Edit Customer</h2>
                 <hr/>
                 <form onSubmit={this.handleSubmit} className="row">
@@ -207,9 +233,15 @@ class Customer extends React.Component {
                             required={false}
                         />
                         <div className="text-right">
+                            {customer.id &&
+                            <button type="submit" className="btn btn-outline-dark btn-lg" onClick={this.handleDelete} style={{marginRight: 10}}>
+                                    {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
+                                    Remove
+                            </button>
+                            }
                             <button type="submit" className="btn btn-lg btn-outline-leeuwen" onClick={this.handleSubmit}>
                                 {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
-                                Save Customer
+                                {customer.id ? 'Update Customer' : 'Save Customer' }
                             </button>
                         </div>
                     </div>
@@ -268,7 +300,7 @@ class Customer extends React.Component {
                                 title="Country"
                                 name="invoiceCountry"
                                 type="text"
-                                value={customer.invoicecountry}
+                                value={customer.invoiceCountry}
                                 onChange={this.handleChange}
                                 submitted={submitted}
                                 inline={true}
@@ -297,7 +329,6 @@ class Customer extends React.Component {
                         </div>   
                         }
                     </div>
-                    {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 </form>
             </Layout>
         );

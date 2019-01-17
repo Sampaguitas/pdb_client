@@ -19,7 +19,7 @@ function create(customer) {
             .then(
                 customer => {
                     dispatch(success());
-                    history.push('/');
+                    // history.push('/');
                     dispatch(alertActions.success('successfully Created'));
                 },
                 error => {
@@ -72,7 +72,10 @@ function update(customer) {
 
         customerService.update(customer)
             .then(
-            customer => dispatch(success(customer)),
+                customer => {
+                    dispatch(success(customer)),
+                    dispatch(alertActions.success('Customer successfully Updated'))
+                },
                 error => dispatch(failure(error.toString()))
             );
     };

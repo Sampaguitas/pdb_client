@@ -55,7 +55,7 @@ class Home extends React.Component {
                     customers: this.props.customers.items 
                 });
             } else {
-                value = value.replace(/\W/g, "");
+                value = value.replace(/([()[{*+.$^\\|?])/g, ""); ///([()[{*+.$^\\|?])/g
                 this.setState({
                     customers: this.props.customers.items.filter((customer) => !!customer.name.match(new RegExp(value, "i")))
                 }); 

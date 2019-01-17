@@ -15,6 +15,7 @@ import { Settings } from '../pages/account/settings.jsx';
 import { Customer } from '../pages/home/customer.jsx';
 import { Opco } from '../pages/home/opco.jsx';
 import { Project } from '../pages/home/project.jsx';
+import { Dashboard } from '../pages/project/dashboard.jsx';
 
 
 // Styles
@@ -54,6 +55,7 @@ class App extends React.Component {
                             <PrivateRoute path="/customer" component={Customer} />
                             <PrivateRoute path="/opco" component={Opco} />
                             <PrivateRoute path="/project" component={Project} />
+                            <PrivateRoute path="/Dashboard" component={Dashboard} />                            
                             <Route path="/login" component={Login} />
                         </div>
                     </Router>

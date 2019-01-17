@@ -1,13 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { opcoActions } from '../../_actions';
-
+import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-//Components
+import config from 'config';
+import { opcoActions, userActions } from '../../_actions';
+import { authHeader } from '../../_helpers';
 import CheckBox from '../../_components/check-box';
 import Input from '../../_components/input';
 import Layout from '../../_components/layout';
+import Select from '../../_components/select';
+import { users } from '../../_reducers/users.reducer';
 
 
 class Opco extends React.Component {
@@ -23,24 +25,42 @@ class Opco extends React.Component {
                 country: '',
                 phone: '',
                 fax:'',
-                email: ''
+                email: '',
+                projectAdmins:[]
             },
-            submitted: false
+            submitted: false,
+            selectedUser:''
         };
-
+        this.handleChangeOpco = this.handleChangeOpco.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleCheck = this.handleCheck.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+        this.addProjectAdmin = this.addProjectAdmin.bind(this);
+        this.removeProjectAdmin = this.removeProjectAdmin.bind(this);
+        this.getById = this.getById.bind(this);
+        this.handleResponse = this.handleResponse.bind(this);
     }
-    handleCheck(event) {
+
+    componentDidMount() {
+        const { location } = this.props
+        this.props.dispatch(userActions.getAll());
+        var qs = queryString.parse(location.search);
+        if (qs.id) {
+            this.getById(qs.id);
+        }
+    }
+
+    handleChange(event) {
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
+            ...this.state,
             [name]: value
         });
     }
-    handleChange(event) {
+
+    handleChangeOpco(event) {
         const { name, value } = event.target;
         const { opco } = this.state;
         this.setState({
@@ -50,40 +70,92 @@ class Opco extends React.Component {
             }
         });
     }
+
     handleSubmit(event) {
         event.preventDefault();
-
-        this.setState({ submitted: true });
         const { opco } = this.state;
         const { dispatch } = this.props;
-        if (
-            opco.name &&
-            opco.address &&
-            opco.city &&
-            opco.country
-        ) {
-            dispatch(opcoActions.create(opco));
-            this.setState({
-                opco: {
-                    name: '',
-                    address: '',
-                    zip: '',
-                    city: '',
-                    country: '',
-                    phone: '',
-                    fax: '',
-                    email: ''
-                },
-                submitted: false   
-            })
+        this.setState({ submitted: true });
+        if (opco.name && opco.address && opco.city && opco.country) {
+            console.log(opco.id);
+            if(opco.id){
+                dispatch(opcoActions.update(opco));
+            } else {
+                dispatch(opcoActions.create(opco));
+            }
         }
     }
-    handleDeletOpco(id) {
-        return (event) => this.props.dispatch(opcoActions.delete(id));
+
+    getById(id) {
+        const requestOptions = {
+            method: 'GET',
+            headers: authHeader()
+        };
+
+        return fetch(`${config.apiUrl}/opco/findOne/?id=${id}`, requestOptions)
+            .then(this.handleResponse)
+            .then(data => this.setState({
+                opco: data
+            }));
     }
+
+    handleDelete(event) {
+        event.preventDefault();
+        const { dispatch } = this.props;
+        const { opco } = this.state;
+        dispatch(opcoActions.delete(opco.id));
+    }
+
+    addProjectAdmin(event){
+        event.preventDefault();
+        const { selectedUser, opco } = this.state;
+        if (selectedUser && !opco.projectAdmins.includes(selectedUser)) {
+            this.setState({ 
+                opco: {
+                    ...opco,
+                    projectAdmins: [...opco.projectAdmins, selectedUser]
+                }
+            });
+            // opco.projectAdmins.push(selectedUser);
+        }
+        console.log(this.state);
+    }
+
+    removeProjectAdmin(projectAdmin){
+        event.preventDefault();
+        const { opco } = this.state;
+        const array = [...opco.projectAdmins];
+        const index = array.indexOf(projectAdmin);
+        if (index !== -1) {
+            array.splice(index, 1);
+            this.setState({
+                opco: {
+                    ...opco,
+                    projectAdmins: array
+                }
+            });
+        }
+    }
+
+    handleResponse(response) {
+        return response.text().then(text => {
+            const data = text && JSON.parse(text);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    // auto logout if 401 response returned from api
+                    logout();
+                    location.reload(true);
+                }
+                const error = (data && data.message) || response.statusText;
+                return Promise.reject(error);
+            }
+            return data;
+        });
+    }
+
     render() {
-        const { alert, loading } = this.props;
-        const { opco, submitted } = this.state;
+        const { alert, loading, users } = this.props;
+        const { opco, submitted, selectedUser } = this.state;
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -96,7 +168,7 @@ class Opco extends React.Component {
                         name="name"
                         type="text"
                         value={opco.name}
-                        onChange={this.handleChange}
+                        onChange={this.handleChangeOpco}
                         submitted={submitted}
                         inline={true}
                         required={true}
@@ -106,7 +178,7 @@ class Opco extends React.Component {
                         name="address"
                         type="text"
                         value={opco.address}
-                        onChange={this.handleChange}
+                        onChange={this.handleChangeOpco}
                         submitted={submitted}
                         inline={true}
                         required={true}
@@ -116,7 +188,7 @@ class Opco extends React.Component {
                         name="zip"
                         type="text"
                         value={opco.zip}
-                        onChange={this.handleChange}
+                        onChange={this.handleChangeOpco}
                         submitted={submitted}
                         inline={true}
                         required={true}
@@ -126,7 +198,7 @@ class Opco extends React.Component {
                         name="city"
                         type="text"
                         value={opco.city}
-                        onChange={this.handleChange}
+                        onChange={this.handleChangeOpco}
                         submitted={submitted}
                         inline={true}
                         required={true}
@@ -136,7 +208,7 @@ class Opco extends React.Component {
                         name="country"
                         type="text"
                         value={opco.country}
-                        onChange={this.handleChange}
+                        onChange={this.handleChangeOpco}
                         submitted={submitted}
                         inline={true}
                         required={true}
@@ -146,7 +218,7 @@ class Opco extends React.Component {
                         name="phone"
                         type="tel"
                         value={opco.phone}
-                        onChange={this.handleChange}
+                        onChange={this.handleChangeOpco}
                         submitted={submitted}
                         inline={true}
                         required={false}
@@ -156,7 +228,7 @@ class Opco extends React.Component {
                         name="fax"
                         type="tel"
                         value={opco.fax}
-                        onChange={this.handleChange}
+                        onChange={this.handleChangeOpco}
                         submitted={submitted}
                         inline={true}
                         required={false}
@@ -166,15 +238,54 @@ class Opco extends React.Component {
                         name="email"
                         type="email"
                         value={opco.email}
-                        onChange={this.handleChange}
+                        onChange={this.handleChangeOpco}
                         submitted={submitted}
                         inline={true}
                         required={false}
                     />
+                    <div className="form-group row">
+                        <label htmlFor="selectedUser" className="col-sm-2 col-form-label">Project Admins</label>
+                        <div className="col-sm-10">
+                            <div className="input-group">
+                                <select className="form-control" type="text" id="selectedUser" name="selectedUser" value={selectedUser} onChange={this.handleChange} >
+                                    <option defaultValue="" disabled hidden></option>
+                                    {users.items && users.items.map(option => {
+                                        return (
+                                            <option key={option._id} value={option._id}>{option.name}</option>
+                                        );
+                                    })}
+                                </select>
+                                <div className="input-group-append">
+                                    <button className="btn btn-leeuwen-blue" type="button" onClick={this.addProjectAdmin}>
+                                        <FontAwesomeIcon icon="plus"/>
+                                    </button>
+                                </div>
+                            </div>
+                            <ul className="list-group mt-3">
+                                {opco.projectAdmins.map(projectAdmin =>
+                                    <li className="list-group-item" key={projectAdmin}>
+                                        {console.log('projectadmin: '+projectAdmin)}
+                                        <span className="inline">{users.items.find(user => user.id === projectAdmin).name}</span>
+                                        <span className="pull-right">
+                                            <button className="btn btn-leeuwen btn-sm right inline" onClick={() => this.removeProjectAdmin(projectAdmin)} type="button">
+                                                <FontAwesomeIcon icon="trash-alt" />
+                                            </button>
+                                        </span>
+                                    </li>
+                                )}
+                            </ul>
+                        </div>
+                    </div>
                     <div className="text-right">
+                        {opco.id &&
+                        <button type="submit" className="btn btn-outline-dark btn-lg" onClick={this.handleDelete} style={{ marginRight: 10 }} >
+                            {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : '' }
+                            Remove
+                        </button>
+                        }
                         <button type="submit" className="btn btn-lg btn-outline-leeuwen">
                         {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
-                        Save OPCO
+                        {opco.id ? 'Update OPCO' : 'Save OPCO'}
                         </button>
                     </div>
                 </form>
@@ -184,11 +295,12 @@ class Opco extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert } = state;
     const { loading } = state.opcos;
+    const { users, alert } = state;
     return {
         alert,
-        loading
+        loading,
+        users
     };
 }
 

@@ -17,6 +17,7 @@
     "express": "^4.16.4",
     "history": "^4.6.3",
     "prop-types": "^15.6.2",
+    "query-string": "^6.2.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-redux": "^5.0.5",

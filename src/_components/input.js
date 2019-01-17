@@ -37,7 +37,7 @@ Input.propTypes = {
     value:propTypes.oneOfType([
         propTypes.string,
         propTypes.number,
-    ]).isRequired,
+    ]),
     placeholder:propTypes.string,
     inline: propTypes.bool,
     required: propTypes.bool

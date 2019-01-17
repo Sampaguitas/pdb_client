@@ -23,7 +23,7 @@ class ProjectCard extends Component {
                 projects: property.projects.items
             });
         } else {
-            value = value.replace(/\W/g, "");
+            value = value.replace(/([()[{*+.$^\\|?])/g, "");
             this.setState({
                 projects: property.projects.filter((project) => !!project.name.match(new RegExp(value, "i")))
             });
@@ -45,7 +45,13 @@ class ProjectCard extends Component {
                     <h5 className="card-header">
                         <div className="row">
                             <div className="col-8">
-                                <NavLink to={{ pathname: this.props.type}} tag="a">
+                                <NavLink 
+                                    to={{
+                                        pathname: type,
+                                        search: '?id=' + property._id
+                                    }}
+                                    tag="a"
+                                >
                                     {property.name}
                                 </NavLink>
                             </div>
@@ -63,28 +69,20 @@ class ProjectCard extends Component {
                             <div className="list-group">
                             {this.state.projects ?
                                 this.state.projects && this.state.projects.map((project)=> 
-                                    <NavLink to={{ pathname: '/project' }} tag="a" className="list-group-item list-group-item-action" key={project._id}>
-                                        <span className="ellipsis">{project.name}</span>
-                                    </NavLink> 
-                                    
-                                    // <li
-                                    //     className="list-group-item list-group-item-action"
-                                    //     key={project._id}
-                                    // >
-                                    //     {project.name}
-                                    // </li>
-                                )
-                                :property.projects && property.projects.map((project) =>
-                                    <NavLink to={{ pathname: '/project' }} tag="a" className="list-group-item list-group-item-action" key={project._id}>
+                                    <NavLink to={{ 
+                                            pathname: '/dashboard', 
+                                            search: '?id=' + project._id
+                                        }} tag="a" className="list-group-item list-group-item-action" key={project._id}>
                                         <span className="ellipsis">{project.name}</span>
                                     </NavLink>
-                                
-                                // <li 
-                                //     className="list-group-item list-group-item-action" 
-                                //     key={project._id}
-                                // >
-                                //     {project.name}
-                                // </li>
+                                )
+                                :property.projects && property.projects.map((project) =>
+                                    <NavLink to={{ 
+                                            pathname: '/dashboard',
+                                            search: '?=id=' + project._id
+                                        }} tag="a" className="list-group-item list-group-item-action" key={project._id}>
+                                        <span className="ellipsis">{project.name}</span>
+                                    </NavLink>
                             )}
                             </div>
                     </div>

@@ -72,7 +72,10 @@ function update(opco) {
 
         opcoService.update(opco)
             .then(
-                opco => dispatch(success(opco)),
+                opco => {
+                    dispatch(success(opco)),
+                    dispatch(alertActions.success('OPCO successfully Updated'))
+                },
                 error => dispatch(failure(error.toString()))
             );
     };

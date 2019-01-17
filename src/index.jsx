@@ -11,7 +11,7 @@ import { App } from './app/app.jsx'; ///app.jsx
 
 render(
     <Provider store={store}>
-        <App />
+	    <App />
     </Provider>,
     document.getElementById('app')
 );
