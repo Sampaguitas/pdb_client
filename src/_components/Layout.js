@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-
-import config from 'config';
 import HeaderBarMenu from "./header-bar-menu/header-bar-menu.js"
 import SideBarMenu from "./side-bar-menu/side-bar-menu.js"
 import Footer from "./footer.js"
 import "../_styles/bootstrap.min.css";
-
-
 
 class Layout extends Component {
     constructor(props) {
