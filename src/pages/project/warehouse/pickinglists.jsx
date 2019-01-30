@@ -13,7 +13,7 @@ class PickingLists extends React.Component {
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="pickinglists">
-                    <h2>PickingLists</h2>
+                    <h2>Warehouse - Picking Lists</h2>
                     <div className="form-group">
                     
                     </div>

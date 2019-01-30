@@ -13,7 +13,7 @@ class CallOffOrder extends React.Component {
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="callofforder">
-                    <h2>CallOffOrder</h2>
+                    <h2>Warehouse - Call-Off Order</h2>
                     <div className="form-group">
                     
                     </div>

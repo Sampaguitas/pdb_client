@@ -13,7 +13,7 @@ class OutgoingShipments extends React.Component {
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="outgoingshipments">
-                    <h2>OutgoingShipments</h2>
+                    <h2>Warehouse - Outgoing Shipments</h2>
                     <div className="form-group">
                     
                     </div>

@@ -13,7 +13,7 @@ class GoodsReceipt extends React.Component {
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="goodsreceipt">
-                    <h2>GoodsReceipt</h2>
+                    <h2>Warehouse - Goods Receipt</h2>
                     <div className="form-group">
                     
                     </div>

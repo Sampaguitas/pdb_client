@@ -13,7 +13,7 @@ class StockManagement extends React.Component {
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="stockmanagement">
-                    <h2>StockManagement</h2>
+                    <h2>Warehouse - Stock Management</h2>
                     <div className="form-group">
                     
                     </div>

@@ -14,7 +14,7 @@ class ProjectOrders extends React.Component {
                 <br />
                 <div>
                     <div className="row mb-3">
-                        <div class="col-md-6">
+                        <div className="col-md-6">
                             <h2>Project Orders</h2>
                         </div>
                     </div>

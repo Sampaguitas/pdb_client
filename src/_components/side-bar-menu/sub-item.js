@@ -20,7 +20,7 @@ class SubItem extends Component {
                         }} tag="a"
                     >
                         <FontAwesomeIcon icon={item.icon} className="item-icon" name={item.icon}/>
-                        <span className="item-text">{item.title}
+                        <span className="item-text" style={{marginLeft: 45}}>{item.title}
                             {item.child &&
                                 <FontAwesomeIcon icon="angle-right" />
                             }
@@ -32,7 +32,7 @@ class SubItem extends Component {
                         }} tag="a"
                     >
                         <FontAwesomeIcon icon={item.icon} className="item-icon" name={item.icon}/>
-                        <span className="item-text">{item.title}
+                        <span className="item-text" style={{marginLeft: 45}}>{item.title}
                             {item.child &&
                                 <FontAwesomeIcon icon="angle-right" />
                             }

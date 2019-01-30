@@ -21,10 +21,10 @@ class Project extends React.Component {
                 customer: '',
                 opco: '',
                 currency:'',
+                projectInspection: true,
+                projectShipping: true,
+                projectWarehouse: true,
             },
-            projectInspection: true,
-            projectShipping: true,
-            projectWarehouse: true,
             submitted: false
         };
 
@@ -42,7 +42,10 @@ class Project extends React.Component {
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
-            [name]: value
+            project: {
+                ...project,
+                [name]: value
+            }
         });
     }
     handleChange(event) {
@@ -75,7 +78,7 @@ class Project extends React.Component {
     }
     render() {
         const { alert, loading, currencies, customers, opcos } = this.props;
-        const { project, projectInspection, projectShipping, projectWarehouse, submitted } = this.state;
+        const { project, submitted } = this.state;
         return (
             <Layout>
                 <h2>Add or Edit Project:</h2>
@@ -135,7 +138,7 @@ class Project extends React.Component {
                             title="Enable Inspection Module"
                             id="projectInspection"
                             name="projectInspection"
-                            checked={projectInspection}
+                            checked={project.projectInspection}
                             onChange={this.handleCheck}
                             small="Check this if this project requires the Inspection Module. The Inspection Module is required if you want to use the Warehouse Module."
                         />
@@ -143,7 +146,7 @@ class Project extends React.Component {
                             title="Enable Shipping Module"
                             id="projectShipping"
                             name="projectShipping"
-                            checked={projectShipping}
+                            checked={project.projectShipping}
                             onChange={this.handleCheck}
                             small="Check this if this project requires the Shipping Module."
                         />
@@ -151,7 +154,7 @@ class Project extends React.Component {
                             title="Enable Warehouse Module"
                             id="projectWarehouse"
                             name="projectWarehouse"
-                            checked={projectWarehouse}
+                            checked={project.projectWarehouse}
                             onChange={this.handleCheck}
                             small="Check this if this project requires the Warehouse Module. "
                             strong="Requires the Inspection Module to be enabled."
