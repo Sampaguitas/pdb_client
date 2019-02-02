@@ -31,27 +31,54 @@ class Configuration extends React.Component {
                 customer: '',
                 opco: '',
                 currency:'',
+                projtInspection: true,
+                projectShipping: true,
+                projectWarehouse: true,
             },
-            projtInspection: true,
-            projectShipping: true,
-            projectWarehouse: true,
             submitted: false
         };
+        this.handleChange = this.handleChange.bind(this);
+        this.handleCheck = this.handleCheck.bind(this);
         this.getById=this.getById.bind(this);
         this.handleResponse=this.handleResponse.bind(this);
+        this.handleSubmit=this.handleSubmit.bind(this);
+        this.handleDelete=this.handleDelete.bind(this);
 
     }
     componentDidMount(){
-        const { location } = this.props
-        this.props.dispatch(currencyActions.getAll());
-        this.props.dispatch(customerActions.getAll());
-        this.props.dispatch(opcoActions.getAll());
-        this.props.dispatch(projectActions.getAll());
-        this.props.dispatch(userActions.getAll());
+        const { location, dispatch } = this.props
+        dispatch(currencyActions.getAll());
+        dispatch(customerActions.getAll());
+        dispatch(opcoActions.getAll());
+        dispatch(projectActions.getAll());
+        dispatch(userActions.getAll());
         var qs = queryString.parse(location.search);
+        console.log(qs);
         if (qs.id) {
             this.getById(qs.id);
         }
+    }
+    handleCheck(event) {
+        const { project } = this.state;
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        this.setState({
+            project: {
+                ...project,
+                [name]: value
+            }
+        });
+    }
+    handleChange(event) {
+        const { name, value } = event.target;
+        const { project } = this.state;
+        this.setState({
+            project: {
+                ...project,
+                [name]: value
+            }
+        });
     }
     getById(id) {
         const { project } = this.state;
@@ -63,10 +90,12 @@ class Configuration extends React.Component {
         return fetch(`${config.apiUrl}/project/findOne/?id=${id}`, requestOptions)
             .then(this.handleResponse)
             .then(
-                data => this.setState({
-                ...this.state,
-                project: data
-            }));
+                data =>{
+                    this.setState({
+                        ...this.state,
+                        project: data
+                    });
+                } );
     }
     handleResponse(response) {
         return response.text().then(text => {
@@ -83,8 +112,29 @@ class Configuration extends React.Component {
             return data;
         });
     }
+    handleSubmit(event) {
+        event.preventDefault();
+        this.setState({ submitted: true });
+        const { project } = this.state;
+        const { dispatch } = this.props;
+        if (project.name && project.customer && project.opco && project.currency) {
+            dispatch(projectActions.update(project));
+        }
+    }
+
+    handleDelete(id) {
+        const { dispatch } = this.props
+        return (event) => dispatch(projectActions.delete(id));
+    }
     render() {
-        const { alert, currencies, customers, opcos, users } = this.props;
+        const { 
+                alert, 
+                currencies, 
+                customers, 
+                loading, 
+                opcos, 
+                users 
+            } = this.props;
         const { project } = this.state;
         return (
             <Layout>
@@ -94,9 +144,14 @@ class Configuration extends React.Component {
                     <h2>Project Configuration</h2>
                     <Tabs 
                         tabs={tabs}
-                        project={project}
                         currencies={currencies}
                         customers={customers}
+                        handleChange={this.handleChange}
+                        handleCheck={this.handleCheck}
+                        handleDelete={this.handleDelete}
+                        handleSubmit={this.handleSubmit}
+                        loading={loading}
+                        project={project}
                         opcos={opcos}
                         users={users}
                     />
@@ -107,12 +162,13 @@ class Configuration extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { loading } = state.projects;
     const { alert, currencies, customers, opcos, users  } = state;
+    const { loading } = state.projects;
     return {
         alert,
         currencies,
         customers,
+        loading,
         opcos,
         users
     };

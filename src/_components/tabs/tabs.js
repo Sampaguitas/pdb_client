@@ -2,17 +2,18 @@ import React, { Component } from 'react';
 import './tabs.css'
 class Tabs extends Component {
     constructor(props) {
-        // const { tabs } = this.props
         super(props);
+        const { tabs } = this.props
         this.state = {
-            tabs: this.props.tabs,
+            tabs: tabs
         };
         this.handleClick=this.handleClick.bind(this);
     }
     componentDidMount(){
+        const { tabs } = this.props
         this.setState({
             ...this.state,
-            tabs: this.props.tabs,
+            tabs: tabs
         })
     }
     handleClick(event, tab){
@@ -27,7 +28,18 @@ class Tabs extends Component {
     }
     render() {
         const { tabs  } = this.state
-        const { currencies, customers, opcos, project, users } = this.props
+        const { 
+                currencies, 
+                customers,
+                handleChange,
+                handleCheck, 
+                handleDelete,
+                handleSubmit,
+                loading, 
+                project,
+                opcos, 
+                users 
+            } = this.props
         return (
             <div id="tabs">
                 <ul className="nav nav-tabs">
@@ -51,9 +63,14 @@ class Tabs extends Component {
                         >
                             <tab.component
                                 tab={tab}
-                                project={project}
                                 currencies={currencies}
                                 customers={customers}
+                                handleChange={handleChange}
+                                handleCheck={handleCheck}
+                                handleDelete={handleDelete}
+                                handleSubmit={handleSubmit}
+                                loading={loading}
+                                project={project}
                                 opcos={opcos}
                                 users={users}
                             />

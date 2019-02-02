@@ -81,6 +81,8 @@ class Project extends React.Component {
         const { project, submitted } = this.state;
         return (
             <Layout>
+                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+                <br />
                 <h2>Add or Edit Project:</h2>
                 <hr />
                 <form onSubmit={this.handleSubmit}>
@@ -166,8 +168,6 @@ class Project extends React.Component {
                         Save Project
                         </button>
                     </div>
-                    <br />
-                    {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 </form>
             </Layout>
         );

@@ -4,17 +4,17 @@ import propTypes from 'prop-types';
 const CheckBox = (props) => (
     <div className="ml-4 mb-3">
         <label className="checkbox-inline">
-        <input 
-                className="form-check-input"
-                id={props.id}
-                name={props.name}
-                type="checkbox"
-                checked={props.checked}
-                onChange={props.onChange}
+            <input 
+                    className="form-check-input"
+                    id={props.id}
+                    name={props.name}
+                    type="checkbox"
+                    checked={props.checked}
+                    onChange={props.onChange}
             />
-            {props.title}
-            </label><br />
-            <small>{props.small}<strong>{props.strong}</strong></small>
+        {props.title}
+        </label><br />
+        <small>{props.small}<strong>{props.strong}</strong></small>
     </div>
 );
 
