@@ -25,6 +25,10 @@ class HeaderBarMenu extends Component {
         window.location.href = "/settings";
     }
     render() {
+        var isAdmin = false;
+        try{
+            isAdmin = JSON.parse(localStorage.getItem("user")).isAdmin;
+        } catch(e){}
         return (
             <div>
                 {isLoggedIn() ? 
@@ -51,7 +55,7 @@ class HeaderBarMenu extends Component {
                                     <button onClick={this.userPage} className="btn btn-outline-leeuwen-blue btn-round header-button" type="button" title="User-Page">
                                         <span><FontAwesomeIcon icon="user" className="fa-2x"/></span>
                                     </button>
-                                    <button onClick={this.settingsPage} className="btn btn-outline-leeuwen-blue btn-round header-button" type="button">
+                                    <button onClick={this.settingsPage} className={isAdmin ? "btn btn-outline-leeuwen-blue btn-round header-button" : "hidden"} type="button">
                                         <span><FontAwesomeIcon icon="cog" className="fa-2x"/></span>
                                     </button>
                                         <button onClick={this.logout} className="btn btn-outline-leeuwen btn-round header-button" type="button" title="Log-Out">

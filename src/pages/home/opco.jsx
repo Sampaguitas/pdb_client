@@ -151,7 +151,7 @@ class Opco extends React.Component {
     }
 
     render() {
-        const { alert, loading, users } = this.props;
+        const { alert, loading, deleting, users } = this.props;
         const { opco, submitted, selectedUser } = this.state;
         return (
             <Layout>
@@ -275,7 +275,7 @@ class Opco extends React.Component {
                     <div className="text-right">
                         {opco.id &&
                         <button type="submit" className="btn btn-outline-dark btn-lg" onClick={this.handleDelete} style={{ marginRight: 10 }} >
-                            {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : '' }
+                            {deleting ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : '' }
                             Remove
                         </button>
                         }
@@ -291,11 +291,12 @@ class Opco extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { loading } = state.opcos;
+    const { loading, deleting } = state.opcos;
     const { users, alert } = state;
     return {
         alert,
         loading,
+        deleting,
         users
     };
 }

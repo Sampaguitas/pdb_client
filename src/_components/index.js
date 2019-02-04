@@ -9,6 +9,7 @@ export * from './input-icon';
 export * from './input';
 export * from './layout';
 export * from './PrivateRoute';
+export * from './AdminRoute';
 export * from './select';
 export * from './table-check-box';
 export * from './text-area';
