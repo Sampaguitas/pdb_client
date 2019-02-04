@@ -246,7 +246,7 @@ class Opco extends React.Component {
                             <div className="input-group">
                                 <select className="form-control" type="text" id="selectedUser" name="selectedUser" value={selectedUser} onChange={this.handleChange} >
                                     <option defaultValue="" disabled hidden></option>
-                                    {users.items && users.items.map(option => {
+                                    {users.items && users.items.sort((a, b)=> a.name.toLowerCase().localeCompare(b.name.toLowerCase())).map(option => {
                                         return (
                                             <option key={option._id} value={option._id}>{option.name}</option>
                                         );
