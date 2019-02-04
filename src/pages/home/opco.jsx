@@ -42,7 +42,7 @@ class Opco extends React.Component {
     }
 
     componentDidMount() {
-        const { location } = this.props
+        const { location, users } = this.props;
         this.props.dispatch(userActions.getAll());
         var qs = queryString.parse(location.search);
         if (qs.id) {
@@ -259,9 +259,9 @@ class Opco extends React.Component {
                                 </div>
                             </div>
                             <ul className="list-group mt-3">
-                                {opco.projectAdmins.map(projectAdmin =>
+                                {opco.projectAdmins && opco.projectAdmins.map(projectAdmin =>
                                     <li className="list-group-item" key={projectAdmin}>
-                                        <span className="inline">{users.items.find(user => user.id === projectAdmin).name}</span>
+                                        <span className="inline">{users.items && users.items.find(user => user.id === projectAdmin).name}</span>
                                         <span className="pull-right">
                                             <button className="btn btn-leeuwen btn-sm right inline" onClick={() => this.removeProjectAdmin(projectAdmin)} type="button">
                                                 <FontAwesomeIcon icon="trash-alt" />
