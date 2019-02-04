@@ -3,6 +3,7 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+    mode: 'development',  
     entry: path.resolve(__dirname, './src/index.jsx'),
     output: {
         path: path.resolve(__dirname, './dist'),
@@ -12,34 +13,31 @@ module.exports = {
         extensions: ['.js', '.jsx']
     },
     module: {
-        loaders: [
+        rules: [
             {
                 test: /\.jsx?$/,
                 exclude: /(node_modules|bower_components)/,
-                loader: 'babel-loader',
-                query: {
-                    presets: ['react', 'es2015', 'stage-3']
+                use: {
+                    loader:'babel-loader',
+                    options: {
+                        presets: ['react', 'es2015', 'stage-3']
+                    }
                 }
             },
             {
-                rules: [{
-                    test: /\.scss$/,
-                    use: [
-                        "style-loader", // creates style nodes from JS strings
-                        "css-loader", // translates CSS into CommonJS
-                        "sass-loader" // compiles Sass to CSS, using Node Sass by default
-                    ]
-                }]
+                test: /\.scss$/,
+                use: [
+                    { loader: 'style-loader' }, // creates style nodes from JS strings
+                    { loader: 'css-loader' }, // translates CSS into CommonJS
+                    { loader: 'sass-loader' } // compiles Sass to CSS, using Node Sass by default
+                ]
             },
             {
-                rules: [
-                    {
-                        test: /\.css$/,
-                        use: ['style-loader', 'css-loader'
-                        ],
-                        
-                    },
-                ],
+                test: /\.css$/,
+                use: [
+                    { loader: 'style-loader' },
+                    { loader: 'css-loader' }
+                ]
             },
             {
                 test: /\.(png|jpg|gif|svg)$/,
