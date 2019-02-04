@@ -77,7 +77,6 @@ class SideBarMenu extends Component {
         const { projectId } = this.state
         return (
             <div>
-                {console.log('pathname: ' + window.location.pathname)}
                 {this.isLoggedIn() && 
                     <div id="sidebar-menu" className={this.props.collapsed ? 'collapsed' : undefined} onMouseLeave={this.onMouseLeave}>
                         <NavLink to={{ pathname: '/' }} tag="div" className="sidebar-logo">

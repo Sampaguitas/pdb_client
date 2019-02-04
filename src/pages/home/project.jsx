@@ -38,6 +38,7 @@ class Project extends React.Component {
         this.props.dispatch(customerActions.getAll());
     }
     handleCheck(event) {
+        const { project } = this.state;
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -49,8 +50,8 @@ class Project extends React.Component {
         });
     }
     handleChange(event) {
-        const { name, value } = event.target;
         const { project } = this.state;
+        const { name, value } = event.target;
         this.setState({
             project: {
                 ...project,

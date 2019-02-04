@@ -77,7 +77,6 @@ class Opco extends React.Component {
         const { dispatch } = this.props;
         this.setState({ submitted: true });
         if (opco.name && opco.address && opco.city && opco.country) {
-            console.log(opco.id);
             if(opco.id){
                 dispatch(opcoActions.update(opco));
             } else {
@@ -116,9 +115,7 @@ class Opco extends React.Component {
                     projectAdmins: [...opco.projectAdmins, selectedUser]
                 }
             });
-            // opco.projectAdmins.push(selectedUser);
         }
-        console.log(this.state);
     }
 
     removeProjectAdmin(projectAdmin){
@@ -264,7 +261,6 @@ class Opco extends React.Component {
                             <ul className="list-group mt-3">
                                 {opco.projectAdmins.map(projectAdmin =>
                                     <li className="list-group-item" key={projectAdmin}>
-                                        {console.log('projectadmin: '+projectAdmin)}
                                         <span className="inline">{users.items.find(user => user.id === projectAdmin).name}</span>
                                         <span className="pull-right">
                                             <button className="btn btn-leeuwen btn-sm right inline" onClick={() => this.removeProjectAdmin(projectAdmin)} type="button">

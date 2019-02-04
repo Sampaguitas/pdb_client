@@ -53,7 +53,6 @@ class Configuration extends React.Component {
         dispatch(projectActions.getAll());
         dispatch(userActions.getAll());
         var qs = queryString.parse(location.search);
-        console.log(qs);
         if (qs.id) {
             this.getById(qs.id);
         }
@@ -117,6 +116,7 @@ class Configuration extends React.Component {
         this.setState({ submitted: true });
         const { project } = this.state;
         const { dispatch } = this.props;
+        console.log(project._id);
         if (project.name && project.customer && project.opco && project.currency) {
             dispatch(projectActions.update(project));
         }
