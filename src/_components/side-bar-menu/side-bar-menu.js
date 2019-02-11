@@ -14,7 +14,7 @@ import SubItem from './sub-item.js'
 import MobileItem from './mobile-item.js'
 //Styles
 import './side-bar-menu.scss'
-import '../../_styles/main.css'
+// import '../../_styles/main.css'
 
 const home_menu = [
     { id: 0, title: 'Overview', href: '/', icon: 'home' },
