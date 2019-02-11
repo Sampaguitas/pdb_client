@@ -14,6 +14,7 @@ import SubItem from './sub-item.js'
 import MobileItem from './mobile-item.js'
 //Styles
 import './side-bar-menu.scss'
+import '../../_styles/main.css'
 
 const home_menu = [
     { id: 0, title: 'Overview', href: '/', icon: 'home' },
@@ -50,6 +51,7 @@ class SideBarMenu extends Component {
         }
         this.isHome=this.isHome.bind(this);
         this.isLoggedIn=this.isLoggedIn.bind(this);
+        this.mouseLeave=this.mouseLeave.bind(this);
     }
     componentDidMount(){
         var qs = queryString.parse(window.location.search);
@@ -73,12 +75,15 @@ class SideBarMenu extends Component {
             default: true
         }
     }
+    mouseLeave(){
+        this.MobileItem = null
+    }
     render() {
         const { projectId } = this.state
         return (
             <div>
                 {this.isLoggedIn() && 
-                    <div id="sidebar-menu" className={this.props.collapsed ? 'collapsed' : undefined} onMouseLeave={this.onMouseLeave}>
+                    <div id="sidebar-menu" className={this.props.collapsed ? 'collapsed' : undefined} onMouseLeave={this.mouseLeave}>
                         <NavLink to={{ pathname: '/' }} tag="div" className="sidebar-logo">
                             <img src={this.props.collapsed ? icon : logo} />
                         </NavLink>
