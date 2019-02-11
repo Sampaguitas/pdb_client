@@ -35,7 +35,8 @@ class Tabs extends Component {
                 handleCheck, 
                 handleDelete,
                 handleSubmit,
-                loading, 
+                loading,
+                deleting, 
                 project,
                 opcos, 
                 users 
@@ -62,16 +63,17 @@ class Tabs extends Component {
                             key={tab.index}
                         >
                             <tab.component
-                                tab={tab}
                                 currencies={currencies}
                                 customers={customers}
+                                deleting={deleting}
                                 handleChange={handleChange}
                                 handleCheck={handleCheck}
                                 handleDelete={handleDelete}
                                 handleSubmit={handleSubmit}
                                 loading={loading}
-                                project={project}
                                 opcos={opcos}
+                                project={project}
+                                tab={tab}
                                 users={users}
                             />
                         </div>

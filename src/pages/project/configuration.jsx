@@ -80,7 +80,6 @@ class Configuration extends React.Component {
         });
     }
     getById(id) {
-        const { project } = this.state;
         const requestOptions = {
             method: 'GET',
             headers: authHeader()
@@ -91,7 +90,6 @@ class Configuration extends React.Component {
             .then(
                 data =>{
                     this.setState({
-                        ...this.state,
                         project: data
                     });
                 } );
@@ -113,24 +111,28 @@ class Configuration extends React.Component {
     }
     handleSubmit(event) {
         event.preventDefault();
-        this.setState({ submitted: true });
         const { project } = this.state;
         const { dispatch } = this.props;
+        this.setState({ submitted: true });
         console.log(project._id);
+        console.log(project)
         if (project.name && project.customer && project.opco && project.currency) {
             dispatch(projectActions.update(project));
         }
     }
 
     handleDelete(id) {
+        const { project } = this.state;
         const { dispatch } = this.props
         return (event) => dispatch(projectActions.delete(id));
+        // .then(dispatch(projectActions.getAll()));
     }
     render() {
         const { 
                 alert, 
                 currencies, 
-                customers, 
+                customers,
+                deleting, 
                 loading, 
                 opcos, 
                 users 
@@ -143,16 +145,17 @@ class Configuration extends React.Component {
                 <div id="configuration">
                     <h2>Project Configuration</h2>
                     <Tabs 
-                        tabs={tabs}
                         currencies={currencies}
                         customers={customers}
+                        deleting={deleting}
                         handleChange={this.handleChange}
                         handleCheck={this.handleCheck}
                         handleDelete={this.handleDelete}
                         handleSubmit={this.handleSubmit}
                         loading={loading}
-                        project={project}
                         opcos={opcos}
+                        project={project}
+                        tabs={tabs}
                         users={users}
                     />
                 </div>
@@ -163,11 +166,12 @@ class Configuration extends React.Component {
 
 function mapStateToProps(state) {
     const { alert, currencies, customers, opcos, users  } = state;
-    const { loading } = state.projects;
+    const { loading, deleting } = state.projects;
     return {
         alert,
         currencies,
         customers,
+        deleting,
         loading,
         opcos,
         users

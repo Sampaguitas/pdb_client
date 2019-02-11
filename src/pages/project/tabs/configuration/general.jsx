@@ -7,17 +7,18 @@ import Select from '../../../../_components/select';
 
 class General extends React.Component {
     render() {
-        const {
-                tab, 
+        const { 
                 currencies, 
-                customers, 
+                customers,
+                deleting, 
                 handleChange,
                 handleCheck, 
                 handleDelete, 
                 handleSubmit,  
                 loading,
+                opcos,
                 project,
-                opcos
+                tab
             } = this.props
         return (
             <div className="tab-pane fade show" id={tab.id} role="tabpanel">
@@ -95,11 +96,11 @@ class General extends React.Component {
                     <div className="text-right">
                         {project._id &&
                         <button type="submit" className="btn btn-outline-dark btn-lg" onClick={handleDelete(project._id)} style={{ marginRight: 10 }} >
-                            {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : '' }
+                            {deleting ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : '' }
                             Remove
                         </button>
                         }
-                        <button type="submit" className="btn btn-lg btn-outline-leeuwen">
+                        <button type="submit" className="btn btn-lg btn-outline-leeuwen" >
                         {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
                         {project._id ? 'Update Project' : 'Save Project'}
                         </button>

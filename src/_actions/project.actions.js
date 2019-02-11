@@ -73,7 +73,10 @@ function update(project) {
 
         projectService.update(project)
             .then(
-                project => dispatch(success(project)),
+                project => {
+                    dispatch(success(project)),
+                    dispatch(alertActions.success('Project successfully Updated'))
+                },
                 error => dispatch(failure(error.toString()))
             );
     };
