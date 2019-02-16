@@ -7,6 +7,8 @@ import { projectActions } from '../../_actions';
 import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Card from '../../_components/card/card';
+import Input from '../../_components/input';
+import { Modal, ModalBody } from 'react-bootstrap';
 import './dashboard.css';
 
 
@@ -14,11 +16,38 @@ class Dashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            project: {}
+            project: {},
+            projectOrder:{
+                name:'',
+            },
+            submitted: false,
+            show: false
         };
         this.getById = this.getById.bind(this);
         this.handleResponse = this.handleResponse.bind(this);
+        this.handleProjectOrder = this.handleProjectOrder.bind(this);
+        this.showModal = this.showModal.bind(this);
+        this.hideModal= this.hideModal.bind(this);
     }
+
+    handleProjectOrder(event) {
+        const { name, value } = event.target;
+        const { projectOrder } = this.state;
+        this.setState({
+            projectOrder: {
+                ...projectOrder,
+                [name]: value
+            }
+        });
+    }
+
+    showModal(){
+        this.setState({ show: true });
+    };
+
+    hideModal() {
+        this.setState({ show: false });
+    };
 
     componentDidMount() {
         const { location } = this.props
@@ -62,7 +91,7 @@ class Dashboard extends React.Component {
 
     render() {
         const { alert, loading } = this.props;
-        const { project } = this.state;
+        const { project, projectOrder, submitted, show } = this.state;
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -73,7 +102,7 @@ class Dashboard extends React.Component {
                             <h3>Project : {project.name}</h3>
                         </div>
                         <div className="col-md-6 text-right">
-                            <button className="btn btn-leeuwen">
+                            <button className="btn btn-leeuwen" onClick={this.showModal}>
                                 <FontAwesomeIcon icon="plus" /> New ProjectOrder
                             </button>
                         </div>
@@ -98,8 +127,32 @@ class Dashboard extends React.Component {
                             />
                         </div>
                     </div>
+                    <Modal
+                        show={show}
+                        onHide={this.hideModal}
+                        dialogClassName="modal-90w"
+                        aria-labelledby="example-custom-modal-styling-title"
+                        centered
+                    >
+                    <Modal.Header closeButton>
+                        <Modal.Title id="example-custom-modal-styling-title">
+                            Custom Modal Styling
+                        </Modal.Title>
+                    </Modal.Header>
+                    <ModalBody>
+                    <Input
+                            title="Name"
+                            name="name" 
+                            type="text"
+                            value={projectOrder.name}
+                            onChange={this.handleProjectOrder}
+                            submitted={submitted}
+                            inline={true}
+                            required={true}
+                        />
+                    </ModalBody>
+                    </Modal>
                 </div>
-
             </Layout>
         );
     }
