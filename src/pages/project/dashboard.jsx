@@ -8,6 +8,7 @@ import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Card from '../../_components/card/card';
 import Input from '../../_components/input';
+import Select from '../../_components/select';
 import { Modal, ModalBody } from 'react-bootstrap';
 import './dashboard.css';
 
@@ -18,7 +19,10 @@ class Dashboard extends React.Component {
         this.state = {
             project: {},
             projectOrder:{
-                name:'',
+                customerOrderNo:'',
+                description:'',
+                deliveryCondition: '',
+                projectId: '',
             },
             submitted: false,
             show: false
@@ -141,15 +145,38 @@ class Dashboard extends React.Component {
                     </Modal.Header>
                     <ModalBody>
                     <Input
-                            title="Name"
-                            name="name" 
-                            type="text"
-                            value={projectOrder.name}
-                            onChange={this.handleProjectOrder}
+                        title="Customer Order Number"
+                        name="customerOrderNo" 
+                        type="text"
+                        value={projectOrder.customerOrderNo}
+                        onChange={this.handleProjectOrder}
+                        submitted={submitted}
+                        inline={false}
+                        required={true}
+                    />
+                    <Input
+                        title="Description"
+                        name="description" 
+                        type="text"
+                        value={projectOrder.description}
+                        onChange={this.handleProjectOrder}
+                        submitted={submitted}
+                        inline={false}
+                        required={true}
+                    />
+                    {this.props.incoterms.items && 
+                        <Select
+                            title="Incoterm"
+                            name="incoterm"
+                            options={incoterms.items}
+                            value={pprojectOrder.incoterm}
+                            onChange={this.handleChange}
+                            placeholder=""
                             submitted={submitted}
-                            inline={true}
+                            inline={false}
                             required={true}
                         />
+                    }
                     </ModalBody>
                     </Modal>
                 </div>
@@ -159,10 +186,12 @@ class Dashboard extends React.Component {
 }
 
 function mapStateToProps(state) {
+    const { alert, incoterms } = state;
     const { loading } = state.projects;
-    const { alert } = state;
     return {
         alert,
+        loading,
+        incoterms
     };
 }
 
