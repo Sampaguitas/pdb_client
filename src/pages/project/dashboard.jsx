@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { projectActions, incotermActions } from '../../_actions';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
-import { projectActions } from '../../_actions';
 import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Card from '../../_components/card/card';
@@ -32,6 +32,11 @@ class Dashboard extends React.Component {
         this.handleProjectOrder = this.handleProjectOrder.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal= this.hideModal.bind(this);
+    }
+
+    componentDidMount() {
+        this.props.dispatch(projectActions.getAll());
+        this.props.dispatch(incotermActions.getAll());
     }
 
     handleProjectOrder(event) {
@@ -94,8 +99,8 @@ class Dashboard extends React.Component {
     }
 
     render() {
-        const { alert, loading } = this.props;
         const { project, projectOrder, submitted, show } = this.state;
+        const { alert, incoterms, loading } = this.props;
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -164,7 +169,7 @@ class Dashboard extends React.Component {
                         inline={false}
                         required={true}
                     />
-                    {this.props.incoterms.items && 
+                    {/* {this.props.incoterms.items && 
                         <Select
                             title="Incoterm"
                             name="incoterm"
@@ -176,7 +181,7 @@ class Dashboard extends React.Component {
                             inline={false}
                             required={true}
                         />
-                    }
+                    } */}
                     </ModalBody>
                     </Modal>
                 </div>

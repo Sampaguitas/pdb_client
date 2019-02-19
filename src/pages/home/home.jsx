@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 //Redux
 import { connect } from 'react-redux';
-import { currencyActions, customerActions, opcoActions, projectActions } from '../../_actions';
+import { currencyActions, customerActions, opcoActions, projectActions, incotermActions } from '../../_actions';
 //Components
 import Layout from '../../_components/layout';
 import ProjectCard from '../../_components/project-card/project-card.js';
@@ -33,6 +33,7 @@ class Home extends React.Component {
         this.props.dispatch(customerActions.getAll());
         this.props.dispatch(opcoActions.getAll());
         this.props.dispatch(projectActions.getAll());
+        this.props.dispatch(incotermActions.getAll());
     }
     switchView() {
         if (this.state.view == 'Customer') {
