@@ -1,15 +1,15 @@
 import { incotermConstants } from '../_constants';
 
-export function currencies(state = {}, action) {
+export function incoterms(state = {}, action) {
     switch (action.type) {
         case incotermConstants.CREATE_REQUEST:
             return {
                 loading: true,
-                items: action.currencies
+                items: action.incoterms
             };
         case incotermConstants.CREATE_SUCCESS:
             return {
-                items: action.currencies
+                items: action.incoterms
             };
         case incotermConstants.CREATE_FAILURE:
             return {
@@ -21,7 +21,7 @@ export function currencies(state = {}, action) {
             };
         case incotermConstants.GET_SUCCESS:
             return {
-                items: action.currencies
+                items: action.incoterms
             };
         case incotermConstants.GET_FAILURE:
             return {
@@ -33,7 +33,7 @@ export function currencies(state = {}, action) {
             };
         case incotermConstants.GETALL_SUCCESS:
             return {
-                items: action.currencies
+                items: action.incoterms
             };
         case incotermConstants.GETALL_FAILURE:
             return {
