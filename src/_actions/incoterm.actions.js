@@ -40,13 +40,13 @@ function getAll() {
 
         incotermService.getAll()
             .then(
-                currencies => dispatch(success(currencies)),
+                incoterms => dispatch(success(incoterms)),
                 error => dispatch(failure(error.toString()))
             );
     };
 
     function request() { return { type: incotermConstants.GETALL_REQUEST } }
-    function success(currencies) { return { type: incotermConstants.GETALL_SUCCESS, currencies } }
+    function success(incoterms) { return { type: incotermConstants.GETALL_SUCCESS, incoterms } }
     function failure(error) { return { type: incotermConstants.GETALL_FAILURE, error } }
 }
 
