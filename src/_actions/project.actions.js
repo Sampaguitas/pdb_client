@@ -1,6 +1,6 @@
 import { projectConstants } from '../_constants';
 import { projectService } from '../_services';
-import { alertActions, customerActions, opcoActions } from './';
+import { alertActions, opcoActions } from './';
 import { history } from '../_helpers';
 
 export const projectActions = {
@@ -20,7 +20,6 @@ function create(project) {
                 project => {
                     dispatch(success());
                     dispatch(alertActions.success('successfully Created'));
-                    dispatch(customerActions.getAll());
                     dispatch(opcoActions.getAll());
                 },
                 error => {

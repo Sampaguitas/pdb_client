@@ -40,7 +40,7 @@ class HeaderBarMenu extends Component {
                                 </span>
                             
                                 <form className="form-inline ml-auto">
-                                <div title="Languages" className="dropdown">
+                                {/* <div title="Languages" className="dropdown">
                                             <button 
                                                 className="btn btn-outline-leeuwen-blue dropdown-toggle"
                                                 id="dropdownMenuButton"
@@ -51,7 +51,7 @@ class HeaderBarMenu extends Component {
                                             >
                                             EN
                                             </button>
-                                </div>
+                                </div> */}
                                     <button onClick={this.userPage} className="btn btn-outline-leeuwen-blue btn-round header-button" type="button" title="User-Page">
                                         <span><FontAwesomeIcon icon="user" className="fa-2x"/></span>
                                     </button>
