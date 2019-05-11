@@ -77,6 +77,10 @@ class Home extends React.Component {
         const { alert, opcos, projects } = this.props;
         return (
             <Layout>
+                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+                <br />
+                <h2>Select your project</h2>
+                <hr />
                 <table class="table table-hover">
                     <thead>
                         <tr>
