@@ -12,7 +12,6 @@ import Select from '../../_components/select';
 import { Modal, ModalBody } from 'react-bootstrap';
 import './dashboard.css';
 
-
 class Dashboard extends React.Component {
     constructor(props) {
         super(props);
@@ -21,7 +20,7 @@ class Dashboard extends React.Component {
             projectOrder:{
                 customerOrderNo:'',
                 description:'',
-                deliveryCondition: '',
+                incoterm: '',
                 projectId: '',
             },
             submitted: false,
@@ -36,7 +35,6 @@ class Dashboard extends React.Component {
 
     componentDidMount() {
         this.props.dispatch(projectActions.getAll());
-        this.props.dispatch(incotermActions.getAll());
     }
 
     handleProjectOrder(event) {
@@ -50,7 +48,19 @@ class Dashboard extends React.Component {
         });
     }
 
+    _handleChange(event) {
+        const { selected, value } = event.target;
+        const { projectOrder } = this.state;
+        this.setState({
+            projectOrder: {
+                ...projectOrder,
+                [selected]: value
+            }
+        });
+    }
+
     showModal(){
+        this.props.dispatch(incotermActions.getAll());
         this.setState({ show: true });
     };
 
@@ -145,12 +155,12 @@ class Dashboard extends React.Component {
                     >
                     <Modal.Header closeButton>
                         <Modal.Title id="example-custom-modal-styling-title">
-                            Custom Modal Styling
+                            Create New Project Order
                         </Modal.Title>
                     </Modal.Header>
                     <ModalBody>
                     <Input
-                        title="Customer Order Number"
+                        title="Customer PO Number"
                         name="customerOrderNo" 
                         type="text"
                         value={projectOrder.customerOrderNo}
@@ -169,19 +179,18 @@ class Dashboard extends React.Component {
                         inline={false}
                         required={true}
                     />
-                    {/* {this.props.incoterms.items && 
+
                         <Select
                             title="Incoterm"
                             name="incoterm"
                             options={incoterms.items}
-                            value={pprojectOrder.incoterm}
-                            onChange={this.handleChange}
+                            value={projectOrder.incoterm}
+                            onChange={this.handleProjectOrder}
                             placeholder=""
                             submitted={submitted}
                             inline={false}
                             required={true}
                         />
-                    } */}
                     </ModalBody>
                     </Modal>
                 </div>

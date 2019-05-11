@@ -38,7 +38,7 @@ class Select extends Component {
 Select.propTypes = {
     title: propTypes.string.isRequired,
     name: propTypes.string.isRequired,
-    options: propTypes.array.isRequired,
+    // options: propTypes.array.isRequired,
     value: propTypes.string,
     placeholder: propTypes.string,
     onChange: propTypes.func.isRequired,

@@ -114,4 +114,54 @@ footer {
     z-index: 998 !important;
 }
 
+.form-control {
+  height: 34px;
+  font-size: 2rem;
+}
 
+select.form-control:not([size]):not([multiple]) {
+  height: 34px;
+  font-size: 1.25rem;
+}
+
+.modal-content {
+  border-radius: 1.25rem;
+}
+
+body {
+  font-size:1.25rem;
+}
+
+.card-login {
+  position:absolute;
+  top:0;
+  bottom:0;
+  margin:auto;
+  left: 0;
+  right: 0;
+  width: 500px;
+  height: 400px;
+  max-width: 100%;
+  padding: 15px;
+}
+
+
+h1 {
+  font-size: 2.5rem; /* 30px/16=2.5em */
+}
+
+h2 {
+  font-size: 2em; /* 25px/16=1.875em */
+}
+
+h3 {
+  font-size: 1.75em; /* 20px/16=2.5em */
+}
+
+h4 {
+  font-size: 1.5em; /* 15px/16=2.5em */
+}
+
+h5 {
+  font-size: 1.25em; /* 22.4px/16=1.4em */
+}

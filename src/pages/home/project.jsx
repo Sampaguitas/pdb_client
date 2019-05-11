@@ -97,7 +97,7 @@ class Project extends React.Component {
                         inline={true}
                         required={true}
                     />
-                    {this.props.customers.items &&
+                    {/* {this.props.customers.items && */}
                         <Select
                             title="Customer"
                             name="customer"
@@ -109,8 +109,8 @@ class Project extends React.Component {
                             inline={true}
                             required={true}
                         />
-                    }                    
-                    {this.props.opcos.items &&
+                    {/* }                     */}
+                    {/* {this.props.opcos.items && */}
                         <Select
                             title="OPCO"
                             name="opco"
@@ -122,8 +122,8 @@ class Project extends React.Component {
                             inline={true}
                             required={true}
                         />
-                    }
-                    {this.props.currencies.items && 
+                    {/* } */}
+                    {/* {this.props.currencies.items &&  */}
                         <Select
                             title="Currency"
                             name="currency"
@@ -135,7 +135,7 @@ class Project extends React.Component {
                             inline={true}
                             required={true}
                         />
-                    }
+                    {/* } */}
                     <div className="col-sm-10 offset-md-2">
                         <CheckBox
                             title="Enable Inspection Module"
