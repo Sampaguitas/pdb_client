@@ -1,12 +1,12 @@
 //React
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 //Redux
 import { connect } from 'react-redux';
 import { opcoActions, projectActions } from '../../_actions';
 //Components
 import Layout from '../../_components/layout';
-// import ProjectCard from '../../_components/project-card/project-card.js';
+import ProjectRow from '../../_components/project-table/project-row.js';
 // Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -81,7 +81,7 @@ class Home extends React.Component {
                 <br />
                 <h2>Select your project</h2>
                 <hr />
-                <table class="table table-hover">
+                <table className="table table-hover">
                     <thead>
                         <tr>
                             <th scope="col">Project No</th>
@@ -89,6 +89,11 @@ class Home extends React.Component {
                             <th scope="col">ERP</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        { this.props.projects.items && this.props.projects.items
+                        .map((project) =><ProjectRow project={project} key={project._id} />)
+                        }
+                    </tbody>
                 </table>
             </Layout>
         );
