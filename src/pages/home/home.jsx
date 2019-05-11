@@ -77,7 +77,15 @@ class Home extends React.Component {
         const { alert, opcos, projects } = this.props;
         return (
             <Layout>
-
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Project No</th>
+                            <th scope="col">Project</th>
+                            <th scope="col">ERP</th>
+                        </tr>
+                    </thead>
+                </table>
             </Layout>
         );
     }
