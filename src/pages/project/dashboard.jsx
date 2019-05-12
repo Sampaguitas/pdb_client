@@ -109,8 +109,8 @@ class Dashboard extends React.Component {
     }
 
     render() {
-        const { project, projectOrder, submitted, show } = this.state;
-        const { alert, incoterms, loading } = this.props;
+        const { project, submitted, show } = this.state;
+        const { alert, loading } = this.props;
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -120,79 +120,10 @@ class Dashboard extends React.Component {
                         <div className="col-md-6">
                             <h3>Project : {project.name}</h3>
                         </div>
-                        <div className="col-md-6 text-right">
-                            <button className="btn btn-leeuwen" onClick={this.showModal}>
-                                <FontAwesomeIcon icon="plus" /> New ProjectOrder
-                            </button>
-                        </div>
                     </div>
                     <div className="row">
-                        <div className="col-md-6 margin-bottom">
-                            <Card 
-                                color="blue-header"
-                                header="Open Project Orders"
-                            />
-                        </div>
-                        <div className="col-md-6 margin-bottom">
-                            <Card
-                                color="blue-header"
-                                header="Late Project Orders"
-                            />
-                        </div>
-                        <div className="col-md-12 margin-bottom">
-                            <Card
-                                color="blue-header"
-                                header="Ready for shipping"
-                            />
-                        </div>
-                    </div>
-                    <Modal
-                        show={show}
-                        onHide={this.hideModal}
-                        dialogClassName="modal-90w"
-                        aria-labelledby="example-custom-modal-styling-title"
-                        centered
-                    >
-                    <Modal.Header closeButton>
-                        <Modal.Title id="example-custom-modal-styling-title">
-                            Create New Project Order
-                        </Modal.Title>
-                    </Modal.Header>
-                    <ModalBody>
-                    <Input
-                        title="Customer PO Number"
-                        name="customerOrderNo" 
-                        type="text"
-                        value={projectOrder.customerOrderNo}
-                        onChange={this.handleProjectOrder}
-                        submitted={submitted}
-                        inline={false}
-                        required={true}
-                    />
-                    <Input
-                        title="Description"
-                        name="description" 
-                        type="text"
-                        value={projectOrder.description}
-                        onChange={this.handleProjectOrder}
-                        submitted={submitted}
-                        inline={false}
-                        required={true}
-                    />
 
-                        <Select
-                            title="Incoterm"
-                            name="incoterm"
-                            options={incoterms.items}
-                            value={projectOrder.incoterm}
-                            onChange={this.handleProjectOrder}
-                            placeholder=""
-                            submitted={submitted}
-                            inline={false}
-                            required={true}
-                        />
-                    </ModalBody>
-                    </Modal>
+                    </div>
                 </div>
             </Layout>
         );
@@ -200,12 +131,11 @@ class Dashboard extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, incoterms } = state;
+    const { alert } = state;
     const { loading } = state.projects;
     return {
         alert,
         loading,
-        incoterms
     };
 }
 
