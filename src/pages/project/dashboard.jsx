@@ -149,6 +149,7 @@ class Dashboard extends React.Component {
         var qs = queryString.parse(location.search);
         if (qs.id) {
             this.getById(qs.id);
+            this.props.dispatch(projectActions.getById(qs.id));
         }
     }
 
