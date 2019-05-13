@@ -110,7 +110,7 @@ const data = {
       { _id: '5', name: 'Quarter' },
   ];
 
-  const Base = [
+  const base = [
     { _id: 1, name: 'Lines' },
     { _id: 2, name: 'Weight' },
     { _id: 3, name: 'Pieces' },
@@ -128,9 +128,9 @@ class Dashboard extends React.Component {
                 rfi: false,
                 released: false,
                 shipped: false,
-                periodId: '4',
-                startDate: new Date(),
-                endDate: new Date()
+                periodId: '1',
+                baseId: '1',
+                poId: '1',
             },
             submitted: false,
             show: false
@@ -241,7 +241,20 @@ class Dashboard extends React.Component {
                         </div>
                     </div>
                     <div className="row mb-3">
-                        <div className="col-4">
+                        <div className="col-3">
+                            <Select
+                                title="PO Number"
+                                name="poId"
+                                options={base}
+                                value={graph.poId}
+                                onChange={this.handleChange}
+                                placeholder=""
+                                submitted={false}
+                                inline={false}
+                                required={true}
+                            />
+                        </div> 
+                        <div className="col-3">
                             <Select
                                 title="Period"
                                 name="periodId"
@@ -250,38 +263,25 @@ class Dashboard extends React.Component {
                                 onChange={this.handleChange}
                                 placeholder=""
                                 submitted={false}
-                                inline={true}
+                                inline={false}
                                 required={true}
                             />
                         </div>
-                        <div className="col-4">
-                            <DatePicker
-                                className="form-control"
-                                selected={graph.startDate}
-                                selectsStart
-                                startDate={graph.startDate}
-                                endDate={graph.endDate}
-                                onChange={this.handleChangeStart}
-                                isClearable={true}
-                                showWeekNumbers
-                                dateFormat="MMMM d, yyyy"
-                            />
-                        </div>
-                        <div className="col-4">
-                            <DatePicker
-                                className="form-control"
-                                selected={graph.endDate}
-                                selectsEnd
-                                startDate={graph.startDate}
-                                endDate={graph.endDate}
-                                onChange={this.handleChangeEnd}
-                                isClearable={true}
-                                showWeekNumbers
-                                dateFormat="MMMM d, yyyy"
+                        <div className="col-3">
+                            <Select
+                                title="Based on"
+                                name="baseId"
+                                options={base}
+                                value={graph.baseId}
+                                onChange={this.handleChange}
+                                placeholder=""
+                                submitted={false}
+                                inline={false}
+                                required={true}
                             />
                         </div>                            
                     </div>
-                    <div className="row">
+                    <div className="row mb-3">
                         <div className="col-10">
                                 <Line data={data} />
                         </div>
@@ -322,7 +322,7 @@ class Dashboard extends React.Component {
                                     onChange={this.handleCheck}
                                 />
                             </div>
-                        </div>
+                        </div>                                
                     </div>
                 </div>
             </Layout>
