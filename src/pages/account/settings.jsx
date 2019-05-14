@@ -1,13 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
 
-import { userActions } from "../../_actions";
+import { userActions, opcoActions } from "../../_actions";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 //Components
 import TableCheckBox from "../../_components/table-check-box";
 import Input from "../../_components/input";
+import Select from '../../_components/select';
 import Layout from "../../_components/layout";
 import { users } from "../../_reducers/users.reducer";
 
@@ -16,9 +17,9 @@ class Settings extends React.Component {
     super(props);
     this.state = {
       user: {
-        firstName: "",
-        lastName: "",
-        phone: "",
+        userName: "",
+        name: "",
+        opcoId: "",
         email: "",
         password: "",
         confirmPassword: ""
@@ -31,6 +32,7 @@ class Settings extends React.Component {
 
   componentDidMount() {
     this.props.dispatch(userActions.getAll());
+    this.props.dispatch(opcoActions.getAll());
   }
 
   handleChange(event) {
@@ -51,10 +53,9 @@ class Settings extends React.Component {
     const { user } = this.state;
     const { dispatch } = this.props;
     if (
-      user.firstName &&
-      user.lastName &&
+      user.userName &&
+      user.name &&
       user.email &&
-      user.phone &&
       user.password &&
       user.confirmPassword
     ) {
@@ -64,11 +65,11 @@ class Settings extends React.Component {
 
   render() {
     const { user, submitted } = this.state;
-    const { users, registering, alert } = this.props;
+    const { users, registering, alert, opcos } = this.props;
     return (
       <Layout>
         <div id="user">
-          <h2>Register new users</h2>
+          <h2>Register new users / Permissions</h2>
           <div className="row">
             <div className="col-md-4 mb-3">
               <div className="card">
@@ -78,40 +79,41 @@ class Settings extends React.Component {
                 <div className="card-body">
                   <form name="form" onSubmit={this.handleSubmit}>
                     <Input
-                      title="First Name"
-                      name="firstName"
+                      title="Initials"
+                      name="userName"
                       type="text"
-                      value={user.firstName}
+                      value={user.userName}
                       onChange={this.handleChange}
                       submitted={submitted}
                       inline={false}
                       required={true}
                     />
                     <Input
-                      title="Last Name"
-                      name="lastName"
+                      title="Full Name"
+                      name="name"
                       type="text"
-                      value={user.lastName}
+                      value={user.name}
                       onChange={this.handleChange}
                       submitted={submitted}
                       inline={false}
                       required={true}
+                    />
+                    <Select
+                        title="OPCO"
+                        name="opcoId"
+                        options={opcos.items}
+                        value={user.opcoId}
+                        onChange={this.handleChange}
+                        placeholder=""
+                        submitted={submitted}
+                        inline={false}
+                        required={true}
                     />
                     <Input
                       title="Email"
                       name="email"
                       type="email"
                       value={user.email}
-                      onChange={this.handleChange}
-                      submitted={submitted}
-                      inline={false}
-                      required={true}
-                    />
-                    <Input
-                      title="Phone"
-                      name="phone"
-                      type="tel"
-                      value={user.phone}
                       onChange={this.handleChange}
                       submitted={submitted}
                       inline={false}
@@ -167,8 +169,7 @@ class Settings extends React.Component {
                     <thead>
                       <tr>
                         <th>User</th>
-                        <th>Email</th>
-                        <th>Phone</th>
+                        <th>Operating Company</th>
                         <th>Admin</th>
                       </tr>
                     </thead>
@@ -176,9 +177,8 @@ class Settings extends React.Component {
                       <tbody>
                         {users.items.map(u => (
                           <tr key={u._id}>
-                            <td>{u.firstName + " " + u.lastName}</td>
-                            <td>{u.email}</td>
-                            <td>{u.phone}</td>
+                            <td>{u.name}</td>
+                            <td>{u.opco.name}</td>
                             <td>
                               <TableCheckBox
                                 id={u._id}
@@ -203,11 +203,12 @@ class Settings extends React.Component {
 
 function mapStateToProps(state) {
   const { registering } = state.registration;
-  const { users, alert } = state;
+  const { users, alert, opcos } = state;
   return {
     alert,
     registering,
-    users
+    users,
+    opcos
   };
 }
 
