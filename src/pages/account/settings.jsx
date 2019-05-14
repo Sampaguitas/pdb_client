@@ -12,6 +12,7 @@ import Select from '../../_components/select';
 import Layout from "../../_components/layout";
 import { users } from "../../_reducers/users.reducer";
 
+
 class Settings extends React.Component {
   constructor(props) {
     super(props);
@@ -28,6 +29,7 @@ class Settings extends React.Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.isUser = this.isUser.bind(this);
   }
 
   componentDidMount() {
@@ -60,6 +62,15 @@ class Settings extends React.Component {
       user.confirmPassword
     ) {
       dispatch(userActions.register(user));
+    }
+  }
+
+  isUser(id) {
+    let user = JSON.parse(localStorage.getItem('user'));
+    if (user.id == id) {
+      return true;
+    } else {
+      return false;
     }
   }
 
@@ -180,11 +191,22 @@ class Settings extends React.Component {
                             <td>{u.name}</td>
                             <td>{u.opco.name}</td>
                             <td>
+                            {
+                              this.isUser(u._id) ?
+                                <TableCheckBox
+                                  id={u._id}
+                                  checked={u.isAdmin}
+                                  onChange={this.handleInputChange}
+                                  disabled={true}
+                                />
+                              :
                               <TableCheckBox
                                 id={u._id}
                                 checked={u.isAdmin}
                                 onChange={this.handleInputChange}
+                                disabled={false}
                               />
+                            }
                             </td>
                           </tr>
                         ))}

@@ -74,6 +74,7 @@ class TableCheckBox extends Component {
                     className="form-check-input"
                     checked={this.state.user.isAdmin}
                     onChange={this.handleInputChange}
+                    disabled={this.props.disabled}
                 />
             </div>
         );
