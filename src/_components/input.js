@@ -18,6 +18,7 @@ class Input extends Component{
                         value={this.props.value}
                         onChange={this.props.onChange}
                         placeholder={this.props.placeholder}
+                        disabled={this.props.disabled}
                     />
                     {this.props.submitted && !this.props.value && this.props.required &&
                         <div className="help-block">{this.props.title} is required</div>
