@@ -18,9 +18,8 @@ import './side-bar-menu.scss'
 
 const home_menu = [
     { id: 0, title: 'Overview', href: '/', icon: 'home' },
-    { id: 1, title: 'Add Customer', href: '/customer', icon: 'plus', roles: ['Admin', 'ProjectAdmin'] },
-    { id: 2, title: 'Add Operation Company', href: '/opco', icon: 'plus', roles: ['Admin'] },
-    { id: 3, title: 'Add Project', href: '/project', icon: 'plus', roles: ['Admin', 'ProjectAdmin'] }
+    { id: 1, title: 'Add Operation Company', href: '/opco', icon: 'plus', roles: ['Admin'] },
+    { id: 2, title: 'Add Project', href: '/project', icon: 'plus', roles: ['Admin', 'ProjectAdmin'] }
 ]
 
 const project_menu = [
@@ -67,7 +66,6 @@ class SideBarMenu extends Component {
             case '/': return true;
             case '/user': return true;
             case '/settings': return true;
-            case '/customer': return true;
             case '/opco': return true;
             case '/project': return true;
             case '/dashboard': return false;

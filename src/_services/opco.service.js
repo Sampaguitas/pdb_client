@@ -9,6 +9,11 @@ export const opcoService = {
     delete: _delete
 };
 
+function logout() {
+    // remove user from local storage to log user out
+    localStorage.removeItem('user');
+}
+
 function create(opco) {
     const requestOptions = {
         method: 'POST',
@@ -21,7 +26,7 @@ function create(opco) {
 function getAll() {
     const requestOptions = {
         method: 'GET',
-        headers: authHeader()
+        headers: authHeader(), 'Content-Type': 'application/json'
     };
 
     return fetch(`${config.apiUrl}/opco/findAll`, requestOptions).then(handleResponse);
@@ -57,6 +62,10 @@ function _delete(id) {
 
 function handleResponse(response) {
     return response.text().then(text => {
+        if (text == 'Unauthorized') {
+            logout();
+            location.reload(true);
+        }
         const data = text && JSON.parse(text);
         if (!response.ok) {
             if (response.status === 401) {

@@ -12,7 +12,6 @@ import { Home } from '../pages/home/home.jsx';
 import { Login } from '../pages/account/login.jsx';
 import { User } from '../pages/account/user.jsx';
 import { Settings } from '../pages/account/settings.jsx';
-import { Customer } from '../pages/home/customer.jsx';
 import { Opco } from '../pages/home/opco.jsx';
 import { Project } from '../pages/home/project.jsx';
 import { Dashboard } from '../pages/project/dashboard.jsx';
@@ -67,7 +66,6 @@ class App extends React.Component {
                     <PrivateRoute exact path="/" component={Home} user={user}/>
                     <PrivateRoute path="/user" component={User} user={user}/>
                     <AdminRoute path="/settings" component={Settings} isAdmin={isAdmin}/>
-                    <PrivateRoute path="/customer" component={Customer} user={user}/>
                     <PrivateRoute path="/opco" component={Opco} user={user}/>
                     <PrivateRoute path="/project" component={Project} user={user}/>
                     <PrivateRoute path="/dashboard" component={Dashboard} user={user}/>

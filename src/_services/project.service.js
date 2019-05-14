@@ -9,6 +9,11 @@ export const projectService = {
     delete: _delete
 };
 
+function logout() {
+    // remove user from local storage to log user out
+    localStorage.removeItem('user');
+}
+
 function create(project) {
     const requestOptions = {
         method: 'POST',
@@ -57,6 +62,10 @@ function _delete(id) {
 
 function handleResponse(response) {
     return response.text().then(text => {
+        if (text == 'Unauthorized') {
+            logout();
+            location.reload(true);
+        }
         const data = text && JSON.parse(text);
         if (!response.ok) {
             if (response.status === 401) {
