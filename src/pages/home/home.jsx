@@ -41,7 +41,15 @@ class Home extends React.Component {
                     </thead>
                     <tbody>
                         { this.props.projects.items && this.props.projects.items
-                        .map((project) =>
+                        .sort(function(a,b){
+                            if (a.number < b.number) {
+                                return -1;
+                            }
+                            if (a.number > b.number) {
+                                return 1;
+                            }
+                            return 0;
+                        }).map((project) =>
                         <ProjectRow project={project} key={project._id} />
                         )}
                     </tbody>
