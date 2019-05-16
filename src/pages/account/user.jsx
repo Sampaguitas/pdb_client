@@ -57,17 +57,16 @@ class User extends React.Component {
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="user">
-                    <h2>User: { user.email }</h2>
+                    <h2>User: { user.name }</h2>
                     <div className="row">
                         <div className="col-md-6 col-sm-12 mb-3">
                             <div className="card mb-3">
                                 <div className="card-header">User Details</div>
                                 <div className="card-body">
                                     <address>
-                                    <strong>{user.name}</strong><br />
-                                    <abbr title="Initials">Initials:</abbr>{user.userName}<br />
-                                    <abbr title="Operating Company">OPCO:</abbr>{user.opco.name}<br />
-                                    <abbr title="Email Address">Email:</abbr>{user.email}
+                                    <strong>{user.name}, {user.userName}</strong><br />
+                                    {user.opco}<br />
+                                    {user.email}
                                     </address>
                                 </div>
                             </div>
@@ -75,6 +74,8 @@ class User extends React.Component {
                                 <div className="card-header">My Roles</div>
                                 <div className="card-body">
                                     <ul>
+                                        { user.isAdmin && <li>Admin</li> }
+                                        { user.isSuperAdmin && <li>Super Admin</li> }
                                         {/* {user.roles.map((role) => <li key={role.id}>{role}</li>)} */}
                                     </ul>
                                 </div>

@@ -139,8 +139,6 @@ class Dashboard extends React.Component {
         this.handleResponse = this.handleResponse.bind(this);
         this.handleCheck = this.handleCheck.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleChangeStart = this.handleChangeStart.bind(this);
-        this.handleChangeEnd = this.handleChangeEnd.bind(this);
     }
 
     componentDidMount() {
@@ -192,25 +190,6 @@ class Dashboard extends React.Component {
         });
     }
 
-    handleChangeStart(date) {
-        const { graph } = this.state;
-        this.setState({
-            graph: {
-                ...graph,
-                startDate: date
-            }
-        });
-    }
-
-    handleChangeEnd(date) {
-        const { graph } = this.state;
-        this.setState({
-            graph: {
-                ...graph,
-                endDate: date
-            }
-        });
-    }
 
     handleResponse(response) {
         return response.text().then(text => {
