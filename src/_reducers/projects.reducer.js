@@ -9,10 +9,12 @@ export function projects(state = {}, action) {
             };
         case projectConstants.CREATE_SUCCESS:
             return {
+                loading: false,
                 items: action.projects
             };
         case projectConstants.CREATE_FAILURE:
             return {
+                loading: false,
                 error: action.error
             };
         case projectConstants.GET_REQUEST:
@@ -21,10 +23,12 @@ export function projects(state = {}, action) {
             };
         case projectConstants.GET_SUCCESS:
             return {
+                loading: false,
                 items: action.projects
             };
         case projectConstants.GET_FAILURE:
             return {
+                loading: false,
                 error: action.error
             };
         case projectConstants.GETALL_REQUEST:
@@ -33,10 +37,12 @@ export function projects(state = {}, action) {
             };
         case projectConstants.GETALL_SUCCESS:
             return {
+                loading: false,
                 items: action.projects
             };
         case projectConstants.GETALL_FAILURE:
             return {
+                loading: false,
                 error: action.error
             };
         case projectConstants.UPDATE_REQUEST:
