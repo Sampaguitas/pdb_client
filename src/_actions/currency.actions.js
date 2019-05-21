@@ -40,13 +40,13 @@ function getAll() {
 
         currencyService.getAll()
             .then(
-                currencys => dispatch(success(currencys)),
+                currencies => dispatch(success(currencies)),
                 error => dispatch(failure(error.toString()))
             );
     };
 
     function request() { return { type: currencyConstants.GETALL_REQUEST } }
-    function success(currencys) { return { type: currencyConstants.GETALL_SUCCESS, currencys } }
+    function success(currencies) { return { type: currencyConstants.GETALL_SUCCESS, currencies } }
     function failure(error) { return { type: currencyConstants.GETALL_FAILURE, error } }
 }
 
