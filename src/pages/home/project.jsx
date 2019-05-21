@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { currencyActions, opcoActions,  customerActions, projectActions } from '../../_actions';
+import { currencyActions, erpActions, opcoActions, projectActions } from '../../_actions';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -19,6 +19,7 @@ class Project extends React.Component {
             project: {
                 name: '',
                 erpId: '',
+                currencyId: '',
                 opcoId:'',
                 projectInspection: true,
                 projectShipping: true,
@@ -33,8 +34,9 @@ class Project extends React.Component {
     }
     componentDidMount() {
         this.props.dispatch(currencyActions.getAll());
+        this.props.dispatch(erpActions.getAll());
         this.props.dispatch(opcoActions.getAll());
-        this.props.dispatch(customerActions.getAll());
+        this.props.dispatch(projectActions.getAll());
     }
     handleCheck(event) {
         const { project } = this.state;
@@ -66,9 +68,9 @@ class Project extends React.Component {
         const { dispatch } = this.props;
         if (
             project.name &&
-            project.customer &&
-            project.opco &&
-            project.currency
+            project.erpId &&
+            project.currencyId &&
+            project.opcoId
         ) {
             dispatch(projectActions.create(project));
         }
@@ -77,7 +79,7 @@ class Project extends React.Component {
         return (event) => this.props.dispatch(projectActions.delete(id));
     }
     render() {
-        const { alert, loading, currencies, customers, opcos } = this.props;
+        const { alert, loading, erps, currencies, opcos } = this.props;
         const { project, submitted } = this.state;
         return (
             <Layout>
@@ -96,20 +98,17 @@ class Project extends React.Component {
                         inline={true}
                         required={true}
                     />
-                    {/* {this.props.customers.items && */}
                         <Select
-                            title="Customer"
-                            name="customer"
-                            options={customers.items}
-                            value={project.customer}
+                            title="ERP"
+                            name="erpId"
+                            options={erps.items}
+                            value={project.erpId}
                             onChange={this.handleChange}
                             placeholder=""
                             submitted={submitted}
                             inline={true}
                             required={true}
                         />
-                    {/* }                     */}
-                    {/* {this.props.opcos.items && */}
                         <Select
                             title="OPCO"
                             name="opco"
@@ -121,20 +120,17 @@ class Project extends React.Component {
                             inline={true}
                             required={true}
                         />
-                    {/* } */}
-                    {/* {this.props.currencies.items &&  */}
                         <Select
                             title="Currency"
-                            name="currency"
+                            name="currencyId"
                             options={currencies.items}
-                            value={project.currency}
+                            value={project.currencyId}
                             onChange={this.handleChange}
                             placeholder=""
                             submitted={submitted}
                             inline={true}
                             required={true}
                         />
-                    {/* } */}
                     <div className="col-sm-10 offset-md-2">
                         <CheckBox
                             title="Enable Inspection Module"
@@ -175,11 +171,11 @@ class Project extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, currencies, customers, opcos } = state;
+    const { alert, erps, currencies, opcos } = state;
     const { loading } = state.projects;
     return {
         alert,
-        customers,
+        erps,
         currencies,
         loading,
         opcos
