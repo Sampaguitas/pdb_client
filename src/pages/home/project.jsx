@@ -17,6 +17,7 @@ class Project extends React.Component {
 
         this.state = {
             project: {
+                copyId: '',
                 name: '',
                 erpId: '',
                 currencyId: '',
@@ -79,7 +80,7 @@ class Project extends React.Component {
         return (event) => this.props.dispatch(projectActions.delete(id));
     }
     render() {
-        const { alert, loading, erps, currencies, opcos } = this.props;
+        const { alert, loading, erps, currencies, opcos, projects } = this.props;
         const { project, submitted } = this.state;
         return (
             <Layout>
@@ -88,6 +89,17 @@ class Project extends React.Component {
                 <h2>Add or Edit Project:</h2>
                 <hr />
                 <form onSubmit={this.handleSubmit}>
+                    <Select
+                        title="Copy Settings from"
+                        name="copyId"
+                        options={projects.items}
+                        value={project.copyId}
+                        onChange={this.handleChange}
+                        placeholder=""
+                        submitted={submitted}
+                        inline={true}
+                        required={true}
+                    />
                     <Input
                         title="Name"
                         name="name"
@@ -171,14 +183,15 @@ class Project extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, erps, currencies, opcos } = state;
+    const { alert, erps, currencies, opcos, projects } = state;
     const { loading } = state.projects;
     return {
         alert,
         erps,
         currencies,
         loading,
-        opcos
+        opcos,
+        projects
     };
 }
 
