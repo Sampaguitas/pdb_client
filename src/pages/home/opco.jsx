@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
-import { opcoActions, userActions } from '../../_actions';
+import { opcoActions, localeActions } from '../../_actions';
 import { authHeader } from '../../_helpers';
 import CheckBox from '../../_components/check-box';
 import Input from '../../_components/input';
@@ -18,32 +18,29 @@ class Opco extends React.Component {
 
         this.state = {
             opco: {
+                id:'',
+                code: '',
                 name: '',
                 address: '',
-                zip: '',
                 city: '',
+                zip: '',
                 country: '',
-                phone: '',
-                fax:'',
-                email: '',
-                projectAdmins:[]
+                localeId: ''
             },
             submitted: false,
-            selectedUser:''
         };
         this.handleChangeOpco = this.handleChangeOpco.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
-        this.addProjectAdmin = this.addProjectAdmin.bind(this);
-        this.removeProjectAdmin = this.removeProjectAdmin.bind(this);
         this.getById = this.getById.bind(this);
         this.handleResponse = this.handleResponse.bind(this);
     }
 
     componentDidMount() {
         const { location, users } = this.props;
-        this.props.dispatch(userActions.getAll());
+        this.props.dispatch(opcoActions.getAll());
+        this.props.dispatch(localeActions.getAll());
         var qs = queryString.parse(location.search);
         if (qs.id) {
             this.getById(qs.id);
@@ -61,8 +58,10 @@ class Opco extends React.Component {
     }
 
     handleChangeOpco(event) {
-        const { name, value } = event.target;
-        const { opco } = this.state;
+        const target = event.target;
+        const { opco } = this.state
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
             opco: {
                 ...opco,
@@ -105,34 +104,6 @@ class Opco extends React.Component {
         dispatch(opcoActions.delete(opco.id));
     }
 
-    addProjectAdmin(event){
-        event.preventDefault();
-        const { selectedUser, opco } = this.state;
-        if (selectedUser && !opco.projectAdmins.includes(selectedUser)) {
-            this.setState({ 
-                opco: {
-                    ...opco,
-                    projectAdmins: [...opco.projectAdmins, selectedUser]
-                }
-            });
-        }
-    }
-
-    removeProjectAdmin(projectAdmin){
-        event.preventDefault();
-        const { opco } = this.state;
-        const array = [...opco.projectAdmins];
-        const index = array.indexOf(projectAdmin);
-        if (index !== -1) {
-            array.splice(index, 1);
-            this.setState({
-                opco: {
-                    ...opco,
-                    projectAdmins: array
-                }
-            });
-        }
-    }
     handleResponse(response) {
         return response.text().then(text => {
             const data = text && JSON.parse(text);
@@ -150,8 +121,8 @@ class Opco extends React.Component {
     }
 
     render() {
-        const { alert, loading, deleting, users } = this.props;
-        const { opco, submitted, selectedUser } = this.state;
+        const { alert, loading, deleting, locales } = this.props;
+        const { opco, submitted } = this.state;
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -159,6 +130,16 @@ class Opco extends React.Component {
                 <h2>Add or Edit Operating Company:</h2>
                 <hr />
                 <form onSubmit={this.handleSubmit}>
+                    <Input
+                        title="Code"
+                        name="code"
+                        type="text"
+                        value={opco.code}
+                        onChange={this.handleChangeOpco}
+                        submitted={submitted}
+                        inline={true}
+                        required={true}
+                    />
                     <Input
                         title="Name"
                         name="name"
@@ -180,16 +161,6 @@ class Opco extends React.Component {
                         required={true}
                     />
                     <Input
-                        title="ZIP"
-                        name="zip"
-                        type="text"
-                        value={opco.zip}
-                        onChange={this.handleChangeOpco}
-                        submitted={submitted}
-                        inline={true}
-                        required={true}
-                    />
-                    <Input
                         title="City"
                         name="city"
                         type="text"
@@ -200,77 +171,36 @@ class Opco extends React.Component {
                         required={true}
                     />
                     <Input
-                        title="Country"
-                        name="country"
+                        title="Zip"
+                        name="zip"
                         type="text"
-                        value={opco.country}
+                        value={opco.zip}
                         onChange={this.handleChangeOpco}
                         submitted={submitted}
                         inline={true}
                         required={true}
                     />
                     <Input
-                        title="Phone"
-                        name="phone"
+                        title="Country"
+                        name="country"
                         type="tel"
-                        value={opco.phone}
+                        value={opco.country}
                         onChange={this.handleChangeOpco}
                         submitted={submitted}
                         inline={true}
                         required={false}
                     />
-                    <Input
-                        title="Fax"
-                        name="fax"
-                        type="tel"
-                        value={opco.fax}
+                    <Select
+                        title="Locale"
+                        name="localeId"
+                        options={locales.items}
+                        value={opco.localeId}
                         onChange={this.handleChangeOpco}
+                        placeholder=""
                         submitted={submitted}
                         inline={true}
-                        required={false}
+                        required={true}
                     />
-                    <Input
-                        title="Email"
-                        name="email"
-                        type="email"
-                        value={opco.email}
-                        onChange={this.handleChangeOpco}
-                        submitted={submitted}
-                        inline={true}
-                        required={false}
-                    />
-                    <div className="form-group row">
-                        <label htmlFor="selectedUser" className="col-sm-2 col-form-label">Project Admins</label>
-                        <div className="col-sm-10">
-                            <div className="input-group">
-                                <select className="form-control" type="text" id="selectedUser" name="selectedUser" value={selectedUser} onChange={this.handleChange} >
-                                    <option defaultValue="" disabled hidden></option>
-                                    {users.items && users.items.sort((a, b)=> a.name.toLowerCase().localeCompare(b.name.toLowerCase())).map(option => {
-                                        return (
-                                            <option key={option._id} value={option._id}>{option.name}</option>
-                                        );
-                                    })}
-                                </select>
-                                <div className="input-group-append">
-                                    <button className="btn btn-leeuwen-blue" type="button" onClick={this.addProjectAdmin}>
-                                        <FontAwesomeIcon icon="plus"/>
-                                    </button>
-                                </div>
-                            </div>
-                            <ul className="list-group mt-3">
-                                {opco.projectAdmins && opco.projectAdmins.map(projectAdmin =>
-                                    <li className="list-group-item" key={projectAdmin}>
-                                        <span className="inline">{users.items && users.items.find(user => user.id === projectAdmin).name}</span>
-                                        <span className="pull-right">
-                                            <button className="btn btn-leeuwen btn-sm right inline" onClick={() => this.removeProjectAdmin(projectAdmin)} type="button">
-                                                <FontAwesomeIcon icon="trash-alt" />
-                                            </button>
-                                        </span>
-                                    </li>
-                                )}
-                            </ul>
-                        </div>
-                    </div>
                     <div className="text-right">
                         {opco.id &&
                         <button type="submit" className="btn btn-outline-dark btn-lg" onClick={this.handleDelete} style={{ marginRight: 10 }} >
@@ -291,12 +221,12 @@ class Opco extends React.Component {
 
 function mapStateToProps(state) {
     const { loading, deleting } = state.opcos;
-    const { users, alert } = state;
+    const { alert, locales } = state;
     return {
         alert,
         loading,
         deleting,
-        users
+        locales
     };
 }
 

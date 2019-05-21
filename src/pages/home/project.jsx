@@ -18,9 +18,8 @@ class Project extends React.Component {
         this.state = {
             project: {
                 name: '',
-                customer: '',
-                opco: '',
-                currency:'',
+                erpId: '',
+                opcoId:'',
                 projectInspection: true,
                 projectShipping: true,
                 projectWarehouse: true,

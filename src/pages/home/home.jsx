@@ -44,11 +44,6 @@ class Home extends React.Component {
     componentDidMount() {
         this.props.dispatch(opcoActions.getAll());
         this.props.dispatch(projectActions.getAll());
-        // if (this.props.projects.items) {
-        //     this.setState({
-        //         projects: projectSorted(this.props.projects.items),
-        //     });
-        // };
     }
     stateReload(event){
         if (this.props.projects.items) {
@@ -58,12 +53,10 @@ class Home extends React.Component {
                 loaded: true,
             });
         };
-        console.log('***************toto loaded')
     }
 
     handleChange(event) {
         const { name, value } = event.target;
-        // console.log('name:', name, 'value:', value)
         this.setState({
             [name]: value
         }, () => {
@@ -116,13 +109,13 @@ class Home extends React.Component {
                 <table className="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Project No<br />
+                            <th scope="col" style={{width:'15%'}}>Project No<br />
                             <input className="form-control" name="number" value={number} onChange={this.handleChange} />
                             </th>
-                            <th scope="col">Project<br />
+                            <th scope="col" style={{width:'70%'}}>Project<br />
                             <input className="form-control" name="name" value={name} onChange={this.handleChange} />
                             </th>
-                            <th scope="col">ERP<br />
+                            <th scope="col" style={{width:'15%'}}>ERP<br />
                             <input className="form-control" name="erp" value={erp} onChange={this.handleChange} />
                             </th>
                         </tr>
