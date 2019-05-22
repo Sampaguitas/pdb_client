@@ -32,7 +32,7 @@ class Project extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleCheck = this.handleCheck.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        // this.stateReload = this.stateReload.bind(this);
+        this.stateReload = this.stateReload.bind(this);
     }
     componentDidMount() {
         this.props.dispatch(currencyActions.getAll());
@@ -43,29 +43,29 @@ class Project extends React.Component {
         // this.stateReload();
     }
 
-    // stateReload(event){
-    //     const { users } = this.props;
-    //     var userArray = []
-    //     var i
-    //     if (users.items) {
-    //         for(i=0;i<users.items.length;i++){
-    //             let NewUserArrayElement = {
-    //                 'userId': users.items[i]._id,
-    //                 'name': users.items[i].name,
-    //                 'isExpediting': false,
-    //                 'isInspection': false,
-    //                 'isShipping': false,
-    //                 'isWarehouse': false,
-    //                 'isConfiguration': false
-    //             };
-    //             userArray.push(NewUserArrayElement)
-    //         };
-    //         this.setState({
-    //             projectUsers: userArray,
-    //             loaded: true,
-    //         });
-    //     };
-    // }
+    stateReload(event){
+        const { users } = this.props;
+        var userArray = []
+        var i
+        if (users.items) {
+            for(i=0;i<users.items.length;i++){
+                let NewUserArrayElement = {
+                    'userId': users.items[i]._id,
+                    'name': users.items[i].name,
+                    'isExpediting': false,
+                    'isInspection': false,
+                    'isShipping': false,
+                    'isWarehouse': false,
+                    'isConfiguration': false
+                };
+                userArray.push(NewUserArrayElement)
+            };
+            this.setState({
+                projectUsers: userArray,
+                loaded: true,
+            });
+        };
+    }
 
     handleCheck(event) {
         const { project } = this.state;
@@ -111,7 +111,7 @@ class Project extends React.Component {
     render() {
         const { alert, currencies, erps, loading, opcos, projects, users } = this.props;
         const { loaded, project, submitted } = this.state;
-        // {users.items && loaded === false && this.stateReload()}
+        {users.items && loaded === false && this.stateReload()}
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
