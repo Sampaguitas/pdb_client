@@ -64,7 +64,7 @@ module.exports = {
     externals: {
         // global app config object
         config: JSON.stringify({
-            apiUrl: 'http://localhost:5000' //'https://pdb-server.herokuapp.com' //
+            apiUrl: 'https://pdb-server.herokuapp.com' //'http://localhost:5000'
         })
     }
 }
