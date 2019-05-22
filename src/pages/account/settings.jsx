@@ -10,8 +10,21 @@ import TableCheckBox from "../../_components/table-check-box";
 import Input from "../../_components/input";
 import Select from '../../_components/select';
 import Layout from "../../_components/layout";
-import { users } from "../../_reducers/users.reducer";
+//import { users } from "../../_reducers/users.reducer";
 
+function userSorted(user) {
+  const newArray = user
+  newArray.sort(function(a,b){
+      if (a.name < b.name) {
+          return -1;
+      }
+      if (a.name > b.name) {
+          return 1;
+      }
+      return 0;
+  });
+  return newArray;
+}
 
 class Settings extends React.Component {
   constructor(props) {
@@ -25,6 +38,13 @@ class Settings extends React.Component {
         password: "",
         confirmPassword: ""
       },
+      tableHeader: {
+        name:'',
+        opco: '',
+        admin: ''
+      },
+      tableUsers: [],
+      loaded: false,
       submitted: false
     };
     this.handleChange = this.handleChange.bind(this);
@@ -46,6 +66,41 @@ class Settings extends React.Component {
         [name]: value
       }
     });
+  }
+
+  handleChangeHeader(event) {
+    const { name, value } = event.target;
+    const { tableHeader } = this.state;
+    this.setState({
+      tableHeader: {
+        ...tableHeader,
+        [name]: value
+      }      
+    }, () => {
+        this.filterTable(tableHeader.name, tableHeader.opco);
+    });
+  }
+  
+  filterTable(name, opco){
+    if (!name && !opco) {
+        this.setState({
+          tableUsers: userSorted(this.props.users.items)
+        });
+    } else {
+        name = name.replace(/([()[{*+.$^\\|?])/g, ""); 
+        opco = opco.replace(/([()[{*+.$^\\|?])/g, "");
+        this.setState({
+          tableUsers: userSorted(this.props.users.items).filter(function (user) {
+                if(name && opco) {
+                    return !!user.name.match(new RegExp(name, "i")) && !!user.opco.name.match(new RegExp(opco, "i"))
+                } else if (name) {
+                    return !!user.name.match(new RegExp(name, "i"))
+                } else {
+                    return !!user.opco.name.match(new RegExp(opco, "i"))
+                }
+            })
+        });
+    }
   }
 
   handleSubmit(event) {
@@ -77,6 +132,7 @@ class Settings extends React.Component {
   render() {
     const { user, submitted } = this.state;
     const { users, registering, alert, opcos } = this.props;
+    {users.items && this.state.loaded === false && this.stateReload()}
     return (
       <Layout>
         <div id="user">
@@ -179,8 +235,12 @@ class Settings extends React.Component {
                   <table className="table table-hover">
                     <thead>
                       <tr>
-                        <th>User</th>
-                        <th>Operating Company</th>
+                        <th>User<br />
+                          <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
+                        </th>
+                        <th>Operating Company<br />
+                          <input className="form-control" name="opco" value={opco} onChange={this.handleChangeHeader} />
+                        </th>
                         <th>Admin</th>
                       </tr>
                     </thead>
