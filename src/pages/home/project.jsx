@@ -21,11 +21,8 @@ class Project extends React.Component {
                 erpId: '',
                 currencyId: '',
                 opcoId:'',
-                projectInspection: true,
-                projectShipping: true,
-                projectWarehouse: true,
+                projectUsers: [],
             },
-            projectUsers: [],
             loaded: false,
             submitted: false
         };
@@ -34,6 +31,11 @@ class Project extends React.Component {
         this.handleCheck = this.handleCheck.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.stateReload = this.stateReload.bind(this);
+        this.handleIsExpediting = this.handleIsExpediting.bind(this);
+        this.handleIsInspection = this.handleIsInspection.bind(this);
+        this.handleIsShipping = this.handleIsShipping.bind(this);
+        this.handleIsWarehouse = this.handleIsWarehouse.bind(this);
+        this.handleIsConfiguration = this.handleIsConfiguration.bind(this);
     }
     componentDidMount() {
         this.props.dispatch(currencyActions.getAll());
@@ -46,6 +48,7 @@ class Project extends React.Component {
 
     stateReload(event){
         const { users } = this.props;
+        const { project } = this.state;
         var userArray = []
         var i
         if (users.items) {
@@ -62,7 +65,10 @@ class Project extends React.Component {
                 userArray.push(NewUserArrayElement)
             };
             this.setState({
-                projectUsers: userArray,
+                project:{
+                    ...project,
+                    projectUsers: userArray,
+                },
                 loaded: true,
             });
         };
@@ -80,6 +86,47 @@ class Project extends React.Component {
             }
         });
     }
+
+    handleIsExpediting(event) {
+        const { name } = event.target;
+        const { projectUsers } = this.state.project;
+        let clickedUser = projectUsers.find(x=>x.userId == name);
+        clickedUser.isExpediting = !clickedUser.isExpediting;
+        this.setState(this.state);
+    }
+
+    handleIsInspection(event) {
+        const { name } = event.target;
+        const { projectUsers } = this.state.project;
+        let clickedUser = projectUsers.find(x=>x.userId == name);
+        clickedUser.isInspection = !clickedUser.isInspection;
+        this.setState(this.state);
+    }
+
+    handleIsShipping(event) {
+        const { name } = event.target;
+        const { projectUsers } = this.state.project;
+        let clickedUser = projectUsers.find(x=>x.userId == name);
+        clickedUser.isShipping = !clickedUser.isShipping;
+        this.setState(this.state);
+    }
+
+    handleIsWarehouse(event) {
+        const { name } = event.target;
+        const { projectUsers } = this.state.project;
+        let clickedUser = projectUsers.find(x=>x.userId == name);
+        clickedUser.isWarehouse = !clickedUser.isWarehouse;
+        this.setState(this.state);
+    }
+
+    handleIsConfiguration(event) {
+        const { name } = event.target;
+        const { projectUsers } = this.state.project;
+        let clickedUser = projectUsers.find(x=>x.userId == name);
+        clickedUser.isConfiguration = !clickedUser.isConfiguration;
+        this.setState(this.state);
+    }
+
     handleChange(event) {
         const { project } = this.state;
         const { name, value } = event.target;
@@ -89,6 +136,7 @@ class Project extends React.Component {
                 [name]: value
             }
         });
+        console.log(this.state.projectUsers)
     }
     handleSubmit(event) {
         event.preventDefault();
@@ -111,20 +159,21 @@ class Project extends React.Component {
     }
     render() {
         const { alert, currencies, erps, loading, opcos, projects, users } = this.props;
-        const { loaded, project, submitted, projectUsers } = this.state;
+        const { loaded, project, submitted } = this.state;
+        const { projectUsers } = this.state.project;
         {users.items && loaded === false && this.stateReload()}
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="setting">
-                    <h2>Add or Edit Project:</h2>
+                    <h2>Create Project</h2>
                     <hr />
                     <div className="row">
                         <div className="col-md-8 mb-3">
                             <div className="card">
                                 <div className="card-header">
-                                    <h5>User Access</h5>
+                                    <h5>Assign users to project</h5>
                                 </div>
                                 <div className="card-body table-responsive">
                                     <table className="table table-hover">
@@ -146,8 +195,8 @@ class Project extends React.Component {
                                                     <td>
                                                         <TableCheckBox
                                                             id={u.userId}
-                                                            checked={u.isInspection}
-                                                            onChange={this.handleInputChange}
+                                                            checked={u.isExpediting}
+                                                            onChange={this.handleIsExpediting}
                                                             disabled={false}
                                                         />   
                                                     </td>
@@ -155,7 +204,7 @@ class Project extends React.Component {
                                                         <TableCheckBox
                                                             id={u.userId}
                                                             checked={u.isInspection}
-                                                            onChange={this.handleInputChange}
+                                                            onChange={this.handleIsInspection}
                                                             disabled={false}
                                                         />   
                                                     </td>
@@ -163,7 +212,7 @@ class Project extends React.Component {
                                                         <TableCheckBox
                                                             id={u.userId}
                                                             checked={u.isShipping}
-                                                            onChange={this.handleInputChange}
+                                                            onChange={this.handleIsShipping}
                                                             disabled={false}
                                                         />   
                                                     </td>
@@ -171,7 +220,7 @@ class Project extends React.Component {
                                                         <TableCheckBox
                                                             id={u.userId}
                                                             checked={u.isWarehouse}
-                                                            onChange={this.handleInputChange}
+                                                            onChange={this.handleIsWarehouse}
                                                             disabled={false}
                                                         />   
                                                     </td>
@@ -179,7 +228,7 @@ class Project extends React.Component {
                                                         <TableCheckBox
                                                             id={u.userId}
                                                             checked={u.isConfiguration}
-                                                            onChange={this.handleInputChange}
+                                                            onChange={this.handleIsConfiguration}
                                                             disabled={false}
                                                         />
                                                     </td>
@@ -194,12 +243,12 @@ class Project extends React.Component {
                         <div className="col-md-4">
                             <div className="card">
                                 <div className="card-header">
-                                    <h5>Project Details</h5>
+                                    <h5>General information</h5>
                                 </div>
                                 <div className="card-body">
                                 <form onSubmit={this.handleSubmit}>
                                         <Select
-                                            title="Copy Settings from"
+                                            title="Copy settings from project"
                                             name="copyId"
                                             options={projects.items}
                                             value={project.copyId}
@@ -252,36 +301,17 @@ class Project extends React.Component {
                                             inline={false}
                                             required={true}
                                         />
-                                        <div className="col-sm-10 offset-md-2">
-                                            <CheckBox
-                                                title="Enable Inspection Module"
-                                                id="projectInspection"
-                                                name="projectInspection"
-                                                checked={project.projectInspection}
-                                                onChange={this.handleCheck}
-                                                small="Check this if this project requires the Inspection Module. The Inspection Module is required if you want to use the Warehouse Module."
-                                            />
-                                            <CheckBox
-                                                title="Enable Shipping Module"
-                                                id="projectShipping"
-                                                name="projectShipping"
-                                                checked={project.projectShipping}
-                                                onChange={this.handleCheck}
-                                                small="Check this if this project requires the Shipping Module."
-                                            />
-                                            <CheckBox
-                                                title="Enable Warehouse Module"
-                                                id="projectWarehouse"
-                                                name="projectWarehouse"
-                                                checked={project.projectWarehouse}
-                                                onChange={this.handleCheck}
-                                                small="Check this if this project requires the Warehouse Module. "
-                                                strong="Requires the Inspection Module to be enabled."
-                                            />
-                                        </div>
                                         <div className="text-right">
-                                            <button type="submit" className="btn btn-lg btn-outline-leeuwen">
-                                                {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
+                                            <button
+                                                type="submit"
+                                                className="btn btn-leeuwen btn-full btn-lg"
+                                            >
+                                                {loading && (
+                                                    <FontAwesomeIcon
+                                                        icon="spinner"
+                                                        className="fa-pulse fa-1x fa-fw"
+                                                    />
+                                                )}    
                                             Save Project
                                             </button>
                                         </div>

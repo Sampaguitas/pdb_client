@@ -87,9 +87,55 @@ class Settings extends React.Component {
         {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
         <br />
         <div id="setting">
-          <h2>Register new users / Permissions</h2>
+          <h2>Settings</h2>
           <hr />
           <div className="row">
+            <div className="col-md-8">
+              <div className="card">
+                <div className="card-header">
+                  <h5>Users</h5>
+                </div>
+                <div className="card-body table-responsive">
+                  <table className="table table-hover">
+                    <thead>
+                      <tr>
+                        <th>User</th>
+                        <th>Operating Company</th>
+                        <th>Admin</th>
+                      </tr>
+                    </thead>
+                    {users.items && (
+                      <tbody>
+                        {users.items.map(u => (
+                          <tr key={u._id}>
+                            <td>{u.name}</td>
+                            <td>{u.opco.name}</td>
+                            <td>
+                            {
+                              this.isUser(u._id) ?
+                                <TableCheckBoxAdmin
+                                  id={u._id}
+                                  checked={u.isAdmin}
+                                  onChange={this.handleInputChange}
+                                  disabled={true}
+                                />
+                              :
+                              <TableCheckBoxAdmin
+                                id={u._id}
+                                checked={u.isAdmin}
+                                onChange={this.handleInputChange}
+                                disabled={false}
+                              />
+                            }
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    )}
+                  </table>
+                </div>
+              </div>
+            </div>
             <div className="col-md-4 mb-3">
               <div className="card">
                 <div className="card-header">
@@ -175,52 +221,6 @@ class Settings extends React.Component {
                   {alert.message && (
                     <div className={`alert ${alert.type}`}>{alert.message}</div>
                   )}
-                </div>
-              </div>
-            </div>
-            <div className="col-md-8">
-              <div className="card">
-                <div className="card-header">
-                  <h5>Users</h5>
-                </div>
-                <div className="card-body table-responsive">
-                  <table className="table table-hover">
-                    <thead>
-                      <tr>
-                        <th>User</th>
-                        <th>Operating Company</th>
-                        <th>Admin</th>
-                      </tr>
-                    </thead>
-                    {users.items && (
-                      <tbody>
-                        {users.items.map(u => (
-                          <tr key={u._id}>
-                            <td>{u.name}</td>
-                            <td>{u.opco.name}</td>
-                            <td>
-                            {
-                              this.isUser(u._id) ?
-                                <TableCheckBoxAdmin
-                                  id={u._id}
-                                  checked={u.isAdmin}
-                                  onChange={this.handleInputChange}
-                                  disabled={true}
-                                />
-                              :
-                              <TableCheckBoxAdmin
-                                id={u._id}
-                                checked={u.isAdmin}
-                                onChange={this.handleInputChange}
-                                disabled={false}
-                              />
-                            }
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    )}
-                  </table>
                 </div>
               </div>
             </div>
