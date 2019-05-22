@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { currencyActions, erpActions, opcoActions, projectActions } from '../../_actions';
+import { currencyActions, erpActions, opcoActions, projectActions, userActions } from '../../_actions';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -10,11 +10,9 @@ import Input from '../../_components/input';
 import Select from '../../_components/select';
 import Layout from '../../_components/layout';
 
-
 class Project extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             project: {
                 copyId: '',
@@ -26,19 +24,49 @@ class Project extends React.Component {
                 projectShipping: true,
                 projectWarehouse: true,
             },
+            projectUsers: [],
+            loaded: false,
             submitted: false
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.handleCheck = this.handleCheck.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        // this.stateReload = this.stateReload.bind(this);
     }
     componentDidMount() {
         this.props.dispatch(currencyActions.getAll());
         this.props.dispatch(erpActions.getAll());
         this.props.dispatch(opcoActions.getAll());
         this.props.dispatch(projectActions.getAll());
+        this.props.dispatch(userActions.getAll());
+        // this.stateReload();
     }
+
+    // stateReload(event){
+    //     const { users } = this.props;
+    //     var userArray = []
+    //     var i
+    //     if (users.items) {
+    //         for(i=0;i<users.items.length;i++){
+    //             let NewUserArrayElement = {
+    //                 'userId': users.items[i]._id,
+    //                 'name': users.items[i].name,
+    //                 'isExpediting': false,
+    //                 'isInspection': false,
+    //                 'isShipping': false,
+    //                 'isWarehouse': false,
+    //                 'isConfiguration': false
+    //             };
+    //             userArray.push(NewUserArrayElement)
+    //         };
+    //         this.setState({
+    //             projectUsers: userArray,
+    //             loaded: true,
+    //         });
+    //     };
+    // }
+
     handleCheck(event) {
         const { project } = this.state;
         const target = event.target;
@@ -63,11 +91,12 @@ class Project extends React.Component {
     }
     handleSubmit(event) {
         event.preventDefault();
-
+        
         this.setState({ submitted: true });
         const { project } = this.state;
         const { dispatch } = this.props;
         if (
+            project.copyId &&
             project.name &&
             project.erpId &&
             project.currencyId &&
@@ -80,8 +109,9 @@ class Project extends React.Component {
         return (event) => this.props.dispatch(projectActions.delete(id));
     }
     render() {
-        const { alert, loading, erps, currencies, opcos, projects } = this.props;
-        const { project, submitted } = this.state;
+        const { alert, currencies, erps, loading, opcos, projects, users } = this.props;
+        const { loaded, project, submitted } = this.state;
+        // {users.items && loaded === false && this.stateReload()}
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -97,7 +127,7 @@ class Project extends React.Component {
                         onChange={this.handleChange}
                         placeholder=""
                         submitted={submitted}
-                        inline={true}
+                        inline={false}
                         required={true}
                     />
                     <Input
@@ -107,42 +137,42 @@ class Project extends React.Component {
                         value={project.name}
                         onChange={this.handleChange}
                         submitted={submitted}
-                        inline={true}
+                        inline={false}
                         required={true}
                     />
-                        <Select
-                            title="ERP"
-                            name="erpId"
-                            options={erps.items}
-                            value={project.erpId}
-                            onChange={this.handleChange}
-                            placeholder=""
-                            submitted={submitted}
-                            inline={true}
-                            required={true}
-                        />
-                        <Select
-                            title="OPCO"
-                            name="opco"
-                            options={opcos.items}
-                            value={project.opco}
-                            onChange={this.handleChange}
-                            placeholder=""
-                            submitted={submitted}
-                            inline={true}
-                            required={true}
-                        />
-                        <Select
-                            title="Currency"
-                            name="currencyId"
-                            options={currencies.items}
-                            value={project.currencyId}
-                            onChange={this.handleChange}
-                            placeholder=""
-                            submitted={submitted}
-                            inline={true}
-                            required={true}
-                        />
+                    <Select
+                        title="ERP"
+                        name="erpId"
+                        options={erps.items}
+                        value={project.erpId}
+                        onChange={this.handleChange}
+                        placeholder=""
+                        submitted={submitted}
+                        inline={false}
+                        required={true}
+                    />
+                    <Select
+                        title="OPCO"
+                        name="opcoId"
+                        options={opcos.items}
+                        value={project.opcoId}
+                        onChange={this.handleChange}
+                        placeholder=""
+                        submitted={submitted}
+                        inline={false}
+                        required={true}
+                    />
+                    <Select
+                        title="Currency"
+                        name="currencyId"
+                        options={currencies.items}
+                        value={project.currencyId}
+                        onChange={this.handleChange}
+                        placeholder=""
+                        submitted={submitted}
+                        inline={false}
+                        required={true}
+                    />
                     <div className="col-sm-10 offset-md-2">
                         <CheckBox
                             title="Enable Inspection Module"
@@ -183,15 +213,16 @@ class Project extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, erps, currencies, opcos, projects } = state;
+    const { alert, currencies, erps, opcos, projects, users } = state;
     const { loading } = state.projects;
     return {
         alert,
-        erps,
         currencies,
+        erps,
         loading,
         opcos,
-        projects
+        projects,
+        users
     };
 }
 

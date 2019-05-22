@@ -45,7 +45,7 @@ class Home extends React.Component {
         this.props.dispatch(opcoActions.getAll());
         this.props.dispatch(projectActions.getAll());
     }
-    stateReload(event){
+    stateReload(){
         if (this.props.projects.items) {
             const sorted = projectSorted(this.props.projects.items)
             this.setState({
