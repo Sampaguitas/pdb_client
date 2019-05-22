@@ -57,10 +57,10 @@ class User extends React.Component {
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="user">
-                    <h2>User: { user.name }</h2>
+                    <h2>User Information</h2>
                     <hr />
                     <div className="row">
-                        <div className="col-md-6 col-sm-12 mb-3">
+                        <div className="col-md-8 col-sm-12 mb-sm-3">
                             <div className="card mb-3">
                                 <div className="card-header">User Details</div>
                                 <div className="card-body">
@@ -77,13 +77,14 @@ class User extends React.Component {
                                     <ul>
                                         { user.isAdmin && <li>Admin</li> }
                                         { user.isSuperAdmin && <li>Super Admin</li> }
+                                        { !user.isSuperAdmin && !user.isAdmin && <li>Regular User</li> }
                                         {/* {user.roles.map((role) => <li key={role.id}>{role}</li>)} */}
                                     </ul>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="col-md-6 col-sm-12 mb-3">
+                        <div className="col-md-4 col-sm-12">
                             <div className="card">
                                 <div className="card-header">Change Password</div>
                                 <div className="card-body">
@@ -118,7 +119,7 @@ class User extends React.Component {
                                             inline={false}
                                             required={true}
                                         />
-                                        <button type="submit" className="btn btn-leeuwen btn-full btn-lg">
+                                        <button type="submit" className="btn btn-leeuwen btn-full btn-lg mb-3">
                                             {updating ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
                                             Change Password
                                         </button>

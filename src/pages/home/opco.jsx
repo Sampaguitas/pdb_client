@@ -127,7 +127,7 @@ class Opco extends React.Component {
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
-                <h2>Add or Edit Operating Company:</h2>
+                <h2>Add Operation Company</h2>
                 <hr />
                 <form onSubmit={this.handleSubmit}>
                     <Input

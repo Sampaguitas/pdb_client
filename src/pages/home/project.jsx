@@ -167,10 +167,10 @@ class Project extends React.Component {
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="setting">
-                    <h2>Create Project</h2>
+                    <h2>Add Project</h2>
                     <hr />
                     <div className="row">
-                        <div className="col-md-8 mb-3">
+                        <div className="col-md-8 col-sm-12 mb-sm-3">
                             <div className="card">
                                 <div className="card-header">
                                     <h5>Assign users to project</h5>
@@ -240,7 +240,7 @@ class Project extends React.Component {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-md-4 col-sm-12">
                             <div className="card">
                                 <div className="card-header">
                                     <h5>General information</h5>
@@ -304,7 +304,7 @@ class Project extends React.Component {
                                         <div className="text-right">
                                             <button
                                                 type="submit"
-                                                className="btn btn-leeuwen btn-full btn-lg"
+                                                className="btn btn-leeuwen btn-full btn-lg mb-3"
                                             >
                                                 {loading && (
                                                     <FontAwesomeIcon

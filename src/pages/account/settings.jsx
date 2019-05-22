@@ -90,7 +90,7 @@ class Settings extends React.Component {
           <h2>Settings</h2>
           <hr />
           <div className="row">
-            <div className="col-md-8">
+            <div className="col-md-8 col-sm-12 mb-sm-3">
               <div className="card">
                 <div className="card-header">
                   <h5>Users</h5>
@@ -136,7 +136,7 @@ class Settings extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="col-md-4 mb-3">
+            <div className="col-md-4 col-sm-12">
               <div className="card">
                 <div className="card-header">
                   <h5>New User</h5>
@@ -206,7 +206,7 @@ class Settings extends React.Component {
                     />
                     <button
                       type="submit"
-                      className="btn btn-leeuwen btn-full btn-lg"
+                      className="btn btn-leeuwen btn-full btn-lg mb-3"
                     >
                       {registering && (
                         <FontAwesomeIcon
@@ -217,10 +217,7 @@ class Settings extends React.Component {
                       Register
                     </button>
                   </form>
-                  <br />
-                  {alert.message && (
-                    <div className={`alert ${alert.type}`}>{alert.message}</div>
-                  )}
+                  {/* <br /> */}
                 </div>
               </div>
             </div>
