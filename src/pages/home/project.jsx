@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 //Components
 import CheckBox from '../../_components/check-box';
+import TableCheckBox from '../../_components/table-check-box';
 import Input from '../../_components/input';
 import Select from '../../_components/select';
 import Layout from '../../_components/layout';
@@ -110,103 +111,186 @@ class Project extends React.Component {
     }
     render() {
         const { alert, currencies, erps, loading, opcos, projects, users } = this.props;
-        const { loaded, project, submitted } = this.state;
+        const { loaded, project, submitted, projectUsers } = this.state;
         {users.items && loaded === false && this.stateReload()}
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
-                <h2>Add or Edit Project:</h2>
-                <hr />
-                <form onSubmit={this.handleSubmit}>
-                    <Select
-                        title="Copy Settings from"
-                        name="copyId"
-                        options={projects.items}
-                        value={project.copyId}
-                        onChange={this.handleChange}
-                        placeholder=""
-                        submitted={submitted}
-                        inline={false}
-                        required={true}
-                    />
-                    <Input
-                        title="Name"
-                        name="name"
-                        type="text"
-                        value={project.name}
-                        onChange={this.handleChange}
-                        submitted={submitted}
-                        inline={false}
-                        required={true}
-                    />
-                    <Select
-                        title="ERP"
-                        name="erpId"
-                        options={erps.items}
-                        value={project.erpId}
-                        onChange={this.handleChange}
-                        placeholder=""
-                        submitted={submitted}
-                        inline={false}
-                        required={true}
-                    />
-                    <Select
-                        title="OPCO"
-                        name="opcoId"
-                        options={opcos.items}
-                        value={project.opcoId}
-                        onChange={this.handleChange}
-                        placeholder=""
-                        submitted={submitted}
-                        inline={false}
-                        required={true}
-                    />
-                    <Select
-                        title="Currency"
-                        name="currencyId"
-                        options={currencies.items}
-                        value={project.currencyId}
-                        onChange={this.handleChange}
-                        placeholder=""
-                        submitted={submitted}
-                        inline={false}
-                        required={true}
-                    />
-                    <div className="col-sm-10 offset-md-2">
-                        <CheckBox
-                            title="Enable Inspection Module"
-                            id="projectInspection"
-                            name="projectInspection"
-                            checked={project.projectInspection}
-                            onChange={this.handleCheck}
-                            small="Check this if this project requires the Inspection Module. The Inspection Module is required if you want to use the Warehouse Module."
-                        />
-                        <CheckBox
-                            title="Enable Shipping Module"
-                            id="projectShipping"
-                            name="projectShipping"
-                            checked={project.projectShipping}
-                            onChange={this.handleCheck}
-                            small="Check this if this project requires the Shipping Module."
-                        />
-                        <CheckBox
-                            title="Enable Warehouse Module"
-                            id="projectWarehouse"
-                            name="projectWarehouse"
-                            checked={project.projectWarehouse}
-                            onChange={this.handleCheck}
-                            small="Check this if this project requires the Warehouse Module. "
-                            strong="Requires the Inspection Module to be enabled."
-                        />
+                <div id="setting">
+                    <h2>Add or Edit Project:</h2>
+                    <hr />
+                    <div className="row">
+                        <div className="col-md-8 mb-3">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h5>User Access</h5>
+                                </div>
+                                <div className="card-body table-responsive">
+                                    <table className="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>User</th>
+                                                <th>Expediting</th>
+                                                <th>Inspection</th>
+                                                <th>Shipping</th>
+                                                <th>Warehouse</th>
+                                                <th>Config</th>
+                                            </tr>
+                                        </thead>
+                                        {projectUsers && (
+                                            <tbody>
+                                                {projectUsers.map(u => (
+                                                   <tr key={u.userId}>
+                                                    <td>{u.name}</td>
+                                                    <td>
+                                                        <TableCheckBox
+                                                            id={u.userId}
+                                                            checked={u.isInspection}
+                                                            onChange={this.handleInputChange}
+                                                            disabled={false}
+                                                        />   
+                                                    </td>
+                                                    <td>
+                                                        <TableCheckBox
+                                                            id={u.userId}
+                                                            checked={u.isInspection}
+                                                            onChange={this.handleInputChange}
+                                                            disabled={false}
+                                                        />   
+                                                    </td>
+                                                    <td>
+                                                        <TableCheckBox
+                                                            id={u.userId}
+                                                            checked={u.isShipping}
+                                                            onChange={this.handleInputChange}
+                                                            disabled={false}
+                                                        />   
+                                                    </td>
+                                                    <td>
+                                                        <TableCheckBox
+                                                            id={u.userId}
+                                                            checked={u.isWarehouse}
+                                                            onChange={this.handleInputChange}
+                                                            disabled={false}
+                                                        />   
+                                                    </td>
+                                                    <td>
+                                                        <TableCheckBox
+                                                            id={u.userId}
+                                                            checked={u.isConfiguration}
+                                                            onChange={this.handleInputChange}
+                                                            disabled={false}
+                                                        />
+                                                    </td>
+                                                   </tr> 
+                                                ))}
+                                            </tbody>
+                                        )}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-4">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h5>Project Details</h5>
+                                </div>
+                                <div className="card-body">
+                                <form onSubmit={this.handleSubmit}>
+                                        <Select
+                                            title="Copy Settings from"
+                                            name="copyId"
+                                            options={projects.items}
+                                            value={project.copyId}
+                                            onChange={this.handleChange}
+                                            placeholder=""
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Input
+                                            title="Name"
+                                            name="name"
+                                            type="text"
+                                            value={project.name}
+                                            onChange={this.handleChange}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Select
+                                            title="ERP"
+                                            name="erpId"
+                                            options={erps.items}
+                                            value={project.erpId}
+                                            onChange={this.handleChange}
+                                            placeholder=""
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Select
+                                            title="OPCO"
+                                            name="opcoId"
+                                            options={opcos.items}
+                                            value={project.opcoId}
+                                            onChange={this.handleChange}
+                                            placeholder=""
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Select
+                                            title="Currency"
+                                            name="currencyId"
+                                            options={currencies.items}
+                                            value={project.currencyId}
+                                            onChange={this.handleChange}
+                                            placeholder=""
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <div className="col-sm-10 offset-md-2">
+                                            <CheckBox
+                                                title="Enable Inspection Module"
+                                                id="projectInspection"
+                                                name="projectInspection"
+                                                checked={project.projectInspection}
+                                                onChange={this.handleCheck}
+                                                small="Check this if this project requires the Inspection Module. The Inspection Module is required if you want to use the Warehouse Module."
+                                            />
+                                            <CheckBox
+                                                title="Enable Shipping Module"
+                                                id="projectShipping"
+                                                name="projectShipping"
+                                                checked={project.projectShipping}
+                                                onChange={this.handleCheck}
+                                                small="Check this if this project requires the Shipping Module."
+                                            />
+                                            <CheckBox
+                                                title="Enable Warehouse Module"
+                                                id="projectWarehouse"
+                                                name="projectWarehouse"
+                                                checked={project.projectWarehouse}
+                                                onChange={this.handleCheck}
+                                                small="Check this if this project requires the Warehouse Module. "
+                                                strong="Requires the Inspection Module to be enabled."
+                                            />
+                                        </div>
+                                        <div className="text-right">
+                                            <button type="submit" className="btn btn-lg btn-outline-leeuwen">
+                                                {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
+                                            Save Project
+                                            </button>
+                                        </div>
+                                    </form>                                
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div className="text-right">
-                        <button type="submit" className="btn btn-lg btn-outline-leeuwen">
-                            {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
-                        Save Project
-                        </button>
-                    </div>
-                </form>
+                </div>
             </Layout>
         );
     }

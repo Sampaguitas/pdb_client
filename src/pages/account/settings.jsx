@@ -6,7 +6,7 @@ import { userActions, opcoActions } from "../../_actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 //Components
-import TableCheckBox from "../../_components/table-check-box";
+import TableCheckBoxAdmin from "../../_components/table-check-box-admin";
 import Input from "../../_components/input";
 import Select from '../../_components/select';
 import Layout from "../../_components/layout";
@@ -84,8 +84,11 @@ class Settings extends React.Component {
     const { users, registering, alert, opcos } = this.props;
     return (
       <Layout>
-        <div id="user">
+        {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+        <br />
+        <div id="setting">
           <h2>Register new users / Permissions</h2>
+          <hr />
           <div className="row">
             <div className="col-md-4 mb-3">
               <div className="card">
@@ -198,14 +201,14 @@ class Settings extends React.Component {
                             <td>
                             {
                               this.isUser(u._id) ?
-                                <TableCheckBox
+                                <TableCheckBoxAdmin
                                   id={u._id}
                                   checked={u.isAdmin}
                                   onChange={this.handleInputChange}
                                   disabled={true}
                                 />
                               :
-                              <TableCheckBox
+                              <TableCheckBoxAdmin
                                 id={u._id}
                                 checked={u.isAdmin}
                                 onChange={this.handleInputChange}

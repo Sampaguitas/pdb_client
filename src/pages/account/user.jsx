@@ -58,6 +58,7 @@ class User extends React.Component {
                 <br />
                 <div id="user">
                     <h2>User: { user.name }</h2>
+                    <hr />
                     <div className="row">
                         <div className="col-md-6 col-sm-12 mb-3">
                             <div className="card mb-3">
