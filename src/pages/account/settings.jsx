@@ -217,7 +217,6 @@ class Settings extends React.Component {
                       Register
                     </button>
                   </form>
-                  {/* <br /> */}
                 </div>
               </div>
             </div>

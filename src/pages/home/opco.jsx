@@ -75,7 +75,7 @@ class Opco extends React.Component {
         const { opco } = this.state;
         const { dispatch } = this.props;
         this.setState({ submitted: true });
-        if (opco.name && opco.address && opco.city && opco.country) {
+        if (opco.name && opco.address && opco.city && opco.country && localeId) {
             if(opco.id){
                 dispatch(opcoActions.update(opco));
             } else {
@@ -121,99 +121,147 @@ class Opco extends React.Component {
     }
 
     render() {
-        const { alert, loading, deleting, locales } = this.props;
+        const { alert, loading, deleting, locales, opcos } = this.props;
         const { opco, submitted } = this.state;
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
+                <div id="Opco">
                 <h2>Add Operation Company</h2>
-                <hr />
-                <form onSubmit={this.handleSubmit}>
-                    <Input
-                        title="Code"
-                        name="code"
-                        type="text"
-                        value={opco.code}
-                        onChange={this.handleChangeOpco}
-                        submitted={submitted}
-                        inline={true}
-                        required={true}
-                    />
-                    <Input
-                        title="Name"
-                        name="name"
-                        type="text"
-                        value={opco.name}
-                        onChange={this.handleChangeOpco}
-                        submitted={submitted}
-                        inline={true}
-                        required={true}
-                    />
-                    <Input
-                        title="Address"
-                        name="address"
-                        type="text"
-                        value={opco.address}
-                        onChange={this.handleChangeOpco}
-                        submitted={submitted}
-                        inline={true}
-                        required={true}
-                    />
-                    <Input
-                        title="City"
-                        name="city"
-                        type="text"
-                        value={opco.city}
-                        onChange={this.handleChangeOpco}
-                        submitted={submitted}
-                        inline={true}
-                        required={true}
-                    />
-                    <Input
-                        title="Zip"
-                        name="zip"
-                        type="text"
-                        value={opco.zip}
-                        onChange={this.handleChangeOpco}
-                        submitted={submitted}
-                        inline={true}
-                        required={true}
-                    />
-                    <Input
-                        title="Country"
-                        name="country"
-                        type="tel"
-                        value={opco.country}
-                        onChange={this.handleChangeOpco}
-                        submitted={submitted}
-                        inline={true}
-                        required={false}
-                    />
-                    <Select
-                        title="Locale"
-                        name="localeId"
-                        options={locales.items}
-                        value={opco.localeId}
-                        onChange={this.handleChangeOpco}
-                        placeholder=""
-                        submitted={submitted}
-                        inline={true}
-                        required={true}
-                    />
-                    <div className="text-right">
-                        {opco.id &&
-                        <button type="submit" className="btn btn-outline-dark btn-lg" onClick={this.handleDelete} style={{ marginRight: 10 }} >
-                            {deleting ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : '' }
-                            Remove
-                        </button>
-                        }
-                        <button type="submit" className="btn btn-lg btn-outline-leeuwen">
-                        {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
-                        {opco.id ? 'Update OPCO' : 'Save OPCO'}
-                        </button>
+                    <hr />
+                    <div className="row">
+                        <div className="col-md-8 col-sm-12 mb-sm-3">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h5>Operation Companies</h5>
+                                </div>
+                                <div className="card-body table-responsive">
+                                    <table className="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Code</th>
+                                                <th>Name</th>
+                                                <th>Country</th>
+                                                <th>Locale</th>
+                                            </tr>
+                                        </thead>
+                                        {opcos.items && (
+                                            <tbody>
+                                                {opcos.items.map(o => (
+                                                    <tr key={o._id}>
+                                                        <td>{o.code}</td>
+                                                        <td>{o.name}</td>
+                                                        <td>{o.country}</td>
+                                                        <td>{o.locale.name}</td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        )}
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="col-md-4 col-sm-12">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h5>General information</h5>
+                                </div>
+                                <div className="card-body">
+                                <form onSubmit={this.handleSubmit}>
+                                        <Input
+                                            title="Code"
+                                            name="code"
+                                            type="text"
+                                            value={opco.code}
+                                            onChange={this.handleChangeOpco}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Input
+                                            title="Name"
+                                            name="name"
+                                            type="text"
+                                            value={opco.name}
+                                            onChange={this.handleChangeOpco}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Input
+                                            title="Address"
+                                            name="address"
+                                            type="text"
+                                            value={opco.address}
+                                            onChange={this.handleChangeOpco}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Input
+                                            title="City"
+                                            name="city"
+                                            type="text"
+                                            value={opco.city}
+                                            onChange={this.handleChangeOpco}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Input
+                                            title="Zip"
+                                            name="zip"
+                                            type="text"
+                                            value={opco.zip}
+                                            onChange={this.handleChangeOpco}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Input
+                                            title="Country"
+                                            name="country"
+                                            type="tel"
+                                            value={opco.country}
+                                            onChange={this.handleChangeOpco}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={false}
+                                        />
+                                        <Select
+                                            title="Locale"
+                                            name="localeId"
+                                            options={locales.items}
+                                            value={opco.localeId}
+                                            onChange={this.handleChangeOpco}
+                                            placeholder=""
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <div className="text-right">
+                                            <button
+                                                type="submit"
+                                                className="btn btn-leeuwen btn-full btn-lg mb-3"
+                                            >
+                                                {loading && (
+                                                    <FontAwesomeIcon
+                                                        icon="spinner"
+                                                        className="fa-pulse fa-1x fa-fw" 
+                                                    />
+                                                )}
+                                                Save OPCO
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </form>
+                
+                </div>
+
             </Layout>
         );
     }
@@ -221,12 +269,13 @@ class Opco extends React.Component {
 
 function mapStateToProps(state) {
     const { loading, deleting } = state.opcos;
-    const { alert, locales } = state;
+    const { opcos, alert, locales } = state;
     return {
         alert,
         loading,
         deleting,
-        locales
+        locales,
+        opcos
     };
 }
 

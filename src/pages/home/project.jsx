@@ -312,7 +312,7 @@ class Project extends React.Component {
                                                         className="fa-pulse fa-1x fa-fw"
                                                     />
                                                 )}    
-                                            Save Project
+                                                Save Project
                                             </button>
                                         </div>
                                     </form>                                
