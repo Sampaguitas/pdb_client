@@ -102,7 +102,10 @@ function changePwd(user) {
 
         userService.changePwd(user)
             .then(
-                user => dispatch(success(user)),
+                user => {
+                    dispatch(success(user));
+                    dispatch(alertActions.success('Password has been updated'));
+                },
                 error => dispatch(failure(error.toString()))
             );
     };

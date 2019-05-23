@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { userActions, opcoActions } from '../../_actions';
+import { userActions } from '../../_actions';
 import { authHeader } from '../../_helpers';
 import config from 'config';
 //Components
@@ -15,7 +15,6 @@ class User extends React.Component {
         super(props);
         this.state = {
             stateUser: {
-                id: '',
                 oldPassword:'',
                 newPassword:'',
                 confirmPassword:'',  
@@ -27,16 +26,7 @@ class User extends React.Component {
     }
 
     componentDidMount() {
-        const { user } = this.props
-        const { stateUser } = this.state
         this.props.dispatch(userActions.getAll());
-        this.props.dispatch(opcoActions.getAll());
-        this.props.user && this.setState({
-            stateUser: {
-                ...stateUser,
-                id: user.id
-            }
-        });
     }
 
     handleChange(event){
@@ -53,27 +43,21 @@ class User extends React.Component {
     handleSubmit(event){
         event.preventDefault();
         const { stateUser } = this.state
-        const { dispatch, user } = this.props;
+        const { dispatch } = this.props;
         this.setState({
-            stateUser: {
-                ...stateUser,
-                id: user.id
-            },
             submitted: true
         });
         if (
-            stateUser.id &&
             stateUser.oldPassword &&
             stateUser.newPassword &&
             stateUser.confirmPassword
           ) {
-            console.log(stateUser);
             dispatch(userActions.changePwd(stateUser));
           }
     }
 
     render() {
-        const { user, alert, updating, opcos } = this.props;
+        const { user, alert, updating } = this.props;
         const { submitted, stateUser } = this.state
         return (
             <Layout>
@@ -158,14 +142,13 @@ class User extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { authentication, alert, users, opcos } = state;
+    const { authentication, alert, users } = state;
     const { user } = authentication;
     const { updating } = users;
     return {
         user,
         updating,
-        alert,
-        opcos
+        alert
     };
 }
 
