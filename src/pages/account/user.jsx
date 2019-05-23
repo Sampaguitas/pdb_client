@@ -14,6 +14,7 @@ class User extends React.Component {
     constructor(props){
         super(props);
         this.state = {
+            id: '',
             oldPassword:'',
             newPassword:'',
             confirmPassword:'',
@@ -26,6 +27,7 @@ class User extends React.Component {
     componentDidMount() {
         this.props.dispatch(userActions.getAll());
         this.props.dispatch(opcoActions.getAll());
+        this.props.user && this.setState({id: this.props.user._id});
     }
 
     handleChange(event){
@@ -37,15 +39,19 @@ class User extends React.Component {
 
     handleSubmit(event){
         event.preventDefault();
-        this.setState({ submitted: true });
         const { oldPassword, newPassword, confirmPassword} = this.state;
-        const { dispatch } = this.props;
+        const { dispatch, user } = this.props;
+        this.setState({ 
+            id: user._id,
+            submitted: true
+        });
         if (
+            id &&
             oldPassword &&
             newPassword &&
             confirmPassword
           ) {
-            dispatch(userActions.changePwd(oldPassword, newPassword, confirmPassword));
+            dispatch(userActions.changePwd(id, oldPassword, newPassword, confirmPassword));
           }
     }
 
