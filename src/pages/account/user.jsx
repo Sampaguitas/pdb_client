@@ -14,10 +14,12 @@ class User extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            id: '',
-            oldPassword:'',
-            newPassword:'',
-            confirmPassword:'',
+            stateUser: {
+                id: '',
+                oldPassword:'',
+                newPassword:'',
+                confirmPassword:'',  
+            },
             submitted:false,
         }
         this.handleChange = this.handleChange.bind(this);
@@ -25,39 +27,54 @@ class User extends React.Component {
     }
 
     componentDidMount() {
+        const { user } = this.props
+        const { stateUser } = this.state
         this.props.dispatch(userActions.getAll());
         this.props.dispatch(opcoActions.getAll());
-        this.props.user && this.setState({id: this.props.user._id});
+        this.props.user && this.setState({
+            stateUser: {
+                ...stateUser,
+                id: user.id
+            }
+        });
     }
 
     handleChange(event){
         const { name, value } = event.target;
+        const { stateUser } = this.state
         this.setState({
+            stateUser: {
+                ...stateUser,
                 [name]:value
+            }
         });
     }
 
     handleSubmit(event){
         event.preventDefault();
-        const { oldPassword, newPassword, confirmPassword} = this.state;
+        const { stateUser } = this.state
         const { dispatch, user } = this.props;
-        this.setState({ 
-            id: user._id,
+        this.setState({
+            stateUser: {
+                ...stateUser,
+                id: user.id
+            },
             submitted: true
         });
         if (
-            id &&
-            oldPassword &&
-            newPassword &&
-            confirmPassword
+            stateUser.id &&
+            stateUser.oldPassword &&
+            stateUser.newPassword &&
+            stateUser.confirmPassword
           ) {
-            dispatch(userActions.changePwd(id, oldPassword, newPassword, confirmPassword));
+            console.log(stateUser);
+            dispatch(userActions.changePwd(stateUser));
           }
     }
 
     render() {
         const { user, alert, updating, opcos } = this.props;
-        const { tfa, submitted, oldPassword, newPassword, confirmPassword } = this.state
+        const { submitted, stateUser } = this.state
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -99,7 +116,7 @@ class User extends React.Component {
                                             title="Current Password"
                                             name="oldPassword"
                                             type="text"
-                                            value={oldPassword}
+                                            value={stateUser.oldPassword}
                                             onChange={this.handleChange}
                                             submitted={submitted}
                                             inline={false}
@@ -109,7 +126,7 @@ class User extends React.Component {
                                             title="New Password"
                                             name="newPassword"
                                             type="text"
-                                            value={newPassword}
+                                            value={stateUser.newPassword}
                                             onChange={this.handleChange}
                                             submitted={submitted}
                                             inline={false}
@@ -119,13 +136,13 @@ class User extends React.Component {
                                             title="Confirm Password"
                                             name="confirmPassword"
                                             type="text"
-                                            value={confirmPassword}
+                                            value={stateUser.confirmPassword}
                                             onChange={this.handleChange}
                                             submitted={submitted}
                                             inline={false}
                                             required={true}
                                         />
-                                        <button type="submit" className="btn btn-leeuwen btn-full btn-lg mb-3">
+                                        <button type="submit" className="btn btn-leeuwen btn-full btn-lg mb-3" onClick={this.handleSubmit}>
                                             {updating ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
                                             Change Password
                                         </button>
