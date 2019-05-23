@@ -9,6 +9,7 @@ export const userActions = {
     register,
     getAll,
     update,
+    changePwd,
     delete: _delete
 };
 
@@ -93,6 +94,22 @@ function update(user) {
     function request() { return { type: userConstants.UPDATE_REQUEST } }
     function success(user) { return { type: userConstants.UPDATE_SUCCESS, user } }
     function failure(error) { return { type: userConstants.UPDATE_FAILURE, error } }
+}
+
+function changePwd(user) {
+    return dispatch => {
+        dispatch(request(user));
+
+        userService.changePwd(user)
+            .then(
+                user => dispatch(success(user)),
+                error => dispatch(failure(error.toString()))
+            );
+    };
+
+    function request() { return { type: userConstants.CHANGEPWD_REQUEST } }
+    function success(user) { return { type: userConstants.CHANGEPWD_SUCCESS, user } }
+    function failure(error) { return { type: userConstants.CHANGEPWD_FAILURE, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

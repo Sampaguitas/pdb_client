@@ -45,7 +45,7 @@ class User extends React.Component {
             newPassword &&
             confirmPassword
           ) {
-            dispatch(userActions.changePassword(oldPassword, newPassword, confirmPassword));
+            dispatch(userActions.changePwd(oldPassword, newPassword, confirmPassword));
           }
     }
 
