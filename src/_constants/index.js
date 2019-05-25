@@ -4,4 +4,5 @@ export * from './erp.constants';
 export * from './locale.constants';
 export * from './opco.constants';
 export * from './project.constants';
+export * from './region.constants';
 export * from './user.constants';

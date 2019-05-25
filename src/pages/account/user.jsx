@@ -82,7 +82,7 @@ class User extends React.Component {
                                 <div className="card-header">My Roles</div>
                                 <div className="card-body">
                                     <ul>
-                                        { user.isAdmin && <li>Admin</li> }
+                                        { user.isAdmin && <li>Admin ({user.region})</li> }
                                         { user.isSuperAdmin && <li>Super Admin</li> }
                                         { !user.isSuperAdmin && !user.isAdmin && <li>Regular User</li> }
                                         {/* {user.roles.map((role) => <li key={role.id}>{role}</li>)} */}

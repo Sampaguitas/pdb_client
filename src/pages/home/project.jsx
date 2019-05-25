@@ -23,6 +23,10 @@ class Project extends React.Component {
                 opcoId:'',
                 projectUsers: [],
             },
+            options: {
+                projects: [],
+                opcos: [],
+            },
             loaded: false,
             submitted: false
         };

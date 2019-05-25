@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
-import { opcoActions, localeActions } from '../../_actions';
+import { opcoActions, localeActions, regionActions } from '../../_actions';
 import { authHeader } from '../../_helpers';
 import CheckBox from '../../_components/check-box';
 import Input from '../../_components/input';
@@ -25,7 +25,8 @@ class Opco extends React.Component {
                 city: '',
                 zip: '',
                 country: '',
-                localeId: ''
+                localeId: '',
+                regionId: '',
             },
             submitted: false,
         };
@@ -41,6 +42,7 @@ class Opco extends React.Component {
         const { location, users } = this.props;
         this.props.dispatch(opcoActions.getAll());
         this.props.dispatch(localeActions.getAll());
+        this.props.dispatch(regionActions.getAll());
         var qs = queryString.parse(location.search);
         if (qs.id) {
             this.getById(qs.id);
@@ -75,7 +77,7 @@ class Opco extends React.Component {
         const { opco } = this.state;
         const { dispatch } = this.props;
         this.setState({ submitted: true });
-        if (opco.name && opco.address && opco.city && opco.country && localeId) {
+        if (opco.name && opco.address && opco.city && opco.country && opco.localeId && opco.regionId) {
             if(opco.id){
                 dispatch(opcoActions.update(opco));
             } else {
@@ -121,7 +123,7 @@ class Opco extends React.Component {
     }
 
     render() {
-        const { alert, loading, deleting, locales, opcos } = this.props;
+        const { alert, loading, deleting, locales, regions, opcos } = this.props;
         const { opco, submitted } = this.state;
         return (
             <Layout>
@@ -143,6 +145,7 @@ class Opco extends React.Component {
                                                 <th>Code</th>
                                                 <th>Name</th>
                                                 <th>Country</th>
+                                                <th>Region</th>
                                                 <th>Locale</th>
                                             </tr>
                                         </thead>
@@ -153,6 +156,7 @@ class Opco extends React.Component {
                                                         <td>{o.code}</td>
                                                         <td>{o.name}</td>
                                                         <td>{o.country}</td>
+                                                        <td>{o.region.name}</td>
                                                         <td>{o.locale.name}</td>
                                                     </tr>
                                                 ))}
@@ -230,6 +234,17 @@ class Opco extends React.Component {
                                             required={false}
                                         />
                                         <Select
+                                            title="Region"
+                                            name="regionId"
+                                            options={regions.items}
+                                            value={opco.regionId}
+                                            onChange={this.handleChangeOpco}
+                                            placeholder=""
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Select
                                             title="Locale"
                                             name="localeId"
                                             options={locales.items}
@@ -269,11 +284,12 @@ class Opco extends React.Component {
 
 function mapStateToProps(state) {
     const { loading, deleting } = state.opcos;
-    const { opcos, alert, locales } = state;
+    const { opcos, alert, regions, locales } = state;
     return {
         alert,
         loading,
         deleting,
+        regions,
         locales,
         opcos
     };

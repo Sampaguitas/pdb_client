@@ -18,8 +18,8 @@ import './side-bar-menu.scss'
 
 const home_menu = [
     { id: 0, title: 'Overview', href: '/', icon: 'home' },
-    { id: 1, title: 'Add Operation Company', href: '/opco', icon: 'plus', roles: ['Admin'] },
-    { id: 2, title: 'Add Project', href: '/project', icon: 'plus', roles: ['Admin', 'ProjectAdmin'] }
+    { id: 1, title: 'Add Operation Company', href: '/opco', icon: 'plus', roles: ['isSuperAdmin'] },
+    { id: 2, title: 'Add Project', href: '/project', icon: 'plus', roles: ['isAdmin', 'isSuperAdmin'] }
 ]
 
 const project_menu = [
@@ -51,6 +51,7 @@ class SideBarMenu extends Component {
         this.isHome=this.isHome.bind(this);
         this.isLoggedIn=this.isLoggedIn.bind(this);
         this.mouseLeave=this.mouseLeave.bind(this);
+        this.menuList = this.menuList.bind(this);
     }
     componentDidMount(){
         var qs = queryString.parse(window.location.search);
@@ -76,8 +77,24 @@ class SideBarMenu extends Component {
     mouseLeave(){
         this.MobileItem = null
     }
+
+    menuList(menu, user){
+        var listMenu = []
+        menu.forEach(function(item) {
+            if (!item.roles){
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isAdmin') > -1 && user.isAdmin) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isSuperAdmin') > -1 && user.isSuperAdmin) {
+                listMenu.push(item);
+            }
+        });
+        return listMenu;
+    }
+
     render() {
         const { projectId } = this.state
+        let currentUser = JSON.parse(localStorage.getItem('user'));
         return (
             <div>
                 {this.isLoggedIn() && 
@@ -87,7 +104,8 @@ class SideBarMenu extends Component {
                         </NavLink>
                         <ul className="default-list menu-list">
                         {this.isHome() ?
-                            home_menu.map((item) => <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} />)
+                            this.menuList(home_menu,currentUser).map((item) => 
+                            <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} />)
                         :
                             project_menu.map((item) => <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} />)
                         }

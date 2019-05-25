@@ -9,6 +9,7 @@ import { alertActions } from '../_actions';
 import { PrivateRoute, AdminRoute } from '../_components';
 import { Home } from '../pages/home/home.jsx';
 
+import { NotFound } from '../pages/account/notfound.jsx';
 import { Login } from '../pages/account/login.jsx';
 import { User } from '../pages/account/user.jsx';
 import { Settings } from '../pages/account/settings.jsx';
@@ -62,6 +63,7 @@ class App extends React.Component {
         return (
             <Router history={history}>
                 <div>
+                    <Route path="/notfound" component={NotFound} user={user}/>
                     <Route path="/login" component={Login} user={user}/>
                     <PrivateRoute exact path="/" component={Home} user={user}/>
                     <PrivateRoute path="/user" component={User} user={user}/>

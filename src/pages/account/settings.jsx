@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 //Components
 import TableCheckBoxAdmin from "../../_components/table-check-box-admin";
+import TableCheckBoxSuperAdmin from "../../_components/table-check-box-spadmin";
 import Input from "../../_components/input";
 import Select from '../../_components/select';
 import Layout from "../../_components/layout";
@@ -77,11 +78,12 @@ class Settings extends React.Component {
     } else {
       return false;
     }
-  }
+  } 
 
   render() {
     const { user, submitted } = this.state;
     const { users, registering, alert, opcos } = this.props;
+    let currentUser = JSON.parse(localStorage.getItem('user'));
     return (
       <Layout>
         {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -102,6 +104,7 @@ class Settings extends React.Component {
                         <th>User</th>
                         <th>Operating Company</th>
                         <th>Admin</th>
+                        <th>SpAdmin</th>
                       </tr>
                     </thead>
                     {users.items && (
@@ -127,6 +130,32 @@ class Settings extends React.Component {
                                 disabled={false}
                               />
                             }
+                            </td>
+                            <td>
+                            {
+                              this.isUser(u._id) ?
+                                <TableCheckBoxSuperAdmin
+                                  id={u._id}
+                                  checked={u.isSuperAdmin}
+                                  onChange={this.handleInputChange}
+                                  disabled={true}
+                                />
+                              :
+                                currentUser.isSuperAdmin ?
+                                  <TableCheckBoxSuperAdmin
+                                    id={u._id}
+                                    checked={u.isSuperAdmin}
+                                    onChange={this.handleInputChange}
+                                    disabled={false}
+                                  />
+                                :
+                                  <TableCheckBoxSuperAdmin
+                                    id={u._id}
+                                    checked={u.isSuperAdmin}
+                                    onChange={this.handleInputChange}
+                                    disabled={true}
+                                  />
+                            } 
                             </td>
                           </tr>
                         ))}
