@@ -136,7 +136,7 @@ class Project extends React.Component {
                 [name]: value
             }
         });
-        console.log(this.state.projectUsers)
+        //console.log(this.state.projectUsers)
     }
     handleSubmit(event) {
         event.preventDefault();
