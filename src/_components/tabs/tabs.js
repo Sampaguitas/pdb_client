@@ -29,17 +29,17 @@ class Tabs extends Component {
     render() {
         const { tabs  } = this.state
         const { 
-                currencies, 
-                customers,
+                currencies,
                 handleChange,
                 handleCheck, 
                 handleDelete,
                 handleSubmit,
                 loading,
-                deleting, 
+                deleting,
                 project,
                 opcos, 
-                users 
+                users,
+                erps
             } = this.props
         return (
             <div id="tabs">
@@ -64,7 +64,6 @@ class Tabs extends Component {
                         >
                             <tab.component
                                 currencies={currencies}
-                                customers={customers}
                                 deleting={deleting}
                                 handleChange={handleChange}
                                 handleCheck={handleCheck}
@@ -75,6 +74,7 @@ class Tabs extends Component {
                                 project={project}
                                 tab={tab}
                                 users={users}
+                                erps={erps}
                             />
                         </div>
                     )}

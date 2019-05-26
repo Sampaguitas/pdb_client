@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
-import { currencyActions, customerActions, opcoActions, projectActions, userActions  } from '../../_actions';
+import { currencyActions, customerActions, opcoActions, projectActions, userActions, erpActions  } from '../../_actions';
 import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs'
@@ -28,12 +28,9 @@ class Configuration extends React.Component {
         this.state = {
             project: {
                 name: '',
-                customer: '',
-                opco: '',
-                currency:'',
-                projtInspection: true,
-                projectShipping: true,
-                projectWarehouse: true,
+                erpId: '',
+                currencyId: '',
+                opcoId: '',
             },
             submitted: false
         };
@@ -48,13 +45,14 @@ class Configuration extends React.Component {
     componentDidMount(){
         const { location, dispatch } = this.props
         dispatch(currencyActions.getAll());
-        dispatch(customerActions.getAll());
+        dispatch(erpActions.getAll());
         dispatch(opcoActions.getAll());
         dispatch(projectActions.getAll());
         dispatch(userActions.getAll());
         var qs = queryString.parse(location.search);
         if (qs.id) {
             this.getById(qs.id);
+            this.props.dispatch(projectActions.getById(qs.id));
         }
     }
     handleCheck(event) {
@@ -130,23 +128,23 @@ class Configuration extends React.Component {
     render() {
         const { 
                 alert, 
-                currencies, 
-                customers,
+                currencies,
                 deleting, 
                 loading, 
                 opcos, 
-                users 
+                users,
+                selection,
+                erps 
             } = this.props;
         const { project } = this.state;
         return (
-            <Layout>
+            <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="configuration">
                     <h2>Project Configuration</h2>
                     <Tabs 
                         currencies={currencies}
-                        customers={customers}
                         deleting={deleting}
                         handleChange={this.handleChange}
                         handleCheck={this.handleCheck}
@@ -157,6 +155,7 @@ class Configuration extends React.Component {
                         project={project}
                         tabs={tabs}
                         users={users}
+                        erps={erps}
                     />
                 </div>
             </Layout>
@@ -165,7 +164,7 @@ class Configuration extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, currencies, customers, opcos, users  } = state;
+    const { alert, currencies, customers, opcos, users, selection, erps  } = state;
     const { loading, deleting } = state.projects;
     return {
         alert,
@@ -174,7 +173,9 @@ function mapStateToProps(state) {
         deleting,
         loading,
         opcos,
-        users
+        users,
+        selection,
+        erps
     };
 }
 

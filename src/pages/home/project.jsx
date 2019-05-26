@@ -42,11 +42,12 @@ class Project extends React.Component {
         this.handleIsConfiguration = this.handleIsConfiguration.bind(this);
     }
     componentDidMount() {
-        this.props.dispatch(currencyActions.getAll());
-        this.props.dispatch(erpActions.getAll());
-        this.props.dispatch(opcoActions.getAll());
-        this.props.dispatch(projectActions.getAll());
-        this.props.dispatch(userActions.getAll());
+        const { dispatch } = this.props
+        dispatch(currencyActions.getAll());
+        dispatch(erpActions.getAll());
+        dispatch(opcoActions.getAll());
+        dispatch(projectActions.getAll());
+        dispatch(userActions.getAll());
         // this.stateReload();
     }
 
