@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Layout from '../../_components/layout';
+import Layout from '../../../_components/layout';
 import queryString from 'query-string';
-import { authHeader } from '../../_helpers';
+import { authHeader } from '../../../_helpers';
 import config from 'config';
-import { projectActions } from '../../_actions';
+import { projectActions } from '../../../_actions';
 
-class Shipping extends React.Component {
+class PackingDetails extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -61,7 +61,7 @@ class Shipping extends React.Component {
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="shipping">
-                    <h2>Shipping</h2>
+                    <h2>Shipping - Packing details</h2>
                     <div className="form-group">
                     
                     </div>
@@ -79,5 +79,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedShipping = connect(mapStateToProps)(Shipping);
-export { connectedShipping as Shipping };
+const connectedPackingDetails = connect(mapStateToProps)(PackingDetails);
+export { connectedPackingDetails as PackingDetails };

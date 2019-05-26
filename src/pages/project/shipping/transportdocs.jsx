@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Layout from '../../_components/layout';
+import Layout from '../../../_components/layout';
 import queryString from 'query-string';
-import { authHeader } from '../../_helpers';
+import { authHeader } from '../../../_helpers';
 import config from 'config';
-import { projectActions } from '../../_actions';
+import { projectActions } from '../../../_actions';
 
-class Inspection extends React.Component {
+class TransportDocuments extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -60,8 +60,8 @@ class Inspection extends React.Component {
             <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
-                <div id="inspection">
-                    <h2>Inspection</h2>
+                <div id="shipping">
+                    <h2>Shipping - Transport documents</h2>
                     <div className="form-group">
                     
                     </div>
@@ -79,5 +79,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedInspection = connect(mapStateToProps)(Inspection);
-export { connectedInspection as Inspection };
+const connectedTransportDocuments = connect(mapStateToProps)(TransportDocuments);
+export { connectedTransportDocuments as TransportDocuments };

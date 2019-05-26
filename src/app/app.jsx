@@ -17,10 +17,13 @@ import { Opco } from '../pages/home/opco.jsx';
 import { Project } from '../pages/home/project.jsx';
 import { Dashboard } from '../pages/project/dashboard.jsx';
 import { Duf } from '../pages/project/duf.jsx';
-import { ProjectOrders } from '../pages/project/projectorders.jsx';
 import { Expediting } from '../pages/project/expediting.jsx';
-import { Inspection } from '../pages/project/inspection.jsx';
-import { Shipping } from '../pages/project/shipping.jsx';
+import { Inspection } from '../pages/project/inspection/inspection.jsx';
+import { ReleaseData } from '../pages/project/inspection/releasedata.jsx';
+import { Certificates } from '../pages/project/inspection/certificates.jsx';
+import { Shipping } from '../pages/project/shipping/shipping.jsx';
+import { TransportDocuments } from '../pages/project/shipping/transportdocs.jsx';
+import { PackingDetails } from '../pages/project/shipping/packingdetails.jsx';
 import { Warehouse } from '../pages/project/warehouse/warehouse.jsx';
 import { GoodsReceipt } from '../pages/project/warehouse/goodsreceipt.jsx';
 import { StockManagement } from '../pages/project/warehouse/stockmanagement.jsx';
@@ -29,6 +32,7 @@ import { PickingLists } from '../pages/project/warehouse/pickinglists.jsx';
 import { OutgoingShipments } from '../pages/project/warehouse/outgoingshipments.jsx';
 import { ProjectWarhouse } from '../pages/project/warehouse/projectwarhouse.jsx';
 import { Configuration } from '../pages/project/configuration.jsx';
+
 
 
 // Styles
@@ -72,10 +76,13 @@ class App extends React.Component {
                     <PrivateRoute path="/project" component={Project} user={user}/>
                     <PrivateRoute path="/dashboard" component={Dashboard} user={user}/>
                     <PrivateRoute path="/duf" component={Duf} user={user}/>
-                    <PrivateRoute path="/projectorders" component={ProjectOrders} user={user}/> 
                     <PrivateRoute path="/expediting" component={Expediting} user={user}/>
                     <PrivateRoute path="/inspection" component={Inspection} user={user}/>
+                    <PrivateRoute path="/releasedata" component={ReleaseData} user={user}/>
+                    <PrivateRoute path="/certificates" component={Certificates} user={user}/>
                     <PrivateRoute path="/shipping" component={Shipping} user={user}/>
+                    <PrivateRoute path="/transportdocs" component={TransportDocuments} user={user}/>
+                    <PrivateRoute path="/packingdetails" component={PackingDetails} user={user}/>
                     <PrivateRoute path="/warehouse" component={Warehouse} user={user}/>
                     <PrivateRoute path="/goodsreceipt" component={GoodsReceipt} user={user}/>
                     <PrivateRoute path="/stockmanagement" component={StockManagement} user={user}/>

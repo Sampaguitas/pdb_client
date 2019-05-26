@@ -6,7 +6,7 @@ import { authHeader } from '../../../_helpers';
 import config from 'config';
 import { projectActions } from '../../../_actions';
 
-class OutgoingShipments extends React.Component {
+class Shipping extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
@@ -60,8 +60,8 @@ class OutgoingShipments extends React.Component {
             <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
-                <div id="outgoingshipments">
-                    <h2>Warehouse - Outgoing Shipments</h2>
+                <div id="shipping">
+                    <h2>Shipping</h2>
                     <div className="form-group">
                     
                     </div>
@@ -79,5 +79,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedOutgoingShipments = connect(mapStateToProps)(OutgoingShipments);
-export { connectedOutgoingShipments as OutgoingShipments };
+const connectedShipping = connect(mapStateToProps)(Shipping);
+export { connectedShipping as Shipping };

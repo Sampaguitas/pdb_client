@@ -2,8 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import queryString from 'query-string';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { authHeader } from '../../../_helpers';
+import config from 'config';
+import { projectActions } from '../../../_actions';
 import Layout from '../../../_components/layout';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 class ProjectWarhouse extends React.Component {
     constructor(props) {
@@ -14,18 +18,56 @@ class ProjectWarhouse extends React.Component {
         this.showUpload=this.showUpload.bind(this);
     }
     componentDidMount(){
-        var qs = queryString.parse(window.location.search);
+        const { location } = this.props
+        var qs = queryString.parse(location.search);
         if (qs.id) {
+            this.getById(qs.id);
+            this.props.dispatch(projectActions.getById(qs.id));
             this.setState({projectId: qs.id})
         }
     }
+
+
+
+    getById(id) {
+        const { project } = this.state;
+        const requestOptions = {
+            method: 'GET',
+            headers: authHeader()
+        };
+
+        return fetch(`${config.apiUrl}/project/findOne/?id=${id}`, requestOptions)
+            .then(this.handleResponse)
+            .then(
+                data => this.setState({
+                project: data
+            }));
+    }
+
+    handleResponse(response) {
+        return response.text().then(text => {
+            const data = text && JSON.parse(text);
+            if (!response.ok) {
+                if (response.status === 401) {
+                    // auto logout if 401 response returned from api
+                    logout();
+                    location.reload(true);
+                }
+                const error = (data && data.message) || response.statusText;
+                return Promise.reject(error);
+            }
+            return data;
+        });
+    }
+
     showUpload(){
 
     }
     render() {
         const { projectId } = this.state
+        const { alert, selection } = this.props;
         return (
-            <Layout>
+            <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="projectwarhouse">
@@ -83,9 +125,10 @@ class ProjectWarhouse extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert } = state;
+    const { alert, selection } = state;
     return {
         alert,
+        selection
     };
 }
 
