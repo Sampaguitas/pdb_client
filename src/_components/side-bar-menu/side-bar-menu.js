@@ -1,5 +1,6 @@
 //React
 import React, { Component } from 'react';
+const _ = require('lodash');
 import { NavLink, Link } from 'react-router-dom';
 import queryString from 'query-string';
 //FontAwesome
@@ -24,23 +25,51 @@ const home_menu = [
 
 const project_menu = [
     { id: 0, title: 'Dashboard', href: '/dashboard', icon: 'tachometer-alt' },
-    { id: 1, title: 'Upload DUF', href: '/duf', icon: 'upload', roles: ['Admin', 'SuperUser'] },
-    { id: 2, title: 'ProjectOrders', href: '/projectorders', icon: 'clipboard-list', roles: ['Admin', 'SuperUser'] },
-    { id: 3, title: 'Expediting', href: '/expediting', icon: 'stopwatch', roles: ['Admin', 'Expediter'] },
-    { id: 4, title: 'Inspection', href: '/inspection', icon: 'search', roles: ['Admin', 'Inspector'] },
-    { id: 5, title: 'Shipping', href: '/shipping', icon: 'ship', roles: ['Admin', 'Shipper'] },
-    { id: 6, title: 'Warehouse', href: '/warehouse', icon: 'warehouse', roles: ['Admin', 'SuperUser', 'Warehouse'], child: 
+    { id: 1, title: 'Upload DUF', href: '/duf', icon: 'upload', roles: ['isAdmin', 'isSuperAdmin'] },
+    { id: 2, title: 'ProjectOrders', href: '/projectorders', icon: 'clipboard-list', roles: ['isAdmin', 'isSuperAdmin'] },
+    { id: 3, title: 'Expediting', href: '/expediting', icon: 'stopwatch', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'] },
+    { id: 4, title: 'Inspection', href: '/inspection', icon: 'search', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'] },
+    { id: 5, title: 'Shipping', href: '/shipping', icon: 'ship', roles: ['isAdmin', 'isSuperAdmin', 'isShipping'] },
+    { id: 6, title: 'Warehouse', href: '/warehouse', icon: 'warehouse', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'], child: 
         [
-            { id: 0, title: 'Goods Receipt', href: '/goodsreceipt', icon: 'cubes', roles: ['Admin', 'SuperUser', 'Warehouse'] },
-            { id: 1, title: 'Stock Management', href: '/stockmanagement', icon: 'cubes', roles: ['Admin', 'SuperUser', 'Warehouse'] },
-            { id: 2, title: 'Call-Off Order', href: '/callofforder', icon: 'clipboard-list', roles: ['Admin', 'SuperUser', 'Warehouse'] }, 
-            { id: 3, title: 'PickingLists', href: '/pickinglists', icon: 'clipboard-list', roles: ['Admin', 'SuperUser', 'Warehouse'] },
-            { id: 4, title: 'Outgoing Shipments', href: '/outgoingshipments', icon: 'ship', roles: ['Admin', 'SuperUser', 'Warehouse'] }, 
-            { id: 5, title: 'Project Warehouses', href: '/projectwarhouse', icon: 'industry', roles: ['Admin', 'SuperUser'] } 
+            { id: 0, title: 'Goods Receipt', href: '/goodsreceipt', icon: 'cubes', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] },
+            { id: 1, title: 'Stock Management', href: '/stockmanagement', icon: 'cubes', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] },
+            { id: 2, title: 'Call-Off Order', href: '/callofforder', icon: 'clipboard-list', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
+            { id: 3, title: 'PickingLists', href: '/pickinglists', icon: 'clipboard-list', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] },
+            { id: 4, title: 'Outgoing Shipments', href: '/outgoingshipments', icon: 'ship', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
+            { id: 5, title: 'Project Warehouses', href: '/projectwarhouse', icon: 'industry', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] } 
         ] 
     },
-    { id: 7, title: 'Configuration', href: '/configuration', icon: 'cog', roles: ['Admin', 'ProjectAdmin', 'SuperUser'] }
+    { id: 7, title: 'Configuration', href: '/configuration', icon: 'cog', roles: ['isAdmin', 'isSuperAdmin', 'isConfiguration'] }
 ]
+
+function test(access, user, role) { 
+    const result = access.find(toto => {
+        if (_.isEqual(toto.userId,user.id)){
+            switch (role) {
+                case 'isExpediting': return toto.isExpediting === true;
+                case 'isInspection': return toto.isInspection === true;
+                case 'isShipping': return toto.isShipping === true;
+                case 'isWarehouse': return toto.isWarehouse === true;
+                case 'isConfiguration': return toto.isConfiguration === true;
+                default: return false;
+            }
+        }
+    });
+    return result
+}
+
+function isRole(accesses, user, role) {
+    if (_.isEmpty(accesses)) {
+        return false;
+    } else {
+        if (!_.isEmpty(test(accesses, user, role))) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
 
 class SideBarMenu extends Component {
     constructor(props) {
@@ -78,14 +107,26 @@ class SideBarMenu extends Component {
         this.MobileItem = null
     }
 
-    menuList(menu, user){
+    menuList(menu){
         var listMenu = []
+        const { accesses } = this.props
+        let user = JSON.parse(localStorage.getItem('user'));
         menu.forEach(function(item) {
             if (!item.roles){
                 listMenu.push(item);
             } else if (item.roles.indexOf('isAdmin') > -1 && user.isAdmin) {
                 listMenu.push(item);
             } else if (item.roles.indexOf('isSuperAdmin') > -1 && user.isSuperAdmin) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isExpediting') > -1 && isRole(accesses, user, 'isExpediting')) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isInspection') > -1 && isRole(accesses, user, 'isInspection')) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isShipping') > -1 && isRole(accesses, user, 'isShipping')) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isWarehouse') > -1 && isRole(accesses, user, 'isWarehouse')) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isConfiguration') > -1 && isRole(accesses, user, 'isConfiguration')) {
                 listMenu.push(item);
             }
         });
@@ -94,7 +135,6 @@ class SideBarMenu extends Component {
 
     render() {
         const { projectId } = this.state
-        let currentUser = JSON.parse(localStorage.getItem('user'));
         return (
             <div>
                 {this.isLoggedIn() && 
@@ -103,11 +143,15 @@ class SideBarMenu extends Component {
                             <img src={this.props.collapsed ? icon : logo} />
                         </NavLink>
                         <ul className="default-list menu-list">
-                        {this.isHome() ?
-                            this.menuList(home_menu,currentUser).map((item) => 
-                            <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} />)
-                        :
-                            project_menu.map((item) => <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} />)
+                        {
+                            this.isHome() ?
+                                this.menuList(home_menu).map((item) => 
+                                    <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} />
+                                )
+                            :
+                                this.menuList(project_menu).map((item) => 
+                                    <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} />
+                                )
                         }
                         </ul>
                         <button className="collapse-btn" onClick={this.props.toggleCollapse}>

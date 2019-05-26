@@ -20,10 +20,10 @@ class Layout extends Component {
         return (
             <div >
                 <HeaderBarMenu id="headerbar" className={this.state.collapsed ? "collapsed" : ''} collapsed={this.state.collapsed} toggleCollapse={this.toggleCollapse}/>
-                <SideBarMenu className={this.state.collapsed ? "collapsed" : ''} collapsed={this.state.collapsed} toggleCollapse={this.toggleCollapse}/>
-                    <div id="content" className={this.state.collapsed ? "collapsed " : ''} >
+                <SideBarMenu className={this.state.collapsed ? "collapsed" : ''} collapsed={this.state.collapsed} toggleCollapse={this.toggleCollapse} accesses={this.props.accesses}/>
+                <div id="content" className={this.state.collapsed ? "collapsed " : ''} >
                     {this.props.children}
-                    </div>
+                </div>
                 <Footer />
             </div>
         )

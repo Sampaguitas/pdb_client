@@ -151,6 +151,7 @@ class Dashboard extends React.Component {
         }
     }
 
+
     getById(id) {
         const { project } = this.state;
         const requestOptions = {
@@ -209,9 +210,9 @@ class Dashboard extends React.Component {
 
     render() {
         const { project, graph } = this.state;
-        const { alert } = this.props;
+        const { alert, selection } = this.props;
         return (
-            <Layout>
+        <Layout accesses={selection.project && selection.project.accesses }>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="projectDashboard">
@@ -311,9 +312,10 @@ class Dashboard extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert } = state;
+    const { alert, selection } = state;
     return {
         alert,
+        selection,
     };
 }
 
