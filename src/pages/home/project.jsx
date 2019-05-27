@@ -1,22 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { currencyActions, erpActions, opcoActions, projectActions, userActions } from '../../_actions';
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import { currencyActions, erpActions, opcoActions, projectActions, userActions } from '../../_actions';
 //Components
 import CheckBox from '../../_components/check-box';
 import TableCheckBox from '../../_components/table-check-box';
 import Input from '../../_components/input';
 import Select from '../../_components/select';
 import Layout from '../../_components/layout';
+const _ = require('lodash');
 
 class Project extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             project: {
-                copyId: '',
+                copyId: '5cc98cf8ab2a306e44a8fe90',
                 name: '',
                 erpId: '',
                 currencyId: '',
@@ -42,7 +41,8 @@ class Project extends React.Component {
         this.handleIsConfiguration = this.handleIsConfiguration.bind(this);
     }
     componentDidMount() {
-        const { dispatch } = this.props
+        const { dispatch, projects } = this.props;
+        const { options } = this.state;
         dispatch(currencyActions.getAll());
         dispatch(erpActions.getAll());
         dispatch(opcoActions.getAll());
@@ -166,6 +166,7 @@ class Project extends React.Component {
         const { alert, currencies, erps, loading, opcos, projects, users } = this.props;
         const { loaded, project, submitted } = this.state;
         const { projectUsers } = this.state.project;
+        let user = JSON.parse(localStorage.getItem('user'));
         {users.items && loaded === false && this.stateReload()}
         return (
             <Layout>
