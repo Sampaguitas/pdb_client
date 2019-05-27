@@ -20,7 +20,7 @@ function create(erp) {
                 erp => {
                     dispatch(success());
                     // history.push('/');
-                    dispatch(alertActions.success('successfully Created'));
+                    dispatch(alertActions.success('Erp successfully created'));
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -74,7 +74,7 @@ function update(erp) {
             .then(
                 erp => {
                     dispatch(success(erp)),
-                    dispatch(alertActions.success('erp successfully Updated'))
+                    dispatch(alertActions.success('Erp successfully updated'))
                 },
                 error => dispatch(failure(error.toString()))
             );

@@ -74,10 +74,17 @@ class Opco extends React.Component {
 
     handleSubmit(event) {
         event.preventDefault();
+        this.setState({ submitted: true });
         const { opco } = this.state;
         const { dispatch } = this.props;
-        this.setState({ submitted: true });
-        if (opco.name && opco.address && opco.city && opco.country && opco.localeId && opco.regionId) {
+        if (
+            opco.name &&
+            opco.address &&
+            opco.city &&
+            opco.country &&
+            opco.localeId &&
+            opco.regionId
+        ) {
             if(opco.id){
                 dispatch(opcoActions.update(opco));
             } else {
@@ -221,12 +228,12 @@ class Opco extends React.Component {
                                             onChange={this.handleChangeOpco}
                                             submitted={submitted}
                                             inline={false}
-                                            required={true}
+                                            required={false}
                                         />
                                         <Input
                                             title="Country"
                                             name="country"
-                                            type="tel"
+                                            type="text"
                                             value={opco.country}
                                             onChange={this.handleChangeOpco}
                                             submitted={submitted}

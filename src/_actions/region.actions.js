@@ -20,7 +20,7 @@ function create(region) {
                 region => {
                     dispatch(success());
                     // history.push('/');
-                    dispatch(alertActions.success('successfully Created'));
+                    dispatch(alertActions.success('Region successfully created'));
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -74,7 +74,7 @@ function update(region) {
             .then(
                 region => {
                     dispatch(success(region)),
-                    dispatch(alertActions.success('region successfully Updated'))
+                    dispatch(alertActions.success('region successfully updated'))
                 },
                 error => dispatch(failure(error.toString()))
             );

@@ -50,7 +50,7 @@ function register(user) {
                 user => { 
                     dispatch(success());
                     dispatch(userActions.getAll(user));
-                    dispatch(alertActions.success('Registration successful'));
+                    dispatch(alertActions.success('User successfully registered'));
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -104,7 +104,7 @@ function changePwd(user) {
             .then(
                 user => {
                     dispatch(success(user));
-                    dispatch(alertActions.success('Password has been updated'));
+                    dispatch(alertActions.success('Password successfully updated'));
                 },
                 error => dispatch(failure(error.toString()))
             );

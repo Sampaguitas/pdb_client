@@ -9,10 +9,12 @@ export function opcos(state = {}, action) {
             };
         case opcoConstants.CREATE_SUCCESS:
             return {
+                loading: false,
                 items: action.opcos
             };
         case opcoConstants.CREATE_FAILURE:
             return {
+                loading: false,
                 error: action.error
             };
         case opcoConstants.GET_REQUEST:
@@ -21,10 +23,12 @@ export function opcos(state = {}, action) {
             };
         case opcoConstants.GET_SUCCESS:
             return {
+                loading: false,
                 items: action.opcos
             };
         case opcoConstants.GET_FAILURE:
             return {
+                loading: false,
                 error: action.error
             };
         case opcoConstants.GETALL_REQUEST:
@@ -33,10 +37,12 @@ export function opcos(state = {}, action) {
             };
         case opcoConstants.GETALL_SUCCESS:
             return {
+                loading: false,
                 items: action.opcos
             };
         case opcoConstants.GETALL_FAILURE:
             return {
+                loading: false,
                 error: action.error
             };
         case opcoConstants.UPDATE_REQUEST:

@@ -18,9 +18,10 @@ function create(opco) {
         opcoService.create(opco)
             .then(
                 opco => {
-                    dispatch(success());
+                    dispatch(success(opco));
+                    dispatch(alertActions.success('Opco successfully created'));
                     dispatch(opcoActions.getAll());
-                    dispatch(alertActions.success('successfully Created'));
+                    
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -74,7 +75,7 @@ function update(opco) {
             .then(
                 opco => {
                     dispatch(success(opco)),
-                    dispatch(alertActions.success('OPCO successfully Updated'))
+                    dispatch(alertActions.success('OPCO successfully updated'))
                 },
                 error => dispatch(failure(error.toString()))
             );

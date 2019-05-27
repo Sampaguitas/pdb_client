@@ -20,7 +20,7 @@ function create(locale) {
                 locale => {
                     dispatch(success());
                     // history.push('/');
-                    dispatch(alertActions.success('successfully Created'));
+                    dispatch(alertActions.success('Locale successfully created'));
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -74,7 +74,7 @@ function update(locale) {
             .then(
                 locale => {
                     dispatch(success(locale)),
-                    dispatch(alertActions.success('Locale successfully Updated'))
+                    dispatch(alertActions.success('Locale successfully updated'))
                 },
                 error => dispatch(failure(error.toString()))
             );

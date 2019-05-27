@@ -1,6 +1,6 @@
 import { projectConstants } from '../_constants';
 import { projectService } from '../_services';
-import { alertActions, opcoActions } from './';
+import { alertActions } from './';
 import { history } from '../_helpers';
 
 export const projectActions = {
@@ -18,9 +18,9 @@ function create(project) {
         projectService.create(project)
             .then(
                 project => {
-                    dispatch(success());
-                    dispatch(alertActions.success('successfully Created'));
-                    dispatch(opcoActions.getAll());
+                    dispatch(success(project));
+                    dispatch(alertActions.success('Project successfully created'));
+                    dispatch(projectActions.getAll());
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -74,7 +74,7 @@ function update(project) {
             .then(
                 project => {
                     dispatch(success(project)),
-                    dispatch(alertActions.success('Project successfully Updated'))
+                    dispatch(alertActions.success('Project successfully updated'))
                 },
                 error => dispatch(failure(error.toString()))
             );

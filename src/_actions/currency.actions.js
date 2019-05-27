@@ -20,7 +20,7 @@ function create(currency) {
                 currency => {
                     dispatch(success());
                     // history.push('/');
-                    dispatch(alertActions.success('successfully Created'));
+                    dispatch(alertActions.success('Currency successfully created'));
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -74,7 +74,7 @@ function update(currency) {
             .then(
                 currency => {
                     dispatch(success(currency)),
-                    dispatch(alertActions.success('currency successfully Updated'))
+                    dispatch(alertActions.success('Currency successfully updated'))
                 },
                 error => dispatch(failure(error.toString()))
             );
