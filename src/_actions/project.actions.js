@@ -61,7 +61,7 @@ function getById(id) {
             );
     };
 
-    function request() { return { type: projectConstants.GET_REQUEST } }
+    function request(id) { return { type: projectConstants.GET_REQUEST } }
     function success(project) { return { type: projectConstants.GET_SUCCESS, project } }
     function failure(id, error) { return { type: projectConstants.GET_FAILURE, id, error } }
 }

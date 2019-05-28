@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { history } from '../_helpers';
 import { alertActions } from '../_actions';
 // pages
-import { PrivateRoute, AdminRoute } from '../_components';
+import { PrivateRoute } from '../_components';
 import { Home } from '../pages/home/home.jsx';
 
 import { NotFound } from '../pages/account/notfound.jsx';
@@ -56,14 +56,6 @@ class App extends React.Component {
 
     render() {
         let user = localStorage.getItem("user");
-        let isAdmin = false;
-        if(user){
-            try{
-                user = JSON.parse(user);
-                isAdmin = !!user.isAdmin;
-            } catch(e){}
-            
-        }
         return (
             <Router history={history}>
                 <div>
@@ -71,7 +63,7 @@ class App extends React.Component {
                     <Route path="/login" component={Login} user={user}/>
                     <PrivateRoute exact path="/" component={Home} user={user}/>
                     <PrivateRoute path="/user" component={User} user={user}/>
-                    <AdminRoute path="/settings" component={Settings} isAdmin={isAdmin}/>
+                    <PrivateRoute path="/settings" component={Settings} user={user}/>
                     <PrivateRoute path="/opco" component={Opco} user={user}/>
                     <PrivateRoute path="/project" component={Project} user={user}/>
                     <PrivateRoute path="/dashboard" component={Dashboard} user={user}/>

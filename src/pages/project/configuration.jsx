@@ -43,7 +43,7 @@ class Configuration extends React.Component {
 
     }
     componentDidMount(){
-        const { location, dispatch } = this.props
+        const { dispatch, location } = this.props
         dispatch(currencyActions.getAll());
         dispatch(erpActions.getAll());
         dispatch(opcoActions.getAll());
@@ -52,7 +52,7 @@ class Configuration extends React.Component {
         var qs = queryString.parse(location.search);
         if (qs.id) {
             this.getById(qs.id);
-            this.props.dispatch(projectActions.getById(qs.id));
+            dispatch(projectActions.getById(qs.id));
         }
     }
     handleCheck(event) {
@@ -141,8 +141,9 @@ class Configuration extends React.Component {
             <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
+                <h2>Configuration : {selection.project && selection.project.name}</h2>
+                <hr />
                 <div id="configuration">
-                    <h2>Project Configuration</h2>
                     <Tabs 
                         currencies={currencies}
                         deleting={deleting}

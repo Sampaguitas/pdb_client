@@ -46,7 +46,7 @@ const project_menu = [
             { id: 2, title: 'Call-off order', href: '/callofforder', icon: 'clipboard-list', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
             { id: 3, title: 'Picking lists', href: '/pickinglists', icon: 'clipboard-list', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] },
             { id: 4, title: 'Outgoing shipments', href: '/outgoingshipments', icon: 'ship', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
-            { id: 5, title: 'Project warehouses', href: '/projectwarhouse', icon: 'industry', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] } 
+            { id: 5, title: 'Warehouse locations', href: '/projectwarhouse', icon: 'industry', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] } 
         ] 
     },
     { id: 6, title: 'Configuration', href: '/configuration', icon: 'cog', roles: ['isAdmin', 'isSuperAdmin', 'isConfiguration'] }
