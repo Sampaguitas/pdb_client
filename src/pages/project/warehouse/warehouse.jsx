@@ -27,7 +27,7 @@ class Warehouse extends React.Component {
             <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
-                <h2>Warehouse - Warehouse : {selection.project && selection.project.name}</h2>
+                <h2>Warehouse: {selection.project && selection.project.name}</h2>
                 <hr />
                 <div id="warehouse">
                     <div className="col-md-4 offset-md-3">
