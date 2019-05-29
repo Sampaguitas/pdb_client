@@ -19,8 +19,8 @@ import './side-bar-menu.scss'
 
 const home_menu = [
     { id: 0, title: 'Overview', href: '/', icon: 'home' },
-    { id: 1, title: 'Add Operation Company', href: '/opco', icon: 'plus', roles: ['isSuperAdmin'] },
-    { id: 2, title: 'Add Project', href: '/project', icon: 'plus', roles: ['isAdmin', 'isSuperAdmin'] }
+    { id: 1, title: 'Add operation company', href: '/opco', icon: 'plus', roles: ['isSuperAdmin'] },
+    { id: 2, title: 'Add project', href: '/project', icon: 'plus', roles: ['isAdmin', 'isSuperAdmin'] }
 ]
 
 const project_menu = [

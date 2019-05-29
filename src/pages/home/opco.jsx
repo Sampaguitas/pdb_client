@@ -136,14 +136,14 @@ class Opco extends React.Component {
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
-                <h2>Add Operation Company</h2>
+                <h2>Add operation company</h2>
                 <hr />
                 <div id="Opco">
                     <div className="row">
                         <div className="col-md-8 col-sm-12 mb-sm-3">
                             <div className="card">
                                 <div className="card-header">
-                                    <h5>Operation Companies</h5>
+                                    <h5>Operation companies</h5>
                                 </div>
                                 <div className="card-body table-responsive">
                                     <table className="table table-hover">

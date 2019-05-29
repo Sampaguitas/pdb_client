@@ -173,7 +173,7 @@ class Project extends React.Component {
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
                 <div id="setting">
-                    <h2>Add Project</h2>
+                    <h2>Add project</h2>
                     <hr />
                     <div className="row">
                         <div className="col-md-8 col-sm-12 mb-sm-3">
