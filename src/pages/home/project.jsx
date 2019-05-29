@@ -179,7 +179,7 @@ class Project extends React.Component {
                         <div className="col-md-8 col-sm-12 mb-sm-3">
                             <div className="card">
                                 <div className="card-header">
-                                    <h5>Assign users to project</h5>
+                                    <h5>Set user roles</h5>
                                 </div>
                                 <div className="card-body table-responsive">
                                     <table className="table table-hover">

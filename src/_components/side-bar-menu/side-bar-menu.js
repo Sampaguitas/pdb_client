@@ -29,24 +29,24 @@ const project_menu = [
     { id: 2, title: 'Expediting', href: '/expediting', icon: 'stopwatch', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'] },
     { id: 3, title: 'Inspection', href: '/inspection', icon: 'search', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'], child:
         [
-            { id: 0, title: 'Release data', href: '/releasedata', icon: 'clipboard-list', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'] },
-            { id: 1, title: 'Certificates', href: '/certificates', icon: 'certificate', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'] },
+            { id: 0, title: 'Release data', href: '/releasedata', icon: 'clipboard-check', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'] },
+            { id: 1, title: 'Certificates', href: '/certificates', icon: 'file-certificate', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'] },
         ]
     },
     { id: 4, title: 'Shipping', href: '/shipping', icon: 'ship', roles: ['isAdmin', 'isSuperAdmin', 'isShipping'], child:
         [
-            { id: 0, title: 'Transport docs', href: '/transportdocs', icon: 'clipboard-list', roles: ['isAdmin', 'isSuperAdmin', 'isShipping'] },
+            { id: 0, title: 'Transport docs', href: '/transportdocs', icon: 'passport', roles: ['isAdmin', 'isSuperAdmin', 'isShipping'] },
             { id: 1, title: 'Packing details', href: '/packingdetails', icon: 'box-open', roles: ['isAdmin', 'isSuperAdmin', 'isShipping'] },            
         ]
     },
     { id: 5, title: 'Warehouse', href: '/warehouse', icon: 'warehouse', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'], child: 
         [
             { id: 0, title: 'Goods receipt', href: '/goodsreceipt', icon: 'cubes', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] },
-            { id: 1, title: 'Stock management', href: '/stockmanagement', icon: 'cubes', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] },
-            { id: 2, title: 'Call-off order', href: '/callofforder', icon: 'clipboard-list', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
+            { id: 1, title: 'Stock management', href: '/stockmanagement', icon: 'forklift', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] },
+            { id: 2, title: 'Call-off order', href: '/callofforder', icon: 'phone-square', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
             { id: 3, title: 'Picking lists', href: '/pickinglists', icon: 'clipboard-list', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] },
             { id: 4, title: 'Outgoing shipments', href: '/outgoingshipments', icon: 'ship', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
-            { id: 5, title: 'Warehouse locations', href: '/projectwarhouse', icon: 'industry', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] } 
+            { id: 5, title: 'Warehouse locations', href: '/projectwarhouse', icon: 'inventory', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] } 
         ] 
     },
     { id: 6, title: 'Configuration', href: '/configuration', icon: 'cog', roles: ['isAdmin', 'isSuperAdmin', 'isConfiguration'] }

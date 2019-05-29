@@ -37,14 +37,14 @@ class Inspection extends React.Component {
                     <NavLink to={{ 
                             pathname: "/releasedata",
                             search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
                         <div className="card-body">
                             <div className="text-center">
                                 <FontAwesomeIcon 
-                                    icon="clipboard-list" 
+                                    icon="clipboard-check" 
                                     className="fa-5x" 
-                                    name="clipboard-list"
+                                    name="clipboard-check"
                                 />
                                 <h3>Release data</h3>
                             </div>
@@ -53,14 +53,14 @@ class Inspection extends React.Component {
                     <NavLink to={{ 
                             pathname: "/certificates",
                             search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
                         <div className="card-body">
                             <div className="text-center">
                                 <FontAwesomeIcon 
-                                    icon="certificate" 
+                                    icon="file-certificate" 
                                     className="fa-5x" 
-                                    name="certificate"
+                                    name="file-certificate"
                                 />
                                 <h3>Certificates</h3>
                             </div>

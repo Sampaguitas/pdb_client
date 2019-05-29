@@ -41,7 +41,7 @@ import '../_styles/main.css';
 
 //Icons
 import { library } from '@fortawesome/fontawesome-svg-core';
-import { fas } from '@fortawesome/free-solid-svg-icons';
+import { fas } from '@fortawesome/pro-solid-svg-icons';
 library.add(fas)
 
 

@@ -5,7 +5,7 @@ import CheckBox from '../../../../_components/check-box';
 import Input from '../../../../_components/input';
 import Select from '../../../../_components/select';
 
-class General extends React.Component {
+class Suppliers extends React.Component {
     render() {
         const { 
                 currencies, 
@@ -25,18 +25,22 @@ class General extends React.Component {
                     <div className="col-md-8 col-sm-12 mb-sm-3">
                         <div className="card">
                             <div className="card-header">
-                                <h5>Set user roles</h5>
+                                <h5>Suppliers</h5>
                             </div>
                             <div className="card-body table-responsive">
                                 <table className="table table-hover">
                                     <thead>
                                         <tr>
-                                            <th>User</th>
-                                            <th>Expediting</th>
-                                            <th>Inspection</th>
-                                            <th>Shipping</th>
-                                            <th>Warehouse</th>
-                                            <th>Config</th>
+                                            <th>Name</th>
+                                            <th>Registered Name</th>
+                                            <th>Contact</th>
+                                            <th>Position</th>
+                                            <th>Tel</th>
+                                            <th>Fax</th>
+                                            <th>Mail</th>
+                                            <th>Address</th>
+                                            <th>City</th>
+                                            <th>Country</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -46,7 +50,7 @@ class General extends React.Component {
                     <div className="col-md-4 col-sm-12">
                         <div className="card">
                             <div className="card-header">
-                                <h5>General information</h5>
+                                <h5>Add supplier</h5>
                             </div>
                             <div className="card-body">
                                 <form onSubmit={handleSubmit}>
@@ -115,4 +119,4 @@ class General extends React.Component {
     }
 }
 
-export default General;
+export default Suppliers;

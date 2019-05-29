@@ -8,16 +8,16 @@ import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs'
 
 import General from './tabs/configuration/general';
+import Suppliers from './tabs/configuration/suppliers';
 import Translations from './tabs/configuration/translations';
-import ProjectUsers from './tabs/configuration/projectusers';
 import Grids from './tabs/configuration/grids';
 import Templates from './tabs/configuration/templates';
 
 
 const tabs = [
     {index: 0, id: 'general', label: 'General', component: General, active: true, isLoaded: false},
-    {index: 1, id: 'translations', label: 'Translations', component: Translations, active: false, isLoaded: false},
-    {index: 2, id: 'project-users', label: 'Project Users', component: ProjectUsers, active: false, isLoaded: false},
+    {index: 1, id: 'suppliers', label: 'Suppliers', component: Suppliers, active: false, isLoaded: false},
+    {index: 2, id: 'translations', label: 'Translations', component: Translations, active: false, isLoaded: false},
     {index: 3, id: 'fields', label: 'Grids', component: Grids, active: false, isLoaded: false},
     {index: 4, id: 'templates', label: 'Templates', component: Templates, active: false, isLoaded: false}
 ]

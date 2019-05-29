@@ -37,7 +37,7 @@ class Warehouse extends React.Component {
                     <NavLink to={{ 
                             pathname: "/goodsreceipt",
                             search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
                         <div className="card-body">
                             <div className="text-center">
@@ -53,14 +53,14 @@ class Warehouse extends React.Component {
                     <NavLink to={{ 
                             pathname: "/stockmanagement",
                             search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
                         <div className="card-body">
                             <div className="text-center">
                                 <FontAwesomeIcon 
-                                    icon="cubes" 
+                                    icon="forklift" 
                                     className="fa-5x" 
-                                    name="cubes"
+                                    name="forklift"
                                 />
                                 <h3>Stock management</h3>
                             </div>
@@ -69,14 +69,14 @@ class Warehouse extends React.Component {
                     <NavLink to={{ 
                             pathname: "/callofforder",
                             search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
                         <div className="card-body">
                             <div className="text-center">
                                 <FontAwesomeIcon 
-                                    icon="clipboard-list" 
+                                    icon="phone-square" 
                                     className="fa-5x" 
-                                    name="clipboard-list"
+                                    name="phone-square"
                                 />
                                 <h3>Call-off order</h3>
                             </div>
@@ -85,7 +85,7 @@ class Warehouse extends React.Component {
                     <NavLink to={{ 
                             pathname: "/pickinglists",
                             search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
                         <div className="card-body">
                             <div className="text-center">
@@ -101,7 +101,7 @@ class Warehouse extends React.Component {
                     <NavLink to={{ 
                             pathname: "/outgoingshipments",
                             search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
                         <div className="card-body">
                             <div className="text-center">
@@ -117,14 +117,14 @@ class Warehouse extends React.Component {
                     <NavLink to={{ 
                             pathname: "/projectwarhouse",
                             search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
                         <div className="card-body">
                             <div className="text-center">
                                 <FontAwesomeIcon 
-                                    icon="industry" 
+                                    icon="inventory" 
                                     className="fa-5x" 
-                                    name="industry"
+                                    name="inventory"
                                 />
                                 <h3>Warehouse locations</h3>
                             </div>

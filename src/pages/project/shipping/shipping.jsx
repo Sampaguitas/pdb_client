@@ -37,14 +37,14 @@ class Shipping extends React.Component {
                     <NavLink to={{ 
                             pathname: "/transportdocs",
                             search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
                         <div className="card-body">
                             <div className="text-center">
                                 <FontAwesomeIcon 
-                                    icon="clipboard-list" 
+                                    icon="passport" 
                                     className="fa-5x" 
-                                    name="clipboard-list"
+                                    name="passport"
                                 />
                                 <h3>Transport docs</h3>
                             </div>
@@ -53,7 +53,7 @@ class Shipping extends React.Component {
                     <NavLink to={{ 
                             pathname: "/packingdetails",
                             search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
                         <div className="card-body">
                             <div className="text-center">
