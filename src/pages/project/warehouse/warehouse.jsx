@@ -9,7 +9,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 class Warehouse extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {}
+        this.state = {
+            projectId:''
+        }
     }
 
     componentDidMount() {
@@ -17,6 +19,7 @@ class Warehouse extends React.Component {
         var qs = queryString.parse(location.search);
         if (qs.id) {
             dispatch(projectActions.getById(qs.id));
+            this.setState({projectId: qs.id})
         }
     }
 
@@ -30,23 +33,103 @@ class Warehouse extends React.Component {
                 <h2>Warehouse: {selection.project && selection.project.name}</h2>
                 <hr />
                 <div id="warehouse">
-                    <div className="col-md-4 offset-md-3">
-                        <NavLink to={{ 
-                                pathname: "/projectwarhouse",
-                                search: '?id=' + projectId
-                            }} className="card" tag="a"
-                        >
-                            <div className="card-body">
-                                <div className="text-center">
-                                    <FontAwesomeIcon 
-                                        icon="industry" 
-                                        className="fa-5x" 
-                                        name="industry"
-                                    />
-                                    <h3>Project Warehouses</h3>
-                                </div>
+                    <div className="row justify-content-center">
+                    <NavLink to={{ 
+                            pathname: "/goodsreceipt",
+                            search: '?id=' + projectId
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                    >
+                        <div className="card-body">
+                            <div className="text-center">
+                                <FontAwesomeIcon 
+                                    icon="cubes" 
+                                    className="fa-5x" 
+                                    name="cubes"
+                                />
+                                <h3>Goods receipt</h3>
                             </div>
-                        </NavLink>
+                        </div>
+                    </NavLink>
+                    <NavLink to={{ 
+                            pathname: "/stockmanagement",
+                            search: '?id=' + projectId
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                    >
+                        <div className="card-body">
+                            <div className="text-center">
+                                <FontAwesomeIcon 
+                                    icon="cubes" 
+                                    className="fa-5x" 
+                                    name="cubes"
+                                />
+                                <h3>Stock management</h3>
+                            </div>
+                        </div>
+                    </NavLink>
+                    <NavLink to={{ 
+                            pathname: "/callofforder",
+                            search: '?id=' + projectId
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                    >
+                        <div className="card-body">
+                            <div className="text-center">
+                                <FontAwesomeIcon 
+                                    icon="clipboard-list" 
+                                    className="fa-5x" 
+                                    name="clipboard-list"
+                                />
+                                <h3>Call-off order</h3>
+                            </div>
+                        </div>
+                    </NavLink>
+                    <NavLink to={{ 
+                            pathname: "/pickinglists",
+                            search: '?id=' + projectId
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                    >
+                        <div className="card-body">
+                            <div className="text-center">
+                                <FontAwesomeIcon 
+                                    icon="clipboard-list" 
+                                    className="fa-5x" 
+                                    name="clipboard-list"
+                                />
+                                <h3>Picking lists</h3>
+                            </div>
+                        </div>
+                    </NavLink>
+                    <NavLink to={{ 
+                            pathname: "/outgoingshipments",
+                            search: '?id=' + projectId
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                    >
+                        <div className="card-body">
+                            <div className="text-center">
+                                <FontAwesomeIcon 
+                                    icon="ship" 
+                                    className="fa-5x" 
+                                    name="ship"
+                                />
+                                <h3>Outgoing shipments</h3>
+                            </div>
+                        </div>
+                    </NavLink>
+                    <NavLink to={{ 
+                            pathname: "/projectwarhouse",
+                            search: '?id=' + projectId
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0" tag="a"
+                    >
+                        <div className="card-body">
+                            <div className="text-center">
+                                <FontAwesomeIcon 
+                                    icon="industry" 
+                                    className="fa-5x" 
+                                    name="industry"
+                                />
+                                <h3>Warehouse locations</h3>
+                            </div>
+                        </div>
+                    </NavLink>
                     </div>
                 </div>
             </Layout>
