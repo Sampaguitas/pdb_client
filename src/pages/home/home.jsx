@@ -104,30 +104,45 @@ class Home extends React.Component {
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
-                <h2>Select your project</h2>
+                <h2>Overview</h2>
                 <hr />
-                <table className="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col" style={{width:'15%'}}>Project No<br />
-                            <input className="form-control" name="number" value={number} onChange={this.handleChange} />
-                            </th>
-                            <th scope="col" style={{width:'70%'}}>Project<br />
-                            <input className="form-control" name="name" value={name} onChange={this.handleChange} />
-                            </th>
-                            <th scope="col" style={{width:'15%'}}>ERP<br />
-                            <input className="form-control" name="erp" value={erp} onChange={this.handleChange} />
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { this.props.projects.items &&  !this.state.loaded ?
-                            this.props.projects.items && this.props.projects.items.map((project) => <ProjectRow project={project} key={project._id} />)
-                         :
-                            this.state.projects && this.state.projects.map((project) => <ProjectRow project={project} key={project._id} />)
-                        }
-                    </tbody>
-                </table>
+                <div id="overview">
+                    <div className="row">
+                        <div className="col-12">
+                            <div className="card">
+                                <div className="card-header">
+                                    <h5>Select your project</h5>
+                                </div>
+                                <div className="card-body table-responsive">
+                                    <table className="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" style={{width:'15%'}}>Project No<br />
+                                                <input className="form-control" name="number" value={number} onChange={this.handleChange} />
+                                                </th>
+                                                <th scope="col" style={{width:'70%'}}>Project<br />
+                                                <input className="form-control" name="name" value={name} onChange={this.handleChange} />
+                                                </th>
+                                                <th scope="col" style={{width:'15%'}}>ERP<br />
+                                                <input className="form-control" name="erp" value={erp} onChange={this.handleChange} />
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            { this.props.projects.items &&  !this.state.loaded ?
+                                                this.props.projects.items && this.props.projects.items.map((project) => <ProjectRow project={project} key={project._id} />)
+                                            :
+                                                this.state.projects && this.state.projects.map((project) => <ProjectRow project={project} key={project._id} />)
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
             </Layout>
         );
     }

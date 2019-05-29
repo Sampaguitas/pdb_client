@@ -136,9 +136,9 @@ class Opco extends React.Component {
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
-                <div id="Opco">
                 <h2>Add Operation Company</h2>
-                    <hr />
+                <hr />
+                <div id="Opco">
                     <div className="row">
                         <div className="col-md-8 col-sm-12 mb-sm-3">
                             <div className="card">
