@@ -26,6 +26,23 @@ function projectSorted(project) {
     return newArray;
 }
 
+function doesMatch(search, array, type) {
+    if (!search) {
+        return true;
+    } else if (!array) {
+        return true;
+    } else {
+        switch(type) {
+            case 'String':
+                // search = search.replace(/([()[{*+.$^\\|?])/g, "");
+                return !!array.match(new RegExp(search, "i"));
+            case 'Number': 
+                return array == Number(search);
+            default: return true;
+        }
+    }
+}
+
 class Home extends React.Component {
     constructor(props) {
         super(props);
@@ -66,50 +83,14 @@ class Home extends React.Component {
     }
 
     filterName(number, name, opco, erp){
-        if (!number && !name && !opco && !erp) {
-            this.setState({
-                projects: projectSorted(this.props.projects.items)
-            });
-        } else {
-            name = name.replace(/([()[{*+.$^\\|?])/g, "");
-            opco = opco.replace(/([()[{*+.$^\\|?])/g, "");
-            erp = erp.replace(/([()[{*+.$^\\|?])/g, "");
             this.setState({
                 projects: projectSorted(this.props.projects.items).filter(function (project) {
-                    if (number && name && opco && erp) {
-                        return project.number == Number(number) && !!project.name.match(new RegExp(name, "i")) && !!project.opco.name.match(new RegExp(opco, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
-                    } else if(number && name && opco) {
-                        return project.number == Number(number) && !!project.name.match(new RegExp(name, "i")) && !!project.opco.name.match(new RegExp(opco, "i"))
-                    } else if(number && name && erp) {
-                        return project.number == Number(number) && !!project.name.match(new RegExp(name, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
-                    } else if(number && opco && erp) {
-                        return project.number == Number(number) && !!project.opco.name.match(new RegExp(opco, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
-                    } else if(name && opco && erp) {
-                        return !!project.name.match(new RegExp(name, "i")) && !!project.opco.name.match(new RegExp(opco, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
-                    } else if(number && name) {
-                        return project.number == Number(number) && !!project.name.match(new RegExp(name, "i"))
-                    } else if(number && opco) {
-                        return project.number == Number(number) && !!project.opco.name.match(new RegExp(opco, "i"))
-                    } else if (number && erp) {
-                        return project.number == Number(number) && !!project.erp.name.match(new RegExp(erp, "i"))
-                    } else if(name && opco){
-                        return !!project.name.match(new RegExp(name, "i")) && !!project.opco.name.match(new RegExp(opco, "i"))
-                    } else if(name && erp){
-                        return !!project.name.match(new RegExp(name, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
-                    } else if(opco && erp){
-                        return !!project.opco.name.match(new RegExp(opco, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
-                    } else if (number) {
-                        return project.number == Number(number)
-                    } else if (name) {
-                        return !!project.name.match(new RegExp(name, "i"))
-                    } else if (opco) {
-                        return !!project.opco.name.match(new RegExp(opco, "i"))
-                    } else {
-                        return !!project.erp.name.match(new RegExp(erp, "i"))
-                    }
+                    return (doesMatch(number, project.number, 'Number') 
+                    && doesMatch(name, project.name, 'String') 
+                    && doesMatch(opco, project.opco.name, 'String') 
+                    && doesMatch(erp, project.erp.name, 'String'));
                 })
             });
-        }
     }
 
 
