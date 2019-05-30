@@ -22,6 +22,7 @@ class ProjectRow extends Component {
             <tr key={project._id} onClick={(event) => this.handleOnclick(event)}>
                 <td>{project.number}</td>
                 <td>{project.name}</td>
+                <td>{project.opco.name}</td>
                 <td>{project.erp.name}</td>
             </tr>
         );

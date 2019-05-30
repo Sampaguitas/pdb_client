@@ -32,6 +32,7 @@ class Home extends React.Component {
         this.state = {
             number: '',
             name: '',
+            opco:'',
             erp: '',
             projects: [],
             loaded: false
@@ -60,32 +61,49 @@ class Home extends React.Component {
         this.setState({
             [name]: value
         }, () => {
-            this.filterName(this.state.number, this.state.name, this.state.erp);
+            this.filterName(this.state.number, this.state.name, this.state.opco, this.state.erp);
         });
     }
 
-    filterName(number, name, erp){
-        if (!number && !name && !erp) {
+    filterName(number, name, opco, erp){
+        if (!number && !name && !opco && !erp) {
             this.setState({
                 projects: projectSorted(this.props.projects.items)
             });
         } else {
-            name = name.replace(/([()[{*+.$^\\|?])/g, ""); 
+            name = name.replace(/([()[{*+.$^\\|?])/g, "");
+            opco = opco.replace(/([()[{*+.$^\\|?])/g, "");
             erp = erp.replace(/([()[{*+.$^\\|?])/g, "");
             this.setState({
                 projects: projectSorted(this.props.projects.items).filter(function (project) {
-                    if(number && name && erp) {
+                    if (number && name && opco && erp) {
+                        return project.number == Number(number) && !!project.name.match(new RegExp(name, "i")) && !!project.opco.name.match(new RegExp(opco, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
+                    } else if(number && name && opco) {
+                        return project.number == Number(number) && !!project.name.match(new RegExp(name, "i")) && !!project.opco.name.match(new RegExp(opco, "i"))
+                    } else if(number && name && erp) {
                         return project.number == Number(number) && !!project.name.match(new RegExp(name, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
+                    } else if(number && opco && erp) {
+                        return project.number == Number(number) && !!project.opco.name.match(new RegExp(opco, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
+                    } else if(name && opco && erp) {
+                        return !!project.name.match(new RegExp(name, "i")) && !!project.opco.name.match(new RegExp(opco, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
                     } else if(number && name) {
                         return project.number == Number(number) && !!project.name.match(new RegExp(name, "i"))
+                    } else if(number && opco) {
+                        return project.number == Number(number) && !!project.opco.name.match(new RegExp(opco, "i"))
                     } else if (number && erp) {
                         return project.number == Number(number) && !!project.erp.name.match(new RegExp(erp, "i"))
+                    } else if(name && opco){
+                        return !!project.name.match(new RegExp(name, "i")) && !!project.opco.name.match(new RegExp(opco, "i"))
                     } else if(name && erp){
                         return !!project.name.match(new RegExp(name, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
+                    } else if(opco && erp){
+                        return !!project.opco.name.match(new RegExp(opco, "i")) && !!project.erp.name.match(new RegExp(erp, "i"))
                     } else if (number) {
                         return project.number == Number(number)
                     } else if (name) {
                         return !!project.name.match(new RegExp(name, "i"))
+                    } else if (opco) {
+                        return !!project.opco.name.match(new RegExp(opco, "i"))
                     } else {
                         return !!project.erp.name.match(new RegExp(erp, "i"))
                     }
@@ -97,7 +115,7 @@ class Home extends React.Component {
 
 
     render() {
-        const { number, name, erp } = this.state;
+        const { number, name, opco, erp } = this.state;
         const { alert, loading } = this.props;
         {this.props.projects.items && this.state.loaded === false && this.stateReload()}
         return (
@@ -117,13 +135,16 @@ class Home extends React.Component {
                                     <table className="table table-hover">
                                         <thead>
                                             <tr>
-                                                <th scope="col" style={{width:'15%'}}>Project No<br />
+                                                <th scope="col" style={{width: '15%'}}>Nr<br />
                                                 <input className="form-control" name="number" value={number} onChange={this.handleChange} />
                                                 </th>
-                                                <th scope="col" style={{width:'70%'}}>Project<br />
+                                                <th scope="col">Project<br />
                                                 <input className="form-control" name="name" value={name} onChange={this.handleChange} />
                                                 </th>
-                                                <th scope="col" style={{width:'15%'}}>ERP<br />
+                                                <th scope="col">Opco<br />
+                                                <input className="form-control" name="opco" value={opco} onChange={this.handleChange} />
+                                                </th>
+                                                <th scope="col" style={{width: '15%'}}>ERP<br />
                                                 <input className="form-control" name="erp" value={erp} onChange={this.handleChange} />
                                                 </th>
                                             </tr>
