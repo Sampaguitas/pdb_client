@@ -10,6 +10,8 @@ export const userActions = {
     getAll,
     update,
     changePwd,
+    setAdmin,
+    setSpAdmin,
     delete: _delete
 };
 
@@ -113,6 +115,50 @@ function changePwd(user) {
     function request() { return { type: userConstants.CHANGEPWD_REQUEST } }
     function success(user) { return { type: userConstants.CHANGEPWD_SUCCESS, user } }
     function failure(error) { return { type: userConstants.CHANGEPWD_FAILURE, error } }
+}
+
+function setAdmin(user) {
+    return dispatch => {
+        dispatch(request(user));
+
+        userService.setAdmin(user)
+            .then(
+                user => {
+                    dispatch(success(user)),
+                    dispatch(userActions.getAll(user));
+                },
+                error => {
+                    dispatch(failure(error.toString()))
+                    dispatch(alertActions.error(error.toString()));
+                }
+            );
+    };
+
+    function request() { return { type: userConstants.SETADMIN_REQUEST } }
+    function success(user) { return { type: userConstants.SETADMIN_SUCCESS, user } }
+    function failure(error) { return { type: userConstants.SETADMIN_FAILURE, error } }
+}
+
+function setSpAdmin(user) {
+    return dispatch => {
+        dispatch(request(user));
+
+        userService.setSpAdmin(user)
+            .then(
+                user => {
+                    dispatch(success(user)),
+                    dispatch(userActions.getAll(user));
+                },
+                error => {
+                    dispatch(failure(error.toString()))
+                    dispatch(alertActions.error(error.toString()));
+                }
+            );
+    };
+
+    function request() { return { type: userConstants.SETSPADMIN_REQUEST } }
+    function success(user) { return { type: userConstants.SETSPADMIN_SUCCESS, user } }
+    function failure(error) { return { type: userConstants.SETSPADMIN_FAILURE, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

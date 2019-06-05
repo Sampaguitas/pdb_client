@@ -13,17 +13,19 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './home.css';
 
 function projectSorted(project) {
-    const newArray = project
-    newArray.sort(function(a,b){
-        if (a.number < b.number) {
-            return -1;
-        }
-        if (a.number > b.number) {
-            return 1;
-        }
-        return 0;
-    });
-    return newArray;
+    if (project.items) {
+        const newArray = project.items
+        newArray.sort(function(a,b){
+            if (a.number < b.number) {
+                return -1;
+            }
+            if (a.number > b.number) {
+                return 1;
+            }
+            return 0;
+        });
+        return newArray;
+    }
 }
 
 function doesMatch(search, array, type) {
@@ -34,7 +36,7 @@ function doesMatch(search, array, type) {
     } else {
         switch(type) {
             case 'String':
-                // search = search.replace(/([()[{*+.$^\\|?])/g, "");
+                search = search.replace(/([()[{*+.$^\\|?])/g, "");
                 return !!array.match(new RegExp(search, "i"));
             case 'Number': 
                 return array == Number(search);
@@ -65,7 +67,7 @@ class Home extends React.Component {
     }
     stateReload(){
         if (this.props.projects.items) {
-            const sorted = projectSorted(this.props.projects.items)
+            const sorted = projectSorted(this.props.projects)
             this.setState({
                 projects: sorted,
                 loaded: true,
@@ -83,14 +85,16 @@ class Home extends React.Component {
     }
 
     filterName(number, name, opco, erp){
+        if (this.props.projects.items) {
             this.setState({
-                projects: projectSorted(this.props.projects.items).filter(function (project) {
+                projects: projectSorted(this.props.projects).filter(function (project) {
                     return (doesMatch(number, project.number, 'Number') 
                     && doesMatch(name, project.name, 'String') 
                     && doesMatch(opco, project.opco.name, 'String') 
                     && doesMatch(erp, project.erp.name, 'String'));
                 })
             });
+        }
     }
 
 

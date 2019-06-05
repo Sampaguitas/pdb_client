@@ -1,31 +1,36 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import "./modal.css";
 
-import './modal.css';
-
-const modal = (props) => {
+class Modal extends React.Component {
+  render() {
+    if(!this.props.show){
+        return null;
+    }
     return (
-        <div>
-            <div className="modal-wrapper"
-                style={{
-                    transform: props.show ? 'translateY(0vh)' : 'translateY(-100vh)',
-                    opacity: props.show ? '1' : '0'
-                }}>
-                <div className="modal-header">
-                    <h3>Modal Header</h3>
-                    <span className="close-modal-btn" onClick={props.close}>×</span>
+        <div className="modal" role="dialog" style={{display: 'block'}}>
+            <div className="modal-dialog" role="document">
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title">{this.props.title}</h5>
+                        <button type="button" className="close" onClick={this.props.hideModal} data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div className="modal-body">
+                        {this.props.children}
+                    </div>     
                 </div>
-                <div className="modal-body">
-                    <p>
-                        {props.children}
-                    </p>
-                </div>
-                <div className="modal-footer">
-                    <button className="btn-cancel" onClick={props.close}>CLOSE</button>
-                    <button className="btn-continue">CONTINUE</button>
-                </div>
-            </div>
+            </div> 
         </div>
-    )
+    );
+  }
 }
 
-export default modal;
+// Modal.propTypes = {
+// //   onClose: PropTypes.func.isRequired,
+//   show: PropTypes.bool,
+//   children: PropTypes.node
+// };
+
+export default Modal;

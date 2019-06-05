@@ -16,16 +16,16 @@ class TableCheckBoxAdmin extends Component {
             }
         };
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.update = this.update.bind(this);
+        this.setAdmin = this.setAdmin.bind(this);
         this.handleResponse = this.handleResponse.bind(this);
     }
-    update(user) {
+    setAdmin(user) {
         const requestOptions = {
             method: 'PUT',
             headers: { ...authHeader(), 'Content-Type': 'application/json' },
             body: JSON.stringify(user)
         };
-        return fetch(`${config.apiUrl}/user/update?id=${user.id}`, requestOptions).then(this.handleResponse);
+        return fetch(`${config.apiUrl}/user/setAdmin?id=${user.id}`, requestOptions).then(this.handleResponse);
     }
     handleResponse(response) {
         return response.text().then(text => {
@@ -48,7 +48,7 @@ class TableCheckBoxAdmin extends Component {
             id: this.props.id,
             isAdmin: !this.state.user.isAdmin
         };
-        this.update(temp_user).then(this.setState({
+        this.setAdmin(temp_user).then(this.setState({
             user: {
                 id: temp_user.id,
                 isAdmin: temp_user.isAdmin
