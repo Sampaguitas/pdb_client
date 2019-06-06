@@ -114,7 +114,8 @@ class Settings extends React.Component {
         password: "",
         confirmPassword: ""
       },
-      show: false});
+      show: false
+    });
   }
 
   handleChangeUser(event) {
@@ -151,7 +152,6 @@ class Settings extends React.Component {
   
   handleSubmit(event) {
     event.preventDefault();
-
     this.setState({ submitted: true });
     const { user } = this.state;
     const { dispatch } = this.props;
@@ -164,6 +164,7 @@ class Settings extends React.Component {
     ) {
       dispatch(userActions.update(user));
       this.hideModal();
+      this.setState({ submitted: false });
     } else if (
       user.userName &&
       user.name &&
@@ -173,6 +174,7 @@ class Settings extends React.Component {
     ) {
       dispatch(userActions.register(user));
       this.hideModal();
+      this.setState({ submitted: false });
     }
   }
 
@@ -348,18 +350,20 @@ class Settings extends React.Component {
                         />
                       </div>
                       }
-                      <button
-                        type="submit"
-                        className="btn btn-leeuwen btn-full btn-lg mb-3"
-                      >
-                        {registering && (
-                          <FontAwesomeIcon
-                            icon="spinner"
-                            className="fa-pulse fa-1x fa-fw"
-                          />
-                        )}
-                        {this.state.user.id ? 'Update' : 'Create'}
-                      </button>
+                      <div className="modal-footer">
+                        <button
+                          type="submit"
+                          className="btn btn-leeuwen btn-full btn-lg mb-3"
+                        >
+                          {registering && (
+                            <FontAwesomeIcon
+                              icon="spinner"
+                              className="fa-pulse fa-1x fa-fw"
+                            />
+                          )}
+                          {this.state.user.id ? 'Update' : 'Create'}
+                        </button>
+                      </div>
                     </form>
               </div>
             </Modal>

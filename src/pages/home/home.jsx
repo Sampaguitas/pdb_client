@@ -1,15 +1,11 @@
-//React
 import React from 'react';
-//Redux
 import { connect } from 'react-redux';
 import { opcoActions, projectActions } from '../../_actions';
-//Components
+import { history } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Input from '../../_components/input';
 import ProjectRow from '../../_components/project-table/project-row.js';
-// Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//Styles
 import './home.css';
 
 function projectSorted(project) {
@@ -58,51 +54,42 @@ class Home extends React.Component {
         };
         this.filterName = this.filterName.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.stateReload = this.stateReload.bind(this);
+        this.gotoProject = this.gotoProject.bind(this);
     }
 
     componentDidMount() {
         this.props.dispatch(opcoActions.getAll());
         this.props.dispatch(projectActions.getAll());
     }
-    stateReload(){
-        if (this.props.projects.items) {
-            const sorted = projectSorted(this.props.projects)
-            this.setState({
-                projects: sorted,
-                loaded: true,
-            });
-        };
-    }
 
     handleChange(event) {
         const { name, value } = event.target;
         this.setState({
             [name]: value
-        }, () => {
-            this.filterName(this.state.number, this.state.name, this.state.opco, this.state.erp);
         });
     }
 
-    filterName(number, name, opco, erp){
-        if (this.props.projects.items) {
-            this.setState({
-                projects: projectSorted(this.props.projects).filter(function (project) {
-                    return (doesMatch(number, project.number, 'Number') 
-                    && doesMatch(name, project.name, 'String') 
-                    && doesMatch(opco, project.opco.name, 'String') 
-                    && doesMatch(erp, project.erp.name, 'String'));
-                })
+    filterName(projects){
+        const { number, name, opco, erp } = this.state
+        if (projects.items) {
+            return projectSorted(this.props.projects).filter(function (project) {
+                return (doesMatch(number, project.number, 'Number') 
+                && doesMatch(name, project.name, 'String') 
+                && doesMatch(opco, project.opco.name, 'String') 
+                && doesMatch(erp, project.erp.name, 'String'));
             });
         }
     }
 
-
+    gotoProject(event) {
+        // event.preventDefault()
+        history.push({pathname:'/project'})
+    }
 
     render() {
         const { number, name, opco, erp } = this.state;
         const { alert, loading } = this.props;
-        {this.props.projects.items && this.state.loaded === false && this.stateReload()}
+        // {this.props.projects.items && this.state.loaded === false && this.stateReload()}
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -114,7 +101,16 @@ class Home extends React.Component {
                         <div className="col-12">
                             <div className="card">
                                 <div className="card-header">
-                                    <h5>Select your project</h5>
+                                    <div className="row">
+                                        <div className="col-8">
+                                            <h5>Select your project</h5>
+                                        </div>
+                                        <div className="col-4 text-right">
+                                            <div className="modal-link" >
+                                                <FontAwesomeIcon icon="plus" className="red" name="plus" onClick={this.gotoProject}/>
+                                            </div>
+                                        </div>
+                                    </div>    
                                 </div>
                                 <div className="card-body table-responsive">
                                     <table className="table table-hover">
@@ -135,11 +131,7 @@ class Home extends React.Component {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            { this.props.projects.items &&  !this.state.loaded ?
-                                                this.props.projects.items && this.props.projects.items.map((project) => <ProjectRow project={project} key={project._id} />)
-                                            :
-                                                this.state.projects && this.state.projects.map((project) => <ProjectRow project={project} key={project._id} />)
-                                            }
+                                            {this.props.projects.items && this.filterName(this.props.projects).map((project) => <ProjectRow project={project} key={project._id} />)}
                                         </tbody>
                                     </table>
                                 </div>

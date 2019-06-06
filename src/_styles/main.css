@@ -116,7 +116,7 @@ footer {
 
 .form-control {
   height: 34px;
-  font-size: 2rem;
+  font-size: 1.25rem;
 }
 
 select.form-control:not([size]):not([multiple]) {

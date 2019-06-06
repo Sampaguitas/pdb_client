@@ -75,7 +75,8 @@ function update(opco) {
             .then(
                 opco => {
                     dispatch(success(opco)),
-                    dispatch(alertActions.success('OPCO successfully updated'))
+                    dispatch(alertActions.success('OPCO successfully updated')),
+                    dispatch(opcoActions.getAll());
                 },
                 error => dispatch(failure(error.toString()))
             );
