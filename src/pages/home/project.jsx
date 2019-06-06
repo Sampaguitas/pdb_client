@@ -10,6 +10,48 @@ import Select from '../../_components/select';
 import Layout from '../../_components/layout';
 const _ = require('lodash');
 
+function arraySorted(array, field) {
+    if (array) {
+        const newArray = array
+        newArray.sort(function(a,b){
+            if (a[field] < b[field]) {
+                return -1;
+            }
+            if (a[field] > b[field]) {
+                return 1;
+            }
+            return 0;
+        });
+        return newArray;
+    }
+}
+
+function doesMatch(search, array, type) {
+    if (!search) {
+        return true;
+    } else if (!array) {
+        return true;
+    } else {
+        switch(type) {
+            case 'String':
+                search = search.replace(/([()[{*+.$^\\|?])/g, "");
+                return !!array.match(new RegExp(search, "i"));
+            case 'Number': 
+                return array == Number(search);
+            case 'Boolean':
+                if (Number(search) == 1) {
+                return true;
+                } else if (Number(search) == 2) {
+                return !!array == 1;
+                } else if (Number(search) == 3) {
+                return !!array == 0;
+                }
+            default: return true;
+        }
+    }
+}
+
+
 class Project extends React.Component {
     constructor(props) {
         super(props);
@@ -69,6 +111,7 @@ class Project extends React.Component {
                 };
                 userArray.push(NewUserArrayElement)
             };
+            userArray = arraySorted(userArray, 'name')
             this.setState({
                 project:{
                     ...project,
@@ -256,7 +299,7 @@ class Project extends React.Component {
                                         <Select
                                             title="Copy settings from project"
                                             name="copyId"
-                                            options={projects.items}
+                                            options={arraySorted(projects.items, 'name')}
                                             value={project.copyId}
                                             onChange={this.handleChange}
                                             placeholder=""
@@ -277,7 +320,7 @@ class Project extends React.Component {
                                         <Select
                                             title="ERP"
                                             name="erpId"
-                                            options={erps.items}
+                                            options={arraySorted(erps.items, 'name')}
                                             value={project.erpId}
                                             onChange={this.handleChange}
                                             placeholder=""
@@ -288,7 +331,7 @@ class Project extends React.Component {
                                         <Select
                                             title="OPCO"
                                             name="opcoId"
-                                            options={opcos.items}
+                                            options={arraySorted(opcos.items, 'name')}
                                             value={project.opcoId}
                                             onChange={this.handleChange}
                                             placeholder=""
@@ -299,7 +342,7 @@ class Project extends React.Component {
                                         <Select
                                             title="Currency"
                                             name="currencyId"
-                                            options={currencies.items}
+                                            options={arraySorted(currencies.items, 'name')}
                                             value={project.currencyId}
                                             onChange={this.handleChange}
                                             placeholder=""

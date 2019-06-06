@@ -13,23 +13,23 @@ import Select from '../../_components/select';
 import { users } from '../../_reducers/users.reducer';
 import OpcoRow from '../../_components/project-table/opco-row.js';
 
-function opcosSorted(opco) {
-    if (opco.items) {
-        const newArray = opco.items
+function arraySorted(array, field) {
+    if (array) {
+        const newArray = array
         newArray.sort(function(a,b){
-            if (a.name < b.name) {
+            if (a[field] < b[field]) {
                 return -1;
             }
-            if (a.name > b.name) {
+            if (a[field] > b[field]) {
                 return 1;
             }
             return 0;
         });
         return newArray;
     }
-  }
-  
-  function doesMatch(search, array, type) {
+}
+
+function doesMatch(search, array, type) {
     if (!search) {
         return true;
     } else if (!array) {
@@ -42,17 +42,17 @@ function opcosSorted(opco) {
             case 'Number': 
                 return array == Number(search);
             case 'Boolean':
-              if (Number(search) == 1) {
+                if (Number(search) == 1) {
                 return true;
-              } else if (Number(search) == 2) {
+                } else if (Number(search) == 2) {
                 return !!array == 1;
-              } else if (Number(search) == 3) {
+                } else if (Number(search) == 3) {
                 return !!array == 0;
-              }
+                }
             default: return true;
         }
     }
-  }
+}
 
 
 class Opco extends React.Component {
@@ -151,7 +151,7 @@ class Opco extends React.Component {
     filterName(opcos){
         const { code, name, city, country, locale, region } = this.state
         if (opcos.items) {
-          return opcosSorted(opcos).filter(function (opco) {
+          return arraySorted(opcos.items, 'name').filter(function (opco) {
             return (doesMatch(code, opco.code, 'String') 
             && doesMatch(name, opco.name, 'String') 
             && doesMatch(city, opco.city, 'String')
@@ -257,7 +257,7 @@ class Opco extends React.Component {
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <br />
-                <h2>Add operation company</h2>
+                <h2>Add or Update operation company</h2>
                 <hr />
                 <div id="Opco">
                     <div className="row">
@@ -382,7 +382,7 @@ class Opco extends React.Component {
                                     <Select
                                         title="Region"
                                         name="regionId"
-                                        options={regions.items}
+                                        options={arraySorted(regions.items, 'name')}
                                         value={opco.regionId}
                                         onChange={this.handleChangeOpco}
                                         placeholder=""
@@ -393,7 +393,7 @@ class Opco extends React.Component {
                                     <Select
                                         title="Locale"
                                         name="localeId"
-                                        options={locales.items}
+                                        options={arraySorted(locales.items, 'name')}
                                         value={opco.localeId}
                                         onChange={this.handleChangeOpco}
                                         placeholder=""

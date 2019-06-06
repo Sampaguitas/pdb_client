@@ -17,14 +17,14 @@ import Select from '../../_components/select';
 import Layout from "../../_components/layout";
 //import { users } from "../../_reducers/users.reducer";
 
-function usersSorted(user) {
-  if (user.items) {
-      const newArray = user.items
+function arraySorted(array, field) {
+  if (array) {
+      const newArray = array
       newArray.sort(function(a,b){
-          if (a.name < b.name) {
+          if (a[field] < b[field]) {
               return -1;
           }
-          if (a.name > b.name) {
+          if (a[field] > b[field]) {
               return 1;
           }
           return 0;
@@ -139,7 +139,7 @@ class Settings extends React.Component {
   filterName(users){
     const { userName, name, opco, region, isAdmin, isSuperAdmin } = this.state
     if (users.items) {
-      return usersSorted(users).filter(function (user) {
+      return arraySorted(users.items, 'name').filter(function (user) {
         return (doesMatch(userName, user.userName, 'String') 
         && doesMatch(name, user.name, 'String') 
         && doesMatch(opco, user.opco.name, 'String')
@@ -213,7 +213,7 @@ class Settings extends React.Component {
         {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
         <br />
         <div id="setting">
-          <h2>Settings</h2>
+          <h2>Add or Update user</h2>
           <hr />
           <div className="row">
             <div className="col-12">
@@ -308,7 +308,7 @@ class Settings extends React.Component {
                       <Select
                           title="OPCO"
                           name="opcoId"
-                          options={opcos.items}
+                          options={arraySorted(opcos.items, 'name')}
                           value={user.opcoId}
                           onChange={this.handleChangeUser}
                           placeholder=""
