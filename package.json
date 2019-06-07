@@ -10,7 +10,7 @@
     "url": "https://github.com/Sampaguitas/pdb_client.git"
   },
   "scripts": {
-    "dev": "webpack-dev-server --open",
+    "dev": "NODE_ENV=dev webpack-dev-server --open ",
     "start": "node server.js",
     "heroku-postbuild": "webpack -p --display-error-details"
   },
