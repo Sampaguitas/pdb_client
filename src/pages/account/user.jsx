@@ -99,7 +99,7 @@ class User extends React.Component {
                                         <Input
                                             title="Current Password"
                                             name="oldPassword"
-                                            type="text"
+                                            type="password"
                                             value={stateUser.oldPassword}
                                             onChange={this.handleChange}
                                             submitted={submitted}
@@ -109,7 +109,7 @@ class User extends React.Component {
                                         <Input
                                             title="New Password"
                                             name="newPassword"
-                                            type="text"
+                                            type="password"
                                             value={stateUser.newPassword}
                                             onChange={this.handleChange}
                                             submitted={submitted}
@@ -119,7 +119,7 @@ class User extends React.Component {
                                         <Input
                                             title="Confirm Password"
                                             name="confirmPassword"
-                                            type="text"
+                                            type="password"
                                             value={stateUser.confirmPassword}
                                             onChange={this.handleChange}
                                             submitted={submitted}

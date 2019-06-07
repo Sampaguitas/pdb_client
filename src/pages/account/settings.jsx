@@ -58,6 +58,16 @@ function doesMatch(search, array, type) {
   }
 }
 
+function canClick(found, currentUser) {
+  if (currentUser.isSuperAdmin) {
+    return true;
+  } else if (_.isEqual(currentUser.regionId, found.opco.regionId)){
+    return true;
+  } else {
+    return false;
+  }
+}
+
 
 class Settings extends React.Component {
   constructor(props) {
@@ -82,7 +92,7 @@ class Settings extends React.Component {
     this.filterName = this.filterName.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleOnclick = this.handleOnclick.bind(this);
-    this.isUser = this.isUser.bind(this);
+    this.accessibleArray = this.accessibleArray.bind(this);
   }
 
   componentDidMount() {
@@ -149,64 +159,78 @@ class Settings extends React.Component {
       });
     }
 }
-  
-  handleSubmit(event) {
-    event.preventDefault();
-    this.setState({ submitted: true });
-    const { user } = this.state;
-    const { dispatch } = this.props;
-    if (
-      user.id &&
-      user.userName &&
-      user.name &&
-      user.opcoId &&
-      user.email
-    ) {
-      dispatch(userActions.update(user));
-      this.hideModal();
-      this.setState({ submitted: false });
-    } else if (
-      user.userName &&
-      user.name &&
-      user.email &&
-      user.password &&
-      user.confirmPassword
-    ) {
-      dispatch(userActions.register(user));
-      this.hideModal();
-      this.setState({ submitted: false });
-    }
+
+accessibleArray(items, sortBy) {
+  let user = JSON.parse(localStorage.getItem('user'));
+  if (items) {
+      return arraySorted(items, sortBy).filter(function (item) {
+          if (user.isSuperAdmin) {
+              return true;
+          } else {
+              return _.isEqual(user.regionId, item.regionId);
+          }
+      });
   }
+}
+  
+handleSubmit(event) {
+  event.preventDefault();
+  this.setState({ submitted: true });
+  const { user } = this.state;
+  const { dispatch } = this.props;
+  if (
+    user.id &&
+    user.userName &&
+    user.name &&
+    user.opcoId &&
+    user.email
+  ) {
+    dispatch(userActions.update(user));
+    this.hideModal();
+    this.setState({ submitted: false });
+  } else if (
+    user.userName &&
+    user.name &&
+    user.email &&
+    user.password &&
+    user.confirmPassword
+  ) {
+    dispatch(userActions.register(user));
+    this.hideModal();
+    this.setState({ submitted: false });
+  }
+}
 
   handleOnclick(event, id) {
-    let user = JSON.parse(localStorage.getItem('user'));
-    if (event.target.type != 'checkbox' && this.props.users.items && user.isSuperAdmin) {
+    const { users } = this.props
+    let currentUser = JSON.parse(localStorage.getItem('user'));
+    if (event.target.type != 'checkbox' && this.props.users.items) {
       let found = this.props.users.items.find(element => element.id === id);
-      this.setState({
-        user: {
-          id: id,
-          userName: found.userName,
-          name: found.name,
-          opcoId: found.opcoId,
-          email: found.email,
-        },
-        show: true
-      })
+      if (canClick(found, currentUser)) {
+        this.setState({
+          user: {
+            id: id,
+            userName: found.userName,
+            name: found.name,
+            opcoId: found.opcoId,
+            email: found.email,
+          },
+          show: true
+        });
+      }
     }
   }
 
-  isUser(id) {
-    let user = JSON.parse(localStorage.getItem('user'));
-    if (user.id == id) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  handleDeletUser(event, id) {
+    event.preventDefault();
+    this.props.dispatch(userActions.delete(id));
+    this.hideModal();
+    this.setState({ submitted: false });
+}
 
   render() {
     const { user, userName, name, opco, region, isAdmin, isSuperAdmin, submitted } = this.state;
-    const { registering, alert, opcos } = this.props;
+    const { loading, updating, deleting, alert, opcos } = this.props;
     let currentUser = JSON.parse(localStorage.getItem('user'));
     return (
       <Layout>
@@ -308,7 +332,7 @@ class Settings extends React.Component {
                       <Select
                           title="OPCO"
                           name="opcoId"
-                          options={arraySorted(opcos.items, 'name')}
+                          options={this.accessibleArray(opcos.items, 'name')}
                           value={user.opcoId}
                           onChange={this.handleChangeUser}
                           placeholder=""
@@ -350,20 +374,54 @@ class Settings extends React.Component {
                         />
                       </div>
                       }
-                      <div className="modal-footer">
-                        <button
-                          type="submit"
-                          className="btn btn-leeuwen btn-full btn-lg mb-3"
-                        >
-                          {registering && (
-                            <FontAwesomeIcon
-                              icon="spinner"
-                              className="fa-pulse fa-1x fa-fw"
-                            />
-                          )}
-                          {this.state.user.id ? 'Update' : 'Create'}
-                        </button>
-                      </div>
+                        <div className="modal-footer">
+                        {this.state.user.id ?
+                            <div className="row">
+                                <div className="col-6">
+                                    <button
+                                        type="submit"
+                                        className="btn btn-outline-dark btn-lg"
+                                        onClick={(event) => {this.handleDeletUser(event, this.state.user.id)}}
+                                    >
+                                        {deleting && (
+                                            <FontAwesomeIcon
+                                                icon="spinner"
+                                                className="fa-pulse fa-1x fa-fw" 
+                                            />
+                                        )}
+                                        Delete
+                                    </button>
+                                </div>
+                                <div className="col-6">
+                                    <button
+                                        type="submit"
+                                        className="btn btn-outline-leeuwen btn-lg"
+                                    >
+                                        {updating && (
+                                            <FontAwesomeIcon
+                                                icon="spinner"
+                                                className="fa-pulse fa-1x fa-fw" 
+                                            />
+                                        )}
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+                        :
+                            <button
+                                type="submit"
+                                className="btn btn-outline-leeuwen btn-lg btn-full"
+                            >
+                                {loading && (
+                                    <FontAwesomeIcon
+                                        icon="spinner"
+                                        className="fa-pulse fa-1x fa-fw" 
+                                    />
+                                )}
+                                Create
+                            </button>
+                        }
+                        </div>
                     </form>
               </div>
             </Modal>
@@ -375,11 +433,13 @@ class Settings extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const { registering } = state.registration;
+  const { loading, updating, deleting } = state.registration;
   const { users, alert, opcos } = state;
   return {
     alert,
-    registering,
+    loading,
+    updating,
+    deleting,
     users,
     opcos
   };

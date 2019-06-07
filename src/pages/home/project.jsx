@@ -1,13 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { currencyActions, erpActions, opcoActions, projectActions, userActions } from '../../_actions';
-//Components
+import { history } from '../../_helpers';
 import CheckBox from '../../_components/check-box';
 import TableCheckBox from '../../_components/table-check-box';
 import Input from '../../_components/input';
 import Select from '../../_components/select';
 import Layout from '../../_components/layout';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 const _ = require('lodash');
 
 function arraySorted(array, field) {
@@ -28,8 +29,6 @@ function arraySorted(array, field) {
 
 function doesMatch(search, array, type) {
     if (!search) {
-        return true;
-    } else if (!array) {
         return true;
     } else {
         switch(type) {
@@ -64,23 +63,25 @@ class Project extends React.Component {
                 opcoId:'',
                 projectUsers: [],
             },
-            options: {
-                projects: [],
-                opcos: [],
-            },
+            userName: '',
+            name: '',
+            isExpediting: '',
+            isInspection: '',
+            isShipping: '',
+            isWarehouse: '',
+            isConfiguration: '',
             loaded: false,
             submitted: false
         };
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleCheck = this.handleCheck.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChangeProject = this.handleChangeProject.bind(this);
+        this.handleChangeHeader = this.handleChangeHeader.bind(this);
+        this.filterName = this.filterName.bind(this);
         this.stateReload = this.stateReload.bind(this);
-        this.handleIsExpediting = this.handleIsExpediting.bind(this);
-        this.handleIsInspection = this.handleIsInspection.bind(this);
-        this.handleIsShipping = this.handleIsShipping.bind(this);
-        this.handleIsWarehouse = this.handleIsWarehouse.bind(this);
-        this.handleIsConfiguration = this.handleIsConfiguration.bind(this);
+        this.handleIsRole = this.handleIsRole.bind(this)
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.accessibleArray = this.accessibleArray.bind(this);
+        this.gotoPage = this.gotoPage.bind(this);
     }
     componentDidMount() {
         const { dispatch, projects } = this.props;
@@ -90,7 +91,52 @@ class Project extends React.Component {
         dispatch(opcoActions.getAll());
         dispatch(projectActions.getAll());
         dispatch(userActions.getAll());
-        // this.stateReload();
+    }
+
+    handleChangeProject(event) {
+        const { project } = this.state;
+        const { name, value } = event.target;
+        this.setState({
+            project: {
+                ...project,
+                [name]: value
+            }
+        });
+    }
+
+    handleChangeHeader(event) {
+        const { name, value } = event.target;
+        this.setState({
+            [name]: value
+        });
+    }
+
+    filterName(users){
+        const { userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration } = this.state
+        if (users) {
+          return arraySorted(users, 'name').filter(function (user) {
+            return (doesMatch(userName, user.userName, 'String')
+            && doesMatch(name, user.name, 'String') 
+            && doesMatch(isExpediting, user.isExpediting, 'Boolean') 
+            && doesMatch(isInspection, user.isInspection, 'Boolean')
+            && doesMatch(isShipping, user.isShipping, 'Boolean')
+            && doesMatch(isWarehouse, user.isWarehouse, 'Boolean')
+            && doesMatch(isConfiguration, user.isConfiguration, 'Boolean'));
+          });
+        }
+    }
+
+    accessibleArray(items, sortBy) {
+        let user = JSON.parse(localStorage.getItem('user'));
+        if (items) {
+            return arraySorted(items, sortBy).filter(function (item) {
+                if (user.isSuperAdmin) {
+                    return true;
+                } else {
+                    return _.isEqual(user.regionId, item.regionId);
+                }
+            });
+        }
     }
 
     stateReload(event){
@@ -102,6 +148,7 @@ class Project extends React.Component {
             for(i=0;i<users.items.length;i++){
                 let NewUserArrayElement = {
                     'userId': users.items[i]._id,
+                    'userName': users.items[i].userName,
                     'name': users.items[i].name,
                     'isExpediting': false,
                     'isInspection': false,
@@ -122,70 +169,14 @@ class Project extends React.Component {
         };
     }
 
-    handleCheck(event) {
-        const { project } = this.state;
-        const target = event.target;
-        const name = target.name;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        this.setState({
-            project: {
-                ...project,
-                [name]: value
-            }
-        });
-    }
-
-    handleIsExpediting(event) {
+    handleIsRole(event, role) {
         const { name } = event.target;
         const { projectUsers } = this.state.project;
         let clickedUser = projectUsers.find(x=>x.userId == name);
-        clickedUser.isExpediting = !clickedUser.isExpediting;
+        clickedUser[role] = !clickedUser[role];
         this.setState(this.state);
     }
 
-    handleIsInspection(event) {
-        const { name } = event.target;
-        const { projectUsers } = this.state.project;
-        let clickedUser = projectUsers.find(x=>x.userId == name);
-        clickedUser.isInspection = !clickedUser.isInspection;
-        this.setState(this.state);
-    }
-
-    handleIsShipping(event) {
-        const { name } = event.target;
-        const { projectUsers } = this.state.project;
-        let clickedUser = projectUsers.find(x=>x.userId == name);
-        clickedUser.isShipping = !clickedUser.isShipping;
-        this.setState(this.state);
-    }
-
-    handleIsWarehouse(event) {
-        const { name } = event.target;
-        const { projectUsers } = this.state.project;
-        let clickedUser = projectUsers.find(x=>x.userId == name);
-        clickedUser.isWarehouse = !clickedUser.isWarehouse;
-        this.setState(this.state);
-    }
-
-    handleIsConfiguration(event) {
-        const { name } = event.target;
-        const { projectUsers } = this.state.project;
-        let clickedUser = projectUsers.find(x=>x.userId == name);
-        clickedUser.isConfiguration = !clickedUser.isConfiguration;
-        this.setState(this.state);
-    }
-
-    handleChange(event) {
-        const { project } = this.state;
-        const { name, value } = event.target;
-        this.setState({
-            project: {
-                ...project,
-                [name]: value
-            }
-        });
-        //console.log(this.state.projectUsers)
-    }
     handleSubmit(event) {
         event.preventDefault();
         
@@ -202,12 +193,15 @@ class Project extends React.Component {
             dispatch(projectActions.create(project));
         }
     }
-    handleDeletProject(id) {
-        return (event) => this.props.dispatch(projectActions.delete(id));
+    
+    gotoPage(event, page) {
+        event.preventDefault();
+        history.push({pathname: page});
     }
+
     render() {
         const { alert, currencies, erps, loading, opcos, projects, users } = this.props;
-        const { loaded, project, submitted } = this.state;
+        const { project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, loaded, submitted } = this.state;
         const { projectUsers } = this.state.project;
         let user = JSON.parse(localStorage.getItem('user'));
         {users.items && loaded === false && this.stateReload()}
@@ -222,30 +216,74 @@ class Project extends React.Component {
                         <div className="col-md-8 col-sm-12 mb-sm-3">
                             <div className="card">
                                 <div className="card-header">
-                                    <h5>Set user roles</h5>
+                                    <div className="row">
+                                        <div className="col-8">
+                                            <h5>Set user roles</h5>
+                                        </div>
+                                        <div className="col-4 text-right">
+                                            <div className="modal-link" >
+                                                <FontAwesomeIcon icon="plus" className="red" name="plus" onClick={(event) => {this.gotoPage(event, '/settings')}}/>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className="card-body table-responsive">
                                     <table className="table table-hover">
                                         <thead>
                                             <tr>
-                                                <th>User</th>
-                                                <th>Expediting</th>
-                                                <th>Inspection</th>
-                                                <th>Shipping</th>
-                                                <th>Warehouse</th>
-                                                <th>Config</th>
+                                                <th scope="col" style={{width: '10%'}}>Initials<br />
+                                                    <input className="form-control" name="userName" value={userName} onChange={this.handleChangeHeader} />
+                                                </th>
+                                                <th scope="col">User<br />
+                                                    <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
+                                                </th>
+                                                <th scope="col" style={{width: '10%'}}>Expediting<br />
+                                                    <select className="form-control" name="isExpediting" value={isExpediting} onChange={this.handleChangeHeader}>
+                                                        <option key="1" value="1">Any</option>
+                                                        <option key="2" value="2">True</option> 
+                                                        <option key="3" value="3">False</option>  
+                                                    </select>
+                                                </th>
+                                                <th scope="col" style={{width: '10%'}}>Inspection<br />
+                                                    <select className="form-control" name="isInspection" value={isInspection} onChange={this.handleChangeHeader}>
+                                                        <option key="1" value="1">Any</option>
+                                                        <option key="2" value="2">True</option> 
+                                                        <option key="3" value="3">False</option>  
+                                                    </select>
+                                                </th>
+                                                <th scope="col" style={{width: '10%'}}>Shipping<br />
+                                                    <select className="form-control" name="isShipping" value={isShipping} onChange={this.handleChangeHeader}>
+                                                        <option key="1" value="1">Any</option>
+                                                        <option key="2" value="2">True</option> 
+                                                        <option key="3" value="3">False</option>  
+                                                    </select>                                                
+                                                </th>
+                                                <th scope="col" style={{width: '10%'}}>Warehouse<br />
+                                                    <select className="form-control" name="isWarehouse" value={isWarehouse} onChange={this.handleChangeHeader}>
+                                                        <option key="1" value="1">Any</option>
+                                                        <option key="2" value="2">True</option> 
+                                                        <option key="3" value="3">False</option>  
+                                                    </select>
+                                                </th>
+                                                <th scope="col" style={{width: '10%'}}>Config<br />
+                                                    <select className="form-control" name="isConfiguration" value={isConfiguration} onChange={this.handleChangeHeader}>
+                                                        <option key="1" value="1">Any</option>
+                                                        <option key="2" value="2">True</option> 
+                                                        <option key="3" value="3">False</option>  
+                                                    </select>
+                                                </th>
                                             </tr>
                                         </thead>
-                                        {projectUsers && (
                                             <tbody>
-                                                {projectUsers.map(u => (
+                                                {projectUsers && this.filterName(projectUsers).map(u => (
                                                    <tr key={u.userId}>
+                                                    <td>{u.userName}</td>
                                                     <td>{u.name}</td>
                                                     <td>
                                                         <TableCheckBox
                                                             id={u.userId}
                                                             checked={u.isExpediting}
-                                                            onChange={this.handleIsExpediting}
+                                                            onChange={(event) => {this.handleIsRole(event, 'isExpediting')}}
                                                             disabled={false}
                                                         />   
                                                     </td>
@@ -253,7 +291,7 @@ class Project extends React.Component {
                                                         <TableCheckBox
                                                             id={u.userId}
                                                             checked={u.isInspection}
-                                                            onChange={this.handleIsInspection}
+                                                            onChange={(event) => {this.handleIsRole(event, 'isInspection')}}
                                                             disabled={false}
                                                         />   
                                                     </td>
@@ -261,7 +299,7 @@ class Project extends React.Component {
                                                         <TableCheckBox
                                                             id={u.userId}
                                                             checked={u.isShipping}
-                                                            onChange={this.handleIsShipping}
+                                                            onChange={(event) => {this.handleIsRole(event, 'isShipping')}}
                                                             disabled={false}
                                                         />   
                                                     </td>
@@ -269,22 +307,21 @@ class Project extends React.Component {
                                                         <TableCheckBox
                                                             id={u.userId}
                                                             checked={u.isWarehouse}
-                                                            onChange={this.handleIsWarehouse}
+                                                            onChange={(event) => {this.handleIsRole(event, 'isWarehouse')}}
                                                             disabled={false}
-                                                        />   
+                                                        />
                                                     </td>
                                                     <td>
                                                         <TableCheckBox
                                                             id={u.userId}
                                                             checked={u.isConfiguration}
-                                                            onChange={this.handleIsConfiguration}
+                                                            onChange={(event) => {this.handleIsRole(event, 'isConfiguration')}}
                                                             disabled={false}
                                                         />
                                                     </td>
                                                    </tr> 
                                                 ))}
                                             </tbody>
-                                        )}
                                     </table>
                                 </div>
                             </div>
@@ -301,7 +338,7 @@ class Project extends React.Component {
                                             name="copyId"
                                             options={arraySorted(projects.items, 'name')}
                                             value={project.copyId}
-                                            onChange={this.handleChange}
+                                            onChange={this.handleChangeProject}
                                             placeholder=""
                                             submitted={submitted}
                                             inline={false}
@@ -312,7 +349,7 @@ class Project extends React.Component {
                                             name="name"
                                             type="text"
                                             value={project.name}
-                                            onChange={this.handleChange}
+                                            onChange={this.handleChangeProject}
                                             submitted={submitted}
                                             inline={false}
                                             required={true}
@@ -322,7 +359,7 @@ class Project extends React.Component {
                                             name="erpId"
                                             options={arraySorted(erps.items, 'name')}
                                             value={project.erpId}
-                                            onChange={this.handleChange}
+                                            onChange={this.handleChangeProject}
                                             placeholder=""
                                             submitted={submitted}
                                             inline={false}
@@ -331,9 +368,9 @@ class Project extends React.Component {
                                         <Select
                                             title="OPCO"
                                             name="opcoId"
-                                            options={arraySorted(opcos.items, 'name')}
+                                            options={this.accessibleArray(opcos.items, 'name')}
                                             value={project.opcoId}
-                                            onChange={this.handleChange}
+                                            onChange={this.handleChangeProject}
                                             placeholder=""
                                             submitted={submitted}
                                             inline={false}
@@ -344,7 +381,7 @@ class Project extends React.Component {
                                             name="currencyId"
                                             options={arraySorted(currencies.items, 'name')}
                                             value={project.currencyId}
-                                            onChange={this.handleChange}
+                                            onChange={this.handleChangeProject}
                                             placeholder=""
                                             submitted={submitted}
                                             inline={false}

@@ -3,12 +3,14 @@ import propTypes from 'prop-types';
 import { history } from '../../_helpers';
 import TableCheckBoxAdmin from "../../_components/table-check-box-admin";
 import TableCheckBoxSuperAdmin from "../../_components/table-check-box-spadmin";
+const _ = require('lodash');
 
 class UserRow extends Component {
     constructor(props) {
         super(props);
         this.state = {};
-        this.isUser = this.isUser.bind(this)
+        this.isUser = this.isUser.bind(this);
+        this.checkBoxDisabled = this.checkBoxDisabled.bind(this);
     }
 
 
@@ -21,6 +23,21 @@ class UserRow extends Component {
         }
     }
 
+    checkBoxDisabled(type) {
+        const { user, currentUser } = this.props
+        if (_.isEqual(user.id, currentUser.id)) {
+            return true;
+        } else if (type === 'isSuperAdmin' && !currentUser.isSuperAdmin) {
+            return true;
+        } else if (_.isEqual(currentUser.regionId, user.opco.regionId)) {
+            return false;
+        } else if (currentUser.isSuperAdmin) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     render() {
         const { user, currentUser, handleOnclick, handleInputChange } = this.props;
         return (
@@ -30,48 +47,20 @@ class UserRow extends Component {
                 <td>{user.opco.name}</td>
                 <td>{user.opco.region.name}</td>
                 <td>
-                {
-                    this.isUser(user._id) ?
                     <TableCheckBoxAdmin
                         id={user._id}
                         checked={user.isAdmin}
                         onChange={handleInputChange}
-                        disabled={true}
+                        disabled={this.checkBoxDisabled('isAdmin')}
                     />
-                    :
-                    <TableCheckBoxAdmin
-                    id={user._id}
-                    checked={user.isAdmin}
-                    onChange={handleInputChange}
-                    disabled={false}
-                    />
-                }
                 </td>
                 <td>
-                {
-                    this.isUser(user._id) ?
                     <TableCheckBoxSuperAdmin
                         id={user._id}
                         checked={user.isSuperAdmin}
                         onChange={handleInputChange}
-                        disabled={true}
+                        disabled={this.checkBoxDisabled('isSuperAdmin')}
                     />
-                    :
-                    currentUser.isSuperAdmin ?
-                        <TableCheckBoxSuperAdmin
-                        id={user._id}
-                        checked={user.isSuperAdmin}
-                        onChange={handleInputChange}
-                        disabled={false}
-                        />
-                    :
-                        <TableCheckBoxSuperAdmin
-                        id={user._id}
-                        checked={user.isSuperAdmin}
-                        onChange={handleInputChange}
-                        disabled={true}
-                        />
-                } 
                 </td>
             </tr>
         );

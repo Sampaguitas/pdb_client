@@ -88,7 +88,11 @@ function update(user) {
 
         userService.update(user)
             .then(
-                user => dispatch(success(user)),
+                user => {
+                    dispatch(success(user)),
+                    dispatch(alertActions.success('User successfully updated')),
+                    dispatch(userActions.getAll(user));
+                },
                 error => dispatch(failure(error.toString()))
             );
     };
@@ -168,7 +172,11 @@ function _delete(id) {
 
         userService.delete(id)
             .then(
-                user => dispatch(success(id)),
+                user => {
+                    dispatch(success(id)),
+                    dispatch(alertActions.success('User successfully deleted')),
+                    dispatch(userActions.getAll(user));
+                },
                 error => dispatch(failure(id, error.toString()))
             );
     };

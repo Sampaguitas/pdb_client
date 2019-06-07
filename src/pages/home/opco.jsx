@@ -77,6 +77,7 @@ class Opco extends React.Component {
         this.filterName = this.filterName.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
+        this.handleDeletOpco = this.handleDeletOpco.bind(this);
         // this.handleDelete = this.handleDelete.bind(this);
         // this.getById = this.getById.bind(this);
         // this.handleResponse = this.handleResponse.bind(this);
@@ -214,45 +215,16 @@ class Opco extends React.Component {
         }
       }
 
-    // getById(id) {
-    //     const requestOptions = {
-    //         method: 'GET',
-    //         headers: authHeader()
-    //     };
-
-    //     return fetch(`${config.apiUrl}/opco/findOne/?id=${id}`, requestOptions)
-    //         .then(this.handleResponse)
-    //         .then(data => this.setState({
-    //             opco: data
-    //         }));
-    // }
-
-    // handleDelete(event) {
-    //     event.preventDefault();
-    //     const { dispatch } = this.props;
-    //     const { opco } = this.state;
-    //     dispatch(opcoActions.delete(opco.id));
-    // }
-
-    // handleResponse(response) {
-    //     return response.text().then(text => {
-    //         const data = text && JSON.parse(text);
-    //         if (!response.ok) {
-    //             if (response.status === 401) {
-    //                 // auto logout if 401 response returned from api
-    //                 logout();
-    //                 location.reload(true);
-    //             }
-    //             const error = (data && data.message) || response.statusText;
-    //             return Promise.reject(error);
-    //         }
-    //         return data;
-    //     });
-    // }
+    handleDeletOpco(event, id) {
+        event.preventDefault();
+        this.props.dispatch(opcoActions.delete(id));
+        this.hideModal();
+        this.setState({ submitted: false });
+    }
 
     render() {
         const { alert, loading, deleting, locales, regions, opcos } = this.props;
-        const { opco, code, name, address, city, zip, country, locale, region, submitted } = this.state;
+        const { opco, code, name, city, country, locale, region, submitted } = this.state;
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -300,7 +272,7 @@ class Opco extends React.Component {
                                             </tr>
                                         </thead>
                                             <tbody>
-                                                {this.props.opcos.items && this.filterName(this.props.opcos).map((opco) =>
+                                                {opcos.items && this.filterName(opcos).map((opco) =>
                                                     <OpcoRow 
                                                     opco={opco}
                                                     handleOnclick={this.handleOnclick}
@@ -402,9 +374,42 @@ class Opco extends React.Component {
                                         required={true}
                                     />
                                     <div className="modal-footer">
+                                    {this.state.opco.id ?
+                                        <div className="row">
+                                            <div className="col-6">
+                                                <button
+                                                    type="submit"
+                                                    className="btn btn-outline-dark btn-lg"
+                                                    onClick={(event) => {this.handleDeletOpco(event, this.state.opco.id)}}
+                                                >
+                                                    {deleting && (
+                                                        <FontAwesomeIcon
+                                                            icon="spinner"
+                                                            className="fa-pulse fa-1x fa-fw" 
+                                                        />
+                                                    )}
+                                                    Delete
+                                                </button>
+                                            </div>
+                                            <div className="col-6">
+                                                <button
+                                                    type="submit"
+                                                    className="btn btn-outline-leeuwen btn-lg"
+                                                >
+                                                    {loading && (
+                                                        <FontAwesomeIcon
+                                                            icon="spinner"
+                                                            className="fa-pulse fa-1x fa-fw" 
+                                                        />
+                                                    )}
+                                                    Update
+                                                </button>
+                                            </div>
+                                        </div>
+                                    :
                                         <button
                                             type="submit"
-                                            className="btn btn-leeuwen btn-full btn-lg mb-3"
+                                            className="btn btn-outline-leeuwen btn-lg btn-full"
                                         >
                                             {loading && (
                                                 <FontAwesomeIcon
@@ -412,8 +417,9 @@ class Opco extends React.Component {
                                                     className="fa-pulse fa-1x fa-fw" 
                                                 />
                                             )}
-                                            {this.state.opco.id ? 'Update' : 'Create'}
+                                            Create
                                         </button>
+                                    }
                                     </div>
                                 </form>
                             </div>

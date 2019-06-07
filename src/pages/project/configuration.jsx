@@ -112,8 +112,6 @@ class Configuration extends React.Component {
         const { project } = this.state;
         const { dispatch } = this.props;
         this.setState({ submitted: true });
-        // console.log(project._id);
-        // console.log(project)
         if (project.name && project.customer && project.opco && project.currency) {
             dispatch(projectActions.update(project));
         }

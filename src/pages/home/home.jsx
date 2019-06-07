@@ -55,6 +55,7 @@ class Home extends React.Component {
         this.filterName = this.filterName.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.gotoProject = this.gotoProject.bind(this);
+        this.withoutProjectMaster = this.withoutProjectMaster.bind(this);
     }
 
     componentDidMount() {
@@ -84,6 +85,12 @@ class Home extends React.Component {
     gotoProject(event) {
         // event.preventDefault()
         history.push({pathname:'/project'})
+    }
+
+    withoutProjectMaster(projects){
+        return this.filterName(projects).filter(function (project){
+            return (!doesMatch('999999', project.number, 'Number'));
+        });
     }
 
     render() {
@@ -131,7 +138,7 @@ class Home extends React.Component {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {this.props.projects.items && this.filterName(this.props.projects).map((project) => <ProjectRow project={project} key={project._id} />)}
+                                            {this.props.projects.items && this.withoutProjectMaster(this.props.projects).map((project) => <ProjectRow project={project} key={project._id} />)}
                                         </tbody>
                                     </table>
                                 </div>

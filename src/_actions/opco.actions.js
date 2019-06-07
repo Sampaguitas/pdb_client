@@ -94,7 +94,11 @@ function _delete(id) {
 
         opcoService.delete(id)
             .then(
-                opco => dispatch(success(id)),
+                opco => {
+                    dispatch(success(id)),
+                    dispatch(alertActions.success('OPCO successfully deleted')),
+                    dispatch(opcoActions.getAll());
+                },
                 error => dispatch(failure(id, error.toString()))
             );
     };
