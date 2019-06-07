@@ -52,7 +52,7 @@ function register(user) {
                 user => { 
                     dispatch(success());
                     dispatch(userActions.getAll(user));
-                    dispatch(alertActions.success('User successfully registered'));
+                    dispatch(alertActions.success('User successfully created'));
                 },
                 error => {
                     dispatch(failure(error.toString()));
