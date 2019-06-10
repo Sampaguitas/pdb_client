@@ -28,19 +28,20 @@ class Tabs extends Component {
     }
     render() {
         const { tabs  } = this.state
+        
         const { 
-                currencies,
-                handleChange,
-                handleCheck, 
-                handleDelete,
-                handleSubmit,
-                loading,
-                deleting,
-                project,
-                opcos, 
-                users,
-                erps
-            } = this.props
+            handleDelete,
+            handleSubmitProject,
+            erps,
+            opcos,
+            currencies,
+            selection,
+            users,
+            loading,
+            deleting,
+            submitted
+        } = this.props
+
         return (
             <div id="tabs">
                 <ul className="nav nav-tabs">
@@ -63,18 +64,18 @@ class Tabs extends Component {
                             key={tab.index}
                         >
                             <tab.component
-                                currencies={currencies}
-                                deleting={deleting}
-                                handleChange={handleChange}
-                                handleCheck={handleCheck}
+
                                 handleDelete={handleDelete}
-                                handleSubmit={handleSubmit}
-                                loading={loading}
-                                opcos={opcos}
-                                project={project}
-                                tab={tab}
-                                users={users}
+                                handleSubmitProject={handleSubmitProject}
                                 erps={erps}
+                                opcos={opcos}
+                                currencies={currencies}
+                                selection={selection}
+                                users={users}
+                                loading={loading}
+                                deleting={deleting}
+                                submitted = {submitted}
+                                tab={tab}
                             />
                         </div>
                     )}

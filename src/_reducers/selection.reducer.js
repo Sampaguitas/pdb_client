@@ -5,10 +5,12 @@ export function selection(state = {}, action) {
     case projectConstants.GET_REQUEST:
       return {
         selecting: true,
+        selected: false,
         project: action.project
       };
     case projectConstants.GET_SUCCESS:
       return {
+        selecting: false,
         selected: true,
         project: action.project
       };

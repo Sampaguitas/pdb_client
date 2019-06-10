@@ -22,119 +22,62 @@ const tabs = [
     {index: 4, id: 'templates', label: 'Templates', component: Templates, active: false, isLoaded: false}
 ]
 
+const _ = require('lodash');
+
 class Configuration extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            project: {
-                name: '',
-                erpId: '',
-                currencyId: '',
-                opcoId: '',
-            },
             submitted: false
-        };
-        this.handleChange = this.handleChange.bind(this);
-        this.handleCheck = this.handleCheck.bind(this);
-        this.getById=this.getById.bind(this);
-        this.handleResponse=this.handleResponse.bind(this);
-        this.handleSubmit=this.handleSubmit.bind(this);
+        }
+        this.handleSubmitProject=this.handleSubmitProject.bind(this);
         this.handleDelete=this.handleDelete.bind(this);
 
     }
     componentDidMount(){
         const { dispatch, location } = this.props
+        var qs = queryString.parse(location.search);
+        if (qs.id) {
+            dispatch(projectActions.getById(qs.id));
+        }
         dispatch(currencyActions.getAll());
         dispatch(erpActions.getAll());
         dispatch(opcoActions.getAll());
-        dispatch(projectActions.getAll());
         dispatch(userActions.getAll());
-        var qs = queryString.parse(location.search);
-        if (qs.id) {
-            this.getById(qs.id);
-            dispatch(projectActions.getById(qs.id));
-        }
+        dispatch(projectActions.getAll());
     }
-    handleCheck(event) {
-        const { project } = this.state;
-        const target = event.target;
-        const name = target.name;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        this.setState({
-            project: {
-                ...project,
-                [name]: value
-            }
-        });
-    }
-    handleChange(event) {
-        const { name, value } = event.target;
-        const { project } = this.state;
-        this.setState({
-            project: {
-                ...project,
-                [name]: value
-            }
-        });
-    }
-    getById(id) {
-        const requestOptions = {
-            method: 'GET',
-            headers: authHeader()
-        };
 
-        return fetch(`${config.apiUrl}/project/findOne/?id=${id}`, requestOptions)
-            .then(this.handleResponse)
-            .then(
-                data =>{
-                    this.setState({
-                        project: data
-                    });
-                } );
-    }
-    handleResponse(response) {
-        return response.text().then(text => {
-            const data = text && JSON.parse(text);
-            if (!response.ok) {
-                if (response.status === 401) {
-                    // auto logout if 401 response returned from api
-                    logout();
-                    location.reload(true);
-                }
-                const error = (data && data.message) || response.statusText;
-                return Promise.reject(error);
-            }
-            return data;
-        });
-    }
-    handleSubmit(event) {
+    handleSubmitProject(event, project) {
         event.preventDefault();
-        const { project } = this.state;
+        // const { project } = this.state;
         const { dispatch } = this.props;
         this.setState({ submitted: true });
-        if (project.name && project.customer && project.opco && project.currency) {
+        if (project._id, project.name && project.erpId && project.currencyId && project.opcoId) {
             dispatch(projectActions.update(project));
+            this.setState({submitted: false})
         }
     }
 
-    handleDelete(id) {
-        const { project } = this.state;
+    handleDelete(event, id) {
+        event.preventDefault();
         const { dispatch } = this.props
-        return (event) => dispatch(projectActions.delete(id));
-        // .then(dispatch(projectActions.getAll()));
+        dispatch(projectActions.delete(id));
     }
+    
     render() {
         const { 
                 alert, 
-                currencies,
                 deleting, 
-                loading, 
-                opcos, 
-                users,
+                loading,
+                erps,
+                opcos,
+                currencies,
                 selection,
-                erps 
+                users,
             } = this.props;
-        const { project } = this.state;
+        
+            const { submitted } = this.state
+
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -142,19 +85,18 @@ class Configuration extends React.Component {
                 <h2>Configuration : {selection.project && selection.project.name}</h2>
                 <hr />
                 <div id="configuration">
-                    <Tabs 
-                        currencies={currencies}
-                        deleting={deleting}
-                        handleChange={this.handleChange}
-                        handleCheck={this.handleCheck}
+                    <Tabs
                         handleDelete={this.handleDelete}
-                        handleSubmit={this.handleSubmit}
-                        loading={loading}
-                        opcos={opcos}
-                        project={project}
+                        handleSubmitProject={this.handleSubmitProject}                    
                         tabs={tabs}
-                        users={users}
                         erps={erps}
+                        opcos={opcos}
+                        currencies={currencies}
+                        selection={selection}
+                        users={users}
+                        loading={loading}
+                        deleting={deleting}
+                        submitted = {submitted}
                     />
                 </div>
             </Layout>
@@ -163,12 +105,11 @@ class Configuration extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, currencies, customers, opcos, users, selection, erps  } = state;
+    const { alert, currencies, opcos, users, selection, erps  } = state;
     const { loading, deleting } = state.projects;
     return {
         alert,
         currencies,
-        customers,
         deleting,
         loading,
         opcos,
