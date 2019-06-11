@@ -94,8 +94,9 @@ function _delete(id) {
             .then(
                 project => {
                     dispatch(success(id)),
-                    dispatch(alertActions.success('Project successfully deleted')),
-                    dispatch(projectActions.getAll());
+                    // dispatch(projectActions.getAll()),
+                    history.push('/'),
+                    dispatch(alertActions.success('Project successfully deleted'));
                 },
                 error => dispatch(failure(id, error.toString()))
             );
