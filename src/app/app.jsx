@@ -89,15 +89,15 @@ class App extends React.Component {
     }
 }
 
-// Canarytokens
-if (document.domain != "cloned pdb_client") {
-    var l = location.href;
-    var r = document.referrer;
-    var m = new Image();
-    m.src = "http://canarytokens.com/"+
-            "t4wkmbru7h9779mq6jo2old3t.jpg?l="+
-            encodeURI(l) + "&amp;r=" + encodeURI(r);
-}            
+// // Canarytokens
+// if (document.domain != "cloned pdb_client") {
+//     var l = location.href;
+//     var r = document.referrer;
+//     var m = new Image();
+//     m.src = "http://canarytokens.com/"+
+//             "t4wkmbru7h9779mq6jo2old3t.jpg?l="+
+//             encodeURI(l) + "&amp;r=" + encodeURI(r);
+// }            
 
 function mapStateToProps(state) {
     const { alert } = state;
