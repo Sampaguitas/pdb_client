@@ -136,22 +136,38 @@ class General extends React.Component {
 
     stateReload(event){
         const { users, selection } = this.props;
+        const { accesses } = this.props.selection.project;
         const { project } = this.state;
         var userArray = []
         var i
         if (users.items) {
             for(i=0;i<users.items.length;i++){
-                let NewUserArrayElement = {
-                    'userId': users.items[i]._id,
-                    'userName': users.items[i].userName,
-                    'name': users.items[i].name,
-                    'isExpediting': false,
-                    'isInspection': false,
-                    'isShipping': false,
-                    'isWarehouse': false,
-                    'isConfiguration': false
-                };
-                userArray.push(NewUserArrayElement)
+                var result = _.find(accesses, { 'userId' : users.items[i]._id });
+                if (result) {
+                    let NewUserArrayElement = {
+                        'userId': result.user._id,
+                        'userName': result.user.userName,
+                        'name': result.user.name,
+                        'isExpediting': result.isExpediting,
+                        'isInspection': result.isInspection,
+                        'isShipping': result.isShipping,
+                        'isWarehouse': result.isWarehouse,
+                        'isConfiguration': result.isConfiguration
+                    };
+                    userArray.push(NewUserArrayElement)
+                } else {
+                    let NewUserArrayElement = {
+                        'userId': users.items[i]._id,
+                        'userName': users.items[i].userName,
+                        'name': users.items[i].name,
+                        'isExpediting': false,
+                        'isInspection': false,
+                        'isShipping': false,
+                        'isWarehouse': false,
+                        'isConfiguration': false
+                    };
+                    userArray.push(NewUserArrayElement)                
+                }
             };
             userArray = arraySorted(userArray, 'name')
             this.setState({
