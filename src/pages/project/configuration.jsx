@@ -78,6 +78,7 @@ class Configuration extends React.Component {
         
             const { submitted } = this.state
 
+            let currentUser = JSON.parse(localStorage.getItem('user'));
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -97,6 +98,7 @@ class Configuration extends React.Component {
                         loading={loading}
                         deleting={deleting}
                         submitted = {submitted}
+                        currentUser = {currentUser}
                     />
                 </div>
             </Layout>

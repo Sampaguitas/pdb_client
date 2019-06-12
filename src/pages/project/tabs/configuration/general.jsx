@@ -135,7 +135,7 @@ class General extends React.Component {
     } 
 
     stateReload(event){
-        const { users, selection } = this.props;
+        const { users, selection, currentUser } = this.props;
         const { accesses } = this.props.selection.project;
         const { project } = this.state;
         var userArray = []
@@ -207,6 +207,7 @@ class General extends React.Component {
             loading,
             deleting,
             submitted,
+            currentUser
         } = this.props
 
         const {
@@ -288,7 +289,7 @@ class General extends React.Component {
                                                     id={u.userId}
                                                     checked={u.isExpediting}
                                                     onChange={(event) => {this.handleIsRole(event, 'isExpediting')}}
-                                                    disabled={false}
+                                                    disabled={false} //_.isEqual(u.userId, currentUser.id)
                                                 />   
                                             </td>
                                             <td>
@@ -296,7 +297,7 @@ class General extends React.Component {
                                                     id={u.userId}
                                                     checked={u.isInspection}
                                                     onChange={(event) => {this.handleIsRole(event, 'isInspection')}}
-                                                    disabled={false}
+                                                    disabled={false} //_.isEqual(u.userId, currentUser.id)
                                                 />   
                                             </td>
                                             <td>
@@ -304,7 +305,7 @@ class General extends React.Component {
                                                     id={u.userId}
                                                     checked={u.isShipping}
                                                     onChange={(event) => {this.handleIsRole(event, 'isShipping')}}
-                                                    disabled={false}
+                                                    disabled={false} //_.isEqual(u.userId, currentUser.id)
                                                 />   
                                             </td>
                                             <td>
@@ -312,7 +313,7 @@ class General extends React.Component {
                                                     id={u.userId}
                                                     checked={u.isWarehouse}
                                                     onChange={(event) => {this.handleIsRole(event, 'isWarehouse')}}
-                                                    disabled={false}
+                                                    disabled={false} //_.isEqual(u.userId, currentUser.id)
                                                 />
                                             </td>
                                             <td>
@@ -320,7 +321,7 @@ class General extends React.Component {
                                                     id={u.userId}
                                                     checked={u.isConfiguration}
                                                     onChange={(event) => {this.handleIsRole(event, 'isConfiguration')}}
-                                                    disabled={false}
+                                                    disabled={false} //_.isEqual(u.userId, currentUser.id)
                                                 />
                                             </td>
                                             </tr> 

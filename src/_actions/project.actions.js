@@ -18,9 +18,13 @@ function create(project) {
         projectService.create(project)
             .then(
                 project => {
-                    dispatch(success(project));
+                    dispatch(success(project)),
+                    // dispatch(projectActions.getAll()),
+                    history.push({
+                        pathname:'/configuration',
+                        search: '?id=' + project._id
+                    }),
                     dispatch(alertActions.success('Project successfully created'));
-                    dispatch(projectActions.getAll());
                 },
                 error => {
                     dispatch(failure(error.toString()));

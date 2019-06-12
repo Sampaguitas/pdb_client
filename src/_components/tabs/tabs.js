@@ -39,7 +39,8 @@ class Tabs extends Component {
             users,
             loading,
             deleting,
-            submitted
+            submitted,
+            currentUser
         } = this.props
 
         return (
@@ -76,6 +77,7 @@ class Tabs extends Component {
                                 deleting={deleting}
                                 submitted = {submitted}
                                 tab={tab}
+                                currentUser={currentUser}
                             />
                         </div>
                     )}
