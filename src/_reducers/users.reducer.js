@@ -4,7 +4,7 @@ export function users(state = {}, action) {
   switch (action.type) {
     case userConstants.GETALL_REQUEST:
       return {
-        loading: true
+        userLoading: true
       };
     case userConstants.GETALL_SUCCESS:
       return {
@@ -20,7 +20,7 @@ export function users(state = {}, action) {
         ...state,
         items: state.items.map(user =>
           user.id === action.id
-            ? { ...user, updating: true }
+            ? { ...user, userUpdating: true }
             : user
         )
       };
@@ -36,7 +36,7 @@ export function users(state = {}, action) {
         items: state.items.map(user => {
           if (user.id === action.id) {
             // make copy of user without 'updating:true' property
-            const { updating, ...userCopy } = user;
+            const { userUpdating, ...userCopy } = user;
             // return copy of user with 'updateError:[error]' property
             return { ...userCopy, updateError: action.error };
           }
@@ -50,7 +50,7 @@ export function users(state = {}, action) {
         ...state,
         items: state.items.map(user =>
           user.id === action.id
-            ? { ...user, updating: true }
+            ? { ...user, userUpdating: true }
             : user
         )
       };
@@ -66,7 +66,7 @@ export function users(state = {}, action) {
         items: state.items.map(user => {
           if (user.id === action.id) {
             // make copy of user without 'updating:true' property
-            const { updating, ...userCopy } = user;
+            const { userUpdating, ...userCopy } = user;
             // return copy of user with 'updateError:[error]' property
             return { ...userCopy, updateError: action.error };
           }
@@ -80,7 +80,7 @@ export function users(state = {}, action) {
           ...state,
           items: state.items.map(user =>
             user.id === action.id
-              ? { ...user, updating: true }
+              ? { ...user, userUpdating: true }
               : user
           )
         };
@@ -96,7 +96,7 @@ export function users(state = {}, action) {
           items: state.items.map(user => {
             if (user.id === action.id) {
               // make copy of user without 'updating:true' property
-              const { updating, ...userCopy } = user;
+              const { userUpdating, ...userCopy } = user;
               // return copy of user with 'updateError:[error]' property
               return { ...userCopy, updateError: action.error };
             }
@@ -110,7 +110,7 @@ export function users(state = {}, action) {
             ...state,
             items: state.items.map(user =>
               user.id === action.id
-                ? { ...user, updating: true }
+                ? { ...user, userUpdating: true }
                 : user
             )
           };
@@ -126,7 +126,7 @@ export function users(state = {}, action) {
             items: state.items.map(user => {
               if (user.id === action.id) {
                 // make copy of user without 'updating:true' property
-                const { updating, ...userCopy } = user;
+                const { userUpdating, ...userCopy } = user;
                 // return copy of user with 'updateError:[error]' property
                 return { ...userCopy, updateError: action.error };
               }
@@ -140,7 +140,7 @@ export function users(state = {}, action) {
         ...state,
         items: state.items.map(user =>
           user.id === action.id
-            ? { ...user, deleting: true }
+            ? { ...user, userDeleting: true }
             : user
         )
       };
@@ -156,7 +156,7 @@ export function users(state = {}, action) {
         items: state.items.map(user => {
           if (user.id === action.id) {
             // make copy of user without 'deleting:true' property
-            const { deleting, ...userCopy } = user;
+            const { userDeleting, ...userCopy } = user;
             // return copy of user with 'deleteError:[error]' property
             return { ...userCopy, deleteError: action.error };
           }

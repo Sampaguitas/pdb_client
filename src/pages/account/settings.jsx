@@ -230,7 +230,7 @@ handleSubmit(event) {
 
   render() {
     const { user, userName, name, opco, region, isAdmin, isSuperAdmin, submitted } = this.state;
-    const { loading, updating, deleting, alert, opcos } = this.props;
+    const { registering, userUpdating, userDeleting, alert, opcos } = this.props;
     let currentUser = JSON.parse(localStorage.getItem('user'));
     return (
       <Layout>
@@ -383,7 +383,7 @@ handleSubmit(event) {
                                         className="btn btn-outline-dark btn-lg"
                                         onClick={(event) => {this.handleDeletUser(event, this.state.user.id)}}
                                     >
-                                        {deleting && (
+                                        {userDeleting && (
                                             <FontAwesomeIcon
                                                 icon="spinner"
                                                 className="fa-pulse fa-1x fa-fw" 
@@ -397,7 +397,7 @@ handleSubmit(event) {
                                         type="submit"
                                         className="btn btn-outline-leeuwen btn-lg"
                                     >
-                                        {updating && (
+                                        {userUpdating && (
                                             <FontAwesomeIcon
                                                 icon="spinner"
                                                 className="fa-pulse fa-1x fa-fw" 
@@ -412,7 +412,7 @@ handleSubmit(event) {
                                 type="submit"
                                 className="btn btn-outline-leeuwen btn-lg btn-full"
                             >
-                                {loading && (
+                                {registering && (
                                     <FontAwesomeIcon
                                         icon="spinner"
                                         className="fa-pulse fa-1x fa-fw" 
@@ -433,13 +433,15 @@ handleSubmit(event) {
 }
 
 function mapStateToProps(state) {
-  const { loading, updating, deleting } = state.registration;
   const { users, alert, opcos } = state;
+  const { userUpdating, userDeleting } = state.users;
+  const { registering } = state.registration;
+  
   return {
     alert,
-    loading,
-    updating,
-    deleting,
+    userUpdating,
+    userDeleting,
+    registering,
     users,
     opcos
   };

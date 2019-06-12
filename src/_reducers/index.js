@@ -10,6 +10,7 @@ import { projects } from './projects.reducer';
 import { regions } from './regions.reducer';
 import { registration } from './registration.reducer';
 import { selection } from './selection.reducer';
+import { suppliers } from './suppliers.reducer';
 import { users } from './users.reducer';
 
 const rootReducer = combineReducers({
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
   regions,
   registration,
   selection,
+  suppliers,
   users
 });
 

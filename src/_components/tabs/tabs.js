@@ -29,18 +29,23 @@ class Tabs extends Component {
     render() {
         const { tabs  } = this.state
         
-        const { 
-            handleDelete,
+        const {
             handleSubmitProject,
+            handleDeleteProject,
+            projectUpdating,
+            projectDeleting,
+            submittedProject,
             erps,
             opcos,
             currencies,
             selection,
             users,
-            loading,
-            deleting,
-            submitted,
-            currentUser
+            handleSubmitSupplier,
+            handleDeleteSupplier,
+            supplierUpdating,
+            supplierDeleting,
+            submittedSupplier
+            // currentUser
         } = this.props
 
         return (
@@ -65,19 +70,23 @@ class Tabs extends Component {
                             key={tab.index}
                         >
                             <tab.component
-
-                                handleDelete={handleDelete}
                                 handleSubmitProject={handleSubmitProject}
+                                handleDeleteProject={handleDeleteProject}
+                                projectUpdating={projectUpdating}
+                                projectDeleting={projectDeleting}
+                                submittedProject = {submittedProject}
                                 erps={erps}
                                 opcos={opcos}
                                 currencies={currencies}
                                 selection={selection}
                                 users={users}
-                                loading={loading}
-                                deleting={deleting}
-                                submitted = {submitted}
+                                handleSubmitSupplier={handleSubmitSupplier}
+                                handleDeleteSupplier={handleDeleteSupplier}
+                                supplierUpdating={supplierUpdating}
+                                supplierDeleting={supplierDeleting}
+                                submittedSupplier={submittedSupplier}
                                 tab={tab}
-                                currentUser={currentUser}
+                                // currentUser={currentUser}
                             />
                         </div>
                     )}

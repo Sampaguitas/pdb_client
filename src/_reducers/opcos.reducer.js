@@ -4,45 +4,39 @@ export function opcos(state = {}, action) {
     switch (action.type) {
         case opcoConstants.CREATE_REQUEST:
             return {
-                loading: true,
+                opcoCreating: true,
                 items: action.opcos
             };
         case opcoConstants.CREATE_SUCCESS:
             return {
-                loading: false,
                 items: action.opcos
             };
         case opcoConstants.CREATE_FAILURE:
             return {
-                loading: false,
                 error: action.error
             };
         case opcoConstants.GET_REQUEST:
             return {
-                loading: true
+                opcoLoading: true
             };
         case opcoConstants.GET_SUCCESS:
             return {
-                loading: false,
                 items: action.opcos
             };
         case opcoConstants.GET_FAILURE:
             return {
-                loading: false,
                 error: action.error
             };
         case opcoConstants.GETALL_REQUEST:
             return {
-                loading: true
+                opcoLoading: true
             };
         case opcoConstants.GETALL_SUCCESS:
             return {
-                loading: false,
                 items: action.opcos
             };
         case opcoConstants.GETALL_FAILURE:
             return {
-                loading: false,
                 error: action.error
             };
         case opcoConstants.UPDATE_REQUEST:
@@ -51,7 +45,7 @@ export function opcos(state = {}, action) {
                 ...state,
                 items: state.items.map(opco =>
                     opco.id === action.id
-                        ? { ...opco, updating: true }
+                        ? { ...opco, opcoUpdating: true }
                         : opco
                 )
             };
@@ -67,7 +61,7 @@ export function opcos(state = {}, action) {
                 items: state.items.map(opco => {
                     if (opco.id === action.id) {
                         // make copy of opco without 'updating:true' property
-                        const { updating, ...opcoCopy } = opco;
+                        const { opcoUpdating, ...opcoCopy } = opco;
                         // return copy of opco with 'updateError:[error]' property
                         return { ...opcoCopy, updateError: action.error };
                     }
@@ -81,7 +75,7 @@ export function opcos(state = {}, action) {
                 ...state,
                 items: state.items.map(opco =>
                     opco.id === action.id
-                        ? { ...opco, deleting: true }
+                        ? { ...opco, opcoDeleting: true }
                         : opco
                 )
             };
@@ -97,7 +91,7 @@ export function opcos(state = {}, action) {
                 items: state.items.map(opco => {
                     if (opco.id === action.id) {
                         // make copy of opco without 'deleting:true' property
-                        const { deleting, ...opcoCopy } = opco;
+                        const { opcoDeleting, ...opcoCopy } = opco;
                         // return copy of opco with 'deleteError:[error]' property
                         return { ...opcoCopy, deleteError: action.error };
                     }

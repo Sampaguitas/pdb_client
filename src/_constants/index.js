@@ -5,4 +5,5 @@ export * from './locale.constants';
 export * from './opco.constants';
 export * from './project.constants';
 export * from './region.constants';
+export * from './supplier.constants';
 export * from './user.constants';

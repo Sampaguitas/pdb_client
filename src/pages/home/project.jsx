@@ -200,7 +200,7 @@ class Project extends React.Component {
     }
 
     render() {
-        const { alert, currencies, erps, loading, opcos, projects, users } = this.props;
+        const { alert, currencies, erps, projectCreating, opcos, projects, users } = this.props;
         const { project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, loaded, submitted } = this.state;
         const { projectUsers } = this.state.project;
         let user = JSON.parse(localStorage.getItem('user'));
@@ -392,7 +392,7 @@ class Project extends React.Component {
                                                 type="submit"
                                                 className="btn btn-leeuwen btn-full btn-lg mb-3"
                                             >
-                                                {loading && (
+                                                {projectCreating && (
                                                     <FontAwesomeIcon
                                                         icon="spinner"
                                                         className="fa-pulse fa-1x fa-fw"
@@ -414,12 +414,12 @@ class Project extends React.Component {
 
 function mapStateToProps(state) {
     const { alert, currencies, erps, opcos, projects, users } = state;
-    const { loading } = state.projects;
+    const { projectCreating } = state.projects;
     return {
         alert,
         currencies,
         erps,
-        loading,
+        projectCreating,
         opcos,
         projects,
         users

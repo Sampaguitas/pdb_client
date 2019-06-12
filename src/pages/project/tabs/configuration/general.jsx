@@ -135,7 +135,7 @@ class General extends React.Component {
     } 
 
     stateReload(event){
-        const { users, selection, currentUser } = this.props;
+        const { users, selection } = this.props;
         const { accesses } = this.props.selection.project;
         const { project } = this.state;
         var userArray = []
@@ -196,18 +196,18 @@ class General extends React.Component {
     render() {
 
         const { 
+            handleSubmitProject,
+            handleDeleteProject,
+            projectUpdating,
+            projectDeleting,
+            submittedProject,
             erps,
             opcos,
             currencies,
             selection,
-            users,
-            handleDelete,
-            handleSubmitProject,                      
+            users,                  
             tab,
-            loading,
-            deleting,
-            submitted,
-            currentUser
+            // currentUser
         } = this.props
 
         const {
@@ -344,7 +344,7 @@ class General extends React.Component {
                                         type="text"
                                         value={project.name}
                                         onChange={this.handleChange}
-                                        submitted={submitted}
+                                        submittedProject={submittedProject}
                                         inline={false}
                                         required={false}
                                     />
@@ -355,7 +355,7 @@ class General extends React.Component {
                                         value={project.erpId}
                                         onChange={this.handleChange}
                                         placeholder=""
-                                        submitted={submitted}
+                                        submittedProject={submittedProject}
                                         inline={false}
                                         required={false}
                                     />
@@ -366,7 +366,7 @@ class General extends React.Component {
                                         value={project.opcoId}
                                         onChange={this.handleChange}
                                         placeholder=""
-                                        submitted={submitted}
+                                        submittedProject={submittedProject}
                                         inline={false}
                                         required={false}
                                     />
@@ -377,19 +377,19 @@ class General extends React.Component {
                                         value={project.currencyId}
                                         onChange={this.handleChange}
                                         placeholder=""
-                                        submitted={submitted}
+                                        submittedProject={submittedProject}
                                         inline={false}
                                         required={false}
                                     />
                                     <div className="text-right">
                                         {project.id &&
                                         <div>
-                                        <button type="submit" className="btn btn-outline-dark btn-lg" onClick={(event) => { handleDelete(event, project.id)}} style={{ marginRight: 10 }} >
-                                            {deleting ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : '' }
+                                        <button type="submit" className="btn btn-outline-dark btn-lg" onClick={(event) => { handleDeleteProject(event, project.id)}} style={{ marginRight: 10 }} >
+                                            {projectDeleting ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : '' }
                                             Remove
                                         </button>
                                         <button type="submit" className="btn btn-lg btn-outline-leeuwen" onClick={(event) => { handleSubmitProject(event, project)} }>
-                                        {loading ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
+                                        {projectUpdating ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
                                             Update
                                         </button>
                                         </div>

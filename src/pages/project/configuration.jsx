@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
-import { currencyActions, customerActions, opcoActions, projectActions, userActions, erpActions  } from '../../_actions';
+import { currencyActions, opcoActions, projectActions, supplierActions, userActions, erpActions  } from '../../_actions';
 import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs'
@@ -28,10 +28,13 @@ class Configuration extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            submitted: false
+            submittedProject: false,
+            submittedSupplier: false
         }
         this.handleSubmitProject=this.handleSubmitProject.bind(this);
-        this.handleDelete=this.handleDelete.bind(this);
+        this.handleDeleteProject=this.handleDeleteProject.bind(this);
+        this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
+        this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
 
     }
     componentDidMount(){
@@ -49,36 +52,56 @@ class Configuration extends React.Component {
 
     handleSubmitProject(event, project) {
         event.preventDefault();
-        // const { project } = this.state;
         const { dispatch } = this.props;
-        this.setState({ submitted: true });
+        this.setState({ submittedProject: true });
         if (project._id, project.name && project.erpId && project.currencyId && project.opcoId) {
             dispatch(projectActions.update(project));
-            this.setState({submitted: false})
+            this.setState({submittedProject: false})
         }
     }
 
-    handleDelete(event, id) {
+    handleSubmitSupplier(event, supplier) {
+        event.preventDefault();
+        const { dispatch } = this.props;
+        this.setState({ submittedSupplier: true });
+        if (supplier._id && supplier.name && supplier.projectId) {
+            dispatch(supplierActions.create(supplier));
+            this.setState({submittedSupplier: false})
+        } else if (supplier.name && supplier.projectId){
+            dispatch(supplierActions.update(supplier));
+            this.setState({submittedSupplier: false})
+        }
+    }
+
+    handleDeleteProject(event, id) {
         event.preventDefault();
         const { dispatch } = this.props
         dispatch(projectActions.delete(id));
     }
+
+    handleDeleteSupplier(event, id) {
+        event.preventDefault();
+        const { dispatch } = this.props
+        dispatch(supplierActions.delete(id));
+    }
     
     render() {
         const { 
-                alert, 
-                deleting, 
-                loading,
+                alert,  
+                projectUpdating,
+                projectDeleting,
                 erps,
                 opcos,
                 currencies,
                 selection,
                 users,
+                supplierUpdating,
+                supplierDeleting
             } = this.props;
         
-            const { submitted } = this.state
+            const { submittedProject, submittedSupplier } = this.state
 
-            let currentUser = JSON.parse(localStorage.getItem('user'));
+            // let currentUser = JSON.parse(localStorage.getItem('user'));
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -87,18 +110,23 @@ class Configuration extends React.Component {
                 <hr />
                 <div id="configuration">
                     <Tabs
-                        handleDelete={this.handleDelete}
-                        handleSubmitProject={this.handleSubmitProject}                    
                         tabs={tabs}
+                        handleSubmitProject={this.handleSubmitProject}
+                        handleDeleteProject={this.handleDeleteProject}
+                        projectUpdating={projectUpdating}
+                        projectDeleting={projectDeleting}
+                        submittedProject = {submittedProject}                    
                         erps={erps}
                         opcos={opcos}
                         currencies={currencies}
                         selection={selection}
                         users={users}
-                        loading={loading}
-                        deleting={deleting}
-                        submitted = {submitted}
-                        currentUser = {currentUser}
+                        handleSubmitSupplier={this.handleSubmitSupplier}
+                        handleDeleteSupplier={this.handleDeleteSupplier}
+                        supplierUpdating={supplierUpdating}
+                        supplierDeleting={supplierDeleting}
+                        submittedSupplier = {submittedSupplier}
+                        // currentUser = {currentUser}
                     />
                 </div>
             </Layout>
@@ -108,12 +136,15 @@ class Configuration extends React.Component {
 
 function mapStateToProps(state) {
     const { alert, currencies, opcos, users, selection, erps  } = state;
-    const { loading, deleting } = state.projects;
+    const { projectUpdating, projectDeleting } = state.projects;
+    const { supplierUpdating, supplierDeleting } = state.suppliers;
     return {
         alert,
         currencies,
-        deleting,
-        loading,
+        projectUpdating,
+        projectDeleting,
+        supplierUpdating,
+        supplierDeleting,        
         opcos,
         users,
         selection,

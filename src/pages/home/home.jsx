@@ -49,7 +49,7 @@ class Home extends React.Component {
             name: '',
             opco:'',
             erp: '',
-            projects: [],
+            // projects: [],
             loaded: false
         };
         this.filterName = this.filterName.bind(this);
@@ -59,8 +59,9 @@ class Home extends React.Component {
     }
 
     componentDidMount() {
-        this.props.dispatch(opcoActions.getAll());
-        this.props.dispatch(projectActions.getAll());
+        const { dispatch } = this.props
+        dispatch(opcoActions.getAll());
+        dispatch(projectActions.getAll());
     }
 
     handleChange(event) {
@@ -73,7 +74,7 @@ class Home extends React.Component {
     filterName(projects){
         const { number, name, opco, erp } = this.state
         if (projects.items) {
-            return projectSorted(this.props.projects).filter(function (project) {
+            return projectSorted(projects).filter(function (project) {
                 return (doesMatch(number, project.number, 'Number') 
                 && doesMatch(name, project.name, 'String') 
                 && doesMatch(opco, project.opco.name, 'String') 
@@ -83,7 +84,7 @@ class Home extends React.Component {
     }
 
     gotoProject(event) {
-        // event.preventDefault()
+        event.preventDefault()
         history.push({pathname:'/project'})
     }
 
@@ -95,8 +96,7 @@ class Home extends React.Component {
 
     render() {
         const { number, name, opco, erp } = this.state;
-        const { alert, loading } = this.props;
-        // {this.props.projects.items && this.state.loaded === false && this.stateReload()}
+        const { alert, projects } = this.props;
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -138,16 +138,14 @@ class Home extends React.Component {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {this.props.projects.items && this.withoutProjectMaster(this.props.projects).map((project) => <ProjectRow project={project} key={project._id} />)}
+                                            {projects.items && this.withoutProjectMaster(projects).map((project) => <ProjectRow project={project} key={project._id} />)}
                                         </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </Layout>
         );
     }
@@ -155,12 +153,12 @@ class Home extends React.Component {
 
 function mapStateToProps(state) {
     const { alert, opcos, projects } = state;
-    const { loading } = state.projects;
+    const { projectLoading } = state.projects;
     return {
         alert,
         opcos,
         projects,
-        loading,
+        projectLoading,
     };
 }
 

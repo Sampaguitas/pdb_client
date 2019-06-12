@@ -78,20 +78,14 @@ class Opco extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
         this.handleDeletOpco = this.handleDeletOpco.bind(this);
-        // this.handleDelete = this.handleDelete.bind(this);
-        // this.getById = this.getById.bind(this);
-        // this.handleResponse = this.handleResponse.bind(this);
     }
 
     componentDidMount() {
-        const { location, users } = this.props;
-        this.props.dispatch(opcoActions.getAll());
-        this.props.dispatch(localeActions.getAll());
-        this.props.dispatch(regionActions.getAll());
+        const { location, dispatch } = this.props;
+        dispatch(opcoActions.getAll());
+        dispatch(localeActions.getAll());
+        dispatch(regionActions.getAll());
         var qs = queryString.parse(location.search);
-        // if (qs.id) {
-        //     this.getById(qs.id);
-        // }
     }
 
     showModal() {
@@ -195,9 +189,10 @@ class Opco extends React.Component {
     }
 
     handleOnclick(event, id) {
+        const { opcos } = this.props
         let user = JSON.parse(localStorage.getItem('user'));
-        if (event.target.type != 'checkbox' && this.props.opcos.items && user.isSuperAdmin) {
-          let found = this.props.opcos.items.find(element => element.id === id);
+        if (event.target.type != 'checkbox' && opcos.items && user.isSuperAdmin) {
+          let found = opcos.items.find(element => element.id === id);
           this.setState({
             opco: {
               id: id,
@@ -217,14 +212,15 @@ class Opco extends React.Component {
 
     handleDeletOpco(event, id) {
         event.preventDefault();
-        this.props.dispatch(opcoActions.delete(id));
+        const { dispatch } = this.props
+        dispatch(opcoActions.delete(id));
         this.hideModal();
         this.setState({ submitted: false });
     }
 
     render() {
-        const { alert, loading, deleting, locales, regions, opcos } = this.props;
-        const { opco, code, name, city, country, locale, region, submitted } = this.state;
+        const { alert, opcoCreating, opcoUpdating, opcoDeleting, locales, regions, opcos } = this.props;
+        const { opco, show, code, name, city, country, locale, region, submitted } = this.state;
         return (
             <Layout>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -271,23 +267,23 @@ class Opco extends React.Component {
                                                 </th>
                                             </tr>
                                         </thead>
-                                            <tbody>
-                                                {opcos.items && this.filterName(opcos).map((opco) =>
-                                                    <OpcoRow 
-                                                    opco={opco}
+                                        <tbody>
+                                            {opcos.items && this.filterName(opcos).map((o) =>
+                                                <OpcoRow 
+                                                    opco={o}
                                                     handleOnclick={this.handleOnclick}
-                                                    key={opco._id} 
-                                                    />
-                                                )}
-                                            </tbody>
+                                                    key={o._id} 
+                                                />
+                                            )}
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
                         </div>
                         <Modal
-                            show={this.state.show}
+                            show={show}
                             hideModal={this.hideModal}
-                            title={this.state.opco.id ? 'Update opco' : 'Add opco'}
+                            title={opco.id ? 'Update opco' : 'Add opco'}
                         >
                             <div className="col-12">
                                 <form name="form" onSubmit={this.handleSubmit}>
@@ -374,15 +370,15 @@ class Opco extends React.Component {
                                         required={true}
                                     />
                                     <div className="modal-footer">
-                                    {this.state.opco.id ?
+                                    {opco.id ?
                                         <div className="row">
                                             <div className="col-6">
                                                 <button
                                                     type="submit"
                                                     className="btn btn-outline-dark btn-lg"
-                                                    onClick={(event) => {this.handleDeletOpco(event, this.state.opco.id)}}
+                                                    onClick={(event) => {this.handleDeletOpco(event, opco.id)}}
                                                 >
-                                                    {deleting && (
+                                                    {opcoDeleting && (
                                                         <FontAwesomeIcon
                                                             icon="spinner"
                                                             className="fa-pulse fa-1x fa-fw" 
@@ -396,7 +392,7 @@ class Opco extends React.Component {
                                                     type="submit"
                                                     className="btn btn-outline-leeuwen btn-lg"
                                                 >
-                                                    {loading && (
+                                                    {opcoUpdating && (
                                                         <FontAwesomeIcon
                                                             icon="spinner"
                                                             className="fa-pulse fa-1x fa-fw" 
@@ -411,7 +407,7 @@ class Opco extends React.Component {
                                             type="submit"
                                             className="btn btn-outline-leeuwen btn-lg btn-full"
                                         >
-                                            {loading && (
+                                            {opcoCreating && (
                                                 <FontAwesomeIcon
                                                     icon="spinner"
                                                     className="fa-pulse fa-1x fa-fw" 
@@ -432,12 +428,13 @@ class Opco extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { loading, deleting } = state.opcos;
     const { opcos, alert, regions, locales } = state;
+    const { opcoCreating, opcoUpdating, opcoDeleting } = state.opcos;
     return {
         alert,
-        loading,
-        deleting,
+        opcoCreating,
+        opcoUpdating,
+        opcoDeleting,
         regions,
         locales,
         opcos

@@ -57,7 +57,7 @@ class User extends React.Component {
     }
 
     render() {
-        const { user, alert, updating } = this.props;
+        const { user, alert, userUpdating } = this.props;
         const { submitted, stateUser } = this.state
         return (
             <Layout>
@@ -127,7 +127,7 @@ class User extends React.Component {
                                             required={true}
                                         />
                                         <button type="submit" className="btn btn-leeuwen btn-full btn-lg mb-3" onClick={this.handleSubmit}>
-                                            {updating ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
+                                            {userUpdating ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
                                             Change Password
                                         </button>
                                     </form>
@@ -142,12 +142,12 @@ class User extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { authentication, alert, users } = state;
-    const { user } = authentication;
-    const { updating } = users;
+    const { alert } = state;
+    const { userUpdating } = state.users;
+    const { user } = state.authentication;
     return {
         user,
-        updating,
+        userUpdating,
         alert
     };
 }

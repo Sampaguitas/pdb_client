@@ -4,45 +4,39 @@ export function projects(state = {}, action) {
     switch (action.type) {
         case projectConstants.CREATE_REQUEST:
             return {
-                loading: true,
+                projectCreating: true,
                 items: action.projects
             };
         case projectConstants.CREATE_SUCCESS:
             return {
-                loading: false,
                 items: action.projects
             };
         case projectConstants.CREATE_FAILURE:
             return {
-                loading: false,
                 error: action.error
             };
         case projectConstants.GET_REQUEST:
             return {
-                loading: true
+                projectLoading: true
             };
         case projectConstants.GET_SUCCESS:
             return {
-                loading: false,
                 items: action.projects
             };
         case projectConstants.GET_FAILURE:
             return {
-                loading: false,
                 error: action.error
             };
         case projectConstants.GETALL_REQUEST:
             return {
-                loading: true
+                projectLoading: true
             };
         case projectConstants.GETALL_SUCCESS:
             return {
-                loading: false,
                 items: action.projects
             };
         case projectConstants.GETALL_FAILURE:
             return {
-                loading: false,
                 error: action.error
             };
         case projectConstants.UPDATE_REQUEST:
@@ -51,7 +45,7 @@ export function projects(state = {}, action) {
                 ...state,
                 items: state.items.map(project =>
                     project.id === action.id
-                        ? { ...project, updating: true }
+                        ? { ...project, projectUpdating: true }
                         : project
                 )
             };
@@ -67,7 +61,7 @@ export function projects(state = {}, action) {
                 items: state.items.map(project => {
                     if (project.id === action.id) {
                         // make copy of project without 'updating:true' property
-                        const { updating, ...projectCopy } = project;
+                        const { projectUpdating, ...projectCopy } = project;
                         // return copy of project with 'updateError:[error]' property
                         return { ...projectCopy, updateError: action.error };
                     }
@@ -81,7 +75,7 @@ export function projects(state = {}, action) {
                 ...state,
                 items: state.items.map(project =>
                     project.id === action.id
-                        ? { ...project, deleting: true }
+                        ? { ...project, projectDeleting: true }
                         : project
                 )
             };
@@ -97,7 +91,7 @@ export function projects(state = {}, action) {
                 items: state.items.map(project => {
                     if (project.id === action.id) {
                         // make copy of project without 'deleting:true' property
-                        const { deleting, ...projectCopy } = project;
+                        const { projectDeleting, ...projectCopy } = project;
                         // return copy of project with 'deleteError:[error]' property
                         return { ...projectCopy, deleteError: action.error };
                     }
