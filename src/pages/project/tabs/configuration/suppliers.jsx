@@ -210,7 +210,7 @@ class Suppliers extends React.Component {
             mail,
             address,
             city,
-            country
+            country,
         } = this.state;
 
         if (selection.project.suppliers) {
@@ -311,6 +311,7 @@ class Suppliers extends React.Component {
             address,
             city,
             country,
+            show
         } = this.state;
         
         return (

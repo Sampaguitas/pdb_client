@@ -5,20 +5,22 @@ import config from 'config';
 import { currencyActions, opcoActions, projectActions, supplierActions, userActions, erpActions  } from '../../_actions';
 import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
-import Tabs from '../../_components/tabs/tabs'
+import Tabs from '../../_components/tabs/tabs';
 
 import General from './tabs/configuration/general';
 import Suppliers from './tabs/configuration/suppliers';
-import Translations from './tabs/configuration/translations';
-import Grids from './tabs/configuration/grids';
-import Templates from './tabs/configuration/templates';
+import Fields from './tabs/configuration/fields';
+import Screens from './tabs/configuration/screens';
+import Documents from './tabs/configuration/documents';
+import Duf from './tabs/configuration/duf';
 
 const tabs = [
     {index: 0, id: 'general', label: 'General', component: General, active: true, isLoaded: false},
     {index: 1, id: 'suppliers', label: 'Suppliers', component: Suppliers, active: false, isLoaded: false},
-    {index: 2, id: 'translations', label: 'Translations', component: Translations, active: false, isLoaded: false},
-    {index: 3, id: 'fields', label: 'Grids', component: Grids, active: false, isLoaded: false},
-    {index: 4, id: 'templates', label: 'Templates', component: Templates, active: false, isLoaded: false}
+    {index: 2, id: 'fields', label: 'Fields', component: Fields, active: false, isLoaded: false},
+    {index: 3, id: 'screens', label: 'Screens', component: Screens, active: false, isLoaded: false},
+    {index: 4, id: 'documents', label: 'Documents', component: Documents, active: false, isLoaded: false},
+    {index: 5, id: 'duf', label: 'DUF', component: Duf, active: false, isLoaded: false}
 ]
 
 const _ = require('lodash');
