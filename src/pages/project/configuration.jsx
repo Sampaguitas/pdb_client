@@ -13,7 +13,6 @@ import Translations from './tabs/configuration/translations';
 import Grids from './tabs/configuration/grids';
 import Templates from './tabs/configuration/templates';
 
-
 const tabs = [
     {index: 0, id: 'general', label: 'General', component: General, active: true, isLoaded: false},
     {index: 1, id: 'suppliers', label: 'Suppliers', component: Suppliers, active: false, isLoaded: false},
@@ -37,6 +36,7 @@ class Configuration extends React.Component {
         this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
 
     }
+
     componentDidMount(){
         const { dispatch, location } = this.props
         var qs = queryString.parse(location.search);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //Components
+import Modal from "../../../../_components/modal/modal.js"
 import CheckBox from '../../../../_components/check-box';
 import Input from '../../../../_components/input';
 import Select from '../../../../_components/select';
@@ -67,7 +68,7 @@ class Suppliers extends React.Component {
         }
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
-        this.handleChange = this.handleChange.bind(this);
+        this.handleChangeSupplier = this.handleChangeSupplier.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
@@ -173,7 +174,7 @@ class Suppliers extends React.Component {
         });
       }
 
-    handleChange(event) {
+    handleChangeSupplier(event) {
         const target = event.target;
         const { supplier } = this.state
         const name = target.name;
@@ -290,6 +291,7 @@ class Suppliers extends React.Component {
             handleSubmitSupplier,
             handleDeleteSupplier,
             SupplierUpdating,
+            SupplierCreating,
             SupplierDeleting,
             submittedSupplier,
             selection,                  
@@ -309,7 +311,6 @@ class Suppliers extends React.Component {
             address,
             city,
             country,
-            submitted
         } = this.state;
         
         return (
@@ -375,6 +376,164 @@ class Suppliers extends React.Component {
                                         )}
                                     </tbody>    
                                 </table>
+                                <Modal
+                                    show={show}
+                                    hideModal={this.hideModal}
+                                    title={supplier.id ? 'Update supplier' : 'Add supplier'}
+                                >
+                                    <div className="col-12">
+                                        <form name="form">
+                                            <Input
+                                                title="Name"
+                                                name="name"
+                                                type="text"
+                                                value={supplier.name}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Registered Name"
+                                                name="registeredName"
+                                                type="text"
+                                                value={supplier.registeredName}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Contact"
+                                                name="contact"
+                                                type="text"
+                                                value={supplier.contact}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Position"
+                                                name="position"
+                                                type="text"
+                                                value={supplier.position}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Tel"
+                                                name="tel"
+                                                type="text"
+                                                value={supplier.tel}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Fax"
+                                                name="fax"
+                                                type="text"
+                                                value={supplier.fax}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Mail"
+                                                name="mail"
+                                                type="text"
+                                                value={supplier.mail}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Address"
+                                                name="address"
+                                                type="text"
+                                                value={supplier.address}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="City"
+                                                name="city"
+                                                type="text"
+                                                value={supplier.city}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Country"
+                                                name="country"
+                                                type="text"
+                                                value={supplier.country}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <div className="modal-footer">
+                                                {supplier.id ?
+                                                    <div className="row">
+                                                        <div className="col-6">
+                                                            <button
+                                                                type="submit"
+                                                                className="btn btn-outline-dark btn-lg"
+                                                                onClick={(event) => {handleDeleteSupplier(event, opco.id)}}
+                                                            >
+                                                                {SupplierDeleting && (
+                                                                    <FontAwesomeIcon
+                                                                        icon="spinner"
+                                                                        className="fa-pulse fa-1x fa-fw" 
+                                                                    />
+                                                                )}
+                                                                Delete
+                                                            </button>
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <button
+                                                                type="submit"
+                                                                className="btn btn-outline-leeuwen btn-lg"
+                                                            >
+                                                                {SupplierUpdating && (
+                                                                    <FontAwesomeIcon
+                                                                        icon="spinner"
+                                                                        className="fa-pulse fa-1x fa-fw" 
+                                                                    />
+                                                                )}
+                                                                Update
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                :
+                                                    <button
+                                                        type="submit"
+                                                        className="btn btn-outline-leeuwen btn-lg btn-full"
+                                                    >
+                                                        {SupplierCreating && (
+                                                            <FontAwesomeIcon
+                                                                icon="spinner"
+                                                                className="fa-pulse fa-1x fa-fw" 
+                                                            />
+                                                        )}
+                                                        Create
+                                                    </button>
+                                                }
+                                            </div>
+                                        </form>
+                                    </div>
+                                </Modal>
                             </div>
                         </div>
                     </div>
