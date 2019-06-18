@@ -233,7 +233,7 @@ class General extends React.Component {
                                 <h5>Set user roles</h5>
                             </div>
                             <div className="card-body table-responsive">
-                                <table className="table table-hover">
+                                <table className="table table-hover" >
                                     <thead>
                                         <tr>
                                             <th scope="col" style={{width: '10%'}}>Initials<br />

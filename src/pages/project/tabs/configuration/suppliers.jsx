@@ -331,7 +331,7 @@ class Suppliers extends React.Component {
                                     </div>
                                 </div>
                             </div>
-                             <div className="card-body" style={{display: 'block', overflow: 'scroll'}}> {/*table-responsive */}
+                             <div className="card-body" style={{display: 'block', overflow: 'scroll', height: '100%'}}> {/*style={{display: 'block', overflow: 'scroll', height: '100%'}} */}
                                 <table className="table table-hover" > {/*style={{display: 'block', overflow: 'scroll'}}*/}
                                     <thead>
                                         <tr>

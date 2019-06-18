@@ -63,7 +63,7 @@ class Tabs extends Component {
                 <div className="tab-content full-height" id="nav-tabContent">
                     {tabs.map((tab)=>
                         <div
-                            className={tab.active ? "tab-pane fade show active" : "tab-pane fade"}
+                            className={tab.active ? "tab-pane fade show active full-height" : "tab-pane fade full-height"}
                             id={tab.id}
                             role="tabpanel"
                             aria-labelledby={tab.id + '-tab'}
