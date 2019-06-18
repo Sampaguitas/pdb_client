@@ -56,7 +56,7 @@ class Configuration extends React.Component {
         event.preventDefault();
         const { dispatch } = this.props;
         this.setState({ submittedProject: true });
-        if (project._id, project.name && project.erpId && project.currencyId && project.opcoId) {
+        if (project._id, project.name && project.erpId && project.opcoId) {
             dispatch(projectActions.update(project));
             this.setState({submittedProject: false})
         }

@@ -226,6 +226,8 @@ class Suppliers extends React.Component {
             && doesMatch(city, supplier.city, 'String')
             && doesMatch(country, supplier.country, 'String'));
           });
+        } else {
+            return [];
         }
     }
 
@@ -368,16 +370,13 @@ class Suppliers extends React.Component {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {selection ? 
-                                            selection.project && this.filterName(selection).map((s) =>
+                                        {selection && selection.project && this.filterName(selection).map((s) =>
                                             <SupplierRow 
                                                 supplier={s}
                                                 handleOnclick={this.handleOnclick}
                                                 key={s._id} 
                                             />
-                                        )
-                                        :
-                                        <div></div>}
+                                        )}
                                     </tbody>    
                                 </table>
                                 <Modal
