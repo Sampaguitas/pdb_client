@@ -22,8 +22,7 @@ class PackingDetails extends React.Component {
         const { alert, selection } = this.props;
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-                <br />
+                {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
                 <h2>Shipping - Packing details : {selection.project && selection.project.name}</h2>
                 <hr />
             </Layout>

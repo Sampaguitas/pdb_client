@@ -234,14 +234,13 @@ handleSubmit(event) {
     let currentUser = JSON.parse(localStorage.getItem('user'));
     return (
       <Layout>
-        {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-        <br />
-        <div id="setting">
+        {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
+        <div id="setting" className="full-height">
           <h2>Add or Update user</h2>
           <hr />
-          <div className="row">
-            <div className="col-12">
-              <div className="card">
+          <div className="row full-height">
+            <div className="col-12 full-height">
+              <div className="card full-height">
                 <div className="card-header">
                   <div className="row">
                     <div className="col-8">

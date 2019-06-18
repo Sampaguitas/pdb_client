@@ -65,6 +65,9 @@ class Configuration extends React.Component {
     handleSubmitSupplier(event, supplier) {
         event.preventDefault();
         const { dispatch } = this.props;
+        // console.log('clicked on submit handleSubmitSupplier');
+        // console.log('supplier:', supplier);
+        // console.log('this.state.submittedSupplier:', this.state.submittedSupplier);
         this.setState({ submittedSupplier: true });
         if (supplier._id && supplier.name && supplier.projectId) {
             dispatch(supplierActions.create(supplier));
@@ -106,11 +109,10 @@ class Configuration extends React.Component {
             // let currentUser = JSON.parse(localStorage.getItem('user'));
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-                <br />
+                {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
                 <h2>Configuration : {selection.project && selection.project.name}</h2>
                 <hr />
-                <div id="configuration">
+                <div id="configuration" className="full-height">
                     <Tabs
                         tabs={tabs}
                         handleSubmitProject={this.handleSubmitProject}

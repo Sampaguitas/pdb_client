@@ -225,10 +225,10 @@ class General extends React.Component {
         const { projectUsers } = this.state.project;
         {users.items && !loaded && selection.project && this.stateReload()}
         return (
-            <div className="tab-pane fade show" id={tab.id} role="tabpanel">
-                <div className="row">
-                    <div className="col-md-8 col-sm-12 mb-sm-3">
-                        <div className="card">
+            <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
+                <div className="row full-height">
+                    <div className="col-md-8 col-sm-12 mb-sm-3 full-height">
+                        <div className="card full-height">
                             <div className="card-header">
                                 <h5>Set user roles</h5>
                             </div>

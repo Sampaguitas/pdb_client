@@ -3,6 +3,8 @@ import HeaderBarMenu from "./header-bar-menu/header-bar-menu.js"
 import SideBarMenu from "./side-bar-menu/side-bar-menu.js"
 import Footer from "./footer.js"
 import "../_styles/bootstrap.min.css";
+import { callbackify } from 'util';
+// import "../_styles/main.css";
 
 class Layout extends Component {
     constructor(props) {
@@ -18,10 +20,10 @@ class Layout extends Component {
 
     render() {
         return (
-            <div >
+            <div className="full-height">
                 <HeaderBarMenu id="headerbar" className={this.state.collapsed ? "collapsed" : ''} collapsed={this.state.collapsed} toggleCollapse={this.toggleCollapse}/>
                 <SideBarMenu className={this.state.collapsed ? "collapsed" : ''} collapsed={this.state.collapsed} toggleCollapse={this.toggleCollapse} accesses={this.props.accesses}/>
-                <div id="content" className={this.state.collapsed ? "collapsed " : ''} >
+                <div id="content" className={this.state.collapsed ? "collapsed" : ''} style={{height: 'calc(100% - 190px)'}}>
                     {this.props.children}
                 </div>
                 <Footer />

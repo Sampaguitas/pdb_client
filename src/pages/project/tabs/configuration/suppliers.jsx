@@ -170,7 +170,7 @@ class Suppliers extends React.Component {
                 projectId: "",
                 daveId: ""
           },
-          show: true
+          show: false
         });
       }
 
@@ -314,237 +314,237 @@ class Suppliers extends React.Component {
             show
         } = this.state;
         
-        return (<div></div>
-            // <div className="tab-pane fade show" id={tab.id} role="tabpanel">
-            //     <div className="row">
-            //         <div className="col-12">
-            //             <div className="card">
-            //                 <div className="card-header">
-            //                     <div className="row">
-            //                         <div className="col-8">
-            //                             <h5>Add or Update supplier information</h5>
-            //                         </div>
-            //                         <div className="col-4 text-right">
-            //                             <div className="modal-link" >
-            //                                 <FontAwesomeIcon icon="plus" className="red" name="plus" onClick={this.showModal}/>
-            //                             </div>
-            //                         </div>
-            //                     </div>
-            //                 </div>
-            //                 <div className="card-body table-responsive">
-            //                     <table className="table table-hover">
-            //                         <thead>
-            //                             <tr>
-            //                                 <th>Name<br />
-            //                                     <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
-            //                                 </th>
-            //                                 <th>Registered Name<br />
-            //                                     <input className="form-control" name="registeredName" value={registeredName} onChange={this.handleChangeHeader} />                                            
-            //                                 </th>
-            //                                 <th>Contact<br />
-            //                                     <input className="form-control" name="contact" value={contact} onChange={this.handleChangeHeader} />
-            //                                 </th>
-            //                                 <th>Position<br />
-            //                                     <input className="form-control" name="position" value={position} onChange={this.handleChangeHeader} />
-            //                                 </th>
-            //                                 <th>Tel<br />
-            //                                     <input className="form-control" name="tel" value={tel} onChange={this.handleChangeHeader} />
-            //                                 </th>
-            //                                 <th>Fax<br />
-            //                                     <input className="form-control" name="fax" value={fax} onChange={this.handleChangeHeader} />
-            //                                 </th>
-            //                                 <th>Mail<br />
-            //                                     <input className="form-control" name="mail" value={mail} onChange={this.handleChangeHeader} />
-            //                                 </th>
-            //                                 <th>Address<br />
-            //                                     <input className="form-control" name="address" value={address} onChange={this.handleChangeHeader} />
-            //                                 </th>
-            //                                 <th>City<br />
-            //                                     <input className="form-control" name="city" value={city} onChange={this.handleChangeHeader} />
-            //                                 </th>
-            //                                 <th>Country<br />
-            //                                     <input className="form-control" name="country" value={country} onChange={this.handleChangeHeader} />
-            //                                 </th>
-            //                             </tr>
-            //                         </thead>
-            //                         <tbody>
-            //                             {selection ? 
-            //                                 selection.project && this.filterName(selection).map((s) =>
-            //                                 <SupplierRow 
-            //                                     supplier={s}
-            //                                     handleOnclick={this.handleOnclick}
-            //                                     key={s._id} 
-            //                                 />
-            //                             )
-            //                             :
-            //                             <div></div>}
-            //                         </tbody>    
-            //                     </table>
-            //                     <Modal
-            //                         show={show}
-            //                         hideModal={this.hideModal}
-            //                         title={supplier.id ? 'Update supplier' : 'Add supplier'}
-            //                     >
-            //                         <div className="col-12">
-            //                             <form name="form">
-            //                                 <Input
-            //                                     title="Name"
-            //                                     name="name"
-            //                                     type="text"
-            //                                     value={supplier.name}
-            //                                     onChange={this.handleChangeSupplier}
-            //                                     submitted={submittedSupplier}
-            //                                     inline={false}
-            //                                     required={true}
-            //                                 />
-            //                                 <Input
-            //                                     title="Registered Name"
-            //                                     name="registeredName"
-            //                                     type="text"
-            //                                     value={supplier.registeredName}
-            //                                     onChange={this.handleChangeSupplier}
-            //                                     submitted={submittedSupplier}
-            //                                     inline={false}
-            //                                     required={true}
-            //                                 />
-            //                                 <Input
-            //                                     title="Contact"
-            //                                     name="contact"
-            //                                     type="text"
-            //                                     value={supplier.contact}
-            //                                     onChange={this.handleChangeSupplier}
-            //                                     submitted={submittedSupplier}
-            //                                     inline={false}
-            //                                     required={true}
-            //                                 />
-            //                                 <Input
-            //                                     title="Position"
-            //                                     name="position"
-            //                                     type="text"
-            //                                     value={supplier.position}
-            //                                     onChange={this.handleChangeSupplier}
-            //                                     submitted={submittedSupplier}
-            //                                     inline={false}
-            //                                     required={true}
-            //                                 />
-            //                                 <Input
-            //                                     title="Tel"
-            //                                     name="tel"
-            //                                     type="text"
-            //                                     value={supplier.tel}
-            //                                     onChange={this.handleChangeSupplier}
-            //                                     submitted={submittedSupplier}
-            //                                     inline={false}
-            //                                     required={true}
-            //                                 />
-            //                                 <Input
-            //                                     title="Fax"
-            //                                     name="fax"
-            //                                     type="text"
-            //                                     value={supplier.fax}
-            //                                     onChange={this.handleChangeSupplier}
-            //                                     submitted={submittedSupplier}
-            //                                     inline={false}
-            //                                     required={true}
-            //                                 />
-            //                                 <Input
-            //                                     title="Mail"
-            //                                     name="mail"
-            //                                     type="text"
-            //                                     value={supplier.mail}
-            //                                     onChange={this.handleChangeSupplier}
-            //                                     submitted={submittedSupplier}
-            //                                     inline={false}
-            //                                     required={true}
-            //                                 />
-            //                                 <Input
-            //                                     title="Address"
-            //                                     name="address"
-            //                                     type="text"
-            //                                     value={supplier.address}
-            //                                     onChange={this.handleChangeSupplier}
-            //                                     submitted={submittedSupplier}
-            //                                     inline={false}
-            //                                     required={true}
-            //                                 />
-            //                                 <Input
-            //                                     title="City"
-            //                                     name="city"
-            //                                     type="text"
-            //                                     value={supplier.city}
-            //                                     onChange={this.handleChangeSupplier}
-            //                                     submitted={submittedSupplier}
-            //                                     inline={false}
-            //                                     required={true}
-            //                                 />
-            //                                 <Input
-            //                                     title="Country"
-            //                                     name="country"
-            //                                     type="text"
-            //                                     value={supplier.country}
-            //                                     onChange={this.handleChangeSupplier}
-            //                                     submitted={submittedSupplier}
-            //                                     inline={false}
-            //                                     required={true}
-            //                                 />
-            //                                 <div className="modal-footer">
-            //                                     {supplier.id ?
-            //                                         <div className="row">
-            //                                             <div className="col-6">
-            //                                                 <button
-            //                                                     type="submit"
-            //                                                     className="btn btn-outline-dark btn-lg"
-            //                                                     onClick={(event) => {handleDeleteSupplier(event, opco.id)}}
-            //                                                 >
-            //                                                     {SupplierDeleting && (
-            //                                                         <FontAwesomeIcon
-            //                                                             icon="spinner"
-            //                                                             className="fa-pulse fa-1x fa-fw" 
-            //                                                         />
-            //                                                     )}
-            //                                                     Delete
-            //                                                 </button>
-            //                                             </div>
-            //                                             <div className="col-6">
-            //                                                 <button
-            //                                                     type="submit"
-            //                                                     className="btn btn-outline-leeuwen btn-lg" //handleSubmitSupplier
-            //                                                     onClick={(event) => {handleSubmitSupplier(event, opco.id)}}
-            //                                                 >
-            //                                                     {SupplierUpdating && (
-            //                                                         <FontAwesomeIcon
-            //                                                             icon="spinner"
-            //                                                             className="fa-pulse fa-1x fa-fw" 
-            //                                                         />
-            //                                                     )}
-            //                                                     Update
-            //                                                 </button>
-            //                                             </div>
-            //                                         </div>
-            //                                     :
-            //                                         <button
-            //                                             type="submit"
-            //                                             className="btn btn-outline-leeuwen btn-lg btn-full"
-            //                                             onClick={(event) => {handleSubmitSupplier(event, opco.id)}}
-            //                                         >
-            //                                             {SupplierCreating && (
-            //                                                 <FontAwesomeIcon
-            //                                                     icon="spinner"
-            //                                                     className="fa-pulse fa-1x fa-fw" 
-            //                                                 />
-            //                                             )}
-            //                                             Create
-            //                                         </button>
-            //                                     }
-            //                                 </div>
-            //                             </form>
-            //                         </div>
-            //                     </Modal>
-            //                 </div>
-            //             </div>
-            //         </div>
-            //     </div>
-            // </div>
+        return (
+            <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
+                <div className="row full-height">
+                    <div className="col-12 full-height">
+                        <div className="card full-height">
+                            <div className="card-header">
+                                <div className="row">
+                                    <div className="col-8">
+                                        <h5>Add or Update supplier information</h5>
+                                    </div>
+                                    <div className="col-4 text-right">
+                                        <div className="modal-link" >
+                                            <FontAwesomeIcon icon="plus" className="red" name="plus" onClick={this.showModal}/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <div className="card-body" style={{display: 'block', overflow: 'scroll'}}> {/*table-responsive */}
+                                <table className="table table-hover" > {/*style={{display: 'block', overflow: 'scroll'}}*/}
+                                    <thead>
+                                        <tr>
+                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Name<br />
+                                                <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
+                                            </th>
+                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Registered Name<br />
+                                                <input className="form-control" name="registeredName" value={registeredName} onChange={this.handleChangeHeader} />                                            
+                                            </th>
+                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Contact<br />
+                                                <input className="form-control" name="contact" value={contact} onChange={this.handleChangeHeader} />
+                                            </th>
+                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Position<br />
+                                                <input className="form-control" name="position" value={position} onChange={this.handleChangeHeader} />
+                                            </th>
+                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Tel<br />
+                                                <input className="form-control" name="tel" value={tel} onChange={this.handleChangeHeader} />
+                                            </th>
+                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Fax<br />
+                                                <input className="form-control" name="fax" value={fax} onChange={this.handleChangeHeader} />
+                                            </th>
+                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Mail<br />
+                                                <input className="form-control" name="mail" value={mail} onChange={this.handleChangeHeader} />
+                                            </th>
+                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Address<br />
+                                                <input className="form-control" name="address" value={address} onChange={this.handleChangeHeader} />
+                                            </th>
+                                            <th className="text-nowrap" style={{minWidth: '100px'}}>City<br />
+                                                <input className="form-control" name="city" value={city} onChange={this.handleChangeHeader} />
+                                            </th>
+                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Country<br />
+                                                <input className="form-control" name="country" value={country} onChange={this.handleChangeHeader} />
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {selection ? 
+                                            selection.project && this.filterName(selection).map((s) =>
+                                            <SupplierRow 
+                                                supplier={s}
+                                                handleOnclick={this.handleOnclick}
+                                                key={s._id} 
+                                            />
+                                        )
+                                        :
+                                        <div></div>}
+                                    </tbody>    
+                                </table>
+                                <Modal
+                                    show={show}
+                                    hideModal={this.hideModal}
+                                    title={supplier.id ? 'Update supplier' : 'Add supplier'}
+                                >
+                                    <div className="col-12">
+                                        <form name="form">
+                                            <Input
+                                                title="Name"
+                                                name="name"
+                                                type="text"
+                                                value={supplier.name}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Registered Name"
+                                                name="registeredName"
+                                                type="text"
+                                                value={supplier.registeredName}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Contact"
+                                                name="contact"
+                                                type="text"
+                                                value={supplier.contact}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Position"
+                                                name="position"
+                                                type="text"
+                                                value={supplier.position}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Tel"
+                                                name="tel"
+                                                type="text"
+                                                value={supplier.tel}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Fax"
+                                                name="fax"
+                                                type="text"
+                                                value={supplier.fax}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Mail"
+                                                name="mail"
+                                                type="text"
+                                                value={supplier.mail}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Address"
+                                                name="address"
+                                                type="text"
+                                                value={supplier.address}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="City"
+                                                name="city"
+                                                type="text"
+                                                value={supplier.city}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <Input
+                                                title="Country"
+                                                name="country"
+                                                type="text"
+                                                value={supplier.country}
+                                                onChange={this.handleChangeSupplier}
+                                                submitted={submittedSupplier}
+                                                inline={false}
+                                                required={true}
+                                            />
+                                            <div className="modal-footer">
+                                                {supplier.id ?
+                                                    <div className="row">
+                                                        <div className="col-6">
+                                                            <button
+                                                                type="submit"
+                                                                className="btn btn-outline-dark btn-lg"
+                                                                onClick={(event) => {handleDeleteSupplier(event, supplier.id)}}
+                                                            >
+                                                                {SupplierDeleting && (
+                                                                    <FontAwesomeIcon
+                                                                        icon="spinner"
+                                                                        className="fa-pulse fa-1x fa-fw" 
+                                                                    />
+                                                                )}
+                                                                Delete
+                                                            </button>
+                                                        </div>
+                                                        <div className="col-6">
+                                                            <button
+                                                                type="submit"
+                                                                className="btn btn-outline-leeuwen btn-lg" //handleSubmitSupplier
+                                                                onClick={(event) => {handleSubmitSupplier(event, supplier)}}
+                                                            >
+                                                                {SupplierUpdating && (
+                                                                    <FontAwesomeIcon
+                                                                        icon="spinner"
+                                                                        className="fa-pulse fa-1x fa-fw" 
+                                                                    />
+                                                                )}
+                                                                Update
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                :
+                                                    <button
+                                                        type="submit"
+                                                        className="btn btn-outline-leeuwen btn-lg btn-full"
+                                                        onClick={(event) => {handleSubmitSupplier(event, supplier)}}
+                                                    >
+                                                        {SupplierCreating && (
+                                                            <FontAwesomeIcon
+                                                                icon="spinner"
+                                                                className="fa-pulse fa-1x fa-fw" 
+                                                            />
+                                                        )}
+                                                        Create
+                                                    </button>
+                                                }
+                                            </div>
+                                        </form>
+                                    </div>
+                                </Modal>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         );
     }
 }

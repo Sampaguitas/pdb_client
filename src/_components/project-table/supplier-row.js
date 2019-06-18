@@ -5,16 +5,16 @@ class SupplierRow extends Component {
         const { supplier, handleOnclick } = this.props;
         return (
             <tr key={supplier.id} onClick={(event) => handleOnclick(event, supplier._id)}>
-                <td>{supplier.name}</td>
-                <td>{supplier.registeredName}</td>
-                <td>{supplier.contact}</td>
-                <td>{supplier.position}</td>
-                <td>{supplier.tel}</td>
-                <td>{supplier.fax}</td>
-                <td>{supplier.mail}</td>
-                <td>{supplier.address}</td>
-                <td>{supplier.city}</td>
-                <td>{supplier.country}</td>
+                <td className="text-nowrap">{supplier.name}</td>
+                <td className="text-nowrap">{supplier.registeredName}</td>
+                <td className="text-nowrap">{supplier.contact}</td>
+                <td className="text-nowrap">{supplier.position}</td>
+                <td className="text-nowrap">{supplier.tel}</td>
+                <td className="text-nowrap">{supplier.fax}</td>
+                <td className="text-nowrap">{supplier.mail}</td>
+                <td className="text-nowrap">{supplier.address}</td>
+                <td className="text-nowrap">{supplier.city}</td>
+                <td className="text-nowrap">{supplier.country}</td>
             </tr>
         );
     }

@@ -223,14 +223,13 @@ class Opco extends React.Component {
         const { opco, show, code, name, city, country, locale, region, submitted } = this.state;
         return (
             <Layout>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-                <br />
+                {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
                 <h2>Add or Update operation company</h2>
                 <hr />
-                <div id="Opco">
-                    <div className="row">
-                        <div className="col-12">
-                            <div className="card">
+                <div id="opco" className="full-height">
+                    <div className="row full-height" >
+                        <div className="col-12 full-height">
+                            <div className="card full-height">
                                 <div className="card-header">
                                     <div className="row">
                                         <div className="col-8">
@@ -253,7 +252,7 @@ class Opco extends React.Component {
                                                 <th>Name<br />
                                                     <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th>city<br />
+                                                <th>City<br />
                                                     <input className="form-control" name="city" value={city} onChange={this.handleChangeHeader} />
                                                 </th>
                                                 <th>Country<br />

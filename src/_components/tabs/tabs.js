@@ -49,7 +49,7 @@ class Tabs extends Component {
         } = this.props
 
         return (
-            <div id="tabs">
+            <div id="tabs" style={{height: '95%'}}>
                 <ul className="nav nav-tabs">
                     {tabs.map((tab)=>
                         <li className={tab.active ? 'nav-item active' : 'nav-item'} key={tab.index}>
@@ -60,7 +60,7 @@ class Tabs extends Component {
                     )}
                 </ul>
                 
-                <div className="tab-content" id="nav-tabContent">
+                <div className="tab-content full-height" id="nav-tabContent">
                     {tabs.map((tab)=>
                         <div
                             className={tab.active ? "tab-pane fade show active" : "tab-pane fade"}

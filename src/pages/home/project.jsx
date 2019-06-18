@@ -207,14 +207,13 @@ class Project extends React.Component {
         {users.items && loaded === false && this.stateReload()}
         return (
             <Layout>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-                <br />
-                <div id="setting">
+                {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
+                <div id="setting" className="full-height">
                     <h2>Add project</h2>
                     <hr />
-                    <div className="row">
-                        <div className="col-md-8 col-sm-12 mb-sm-3">
-                            <div className="card">
+                    <div className="row full-height">
+                        <div className="col-md-8 col-sm-12 mb-sm-3 full-height">
+                            <div className="card full-height">
                                 <div className="card-header">
                                     <div className="row">
                                         <div className="col-8">

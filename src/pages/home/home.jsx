@@ -99,14 +99,13 @@ class Home extends React.Component {
         const { alert, projects } = this.props;
         return (
             <Layout>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-                <br />
+                {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
                 <h2>Overview</h2>
                 <hr />
-                <div id="overview">
-                    <div className="row">
-                        <div className="col-12">
-                            <div className="card">
+                <div id="overview" className="full-height">
+                    <div className="row full-height">
+                        <div className="col-12 full-height">
+                            <div className="card full-height">
                                 <div className="card-header">
                                     <div className="row">
                                         <div className="col-8">
