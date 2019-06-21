@@ -62,19 +62,17 @@ class TableInput extends Component{
                 field => {
                     this.setState({color:'green'}, () => {
                         setTimeout(() => {
-                            this.setState({color: 'inherit'});
+                            this.setState({color: 'inherit'}),
+                            this.setState({editing:false});
                         }, 1000);
-                    }, () => {
-                        this.setState({editing:false});
                     });
                 },
                 error => {
                     this.setState({color:'red'}, () => {
                         setTimeout(() => {
-                            this.setState({color: 'inherit'});
+                            this.setState({color: 'inherit'}),
+                            this.setState({editing:false});
                         }, 1000);
-                    }, () => {
-                        this.setState({editing:false});
                     });
                 }
             );
