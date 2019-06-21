@@ -26,8 +26,8 @@ function arraySorted(array, field) {
 function doesMatch(search, array, type) {
     if (!search) {
         return true;
-    } else if (!array) {
-        return true;
+    } else if (!array && search) {
+        return false;
     } else {
         switch(type) {
             case 'String':
@@ -312,7 +312,7 @@ class Suppliers extends React.Component {
             mail,
             address,
             city,
-            country,
+            country,        
             show
         } = this.state;
         
@@ -334,7 +334,7 @@ class Suppliers extends React.Component {
                                 </div>
                             </div>
                              <div className="card-body" style={{display: 'block', overflow: 'scroll', height: '100%'}}> {/*style={{display: 'block', overflow: 'scroll', height: '100%'}} */}
-                                <table className="table table-hover" > {/*style={{display: 'block', overflow: 'scroll'}}*/}
+                                <table className="table table-hover table-bordered" > {/*table-bordered*/}
                                     <thead>
                                         <tr>
                                             <th className="text-nowrap" style={{minWidth: '100px'}}>Name<br />
@@ -371,11 +371,18 @@ class Suppliers extends React.Component {
                                     </thead>
                                     <tbody>
                                         {selection && selection.project && this.filterName(selection).map((s) =>
-                                            <SupplierRow 
-                                                supplier={s}
-                                                handleOnclick={this.handleOnclick}
-                                                key={s._id} 
-                                            />
+                                            <tr key={s._id} onClick={(event) => this.handleOnclick(event, s._id)}>
+                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.name}</td>
+                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.registeredName}</td>
+                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.contact}</td>
+                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.position}</td>
+                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.tel}</td>
+                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.fax}</td>
+                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.mail}</td>
+                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.address}</td>
+                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.city}</td>
+                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.country}</td>
+                                            </tr>
                                         )}
                                     </tbody>    
                                 </table>

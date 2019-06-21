@@ -10,7 +10,7 @@
     }
     .menu-item {
         margin-left: 15px;
-        color: #c00a2b;
+        color: #A8052C; /* #c00a2b */
     }
     .icon {
         position: relative;
@@ -19,7 +19,7 @@
     }
     .navbars {
         transition: 0.3s transform;
-        color: #c00a2b;
+        color: #A8052C; /* #c00a2b */
         cursor: pointer;
     }
     .navbars.collapsed {
@@ -32,15 +32,15 @@
         right:0;
         left:0;
         margin:auto;
-        color: #c00a2b;
+        color: #A8052C; /* #c00a2b */
     }
     .icon:hover {
         cursor: pointer;
         background-color: #2a2a2a;
-        color: #c00a2b
+        color: #A8052C /* #c00a2b */
     }
     .bordered {
-        border: 1px solid #c00a2b;
+        border: 1px solid #A8052C; /* #c00a2b */
     }
     /* .round {
         border-radius: 50%;

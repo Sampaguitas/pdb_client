@@ -8,7 +8,7 @@ class Modal extends React.Component {
         return null;
     }
     return (
-        <div className="modal" role="dialog" style={{display: 'block'}}>
+        <div className="modal" role="dialog" style={{display: 'block', overflow: 'scroll'}}>
             <div className="modal-dialog" role="document">
                 <div className="modal-content">
                     <div className="modal-header">

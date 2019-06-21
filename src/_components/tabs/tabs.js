@@ -44,7 +44,7 @@ class Tabs extends Component {
             handleDeleteSupplier,
             supplierUpdating,
             supplierDeleting,
-            submittedSupplier
+            submittedSupplier,
             // currentUser
         } = this.props
 

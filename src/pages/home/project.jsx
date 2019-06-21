@@ -227,7 +227,7 @@ class Project extends React.Component {
                                     </div>
                                 </div>
                                 <div className="card-body table-responsive">
-                                    <table className="table table-hover">
+                                    <table className="table table-hover table-bordered">
                                         <thead>
                                             <tr>
                                                 <th scope="col" style={{width: '10%'}}>Initials<br />
@@ -236,7 +236,7 @@ class Project extends React.Component {
                                                 <th scope="col">User<br />
                                                     <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th scope="col" style={{width: '10%'}}>Expediting<br />
+                                                <th scope="col" align="center" style={{width: '10%'}}>Expediting<br />
                                                     <select className="form-control" name="isExpediting" value={isExpediting} onChange={this.handleChangeHeader}>
                                                         <option key="1" value="1">Any</option>
                                                         <option key="2" value="2">True</option> 
@@ -284,6 +284,7 @@ class Project extends React.Component {
                                                             checked={u.isExpediting}
                                                             onChange={(event) => {this.handleIsRole(event, 'isExpediting')}}
                                                             disabled={false}
+                                                            
                                                         />   
                                                     </td>
                                                     <td>

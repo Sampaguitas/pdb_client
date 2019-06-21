@@ -18,20 +18,20 @@ html, body, #app, #app>div {
   border-radius: 50%;
 }
 .btn-outline-leeuwen {
-    color:#c00a2b;
+    color:#A8052C; /*#c00a2b */
     background-color: transparent;
     background-image: none;
-    border-color:#c00a2b;
+    border-color:#A8052C; /*#c00a2b */
 }
 .btn-outline-leeuwen:hover {
   color: #fff;
-  background-color: #c00a2b;
+  background-color: #A8052C; /*#c00a2b */
 }
 
 .btn-leeuwen {
   color: #fff;
-  background-color: #c00a2b;
-  border-color:#c00a2b
+  background-color: #A8052C; /*#c00a2b */
+  border-color:#A8052C /*#c00a2b */
 }
 
 .btn-leeuwen:hover {
@@ -41,25 +41,25 @@ html, body, #app, #app>div {
 }
 
 .btn-outline-leeuwen-blue {
-    color:#1658a6;
+    color:#0070C0;  /* #1658a6 */
     background-color: transparent;
     background-image: none;
-    border-color:#1658a6;
+    border-color:#0070C0; /* #1658a6 */
 }
 .btn-outline-leeuwen-blue:hover {
   color: #fff;
-  background-color: #1658a6;
+  background-color: #0070C0; /* #1658a6 */
 }
 
 .btn-leeuwen-blue {
   color: #fff;
-  background-color: #1658a6;
-  border-color:#1658a6
+  background-color: #0070C0; /* #1658a6 */
+  border-color:#0070C0 /* #1658a6 */
 }
 
 .btn-leeuwen-blue:hover {
-  background-color: #0f3a71;
-  border-color:#0f3a71;
+  background-color: #180F5E; /* #0f3a71 */
+  border-color:#180F5E;/* #0f3a71 */
 }
 
 .fa-icon {    
@@ -75,13 +75,13 @@ html, body, #app, #app>div {
     padding: 0.5rem 1rem;
 }
 .red {
-  color: #c00a2b;
+  color: #A8052C; /*#c00a2b */
 }
 .bg-red {
   background-color: rgba(192, 10, 43, 0.5) !important;
 }
 .blue, a, a:hover {
-  color: #1658a6;
+  color: #0070C0; /* #1658a6 */
 }
 .ellipsis {
   text-overflow: ellipsis;
@@ -174,3 +174,9 @@ h4 {
 h5 {
   font-size: 1.25em; /* 22.4px/16=1.4em */
 }
+
+
+
+
+
+

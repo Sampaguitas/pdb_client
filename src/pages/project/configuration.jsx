@@ -65,9 +65,6 @@ class Configuration extends React.Component {
     handleSubmitSupplier(event, supplier) {
         event.preventDefault();
         const { dispatch } = this.props;
-        // console.log('clicked on submit handleSubmitSupplier');
-        // console.log('supplier:', supplier);
-        // console.log('this.state.submittedSupplier:', this.state.submittedSupplier);
         this.setState({ submittedSupplier: true });
         if (supplier._id && supplier.name && supplier.projectId) {
             dispatch(supplierActions.create(supplier));
@@ -101,10 +98,13 @@ class Configuration extends React.Component {
                 selection,
                 users,
                 supplierUpdating,
-                supplierDeleting
+                supplierDeleting,
             } = this.props;
         
-            const { submittedProject, submittedSupplier } = this.state
+            const { 
+                submittedProject, 
+                submittedSupplier, 
+            } = this.state
 
             // let currentUser = JSON.parse(localStorage.getItem('user'));
         return (

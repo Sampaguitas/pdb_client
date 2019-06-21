@@ -1,7 +1,7 @@
 //var.scss 
-$primaryColor: #c00a2b;
+$primaryColor: #A8052C; //#c00a2b
 $logoBg: #f8f9fa;
-$baseBg: #1658a6;
+$baseBg: #0070C0; //#1658a6
 $darkenBg: darken( $baseBg, 5% );
 $lightenBg: lighten( $baseBg, 5% );
 
@@ -203,7 +203,7 @@ $textColor: #fff;
     padding-left: 45px;
 }
 .menu-list .dropdown > ul li:before {
-    /*content: '';
+  content: '';
   height: 5px;
   width: 5px;
   border-radius: 50%;
@@ -211,7 +211,7 @@ $textColor: #fff;
   position: absolute;
   left: 0px;
   top: 23px;
-  z-index: 3;*/
+  z-index: 3;
 }
 
 .show-animation-enter-active {

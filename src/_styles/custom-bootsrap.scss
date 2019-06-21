@@ -4,11 +4,11 @@
 // Override / set color variables
 $white: #fff;
 $black: #000;
-$green: #00e389;
-$blue: #3399ff;
+$green: #05A881; //#00e389
+$blue: #0070C0; //#3399ff
 $orange: #f26c22;
 $yellow: #ffd925;
-$red: #e5001e;
+$red: #A8052C; // #e5001e
 
 // Create grayscale
 $gray-dark: #292b2c;
@@ -57,4 +57,7 @@ $font-family-base: $font-family-sans-serif;
 $enable-shadows: false;
 $enable-gradients: true;
 
-
+.table-hover> tbody> tr:hover{
+  background-color:#A8052C;
+  color:#FFFFFF;
+}
