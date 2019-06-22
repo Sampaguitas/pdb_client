@@ -35,11 +35,12 @@ class Tabs extends Component {
             projectUpdating,
             projectDeleting,
             submittedProject,
+            users,
             erps,
             opcos,
             currencies,
+            screens,
             selection,
-            users,
             handleSubmitSupplier,
             handleDeleteSupplier,
             supplierUpdating,
@@ -74,12 +75,13 @@ class Tabs extends Component {
                                 handleDeleteProject={handleDeleteProject}
                                 projectUpdating={projectUpdating}
                                 projectDeleting={projectDeleting}
-                                submittedProject = {submittedProject}
+                                submittedProject={submittedProject}
+                                users={users}
                                 erps={erps}
                                 opcos={opcos}
                                 currencies={currencies}
+                                screens={screens}
                                 selection={selection}
-                                users={users}
                                 handleSubmitSupplier={handleSubmitSupplier}
                                 handleDeleteSupplier={handleDeleteSupplier}
                                 supplierUpdating={supplierUpdating}

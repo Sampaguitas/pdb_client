@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
-import { currencyActions, opcoActions, projectActions, supplierActions, userActions, erpActions  } from '../../_actions';
+import { currencyActions, opcoActions, projectActions, supplierActions, userActions, erpActions, screenActions  } from '../../_actions';
 import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs';
@@ -49,7 +49,8 @@ class Configuration extends React.Component {
         dispatch(erpActions.getAll());
         dispatch(opcoActions.getAll());
         dispatch(userActions.getAll());
-        dispatch(projectActions.getAll());
+        // dispatch(projectActions.getAll());
+        dispatch(screenActions.getAll());
     }
 
     handleSubmitProject(event, project) {
@@ -92,11 +93,12 @@ class Configuration extends React.Component {
                 alert,  
                 projectUpdating,
                 projectDeleting,
+                users,
                 erps,
                 opcos,
                 currencies,
+                screens,
                 selection,
-                users,
                 supplierUpdating,
                 supplierDeleting,
             } = this.props;
@@ -119,17 +121,19 @@ class Configuration extends React.Component {
                         handleDeleteProject={this.handleDeleteProject}
                         projectUpdating={projectUpdating}
                         projectDeleting={projectDeleting}
-                        submittedProject = {submittedProject}                    
+                        submittedProject={submittedProject}                    
+                        users={users}
                         erps={erps}
                         opcos={opcos}
                         currencies={currencies}
+                        screens={screens}
                         selection={selection}
-                        users={users}
                         handleSubmitSupplier={this.handleSubmitSupplier}
                         handleDeleteSupplier={this.handleDeleteSupplier}
                         supplierUpdating={supplierUpdating}
                         supplierDeleting={supplierDeleting}
-                        submittedSupplier = {submittedSupplier}
+                        submittedSupplier={submittedSupplier}
+                        
                         // currentUser = {currentUser}
                     />
                 </div>
@@ -139,20 +143,21 @@ class Configuration extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, currencies, opcos, users, selection, erps  } = state;
+    const { alert, currencies, opcos, users, selection, erps, screens  } = state;
     const { projectUpdating, projectDeleting } = state.projects;
     const { supplierUpdating, supplierDeleting } = state.suppliers;
     return {
         alert,
-        currencies,
         projectUpdating,
         projectDeleting,
         supplierUpdating,
         supplierDeleting,        
-        opcos,
         users,
+        erps,
+        opcos,
+        currencies,
+        screens,
         selection,
-        erps
     };
 }
 

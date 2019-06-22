@@ -5,5 +5,6 @@ export * from './locale.actions';
 export * from './opco.actions';
 export * from './project.actions';
 export * from './region.actions';
+export * from './screen.actions';
 export * from './supplier.actions';
 export * from './user.actions';

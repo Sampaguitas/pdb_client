@@ -4,5 +4,6 @@ export * from './locale.service';
 export * from './opco.service';
 export * from './project.service';
 export * from './region.service';
+export * from './screen.service';
 export * from './supplier.service';
 export * from './user.service';
