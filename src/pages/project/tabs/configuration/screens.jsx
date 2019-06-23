@@ -79,7 +79,7 @@ class Screens extends React.Component {
             screenId: '',
             fieldId: '',
             custom: '',
-            selectedScreen:'',
+            selectedScreen:'0',
             loaded: false,
             show: false,
         }
@@ -150,13 +150,13 @@ class Screens extends React.Component {
                     <table className="table table-hover table-sm table-bordered" >
                         <thead>
                             <tr className="text-center">
-                                <th colspan="5" >
+                                <th colSpan="5" >
                                     <div className="input-group">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">Screen</span>
                                         </div>
                                         <select className="form-control" name="selectedScreen" value={selectedScreen} onChange={this.handleChangeHeader}>
-                                            <option selected value="0">Select Screen...</option>
+                                            <option value="0">Select Screen...</option>
                                             {
                                                 screens.items && arraySorted(screens.items, "name").map((screen) =>  {        
                                                     return (

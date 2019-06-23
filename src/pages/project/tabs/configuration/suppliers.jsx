@@ -219,10 +219,6 @@ class Suppliers extends React.Component {
             && doesMatch(registeredName, supplier.registeredName, 'String') 
             && doesMatch(contact, supplier.contact, 'String')
             && doesMatch(position, supplier.position, 'String')
-            && doesMatch(tel, supplier.tel, 'String')
-            && doesMatch(fax, supplier.fax, 'String')
-            && doesMatch(mail, supplier.mail, 'String')
-            && doesMatch(address, supplier.address, 'String')
             && doesMatch(city, supplier.city, 'String')
             && doesMatch(country, supplier.country, 'String'));
           });
@@ -333,38 +329,26 @@ class Suppliers extends React.Component {
                                     </div>
                                 </div>
                             </div>
-                             <div className="card-body" style={{display: 'block', overflow: 'scroll', height: '100%'}}> {/*style={{display: 'block', overflow: 'scroll', height: '100%'}} */}
-                                <table className="table table-hover table-bordered" > {/*table-bordered*/}
+                             <div className="card-body table-responsive full-height"> {/* style={{display: 'block', overflow: 'scroll', height: '100%'}} */}
+                                <table className="table table-hover table-bordered"> {/*table-bordered*/}
                                     <thead>
                                         <tr>
-                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Name<br />
+                                            <th>Name<br /> {/* className="text-nowrap" style={{minWidth: '100px'}}*/}
                                                 <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
                                             </th>
-                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Registered Name<br />
+                                            <th>Registered Name<br />
                                                 <input className="form-control" name="registeredName" value={registeredName} onChange={this.handleChangeHeader} />                                            
                                             </th>
-                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Contact<br />
+                                            <th>Contact<br />
                                                 <input className="form-control" name="contact" value={contact} onChange={this.handleChangeHeader} />
                                             </th>
-                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Position<br />
+                                            <th>Position<br />
                                                 <input className="form-control" name="position" value={position} onChange={this.handleChangeHeader} />
                                             </th>
-                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Tel<br />
-                                                <input className="form-control" name="tel" value={tel} onChange={this.handleChangeHeader} />
-                                            </th>
-                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Fax<br />
-                                                <input className="form-control" name="fax" value={fax} onChange={this.handleChangeHeader} />
-                                            </th>
-                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Mail<br />
-                                                <input className="form-control" name="mail" value={mail} onChange={this.handleChangeHeader} />
-                                            </th>
-                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Address<br />
-                                                <input className="form-control" name="address" value={address} onChange={this.handleChangeHeader} />
-                                            </th>
-                                            <th className="text-nowrap" style={{minWidth: '100px'}}>City<br />
+                                            <th>City<br />
                                                 <input className="form-control" name="city" value={city} onChange={this.handleChangeHeader} />
                                             </th>
-                                            <th className="text-nowrap" style={{minWidth: '100px'}}>Country<br />
+                                            <th>Country<br />
                                                 <input className="form-control" name="country" value={country} onChange={this.handleChangeHeader} />
                                             </th>
                                         </tr>
@@ -372,16 +356,12 @@ class Suppliers extends React.Component {
                                     <tbody>
                                         {selection && selection.project && this.filterName(selection).map((s) =>
                                             <tr key={s._id} onClick={(event) => this.handleOnclick(event, s._id)}>
-                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.name}</td>
-                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.registeredName}</td>
-                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.contact}</td>
-                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.position}</td>
-                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.tel}</td>
-                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.fax}</td>
-                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.mail}</td>
-                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.address}</td>
-                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.city}</td>
-                                                <td className="text-nowrap" style={{minWidth: '100px'}}>{s.country}</td>
+                                                <td>{s.name}</td>
+                                                <td>{s.registeredName}</td>
+                                                <td>{s.contact}</td>
+                                                <td>{s.position}</td>
+                                                <td>{s.city}</td>
+                                                <td>{s.country}</td>
                                             </tr>
                                         )}
                                     </tbody>    
