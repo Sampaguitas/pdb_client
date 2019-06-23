@@ -201,16 +201,30 @@ class Screens extends React.Component {
                             {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
                                 <tr key={s._id}>
                                     <td>{s.fields.custom}</td>
-                                    <td>{s.forShow}</td>
-                                    <td>{s.forSelect}</td>
+                                    {/* <td>{s.forShow}</td> */}
+                                    <TableInput 
+                                        collection="fieldname"
+                                        objectId={s._id}
+                                        fieldName="forShow"
+                                        fieldValue={s.forShow}
+                                        fieldType="number"
+                                    />
+                                    {/* <td>{s.forSelect}</td> */}
+                                    <TableInput 
+                                        collection="fieldname"
+                                        objectId={s._id}
+                                        fieldName="forSelect"
+                                        fieldValue={s.forSelect}
+                                        fieldType="number"
+                                    />
                                     <td>{s.align}</td>
                                     <td>{s.edit}</td>
                                     {/* <TableInput 
-                                        collection="field"
+                                        collection="fieldname"
                                         objectId={s._id}
-                                        fieldName="custom"
-                                        fieldValue={s.custom}
-                                        fieldType="text"
+                                        fieldName="forShow"
+                                        fieldValue={s.forShow}
+                                        fieldType="number"
                                     /> */}
                                 </tr>
                             )}
