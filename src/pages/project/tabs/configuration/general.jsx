@@ -85,8 +85,7 @@ class General extends React.Component {
         this.setState(this.state);
     }
 
-    handleChange(event) {
-        
+    handleChange(event) {  
         const { project } = this.state;
         const target = event.target;
         const name = target.name;
@@ -172,7 +171,7 @@ class General extends React.Component {
             userArray = arraySorted(userArray, 'name')
             this.setState({
                 project:{
-                    ...project,
+                    // ...project,
                     id: selection.project._id,
                     name: selection.project.name,
                     erpId: selection.project.erpId,

@@ -70,6 +70,29 @@ class TableSelect extends Component{
         this.setState({
             ...this.state,
             [name]: value
+        }, () => {
+            const { collection, objectId, fieldName, fieldValue } = this.state
+            if (collection && objectId && fieldName) {
+                this.updatefield(this.state)
+                .then(
+                    field => {
+                        this.setState({color:'green'}, () => {
+                            setTimeout(() => {
+                                this.setState({color: 'inherit'}),
+                                this.setState({editing:false});
+                            }, 1000);
+                        });
+                    },
+                    error => {
+                        this.setState({color:'red'}, () => {
+                            setTimeout(() => {
+                                this.setState({color: 'inherit'}),
+                                this.setState({editing:false});
+                            }, 1000);
+                        });
+                    }
+                );
+            }            
         });
     }
 
@@ -81,28 +104,29 @@ class TableSelect extends Component{
 
     onBlur(event){
         event.preventDefault();
-        const { collection, objectId, fieldName, fieldValue } = this.state      
-        if (collection && objectId && fieldName) {
-            this.updatefield(this.state)
-            .then(
-                field => {
-                    this.setState({color:'green'}, () => {
-                        setTimeout(() => {
-                            this.setState({color: 'inherit'}),
-                            this.setState({editing:false});
-                        }, 1000);
-                    });
-                },
-                error => {
-                    this.setState({color:'red'}, () => {
-                        setTimeout(() => {
-                            this.setState({color: 'inherit'}),
-                            this.setState({editing:false});
-                        }, 1000);
-                    });
-                }
-            );
-        }
+        this.setState({editing:false});
+        // const { collection, objectId, fieldName, fieldValue } = this.state      
+        // if (collection && objectId && fieldName) {
+        //     this.updatefield(this.state)
+        //     .then(
+        //         field => {
+        //             this.setState({color:'green'}, () => {
+        //                 setTimeout(() => {
+        //                     this.setState({color: 'inherit'}),
+        //                     this.setState({editing:false});
+        //                 }, 1000);
+        //             });
+        //         },
+        //         error => {
+        //             this.setState({color:'red'}, () => {
+        //                 setTimeout(() => {
+        //                     this.setState({color: 'inherit'}),
+        //                     this.setState({editing:false});
+        //                 }, 1000);
+        //             });
+        //         }
+        //     );
+        // }
     }
 
     updatefield(args) {

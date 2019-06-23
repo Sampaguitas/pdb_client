@@ -34,6 +34,7 @@ class Configuration extends React.Component {
             submittedSupplier: false,
             showSupplierModal: false
         }
+        this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.handleSubmitProject=this.handleSubmitProject.bind(this);
         this.handleDeleteProject=this.handleDeleteProject.bind(this);
         this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
@@ -55,6 +56,15 @@ class Configuration extends React.Component {
         dispatch(userActions.getAll());
         dispatch(projectActions.getAll());
         dispatch(screenActions.getAll());
+    }
+
+    handleSelectionReload(event){
+        event.preventDefault();
+        const { dispatch, location } = this.props
+        var qs = queryString.parse(location.search);
+        if (qs.id) {
+            dispatch(projectActions.getById(qs.id));
+        }        
     }
 
     handleSubmitProject(event, project) {
@@ -131,6 +141,7 @@ class Configuration extends React.Component {
                 <div id="configuration" className="full-height">
                     <Tabs
                         tabs={tabs}
+                        handleSelectionReload={this.handleSelectionReload}
                         handleSubmitProject={this.handleSubmitProject}
                         handleDeleteProject={this.handleDeleteProject}
                         projectUpdating={projectUpdating}

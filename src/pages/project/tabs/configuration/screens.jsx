@@ -205,7 +205,7 @@ class Screens extends React.Component {
                                     <TableSelect 
                                         collection="fieldname"
                                         objectId={s._id}
-                                        fieldName="custom"
+                                        fieldName="fieldId"
                                         fieldValue={s.fieldId}
                                         options={selection.project.fields}
                                         optionText="custom"                                  
