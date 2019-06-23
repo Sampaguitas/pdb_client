@@ -79,7 +79,7 @@ class Screens extends React.Component {
             screenId: '',
             fieldId: '',
             custom: '',
-            selectedScreen:'0',
+            selectedScreen:'5cd2b643fd333616dc360b66',
             loaded: false,
             show: false,
         }
@@ -153,10 +153,9 @@ class Screens extends React.Component {
                                 <th colSpan="5" >
                                     <div className="input-group">
                                         <div className="input-group-prepend">
-                                            <span className="input-group-text">Screen</span>
+                                            <span className="input-group-text">Select Screen</span>
                                         </div>
                                         <select className="form-control" name="selectedScreen" value={selectedScreen} onChange={this.handleChangeHeader}>
-                                            <option value="0">Select Screen...</option>
                                             {
                                                 screens.items && arraySorted(screens.items, "name").map((screen) =>  {        
                                                     return (
@@ -172,13 +171,13 @@ class Screens extends React.Component {
                                 </th>
                             </tr>
                             <tr>
-                                <th className="text-nowrap">Field<br/>
+                                <th>Field<br/>
                                     <input className="form-control" name="custom" value={custom} onChange={this.handleChangeHeader} />
                                 </th>
-                                <th className="text-nowrap" style={{width: '15%'}}>For Show<br/>
+                                <th style={{width: '15%'}}>For Show<br/>
                                     <input type="number" min="0" step="1" className="form-control" name="forShow" value={forShow} onChange={this.handleChangeHeader} />
                                 </th>
-                                <th className="text-nowrap" style={{width: '15%'}}>For Select<br/>
+                                <th style={{width: '15%'}}>For Select<br/>
                                     <input type="number" min="0" step="1" className="form-control" name="forSelect" value={forSelect} onChange={this.handleChangeHeader} />
                                 </th>
                                 <th scope="col" style={{width: '15%'}}>Align<br />
@@ -201,11 +200,11 @@ class Screens extends React.Component {
                         <tbody className="full-height" style={{overflowY:'auto'}}>
                             {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
                                 <tr key={s._id}>
-                                    <td className="text-nowrap">{s.fields.custom}</td>
-                                    <td className="text-nowrap">{s.forShow}</td>
-                                    <td className="text-nowrap">{s.forSelect}</td>
-                                    <td className="text-nowrap">{s.align}</td>
-                                    <td className="text-nowrap">{s.edit}</td>
+                                    <td>{s.fields.custom}</td>
+                                    <td>{s.forShow}</td>
+                                    <td>{s.forSelect}</td>
+                                    <td>{s.align}</td>
+                                    <td>{s.edit}</td>
                                     {/* <TableInput 
                                         collection="field"
                                         objectId={s._id}
