@@ -5,32 +5,25 @@ import TableSelect from '../../../../_components/project-table/table-select';
 import TableCheckBox from '../../../../_components/project-table/table-check-box';
 import _ from 'lodash';
 
-function arraySorted(array, field, subfiled ) {
+function resolve(path, obj) {
+    return path.split('.').reduce(function(prev, curr) {
+        return prev ? prev[curr] : null
+    }, obj || self)
+}
+
+function arraySorted(array, field) {
     if (array) {
         const newArray = array
-        if (!subfiled) {
-            newArray.sort(function(a,b){
-                if (a[field] < b[field]) {
-                    return -1;
-                }
-                if (a[field] > b[field]) {
-                    return 1;
-                }
+        newArray.sort(function(a,b){
+            if (resolve(field, a) < resolve(field, b)) {
+                return -1;
+            } else if ((resolve(field, a) > resolve(field, b))) {
+                return 1;
+            } else {
                 return 0;
-            });
-            return newArray;
-        } else {
-            newArray.sort(function(a,b){
-                if (a[field][subfiled] < b[field][subfiled]) {
-                    return -1;
-                }
-                if (a[field][subfiled] > b[field][subfiled]) {
-                    return 1;
-                }
-                return 0;
-            });
-            return newArray;
-        }
+            }
+        });
+        return newArray;             
     }
 }
 
@@ -60,6 +53,8 @@ function doesMatch(search, array, type) {
                     return !!array == 0; //false
                 }
             case 'Select':
+                console.log('search:', search);
+                console.log('array:', array);
                 if(search == 'any' || _.isEqual(search, array)) {
                     return true; //any or equal
                 } else {
@@ -113,7 +108,7 @@ class Screens extends React.Component {
         } = this.state;
 
         if (array) {
-          return arraySorted(array, 'fields', 'custom').filter(function (element) {
+          return arraySorted(array, 'fields.custom').filter(function (element) {
             return (doesMatch(selectedScreen, element.screenId, 'Id')
             && doesMatch(custom, element.fields.custom, 'String')
             && doesMatch(forShow, element.forShow, 'Number')
@@ -145,6 +140,12 @@ class Screens extends React.Component {
             selectedScreen,
         } = this.state;
 
+
+        const arrAlign = [
+            { _id: 'left', name: 'Left' },
+            { _id: 'center', name: 'Center' },
+            { _id: 'right', name: 'Right' },
+        ]
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
             <div className="row full-height">
@@ -186,8 +187,8 @@ class Screens extends React.Component {
                                     <select className="form-control" name="align" value={align} onChange={this.handleChangeHeader}>
                                         <option key="0" value="any">Any</option>
                                         <option key="1" value="left">Left</option>
-                                        <option key="2" value="right">Right</option> 
-                                        <option key="3" value="center">Center</option>                    
+                                        <option key="2" value="center">Center</option>
+                                        <option key="3" value="right">Right</option>                     
                                     </select>
                                 </th>
                                 <th scope="col" style={{width: '10%'}}>Disable<br />
@@ -208,7 +209,8 @@ class Screens extends React.Component {
                                         objectId={s._id}
                                         fieldName="custom"
                                         fieldValue={s.fieldId}
-                                        options={selection.project.fields}                                   
+                                        options={selection.project.fields}
+                                        optionText="custom"                                  
                                     />
                                     {/* <td>{s.forShow}</td> */}
                                     <TableInput 
@@ -226,7 +228,15 @@ class Screens extends React.Component {
                                         fieldValue={s.forSelect}
                                         fieldType="number"
                                     />
-                                    <td>{s.align}</td>
+                                    {/* <td>{s.align}</td> */}
+                                    <TableSelect 
+                                        collection="fieldname"
+                                        objectId={s._id}
+                                        fieldName="align"
+                                        fieldValue={s.align}
+                                        options={arrAlign}
+                                        optionText="name"                                  
+                                    />
                                     {/* <td>{s.edit}</td> */}
                                     <TableCheckBox 
                                         collection="fieldname"

@@ -9,6 +9,29 @@ function logout() {
     localStorage.removeItem('user');
 }
 
+function resolve(path, obj) {
+    return path.split('.').reduce(function(prev, curr) {
+        return prev ? prev[curr] : null
+    }, obj || self)
+}
+
+
+function arraySorted(array, field) {
+    if (array) {
+        const newArray = array
+        newArray.sort(function(a,b){
+            if (resolve(field, a) < resolve(field, b)) {
+                return -1;
+            } else if ((resolve(field, a) > resolve(field, b))) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        return newArray;             
+    }
+}
+
 class TableSelect extends Component{
     constructor(props) {
         super(props);
@@ -19,7 +42,8 @@ class TableSelect extends Component{
             fieldValue: '',
             color: 'inherit',
             editing: false,
-            options:[]
+            options:[],
+            optionText: '',
         }
         this.onChange = this.onChange.bind(this);
         this.onFocus = this.onFocus.bind(this);
@@ -35,6 +59,7 @@ class TableSelect extends Component{
             fieldName: this.props.fieldName,
             fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
             options: this.props.options,
+            optionText: this.props.optionText
         });
     }
 
@@ -111,12 +136,13 @@ class TableSelect extends Component{
     }
 
     selectedName(arr, search) {
+        const { optionText } = this.state;
         if (arr && search) {
             const foundOption = arr.find((option) => {
                 return _.isEqual(option._id, search);
             })
             if(foundOption){
-                return foundOption.name;
+                return foundOption[optionText];
             } else {
                 "";
             }
@@ -126,7 +152,7 @@ class TableSelect extends Component{
     }
 
     render() {
-        const { fieldValue, color, options } = this.state
+        const { fieldValue, color, options, optionText } = this.state
 
         return this.state.editing ? (
             <td className="text-nowrap" style={{padding:0}}>
@@ -147,11 +173,11 @@ class TableSelect extends Component{
                     //     boxShadow: 'none',  
                     // }}
                 >
-                        {options && options.map(option => {
+                        {options && arraySorted(options, optionText).map(option => {
                             return (
                                 <option
                                     key={option._id}
-                                    value={option._id}>{option.name}
+                                    value={option._id}>{option[optionText]}
                                 </option>
                             );
                         })}                    

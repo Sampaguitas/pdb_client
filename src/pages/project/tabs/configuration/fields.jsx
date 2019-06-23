@@ -3,40 +3,26 @@ import { connect } from 'react-redux';
 import TableInput from '../../../../_components/project-table/table-input'
 
 //https://stackoverflow.com/questions/4244896/dynamically-access-object-property-using-variable
-// function resolve(path, obj) {
-//     return path.split('.').reduce(function(prev, curr) {
-//         return prev ? prev[curr] : null
-//     }, obj || self)
-// }
+function resolve(path, obj) {
+    return path.split('.').reduce(function(prev, curr) {
+        return prev ? prev[curr] : null
+    }, obj || self)
+}
 
 
-function arraySorted(array, field1, field2) {
-    const field = field.split(".")
+function arraySorted(array, field) {
     if (array) {
         const newArray = array
-        if (field2) {
-            newArray.sort(function(a,b){
-                if (a[field1][field2] < b[field1][field2]) {
-                    return -1;
-                }
-                if (a[field1][field2] > b[field1][field2]) {
-                    return 1;
-                }
+        newArray.sort(function(a,b){
+            if (resolve(field, a) < resolve(field, b)) {
+                return -1;
+            } else if ((resolve(field, a) > resolve(field, b))) {
+                return 1;
+            } else {
                 return 0;
-            });
-            return newArray;
-        } else {
-            newArray.sort(function(a,b){
-                if (a[field1] < b[field1]) {
-                    return -1;
-                }
-                if (a[field1] > b[field1]) {
-                    return 1;
-                }
-                return 0;
-            });            
-        }
-
+            }
+        });
+        return newArray;             
     }
 }
 
@@ -100,7 +86,7 @@ class Fields extends React.Component {
         } = this.state;
 
         if (array) {
-          return arraySorted(array, 'fromTbl', 'name').filter(function (element) {
+          return arraySorted(array, 'fromTbl.name').filter(function (element) {
             return (doesMatch(name, element.name, 'String')
             && doesMatch(custom, element.custom, 'String')
             && doesMatch(fromTbl, element.fromTbl, 'String') 
