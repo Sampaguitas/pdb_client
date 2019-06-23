@@ -1,32 +1,26 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import TableInput from '../../../../_components/project-table/table-input';
+import TableSelect from '../../../../_components/project-table/table-select';
+function resolve(path, obj) {
+    return path.split('.').reduce(function(prev, curr) {
+        return prev ? prev[curr] : null
+    }, obj || self)
+}
 
-function arraySorted(array, field, subfiled ) {
+function arraySorted(array, field) {
     if (array) {
         const newArray = array
-        if (!subfiled) {
-            newArray.sort(function(a,b){
-                if (a[field] < b[field]) {
-                    return -1;
-                }
-                if (a[field] > b[field]) {
-                    return 1;
-                }
+        newArray.sort(function(a,b){
+            if (resolve(field, a) < resolve(field, b)) {
+                return -1;
+            } else if ((resolve(field, a) > resolve(field, b))) {
+                return 1;
+            } else {
                 return 0;
-            });
-            return newArray;
-        } else {
-            newArray.sort(function(a,b){
-                if (a[field][subfiled] < b[field][subfiled]) {
-                    return -1;
-                }
-                if (a[field][subfiled] > b[field][subfiled]) {
-                    return 1;
-                }
-                return 0;
-            });
-            return newArray;
-        }
+            }
+        });
+        return newArray;             
     }
 }
 
@@ -101,7 +95,7 @@ class Duf extends React.Component {
         } = this.state;
 
         if (array) {
-          return arraySorted(array, 'fields', 'custom').filter(function (element) {
+          return arraySorted(array, 'fields.custom').filter(function (element) {
             return (doesMatch(selectedScreen, element.screenId, 'Id')
             && doesMatch(custom, element.fields.custom, 'String')
             && doesMatch(forShow, element.forShow, 'Number')
@@ -146,8 +140,23 @@ class Duf extends React.Component {
                         <tbody className="full-height" style={{overflowY:'auto'}}>
                             {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
                                 <tr key={s._id}>
-                                    <td>{s.forShow}</td>
-                                    <td>{s.fields.custom}</td>
+                                    {/* <td>{s.forShow}</td> */}
+                                    <TableInput 
+                                        collection="fieldname"
+                                        objectId={s._id}
+                                        fieldName="forShow"
+                                        fieldValue={s.forShow}
+                                        fieldType="number"
+                                    />
+                                    {/* <td>{s.fields.custom}</td> */}
+                                    <TableSelect 
+                                        collection="fieldname"
+                                        objectId={s._id}
+                                        fieldName="custom"
+                                        fieldValue={s.fieldId}
+                                        options={selection.project.fields}
+                                        optionText="custom"                                  
+                                    />
                                 </tr>
                             )}
                         </tbody>

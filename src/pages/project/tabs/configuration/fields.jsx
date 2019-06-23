@@ -9,7 +9,6 @@ function resolve(path, obj) {
     }, obj || self)
 }
 
-
 function arraySorted(array, field) {
     if (array) {
         const newArray = array
