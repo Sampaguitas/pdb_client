@@ -53,8 +53,6 @@ function doesMatch(search, array, type) {
                     return !!array == 0; //false
                 }
             case 'Select':
-                console.log('search:', search);
-                console.log('array:', array);
                 if(search == 'any' || _.isEqual(search, array)) {
                     return true; //any or equal
                 } else {

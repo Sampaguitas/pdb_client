@@ -25,6 +25,7 @@ class Tabs extends Component {
         this.setState({
             tabs // 4. update state
         })
+
     }
     render() {
         const { tabs  } = this.state
@@ -46,6 +47,9 @@ class Tabs extends Component {
             supplierUpdating,
             supplierDeleting,
             submittedSupplier,
+            showSupplierModal,
+            handleShowSupplierModal,
+            handleHideSupplierModal
             // currentUser
         } = this.props
 
@@ -71,6 +75,7 @@ class Tabs extends Component {
                             key={tab.index}
                         >
                             <tab.component
+                                tab={tab}
                                 handleSubmitProject={handleSubmitProject}
                                 handleDeleteProject={handleDeleteProject}
                                 projectUpdating={projectUpdating}
@@ -87,7 +92,10 @@ class Tabs extends Component {
                                 supplierUpdating={supplierUpdating}
                                 supplierDeleting={supplierDeleting}
                                 submittedSupplier={submittedSupplier}
-                                tab={tab}
+                                showSupplierModal={showSupplierModal}
+                                handleShowSupplierModal={handleShowSupplierModal}
+                                handleHideSupplierModal={handleHideSupplierModal}
+                                
                                 // currentUser={currentUser}
                             />
                         </div>

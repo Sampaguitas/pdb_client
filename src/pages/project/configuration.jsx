@@ -13,6 +13,7 @@ import Fields from './tabs/configuration/fields';
 import Screens from './tabs/configuration/screens';
 import Documents from './tabs/configuration/documents';
 import Duf from './tabs/configuration/duf';
+import { EventEmitter } from 'events';
 
 const tabs = [
     {index: 0, id: 'general', label: 'General', component: General, active: true, isLoaded: false},
@@ -30,12 +31,15 @@ class Configuration extends React.Component {
         super(props);
         this.state = {
             submittedProject: false,
-            submittedSupplier: false
+            submittedSupplier: false,
+            showSupplierModal: false
         }
         this.handleSubmitProject=this.handleSubmitProject.bind(this);
         this.handleDeleteProject=this.handleDeleteProject.bind(this);
         this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
         this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
+        this.handleShowSupplierModal=this.handleShowSupplierModal.bind(this);
+        this.handleHideSupplierModal=this.handleHideSupplierModal.bind(this);
 
     }
 
@@ -69,10 +73,12 @@ class Configuration extends React.Component {
         this.setState({ submittedSupplier: true });
         if (supplier._id && supplier.name && supplier.projectId) {
             dispatch(supplierActions.create(supplier));
-            this.setState({submittedSupplier: false})
+            this.setState({submittedSupplier: false},
+                ()=> {this.handleHideSupplierModal(event)});
         } else if (supplier.name && supplier.projectId){
             dispatch(supplierActions.update(supplier));
-            this.setState({submittedSupplier: false})
+            this.setState({submittedSupplier: false},
+                ()=> {this.handleHideSupplierModal(event)})
         }
     }
 
@@ -87,7 +93,14 @@ class Configuration extends React.Component {
         const { dispatch } = this.props
         dispatch(supplierActions.delete(id));
     }
-    
+
+    handleShowSupplierModal(event) {
+        this.setState({showSupplierModal: true});
+    }
+
+    handleHideSupplierModal(event) {
+        this.setState({showSupplierModal: false});
+    }    
     render() {
         const { 
                 alert,  
@@ -105,7 +118,8 @@ class Configuration extends React.Component {
         
             const { 
                 submittedProject, 
-                submittedSupplier, 
+                submittedSupplier,
+                showSupplierModal 
             } = this.state
 
             // let currentUser = JSON.parse(localStorage.getItem('user'));
@@ -133,6 +147,9 @@ class Configuration extends React.Component {
                         supplierUpdating={supplierUpdating}
                         supplierDeleting={supplierDeleting}
                         submittedSupplier={submittedSupplier}
+                        showSupplierModal={showSupplierModal}
+                        handleShowSupplierModal={this.handleShowSupplierModal}
+                        handleHideSupplierModal={this.handleHideSupplierModal}
                         
                         // currentUser = {currentUser}
                     />

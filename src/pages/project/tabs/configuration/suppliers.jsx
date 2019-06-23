@@ -75,6 +75,7 @@ class Suppliers extends React.Component {
     };
 
     showModal() {
+        const { handleShowSupplierModal } = this.props;
         this.setState({
             supplier: {
                 name: "",
@@ -119,12 +120,12 @@ class Suppliers extends React.Component {
                 udfSpD10: "",
                 projectId: "",
                 daveId: ""
-          },
-          show: true
-        });
+          }
+        },()=> {handleShowSupplierModal(event)});
       }
     
       hideModal() {
+        const { handleHideSupplierModal } = this.props
         this.setState({
             supplier: {
                 name: "",
@@ -169,9 +170,8 @@ class Suppliers extends React.Component {
                 udfSpD10: "",
                 projectId: "",
                 daveId: ""
-          },
-          show: false
-        });
+          }
+        },()=> {handleHideSupplierModal(event)});
       }
 
     handleChangeSupplier(event) {
@@ -229,6 +229,7 @@ class Suppliers extends React.Component {
 
     handleOnclick(event, id) {
         const { project } = this.props.selection
+        const { handleShowSupplierModal } = this.props;
         // let user = JSON.parse(localStorage.getItem('user'));
         if (event.target.type != 'checkbox' && project.suppliers) {
           let found = project.suppliers.find(element => element._id === id);
@@ -277,23 +278,23 @@ class Suppliers extends React.Component {
               udfSpD10: found.udfSpD10,
               projectId: found.projectId,
               daveId: found.daveId
-            },
-            show: true
-          })
+            }
+          }, () => {handleShowSupplierModal(event)});
         }
       }
 
     render() {
 
         const { 
+            tab,
             handleSubmitSupplier,
             handleDeleteSupplier,
             SupplierUpdating,
             SupplierCreating,
             SupplierDeleting,
             submittedSupplier,
+            showSupplierModal,
             selection,                  
-            tab,
             // currentUser
         } = this.props
 
@@ -309,7 +310,6 @@ class Suppliers extends React.Component {
             address,
             city,
             country,        
-            show
         } = this.state;
         
         return (
@@ -367,7 +367,7 @@ class Suppliers extends React.Component {
                                     </tbody>    
                                 </table>
                                 <Modal
-                                    show={show}
+                                    show={showSupplierModal}
                                     hideModal={this.hideModal}
                                     title={supplier.id ? 'Update supplier' : 'Add supplier'}
                                 >
