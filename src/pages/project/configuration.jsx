@@ -53,7 +53,7 @@ class Configuration extends React.Component {
         dispatch(erpActions.getAll());
         dispatch(opcoActions.getAll());
         dispatch(userActions.getAll());
-        // dispatch(projectActions.getAll());
+        dispatch(projectActions.getAll());
         dispatch(screenActions.getAll());
     }
 
