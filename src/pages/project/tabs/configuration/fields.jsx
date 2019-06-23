@@ -1,26 +1,42 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import TableInput from '../../../../_components/table-input'
+import TableInput from '../../../../_components/project-table/table-input'
+
+//https://stackoverflow.com/questions/4244896/dynamically-access-object-property-using-variable
+// function resolve(path, obj) {
+//     return path.split('.').reduce(function(prev, curr) {
+//         return prev ? prev[curr] : null
+//     }, obj || self)
+// }
+
 
 function arraySorted(array, field1, field2) {
+    const field = field.split(".")
     if (array) {
         const newArray = array
-        newArray.sort(function(a,b){
-            if (a[field1] < b[field1]) {
-                return -1;
-            }
-            if (a[field1] > b[field1]) {
-                return 1;
-            }
-            if (a[field2] < b[field2]){
-                return -1;
-            }
-            if (a[field2] > b[field2]){
-                return 1;
-            }
-            return 0;
-        });
-        return newArray;
+        if (field2) {
+            newArray.sort(function(a,b){
+                if (a[field1][field2] < b[field1][field2]) {
+                    return -1;
+                }
+                if (a[field1][field2] > b[field1][field2]) {
+                    return 1;
+                }
+                return 0;
+            });
+            return newArray;
+        } else {
+            newArray.sort(function(a,b){
+                if (a[field1] < b[field1]) {
+                    return -1;
+                }
+                if (a[field1] > b[field1]) {
+                    return 1;
+                }
+                return 0;
+            });            
+        }
+
     }
 }
 

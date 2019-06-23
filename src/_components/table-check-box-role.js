@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import propTypes from 'prop-types';
 
-class TableCheckBox extends Component {
+class TableCheckBoxRole extends Component {
     render(){
         return (
             <div className="form-check">
@@ -17,9 +17,9 @@ class TableCheckBox extends Component {
         );
     }
 };
-TableCheckBox.propTypes = {
+TableCheckBoxRole.propTypes = {
     id:propTypes.string.isRequired,
     checked:propTypes.bool.isRequired
 };
 
-export default TableCheckBox;
+export default TableCheckBoxRole;

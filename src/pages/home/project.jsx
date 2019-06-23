@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { currencyActions, erpActions, opcoActions, projectActions, userActions } from '../../_actions';
 import { history } from '../../_helpers';
 import CheckBox from '../../_components/check-box';
-import TableCheckBox from '../../_components/table-check-box';
+import TableCheckBoxRole from '../../_components/table-check-box-role';
 import Input from '../../_components/input';
 import Select from '../../_components/select';
 import Layout from '../../_components/layout';
@@ -279,7 +279,7 @@ class Project extends React.Component {
                                                     <td>{u.userName}</td>
                                                     <td>{u.name}</td>
                                                     <td>
-                                                        <TableCheckBox
+                                                        <TableCheckBoxRole
                                                             id={u.userId}
                                                             checked={u.isExpediting}
                                                             onChange={(event) => {this.handleIsRole(event, 'isExpediting')}}
@@ -288,7 +288,7 @@ class Project extends React.Component {
                                                         />   
                                                     </td>
                                                     <td>
-                                                        <TableCheckBox
+                                                        <TableCheckBoxRole
                                                             id={u.userId}
                                                             checked={u.isInspection}
                                                             onChange={(event) => {this.handleIsRole(event, 'isInspection')}}
@@ -296,7 +296,7 @@ class Project extends React.Component {
                                                         />   
                                                     </td>
                                                     <td>
-                                                        <TableCheckBox
+                                                        <TableCheckBoxRole
                                                             id={u.userId}
                                                             checked={u.isShipping}
                                                             onChange={(event) => {this.handleIsRole(event, 'isShipping')}}
@@ -304,7 +304,7 @@ class Project extends React.Component {
                                                         />   
                                                     </td>
                                                     <td>
-                                                        <TableCheckBox
+                                                        <TableCheckBoxRole
                                                             id={u.userId}
                                                             checked={u.isWarehouse}
                                                             onChange={(event) => {this.handleIsRole(event, 'isWarehouse')}}
@@ -312,7 +312,7 @@ class Project extends React.Component {
                                                         />
                                                     </td>
                                                     <td>
-                                                        <TableCheckBox
+                                                        <TableCheckBoxRole
                                                             id={u.userId}
                                                             checked={u.isConfiguration}
                                                             onChange={(event) => {this.handleIsRole(event, 'isConfiguration')}}

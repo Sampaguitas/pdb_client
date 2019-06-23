@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CheckBox from '../../../../_components/check-box';
 import Input from '../../../../_components/input';
 import Select from '../../../../_components/select';
-import TableCheckBox from '../../../../_components/table-check-box';
+import TableCheckBoxRole from '../../../../_components/table-check-box-role';
 
 const _ = require('lodash');
 
@@ -285,7 +285,7 @@ class General extends React.Component {
                                             <td>{u.userName}</td>
                                             <td>{u.name}</td>
                                             <td>
-                                                <TableCheckBox
+                                                <TableCheckBoxRole
                                                     id={u.userId}
                                                     checked={u.isExpediting}
                                                     onChange={(event) => {this.handleIsRole(event, 'isExpediting')}}
@@ -293,7 +293,7 @@ class General extends React.Component {
                                                 />   
                                             </td>
                                             <td>
-                                                <TableCheckBox
+                                                <TableCheckBoxRole
                                                     id={u.userId}
                                                     checked={u.isInspection}
                                                     onChange={(event) => {this.handleIsRole(event, 'isInspection')}}
@@ -301,7 +301,7 @@ class General extends React.Component {
                                                 />   
                                             </td>
                                             <td>
-                                                <TableCheckBox
+                                                <TableCheckBoxRole
                                                     id={u.userId}
                                                     checked={u.isShipping}
                                                     onChange={(event) => {this.handleIsRole(event, 'isShipping')}}
@@ -309,7 +309,7 @@ class General extends React.Component {
                                                 />   
                                             </td>
                                             <td>
-                                                <TableCheckBox
+                                                <TableCheckBoxRole
                                                     id={u.userId}
                                                     checked={u.isWarehouse}
                                                     onChange={(event) => {this.handleIsRole(event, 'isWarehouse')}}
@@ -317,7 +317,7 @@ class General extends React.Component {
                                                 />
                                             </td>
                                             <td>
-                                                <TableCheckBox
+                                                <TableCheckBoxRole
                                                     id={u.userId}
                                                     checked={u.isConfiguration}
                                                     onChange={(event) => {this.handleIsRole(event, 'isConfiguration')}}

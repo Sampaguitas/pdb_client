@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import config from 'config';
-import { authHeader } from '../_helpers';
+import { authHeader } from '../../_helpers';
 import propTypes from 'prop-types';
 
 function logout() {
@@ -32,7 +32,7 @@ class TableInput extends Component{
             collection: this.props.collection,
             objectId: this.props.objectId,
             fieldName: this.props.fieldName,
-            fieldValue: this.props.fieldValue,
+            fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
             fieldType: this.props.fieldType,
         });
     }
@@ -56,7 +56,7 @@ class TableInput extends Component{
     onBlur(event){
         event.preventDefault();
         const { collection, objectId, fieldName, fieldValue } = this.state      
-        if (collection && objectId && fieldName && fieldValue) {
+        if (collection && objectId && fieldName) {
             this.updatefield(this.state)
             .then(
                 field => {
@@ -135,7 +135,7 @@ class TableInput extends Component{
             </td>
         ):
         (
-        <td onDoubleClick={() => this.onFocus()}>{fieldValue}</td>
+        <td onClick={() => this.onFocus()}>{fieldValue}</td> //onDoubleClick
         );
     }
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import TableInput from '../../../../_components/table-input'
+import TableInput from '../../../../_components/project-table/table-input';
+import TableSelect from '../../../../_components/project-table/table-select';
+import TableCheckBox from '../../../../_components/project-table/table-check-box';
 import _ from 'lodash';
 
 function arraySorted(array, field, subfiled ) {
@@ -200,7 +202,14 @@ class Screens extends React.Component {
                         <tbody className="full-height" style={{overflowY:'auto'}}>
                             {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
                                 <tr key={s._id}>
-                                    <td>{s.fields.custom}</td>
+                                    {/* <td>{s.fields.custom}</td> */}
+                                    <TableSelect 
+                                        collection="fieldname"
+                                        objectId={s._id}
+                                        fieldName="custom"
+                                        fieldValue={s.fieldId}
+                                        options={selection.project.fields}                                   
+                                    />
                                     {/* <td>{s.forShow}</td> */}
                                     <TableInput 
                                         collection="fieldname"
@@ -218,14 +227,14 @@ class Screens extends React.Component {
                                         fieldType="number"
                                     />
                                     <td>{s.align}</td>
-                                    <td>{s.edit}</td>
-                                    {/* <TableInput 
+                                    {/* <td>{s.edit}</td> */}
+                                    <TableCheckBox 
                                         collection="fieldname"
                                         objectId={s._id}
-                                        fieldName="forShow"
-                                        fieldValue={s.forShow}
-                                        fieldType="number"
-                                    /> */}
+                                        fieldName="edit"
+                                        fieldValue={s.edit}
+                                        fieldType="checkbox"
+                                    />
                                 </tr>
                             )}
                         </tbody>
