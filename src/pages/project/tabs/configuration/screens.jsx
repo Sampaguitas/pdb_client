@@ -4,6 +4,7 @@ import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
 import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
 import TableCheckBox from '../../../../_components/project-table/table-check-box';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
 function arrayRemove(arr, value) {
@@ -229,7 +230,15 @@ class Screens extends React.Component {
                                                 })
                                             }
                                         </select>
-                                    </div>
+                                        <div className="input-group-append">
+                                            <button className="btn btn-dark btn-lg">
+                                                <span><FontAwesomeIcon icon="plus" className="fa-lg"/></span>
+                                            </button>
+                                            <button className="btn btn-leeuwen btn-lg">
+                                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg"/></span>
+                                            </button>  
+                                        </div>
+                                    </div>                                  
                                 </th>
                             </tr>
                             <tr>
