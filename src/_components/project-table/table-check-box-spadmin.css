@@ -1,0 +1,15 @@
+.table-check-box-spadmin input[type="checkbox"],
+.table-check-box-spadmin .checked {
+    display: none;
+}
+
+.table-check-box-spadmin input[type="checkbox"]:checked ~ .checked
+{
+    display: inline-block;
+}
+ 
+.table-check-box-spadmin input[type="checkbox"]:checked ~ .unchecked
+{
+    display: none;
+
+}

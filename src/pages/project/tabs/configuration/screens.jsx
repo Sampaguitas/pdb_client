@@ -49,7 +49,6 @@ function doesMatch(search, array, type) {
                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
                 return !!array.match(new RegExp(search, "i"));
             case 'Number':
-                console.log('array:', typeof(String(array)));
                 search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
                 return !!String(array).match(new RegExp(search, "i"));
                 //return array == Number(search);
@@ -89,11 +88,11 @@ class Screens extends React.Component {
             selectedRows: [],
             selectAllRows: false,
         }
-        this.handleChangeHeader = this.handleChangeHeader.bind(this);
-        this.filterName = this.filterName.bind(this);
         this.toggleRow = this.toggleRow.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
+        this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeScreen = this.handleChangeScreen.bind(this);
+        this.filterName = this.filterName.bind(this);
     }
 
     toggleRow(event, Id) {
@@ -114,8 +113,7 @@ class Screens extends React.Component {
     
 	toggleSelectAllRow() {
         event.preventDefault();
-        // let newSelectedRows = {};
-        const { selectedRows, selectAllRows } = this.state;
+        const { selectAllRows } = this.state;
         const { selection } = this.props;
         if (selection.project) {
             if (this.state.selectAllRows) {
@@ -206,13 +204,12 @@ class Screens extends React.Component {
             { _id: 'center', name: 'Center' },
             { _id: 'right', name: 'Right' },
         ]
-        console.log('render called');
         return (
             
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
             <div className="row full-height">
                 <div className="table-responsive full-height">
-                    <table className="table table-hover table-sm table-bordered" >
+                    <table className="table table-hover table-bordered table-sm" >
                         <thead>
                             <tr className="text-center">
                                 <th colSpan="6" >
@@ -238,9 +235,8 @@ class Screens extends React.Component {
                             <tr>
                                 <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                     <TableSelectionRow
-                                        // style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}
-                                            checked={this.selectAllRows}
-                                            onChange={(event) => this.toggleSelectAllRow(event) }
+                                        checked={this.selectAllRows}
+                                        onChange={(event) => this.toggleSelectAllRow(event) }
                                     />
                                 </th>
                                 <th>Field<br/>
@@ -274,7 +270,6 @@ class Screens extends React.Component {
                                 <tr key={s._id}>
                                     <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                         <TableSelectionRow
-                                        // style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}
                                             checked={selectedRows.includes(s._id)}
                                             onChange={(event) => { this.toggleRow(event, s._id) } }
                                         />

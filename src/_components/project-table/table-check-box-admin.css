@@ -1,0 +1,15 @@
+.fancy-table-check-box-admin input[type="checkbox"],
+.fancy-table-check-box-admin .checked {
+    display: none;
+}
+
+.fancy-table-check-box-admin input[type="checkbox"]:checked ~ .checked
+{
+    display: inline-block;
+}
+ 
+.fancy-table-check-box-admin input[type="checkbox"]:checked ~ .unchecked
+{
+    display: none;
+
+}

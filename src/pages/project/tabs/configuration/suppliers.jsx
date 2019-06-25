@@ -330,7 +330,7 @@ class Suppliers extends React.Component {
                                 </div>
                             </div>
                              <div className="card-body table-responsive full-height"> {/* style={{display: 'block', overflow: 'scroll', height: '100%'}} */}
-                                <table className="table table-hover table-bordered"> {/*table-bordered*/}
+                                <table className="table table-hover table-bordered table-sm"> {/*table-bordered*/}
                                     <thead>
                                         <tr>
                                             <th>Name<br /> {/* className="text-nowrap" style={{minWidth: '100px'}}*/}

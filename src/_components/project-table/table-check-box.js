@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import config from 'config';
 import { authHeader } from '../../_helpers';
 import propTypes from 'prop-types';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import './table-check-box.css'
 
 function logout() {
     // remove user from local storage to log user out
@@ -80,16 +82,19 @@ class TableCheckBox extends Component {
         const { fieldValue, disabled } = this.state
         return (
             <td>
-             <div className="form-check">
+             <div>
+                <label className="fancy-table-checkbox">
                 <input
                     ref="input"
-                    className="form-check-input"
                     type='checkbox'
                     name='fieldValue'
                     checked={fieldValue}
                     onChange={this.onChange}
                     disabled={disabled}
                 />
+                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/>
+                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/>                
+                </label>
             </div>
             </td>
         );

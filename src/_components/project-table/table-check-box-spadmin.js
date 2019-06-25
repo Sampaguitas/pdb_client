@@ -4,7 +4,8 @@ import propTypes from 'prop-types';
 import { userActions } from '../../_actions';
 import config from 'config';
 import { authHeader } from '../../_helpers';
-
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import './table-check-box-spadmin.css'
 
 class TableCheckBoxSuperAdmin extends Component {
     constructor(props) {
@@ -67,15 +68,19 @@ class TableCheckBoxSuperAdmin extends Component {
     }
     render(){
         return (
-            <div className="form-check">
+            <div>
+                <label className="table-check-box-spadmin">
                 <input
                     name="isSuperAdmin"
                     type="checkbox"
-                    className="form-check-input"
                     checked={this.state.user.isSuperAdmin}
                     onChange={this.handleInputChange}
                     disabled={this.props.disabled}
                 />
+                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/>
+                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/> 
+                </label>
+
             </div>
         );
     }

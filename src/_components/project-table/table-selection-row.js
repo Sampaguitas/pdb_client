@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './table-selection-row.css'
-//https://codingwithspike.wordpress.com/2014/11/16/fancy-css-checkboxes-with-fontawesome/
-
 
 class TableSelectionRow extends Component {
 
@@ -10,18 +8,15 @@ class TableSelectionRow extends Component {
         const { checked, onChange } = this.props
         return (
             <div>
-                <label className="fancy-table-selection-row-checkbox">
+                <label className="fancy-table-selection-row">
                 <input type='checkbox' checked={checked} onChange={onChange}/>
-                <FontAwesomeIcon icon="check" className="checked fa-2x" style={{color: '#0070C0'}}/> {/* */}
-                <FontAwesomeIcon icon="check" className="unchecked fa-2x" style={{color: '#ededed'}}/>
+                <FontAwesomeIcon icon="check" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/> 
+                <FontAwesomeIcon icon="check" className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/> {/*#ededed*/}
                 </label>
 
             </div>
         );
     }
 };
-// TableSelectionRow.propTypes = {
-//     name: propTypes.string.isRequired,
-// };
 
 export default TableSelectionRow;

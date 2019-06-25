@@ -42,7 +42,10 @@ import '../_styles/main.css';
 //Icons
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/pro-solid-svg-icons';
-library.add(fas)
+import { far } from '@fortawesome/pro-regular-svg-icons';
+import { fal } from '@fortawesome/pro-light-svg-icons';
+
+library.add(fas, far, fal)
 
 
 class App extends React.Component {

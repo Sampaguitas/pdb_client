@@ -1,15 +1,15 @@
-.fancy-table-selection-row-checkbox input[type="checkbox"],
-.fancy-table-selection-row-checkbox .checked {
+.fancy-table-selection-row input[type="checkbox"],
+.fancy-table-selection-row .checked {
     display: none;
     padding: 'auto';
 }
 
-.fancy-table-selection-row-checkbox input[type="checkbox"]:checked ~ .checked
+.fancy-table-selection-row input[type="checkbox"]:checked ~ .checked
 {
     display: inline-block;
 }
  
-.fancy-table-selection-row-checkbox input[type="checkbox"]:checked ~ .unchecked
+.fancy-table-selection-row input[type="checkbox"]:checked ~ .unchecked
 {
     display: none;
 }
