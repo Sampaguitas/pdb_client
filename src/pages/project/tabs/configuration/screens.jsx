@@ -100,10 +100,10 @@ class Screens extends React.Component {
         event.preventDefault();
         const { selectedRows } = this.state;
         if (selectedRows.includes(Id)) {
-                this.setState({
-                    ...this.state,
-                    selectedRows: arrayRemove(selectedRows, Id)
-                });
+            this.setState({
+                ...this.state,
+                selectedRows: arrayRemove(selectedRows, Id)
+            });
         } else {
             this.setState({
                 ...this.state,
@@ -117,17 +117,18 @@ class Screens extends React.Component {
         // let newSelectedRows = {};
         const { selectedRows, selectAllRows } = this.state;
         const { selection } = this.props;
-
-		if (this.state.selectAllRows) {
-            this.setState({
-                selectedRows: [],
-                selectAllRows: !selectAllRows
-            });
-		} else {
-            this.setState({
-                selectedRows: this.filterName(selection.project.fieldnames).map(s => s._id),
-                selectAllRows: !selectAllRows
-            });
+        if (selection.project) {
+            if (this.state.selectAllRows) {
+                this.setState({
+                    selectedRows: [],
+                    selectAllRows: !selectAllRows
+                });
+            } else {
+                this.setState({
+                    selectedRows: this.filterName(selection.project.fieldnames).map(s => s._id),
+                    selectAllRows: !selectAllRows
+                });
+            }            
         }
 	}
 
@@ -239,7 +240,7 @@ class Screens extends React.Component {
                                     <TableSelectionRow
                                         // style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}
                                             checked={this.selectAllRows}
-                                            onChange={(event) => { this.toggleSelectAllRow(event) } }
+                                            onChange={(event) => this.toggleSelectAllRow(event) }
                                     />
                                 </th>
                                 <th>Field<br/>
