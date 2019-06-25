@@ -69,16 +69,17 @@ class TableCheckBoxAdmin extends Component {
     render(){
         return (
             <div>
-                <label className="fancy-table-check-box-admin">
+                <label className="fancy-table-check-box-admin" data-type="checkbox">
                 <input
                     name="isAdmin"
                     type="checkbox"
                     checked={this.state.user.isAdmin}
                     onChange={this.handleInputChange}
                     disabled={this.props.disabled}
+                    data-type="checkbox"
                 />
-                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/>
-                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/> 
+                <FontAwesomeIcon data-type="checkbox" icon="check-square" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/>
+                <FontAwesomeIcon data-type="checkbox" icon={["far", "square"]} className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/> 
                 </label>
 
             </div>

@@ -202,9 +202,13 @@ handleSubmit(event) {
 }
 
   handleOnclick(event, id) {
+    // event.preventDefault();
+    console.log('type:', event.target.dataset.type);
+    console.log('id:',id);
     const { users } = this.props
     let currentUser = JSON.parse(localStorage.getItem('user'));
-    if (event.target.type != 'checkbox' && this.props.users.items) {
+    //if (event.target.type != 'checkbox' && this.props.users.items) {
+    if (event.target.dataset['type'] != 'checkbox' && this.props.users.items) {
       let found = this.props.users.items.find(element => element.id === id);
       if (canClick(found, currentUser)) {
         this.setState({
@@ -291,7 +295,7 @@ handleSubmit(event) {
                           <UserRow 
                             user={user}
                             currentUser={currentUser}
-                            handleOnclick={this.handleOnclick}
+                            handleOnclick={(event) => this.handleOnclick(event, user._id)}
                             handleInputChange={this.handleInputChange}
                             key={user._id} 
                             />

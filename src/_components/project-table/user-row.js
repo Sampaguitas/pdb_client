@@ -46,20 +46,22 @@ class UserRow extends Component {
                 <td>{user.name}</td>
                 <td>{user.opco.name}</td>
                 <td>{user.opco.region.name}</td>
-                <td>
+                <td data-type="checkbox">
                     <TableCheckBoxAdmin
                         id={user._id}
                         checked={user.isAdmin}
                         onChange={handleInputChange}
                         disabled={this.checkBoxDisabled('isAdmin')}
+                        data-type="checkbox"
                     />
                 </td>
-                <td>
+                <td data-type="checkbox">
                     <TableCheckBoxSuperAdmin
                         id={user._id}
                         checked={user.isSuperAdmin}
                         onChange={handleInputChange}
                         disabled={this.checkBoxDisabled('isSuperAdmin')}
+                        data-type="checkbox"
                     />
                 </td>
             </tr>

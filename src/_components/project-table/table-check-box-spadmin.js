@@ -68,17 +68,18 @@ class TableCheckBoxSuperAdmin extends Component {
     }
     render(){
         return (
-            <div>
-                <label className="table-check-box-spadmin">
+            <div data-type="checkbox">
+                <label className="table-check-box-spadmin" data-type="checkbox">
                 <input
                     name="isSuperAdmin"
                     type="checkbox"
                     checked={this.state.user.isSuperAdmin}
                     onChange={this.handleInputChange}
                     disabled={this.props.disabled}
+                    data-type="checkbox"
                 />
-                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/>
-                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/> 
+                <FontAwesomeIcon data-type="checkbox" icon="check-square" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/>
+                <FontAwesomeIcon data-type="checkbox" icon={["far", "square"]} className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/> 
                 </label>
 
             </div>
