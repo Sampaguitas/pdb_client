@@ -11,6 +11,5 @@ export * from './layout';
 export * from './PrivateRoute';
 export * from './AdminRoute';
 export * from './select';
-export * from './table-check-box-admin';
 export * from './text-area';
 

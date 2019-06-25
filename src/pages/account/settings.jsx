@@ -8,8 +8,8 @@ import { userActions, opcoActions } from "../../_actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 //Components
-import TableCheckBoxAdmin from "../../_components/table-check-box-admin";
-import TableCheckBoxSuperAdmin from "../../_components/table-check-box-spadmin";
+import TableCheckBoxAdmin from "../../_components/project-table/table-check-box-admin";
+import TableCheckBoxSuperAdmin from "../../_components/project-table/table-check-box-spadmin";
 import UserRow from '../../_components/project-table/user-row.js';
 import Modal from "../../_components/modal/modal.js"
 import Input from "../../_components/input";

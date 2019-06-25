@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import propTypes from 'prop-types';
 import { history } from '../../_helpers';
-import TableCheckBoxAdmin from "../../_components/table-check-box-admin";
-import TableCheckBoxSuperAdmin from "../../_components/table-check-box-spadmin";
+import TableCheckBoxAdmin from "../../_components/project-table/table-check-box-admin";
+import TableCheckBoxSuperAdmin from "../../_components/project-table/table-check-box-spadmin";
 const _ = require('lodash');
 
 class UserRow extends Component {

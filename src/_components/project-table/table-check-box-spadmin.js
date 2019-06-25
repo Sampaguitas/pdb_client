@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import propTypes from 'prop-types';
-import { userActions } from '../_actions';
+import { userActions } from '../../_actions';
 import config from 'config';
-import { authHeader } from '../_helpers';
+import { authHeader } from '../../_helpers';
 
 
 class TableCheckBoxSuperAdmin extends Component {

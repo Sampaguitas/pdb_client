@@ -2,8 +2,17 @@ import React from 'react';
 import { connect } from 'react-redux';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
+import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
 import TableCheckBox from '../../../../_components/project-table/table-check-box';
 import _ from 'lodash';
+
+function arrayRemove(arr, value) {
+
+    return arr.filter(function(ele){
+        return ele != value;
+    });
+ 
+ }
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -77,10 +86,50 @@ class Screens extends React.Component {
             selectedScreen:'5cd2b643fd333616dc360b66',
             loaded: false,
             show: false,
+            selectedRows: [],
+            selectAllRows: false,
         }
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
+        this.toggleRow = this.toggleRow.bind(this);
+        this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
+        this.handleChangeScreen = this.handleChangeScreen.bind(this);
     }
+
+    toggleRow(event, Id) {
+        event.preventDefault();
+        const { selectedRows } = this.state;
+        if (selectedRows.includes(Id)) {
+                this.setState({
+                    ...this.state,
+                    selectedRows: arrayRemove(selectedRows, Id)
+                });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedRows: [...selectedRows, Id]
+            });
+        }
+    }
+    
+	toggleSelectAllRow() {
+        event.preventDefault();
+        // let newSelectedRows = {};
+        const { selectedRows, selectAllRows } = this.state;
+        const { selection } = this.props;
+
+		if (this.state.selectAllRows) {
+            this.setState({
+                selectedRows: [],
+                selectAllRows: !selectAllRows
+            });
+		} else {
+            this.setState({
+                selectedRows: this.filterName(selection.project.fieldnames).map(s => s._id),
+                selectAllRows: !selectAllRows
+            });
+        }
+	}
 
     handleChangeHeader(event) {
         const target = event.target;
@@ -89,6 +138,17 @@ class Screens extends React.Component {
         this.setState({
             ...this.state,
             [name]: value
+        });
+    }
+
+    handleChangeScreen(event) {
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        this.setState({
+            ...this.state,
+            [name]: value,
+            selectedRows: []
         });
     }  
     
@@ -136,6 +196,7 @@ class Screens extends React.Component {
             fieldId,
             custom,
             selectedScreen,
+            selectedRows
         } = this.state;
 
 
@@ -144,19 +205,21 @@ class Screens extends React.Component {
             { _id: 'center', name: 'Center' },
             { _id: 'right', name: 'Right' },
         ]
+        console.log('render called');
         return (
+            
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
             <div className="row full-height">
                 <div className="table-responsive full-height">
                     <table className="table table-hover table-sm table-bordered" >
                         <thead>
                             <tr className="text-center">
-                                <th colSpan="5" >
+                                <th colSpan="6" >
                                     <div className="input-group">
                                         <div className="input-group-prepend">
                                             <span className="input-group-text">Select Screen</span>
                                         </div>
-                                        <select className="form-control" name="selectedScreen" value={selectedScreen} onChange={this.handleChangeHeader}>
+                                        <select className="form-control" name="selectedScreen" value={selectedScreen} onChange={this.handleChangeScreen}>
                                             {
                                                 screens.items && arraySorted(screens.items, "name").map((screen) =>  {        
                                                     return (
@@ -172,6 +235,13 @@ class Screens extends React.Component {
                                 </th>
                             </tr>
                             <tr>
+                                <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
+                                    <TableSelectionRow
+                                        // style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}
+                                            checked={this.selectAllRows}
+                                            onChange={(event) => { this.toggleSelectAllRow(event) } }
+                                    />
+                                </th>
                                 <th>Field<br/>
                                     <input className="form-control" name="custom" value={custom} onChange={this.handleChangeHeader} />
                                 </th>
@@ -201,6 +271,13 @@ class Screens extends React.Component {
                         <tbody className="full-height" style={{overflowY:'auto'}}>
                             {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
                                 <tr key={s._id}>
+                                    <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
+                                        <TableSelectionRow
+                                        // style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}
+                                            checked={selectedRows.includes(s._id)}
+                                            onChange={(event) => { this.toggleRow(event, s._id) } }
+                                        />
+                                    </td>
                                     {/* <td>{s.fields.custom}</td> */}
                                     <TableSelect 
                                         collection="fieldname"

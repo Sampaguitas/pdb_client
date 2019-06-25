@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CheckBox from '../../../../_components/check-box';
 import Input from '../../../../_components/input';
 import Select from '../../../../_components/select';
-import TableCheckBoxRole from '../../../../_components/table-check-box-role';
+import TableCheckBoxRole from '../../../../_components/project-table/table-check-box-role';
 
 const _ = require('lodash');
 
