@@ -1,6 +1,7 @@
 var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     mode: 'development',  
@@ -66,5 +67,8 @@ module.exports = {
         config: JSON.stringify({
             apiUrl: process.env.NODE_ENV === 'dev' ? 'http://localhost:5000' : 'https://pdb-server.herokuapp.com'
         })
+    },
+    optimization: {
+        minimizer: [new UglifyJsPlugin()],
     }
 }
