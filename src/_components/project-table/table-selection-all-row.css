@@ -1,0 +1,15 @@
+.fancy-table-selection-all-row input[type="checkbox"],
+.fancy-table-selection-all-row .checked {
+    display: none;
+    padding: 'auto';
+}
+
+.fancy-table-selection-all-row input[type="checkbox"]:checked ~ .checked
+{
+    display: inline-block;
+}
+ 
+.fancy-table-selection-all-row input[type="checkbox"]:checked ~ .unchecked
+{
+    display: none;
+}

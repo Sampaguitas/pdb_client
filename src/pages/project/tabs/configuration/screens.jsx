@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
 import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
+import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
 import TableCheckBox from '../../../../_components/project-table/table-check-box';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
@@ -243,7 +244,7 @@ class Screens extends React.Component {
                             </tr>
                             <tr>
                                 <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
-                                    <TableSelectionRow
+                                    <TableSelectionAllRow
                                         checked={this.selectAllRows}
                                         onChange={(event) => this.toggleSelectAllRow(event) }
                                     />
@@ -279,8 +280,10 @@ class Screens extends React.Component {
                                 <tr key={s._id}>
                                     <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                         <TableSelectionRow
-                                            checked={selectedRows.includes(s._id)}
+                                            id={s._id}
+                                            //checked={selectedRows.includes(s._id)}
                                             onChange={(event) => { this.toggleRow(event, s._id) } }
+                                            selectedRows={selectedRows}
                                         />
                                     </td>
                                     {/* <td>{s.fields.custom}</td> */}
