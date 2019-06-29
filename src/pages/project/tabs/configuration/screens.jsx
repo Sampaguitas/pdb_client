@@ -95,22 +95,40 @@ class Screens extends React.Component {
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeScreen = this.handleChangeScreen.bind(this);
         this.filterName = this.filterName.bind(this);
+        this.updateSelectedRows = this.updateSelectedRows.bind(this);
     }
 
     toggleRow(event, Id) {
-        event.preventDefault();
+        // event.preventDefault();
+        // const { selectedRows } = this.state;
+        // if (selectedRows.includes(Id)) {
+        //     this.setState({
+        //         ...this.state,
+        //         selectedRows: arrayRemove(selectedRows, Id)
+        //     });
+        // } else {
+        //     this.setState({
+        //         ...this.state,
+        //         selectedRows: [...selectedRows, Id]
+        //     });
+        // }
+    }
+
+    updateSelectedRows(id) {
         const { selectedRows } = this.state;
-        if (selectedRows.includes(Id)) {
+        if (selectedRows.includes(id)) {
             this.setState({
                 ...this.state,
-                selectedRows: arrayRemove(selectedRows, Id)
+                selectedRows: arrayRemove(selectedRows, id)
             });
         } else {
             this.setState({
                 ...this.state,
-                selectedRows: [...selectedRows, Id]
+                selectedRows: [...selectedRows, id]
             });
         }
+
+       
     }
     
 	toggleSelectAllRow() {
@@ -245,7 +263,7 @@ class Screens extends React.Component {
                             <tr>
                                 <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                     <TableSelectionAllRow
-                                        checked={this.selectAllRows}
+                                        selectAllRows={this.state.selectAllRows}
                                         onChange={(event) => this.toggleSelectAllRow(event) }
                                     />
                                 </th>
@@ -281,9 +299,8 @@ class Screens extends React.Component {
                                     <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                         <TableSelectionRow
                                             id={s._id}
-                                            //checked={selectedRows.includes(s._id)}
-                                            onChange={(event) => { this.toggleRow(event, s._id) } }
-                                            selectedRows={selectedRows}
+                                            selectAllRows={this.state.selectAllRows}
+                                            callback={this.updateSelectedRows}
                                         />
                                     </td>
                                     {/* <td>{s.fields.custom}</td> */}

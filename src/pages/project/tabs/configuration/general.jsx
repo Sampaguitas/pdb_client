@@ -383,12 +383,31 @@ class General extends React.Component {
                                     <div className="text-right">
                                         {project.id &&
                                         <div>
-                                        <button type="submit" className="btn btn-outline-dark btn-lg" onClick={(event) => { handleDeleteProject(event, project.id)}} style={{ marginRight: 10 }} >
-                                            {projectDeleting ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : '' }
+                                        <button
+                                            type="submit"
+                                            className="btn btn-outline-dark btn-lg"
+                                            onClick={(event) => { handleDeleteProject(event, project.id)}} 
+                                            style={{ marginRight: 10 }}
+                                        >
+                                            {projectDeleting && (
+                                                <FontAwesomeIcon 
+                                                    icon="spinner"
+                                                    className="fa-pulse fa-1x fa-fw" 
+                                                /> 
+                                            )}
                                             Remove
                                         </button>
-                                        <button type="submit" className="btn btn-lg btn-outline-leeuwen" onClick={(event) => { handleSubmitProject(event, project)} }>
-                                        {projectUpdating ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
+                                        <button
+                                            type="submit"
+                                            className="btn btn-lg btn-outline-leeuwen"
+                                            onClick={(event) => { handleSubmitProject(event, project)} }
+                                        >
+                                            {projectUpdating && (
+                                                <FontAwesomeIcon
+                                                    icon="spinner"
+                                                    className="fa-pulse fa-1x fa-fw"
+                                                />
+                                            )}
                                             Update
                                         </button>
                                         </div>
