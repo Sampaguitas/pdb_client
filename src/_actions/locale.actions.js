@@ -80,9 +80,9 @@ function update(locale) {
             );
     };
 
-    function request() { return { type: localeConstants.GET_REQUEST } }
-    function success(locale) { return { type: localeConstants.GET_SUCCESS, locale } }
-    function failure(error) { return { type: localeConstants.GET_FAILURE, error } }
+    function request() { return { type: localeConstants.UPDATE_REQUEST } }
+    function success(locale) { return { type: localeConstants.UPDATE_SUCCESS, locale } }
+    function failure(error) { return { type: localeConstants.UPDATE_FAILURE, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
 import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
+import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
         return prev ? prev[curr] : null
@@ -74,44 +75,43 @@ class Duf extends React.Component {
             loaded: false,
             show: false,
         }
-        this.toggleRow = this.toggleRow.bind(this);
+        this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
     }
 
-    toggleRow(event, Id) {
-        event.preventDefault();
+    updateSelectedRows(id) {
         const { selectedRows } = this.state;
-        if (selectedRows.includes(Id)) {
+        if (selectedRows.includes(id)) {
             this.setState({
                 ...this.state,
-                selectedRows: arrayRemove(selectedRows, Id)
+                selectedRows: arrayRemove(selectedRows, id)
             });
         } else {
             this.setState({
                 ...this.state,
-                selectedRows: [...selectedRows, Id]
+                selectedRows: [...selectedRows, id]
             });
-        }
+        }       
     }
     
 	toggleSelectAllRow() {
-        event.preventDefault();
+        //event.preventDefault();
         const { selectAllRows } = this.state;
         const { selection } = this.props;
         if (selection.project) {
-            if (this.state.selectAllRows) {
+            if (selectAllRows) {
                 this.setState({
                     selectedRows: [],
-                    selectAllRows: !selectAllRows
+                    selectAllRows: false
                 });
             } else {
                 this.setState({
                     selectedRows: this.filterName(selection.project.fieldnames).map(s => s._id),
-                    selectAllRows: !selectAllRows
+                    selectAllRows: true
                 });
-            }            
+            }         
         }
 	}
 
@@ -160,6 +160,7 @@ class Duf extends React.Component {
             custom,
             selectedScreen,
             selectedRows,
+            selectAllRows,
         } = this.state;
 
         return ( 
@@ -170,9 +171,12 @@ class Duf extends React.Component {
                         <thead>
                             <tr>
                                 <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
-                                    <TableSelectionRow
-                                        checked={this.selectAllRows}
-                                        onChange={(event) => this.toggleSelectAllRow(event) }
+                                    <TableSelectionAllRow
+                                        // selectAllRows={selectAllRows}
+                                        // toggleSelectAllRow={this.toggleSelectAllRow}
+                                        // selectedScreen={selectedScreen}
+                                        checked={selectAllRows}
+                                        onChange={this.toggleSelectAllRow}                                        
                                     />
                                 </th>
                                 <th style={{width: '15%'}}>Column<br/>
@@ -188,8 +192,9 @@ class Duf extends React.Component {
                                 <tr key={s._id}>
                                     <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                         <TableSelectionRow
-                                            checked={selectedRows.includes(s._id)}
-                                            onChange={(event) => { this.toggleRow(event, s._id) } }
+                                            id={s._id}
+                                            selectAllRows={this.state.selectAllRows}
+                                            callback={this.updateSelectedRows}
                                         />
                                     </td>                                    
                                     {/* <td>{s.forShow}</td> */}

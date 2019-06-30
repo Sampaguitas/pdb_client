@@ -80,9 +80,9 @@ function update(erp) {
             );
     };
 
-    function request() { return { type: erpConstants.GET_REQUEST } }
-    function success(erp) { return { type: erpConstants.GET_SUCCESS, erp } }
-    function failure(error) { return { type: erpConstants.GET_FAILURE, error } }
+    function request() { return { type: erpConstants.UPDATE_REQUEST } }
+    function success(erp) { return { type: erpConstants.UPDATE_SUCCESS, erp } }
+    function failure(error) { return { type: erpConstants.UPDATE_FAILURE, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

@@ -84,9 +84,9 @@ function update(project) {
             );
     };
 
-    function request() { return { type: projectConstants.GET_REQUEST } }
-    function success(project) { return { type: projectConstants.GET_SUCCESS, project } }
-    function failure(error) { return { type: projectConstants.GET_FAILURE, error } }
+    function request() { return { type: projectConstants.UPDATE_REQUEST } }
+    function success(project) { return { type: projectConstants.UPDATE_SUCCESS, project } }
+    function failure(error) { return { type: projectConstants.UPDATE_FAILURE, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

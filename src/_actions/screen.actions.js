@@ -80,9 +80,9 @@ function update(screen) {
             );
     };
 
-    function request() { return { type: screenConstants.GET_REQUEST } }
-    function success(screen) { return { type: screenConstants.GET_SUCCESS, screen } }
-    function failure(error) { return { type: screenConstants.GET_FAILURE, error } }
+    function request() { return { type: screenConstants.UPDATE_REQUEST } }
+    function success(screen) { return { type: screenConstants.UPDATE_SUCCESS, screen } }
+    function failure(error) { return { type: screenConstants.UPDATE_FAILURE, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

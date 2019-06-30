@@ -82,9 +82,9 @@ function update(opco) {
             );
     };
 
-    function request() { return { type: opcoConstants.GET_REQUEST } }
-    function success(opco) { return { type: opcoConstants.GET_SUCCESS, opco } }
-    function failure(error) { return { type: opcoConstants.GET_FAILURE, error } }
+    function request() { return { type: opcoConstants.UPDATE_REQUEST } }
+    function success(opco) { return { type: opcoConstants.UPDATE_SUCCESS, opco } }
+    function failure(error) { return { type: opcoConstants.UPDATE_FAILURE, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

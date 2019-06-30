@@ -7,6 +7,10 @@ import { authHeader } from '../../_helpers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './table-check-box-spadmin.css'
 
+function logout() {
+    // remove user from local storage to log user out
+    localStorage.removeItem('user');
+}
 class TableCheckBoxSuperAdmin extends Component {
     constructor(props) {
         super(props);

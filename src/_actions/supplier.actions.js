@@ -80,9 +80,9 @@ function update(supplier) {
             );
     };
 
-    function request() { return { type: supplierConstants.GET_REQUEST } }
-    function success(supplier) { return { type: supplierConstants.GET_SUCCESS, supplier } }
-    function failure(error) { return { type: supplierConstants.GET_FAILURE, error } }
+    function request() { return { type: supplierConstants.UPDATE_REQUEST } }
+    function success(supplier) { return { type: supplierConstants.UPDATE_SUCCESS, supplier } }
+    function failure(error) { return { type: supplierConstants.UPDATE_FAILURE, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

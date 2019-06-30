@@ -95,6 +95,7 @@ class Screens extends React.Component {
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeScreen = this.handleChangeScreen.bind(this);
         this.filterName = this.filterName.bind(this);
+        
     }
 
     updateSelectedRows(id) {
@@ -186,6 +187,7 @@ class Screens extends React.Component {
             selection, 
             tab,
             screens,
+            handleDeleteScreen,
         } = this.props;
         
         const {
@@ -198,9 +200,9 @@ class Screens extends React.Component {
             custom,
             selectedScreen,
             selectedRows,
-            selectedAllRows
+            selectAllRows
         } = this.state;
-
+//selectAllRows
 
         const arrAlign = [
             { _id: 'left', name: 'Left' },
@@ -236,7 +238,7 @@ class Screens extends React.Component {
                                             <button className="btn btn-dark btn-lg">
                                                 <span><FontAwesomeIcon icon="plus" className="fa-lg"/></span>
                                             </button>
-                                            <button className="btn btn-leeuwen btn-lg">
+                                            <button className="btn btn-leeuwen btn-lg" onClick={ (event) => handleDeleteScreen(event, selectedRows)}>
                                                 <span><FontAwesomeIcon icon="trash-alt" className="fa-lg"/></span>
                                             </button>  
                                         </div>
@@ -246,9 +248,12 @@ class Screens extends React.Component {
                             <tr>
                                 <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                     <TableSelectionAllRow
-                                        selectedAllRows={selectedAllRows}
-                                        toggleSelectAllRow={this.toggleSelectAllRow}
-                                        selectedScreen={selectedScreen}
+                                        // selectAllRows={selectAllRows}
+                                        // toggleSelectAllRow={this.toggleSelectAllRow}
+                                        // selectedScreen={selectedScreen}
+                                        // tab={tab}
+                                        checked={selectAllRows}
+                                        onChange={this.toggleSelectAllRow}
                                     />
                                 </th>
                                 <th>Field<br/>

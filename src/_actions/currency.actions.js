@@ -80,9 +80,9 @@ function update(currency) {
             );
     };
 
-    function request() { return { type: currencyConstants.GET_REQUEST } }
-    function success(currency) { return { type: currencyConstants.GET_SUCCESS, currency } }
-    function failure(error) { return { type: currencyConstants.GET_FAILURE, error } }
+    function request() { return { type: currencyConstants.UPDATE_REQUEST } }
+    function success(currency) { return { type: currencyConstants.UPDATE_SUCCESS, currency } }
+    function failure(error) { return { type: currencyConstants.UPDATE_FAILURE, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

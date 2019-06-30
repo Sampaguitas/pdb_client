@@ -80,9 +80,9 @@ function update(region) {
             );
     };
 
-    function request() { return { type: regionConstants.GET_REQUEST } }
-    function success(region) { return { type: regionConstants.GET_SUCCESS, region } }
-    function failure(error) { return { type: regionConstants.GET_FAILURE, error } }
+    function request() { return { type: regionConstants.UPDATE_REQUEST } }
+    function success(region) { return { type: regionConstants.UPDATE_SUCCESS, region } }
+    function failure(error) { return { type: regionConstants.UPDATE_FAILURE, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

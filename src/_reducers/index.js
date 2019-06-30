@@ -4,6 +4,8 @@ import { alert } from './alert.reducer';
 import { authentication } from './authentication.reducer';
 import { currencies } from './currencies.reducer';
 import { erps } from './erps.reducer';
+import { fields } from './fields.reducer';
+import { fieldnames } from './fieldnames.reducer';
 import { locales } from './locales.reducer';
 import { opcos } from './opcos.reducer';
 import { projects } from './projects.reducer';
@@ -19,6 +21,8 @@ const rootReducer = combineReducers({
   authentication,
   currencies,
   erps,
+  fields,
+  fieldnames,
   locales,
   opcos,
   projects,

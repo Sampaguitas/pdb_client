@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
-import { currencyActions, opcoActions, projectActions, supplierActions, userActions, erpActions, screenActions  } from '../../_actions';
+import { currencyActions, opcoActions, projectActions, supplierActions, userActions, erpActions, screenActions, fieldnameActions  } from '../../_actions';
 import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs';
@@ -26,6 +26,11 @@ const tabs = [
 
 const _ = require('lodash');
 
+function logout() {
+    // remove user from local storage to log user out
+    localStorage.removeItem('user');
+}
+
 class Configuration extends React.Component {
     constructor(props) {
         super(props);
@@ -41,6 +46,9 @@ class Configuration extends React.Component {
         this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
         this.handleShowSupplierModal=this.handleShowSupplierModal.bind(this);
         this.handleHideSupplierModal=this.handleHideSupplierModal.bind(this);
+        this.handleDeleteScreen = this.handleDeleteScreen.bind(this);
+        // this.handleDeleteScreenApi = this.handleDeleteScreenApi.bind(this);
+        // this.handleResponse = this.handleResponse.bind(this);
 
     }
 
@@ -59,11 +67,12 @@ class Configuration extends React.Component {
     }
 
     handleSelectionReload(event){
-        event.preventDefault();
+        // event.preventDefault();
         const { dispatch, location } = this.props
         var qs = queryString.parse(location.search);
         if (qs.id) {
             dispatch(projectActions.getById(qs.id));
+            console.log('stateReload');
         }        
     }
 
@@ -103,6 +112,51 @@ class Configuration extends React.Component {
         const { dispatch } = this.props
         dispatch(supplierActions.delete(id));
     }
+
+    handleDeleteScreen(event, id) {
+        event.preventDefault();
+        console.log('fields:',id);
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { ...authHeader()},
+        };
+    
+        return fetch(`${config.apiUrl}/fieldName/delete?id=${JSON.stringify(id)}`, requestOptions)
+        .then(this.handleSelectionReload());
+    }
+
+    // handleDeleteScreenApi(id){
+    //     event.preventDefault();
+    //     console.log('fields:',id);
+    //     const requestOptions = {
+    //         method: 'DELETE',
+    //         headers: { ...authHeader()},
+    //     };
+    
+    //     return fetch(`${config.apiUrl}/fieldName/delete?id=${JSON.stringify(id)}`, requestOptions).then(this.handleResponse);
+    // }
+
+    // handleResponse(response) {
+    //     return response.text().then(text => {
+    //         if (text == 'Unauthorized') {
+    //             logout();
+    //             location.reload(true);
+    //         }
+    //         const data = text && JSON.parse(text);
+    //         if (!response.ok) {
+    //             if (response.status === 401) {
+    //                 // auto logout if 401 response returned from api
+    //                 logout();
+    //                 location.reload(true);
+    //             }
+    //             const error = (data && data.message) || response.statusText;
+    //             return Promise.reject(error);
+    //         }
+    //         return data;
+            
+    //     });
+    // }
+
 
     handleShowSupplierModal(event) {
         this.setState({showSupplierModal: true});
@@ -161,6 +215,7 @@ class Configuration extends React.Component {
                         showSupplierModal={showSupplierModal}
                         handleShowSupplierModal={this.handleShowSupplierModal}
                         handleHideSupplierModal={this.handleHideSupplierModal}
+                        handleDeleteScreen={this.handleDeleteScreen}
                         
                         // currentUser = {currentUser}
                     />

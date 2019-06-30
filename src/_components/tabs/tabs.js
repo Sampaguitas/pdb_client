@@ -51,7 +51,8 @@ class Tabs extends Component {
             submittedSupplier,
             showSupplierModal,
             handleShowSupplierModal,
-            handleHideSupplierModal
+            handleHideSupplierModal,
+            handleDeleteScreen
             // currentUser
         } = this.props
 
@@ -97,6 +98,7 @@ class Tabs extends Component {
                                 showSupplierModal={showSupplierModal}
                                 handleShowSupplierModal={handleShowSupplierModal}
                                 handleHideSupplierModal={handleHideSupplierModal}
+                                handleDeleteScreen={handleDeleteScreen}
                                 
                                 // currentUser={currentUser}
                             />
