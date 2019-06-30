@@ -8,15 +8,8 @@ class TableSelectionAllRow extends Component {
         this.state = {
             fieldValue: false,
         }
-        //this.onClickHandler = this.onClickHandler.bind(this);
         this.onChange = this.onChange.bind(this);
     }
-
-    // onClickHandler() {
-    //     const { fieldValue } = this.state;
-    //     const { callback } = this.props;
-    //     this.setState({  fieldValue: !fieldValue }, callback());
-    // }
 
     onChange(event) {
         const target = event.target;
@@ -26,25 +19,16 @@ class TableSelectionAllRow extends Component {
             ...this.state,
             [name]: value
         }, () => this.props.toggleSelectAllRow());
-            // event.preventDefault();
     }
 
-    // componentDidMount(){
-    //     const { selectAllRows } = this.props
-    //     this.setState({fieldValue: selectAllRows})
-    // }
-
-    
-
-    // componentDidUpdate(prevProps) {
-
-    //     if(this.props.selectAllRows !== prevProps.selectAllRows) {
-    //         this.setState({ fieldValue: this.props.selectAllRows })
-    //     }
-    // }
+    componentDidUpdate(prevProps) {
+        if(this.props.selectedScreen !== prevProps.selectedScreen) {
+            console.log('the screen has changed');
+            this.setState({ fieldValue: false })
+        }
+    }
 
     render(){
-        //const { checked, onChange } = this.props
         const { fieldValue } = this.state;
         return (
             <div>

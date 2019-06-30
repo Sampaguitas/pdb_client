@@ -90,29 +90,12 @@ class Screens extends React.Component {
             selectedRows: [],
             selectAllRows: false,
         }
-        // this.toggleRow = this.toggleRow.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeScreen = this.handleChangeScreen.bind(this);
         this.filterName = this.filterName.bind(this);
     }
-
-    // toggleRow(event, Id) {
-    //     event.preventDefault();
-    //     const { selectedRows } = this.state;
-    //     if (selectedRows.includes(Id)) {
-    //         this.setState({
-    //             ...this.state,
-    //             selectedRows: arrayRemove(selectedRows, Id)
-    //         });
-    //     } else {
-    //         this.setState({
-    //             ...this.state,
-    //             selectedRows: [...selectedRows, Id]
-    //         });
-    //     }
-    // }
 
     updateSelectedRows(id) {
         const { selectedRows } = this.state;
@@ -165,7 +148,8 @@ class Screens extends React.Component {
         this.setState({
             ...this.state,
             [name]: value,
-            selectedRows: []
+            selectedRows: [],
+            selectAllRows: false
         });
     }  
     
@@ -262,10 +246,9 @@ class Screens extends React.Component {
                             <tr>
                                 <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                     <TableSelectionAllRow
-                                        //checked={this.state.selectAllRows}
-                                        //onChange={(event) => this.toggleSelectAllRow(event) }
                                         selectedAllRows={selectedAllRows}
                                         toggleSelectAllRow={this.toggleSelectAllRow}
+                                        selectedScreen={selectedScreen}
                                     />
                                 </th>
                                 <th>Field<br/>
