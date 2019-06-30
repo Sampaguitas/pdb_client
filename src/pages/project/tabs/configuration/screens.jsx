@@ -90,29 +90,29 @@ class Screens extends React.Component {
             selectedRows: [],
             selectAllRows: false,
         }
-        this.toggleRow = this.toggleRow.bind(this);
+        // this.toggleRow = this.toggleRow.bind(this);
+        this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeScreen = this.handleChangeScreen.bind(this);
         this.filterName = this.filterName.bind(this);
-        this.updateSelectedRows = this.updateSelectedRows.bind(this);
     }
 
-    toggleRow(event, Id) {
-        // event.preventDefault();
-        // const { selectedRows } = this.state;
-        // if (selectedRows.includes(Id)) {
-        //     this.setState({
-        //         ...this.state,
-        //         selectedRows: arrayRemove(selectedRows, Id)
-        //     });
-        // } else {
-        //     this.setState({
-        //         ...this.state,
-        //         selectedRows: [...selectedRows, Id]
-        //     });
-        // }
-    }
+    // toggleRow(event, Id) {
+    //     event.preventDefault();
+    //     const { selectedRows } = this.state;
+    //     if (selectedRows.includes(Id)) {
+    //         this.setState({
+    //             ...this.state,
+    //             selectedRows: arrayRemove(selectedRows, Id)
+    //         });
+    //     } else {
+    //         this.setState({
+    //             ...this.state,
+    //             selectedRows: [...selectedRows, Id]
+    //         });
+    //     }
+    // }
 
     updateSelectedRows(id) {
         const { selectedRows } = this.state;
@@ -126,27 +126,25 @@ class Screens extends React.Component {
                 ...this.state,
                 selectedRows: [...selectedRows, id]
             });
-        }
-
-       
+        }       
     }
     
 	toggleSelectAllRow() {
-        event.preventDefault();
+        //event.preventDefault();
         const { selectAllRows } = this.state;
         const { selection } = this.props;
         if (selection.project) {
-            if (this.state.selectAllRows) {
+            if (selectAllRows) {
                 this.setState({
                     selectedRows: [],
-                    selectAllRows: !selectAllRows
+                    selectAllRows: false
                 });
             } else {
                 this.setState({
                     selectedRows: this.filterName(selection.project.fieldnames).map(s => s._id),
-                    selectAllRows: !selectAllRows
+                    selectAllRows: true
                 });
-            }            
+            }         
         }
 	}
 
@@ -215,7 +213,8 @@ class Screens extends React.Component {
             fieldId,
             custom,
             selectedScreen,
-            selectedRows
+            selectedRows,
+            selectedAllRows
         } = this.state;
 
 
@@ -263,8 +262,10 @@ class Screens extends React.Component {
                             <tr>
                                 <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                     <TableSelectionAllRow
-                                        selectAllRows={this.state.selectAllRows}
-                                        onChange={(event) => this.toggleSelectAllRow(event) }
+                                        //checked={this.state.selectAllRows}
+                                        //onChange={(event) => this.toggleSelectAllRow(event) }
+                                        selectedAllRows={selectedAllRows}
+                                        toggleSelectAllRow={this.toggleSelectAllRow}
                                     />
                                 </th>
                                 <th>Field<br/>
