@@ -7,6 +7,28 @@ import TableSelectionRow from '../../../../_components/project-table/table-selec
 import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+function resolve(path, obj) {
+    return path.split('.').reduce(function(prev, curr) {
+        return prev ? prev[curr] : null
+    }, obj || self)
+}
+
+function arraySorted(array, field) {
+    if (array) {
+        const newArray = array
+        newArray.sort(function(a,b){
+            if (resolve(field, a) < resolve(field, b)) {
+                return -1;
+            } else if ((resolve(field, a) > resolve(field, b))) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        return newArray;             
+    }
+}
+
 class Documents extends React.Component {
     constructor(props) {
         super(props);
@@ -49,15 +71,15 @@ class Documents extends React.Component {
 
 
     handleChangeTemplate(event) {
-        // const target = event.target;
-        // const name = target.name;
-        // const value = target.type === 'checkbox' ? target.checked : target.value;
-        // this.setState({
-        //     ...this.state,
-        //     [name]: value,
-        //     selectedRows: [],
-        //     selectAllRows: false
-        // });
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        this.setState({
+            ...this.state,
+            [name]: value,
+            selectedRows: [],
+            selectAllRows: false
+        });
     }
 
     handleChangeFields(event) {
@@ -106,7 +128,7 @@ class Documents extends React.Component {
         //     return (doesMatch(selectedTemplate, element.screenId, 'Id')
         //     && doesMatch(custom, element.fields.custom, 'String')
         //     && doesMatch(forShow, element.forShow, 'Number')
-        //     && doesMatch(forSelect, element.forSelect, 'Number')
+        //     && doesMatch(forSelect, element.forSelect, 'Number')screen
         //     && doesMatch(align, element.align, 'Select')
         //     // && doesMatch(edit, element.edit, 'Boolean')
         //     );
@@ -120,6 +142,7 @@ class Documents extends React.Component {
 
         const { 
             tab,
+            selection,
             handleDeleteDocDef,
             handleDeleteDocFields,
         } = this.props
@@ -151,7 +174,16 @@ class Documents extends React.Component {
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Document</span>
                                                 </div>
                                                 <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select Template..." onChange={this.handleChangeTemplate}>
-                                                {/*Options*/}
+                                                {
+                                                    selection.project && arraySorted(selection.project.docdefs, "name").map((p) =>  {        
+                                                        return (
+                                                            <option 
+                                                                key={p._id}
+                                                                value={p._id}>{p.name}
+                                                            </option>
+                                                        );
+                                                    })
+                                                }
                                                 </select>
                                                 <div className="input-group-append">
                                                     <button className="btn btn-leeuwen-blue btn-lg">
@@ -173,9 +205,10 @@ class Documents extends React.Component {
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
                                                     <input
                                                         type="file"
-                                                        className="custom-file-input"
+                                                        name="fileInput"
                                                         id="fileInput"
                                                         ref={this.fileInput}
+                                                        className="custom-file-input"
                                                         style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
                                                         onChange={this.handleFileChange} required />
                                                 </div>
