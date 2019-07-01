@@ -58,8 +58,9 @@ html, body, #app, #app>div {
 }
 
 .btn-leeuwen-blue:hover {
-  background-color: #180F5E; /* #0f3a71 */
-  border-color:#180F5E;/* #0f3a71 */
+  color: #fff;
+  background-color: #0f3a71; /* #0f3a71 */
+  border-color:#0f3a71;/* #0f3a71 */
 }
 
 .fa-icon {    

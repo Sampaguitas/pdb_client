@@ -46,8 +46,10 @@ class Configuration extends React.Component {
         this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
         this.handleShowSupplierModal=this.handleShowSupplierModal.bind(this);
         this.handleHideSupplierModal=this.handleHideSupplierModal.bind(this);
-        this.handleDeleteScreen = this.handleDeleteScreen.bind(this);
-        // this.handleDeleteScreenApi = this.handleDeleteScreenApi.bind(this);
+        this.handleDeleteFieldNames = this.handleDeleteFieldNames.bind(this);
+        this.handleDeleteDocFields = this.handleDeleteDocFields.bind(this);
+        this.handleDeleteDocDef = this.handleDeleteDocDef.bind(this);
+        // this.handleDeleteFieldNamesApi = this.handleDeleteFieldNamesApi.bind(this);
         // this.handleResponse = this.handleResponse.bind(this);
 
     }
@@ -113,7 +115,7 @@ class Configuration extends React.Component {
         dispatch(supplierActions.delete(id));
     }
 
-    handleDeleteScreen(event, id) {
+    handleDeleteFieldNames(event, id) {
         event.preventDefault();
         console.log('fields:',id);
         const requestOptions = {
@@ -125,7 +127,15 @@ class Configuration extends React.Component {
         .then(this.handleSelectionReload());
     }
 
-    // handleDeleteScreenApi(id){
+    handleDeleteDocFields(event, id) {
+
+    }
+
+    handleDeleteDocDef(event, id) {
+        
+    }
+
+    // handleDeleteFieldNamesApi(id){
     //     event.preventDefault();
     //     console.log('fields:',id);
     //     const requestOptions = {
@@ -215,8 +225,9 @@ class Configuration extends React.Component {
                         showSupplierModal={showSupplierModal}
                         handleShowSupplierModal={this.handleShowSupplierModal}
                         handleHideSupplierModal={this.handleHideSupplierModal}
-                        handleDeleteScreen={this.handleDeleteScreen}
-                        
+                        handleDeleteFieldNames={this.handleDeleteFieldNames}
+                        handleDeleteDocFields={this.handleDeleteDocFields}
+                        handleDeleteDocDef={this.handleDeleteDocDef}
                         // currentUser = {currentUser}
                     />
                 </div>

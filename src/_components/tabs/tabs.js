@@ -52,7 +52,9 @@ class Tabs extends Component {
             showSupplierModal,
             handleShowSupplierModal,
             handleHideSupplierModal,
-            handleDeleteScreen
+            handleDeleteFieldNames,
+            handleDeleteDocFields,
+            handleDeleteDocDef
             // currentUser
         } = this.props
 
@@ -98,8 +100,9 @@ class Tabs extends Component {
                                 showSupplierModal={showSupplierModal}
                                 handleShowSupplierModal={handleShowSupplierModal}
                                 handleHideSupplierModal={handleHideSupplierModal}
-                                handleDeleteScreen={handleDeleteScreen}
-                                
+                                handleDeleteFieldNames={handleDeleteFieldNames}
+                                handleDeleteDocFields={handleDeleteDocFields}
+                                handleDeleteDocDef={handleDeleteDocDef}
                                 // currentUser={currentUser}
                             />
                         </div>

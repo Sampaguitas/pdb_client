@@ -2,9 +2,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
+import TableCheckBox from '../../../../_components/project-table/table-check-box';
 import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
-import TableCheckBox from '../../../../_components/project-table/table-check-box';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -187,7 +187,7 @@ class Screens extends React.Component {
             selection, 
             tab,
             screens,
-            handleDeleteScreen,
+            handleDeleteFieldNames,
         } = this.props;
         
         const {
@@ -238,7 +238,7 @@ class Screens extends React.Component {
                                             <button className="btn btn-dark btn-lg">
                                                 <span><FontAwesomeIcon icon="plus" className="fa-lg"/></span>
                                             </button>
-                                            <button className="btn btn-leeuwen btn-lg" onClick={ (event) => handleDeleteScreen(event, selectedRows)}>
+                                            <button className="btn btn-leeuwen btn-lg" onClick={ (event) => handleDeleteFieldNames(event, selectedRows)}>
                                                 <span><FontAwesomeIcon icon="trash-alt" className="fa-lg"/></span>
                                             </button>  
                                         </div>
