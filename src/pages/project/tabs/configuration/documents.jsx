@@ -45,6 +45,7 @@ class Documents extends React.Component {
             fileName:''
         }
         this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
+        this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeField = this.handleChangeFields.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleUploadFile = this.handleUploadFile.bind(this);
@@ -60,6 +61,7 @@ class Documents extends React.Component {
             }`
         );        
     }
+
     handleFileChange(event){
         console.log('onChangeFile');
         if(event.target.files.length > 0) {
@@ -67,6 +69,16 @@ class Documents extends React.Component {
                 fileName: event.target.files[0].name
             });
         }
+    }
+
+    handleChangeHeader(event) {
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        this.setState({
+            ...this.state,
+            [name]: value
+        });
     }
 
 
@@ -212,7 +224,7 @@ class Documents extends React.Component {
                                                         style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
                                                         onChange={this.handleFileChange} required />
                                                 </div>
-                                                <label type="text" className="form-control text-left" for="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
+                                                <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
                                                 <div className="input-group-append">
                                                     <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
                                                         <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>
@@ -238,19 +250,22 @@ class Documents extends React.Component {
                                 <tr>
                                     <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                         <TableSelectionAllRow
-                                            selectAllRows={selectAllRows}
-                                            toggleSelectAllRow={this.toggleSelectAllRow}
-                                            selectedTemplate={selectedTemplate}
+                                            checked={selectAllRows}
+                                            onChange={this.toggleSelectAllRow}
                                         />
                                     </th>
-                                    <th>Location<br/>
-                                        <input className="form-control" name="location" value={location} onChange={this.handleChangeHeader} />
+                                    <th style={{width: '15%'}}>Location<br/>
+                                        <select className="form-control" name="location" value={location} onChange={this.handleChangeHeader}>
+                                            <option key="0" value="Any">Any</option>
+                                            <option key="1" value="Header">Header</option>
+                                            <option key="2" value="Line">Line</option>
+                                        </select>
                                     </th>
-                                    <th>Section/Row<br/>
-                                        <input className="form-control" name="row" value={row} onChange={this.handleChangeHeader} />
+                                    <th style={{width: '15%'}}>Row<br/>
+                                        <input type="number" min="0" step="1" className="form-control" name="row" value={row} onChange={this.handleChangeHeader} />
                                     </th>
-                                    <th>Col<br/>
-                                        <input className="form-control" name="col" value={col} onChange={this.handleChangeHeader} />
+                                    <th style={{width: '15%'}}>Col<br/>
+                                        <input type="number" min="0" step="1" className="form-control" name="col" value={col} onChange={this.handleChangeHeader} />
                                     </th>
                                     <th>Field<br/>
                                         <input className="form-control" name="custom" value={custom} onChange={this.handleChangeHeader} />
