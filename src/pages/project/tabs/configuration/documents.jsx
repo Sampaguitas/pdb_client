@@ -19,11 +19,32 @@ class Documents extends React.Component {
             description:'',
             selectedTemplate:'',
             selectedRows: [],
-            selectAllRows: false
+            selectAllRows: false,
+            fileName:''
         }
         this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
         this.handleChangeField = this.handleChangeFields.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
+        this.handleUploadFile = this.handleUploadFile.bind(this);
+        this.handleFileChange=this.handleFileChange.bind(this);
+        this.fileInput = React.createRef();
+    }
+
+    handleUploadFile(event){
+        event.preventDefault();
+        alert(
+            `Selected file - ${
+                this.fileInput.current.files[0].name
+            }`
+        );        
+    }
+    handleFileChange(event){
+        console.log('onChangeFile');
+        if(event.target.files.length > 0) {
+            this.setState({
+                fileName: event.target.files[0].name
+            });
+        }
     }
 
 
@@ -112,6 +133,7 @@ class Documents extends React.Component {
             description,
             selectedTemplate,
             selectAllRows,
+            fileName,
         } = this.state;
 
         
@@ -144,20 +166,22 @@ class Documents extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="col-12 mb-3">
+                                        <form className="col-12 mb-3" onSubmit={this.handleUploadFile}>
                                             <div className="input-group">
                                                 <div className="input-group-prepend">
                                                     <input type="file" style={{visibility: 'hidden', position: 'absolute'}}/>
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
-                                                    <input type="file" className="custom-file-input" id="validatedCustomFile" style={{display: 'none'}}required></input>
+                                                    <input
+                                                        type="file"
+                                                        className="custom-file-input"
+                                                        id="fileInput"
+                                                        ref={this.fileInput}
+                                                        style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
+                                                        onChange={this.handleFileChange} required />
                                                 </div>
-                                                {/* <div className="custom-file">
-                                                    <input type="file" className="custom-file-input" id="validatedCustomFile" required></input>
-                                                    <label className="custom-file-label" for="validatedCustomFile">Choose file...</label>
-                                                </div> */}
-                                                <label type="text" className="form-control text-left" name="description" for="validatedCustomFile" style={{display:'inline-block', padding: '7px'}}>Choose file...</label>
+                                                <label type="text" className="form-control text-left" for="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
                                                 <div className="input-group-append">
-                                                    <button className="btn btn-outline-leeuwen-blue btn-lg">
+                                                    <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
                                                         <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>
                                                     </button>
                                                     <button className="btn btn-outline-leeuwen-blue btn-lg">
@@ -165,7 +189,7 @@ class Documents extends React.Component {
                                                     </button>  
                                                 </div>                                                
                                             </div>
-                                        </div>
+                                        </form>
                                         <div className="col-12 text-right">
                                             {/* <div className="row"> */}
                                                 <button className="btn btn-leeuwen-blue bt-lg mr-3">
