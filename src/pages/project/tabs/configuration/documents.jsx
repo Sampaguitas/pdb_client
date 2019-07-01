@@ -128,7 +128,7 @@ class Documents extends React.Component {
                                                 <div className="input-group-prepend">
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Document</span>
                                                 </div>
-                                                <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select Document..." onChange={this.handleChangeTemplate}>
+                                                <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select Template..." onChange={this.handleChangeTemplate}>
                                                 {/*Options*/}
                                                 </select>
                                                 <div className="input-group-append">
@@ -147,9 +147,15 @@ class Documents extends React.Component {
                                         <div className="col-12 mb-3">
                                             <div className="input-group">
                                                 <div className="input-group-prepend">
+                                                    <input type="file" style={{visibility: 'hidden', position: 'absolute'}}/>
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
+                                                    <input type="file" className="custom-file-input" id="validatedCustomFile" style={{display: 'none'}}required></input>
                                                 </div>
-                                                <input className="form-control" name="description" value={description} placeholder="Choose file..." onChange={this.handleChangeTemplate} />
+                                                {/* <div className="custom-file">
+                                                    <input type="file" className="custom-file-input" id="validatedCustomFile" required></input>
+                                                    <label className="custom-file-label" for="validatedCustomFile">Choose file...</label>
+                                                </div> */}
+                                                <label type="text" className="form-control text-left" name="description" for="validatedCustomFile" style={{display:'inline-block', padding: '7px'}}>Choose file...</label>
                                                 <div className="input-group-append">
                                                     <button className="btn btn-outline-leeuwen-blue btn-lg">
                                                         <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>
