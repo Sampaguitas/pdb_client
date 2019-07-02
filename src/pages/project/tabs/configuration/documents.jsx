@@ -29,6 +29,41 @@ function arraySorted(array, field) {
     }
 }
 
+function doesMatch(search, array, type) {
+    if (!search) {
+        return true;
+    } else if (!array && search) {
+        return false;
+    } else {
+        switch(type) {
+            case 'Id':
+                return _.isEqual(search, array);
+            case 'String':
+                search = search.replace(/([()[{*+.$^\\|?])/g, "");
+                return !!array.match(new RegExp(search, "i"));
+            case 'Number':
+                search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
+                return !!String(array).match(new RegExp(search, "i"));
+                //return array == Number(search);
+            case 'Boolean':
+                if (Number(search) == 1) {
+                    return true; //any
+                } else if (Number(search) == 2) {
+                    return !!array == 1; //true
+                } else if (Number(search) == 3) {
+                    return !!array == 0; //false
+                }
+            case 'Select':
+                if(search.toLowerCase() == 'any' || _.isEqual(search, array)) {
+                    return true; //any or equal
+                } else {
+                    return false;
+                }
+            default: return true;
+        }
+    }
+}
+
 class Documents extends React.Component {
     constructor(props) {
         super(props);
@@ -135,19 +170,19 @@ class Documents extends React.Component {
             selectedTemplate,
         } = this.state;
 
-        // if (array) {
-        //   return arraySorted(array, 'fields.custom').filter(function (element) {
-        //     return (doesMatch(selectedTemplate, element.screenId, 'Id')
-        //     && doesMatch(custom, element.fields.custom, 'String')
-        //     && doesMatch(forShow, element.forShow, 'Number')
-        //     && doesMatch(forSelect, element.forSelect, 'Number')screen
-        //     && doesMatch(align, element.align, 'Select')
-        //     // && doesMatch(edit, element.edit, 'Boolean')
-        //     );
-        //   });
-        // } else {
-        //     return [];
-        // }
+        if (array) {
+          return arraySorted(array, 'fields.custom').filter(function (element) {
+            return (doesMatch(selectedTemplate, element.docdefId, 'Id')
+            && doesMatch(location, element.location, 'Select')
+            && doesMatch(row, element.row, 'Number')
+            && doesMatch(col, element.col, 'Number')
+            && doesMatch(custom, element.fields.custom, 'String')
+            // && doesMatch(edit, element.edit, 'Boolean')
+            );
+          });
+        } else {
+            return [];
+        }
     }
 
     render() {
@@ -171,6 +206,10 @@ class Documents extends React.Component {
             fileName,
         } = this.state;
 
+        const ArrLocation = [
+            { _id: 'Header', location: 'Header'},
+            { _id: 'Line', location: 'Line'}
+        ]
         
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
@@ -275,6 +314,61 @@ class Documents extends React.Component {
                                     </th>                              
                                 </tr>
                             </thead>
+                            <tbody className="full-height" style={{overflowY:'auto'}}>
+                            {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
+                                <tr key={s._id}>
+                                    <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
+                                        <TableSelectionRow
+                                            id={s._id}
+                                            selectAllRows={this.state.selectAllRows}
+                                            callback={this.updateSelectedRows}
+                                        />
+                                    </td>
+                                    {/* <td>{s.fields.custom}</td> */}
+                                    <TableSelect 
+                                        collection="docfields"
+                                        objectId={s._id}
+                                        fieldName="location"
+                                        fieldValue={s.location}
+                                        options={ArrLocation}
+                                        optionText="location"                                  
+                                    />
+                                    {/* <td>{s.forShow}</td> */}
+                                    <TableInput 
+                                        collection="docfields"
+                                        objectId={s._id}
+                                        fieldName="row"
+                                        fieldValue={s.row}
+                                        fieldType="number"
+                                    />
+                                    {/* <td>{s.forSelect}</td> */}
+                                    <TableInput 
+                                        collection="docfields"
+                                        objectId={s._id}
+                                        fieldName="col"
+                                        fieldValue={s.col}
+                                        fieldType="number"
+                                    />
+                                    {/* <td>{s.align}</td> */}
+                                    <TableSelect 
+                                        collection="docfields"
+                                        objectId={s._id}
+                                        fieldName="fieldId"
+                                        fieldValue={s.fieldId}
+                                        options={selection.project.fields}
+                                        optionText="custom"                                  
+                                    />
+                                    {/* <td>{s.edit}</td> */}
+                                    <TableInput 
+                                        collection="docfields"
+                                        objectId={s._id}
+                                        fieldName="param"
+                                        fieldValue={s.param}
+                                        fieldType="text"
+                                    />
+                                </tr>
+                            )}
+                        </tbody>
                         </table>
                     </div>
                 </div>    
