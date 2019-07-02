@@ -29,6 +29,18 @@ function arraySorted(array, field) {
     }
 }
 
+function docConf(array) {
+    const tpeOf = [
+        '5d1927131424114e3884ac80', //PL01 Packing List
+        '5d1927141424114e3884ac84', //SM01 Shipping Mark
+        '5d1927131424114e3884ac81', //PN01 Packing Note
+        '5d1927141424114e3884ac83' //SI01 Shipping Invoice
+    ];
+    return array.filter(function (element) {
+        return tpeOf.includes(element.doctypeId);
+    });
+}
+
 function findObj(array, search) {
     if (!_.isEmpty(array) && search) {
         return array.find((function(element) {
@@ -84,10 +96,12 @@ class Documents extends React.Component {
             custom: '',
             param: '',
             description:'',
-            selectedTemplate:'',
+            selectedTemplate:'0',
+            multi: false,
             selectedRows: [],
             selectAllRows: false,
-            fileName:''
+            fileName:'',
+            inputKey: Date.now()
         }
         this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
@@ -96,10 +110,17 @@ class Documents extends React.Component {
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleFileChange=this.handleFileChange.bind(this);
         this.fileInput = React.createRef();
+        //this.docConf = this.docConf.bind(this);
     }
+
+
+
+
 
     handleUploadFile(event){
         event.preventDefault();
+        //console.log('toto:', document.getElementById('fileInput')[0].current.files[0].name);
+        //console.log('toto:',this.fileInput.value);
         alert(
             `Selected file - ${
                 this.fileInput.current.files[0].name
@@ -108,7 +129,6 @@ class Documents extends React.Component {
     }
 
     handleFileChange(event){
-        console.log('onChangeFile');
         if(event.target.files.length > 0) {
             this.setState({
                 fileName: event.target.files[0].name
@@ -129,22 +149,34 @@ class Documents extends React.Component {
 
     handleChangeTemplate(event) {
         const { selection } = this.props;
-        const { selectedTemplate } = this.state;
-        const target = event.target;
-        const name = target.name;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
+        // const { selectedTemplate } = this.state;
+        // const target = event.target;
+        // const name = target.name;
+        const value =  event.target.value;
         this.setState({
             ...this.state,
-            [name]: value,
+            selectedTemplate: value,
             selectedRows: [],
-            selectAllRows: false
+            selectAllRows: false,
+            inputKey: Date.now(),
+            fileName:''
         }, () => {
+            
             if (selection.project) {
                 let obj = findObj(selection.project.docdefs,value);
                 if (obj) {
                     this.setState({
                         fileName: obj.field
                     });
+                    if (!!obj.col2){
+                        this.setState({
+                            multi: true
+                        });
+                    } else {
+                        this.setState({
+                            multi: false
+                        })
+                    }
                 }
             }
         });
@@ -225,11 +257,17 @@ class Documents extends React.Component {
             selectedTemplate,
             selectAllRows,
             fileName,
+            multi
         } = this.state;
 
         const ArrLocation = [
             { _id: 'Header', location: 'Header'},
             { _id: 'Line', location: 'Line'}
+        ]
+
+        const ArrSheet = [
+            { _id: 'Sheet1', worksheet: 'Sheet1'},
+            { _id: 'Sheet2', worksheet: 'Sheet2'}
         ]
         
         return (
@@ -239,15 +277,16 @@ class Documents extends React.Component {
                         <table className="table table-hover table-bordered table-sm" >
                             <thead>
                                 <tr className="text-center">
-                                    <th colSpan="6" >
+                                    <th colSpan={multi ? '7' : '6'}>
                                         <div className="col-12 mb-3">
                                             <div className="input-group">
                                                 <div className="input-group-prepend">
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Document</span>
                                                 </div>
                                                 <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select Template..." onChange={this.handleChangeTemplate}>
+                                                    <option key="0" value="0" selected>Select document...</option>
                                                 {
-                                                    selection.project && arraySorted(selection.project.docdefs, "name").map((p) =>  {        
+                                                    selection.project && arraySorted(docConf(selection.project.docdefs), "name").map((p) =>  {        
                                                         return (
                                                             <option 
                                                                 key={p._id}
@@ -273,16 +312,20 @@ class Documents extends React.Component {
                                         <form className="col-12 mb-3" onSubmit={this.handleUploadFile}>
                                             <div className="input-group">
                                                 <div className="input-group-prepend">
-                                                    <input type="file" style={{visibility: 'hidden', position: 'absolute'}}/>
+                                                    {/* <input type="file" style={{visibility: 'hidden', position: 'absolute'}}/> */}
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
                                                     <input
                                                         type="file"
+                                                        
                                                         name="fileInput"
                                                         id="fileInput"
                                                         ref={this.fileInput}
                                                         className="custom-file-input"
                                                         style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
-                                                        onChange={this.handleFileChange} required />
+                                                        onChange={this.handleFileChange}
+                                                        key={this.state.inputKey}
+                                                        required
+                                                    />
                                                 </div>
                                                 <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
                                                 <div className="input-group-append">
@@ -314,6 +357,15 @@ class Documents extends React.Component {
                                             onChange={this.toggleSelectAllRow}
                                         />
                                     </th>
+                                    {multi &&
+                                        <th style={{width: '15%'}}>Worksheet<br/>
+                                            <select className="form-control" name="location" value={location} onChange={this.handleChangeHeader}>
+                                                <option key="0" value="Any">Any</option>
+                                                <option key="1" value="Sheet1">Sheet1</option>
+                                                <option key="2" value="Sheet2">Sheet2</option>
+                                            </select>
+                                        </th>
+                                    }
                                     <th style={{width: '15%'}}>Location<br/>
                                         <select className="form-control" name="location" value={location} onChange={this.handleChangeHeader}>
                                             <option key="0" value="Any">Any</option>
@@ -346,6 +398,16 @@ class Documents extends React.Component {
                                         />
                                     </td>
                                     {/* <td>{s.fields.custom}</td> */}
+                                    {multi &&
+                                        <TableSelect 
+                                            collection="docfield"
+                                            objectId={s._id}
+                                            fieldName="worksheet"
+                                            fieldValue={s.worksheet}
+                                            options={ArrSheet}
+                                            optionText="worksheet"                                 
+                                        />
+                                    }
                                     <TableSelect 
                                         collection="docfield"
                                         objectId={s._id}
