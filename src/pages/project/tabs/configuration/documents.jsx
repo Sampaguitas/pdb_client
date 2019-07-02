@@ -321,7 +321,6 @@ class Documents extends React.Component {
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
                                                     <input
                                                         type="file"
-                                                        
                                                         name="fileInput"
                                                         id="fileInput"
                                                         ref={this.fileInput}
@@ -329,7 +328,6 @@ class Documents extends React.Component {
                                                         style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
                                                         onChange={this.handleFileChange}
                                                         key={this.state.inputKey}
-                                                        required
                                                     />
                                                 </div>
                                                 <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
