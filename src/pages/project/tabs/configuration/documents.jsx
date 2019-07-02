@@ -29,6 +29,16 @@ function arraySorted(array, field) {
     }
 }
 
+function findObj(array, search) {
+    if (!_.isEmpty(array) && search) {
+        return array.find((function(element) {
+            return _.isEqual(element._id, search);
+        }));
+    } else {
+        return {};
+    }
+}
+
 function doesMatch(search, array, type) {
     if (!search) {
         return true;
@@ -118,6 +128,8 @@ class Documents extends React.Component {
 
 
     handleChangeTemplate(event) {
+        const { selection } = this.props;
+        const { selectedTemplate } = this.state;
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -126,6 +138,15 @@ class Documents extends React.Component {
             [name]: value,
             selectedRows: [],
             selectAllRows: false
+        }, () => {
+            if (selection.project) {
+                let obj = findObj(selection.project.docdefs,value);
+                if (obj) {
+                    this.setState({
+                        fileName: obj.field
+                    });
+                }
+            }
         });
     }
 
@@ -326,7 +347,7 @@ class Documents extends React.Component {
                                     </td>
                                     {/* <td>{s.fields.custom}</td> */}
                                     <TableSelect 
-                                        collection="docfields"
+                                        collection="docfield"
                                         objectId={s._id}
                                         fieldName="location"
                                         fieldValue={s.location}
@@ -335,7 +356,7 @@ class Documents extends React.Component {
                                     />
                                     {/* <td>{s.forShow}</td> */}
                                     <TableInput 
-                                        collection="docfields"
+                                        collection="docfield"
                                         objectId={s._id}
                                         fieldName="row"
                                         fieldValue={s.row}
@@ -343,7 +364,7 @@ class Documents extends React.Component {
                                     />
                                     {/* <td>{s.forSelect}</td> */}
                                     <TableInput 
-                                        collection="docfields"
+                                        collection="docfield"
                                         objectId={s._id}
                                         fieldName="col"
                                         fieldValue={s.col}
@@ -351,7 +372,7 @@ class Documents extends React.Component {
                                     />
                                     {/* <td>{s.align}</td> */}
                                     <TableSelect 
-                                        collection="docfields"
+                                        collection="docfield"
                                         objectId={s._id}
                                         fieldName="fieldId"
                                         fieldValue={s.fieldId}
@@ -360,7 +381,7 @@ class Documents extends React.Component {
                                     />
                                     {/* <td>{s.edit}</td> */}
                                     <TableInput 
-                                        collection="docfields"
+                                        collection="docfield"
                                         objectId={s._id}
                                         fieldName="param"
                                         fieldValue={s.param}
