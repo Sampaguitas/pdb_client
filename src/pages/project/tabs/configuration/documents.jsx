@@ -110,12 +110,24 @@ class Documents extends React.Component {
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleFileChange=this.handleFileChange.bind(this);
         this.fileInput = React.createRef();
+        this.updateSelectedRows = this.updateSelectedRows.bind(this);
         //this.docConf = this.docConf.bind(this);
     }
 
-
-
-
+    updateSelectedRows(id) {
+        const { selectedRows } = this.state;
+        if (selectedRows.includes(id)) {
+            this.setState({
+                ...this.state,
+                selectedRows: arrayRemove(selectedRows, id)
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedRows: [...selectedRows, id]
+            });
+        }       
+    }
 
     handleUploadFile(event){
         event.preventDefault();
@@ -181,35 +193,23 @@ class Documents extends React.Component {
             }
         });
     }
-
-    handleChangeFields(event) {
-        // const target = event.target;
-        // const name = target.name;
-        // const value = target.type === 'checkbox' ? target.checked : target.value;
-        // this.setState({
-        //     ...this.state,
-        //     [name]: value,
-        //     selectedRows: [],
-        //     selectAllRows: false
-        // });
-    }
     
     toggleSelectAllRow() {
-        // const { selectAllRows } = this.state;
-        // const { selection } = this.props;
-        // if (selection.project) {
-        //     if (selectAllRows) {
-        //         this.setState({
-        //             selectedRows: [],
-        //             selectAllRows: false
-        //         });
-        //     } else {
-        //         this.setState({
-        //             selectedRows: this.filterName(selection.project.docdefs).map(s => s._id),
-        //             selectAllRows: true
-        //         });
-        //     }         
-        // }
+        const { selectAllRows } = this.state;
+        const { selection } = this.props;
+        if (selection.project) {
+            if (selectAllRows) {
+                this.setState({
+                    selectedRows: [],
+                    selectAllRows: false
+                });
+            } else {
+                this.setState({
+                    selectedRows: this.filterName(selection.project.docfields).map(s => s._id),
+                    selectAllRows: true
+                });
+            }         
+        }
     }
     
     filterName(array){
@@ -230,7 +230,6 @@ class Documents extends React.Component {
             && doesMatch(row, element.row, 'Number')
             && doesMatch(col, element.col, 'Number')
             && doesMatch(custom, element.fields.custom, 'String')
-            // && doesMatch(edit, element.edit, 'Boolean')
             );
           });
         } else {
