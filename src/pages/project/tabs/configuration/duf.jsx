@@ -4,6 +4,16 @@ import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
 import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
+
+function arrayRemove(arr, value) {
+
+    return arr.filter(function(ele){
+        return ele != value;
+    });
+ 
+ }
+
+
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
         return prev ? prev[curr] : null

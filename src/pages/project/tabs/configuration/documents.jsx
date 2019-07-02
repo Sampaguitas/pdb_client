@@ -7,6 +7,12 @@ import TableSelectionRow from '../../../../_components/project-table/table-selec
 import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+function arrayRemove(arr, value) {
+    return arr.filter(function(ele){
+        return ele != value;
+    });
+ }
+
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
         return prev ? prev[curr] : null
@@ -105,7 +111,7 @@ class Documents extends React.Component {
         }
         this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
-        this.handleChangeField = this.handleChangeFields.bind(this);
+        // this.handleChangeField = this.handleChangeFields.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleFileChange=this.handleFileChange.bind(this);
@@ -282,8 +288,8 @@ class Documents extends React.Component {
                                                 <div className="input-group-prepend">
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Document</span>
                                                 </div>
-                                                <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select Template..." onChange={this.handleChangeTemplate}>
-                                                    <option key="0" value="0" selected>Select document...</option>
+                                                <select className="form-control" name="selectedTemplate" value={selectedTemplate} defaultValue="0" placeholder="Select Template..." onChange={this.handleChangeTemplate}>
+                                                    <option key="0" value="0">Select document...</option>
                                                 {
                                                     selection.project && arraySorted(docConf(selection.project.docdefs), "name").map((p) =>  {        
                                                         return (
