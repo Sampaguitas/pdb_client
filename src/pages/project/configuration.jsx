@@ -37,7 +37,7 @@ class Configuration extends React.Component {
         this.state = {
             submittedProject: false,
             submittedSupplier: false,
-            showSupplierModal: false
+            showSupplierModal: false 
         }
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.handleSubmitProject=this.handleSubmitProject.bind(this);

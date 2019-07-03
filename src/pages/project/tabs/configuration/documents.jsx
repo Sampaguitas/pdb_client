@@ -1,5 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import config from 'config';
+import { saveAs } from 'file-saver';
+import { authHeader } from '../../../../_helpers';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
 import TableCheckBox from '../../../../_components/project-table/table-check-box';
@@ -113,6 +116,7 @@ class Documents extends React.Component {
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         // this.handleChangeField = this.handleChangeFields.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
+        this.handleDownloadFile = this.handleDownloadFile.bind(this);
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleFileChange=this.handleFileChange.bind(this);
         this.fileInput = React.createRef();
@@ -137,13 +141,31 @@ class Documents extends React.Component {
 
     handleUploadFile(event){
         event.preventDefault();
-        //console.log('toto:', document.getElementById('fileInput')[0].current.files[0].name);
-        //console.log('toto:',this.fileInput.value);
         alert(
             `Selected file - ${
                 this.fileInput.current.files[0].name
             }`
         );        
+    }
+
+    handleDownloadFile(event) {
+        event.preventDefault();
+        const { selection, handleSelectionReload } = this.props;
+        const { selectedTemplate } = this.state;
+        if (selection.project) {
+            let obj = findObj(selection.project.docdefs,selectedTemplate);
+             if (obj) {
+                const requestOptions = {
+                    method: 'GET',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    // body: `{"file":"${obj.field}","project":"${selection.project.number}"}`
+                };
+                return fetch(`${config.apiUrl}/template/download?project=${selection.project.number}&file=${obj.field}`, requestOptions)
+                    .then(data => {
+                        saveAs(new Blob([data],{type:"application/vnd.ms-excel;charset=utf-8"}), obj.field);
+                    });
+             }
+        }
     }
 
     handleFileChange(event){
@@ -335,7 +357,7 @@ class Documents extends React.Component {
                                                     <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
                                                         <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>
                                                     </button>
-                                                    <button className="btn btn-outline-leeuwen-blue btn-lg">
+                                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={ (event) => this.handleDownloadFile(event)}>
                                                         <span><FontAwesomeIcon icon="download" className="fa-lg mr-2"/>Download</span>
                                                     </button>  
                                                 </div>                                                

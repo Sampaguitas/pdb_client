@@ -33,6 +33,7 @@ class Tabs extends Component {
         const { tabs  } = this.state
         
         const {
+            handleSelectionReload,
             handleSubmitProject,
             handleDeleteProject,
             projectUpdating,
@@ -81,6 +82,7 @@ class Tabs extends Component {
                         >
                             <tab.component
                                 tab={tab}
+                                handleSelectionReload={handleSelectionReload}
                                 handleSubmitProject={handleSubmitProject}
                                 handleDeleteProject={handleDeleteProject}
                                 projectUpdating={projectUpdating}
