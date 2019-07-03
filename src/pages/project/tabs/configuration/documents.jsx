@@ -161,9 +161,7 @@ class Documents extends React.Component {
                     // body: `{"file":"${obj.field}","project":"${selection.project.number}"}`
                 };
                 return fetch(`${config.apiUrl}/template/download?project=${selection.project.number}&file=${obj.field}`, requestOptions)
-                    .then(data => {
-                        saveAs(new Blob([data],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), obj.field);
-                    });
+                    .then(res => res.blob()).then(blob => saveAs(blob, obj.field))
              }
         }
     }
