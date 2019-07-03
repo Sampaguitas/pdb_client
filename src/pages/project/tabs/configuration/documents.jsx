@@ -162,7 +162,7 @@ class Documents extends React.Component {
                 };
                 return fetch(`${config.apiUrl}/template/download?project=${selection.project.number}&file=${obj.field}`, requestOptions)
                     .then(data => {
-                        saveAs(new Blob([data],{type:"application/vnd.ms-excel;charset=utf-8"}), obj.field);
+                        saveAs(new Blob([data],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}), obj.field);
                     });
              }
         }
