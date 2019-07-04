@@ -141,11 +141,17 @@ class Documents extends React.Component {
 
     handleUploadFile(event){
         event.preventDefault();
-        alert(
-            `Selected file - ${
-                this.fileInput.current.files[0].name
-            }`
-        );        
+        const { selectedTemplate } = this.state;
+        if(this.fileInput.current.files[0] && selectedTemplate != '0') {
+            console.log(this.fileInput.current.files[0]);
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                body: `{"file":"${this.fileInput.current.files[0]}", "docDef":"${selectedTemplate}"}`
+            }
+            return fetch(`${config.apiUrl}/template/upload`, requestOptions)
+            .then(handleSelectionReload);            
+        }        
     }
 
     handleDownloadFile(event) {

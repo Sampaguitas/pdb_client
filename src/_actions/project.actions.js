@@ -98,9 +98,9 @@ function _delete(id) {
             .then(
                 project => {
                     dispatch(success(id)),
-                    dispatch(projectActions.getAll()),
                     history.push('/'),
-                    dispatch(alertActions.success('Project successfully deleted'));
+                    dispatch(alertActions.success('Project successfully deleted')),
+                    dispatch(projectActions.getAll(project)) //added project within brackets...);
                 },
                 error => dispatch(failure(id, error.toString()))
             );
