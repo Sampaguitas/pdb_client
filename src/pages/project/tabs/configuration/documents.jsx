@@ -142,12 +142,13 @@ class Documents extends React.Component {
     handleUploadFile(event){
         event.preventDefault();
         const { selectedTemplate } = this.state;
-        if(this.fileInput.current.files[0] && selectedTemplate != '0') {
-            console.log(this.fileInput.current.files[0]);
+        const { selection, handleSelectionReload } = this.props
+        if(this.fileInput.current.files[0] && selectedTemplate != '0' && selection.project) {
+            console.log('number:', selection.project.number);
             const requestOptions = {
                 method: 'POST',
                 headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                body: `{"file":"${this.fileInput.current.files[0]}", "docDef":"${selectedTemplate}"}`
+                body: `{"file":"${this.fileInput.current.files[0]}", "documentId":"${selectedTemplate}","project":"${selection.project.number}"}`
             }
             return fetch(`${config.apiUrl}/template/upload`, requestOptions)
             .then(handleSelectionReload);            
@@ -164,7 +165,6 @@ class Documents extends React.Component {
                 const requestOptions = {
                     method: 'GET',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    // body: `{"file":"${obj.field}","project":"${selection.project.number}"}`
                 };
                 return fetch(`${config.apiUrl}/template/download?project=${selection.project.number}&file=${obj.field}`, requestOptions)
                     .then(res => res.blob()).then(blob => saveAs(blob, obj.field))
