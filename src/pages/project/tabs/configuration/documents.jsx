@@ -162,7 +162,7 @@ class Documents extends React.Component {
     handleDownloadFile(event) {
         event.preventDefault();
         const { selection } = this.props;
-        const { selectedTemplate } = this.state;
+        const { selectedTemplate, fileName } = this.state;
         if (selection.project && selectedTemplate != "0" && fileName) {
             let obj = findObj(selection.project.docdefs,selectedTemplate);
              if (obj) {
