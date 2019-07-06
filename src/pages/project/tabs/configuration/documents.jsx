@@ -141,14 +141,21 @@ class Documents extends React.Component {
 
     handleUploadFile(event){
         event.preventDefault();
-        const { selectedTemplate } = this.state;
+        const { selectedTemplate, fileName } = this.state;
         const { selection, handleSelectionReload } = this.props
-        if(this.fileInput.current.files[0] && selectedTemplate != '0' && selection.project) {
-            console.log('number:', selection.project.number);
+        if(this.fileInput.current.files[0] && selectedTemplate != '0' && selection.project && fileName) {
+            // var input = document.querySelector('input[type="file"]')
+            //console.log(this.fileInput.current.files[0])
+            var data = new FormData()
+            data.append('file', this.fileInput.current.files[0])
+            data.append('fileName', this.fileInput.current.files[0].name)
+            data.append('documentId', selectedTemplate)
+            data.append('project', selection.project.number)
             const requestOptions = {
                 method: 'POST',
-                headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                body: `{"file":"${this.fileInput.current.files[0]}", "documentId":"${selectedTemplate}","project":"${selection.project.number}"}`
+                headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
+                body: data
+                // body: `{"fileName":"${this.fileInput.current.files[0].name}", "documentId":"${selectedTemplate}", "project":"${selection.project.number}"}`
             }
             return fetch(`${config.apiUrl}/template/upload`, requestOptions)
             .then(handleSelectionReload);            
@@ -157,9 +164,9 @@ class Documents extends React.Component {
 
     handleDownloadFile(event) {
         event.preventDefault();
-        const { selection, handleSelectionReload } = this.props;
+        const { selection } = this.props;
         const { selectedTemplate } = this.state;
-        if (selection.project) {
+        if (selection.project && selectedTemplate != "0" && fileName) {
             let obj = findObj(selection.project.docdefs,selectedTemplate);
              if (obj) {
                 const requestOptions = {
@@ -340,7 +347,7 @@ class Documents extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <form className="col-12 mb-3" onSubmit={this.handleUploadFile}>
+                                        <form className="col-12 mb-3" enctype="multipart/form-data" onSubmit={this.handleUploadFile}>
                                             <div className="input-group">
                                                 <div className="input-group-prepend">
                                                     {/* <input type="file" style={{visibility: 'hidden', position: 'absolute'}}/> */}
