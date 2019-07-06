@@ -144,18 +144,15 @@ class Documents extends React.Component {
         const { selectedTemplate, fileName } = this.state;
         const { selection, handleSelectionReload } = this.props
         if(this.fileInput.current.files[0] && selectedTemplate != '0' && selection.project && fileName) {
-            // var input = document.querySelector('input[type="file"]')
-            //console.log(this.fileInput.current.files[0])
+            console.log(this.fileInput.current.files[0])
             var data = new FormData()
             data.append('file', this.fileInput.current.files[0])
-            data.append('fileName', this.fileInput.current.files[0].name)
             data.append('documentId', selectedTemplate)
             data.append('project', selection.project.number)
             const requestOptions = {
                 method: 'POST',
                 headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
                 body: data
-                // body: `{"fileName":"${this.fileInput.current.files[0].name}", "documentId":"${selectedTemplate}", "project":"${selection.project.number}"}`
             }
             return fetch(`${config.apiUrl}/template/upload`, requestOptions)
             .then(handleSelectionReload);            
