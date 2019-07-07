@@ -1,5 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import config from 'config';
+import { authHeader } from '../../../../_helpers';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
 import TableCheckBox from '../../../../_components/project-table/table-check-box';
@@ -89,13 +90,42 @@ class Screens extends React.Component {
             show: false,
             selectedRows: [],
             selectAllRows: false,
+            deleting: false,
         }
+        this.handleDelete = this.handleDelete.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeScreen = this.handleChangeScreen.bind(this);
         this.filterName = this.filterName.bind(this);
-        
+    }
+
+    handleDelete(event, id) {
+        event.preventDefault();
+        const { handleSelectionReload } = this.props;
+        console.log('fields:',id);
+        if(id) {
+            this.setState({deleting: true }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader()},
+                };
+                return fetch(`${config.apiUrl}/fieldName/delete?id=${JSON.stringify(id)}`, requestOptions)
+                .then( () => {
+                    this.setState({deleting: false},
+                    () => {
+                        handleSelectionReload();
+                    });
+                })
+                .catch( err => {
+                    console.log(err),
+                    this.setState({deleting: false},
+                    ()=> {
+                        handleSelectionReload();
+                    });
+                });
+            });
+        }
     }
 
     updateSelectedRows(id) {
@@ -187,7 +217,7 @@ class Screens extends React.Component {
             selection, 
             tab,
             screens,
-            handleDeleteFieldNames,
+            //handleDeleteFieldNames,
         } = this.props;
         
         const {
@@ -243,7 +273,7 @@ class Screens extends React.Component {
                                         <button className="btn btn-leeuwen-blue bt-lg mr-3">
                                             <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
                                         </button>
-                                        <button className="btn btn-leeuwen bt-lg" onClick={ (event) => handleDeleteFieldNames(event, selectedRows)}>
+                                        <button className="btn btn-leeuwen bt-lg" onClick={ (event) => this.handleDelete(event, selectedRows)}>
                                             <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
                                         </button>                                     
                                     </div>                                  
