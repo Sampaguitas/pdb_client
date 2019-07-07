@@ -16,6 +16,7 @@ export function users(state = {}, action) {
       };
     case userConstants.UPDATE_REQUEST:
       // add 'updating:true' property to opco being updated
+      console.log('actionId:', action.id);
       return {
         ...state,
         items: state.items.map(user =>

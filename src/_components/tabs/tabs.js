@@ -45,18 +45,19 @@ class Tabs extends Component {
             currencies,
             screens,
             selection,
-            handleSubmitSupplier,
-            handleDeleteSupplier,
-            supplierUpdating,
-            supplierDeleting,
-            submittedSupplier,
-            showSupplierModal,
-            handleShowSupplierModal,
-            handleHideSupplierModal,
+            // handleSubmitSupplier,
+            // handleDeleteSupplier,
+            // supplierUpdating,
+            // supplierDeleting,
+            // submittedSupplier,
+            // showSupplierModal,
+            // handleShowSupplierModal,
+            // handleHideSupplierModal,
             handleDeleteFieldNames,
             handleDeleteDocFields,
-            handleDeleteDocDef
-            // currentUser
+            handleDeleteDocDef,
+            // currentUser,
+            projectId,
         } = this.props
 
         return (
@@ -94,18 +95,19 @@ class Tabs extends Component {
                                 currencies={currencies}
                                 screens={screens}
                                 selection={selection}
-                                handleSubmitSupplier={handleSubmitSupplier}
-                                handleDeleteSupplier={handleDeleteSupplier}
-                                supplierUpdating={supplierUpdating}
-                                supplierDeleting={supplierDeleting}
-                                submittedSupplier={submittedSupplier}
-                                showSupplierModal={showSupplierModal}
-                                handleShowSupplierModal={handleShowSupplierModal}
-                                handleHideSupplierModal={handleHideSupplierModal}
+                                // handleSubmitSupplier={handleSubmitSupplier}
+                                // handleDeleteSupplier={handleDeleteSupplier}
+                                // supplierUpdating={supplierUpdating}
+                                // supplierDeleting={supplierDeleting}
+                                // submittedSupplier={submittedSupplier}
+                                // showSupplierModal={showSupplierModal}
+                                // handleShowSupplierModal={handleShowSupplierModal}
+                                // handleHideSupplierModal={handleHideSupplierModal}
                                 handleDeleteFieldNames={handleDeleteFieldNames}
                                 handleDeleteDocFields={handleDeleteDocFields}
                                 handleDeleteDocDef={handleDeleteDocDef}
                                 // currentUser={currentUser}
+                                projectId={projectId}
                             />
                         </div>
                     )}

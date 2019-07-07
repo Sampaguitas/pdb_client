@@ -1,6 +1,8 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import config from 'config';
 //Components
+import { authHeader } from '../../../../_helpers';
 import Modal from "../../../../_components/modal/modal.js"
 import CheckBox from '../../../../_components/check-box';
 import Input from '../../../../_components/input';
@@ -65,67 +67,211 @@ class Suppliers extends React.Component {
             country: '',
             loaded: false,
             show: false,
+            submitted: false,
+            loading: false,
+            deleting: false
+            //submittedSupplier: false,
+            //showSupplierModal: false 
         }
+        this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+        //this.handleResponse = this.handleResponse.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.handleChangeSupplier = this.handleChangeSupplier.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
+        //brought from Configs
+        //this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
+        // this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
+        //this.handleShowSupplierModal=this.handleShowSupplierModal.bind(this);
+        //this.handleHideSupplierModal=this.handleHideSupplierModal.bind(this);
     };
+    //brought from Configs
+    handleSubmit(event) {
+        event.preventDefault();
+        const { supplier } = this.state;
+        console.log('supplier:', supplier);
+        const { handleSelectionReload } = this.props
+        this.setState({ submitted: true }, () => {
+            if (supplier.id && supplier.name && supplier.projectId) {
+                this.setState({loading: true}, () => {
+                    const requestOptions = {
+                        method: 'PUT',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
+                        body: JSON.stringify(supplier)
+                    }
+                    return fetch(`${config.apiUrl}/supplier/update?id=${supplier.id}`, requestOptions)
+                    .then( () => {
+                        this.setState({submitted: false, loading: false},
+                            ()=> {
+                                console.log('successfuly updated'),
+                                this.hideModal(event),
+                                handleSelectionReload();
+                            });
+                    })
+                    .catch( err => {
+                        console.log(err),
+                        this.setState({submitted: false, loading: false},
+                            ()=> {
+                                console.log('an error occured during update'),
+                                this.hideModal(event),
+                                handleSelectionReload();
+                            });
+                    });
+                });
+            } else if (supplier.name && supplier.projectId){
+                this.setState({loading: true}, () => {
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
+                        body: JSON.stringify(supplier)
+                    }
+                    return fetch(`${config.apiUrl}/supplier/create`, requestOptions)
+                    .then( () => {
+                        this.setState({submitted: false, loading: false},
+                            ()=> {
+                                console.log('successfuly created'),
+                                this.hideModal(event),
+                                handleSelectionReload();
+                            })
+                    })
+                    .catch( err => {
+                        console.log(err),
+                        this.setState({submitted: false, loading: false},
+                            ()=> {
+                                console.log('an error occured during create'),
+                                this.hideModal(event),
+                                handleSelectionReload();
+                            });
+                    });
+                    //dispatch(supplierActions.update(supplier));
+                });
+            } else {
+                console.log('supplier name or Id is missing')
+            }
+        });
+    }
+
+    //brought from Configs
+    handleDelete(event, id) {
+        event.preventDefault();
+        const { handleSelectionReload } = this.props
+        //dispatch(supplierActions.delete(id));
+        if (id) {
+            this.setState({ submitted: true, deleting: true }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: authHeader()
+                };
+                return fetch(`${config.apiUrl}/supplier/delete?id=${id}`, requestOptions)
+                .then( () => {
+                    this.setState({submitted: false, deleting: false},
+                        ()=> {
+                            this.hideModal(event),
+                            handleSelectionReload();
+                        });
+                })
+                .catch( err => {
+                    console.log(err),
+                    this.setState({submitted: false, deleting: false},
+                        ()=> {
+                            this.hideModal(event),
+                            handleSelectionReload();
+                        });
+                });
+            });          
+        }
+
+    }
+
+    // handleResponse(response) {
+    //     return response.text().then(text => {
+    //         if (text == 'Unauthorized') {
+    //             logout();
+    //             location.reload(true);
+    //         }
+    //         const data = text && JSON.parse(text);
+    //         if (!response.ok) {
+    //             if (response.status === 401) {
+    //                 // auto logout if 401 response returned from api
+    //                 logout();
+    //                 location.reload(true);
+    //             }
+    //             const error = (data && data.message) || response.statusText;
+    //             return Promise.reject(error);
+    //         }
+    //         return data;
+    //     });
+    // }
+
+
+
+    //brought from Configs
+    // handleShowSupplierModal(event) {
+    //     this.setState({showSupplierModal: true});
+    // }
+    //brought from Configs
+    // handleHideSupplierModal(event) {
+    //     this.setState({showSupplierModal: false});
+    // } 
 
     showModal() {
-        const { handleShowSupplierModal } = this.props;
-        this.setState({
-            supplier: {
-                name: "",
-                registeredName: "",
-                contact: "",
-                position: "",
-                tel: "",
-                fax: "",
-                mail: "",
-                address: "",
-                city: "",
-                country: "",
-                udfSpX1: "",
-                udfSpX2: "",
-                udfSpX3: "",
-                udfSpX4: "",
-                udfSpX5: "",
-                udfSpX6: "",
-                udfSpX7: "",
-                udfSpX8: "",
-                udfSpX9: "",
-                udfSpX10: "",
-                udfSp91: "",
-                udfSp92: "",
-                udfSp93: "",
-                udfSp94: "",
-                udfSp95: "",
-                udfSp96: "",
-                udfSp97: "",
-                udfSp98: "",
-                udfSp99: "",
-                udfSp910: "",
-                udfSpD1: "",
-                udfSpD2: "",
-                udfSpD3: "",
-                udfSpD4: "",
-                udfSpD5: "",
-                udfSpD6: "",
-                udfSpD7: "",
-                udfSpD8: "",
-                udfSpD9: "",
-                udfSpD10: "",
-                projectId: "",
-                daveId: ""
-          }
-        },()=> {handleShowSupplierModal(event)});
+        const { projectId } = this.props
+        if (projectId) {
+            this.setState({
+                supplier: {
+                    name: "",
+                    registeredName: "",
+                    contact: "",
+                    position: "",
+                    tel: "",
+                    fax: "",
+                    mail: "",
+                    address: "",
+                    city: "",
+                    country: "",
+                    udfSpX1: "",
+                    udfSpX2: "",
+                    udfSpX3: "",
+                    udfSpX4: "",
+                    udfSpX5: "",
+                    udfSpX6: "",
+                    udfSpX7: "",
+                    udfSpX8: "",
+                    udfSpX9: "",
+                    udfSpX10: "",
+                    udfSp91: "",
+                    udfSp92: "",
+                    udfSp93: "",
+                    udfSp94: "",
+                    udfSp95: "",
+                    udfSp96: "",
+                    udfSp97: "",
+                    udfSp98: "",
+                    udfSp99: "",
+                    udfSp910: "",
+                    udfSpD1: "",
+                    udfSpD2: "",
+                    udfSpD3: "",
+                    udfSpD4: "",
+                    udfSpD5: "",
+                    udfSpD6: "",
+                    udfSpD7: "",
+                    udfSpD8: "",
+                    udfSpD9: "",
+                    udfSpD10: "",
+                    projectId: projectId,
+                    daveId: ""
+            },
+            show: true,
+            submitted: false,
+            });
+        }
       }
     
       hideModal() {
-        const { handleHideSupplierModal } = this.props
         this.setState({
             supplier: {
                 name: "",
@@ -170,8 +316,10 @@ class Suppliers extends React.Component {
                 udfSpD10: "",
                 projectId: "",
                 daveId: ""
-          }
-        },()=> {handleHideSupplierModal(event)});
+          },
+          show: false,
+          submitted: false,
+        });
       }
 
     handleChangeSupplier(event) {
@@ -196,7 +344,6 @@ class Suppliers extends React.Component {
             [name]: value
         });
     }
-
 
     filterName(selection){
         
@@ -229,8 +376,6 @@ class Suppliers extends React.Component {
 
     handleOnclick(event, id) {
         const { project } = this.props.selection
-        const { handleShowSupplierModal } = this.props;
-        // let user = JSON.parse(localStorage.getItem('user'));
         if (event.target.type != 'checkbox' && project.suppliers) {
           let found = project.suppliers.find(element => element._id === id);
           this.setState({
@@ -278,8 +423,10 @@ class Suppliers extends React.Component {
               udfSpD10: found.udfSpD10,
               projectId: found.projectId,
               daveId: found.daveId
-            }
-          }, () => {handleShowSupplierModal(event)});
+            },
+            show: true,
+            submitted: false,
+          });
         }
       }
 
@@ -287,13 +434,13 @@ class Suppliers extends React.Component {
 
         const { 
             tab,
-            handleSubmitSupplier,
-            handleDeleteSupplier,
-            SupplierUpdating,
-            SupplierCreating,
-            SupplierDeleting,
-            submittedSupplier,
-            showSupplierModal,
+            // handleSubmitSupplier,
+            // handleDeleteSupplier,
+            // SupplierUpdating,
+            // SupplierCreating,
+            // SupplierDeleting,
+            // submittedSupplier,
+            // showSupplierModal,
             selection,                  
             // currentUser
         } = this.props
@@ -309,7 +456,11 @@ class Suppliers extends React.Component {
             mail,
             address,
             city,
-            country,        
+            country,
+            show,
+            submitted,
+            loading,
+            deleting,     
         } = this.state;
         
         return (
@@ -367,7 +518,7 @@ class Suppliers extends React.Component {
                                     </tbody>    
                                 </table>
                                 <Modal
-                                    show={showSupplierModal}
+                                    show={show} //showSupplierModal
                                     hideModal={this.hideModal}
                                     title={supplier.id ? 'Update supplier' : 'Add supplier'}
                                 >
@@ -379,7 +530,7 @@ class Suppliers extends React.Component {
                                                 type="text"
                                                 value={supplier.name}
                                                 onChange={this.handleChangeSupplier}
-                                                submitted={submittedSupplier}
+                                                submitted={submitted}
                                                 inline={false}
                                                 required={true}
                                             />
@@ -389,7 +540,7 @@ class Suppliers extends React.Component {
                                                 type="text"
                                                 value={supplier.registeredName}
                                                 onChange={this.handleChangeSupplier}
-                                                submitted={submittedSupplier}
+                                                submitted={submitted}
                                                 inline={false}
                                                 required={true}
                                             />
@@ -399,9 +550,9 @@ class Suppliers extends React.Component {
                                                 type="text"
                                                 value={supplier.contact}
                                                 onChange={this.handleChangeSupplier}
-                                                submitted={submittedSupplier}
+                                                submitted={submitted}
                                                 inline={false}
-                                                required={true}
+                                                required={false}
                                             />
                                             <Input
                                                 title="Position"
@@ -409,9 +560,9 @@ class Suppliers extends React.Component {
                                                 type="text"
                                                 value={supplier.position}
                                                 onChange={this.handleChangeSupplier}
-                                                submitted={submittedSupplier}
+                                                submitted={submitted}
                                                 inline={false}
-                                                required={true}
+                                                required={false}
                                             />
                                             <Input
                                                 title="Tel"
@@ -419,7 +570,7 @@ class Suppliers extends React.Component {
                                                 type="text"
                                                 value={supplier.tel}
                                                 onChange={this.handleChangeSupplier}
-                                                submitted={submittedSupplier}
+                                                submitted={submitted}
                                                 inline={false}
                                                 required={true}
                                             />
@@ -429,9 +580,9 @@ class Suppliers extends React.Component {
                                                 type="text"
                                                 value={supplier.fax}
                                                 onChange={this.handleChangeSupplier}
-                                                submitted={submittedSupplier}
+                                                submitted={submitted}
                                                 inline={false}
-                                                required={true}
+                                                required={false}
                                             />
                                             <Input
                                                 title="Mail"
@@ -439,9 +590,9 @@ class Suppliers extends React.Component {
                                                 type="text"
                                                 value={supplier.mail}
                                                 onChange={this.handleChangeSupplier}
-                                                submitted={submittedSupplier}
+                                                submitted={submitted}
                                                 inline={false}
-                                                required={true}
+                                                required={false}
                                             />
                                             <Input
                                                 title="Address"
@@ -449,9 +600,9 @@ class Suppliers extends React.Component {
                                                 type="text"
                                                 value={supplier.address}
                                                 onChange={this.handleChangeSupplier}
-                                                submitted={submittedSupplier}
+                                                submitted={submitted}
                                                 inline={false}
-                                                required={true}
+                                                required={false}
                                             />
                                             <Input
                                                 title="City"
@@ -459,7 +610,7 @@ class Suppliers extends React.Component {
                                                 type="text"
                                                 value={supplier.city}
                                                 onChange={this.handleChangeSupplier}
-                                                submitted={submittedSupplier}
+                                                submitted={submitted}
                                                 inline={false}
                                                 required={true}
                                             />
@@ -469,7 +620,7 @@ class Suppliers extends React.Component {
                                                 type="text"
                                                 value={supplier.country}
                                                 onChange={this.handleChangeSupplier}
-                                                submitted={submittedSupplier}
+                                                submitted={submitted}
                                                 inline={false}
                                                 required={true}
                                             />
@@ -480,9 +631,9 @@ class Suppliers extends React.Component {
                                                             <button
                                                                 type="submit"
                                                                 className="btn btn-outline-dark btn-lg"
-                                                                onClick={(event) => {handleDeleteSupplier(event, supplier.id)}}
+                                                                onClick={(event) => this.handleDelete(event, supplier.id)}
                                                             >
-                                                                {SupplierDeleting && (
+                                                                {deleting && (
                                                                     <FontAwesomeIcon
                                                                         icon="spinner"
                                                                         className="fa-pulse fa-1x fa-fw" 
@@ -495,9 +646,9 @@ class Suppliers extends React.Component {
                                                             <button
                                                                 type="submit"
                                                                 className="btn btn-outline-leeuwen btn-lg" //handleSubmitSupplier
-                                                                onClick={(event) => {handleSubmitSupplier(event, supplier)}}
+                                                                onClick={(event) => this.handleSubmit(event, supplier)}
                                                             >
-                                                                {SupplierUpdating && (
+                                                                {loading && (
                                                                     <FontAwesomeIcon
                                                                         icon="spinner"
                                                                         className="fa-pulse fa-1x fa-fw" 
@@ -511,9 +662,9 @@ class Suppliers extends React.Component {
                                                     <button
                                                         type="submit"
                                                         className="btn btn-outline-leeuwen btn-lg btn-full"
-                                                        onClick={(event) => {handleSubmitSupplier(event, supplier)}}
+                                                        onClick={(event) => this.handleSubmit(event, supplier)}
                                                     >
-                                                        {SupplierCreating && (
+                                                        {loading && (
                                                             <FontAwesomeIcon
                                                                 icon="spinner"
                                                                 className="fa-pulse fa-1x fa-fw" 

@@ -25,6 +25,7 @@ function create(project) {
                         search: '?id=' + project._id
                     }),
                     dispatch(alertActions.success('Project successfully created'));
+                    dispatch(projectActions.getAll(project));
                 },
                 error => {
                     dispatch(failure(error.toString()));

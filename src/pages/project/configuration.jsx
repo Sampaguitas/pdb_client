@@ -36,16 +36,17 @@ class Configuration extends React.Component {
         super(props);
         this.state = {
             submittedProject: false,
-            submittedSupplier: false,
-            showSupplierModal: false 
+            projectId: ''
+            // submittedSupplier: false,
+            // showSupplierModal: false 
         }
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.handleSubmitProject=this.handleSubmitProject.bind(this);
         this.handleDeleteProject=this.handleDeleteProject.bind(this);
-        this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
-        this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
-        this.handleShowSupplierModal=this.handleShowSupplierModal.bind(this);
-        this.handleHideSupplierModal=this.handleHideSupplierModal.bind(this);
+        // this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
+        // this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
+        // this.handleShowSupplierModal=this.handleShowSupplierModal.bind(this);
+        // this.handleHideSupplierModal=this.handleHideSupplierModal.bind(this);
         this.handleDeleteFieldNames = this.handleDeleteFieldNames.bind(this);
         this.handleDeleteDocFields = this.handleDeleteDocFields.bind(this);
         this.handleDeleteDocDef = this.handleDeleteDocDef.bind(this);
@@ -58,6 +59,7 @@ class Configuration extends React.Component {
         const { dispatch, location } = this.props
         var qs = queryString.parse(location.search);
         if (qs.id) {
+            this.setState({projectId: qs.id}),
             dispatch(projectActions.getById(qs.id));
         }
         dispatch(currencyActions.getAll());
@@ -73,9 +75,11 @@ class Configuration extends React.Component {
         const { dispatch, location } = this.props
         var qs = queryString.parse(location.search);
         if (qs.id) {
+            this.setState({projectId: qs.id}),
             dispatch(projectActions.getById(qs.id));
             console.log('stateReload');
-        }        
+        }
+        dispatch(projectActions.getAll());     
     }
 
     handleSubmitProject(event, project) {
@@ -88,20 +92,20 @@ class Configuration extends React.Component {
         }
     }
 
-    handleSubmitSupplier(event, supplier) {
-        event.preventDefault();
-        const { dispatch } = this.props;
-        this.setState({ submittedSupplier: true });
-        if (supplier._id && supplier.name && supplier.projectId) {
-            dispatch(supplierActions.create(supplier));
-            this.setState({submittedSupplier: false},
-                ()=> {this.handleHideSupplierModal(event)});
-        } else if (supplier.name && supplier.projectId){
-            dispatch(supplierActions.update(supplier));
-            this.setState({submittedSupplier: false},
-                ()=> {this.handleHideSupplierModal(event)})
-        }
-    }
+    // handleSubmitSupplier(event, supplier) {
+    //     event.preventDefault();
+    //     const { dispatch } = this.props;
+    //     this.setState({ submittedSupplier: true });
+    //     if (supplier._id && supplier.name && supplier.projectId) {
+    //         dispatch(supplierActions.create(supplier));
+    //         this.setState({submittedSupplier: false},
+    //             ()=> {this.handleHideSupplierModal(event)});
+    //     } else if (supplier.name && supplier.projectId){
+    //         dispatch(supplierActions.update(supplier));
+    //         this.setState({submittedSupplier: false},
+    //             ()=> {this.handleHideSupplierModal(event)})
+    //     }
+    // }
 
     handleDeleteProject(event, id) {
         event.preventDefault();
@@ -109,11 +113,11 @@ class Configuration extends React.Component {
         dispatch(projectActions.delete(id));
     }
 
-    handleDeleteSupplier(event, id) {
-        event.preventDefault();
-        const { dispatch } = this.props
-        dispatch(supplierActions.delete(id));
-    }
+    // handleDeleteSupplier(event, id) {
+    //     event.preventDefault();
+    //     const { dispatch } = this.props
+    //     dispatch(supplierActions.delete(id));
+    // }
 
     handleDeleteFieldNames(event, id) {
         event.preventDefault();
@@ -168,13 +172,13 @@ class Configuration extends React.Component {
     // }
 
 
-    handleShowSupplierModal(event) {
-        this.setState({showSupplierModal: true});
-    }
+    // handleShowSupplierModal(event) {
+    //     this.setState({showSupplierModal: true});
+    // }
 
-    handleHideSupplierModal(event) {
-        this.setState({showSupplierModal: false});
-    }    
+    // handleHideSupplierModal(event) {
+    //     this.setState({showSupplierModal: false});
+    // }    
     render() {
         const { 
                 alert,  
@@ -186,14 +190,15 @@ class Configuration extends React.Component {
                 currencies,
                 screens,
                 selection,
-                supplierUpdating,
-                supplierDeleting,
+                // supplierUpdating,
+                // supplierDeleting,
             } = this.props;
         
             const { 
                 submittedProject, 
-                submittedSupplier,
-                showSupplierModal 
+                projectId,
+                // submittedSupplier,
+                // showSupplierModal 
             } = this.state
 
             // let currentUser = JSON.parse(localStorage.getItem('user'));
@@ -217,17 +222,18 @@ class Configuration extends React.Component {
                         currencies={currencies}
                         screens={screens}
                         selection={selection}
-                        handleSubmitSupplier={this.handleSubmitSupplier}
-                        handleDeleteSupplier={this.handleDeleteSupplier}
-                        supplierUpdating={supplierUpdating}
-                        supplierDeleting={supplierDeleting}
-                        submittedSupplier={submittedSupplier}
-                        showSupplierModal={showSupplierModal}
-                        handleShowSupplierModal={this.handleShowSupplierModal}
-                        handleHideSupplierModal={this.handleHideSupplierModal}
+                        // handleSubmitSupplier={this.handleSubmitSupplier}
+                        // handleDeleteSupplier={this.handleDeleteSupplier}
+                        // supplierUpdating={supplierUpdating}
+                        // supplierDeleting={supplierDeleting}
+                        // submittedSupplier={submittedSupplier}
+                        // showSupplierModal={showSupplierModal}
+                        // handleShowSupplierModal={this.handleShowSupplierModal}
+                        // handleHideSupplierModal={this.handleHideSupplierModal}
                         handleDeleteFieldNames={this.handleDeleteFieldNames}
                         handleDeleteDocFields={this.handleDeleteDocFields}
                         handleDeleteDocDef={this.handleDeleteDocDef}
+                        projectId={projectId}
                         // currentUser = {currentUser}
                     />
                 </div>
@@ -239,13 +245,13 @@ class Configuration extends React.Component {
 function mapStateToProps(state) {
     const { alert, currencies, opcos, users, selection, erps, screens  } = state;
     const { projectUpdating, projectDeleting } = state.projects;
-    const { supplierUpdating, supplierDeleting } = state.suppliers;
+    // const { supplierUpdating, supplierDeleting } = state.suppliers;
     return {
         alert,
         projectUpdating,
         projectDeleting,
-        supplierUpdating,
-        supplierDeleting,        
+        // supplierUpdating,
+        // supplierDeleting,        
         users,
         erps,
         opcos,

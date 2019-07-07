@@ -344,7 +344,7 @@ class Documents extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <form className="col-12 mb-3" enctype="multipart/form-data" onSubmit={this.handleUploadFile}>
+                                        <form className="col-12 mb-3" encType="multipart/form-data" onSubmit={this.handleUploadFile}>
                                             <div className="input-group">
                                                 <div className="input-group-prepend">
                                                     {/* <input type="file" style={{visibility: 'hidden', position: 'absolute'}}/> */}
