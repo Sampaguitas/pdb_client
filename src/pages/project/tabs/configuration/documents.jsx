@@ -113,7 +113,7 @@ class Documents extends React.Component {
             inputKey: Date.now()
         }
         this.handleDeleteDocFields = this.handleDeleteDocFields.bind(this);
-        this.handleDeleteDocDef = tjos.handleDeleteDocDef.bind(this);
+        this.handleDeleteDocDef = this.handleDeleteDocDef.bind(this);
         this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         // this.handleChangeField = this.handleChangeFields.bind(this);
