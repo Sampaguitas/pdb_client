@@ -328,6 +328,7 @@ class Documents extends React.Component {
             param,
             description,
             selectedTemplate,
+            selectedRows,
             selectAllRows,
             fileName,
             multi
