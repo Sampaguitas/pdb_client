@@ -112,6 +112,8 @@ class Documents extends React.Component {
             fileName:'',
             inputKey: Date.now()
         }
+        this.handleDeleteDocFields = this.handleDeleteDocFields.bind(this);
+        this.handleDeleteDocDef = tjos.handleDeleteDocDef.bind(this);
         this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         // this.handleChangeField = this.handleChangeFields.bind(this);
@@ -122,6 +124,15 @@ class Documents extends React.Component {
         this.fileInput = React.createRef();
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         //this.docConf = this.docConf.bind(this);
+    }
+    handleDeleteDocFields(event, id) {
+        event.preventDefault();
+
+    }
+
+    handleDeleteDocDef(event, id) {
+        event.preventDefault();
+        
     }
 
     updateSelectedRows(id) {
@@ -278,8 +289,8 @@ class Documents extends React.Component {
         const { 
             tab,
             selection,
-            handleDeleteDocDef,
-            handleDeleteDocFields,
+            //handleDeleteDocDef,
+            //handleDeleteDocFields,
         } = this.props
         
         const {
@@ -338,7 +349,7 @@ class Documents extends React.Component {
                                                     <button className="btn btn-dark btn-lg">
                                                         <span><FontAwesomeIcon icon="plus" className="fa-lg"/></span>
                                                     </button>
-                                                    <button className="btn btn-leeuwen btn-lg" onClick={ (event) => handleDeleteDocDef(event, selectedTemplate)}>
+                                                    <button className="btn btn-leeuwen btn-lg" onClick={ (event) => this.handleDeleteDocDef(event, selectedTemplate)}>
                                                         <span><FontAwesomeIcon icon="trash-alt" className="fa-lg"/></span>
                                                     </button>  
                                                 </div>

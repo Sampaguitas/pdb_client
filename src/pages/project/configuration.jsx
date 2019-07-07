@@ -47,9 +47,9 @@ class Configuration extends React.Component {
         // this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
         // this.handleShowSupplierModal=this.handleShowSupplierModal.bind(this);
         // this.handleHideSupplierModal=this.handleHideSupplierModal.bind(this);
-        this.handleDeleteFieldNames = this.handleDeleteFieldNames.bind(this);
-        this.handleDeleteDocFields = this.handleDeleteDocFields.bind(this);
-        this.handleDeleteDocDef = this.handleDeleteDocDef.bind(this);
+        //this.handleDeleteFieldNames = this.handleDeleteFieldNames.bind(this);
+        //this.handleDeleteDocFields = this.handleDeleteDocFields.bind(this);
+        //this.handleDeleteDocDef = this.handleDeleteDocDef.bind(this);
         // this.handleDeleteFieldNamesApi = this.handleDeleteFieldNamesApi.bind(this);
         // this.handleResponse = this.handleResponse.bind(this);
 
@@ -119,25 +119,25 @@ class Configuration extends React.Component {
     //     dispatch(supplierActions.delete(id));
     // }
 
-    handleDeleteFieldNames(event, id) {
-        event.preventDefault();
-        console.log('fields:',id);
-        const requestOptions = {
-            method: 'DELETE',
-            headers: { ...authHeader()},
-        };
+    // handleDeleteFieldNames(event, id) {
+    //     event.preventDefault();
+    //     console.log('fields:',id);
+    //     const requestOptions = {
+    //         method: 'DELETE',
+    //         headers: { ...authHeader()},
+    //     };
     
-        return fetch(`${config.apiUrl}/fieldName/delete?id=${JSON.stringify(id)}`, requestOptions)
-        .then(this.handleSelectionReload());
-    }
+    //     return fetch(`${config.apiUrl}/fieldName/delete?id=${JSON.stringify(id)}`, requestOptions)
+    //     .then(this.handleSelectionReload());
+    // }
 
-    handleDeleteDocFields(event, id) {
+    // handleDeleteDocFields(event, id) {
 
-    }
+    // }
 
-    handleDeleteDocDef(event, id) {
+    // handleDeleteDocDef(event, id) {
         
-    }
+    // }
 
     // handleDeleteFieldNamesApi(id){
     //     event.preventDefault();
@@ -230,9 +230,9 @@ class Configuration extends React.Component {
                         // showSupplierModal={showSupplierModal}
                         // handleShowSupplierModal={this.handleShowSupplierModal}
                         // handleHideSupplierModal={this.handleHideSupplierModal}
-                        handleDeleteFieldNames={this.handleDeleteFieldNames}
-                        handleDeleteDocFields={this.handleDeleteDocFields}
-                        handleDeleteDocDef={this.handleDeleteDocDef}
+                        //handleDeleteFieldNames={this.handleDeleteFieldNames}
+                        //handleDeleteDocFields={this.handleDeleteDocFields}
+                        //handleDeleteDocDef={this.handleDeleteDocDef}
                         projectId={projectId}
                         // currentUser = {currentUser}
                     />
