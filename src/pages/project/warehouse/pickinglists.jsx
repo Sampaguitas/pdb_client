@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { projectActions } from '../../../_actions';
 import Layout from '../../../_components/layout';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class PickingLists extends React.Component {
     constructor(props) {
@@ -23,7 +24,7 @@ class PickingLists extends React.Component {
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
-                <h2>Warehouse - Picking lists : {selection.project && selection.project.name}</h2>
+                <h2>Warehouse - Picking lists : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
             </Layout>
         );
