@@ -86,10 +86,10 @@ class Screens extends React.Component {
             fieldId: '',
             custom: '',
             selectedScreen:'5cd2b643fd333616dc360b66',
-            loaded: false,
-            show: false,
             selectedRows: [],
             selectAllRows: false,
+            loaded: false,
+            show: false,
             deleting: false,
         }
         this.handleDelete = this.handleDelete.bind(this);

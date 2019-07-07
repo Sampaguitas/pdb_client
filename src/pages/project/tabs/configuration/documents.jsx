@@ -158,8 +158,9 @@ class Documents extends React.Component {
 
     handleDeleteDocDef(event, id) {
         event.preventDefault();
-        
-        
+        if (id != '0') {
+            console.log('selectedTemplate:', id);
+        }
     }
 
     updateSelectedRows(id) {

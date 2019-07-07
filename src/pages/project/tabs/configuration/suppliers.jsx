@@ -1,5 +1,4 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
 //Components
 import { authHeader } from '../../../../_helpers';
@@ -8,6 +7,7 @@ import CheckBox from '../../../../_components/check-box';
 import Input from '../../../../_components/input';
 import Select from '../../../../_components/select';
 import SupplierRow from '../../../../_components/project-table/supplier-row.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function arraySorted(array, field) {
     if (array) {
@@ -157,7 +157,7 @@ class Suppliers extends React.Component {
     //brought from Configs
     handleDelete(event, id) {
         event.preventDefault();
-        const { handleSelectionReload } = this.props
+        const { handleSelectionReload } = this.props;
         //dispatch(supplierActions.delete(id));
         if (id) {
             this.setState({ submitted: true, deleting: true }, () => {
