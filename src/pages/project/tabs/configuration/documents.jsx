@@ -106,11 +106,14 @@ class Documents extends React.Component {
             param: '',
             description:'',
             selectedTemplate:'0',
+            fileName:'',
+            inputKey: Date.now(),
             multi: false,
             selectedRows: [],
             selectAllRows: false,
-            fileName:'',
-            inputKey: Date.now()
+            loaded: false,
+            show: false,
+            deletingFields: false,
         }
         this.handleDeleteDocFields = this.handleDeleteDocFields.bind(this);
         this.handleDeleteDocDef = this.handleDeleteDocDef.bind(this);
@@ -127,11 +130,35 @@ class Documents extends React.Component {
     }
     handleDeleteDocFields(event, id) {
         event.preventDefault();
-
+        const { handleSelectionReload } = this.props;
+        console.log('fields:',id);
+        if(id) {
+            this.setState({deletingFields: true }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader()},
+                };
+                return fetch(`${config.apiUrl}/docField/delete?id=${JSON.stringify(id)}`, requestOptions)
+                .then( () => {
+                    this.setState({deletingFields: false},
+                    () => {
+                        handleSelectionReload();
+                    });
+                })
+                .catch( err => {
+                    console.log(err),
+                    this.setState({deletingFields: false},
+                    ()=> {
+                        handleSelectionReload();
+                    });
+                });
+            });
+        }
     }
 
     handleDeleteDocDef(event, id) {
         event.preventDefault();
+        
         
     }
 
@@ -387,7 +414,7 @@ class Documents extends React.Component {
                                                 <button className="btn btn-leeuwen-blue bt-lg mr-3">
                                                     <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
                                                 </button>                                               
-                                                <button className="btn btn-leeuwen bt-lg">
+                                                <button className="btn btn-leeuwen bt-lg" onClick={ (event) => this.handleDeleteDocFields(event, selectedRows)}>
                                                     <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
                                                 </button> 
                                             {/* </div> */}
