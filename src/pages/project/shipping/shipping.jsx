@@ -29,7 +29,7 @@ class Shipping extends React.Component {
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
-                <h2>Shipping : {selection.project && selection.project.name}</h2>
+                <h2>Shipping : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="shipping">
                     <div className="row justify-content-center">

@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import { authHeader } from '../../../_helpers';
 import config from 'config';
 import { projectActions } from '../../../_actions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class TransportDocuments extends React.Component {
     constructor(props) {
@@ -25,7 +26,7 @@ class TransportDocuments extends React.Component {
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
                 {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
-                <h2>Shipping - Transport docs : {selection.project && selection.project.name}</h2>
+                <h2>Shipping - Transport docs : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
             </Layout>
         );
