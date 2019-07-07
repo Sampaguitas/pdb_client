@@ -1,9 +1,11 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import config from 'config';
+import { authHeader } from '../../../../_helpers';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
 import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function arrayRemove(arr, value) {
 
@@ -84,11 +86,41 @@ class Duf extends React.Component {
             selectAllRows: false,
             loaded: false,
             show: false,
+            deleting: false,
         }
+        this.handleDelete = this.handleDelete.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
+    }
+
+    handleDelete(event, id) {
+        event.preventDefault();
+        const { handleSelectionReload } = this.props;
+        console.log('fields:',id);
+        if(id) {
+            this.setState({deleting: true }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader()},
+                };
+                return fetch(`${config.apiUrl}/fieldName/delete?id=${JSON.stringify(id)}`, requestOptions)
+                .then( () => {
+                    this.setState({deleting: false},
+                    () => {
+                        handleSelectionReload();
+                    });
+                })
+                .catch( err => {
+                    console.log(err),
+                    this.setState({deleting: false},
+                    ()=> {
+                        handleSelectionReload();
+                    });
+                });
+            });
+        }
     }
 
     updateSelectedRows(id) {
@@ -148,7 +180,6 @@ class Duf extends React.Component {
             return (doesMatch(selectedScreen, element.screenId, 'Id')
             && doesMatch(custom, element.fields.custom, 'String')
             && doesMatch(forShow, element.forShow, 'Number')
-            // && doesMatch(edit, element.edit, 'Boolean')
             );
           });
         } else {
@@ -179,6 +210,18 @@ class Duf extends React.Component {
                 <div className="table-responsive full-height">
                     <table className="table table-hover table-bordered table-sm" >
                         <thead>
+                        <tr className="text-center">
+                                <th colSpan="3" >
+                                    <div className="col-12 text-right">
+                                        <button className="btn btn-leeuwen-blue bt-lg mr-3">
+                                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
+                                        </button>
+                                        <button className="btn btn-leeuwen bt-lg" onClick={ (event) => this.handleDelete(event, selectedRows)}>
+                                            <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
+                                        </button>                                     
+                                    </div>                                  
+                                </th>
+                            </tr>
                             <tr>
                                 <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                     <TableSelectionAllRow
