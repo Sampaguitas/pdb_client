@@ -198,7 +198,7 @@ class Documents extends React.Component {
       handleOnclick(event, id) {
           event.preventDefault();
           const { project } = this.props.selection
-        if (project.docdefs) {
+        if (id != '0' && project.docdefs) {
           let found = project.docdefs.find(element => element._id === id);
           this.setState({
             docDef: {
