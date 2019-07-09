@@ -14,7 +14,7 @@ function arrayRemove(arr, value) {
     return arr.filter(function(ele){
         return ele != value;
     });
- }
+}
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -40,6 +40,7 @@ function arraySorted(array, field) {
 
 function docConf(array) {
     const tpeOf = [
+        '5d1927121424114e3884ac7e', //ESR01 Expediting status report
         '5d1927131424114e3884ac80', //PL01 Packing List
         '5d1927141424114e3884ac84', //SM01 Shipping Mark
         '5d1927131424114e3884ac81', //PN01 Packing Note
@@ -114,6 +115,7 @@ class Documents extends React.Component {
             loaded: false,
             show: false,
             deletingFields: false,
+            deletingDoc: false,
         }
         this.handleDeleteDocFields = this.handleDeleteDocFields.bind(this);
         this.handleDeleteDocDef = this.handleDeleteDocDef.bind(this);
@@ -158,8 +160,28 @@ class Documents extends React.Component {
 
     handleDeleteDocDef(event, id) {
         event.preventDefault();
+        const { handleSelectionReload } = this.props;
         if (id != '0') {
-            console.log('selectedTemplate:', id);
+            this.setState({deletingDoc: true }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader()},
+                };
+                return fetch(`${config.apiUrl}/docdef/delete?id=${id}`, requestOptions)
+                .then( () => {
+                    this.setState({deletingDoc: false, selectedTemplate: '0', fileName: '', inputKey: Date.now(),},
+                    () => {
+                        handleSelectionReload();
+                    });
+                })
+                .catch( err => {
+                    console.log(err),
+                    this.setState({deletingDoc: false, selectedTemplate: '0', fileName: '', inputKey: Date.now(),},
+                    ()=> {
+                        handleSelectionReload();
+                    });
+                });
+            });
         }
     }
 
