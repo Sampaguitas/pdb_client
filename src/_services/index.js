@@ -1,4 +1,5 @@
 export * from './currency.service';
+export * from './doctype.service';
 export * from './erp.service';
 export * from './field.service';
 export * from './fieldname.service';

@@ -1,5 +1,6 @@
 export * from './alert.constants';
 export * from './currency.constants';
+export * from './doctype.constants';
 export * from './erp.constants';
 export * from './field.constants';
 export * from './fieldname.constants';

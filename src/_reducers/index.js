@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import { alert } from './alert.reducer';
 import { authentication } from './authentication.reducer';
 import { currencies } from './currencies.reducer';
+import { doctypes } from './doctypes.reducer';
 import { erps } from './erps.reducer';
 import { fields } from './fields.reducer';
 import { fieldnames } from './fieldnames.reducer';
@@ -20,6 +21,7 @@ const rootReducer = combineReducers({
   alert,
   authentication,
   currencies,
+  doctypes,
   erps,
   fields,
   fieldnames,

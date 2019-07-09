@@ -3,6 +3,10 @@ import { connect } from 'react-redux';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../../../_helpers';
+import Modal from "../../../../_components/modal/modal.js"
+import Input from '../../../../_components/input';
+import CheckBox from '../../../../_components/check-box';
+import Select from '../../../../_components/select';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
 import TableCheckBox from '../../../../_components/project-table/table-check-box';
@@ -113,12 +117,21 @@ class Documents extends React.Component {
             selectedRows: [],
             selectAllRows: false,
             loaded: false,
-            show: false,
             deletingFields: false,
             deletingDoc: false,
+            show: false,
+            submitted: false,
+            loading: false,
+            docDef:{}
+
         }
+        this.showModal = this.showModal.bind(this);
+        this.hideModal = this.hideModal.bind(this);
+        this.handleOnclick = this.handleOnclick.bind(this);
+        this.handleChangeDocDef = this.handleChangeDocDef.bind(this);
         this.handleDeleteDocFields = this.handleDeleteDocFields.bind(this);
         this.handleDeleteDocDef = this.handleDeleteDocDef.bind(this);
+        this.handleSubmitDocDef = this.handleSubmitDocDef.bind(this);
         this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         // this.handleChangeField = this.handleChangeFields.bind(this);
@@ -128,8 +141,91 @@ class Documents extends React.Component {
         this.handleFileChange=this.handleFileChange.bind(this);
         this.fileInput = React.createRef();
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
+        
         //this.docConf = this.docConf.bind(this);
     }
+
+    showModal() {
+        const { projectId } = this.props
+        if (projectId) {
+            this.setState({
+                docDef: {
+                    code: "",
+                    location: "Template",
+                    field: "",
+                    description: "",
+                    row1: "",
+                    col1: "",
+                    grid: "",
+                    worksheet1: "",
+                    worksheet2: "",
+                    row2: "",
+                    col2: "",
+                    doctypeId: "",
+                    projectId: projectId,
+                    detail: false
+            },
+            show: true,
+            submitted: false,
+            });
+        }
+      }
+
+    hideModal() {
+        this.setState({
+            docDef: {
+                code: "",
+                location: "",
+                field: "",
+                description: "",
+                row1: "",
+                col1: "",
+                grid: "",
+                worksheet1: "",
+                worksheet2: "",
+                row2: "",
+                col2: "",
+                doctypeId: "",
+                projectId: "",
+                daveId: "",
+                detail: false
+          },
+          show: false,
+          submitted: false,
+        });
+      }
+
+      handleOnclick(event, id) {
+          event.preventDefault();
+          const { project } = this.props.selection
+        if (project.docdefs) {
+          let found = project.docdefs.find(element => element._id === id);
+          this.setState({
+            docDef: {
+              id: id,
+              code: found.code,
+              location: found.location,
+              field: found.field,
+              description: found.description,
+              row1: found.row1,
+              col1: found.col1,
+              grid: found.grid,
+              worksheet1: found.worksheet1,
+              worksheet2: found.worksheet2,
+              row2: found.row2,
+              col2: found.col2,
+              doctypeId: found.doctypeId,
+              projectId: found.projectId,
+              daveId: found.daveId,
+              detail: found.row2 ? true : false
+            },
+            show: true,
+            submitted: false,
+          });
+        }
+      }
+
+
     handleDeleteDocFields(event, id) {
         event.preventDefault();
         const { handleSelectionReload } = this.props;
@@ -183,6 +279,71 @@ class Documents extends React.Component {
                 });
             });
         }
+    }
+
+    handleSubmitDocDef(event) {
+        event.preventDefault();
+        const { docDef } = this.state;
+        console.log('docDef:', docDef);
+        const { handleSelectionReload } = this.props
+        this.setState({ submitted: true }, () => {
+            if (docDef.id && docDef.description && docDef.doctypeId && docDef.projectId) {
+                this.setState({loading: true}, () => {
+                    const requestOptions = {
+                        method: 'PUT',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
+                        body: JSON.stringify(docDef)
+                    }
+                    return fetch(`${config.apiUrl}/docdef/update?id=${docDef.id}`, requestOptions)
+                    .then( () => {
+                        this.setState({submitted: false, loading: false},
+                            ()=> {
+                                console.log('successfuly updated'),
+                                this.hideModal(event),
+                                handleSelectionReload();
+                            });
+                    })
+                    .catch( err => {
+                        console.log(err),
+                        this.setState({submitted: false, loading: false},
+                            ()=> {
+                                console.log('an error occured during update'),
+                                this.hideModal(event),
+                                handleSelectionReload();
+                            });
+                    });
+                });
+            } else if (docDef.description && docDef.doctypeId && docDef.projectId){
+                this.setState({loading: true}, () => {
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
+                        body: JSON.stringify(docDef)
+                    }
+                    return fetch(`${config.apiUrl}/docdef/create`, requestOptions)
+                    .then( () => {
+                        this.setState({submitted: false, loading: false},
+                            ()=> {
+                                console.log('successfuly created'),
+                                this.hideModal(event),
+                                handleSelectionReload();
+                            })
+                    })
+                    .catch( err => {
+                        console.log(err),
+                        this.setState({submitted: false, loading: false},
+                            ()=> {
+                                console.log('an error occured during create'),
+                                this.hideModal(event),
+                                handleSelectionReload();
+                            });
+                    });
+                    //dispatch(supplierActions.update(supplier));
+                });
+            } else {
+                console.log('docDef description or Id is missing')
+            }
+        });
     }
 
     updateSelectedRows(id) {
@@ -255,6 +416,19 @@ class Documents extends React.Component {
         });
     }
 
+    handleChangeDocDef(event) {
+        const target = event.target;
+        const { docDef } = this.state
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        this.setState({
+            docDef: {
+                ...docDef,
+                [name]: value
+            }
+        });
+    }
+
 
     handleChangeTemplate(event) {
         const { selection } = this.props;
@@ -277,7 +451,7 @@ class Documents extends React.Component {
                     this.setState({
                         fileName: obj.field
                     });
-                    if (!!obj.col2){
+                    if (!!obj.row2){
                         this.setState({
                             multi: true
                         });
@@ -354,7 +528,12 @@ class Documents extends React.Component {
             selectedRows,
             selectAllRows,
             fileName,
-            multi
+            multi,
+            show,
+            submitted,
+            loading,
+            deletingDoc,
+            docDef
         } = this.state;
 
         const ArrLocation = [
@@ -366,7 +545,21 @@ class Documents extends React.Component {
             { _id: 'Sheet1', worksheet: 'Sheet1'},
             { _id: 'Sheet2', worksheet: 'Sheet2'}
         ]
+
+        const ArrType = [
+            {_id: '5d1927121424114e3884ac7e', code: 'ESR01' , name: 'Expediting status report'},
+            {_id: '5d1927131424114e3884ac80', code: 'PL01' , name: 'Packing List'},
+            {_id: '5d1927141424114e3884ac84', code: 'SM01' , name: 'Shipping Mark'},
+            {_id: '5d1927131424114e3884ac81', code: 'PN01' , name: 'Packing Note'},
+            {_id: '5d1927141424114e3884ac83', code: 'SI01' , name: 'Shipping Invoice'}
+        ]
         
+        '5d1927121424114e3884ac7e', //ESR01 Expediting status report
+        '5d1927131424114e3884ac80', //PL01 Packing List
+        '5d1927141424114e3884ac84', //SM01 Shipping Mark
+        '5d1927131424114e3884ac81', //PN01 Packing Note
+        '5d1927141424114e3884ac83' //SI01 Shipping Invoice
+
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
                 <div className="row full-height">
@@ -394,10 +587,10 @@ class Documents extends React.Component {
                                                 }
                                                 </select>
                                                 <div className="input-group-append">
-                                                    <button className="btn btn-leeuwen-blue btn-lg">
+                                                    <button className="btn btn-leeuwen-blue btn-lg" onClick={(event) => this.handleOnclick(event, selectedTemplate)}>
                                                         <span><FontAwesomeIcon icon="edit" className="fa-lg"/></span>
                                                     </button>
-                                                    <button className="btn btn-dark btn-lg">
+                                                    <button className="btn btn-dark btn-lg" onClick={this.showModal}>
                                                         <span><FontAwesomeIcon icon="plus" className="fa-lg"/></span>
                                                     </button>
                                                     <button className="btn btn-leeuwen btn-lg" onClick={ (event) => this.handleDeleteDocDef(event, selectedTemplate)}>
@@ -548,6 +741,142 @@ class Documents extends React.Component {
                             )}
                         </tbody>
                         </table>
+                        <Modal
+                            show={show}
+                            hideModal={this.hideModal}
+                            title={docDef.id ? 'Update Document' : 'Add Document'}
+                        >
+                            <div className="col-12">
+                                <form name="form">
+                                    <Input
+                                        title="Description"
+                                        name="description"
+                                        type="text"
+                                        value={docDef.description}
+                                        onChange={this.handleChangeDocDef}
+                                        submitted={submitted}
+                                        inline={false}
+                                        required={true}
+                                    />
+                                    <Select
+                                        title="Document Type"
+                                        name="doctypeId"
+                                        options={ArrType}
+                                        value={docDef.doctypeId}
+                                        onChange={this.handleChangeDocDef}
+                                        placeholder=""
+                                        submitted={submitted}
+                                        inline={false}
+                                        required={true}
+                                        disabled={docDef.id ? true : false}
+                                    />
+                                    {docDef.doctypeId == '5d1927131424114e3884ac80' &&
+                                        <CheckBox
+                                        title="Master and Detail sheet"
+                                        name="detail"
+                                        checked={docDef.detail}
+                                        onChange={this.handleChangeDocDef}
+                                        disabled={false}
+                                        />
+                                    }
+                                    <Input
+                                        title="Start Row (Sheet1)"
+                                        name="row1"
+                                        type="number"
+                                        value={docDef.row1}
+                                        onChange={this.handleChangeDocDef}
+                                        submitted={submitted}
+                                        inline={false}
+                                        required={true}
+                                    />
+                                    <Input
+                                        title="Last Column (Sheet1)"
+                                        name="col1"
+                                        type="number"
+                                        value={docDef.col1}
+                                        onChange={this.handleChangeDocDef}
+                                        submitted={submitted}
+                                        inline={false}
+                                        required={true}
+                                    />
+                                    {docDef.doctypeId == '5d1927131424114e3884ac80' && docDef.detail == true &&
+                                        <div>
+                                            <Input
+                                                title="Start Row (Sheet2)"
+                                                name="row2"
+                                                type="number"
+                                                value={docDef.row2}
+                                                onChange={this.handleChangeDocDef}
+                                                submitted={submitted}
+                                                inline={false}
+                                                required={docDef.detail == true}
+                                            />
+                                            <Input
+                                                title="Last Column (Sheet2)"
+                                                name="col2"
+                                                type="number"
+                                                value={docDef.col2}
+                                                onChange={this.handleChangeDocDef}
+                                                submitted={submitted}
+                                                inline={false}
+                                                required={docDef.detail == true}
+                                            />
+                                        </div>
+                                    }
+
+                                    <div className="modal-footer">
+                                        {docDef.id ?
+                                            <div className="row">
+                                                <div className="col-6">
+                                                    <button
+                                                        type="submit"
+                                                        className="btn btn-outline-dark btn-lg"
+                                                        onClick={(event) => this.handleDeleteDocDef(event, docDef.id)}
+                                                    >
+                                                        {deletingDoc && (
+                                                            <FontAwesomeIcon
+                                                                icon="spinner"
+                                                                className="fa-pulse fa-1x fa-fw" 
+                                                            />
+                                                        )}
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                                <div className="col-6">
+                                                    <button
+                                                        type="submit"
+                                                        className="btn btn-outline-leeuwen btn-lg"
+                                                        onClick={(event) => this.handleSubmitDocDef(event, docDef)}
+                                                    >
+                                                        {loading && (
+                                                            <FontAwesomeIcon
+                                                                icon="spinner"
+                                                                className="fa-pulse fa-1x fa-fw" 
+                                                            />
+                                                        )}
+                                                        Update
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        :
+                                            <button
+                                                type="submit"
+                                                className="btn btn-outline-leeuwen btn-lg btn-full"
+                                                onClick={(event) => this.handleSubmit(event, docDef)}
+                                            >
+                                                {loading && (
+                                                    <FontAwesomeIcon
+                                                        icon="spinner"
+                                                        className="fa-pulse fa-1x fa-fw" 
+                                                    />
+                                                )}
+                                                Create
+                                            </button>
+                                        }
+                                    </div>
+                                </form>
+                            </div>
+                        </Modal>
                     </div>
                 </div>    
             </div>
