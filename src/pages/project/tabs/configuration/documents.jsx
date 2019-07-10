@@ -284,7 +284,7 @@ class Documents extends React.Component {
     handleSubmitDocDef(event) {
         event.preventDefault();
         const { docDef } = this.state;
-        console.log('docDef:', docDef);
+        //console.log('docDef:', docDef);
         const { handleSelectionReload } = this.props
         this.setState({ submitted: true }, () => {
             if (docDef.id && docDef.description && docDef.doctypeId && docDef.projectId) {
@@ -862,7 +862,7 @@ class Documents extends React.Component {
                                             <button
                                                 type="submit"
                                                 className="btn btn-outline-leeuwen btn-lg btn-full"
-                                                onClick={(event) => this.handleSubmit(event, docDef)}
+                                                onClick={(event) => this.handleSubmitDocDef(event, docDef)}
                                             >
                                                 {loading && (
                                                     <FontAwesomeIcon
