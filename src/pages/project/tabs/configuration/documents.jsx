@@ -393,7 +393,7 @@ class Documents extends React.Component {
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 };
                 return fetch(`${config.apiUrl}/template/download?project=${selection.project.number}&file=${obj.field}`, requestOptions)
-                    .then(res => res.blob()).then(blob => saveAs(blob, obj.field))
+                    .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
              }
         }
     }
