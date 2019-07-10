@@ -392,7 +392,7 @@ class Documents extends React.Component {
                     method: 'GET',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 };
-                return fetch(`${config.proxyUrl + config.apiUrl}/template/download?project=${selection.project.number}&file=${obj.field}`, requestOptions)
+                return fetch(`${config.apiUrl}/template/download?project=${selection.project.number}&file=${obj.field}`, requestOptions)
                     .then(res => res.blob()).then(blob => saveAs(blob, obj.field))
              }
         }
