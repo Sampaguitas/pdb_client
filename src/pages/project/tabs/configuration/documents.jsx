@@ -280,7 +280,7 @@ class Documents extends React.Component {
             });
         }
     }
-
+ 
     handleSubmitDocDef(event) {
         event.preventDefault();
         const { docDef } = this.state;
