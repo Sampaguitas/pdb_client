@@ -16,7 +16,7 @@ class CheckBox extends Component {
                 checked={this.props.checked}
                 onChange={this.props.onChange}
                 disabled={this.props.disabled}
-                ClassName="form-check-input"
+                className="form-check-input"
             />
             <FontAwesomeIcon icon="check-square" className="checked fa-lg mr-3" style={{color: '#0070C0'}}/>
             <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg mr-3" style={{color: '#adb5bd'}}/>
