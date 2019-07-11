@@ -365,8 +365,8 @@ class Documents extends React.Component {
         event.preventDefault();
         const { selectedTemplate, fileName } = this.state;
         const { selection, handleSelectionReload } = this.props
+        console.log(this.fileInput.current.files[0].name);
         if(this.fileInput.current.files[0] && selectedTemplate != '0' && selection.project && fileName) {
-            console.log(this.fileInput.current.files[0])
             var data = new FormData()
             data.append('file', this.fileInput.current.files[0])
             data.append('documentId', selectedTemplate)
