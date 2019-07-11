@@ -127,6 +127,7 @@ class Documents extends React.Component {
             docField:{},
 
         }
+        this.onBlurRow = this.onBlurRow.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
@@ -148,6 +149,11 @@ class Documents extends React.Component {
         //this.docConf = this.docConf.bind(this);
     }
 
+    onBlurRow(event){
+        event.preventDefault()
+        // alert('onBlurRow');
+    }
+
     toggleNewRow(event) {
         event.preventDefault()
         const { newRow } = this.state;
@@ -159,8 +165,10 @@ class Documents extends React.Component {
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
-            ...docField,
-            [name]: value
+            docField: {
+                ...docField,
+                [name]: value
+            }
         });        
     }
 
@@ -684,11 +692,11 @@ class Documents extends React.Component {
                             </thead>
                             <tbody className="full-height" style={{overflowY:'auto'}}>
                                 {newRow &&
-                                    <tr>
+                                    <tr onBlur={this.onBlurRow}>
                                         <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}></td>
                                         {multi &&
                                             <td>
-                                                <select className="form-control" name="worksheet" value={worksheet} onChange={this.handleChangeNewRow}>
+                                                <select className="form-control" name="worksheet" value={docDef.worksheet} onChange={event => this.handleChangeNewRow(event)}>
                                                     {ArrSheet && arraySorted(ArrSheet, "worksheet").map(option => {
                                                     return (
                                                         <option 
@@ -703,22 +711,31 @@ class Documents extends React.Component {
                                             </td>
                                         }
                                         <td>
-                                            <select className="form-control" name="location" value={location} onChange={this.handleChangeNewRow}>
-                                                    {ArrLocation && arraySorted(ArrLocation, "worksheet").map(option => {
+                                            <select className="form-control" name="location" value={docDef.location} onChange={event => this.handleChangeNewRow(event)}>
+                                                    {ArrLocation && arraySorted(ArrLocation, "location").map(option => {
                                                     return (
                                                         <option
                                                             key={option._id}
                                                             value={option._id}
                                                         >
-                                                            {option.worksheet}
+                                                            {option.location}
                                                         </option>
                                                     );
                                                     })}
                                             </select>                                             
+                                        </td>    
+                                        <td>
+                                            <input type="number" min="0" step="1" className="form-control" name="row" value={docDef.row} onChange={event => this.handleChangeNewRow(event)} />
                                         </td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td>
+                                            <input type="number" min="0" step="1" className="form-control" name="col" value={docDef.col} onChange={event => this.handleChangeNewRow(event)} />
+                                        </td>
+                                        <td>
+                                            <input className="form-control" name="custom" value={docDef.custom} onChange={event => this.handleChangeNewRow(event)} />
+                                        </td>
+                                        <td>
+                                            <input className="form-control" name="param" value={docDef.param} onChange={event => this.handleChangeNewRow(event)} />
+                                        </td>
                                     </tr>                                
                                 }
 
