@@ -695,7 +695,7 @@ class Documents extends React.Component {
                                     <tr onBlur={this.onBlurRow}>
                                         <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}></td>
                                         {multi &&
-                                            <td>
+                                            <td className="text-nowrap" style={{padding:0}}>
                                                 <select className="form-control" name="worksheet" value={docDef.worksheet} onChange={event => this.handleChangeNewRow(event)}>
                                                     {ArrSheet && arraySorted(ArrSheet, "worksheet").map(option => {
                                                     return (
@@ -710,7 +710,7 @@ class Documents extends React.Component {
                                                 </select>                                            
                                             </td>
                                         }
-                                        <td>
+                                        <td className="text-nowrap" style={{padding:0}}>
                                             <select className="form-control" name="location" value={docDef.location} onChange={event => this.handleChangeNewRow(event)}>
                                                     {ArrLocation && arraySorted(ArrLocation, "location").map(option => {
                                                     return (
@@ -724,16 +724,16 @@ class Documents extends React.Component {
                                                     })}
                                             </select>                                             
                                         </td>    
-                                        <td>
+                                        <td className="text-nowrap" style={{padding:0}}>
                                             <input type="number" min="0" step="1" className="form-control" name="row" value={docDef.row} onChange={event => this.handleChangeNewRow(event)} />
                                         </td>
-                                        <td>
+                                        <td className="text-nowrap" style={{padding:0}}>
                                             <input type="number" min="0" step="1" className="form-control" name="col" value={docDef.col} onChange={event => this.handleChangeNewRow(event)} />
                                         </td>
-                                        <td>
+                                        <td className="text-nowrap" style={{padding:0}}>
                                             <input className="form-control" name="custom" value={docDef.custom} onChange={event => this.handleChangeNewRow(event)} />
                                         </td>
-                                        <td>
+                                        <td className="text-nowrap" style={{padding:0}}>
                                             <input className="form-control" name="param" value={docDef.param} onChange={event => this.handleChangeNewRow(event)} />
                                         </td>
                                     </tr>                                
