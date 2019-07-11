@@ -122,9 +122,12 @@ class Documents extends React.Component {
             show: false,
             submitted: false,
             loading: false,
-            docDef:{}
+            docDef:{},
+            newRow: false,
+            docField:{},
 
         }
+        this.toggleNewRow = this.toggleNewRow.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
@@ -143,6 +146,22 @@ class Documents extends React.Component {
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         
         //this.docConf = this.docConf.bind(this);
+    }
+
+    toggleNewRow(event) {
+        event.preventDefault()
+        const { newRow } = this.state;
+        this.setState({newRow: !newRow})
+    }
+
+    handleChangeNewRow(event){
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        this.setState({
+            ...docField,
+            [name]: value
+        });        
     }
 
     showModal() {
@@ -229,7 +248,6 @@ class Documents extends React.Component {
     handleDeleteDocFields(event, id) {
         event.preventDefault();
         const { handleSelectionReload } = this.props;
-        console.log('fields:',id);
         if(id) {
             this.setState({deletingFields: true }, () => {
                 const requestOptions = {
@@ -244,7 +262,6 @@ class Documents extends React.Component {
                     });
                 })
                 .catch( err => {
-                    console.log(err),
                     this.setState({deletingFields: false},
                     ()=> {
                         handleSelectionReload();
@@ -271,7 +288,6 @@ class Documents extends React.Component {
                     });
                 })
                 .catch( err => {
-                    console.log(err),
                     this.setState({deletingDoc: false, selectedTemplate: '0', fileName: '', inputKey: Date.now(),},
                     ()=> {
                         handleSelectionReload();
@@ -284,7 +300,6 @@ class Documents extends React.Component {
     handleSubmitDocDef(event) {
         event.preventDefault();
         const { docDef } = this.state;
-        //console.log('docDef:', docDef);
         const { handleSelectionReload } = this.props
         this.setState({ submitted: true }, () => {
             if (docDef.id && docDef.description && docDef.doctypeId && docDef.projectId) {
@@ -298,16 +313,13 @@ class Documents extends React.Component {
                     .then( () => {
                         this.setState({submitted: false, loading: false},
                             ()=> {
-                                console.log('successfuly updated'),
                                 this.hideModal(event),
                                 handleSelectionReload();
                             });
                     })
                     .catch( err => {
-                        console.log(err),
                         this.setState({submitted: false, loading: false},
                             ()=> {
-                                console.log('an error occured during update'),
                                 this.hideModal(event),
                                 handleSelectionReload();
                             });
@@ -324,24 +336,19 @@ class Documents extends React.Component {
                     .then( () => {
                         this.setState({submitted: false, loading: false},
                             ()=> {
-                                console.log('successfuly created'),
                                 this.hideModal(event),
                                 handleSelectionReload();
                             })
                     })
                     .catch( err => {
-                        console.log(err),
                         this.setState({submitted: false, loading: false},
                             ()=> {
-                                console.log('an error occured during create'),
                                 this.hideModal(event),
                                 handleSelectionReload();
                             });
                     });
                     //dispatch(supplierActions.update(supplier));
                 });
-            } else {
-                console.log('docDef description or Id is missing')
             }
         });
     }
@@ -365,7 +372,6 @@ class Documents extends React.Component {
         event.preventDefault();
         const { selectedTemplate, fileName } = this.state;
         const { selection, handleSelectionReload } = this.props
-        console.log(this.fileInput.current.files[0].name);
         if(this.fileInput.current.files[0] && selectedTemplate != '0' && selection.project && fileName) {
             var data = new FormData()
             data.append('file', this.fileInput.current.files[0])
@@ -533,7 +539,8 @@ class Documents extends React.Component {
             submitted,
             loading,
             deletingDoc,
-            docDef
+            docDef,
+            newRow
         } = this.state;
 
         const ArrLocation = [
@@ -628,7 +635,7 @@ class Documents extends React.Component {
                                         </form>
                                         <div className="col-12 text-right">
                                             {/* <div className="row"> */}
-                                                <button className="btn btn-leeuwen-blue bt-lg mr-3">
+                                                <button className="btn btn-leeuwen-blue bt-lg mr-3" onClick={event => this.toggleNewRow(event)}>
                                                     <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
                                                 </button>                                               
                                                 <button className="btn btn-leeuwen bt-lg" onClick={ (event) => this.handleDeleteDocFields(event, selectedRows)}>
@@ -676,6 +683,45 @@ class Documents extends React.Component {
                                 </tr>
                             </thead>
                             <tbody className="full-height" style={{overflowY:'auto'}}>
+                                {newRow &&
+                                    <tr>
+                                        <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}></td>
+                                        {multi &&
+                                            <td>
+                                                <select className="form-control" name="worksheet" value={worksheet} onChange={this.handleChangeNewRow}>
+                                                    {ArrSheet && arraySorted(ArrSheet, "worksheet").map(option => {
+                                                    return (
+                                                        <option 
+                                                            key={option._id}
+                                                            value={option._id}
+                                                        >
+                                                            {option.worksheet}
+                                                        </option>
+                                                    );
+                                                    })}
+                                                </select>                                            
+                                            </td>
+                                        }
+                                        <td>
+                                            <select className="form-control" name="location" value={location} onChange={this.handleChangeNewRow}>
+                                                    {ArrLocation && arraySorted(ArrLocation, "worksheet").map(option => {
+                                                    return (
+                                                        <option
+                                                            key={option._id}
+                                                            value={option._id}
+                                                        >
+                                                            {option.worksheet}
+                                                        </option>
+                                                    );
+                                                    })}
+                                            </select>                                             
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>                                
+                                }
+
                             {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
                                 <tr key={s._id}>
                                     <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
