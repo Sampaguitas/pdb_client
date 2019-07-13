@@ -125,8 +125,10 @@ class Documents extends React.Component {
             docDef:{},
             newRow: false,
             docField:{},
+            newRowFocus:false
 
         }
+        this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
         this.showModal = this.showModal.bind(this);
@@ -149,21 +151,40 @@ class Documents extends React.Component {
         //this.docConf = this.docConf.bind(this);
     }
 
+    onFocusRow(event) {
+        event.preventDefault();
+        const { newRowFocus } = this.state;
+        if (event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+            this.setState({
+                newRow:false,
+                docField:{},
+                newRowFocus: false
+            });
+        }
+    }
+
     onBlurRow(event){
         event.preventDefault()
-        // alert('onBlurRow');
+        if (event.currentTarget.dataset['type'] == 'newrow'){
+            this.setState({newRowFocus: true});
+        }
     }
 
     toggleNewRow(event) {
         event.preventDefault()
-        const { newRow } = this.state;
-        this.setState({newRow: !newRow})
+        const { newRow, selectedTemplate } = this.state;
+        if (selectedTemplate == '0') {
+            this.setState({newRow: false})
+        } else {
+            this.setState({newRow: !newRow})
+        }
     }
 
     handleChangeNewRow(event){
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
+        const { docField } = this.state
         this.setState({
             docField: {
                 ...docField,
@@ -692,11 +713,11 @@ class Documents extends React.Component {
                             </thead>
                             <tbody className="full-height" style={{overflowY:'auto'}}>
                                 {newRow &&
-                                    <tr onBlur={this.onBlurRow}>
+                                    <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow">
                                         <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}></td>
                                         {multi &&
-                                            <td className="text-nowrap" style={{padding:0}}>
-                                                <select className="form-control" name="worksheet" value={docDef.worksheet} onChange={event => this.handleChangeNewRow(event)}>
+                                            <td className="text-nowrap" style={{padding:0}} data-type="newrow">
+                                                <select className="form-control" data-type="newrow" name="worksheet" value={docDef.worksheet} onChange={event => this.handleChangeNewRow(event)}>
                                                     {ArrSheet && arraySorted(ArrSheet, "worksheet").map(option => {
                                                     return (
                                                         <option 
@@ -710,8 +731,8 @@ class Documents extends React.Component {
                                                 </select>                                            
                                             </td>
                                         }
-                                        <td className="text-nowrap" style={{padding:0}}>
-                                            <select className="form-control" name="location" value={docDef.location} onChange={event => this.handleChangeNewRow(event)}>
+                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
+                                            <select className="form-control" data-type="newrow" name="location" value={docDef.location} onChange={event => this.handleChangeNewRow(event)}>
                                                     {ArrLocation && arraySorted(ArrLocation, "location").map(option => {
                                                     return (
                                                         <option
@@ -724,23 +745,23 @@ class Documents extends React.Component {
                                                     })}
                                             </select>                                             
                                         </td>    
-                                        <td className="text-nowrap" style={{padding:0}}>
-                                            <input type="number" min="0" step="1" className="form-control" name="row" value={docDef.row} onChange={event => this.handleChangeNewRow(event)} />
+                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
+                                            <input type="number" data-type="newrow" min="0" step="1" className="form-control" name="row" value={docDef.row} onChange={event => this.handleChangeNewRow(event)} />
                                         </td>
-                                        <td className="text-nowrap" style={{padding:0}}>
-                                            <input type="number" min="0" step="1" className="form-control" name="col" value={docDef.col} onChange={event => this.handleChangeNewRow(event)} />
+                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
+                                            <input type="number" data-type="newrow" min="0" step="1" className="form-control" name="col" value={docDef.col} onChange={event => this.handleChangeNewRow(event)} />
                                         </td>
-                                        <td className="text-nowrap" style={{padding:0}}>
-                                            <input className="form-control" name="custom" value={docDef.custom} onChange={event => this.handleChangeNewRow(event)} />
+                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
+                                            <input className="form-control" data-type="newrow" name="custom" value={docDef.custom} onChange={event => this.handleChangeNewRow(event)} />
                                         </td>
-                                        <td className="text-nowrap" style={{padding:0}}>
-                                            <input className="form-control" name="param" value={docDef.param} onChange={event => this.handleChangeNewRow(event)} />
+                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
+                                            <input className="form-control" data-type="newrow" name="param" value={docDef.param} onChange={event => this.handleChangeNewRow(event)} />
                                         </td>
                                     </tr>                                
                                 }
 
                             {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
-                                <tr key={s._id}>
+                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
                                     <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                         <TableSelectionRow
                                             id={s._id}
