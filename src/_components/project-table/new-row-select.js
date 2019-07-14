@@ -47,7 +47,6 @@ class NewRowSelect extends Component{
     }
 
     selectedName(arr, search) {
-        console.log('props:', this.props);
         const { optionText } = this.props;
         if (arr && search) {
             const foundOption = arr.find((option) => {

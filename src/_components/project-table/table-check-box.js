@@ -17,11 +17,10 @@ class TableCheckBox extends Component {
             collection: '',
             objectId: '',
             fieldName: '',
-            fieldValue: false
+            fieldValue: false,
+            color: 'inherit'
         }
         this.onChange = this.onChange.bind(this);
-        this.updatefield = this.updatefield.bind(this);
-        this.handleResponse = this.handleResponse.bind(this);
     }
     
     componentDidMount(){
@@ -34,7 +33,7 @@ class TableCheckBox extends Component {
     }
 
     onChange(event) {
-        const { collection, objectId, fieldName } = this.state
+        const { collection, objectId, fieldName, fieldValue } = this.state
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -43,43 +42,45 @@ class TableCheckBox extends Component {
             [name]: value
         }, () => {
             if (collection && objectId && fieldName) {
-                this.updatefield(this.state);
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: `{"${fieldName}":${fieldValue}}`
+                };
+                return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        ...this.state,
+                        color: 'green',
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                color: 'inherit',
+                            });
+                        }, 1000);                         
+                    });
+                })
+                .catch( () => {
+                    this.setState({
+                        ...this.state,
+                        color: 'red',
+                        fieldValue: this.props.fieldValue ? this.props.fieldValue: false,
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                color: 'inherit',
+                            });
+                        }, 1000);
+                    }); 
+                });
             }            
         });
     }
 
-    updatefield(args) {
-        const requestOptions = {
-            method: 'PUT',
-            headers: { ...authHeader(), 'Content-Type': 'application/json' },
-            body: `{"${args.fieldName}":${args.fieldValue}}`
-        };
-    
-        return fetch(`${config.apiUrl}/${args.collection}/update?id=${args.objectId}`, requestOptions).then(this.handleResponse);
-    }
-    
-    handleResponse(response) {
-        return response.text().then(text => {
-            if (text == 'Unauthorized') {
-                logout();
-                location.reload(true);
-            }
-            const data = text && JSON.parse(text);
-            if (!response.ok) {
-                if (response.status === 401) {
-                    // auto logout if 401 response returned from api
-                    logout();
-                    location.reload(true);
-                }
-                const error = (data && data.message) || response.statusText;
-                return Promise.reject(error);
-            }
-            return data;
-        });
-    }
-
     render(){
-        const { fieldValue, disabled } = this.state
+        const { fieldValue, disabled, color } = this.state
         return (
             <td>
              <div>
@@ -92,8 +93,8 @@ class TableCheckBox extends Component {
                     onChange={this.onChange}
                     disabled={disabled}
                 />
-                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/>
-                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/>                
+                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: `${color == 'inherit' ? '#0070C0' : color}`, padding: 'auto', textAlign: 'center', width: '100%'}}/>
+                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: `${color == 'inherit' ? '#adb5bd' : color}`, padding: 'auto', textAlign: 'center', width: '100%'}}/>                
                 </label>
             </div>
             </td>

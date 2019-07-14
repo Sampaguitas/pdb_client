@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import config from 'config';
-import { authHeader } from '../../_helpers';
-import propTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './new-row-check-box.css'
 
 class NewRowCheckBox extends Component {
     render(){
+        const { name, checked, onChange, disabled, color } = this.props
         return (
             <td>
              <div>
@@ -14,13 +12,13 @@ class NewRowCheckBox extends Component {
                 <input
                     ref="input"
                     type='checkbox'
-                    name={this.props.name}
-                    checked={this.props.checked}
-                    onChange={this.props.onChange}
-                    disabled={this.props.disabled}
+                    name={name}
+                    checked={checked}
+                    onChange={onChange}
+                    disabled={disabled}
                 />
-                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: `${this.props.color == 'inherit' ? '#0070C0' : this.props.color}`, padding: 'auto', textAlign: 'center', width: '100%'}}/>
-                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/>                
+                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: `${color == 'inherit' ? '#0070C0' : color}`, padding: 'auto', textAlign: 'center', width: '100%'}}/>
+                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: `${color == 'inherit' ? '#adb5bd' : color}`, padding: 'auto', textAlign: 'center', width: '100%'}}/>                
                 </label>
             </div>
             </td>

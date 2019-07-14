@@ -131,49 +131,39 @@ class Screens extends React.Component {
                 .then( () => {
                     this.setState({
                         ...this.state,
-                        creatingNewRow: false
-                    },
-                    () => {
-                        this.setState({
-                            ...this.state,
-                            newRowColor: 'green'
-                        }, () => {
-                            setTimeout(() => {
-                                this.setState({
-                                    ...this.state,
-                                    newRowColor: 'inherit',
-                                    newRow:false,
-                                    fieldName:{},
-                                    newRowFocus: false
-                                }, () => {
-                                    handleSelectionReload();
-                                });
-                            }, 1000);                                
-                        });
+                        creatingNewRow: false,
+                        newRowColor: 'green'
+                    }, () => {
+                        setTimeout( () => {
+                            this.setState({
+                                ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                fieldName:{},
+                                newRowFocus: false
+                            }, () => {
+                                handleSelectionReload();
+                            });
+                        }, 1000);                                
                     });
                 })
                 .catch( () => {
                     this.setState({
                         ...this.state,
-                        creatingNewRow: false
-                    },
-                    () => {
-                        this.setState({
-                            ...this.state,
-                            newRowColor: 'red'
-                        }, () => {
-                            setTimeout(() => {
-                                this.setState({
-                                    ...this.state,
-                                    newRowColor: 'inherit',
-                                    newRow:false,
-                                    fieldName:{},
-                                    newRowFocus: false                                    
-                                }, () => {
-                                    handleSelectionReload();
-                                });
-                            }, 1000);                                
-                        });                        
+                        creatingNewRow: false,
+                        newRowColor: 'red'
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                fieldName:{},
+                                newRowFocus: false                                    
+                            }, () => {
+                                handleSelectionReload();
+                            });
+                        }, 1000);                                                      
                     });
                 });
             });
@@ -193,8 +183,6 @@ class Screens extends React.Component {
     toggleNewRow(event) {
         event.preventDefault()
         const { newRow, selectedScreen } = this.state;
-        console.log('selectedScreen:', selectedScreen);
-        console.log('newRow:', newRow);
         if (!selectedScreen) {
             this.setState({
                 ...this.state,
@@ -230,7 +218,6 @@ class Screens extends React.Component {
     handleDelete(event, id) {
         event.preventDefault();
         const { handleSelectionReload } = this.props;
-        console.log('fields:',id);
         if(id) {
             this.setState({
                 ...this.state,

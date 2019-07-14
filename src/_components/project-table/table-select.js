@@ -4,11 +4,6 @@ import { authHeader } from '../../_helpers';
 import propTypes from 'prop-types';
 import _ from 'lodash';
 
-function logout() {
-    // remove user from local storage to log user out
-    localStorage.removeItem('user');
-}
-
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
         return prev ? prev[curr] : null
@@ -48,8 +43,6 @@ class TableSelect extends Component{
         this.onChange = this.onChange.bind(this);
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
-        this.updatefield = this.updatefield.bind(this);
-        this.handleResponse = this.handleResponse.bind(this);
         this.selectedName = this.selectedName.bind(this);
     }
     componentDidMount(){
@@ -70,29 +63,6 @@ class TableSelect extends Component{
         this.setState({
             ...this.state,
             [name]: value
-        }, () => {
-            const { collection, objectId, fieldName, fieldValue } = this.state
-            if (collection && objectId && fieldName) {
-                this.updatefield(this.state)
-                .then(
-                    field => {
-                        this.setState({color:'green'}, () => {
-                            setTimeout(() => {
-                                this.setState({color: 'inherit'}),
-                                this.setState({editing:false});
-                            }, 1000);
-                        });
-                    },
-                    error => {
-                        this.setState({color:'red'}, () => {
-                            setTimeout(() => {
-                                this.setState({color: 'inherit'}),
-                                this.setState({editing:false});
-                            }, 1000);
-                        });
-                    }
-                );
-            }            
         });
     }
 
@@ -105,59 +75,47 @@ class TableSelect extends Component{
     onBlur(event){
         event.preventDefault();
         this.setState({editing:false});
-        // const { collection, objectId, fieldName, fieldValue } = this.state      
-        // if (collection && objectId && fieldName) {
-        //     this.updatefield(this.state)
-        //     .then(
-        //         field => {
-        //             this.setState({color:'green'}, () => {
-        //                 setTimeout(() => {
-        //                     this.setState({color: 'inherit'}),
-        //                     this.setState({editing:false});
-        //                 }, 1000);
-        //             });
-        //         },
-        //         error => {
-        //             this.setState({color:'red'}, () => {
-        //                 setTimeout(() => {
-        //                     this.setState({color: 'inherit'}),
-        //                     this.setState({editing:false});
-        //                 }, 1000);
-        //             });
-        //         }
-        //     );
-        // }
+        const { collection, objectId, fieldName, fieldValue } = this.state      
+        if (collection && objectId && fieldName && objectId) {
+            const requestOptions = {
+                method: 'PUT',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: `{"${fieldName}":"${fieldValue}"}`
+            };
+            return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
+            .then( () => {
+                this.setState({
+                    ...this.state,
+                    editing: false,
+                    color: 'green',                    
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            ...this.state,
+                            color: 'inherit',
+                        });
+                    }, 1000);                    
+                });
+            })
+            .catch( () => {
+                this.setState({
+                    ...this.state,
+                    editing: false,
+                    color: 'red',
+                    fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            ...this.state,
+                            color: 'inherit',
+                        });
+                    }, 1000);
+                });                
+            });
+        }
     }
 
-    updatefield(args) {
-        const requestOptions = {
-            method: 'PUT',
-            headers: { ...authHeader(), 'Content-Type': 'application/json' },
-            body: `{"${args.fieldName}":"${args.fieldValue}"}`
-        };
-    
-        return fetch(`${config.apiUrl}/${args.collection}/update?id=${args.objectId}`, requestOptions).then(this.handleResponse);
-    }
-    
-    handleResponse(response) {
-        return response.text().then(text => {
-            if (text == 'Unauthorized') {
-                logout();
-                location.reload(true);
-            }
-            const data = text && JSON.parse(text);
-            if (!response.ok) {
-                if (response.status === 401) {
-                    // auto logout if 401 response returned from api
-                    logout();
-                    location.reload(true);
-                }
-                const error = (data && data.message) || response.statusText;
-                return Promise.reject(error);
-            }
-            return data;
-        });
-    }
+
 
     selectedName(arr, search) {
         const { optionText } = this.state;
@@ -192,7 +150,7 @@ class TableSelect extends Component{
                     //     borderRadius:0,
                     //     borderColor: 'white',
                     //     backgroundColor: 'inherit',
-                    //     color: color,
+                    //     color: 'inherit',
                     //     WebkitBoxShadow: 'none',
                     //     boxShadow: 'none',  
                     // }}
@@ -209,8 +167,7 @@ class TableSelect extends Component{
             </td>
         ):
         (
-        <td onClick={() => this.onFocus()}>{ this.selectedName(options, fieldValue)}</td> //onDoubleClick
-        //options.find(( option) => _.isEqual(option._id,fieldValue))?options.find(( option) => _.isEqual(option._id,fieldValue)).name : "not selected"
+        <td onClick={() => this.onFocus()} style={{color: color}}>{ this.selectedName(options, fieldValue)}</td> //onDoubleClick
         );
     }
 }

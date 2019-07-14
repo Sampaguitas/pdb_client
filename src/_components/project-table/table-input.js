@@ -3,11 +3,6 @@ import config from 'config';
 import { authHeader } from '../../_helpers';
 import propTypes from 'prop-types';
 
-function logout() {
-    // remove user from local storage to log user out
-    localStorage.removeItem('user');
-}
-
 class TableInput extends Component{
     constructor(props) {
         super(props);
@@ -23,8 +18,6 @@ class TableInput extends Component{
         this.onChange = this.onChange.bind(this);
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
-        this.updatefield = this.updatefield.bind(this);
-        this.handleResponse = this.handleResponse.bind(this);
 
     }
     componentDidMount(){
@@ -55,58 +48,45 @@ class TableInput extends Component{
 
     onBlur(event){
         event.preventDefault();
+
         const { collection, objectId, fieldName, fieldValue } = this.state      
         if (collection && objectId && fieldName) {
-            this.updatefield(this.state)
-            .then(
-                field => {
-                    this.setState({color:'green'}, () => {
-                        setTimeout(() => {
-                            this.setState({color: 'inherit'}),
-                            this.setState({editing:false});
-                        }, 1000);
-                    });
-                },
-                error => {
-                    this.setState({color:'red'}, () => {
-                        setTimeout(() => {
-                            this.setState({color: 'inherit'}),
-                            this.setState({editing:false});
-                        }, 1000);
-                    });
-                }
-            );
+            const requestOptions = {
+                method: 'PUT',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: `{"${fieldName}":"${fieldValue}"}`
+            };
+            return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
+            .then( () => {
+                this.setState({
+                    ...this.state,
+                    editing: false,
+                    color: 'green',
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            ...this.state,
+                            color: 'inherit',
+                        });
+                    }, 1000);
+                });
+            })
+            .catch( () => {
+                this.setState({
+                    ...this.state,
+                    editing: false,
+                    color: 'red',
+                    fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            ...this.state,
+                            color: 'inherit',
+                        });
+                    }, 1000);
+                });                
+            });
         }
-    }
-
-    updatefield(args) {
-        const requestOptions = {
-            method: 'PUT',
-            headers: { ...authHeader(), 'Content-Type': 'application/json' },
-            body: `{"${args.fieldName}":"${args.fieldValue}"}`
-        };
-    
-        return fetch(`${config.apiUrl}/${args.collection}/update?id=${args.objectId}`, requestOptions).then(this.handleResponse);
-    }
-    
-    handleResponse(response) {
-        return response.text().then(text => {
-            if (text == 'Unauthorized') {
-                logout();
-                location.reload(true);
-            }
-            const data = text && JSON.parse(text);
-            if (!response.ok) {
-                if (response.status === 401) {
-                    // auto logout if 401 response returned from api
-                    logout();
-                    location.reload(true);
-                }
-                const error = (data && data.message) || response.statusText;
-                return Promise.reject(error);
-            }
-            return data;
-        });
     }
 
     render() {
@@ -122,20 +102,20 @@ class TableInput extends Component{
                     value={fieldValue}
                     onChange={this.onChange}
                     onBlur={this.onBlur}
-                    style={{
-                        margin: 0,
-                        borderRadius:0,
-                        borderColor: 'white',
-                        backgroundColor: 'inherit',
-                        color: color,
-                        WebkitBoxShadow: 'none',
-                        boxShadow: 'none',  
-                    }}
+                    // style={{
+                    //     margin: 0,
+                    //     borderRadius:0,
+                    //     borderColor: 'white',
+                    //     backgroundColor: 'inherit',
+                    //     color: 'inherit',
+                    //     WebkitBoxShadow: 'none',
+                    //     boxShadow: 'none',  
+                    // }}
                 />
             </td>
         ):
         (
-        <td onClick={() => this.onFocus()}>{fieldValue}</td> //onDoubleClick
+        <td onClick={() => this.onFocus()} style={{color:color}}>{fieldValue}</td> //onDoubleClick
         );
     }
 }

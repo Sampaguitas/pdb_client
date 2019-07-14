@@ -32,15 +32,15 @@ class NewRowInput extends Component{
                     value={this.props.value}
                     onChange={this.props.onChange}
                     onBlur={this.onBlur}
-                    style={{
-                        margin: 0,
-                        borderRadius:0,
-                        borderColor: 'white',
-                        backgroundColor: 'inherit',
-                        color: this.props.color ? this.props.color : 'inherit',
-                        WebkitBoxShadow: 'none',
-                        boxShadow: 'none',  
-                    }}
+                    // style={{
+                    //     margin: 0,
+                    //     borderRadius:0,
+                    //     borderColor: 'white',
+                    //     backgroundColor: 'inherit',
+                    //     color: this.props.color ? this.props.color : 'inherit',
+                    //     WebkitBoxShadow: 'none',
+                    //     boxShadow: 'none',  
+                    // }}
                 />
             </td>
         )

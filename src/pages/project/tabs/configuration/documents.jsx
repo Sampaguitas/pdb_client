@@ -175,49 +175,39 @@ class Documents extends React.Component {
                 .then( () => {
                     this.setState({
                         ...this.state,
-                        creatingNewRow: false
-                    },
-                    () => {
-                        this.setState({
-                            ...this.state,
-                            newRowColor: 'green'
-                        }, () => {
-                            setTimeout(() => {
-                                this.setState({
-                                    ...this.state,
-                                    newRowColor: 'inherit',
-                                    newRow:false,
-                                    docField:{},
-                                    newRowFocus: false
-                                }, () => {
-                                    handleSelectionReload();
-                                });
-                            }, 1000);
-                        });
+                        creatingNewRow: false,
+                        newRowColor: 'green'
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                docField:{},
+                                newRowFocus: false
+                            }, () => {
+                                handleSelectionReload();
+                            });
+                        }, 1000);
                     });
                 })
                 .catch( () => {
                     this.setState({
                         ...this.state,
-                        creatingNewRow: false
-                    },
-                    () => {
-                        this.setState({
-                            ...this.state,
-                            newRowColor: 'red'
-                        }, () => {
-                            setTimeout(() => {
-                                this.setState({
-                                    ...this.state,
-                                    newRowColor: 'inherit',
-                                    newRow:false,
-                                    docField:{},
-                                    newRowFocus: false
-                                }, () => {
-                                    handleSelectionReload();
-                                });
-                            }, 1000);
-                        });
+                        creatingNewRow: false,
+                        newRowColor: 'red'
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                docField:{},
+                                newRowFocus: false
+                            }, () => {
+                                handleSelectionReload();
+                            });
+                        }, 1000);
                     });
                 });
             });
@@ -255,8 +245,6 @@ class Documents extends React.Component {
         const { docField, selectedTemplate } = this.state;
         const target = event.target;
         const name = target.name;
-        console.log('projectId:', projectId);
-        console.log('selectedTemplate:', selectedTemplate);
         const value = target.type === 'checkbox' ? target.checked : target.value;
         if (projectId && selectedTemplate != '0') {
             this.setState({
