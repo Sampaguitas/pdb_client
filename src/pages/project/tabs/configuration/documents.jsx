@@ -122,11 +122,12 @@ class Documents extends React.Component {
             show: false,
             submitted: false,
             loading: false,
+            //create new row
             docDef:{},
             newRow: false,
             docField:{},
             newRowFocus:false,
-            creatingNewField: false,
+            creatingNewRow: false,
 
         }
         this.onFocusRow = this.onFocusRow.bind(this);
@@ -154,11 +155,10 @@ class Documents extends React.Component {
 
     onFocusRow(event) {
         event.preventDefault();
-        const { handleSelectionReload, projectId } = this.props;
+        const { handleSelectionReload } = this.props;
         const { selectedTemplate, newRowFocus, docField } = this.state;
         if (selectedTemplate !='0' && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-            this.setState({creatingNewField: true}, () => {
-                console.log(docField);
+            this.setState({creatingNewRow: true}, () => {
                 const requestOptions = {
                     method: 'POST',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -166,7 +166,7 @@ class Documents extends React.Component {
                 };
                 return fetch(`${config.apiUrl}/docField/create`, requestOptions)
                 .then( () => {
-                    this.setState({creatingNewField: false},
+                    this.setState({creatingNewRow: false},
                     () => {
                         this.setState({
                             newRow:false,
@@ -177,8 +177,8 @@ class Documents extends React.Component {
                         });
                     });
                 })
-                .catch( err => {
-                    this.setState({creatingNewField: false},
+                .catch( () => {
+                    this.setState({creatingNewRow: false},
                     () => {
                         this.setState({
                             newRow:false,
@@ -216,7 +216,7 @@ class Documents extends React.Component {
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
-        if (projectId && selectedTemplate) {
+        if (projectId && selectedTemplate != '0') {
             this.setState({
                 docField: {
                     ...docField,
