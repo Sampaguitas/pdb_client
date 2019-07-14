@@ -1,6 +1,9 @@
 import React from 'react';
 import config from 'config';
 import { authHeader } from '../../../../_helpers';
+import NewRowCheckBox from '../../../../_components/project-table/new-row-check-box';
+import NewRowInput from '../../../../_components/project-table/new-row-input';
+import NewRowSelect from '../../../../_components/project-table/new-row-select';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
 import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
@@ -86,7 +89,17 @@ class Duf extends React.Component {
             loaded: false,
             show: false,
             deleting: false,
+            //create new row
+            newRow: false,
+            fieldName:{},
+            newRowFocus:false,
+            creatingNewRow: false,
+            //creating new row
+            newRowColor: 'inherit',
         }
+        this.onFocusRow = this.onFocusRow.bind(this);
+        this.onBlurRow = this.onBlurRow.bind(this);
+        this.toggleNewRow = this.toggleNewRow.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
@@ -94,26 +107,153 @@ class Duf extends React.Component {
         this.filterName = this.filterName.bind(this);
     }
 
+    onFocusRow(event) {
+        event.preventDefault();
+        const { handleSelectionReload } = this.props;
+        const { selectedScreen, newRowFocus, fieldName } = this.state;
+        console.log('toto');
+        console.log('selectedScreen:', selectedScreen);
+        console.log('datatype:', event.currentTarget.dataset['type']);
+        console.log('newRowFocus:', newRowFocus);
+        if (selectedScreen && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+            this.setState({
+                ...this.state,
+                creatingNewRow: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(fieldName)
+                };
+                return fetch(`${config.apiUrl}/fieldName/create`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false
+                    },
+                    () => {
+                        this.setState({
+                            ...this.state,
+                            newRowColor: 'green'
+                        }, () => {
+                            setTimeout(() => {
+                                this.setState({
+                                    ...this.state,
+                                    newRowColor: 'inherit',
+                                    newRow:false,
+                                    fieldName:{},
+                                    newRowFocus: false
+                                }, () => {
+                                    handleSelectionReload();
+                                });
+                            }, 1000);                                
+                        });
+                    });
+                })
+                .catch( () => {
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false
+                    },
+                    () => {
+                        this.setState({
+                            ...this.state,
+                            newRowColor: 'red'
+                        }, () => {
+                            setTimeout(() => {
+                                this.setState({
+                                    ...this.state,
+                                    newRowColor: 'inherit',
+                                    newRow:false,
+                                    fieldName:{},
+                                    newRowFocus: false                                    
+                                }, () => {
+                                    handleSelectionReload();
+                                });
+                            }, 1000);                                
+                        });                        
+                    });
+                });
+            });
+        }
+    }
+
+    onBlurRow(event){
+        event.preventDefault()
+        if (event.currentTarget.dataset['type'] == 'newrow'){
+            this.setState({
+                ...this.state,
+                newRowFocus: true
+            });
+        }
+    }
+
+    handleChangeNewRow(event){
+        const { projectId } = this.props;
+        const { fieldName, selectedScreen} = this.state;
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        if (projectId && selectedScreen) {
+            this.setState({
+                ...this.state,
+                fieldName: {
+                    ...fieldName,
+                    [name]: value,
+                    screenId: selectedScreen,
+                    projectId: projectId
+                }
+            });
+        } 
+    }
+
+    toggleNewRow(event) {
+        event.preventDefault()
+        const { newRow, selectedScreen } = this.state;
+        console.log('selectedScreen:', selectedScreen);
+        console.log('newRow:', newRow);
+        if (!selectedScreen) {
+            this.setState({
+                ...this.state,
+                newRow: false
+            })
+        } else {
+            this.setState({
+                ...this.state,
+                newRow: !newRow
+            })
+        }
+    }
+
     handleDelete(event, id) {
         event.preventDefault();
         const { handleSelectionReload } = this.props;
         console.log('fields:',id);
         if(id) {
-            this.setState({deleting: true }, () => {
+            this.setState({
+                ...this.state,
+                deleting: true 
+            }, () => {
                 const requestOptions = {
                     method: 'DELETE',
                     headers: { ...authHeader()},
                 };
                 return fetch(`${config.apiUrl}/fieldName/delete?id=${JSON.stringify(id)}`, requestOptions)
                 .then( () => {
-                    this.setState({deleting: false},
+                    this.setState({
+                        ...this.state,
+                        deleting: false
+                    },
                     () => {
                         handleSelectionReload();
                     });
                 })
                 .catch( err => {
                     console.log(err),
-                    this.setState({deleting: false},
+                    this.setState({
+                        ...this.state,
+                        deleting: false
+                    },
                     ()=> {
                         handleSelectionReload();
                     });
@@ -144,11 +284,13 @@ class Duf extends React.Component {
         if (selection.project) {
             if (selectAllRows) {
                 this.setState({
+                    ...this.state,
                     selectedRows: [],
                     selectAllRows: false
                 });
             } else {
                 this.setState({
+                    ...this.state,
                     selectedRows: this.filterName(selection.project.fieldnames).map(s => s._id),
                     selectAllRows: true
                 });
@@ -177,7 +319,7 @@ class Duf extends React.Component {
         if (array) {
           return arraySorted(array, 'fields.custom').filter(function (element) {
             return (doesMatch(selectedScreen, element.screenId, 'Id')
-            && doesMatch(custom, element.fields.custom, 'String')
+            && element.fields && doesMatch(custom, element.fields.custom, 'String')
             && doesMatch(forShow, element.forShow, 'Number')
             );
           });
@@ -201,6 +343,9 @@ class Duf extends React.Component {
             selectedScreen,
             selectedRows,
             selectAllRows,
+            fieldName,
+            newRow,
+            newRowColor
         } = this.state;
 
         return ( 
@@ -209,10 +354,10 @@ class Duf extends React.Component {
                 <div className="table-responsive full-height">
                     <table className="table table-hover table-bordered table-sm" >
                         <thead>
-                        <tr className="text-center">
+                            <tr className="text-center"onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
                                 <th colSpan="3" >
                                     <div className="col-12 text-right">
-                                        <button className="btn btn-leeuwen-blue bt-lg mr-3">
+                                        <button className="btn btn-leeuwen-blue bt-lg mr-3" onClick={event => this.toggleNewRow(event)}>
                                             <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
                                         </button>
                                         <button className="btn btn-leeuwen bt-lg" onClick={ (event) => this.handleDelete(event, selectedRows)}>
@@ -221,7 +366,7 @@ class Duf extends React.Component {
                                     </div>                                  
                                 </th>
                             </tr>
-                            <tr>
+                            <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
                                 <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                     <TableSelectionAllRow
                                         // selectAllRows={selectAllRows}
@@ -240,8 +385,28 @@ class Duf extends React.Component {
                             </tr>
                         </thead>
                         <tbody className="full-height" style={{overflowY:'auto'}}>
+                            {newRow && 
+                                <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow" style={{height: '40px', lineHeight: '17.8571px'}}>
+                                    <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}></td>
+                                    <NewRowInput
+                                        type="number"
+                                        name="forShow"
+                                        value={fieldName.forShow}
+                                        onChange={event => this.handleChangeNewRow(event)}
+                                        color={newRowColor}
+                                    />
+                                    <NewRowSelect 
+                                        name="fieldId"
+                                        value={fieldName.fieldId}
+                                        options={selection && selection.project && selection.project.fields}
+                                        optionText="custom"
+                                        onChange={event => this.handleChangeNewRow(event)}
+                                        color={newRowColor}
+                                    />
+                                </tr>                            
+                            }
                             {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
-                                <tr key={s._id}>
+                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>
                                     <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                         <TableSelectionRow
                                             id={s._id}

@@ -95,11 +95,12 @@ class Screens extends React.Component {
             show: false,
             deleting: false,
             //create new row
-            fieldName:{},
             newRow: false,
             fieldName:{},
             newRowFocus:false,
             creatingNewRow: false,
+            //creating new row
+            newRowColor: 'inherit',
         }
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
@@ -117,7 +118,10 @@ class Screens extends React.Component {
         const { handleSelectionReload } = this.props;
         const { selectedScreen, newRowFocus, fieldName } = this.state;
         if (selectedScreen && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-            this.setState({creatingNewRow: true}, () => {
+            this.setState({
+                ...this.state,
+                creatingNewRow: true
+            }, () => {
                 const requestOptions = {
                     method: 'POST',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -125,27 +129,51 @@ class Screens extends React.Component {
                 };
                 return fetch(`${config.apiUrl}/fieldName/create`, requestOptions)
                 .then( () => {
-                    this.setState({creatingNewRow: false},
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false
+                    },
                     () => {
                         this.setState({
-                            newRow:false,
-                            fieldName:{},
-                            newRowFocus: false
-                        }, ()=>{
-                            handleSelectionReload();
+                            ...this.state,
+                            newRowColor: 'green'
+                        }, () => {
+                            setTimeout(() => {
+                                this.setState({
+                                    ...this.state,
+                                    newRowColor: 'inherit',
+                                    newRow:false,
+                                    fieldName:{},
+                                    newRowFocus: false
+                                }, () => {
+                                    handleSelectionReload();
+                                });
+                            }, 1000);                                
                         });
                     });
                 })
                 .catch( () => {
-                    this.setState({creatingNewRow: false},
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false
+                    },
                     () => {
                         this.setState({
-                            newRow:false,
-                            fieldName:{},
-                            newRowFocus: false
-                        }, ()=>{
-                            handleSelectionReload();
-                        });
+                            ...this.state,
+                            newRowColor: 'red'
+                        }, () => {
+                            setTimeout(() => {
+                                this.setState({
+                                    ...this.state,
+                                    newRowColor: 'inherit',
+                                    newRow:false,
+                                    fieldName:{},
+                                    newRowFocus: false                                    
+                                }, () => {
+                                    handleSelectionReload();
+                                });
+                            }, 1000);                                
+                        });                        
                     });
                 });
             });
@@ -155,7 +183,10 @@ class Screens extends React.Component {
     onBlurRow(event){
         event.preventDefault()
         if (event.currentTarget.dataset['type'] == 'newrow'){
-            this.setState({newRowFocus: true});
+            this.setState({
+                ...this.state,
+                newRowFocus: true
+            });
         }
     }
 
@@ -165,9 +196,15 @@ class Screens extends React.Component {
         console.log('selectedScreen:', selectedScreen);
         console.log('newRow:', newRow);
         if (!selectedScreen) {
-            this.setState({newRow: false})
+            this.setState({
+                ...this.state,
+                newRow: false
+            });
         } else {
-            this.setState({newRow: !newRow})
+            this.setState({
+                ...this.state,
+                newRow: !newRow
+            });
         }
     }
 
@@ -179,6 +216,7 @@ class Screens extends React.Component {
         const value = target.type === 'checkbox' ? target.checked : target.value;
         if (projectId && selectedScreen) {
             this.setState({
+                ...this.state,
                 fieldName: {
                     ...fieldName,
                     [name]: value,
@@ -194,21 +232,30 @@ class Screens extends React.Component {
         const { handleSelectionReload } = this.props;
         console.log('fields:',id);
         if(id) {
-            this.setState({deleting: true }, () => {
+            this.setState({
+                ...this.state,
+                deleting: true
+            }, () => {
                 const requestOptions = {
                     method: 'DELETE',
                     headers: { ...authHeader()},
                 };
                 return fetch(`${config.apiUrl}/fieldName/delete?id=${JSON.stringify(id)}`, requestOptions)
                 .then( () => {
-                    this.setState({deleting: false},
+                    this.setState({
+                        ...this.state,
+                        deleting: false
+                    },
                     () => {
                         handleSelectionReload();
                     });
                 })
                 .catch( err => {
                     console.log(err),
-                    this.setState({deleting: false},
+                    this.setState({
+                        ...this.state,
+                        deleting: false
+                    },
                     ()=> {
                         handleSelectionReload();
                     });
@@ -239,11 +286,13 @@ class Screens extends React.Component {
         if (selection.project) {
             if (selectAllRows) {
                 this.setState({
+                    ...this.state,
                     selectedRows: [],
                     selectAllRows: false
                 });
             } else {
                 this.setState({
+                    ...this.state,
                     selectedRows: this.filterName(selection.project.fieldnames).map(s => s._id),
                     selectAllRows: true
                 });
@@ -321,7 +370,8 @@ class Screens extends React.Component {
             selectedRows,
             selectAllRows,
             fieldName,
-            newRow
+            newRow,
+            newRowColor
         } = this.state;
 //selectAllRows
 
@@ -403,73 +453,48 @@ class Screens extends React.Component {
                         </thead>
                         <tbody className="full-height" style={{overflowY:'auto'}}>
                                 {newRow &&
-                                    <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow">
+                                    <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow" style={{height: '40px', lineHeight: '17.8571px'}}>
                                         <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}></td>
-                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
-                                            <select className="form-control" data-type="newrow" name="fieldId" value={fieldName.fieldId} onChange={event => this.handleChangeNewRow(event)}>
-                                                <option key="0" value="0">Select field...</option>
-                                                {selection && selection.project && arraySorted(selection.project.fields, "custom").map(option => {
-                                                    return (
-                                                        <option
-                                                            key={option._id}
-                                                            value={option._id}
-                                                        >
-                                                            {option.custom}
-                                                        </option>
-                                                    );
-                                                })}
-                                            </select>                                           
-                                        </td>
-                                        {/* <NewRowSelect 
-                                        name="fieldId"
-                                        value={fieldName.fieldId}
-                                        options={selection && selection.project && selection.project.fields}
-                                        optionText="custom"
-                                        onChange={event => this.handleChangeNewRow(event)}
-                                        /> */}
+                                        <NewRowSelect 
+                                            name="fieldId"
+                                            value={fieldName.fieldId}
+                                            options={selection && selection.project && selection.project.fields}
+                                            optionText="custom"
+                                            onChange={event => this.handleChangeNewRow(event)}
+                                            color={newRowColor}
+                                        />
                                         <NewRowInput
                                             type="number"
                                             name="forShow"
                                             value={fieldName.forShow}
                                             onChange={event => this.handleChangeNewRow(event)}
+                                            color={newRowColor}
                                         />
                                         <NewRowInput
                                             type="number"
                                             name="forSelect"
                                             value={fieldName.forSelect}
                                             onChange={event => this.handleChangeNewRow(event)}
+                                            color={newRowColor}
                                         />                                      
-                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
-                                            <select className="form-control" data-type="newrow" name="align" value={fieldName.align} onChange={event => this.handleChangeNewRow(event)}>
-                                                <option key="0" value="0">Select alignment...</option>
-                                                {selection && selection.project && arraySorted(arrAlign, "name").map(option => {
-                                                    return (
-                                                        <option
-                                                            key={option._id}
-                                                            value={option._id}
-                                                        >
-                                                            {option.name}
-                                                        </option>
-                                                    );
-                                                })}
-                                            </select>                                             
-                                        </td>
-                                        {/* <NewRowSelect 
+                                        <NewRowSelect 
                                             name="align"
                                             value={fieldName.align}
                                             options={arrAlign}
                                             optionText="name"
                                             onChange={event => this.handleChangeNewRow(event)}
-                                        /> */}
+                                            color={newRowColor}
+                                        />
                                         <NewRowCheckBox
                                             name="edit"
                                             checked={fieldName.edit}
                                             onChange={event => this.handleChangeNewRow(event)}
+                                            color={newRowColor}
                                         />
                                     </tr>                                
                                 }
                             {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
-                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
+                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>
                                     <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                         <TableSelectionRow
                                             id={s._id}

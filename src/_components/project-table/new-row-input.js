@@ -45,7 +45,7 @@ class NewRowInput extends Component{
             </td>
         )
         :
-        (<td onClick={() => this.onFocus()}>{this.props.value}</td>);
+        (<td onClick={() => this.onFocus()} style={{color: this.props.color}}>{this.props.value}</td>);
     }
 }
 

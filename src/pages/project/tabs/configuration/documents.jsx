@@ -7,6 +7,9 @@ import Modal from "../../../../_components/modal/modal.js"
 import Input from '../../../../_components/input';
 import CheckBox from '../../../../_components/check-box';
 import Select from '../../../../_components/select';
+import NewRowCheckBox from '../../../../_components/project-table/new-row-check-box';
+import NewRowInput from '../../../../_components/project-table/new-row-input';
+import NewRowSelect from '../../../../_components/project-table/new-row-select';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
 import TableCheckBox from '../../../../_components/project-table/table-check-box';
@@ -128,6 +131,7 @@ class Documents extends React.Component {
             docField:{},
             newRowFocus:false,
             creatingNewRow: false,
+            newRowColor: 'inherit',
 
         }
         this.onFocusRow = this.onFocusRow.bind(this);
@@ -158,7 +162,10 @@ class Documents extends React.Component {
         const { handleSelectionReload } = this.props;
         const { selectedTemplate, newRowFocus, docField } = this.state;
         if (selectedTemplate !='0' && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-            this.setState({creatingNewRow: true}, () => {
+            this.setState({
+                ...this.state,
+                creatingNewRow: true
+            }, () => {
                 const requestOptions = {
                     method: 'POST',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -166,26 +173,50 @@ class Documents extends React.Component {
                 };
                 return fetch(`${config.apiUrl}/docField/create`, requestOptions)
                 .then( () => {
-                    this.setState({creatingNewRow: false},
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false
+                    },
                     () => {
                         this.setState({
-                            newRow:false,
-                            docField:{},
-                            newRowFocus: false
-                        }, ()=>{
-                            handleSelectionReload();
+                            ...this.state,
+                            newRowColor: 'green'
+                        }, () => {
+                            setTimeout(() => {
+                                this.setState({
+                                    ...this.state,
+                                    newRowColor: 'inherit',
+                                    newRow:false,
+                                    docField:{},
+                                    newRowFocus: false
+                                }, () => {
+                                    handleSelectionReload();
+                                });
+                            }, 1000);
                         });
                     });
                 })
                 .catch( () => {
-                    this.setState({creatingNewRow: false},
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false
+                    },
                     () => {
                         this.setState({
-                            newRow:false,
-                            docField:{},
-                            newRowFocus: false
-                        }, ()=>{
-                            handleSelectionReload();
+                            ...this.state,
+                            newRowColor: 'red'
+                        }, () => {
+                            setTimeout(() => {
+                                this.setState({
+                                    ...this.state,
+                                    newRowColor: 'inherit',
+                                    newRow:false,
+                                    docField:{},
+                                    newRowFocus: false
+                                }, () => {
+                                    handleSelectionReload();
+                                });
+                            }, 1000);
                         });
                     });
                 });
@@ -196,7 +227,10 @@ class Documents extends React.Component {
     onBlurRow(event){
         event.preventDefault()
         if (event.currentTarget.dataset['type'] == 'newrow'){
-            this.setState({newRowFocus: true});
+            this.setState({
+                ...this.state,
+                newRowFocus: true
+            });
         }
     }
 
@@ -204,9 +238,15 @@ class Documents extends React.Component {
         event.preventDefault()
         const { newRow, selectedTemplate } = this.state;
         if (selectedTemplate == '0') {
-            this.setState({newRow: false})
+            this.setState({
+                ...this.state,
+                newRow: false}
+                )
         } else {
-            this.setState({newRow: !newRow})
+            this.setState({
+                ...this.state,
+                newRow: !newRow
+            })
         }
     }
 
@@ -215,9 +255,12 @@ class Documents extends React.Component {
         const { docField, selectedTemplate } = this.state;
         const target = event.target;
         const name = target.name;
+        console.log('projectId:', projectId);
+        console.log('selectedTemplate:', selectedTemplate);
         const value = target.type === 'checkbox' ? target.checked : target.value;
         if (projectId && selectedTemplate != '0') {
             this.setState({
+                ...this.state,
                 docField: {
                     ...docField,
                     [name]: value,
@@ -232,6 +275,7 @@ class Documents extends React.Component {
         const { projectId } = this.props
         if (projectId) {
             this.setState({
+                ...this.state,
                 docDef: {
                     code: "",
                     location: "Template",
@@ -256,6 +300,7 @@ class Documents extends React.Component {
 
     hideModal() {
         this.setState({
+            ...this.state,
             docDef: {
                 code: "",
                 location: "",
@@ -284,6 +329,7 @@ class Documents extends React.Component {
         if (id != '0' && project.docdefs) {
           let found = project.docdefs.find(element => element._id === id);
           this.setState({
+            ...this.state,
             docDef: {
               id: id,
               code: found.code,
@@ -313,20 +359,29 @@ class Documents extends React.Component {
         event.preventDefault();
         const { handleSelectionReload } = this.props;
         if(id) {
-            this.setState({deletingFields: true }, () => {
+            this.setState({
+                ...this.state,
+                deletingFields: true 
+            }, () => {
                 const requestOptions = {
                     method: 'DELETE',
                     headers: { ...authHeader()},
                 };
                 return fetch(`${config.apiUrl}/docField/delete?id=${JSON.stringify(id)}`, requestOptions)
                 .then( () => {
-                    this.setState({deletingFields: false},
+                    this.setState({
+                        ...this.state,
+                        deletingFields: false
+                    },
                     () => {
                         handleSelectionReload();
                     });
                 })
                 .catch( err => {
-                    this.setState({deletingFields: false},
+                    this.setState({
+                        ...this.state,
+                        deletingFields: false
+                    },
                     ()=> {
                         handleSelectionReload();
                     });
@@ -339,20 +394,35 @@ class Documents extends React.Component {
         event.preventDefault();
         const { handleSelectionReload } = this.props;
         if (id != '0') {
-            this.setState({deletingDoc: true }, () => {
+            this.setState({
+                ...this.state,
+                deletingDoc: true 
+            }, () => {
                 const requestOptions = {
                     method: 'DELETE',
                     headers: { ...authHeader()},
                 };
                 return fetch(`${config.apiUrl}/docdef/delete?id=${id}`, requestOptions)
                 .then( () => {
-                    this.setState({deletingDoc: false, selectedTemplate: '0', fileName: '', inputKey: Date.now(),},
+                    this.setState({
+                        ...this.state,
+                        deletingDoc: false,
+                        selectedTemplate: '0',
+                        fileName: '',
+                        inputKey: Date.now()
+                    },
                     () => {
                         handleSelectionReload();
                     });
                 })
                 .catch( err => {
-                    this.setState({deletingDoc: false, selectedTemplate: '0', fileName: '', inputKey: Date.now(),},
+                    this.setState({
+                        ...this.state,
+                        deletingDoc: false,
+                        selectedTemplate: '0',
+                        fileName: '',
+                        inputKey: Date.now()
+                    },
                     ()=> {
                         handleSelectionReload();
                     });
@@ -365,9 +435,15 @@ class Documents extends React.Component {
         event.preventDefault();
         const { docDef } = this.state;
         const { handleSelectionReload } = this.props
-        this.setState({ submitted: true }, () => {
+        this.setState({
+            ...this.state,
+            submitted: true
+        }, () => {
             if (docDef.id && docDef.description && docDef.doctypeId && docDef.projectId) {
-                this.setState({loading: true}, () => {
+                this.setState({
+                    ...this.state,
+                    loading: true
+                }, () => {
                     const requestOptions = {
                         method: 'PUT',
                         headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
@@ -375,14 +451,22 @@ class Documents extends React.Component {
                     }
                     return fetch(`${config.apiUrl}/docdef/update?id=${docDef.id}`, requestOptions)
                     .then( () => {
-                        this.setState({submitted: false, loading: false},
+                        this.setState({
+                            ...this.state,
+                            submitted: false, 
+                            loading: false
+                        },
                             ()=> {
                                 this.hideModal(event),
                                 handleSelectionReload();
                             });
                     })
                     .catch( err => {
-                        this.setState({submitted: false, loading: false},
+                        this.setState({
+                            ...this.state,
+                            submitted: false,
+                            loading: false
+                        },
                             ()=> {
                                 this.hideModal(event),
                                 handleSelectionReload();
@@ -390,7 +474,10 @@ class Documents extends React.Component {
                     });
                 });
             } else if (docDef.description && docDef.doctypeId && docDef.projectId){
-                this.setState({loading: true}, () => {
+                this.setState({
+                    ...this.state,
+                    loading: true
+                }, () => {
                     const requestOptions = {
                         method: 'POST',
                         headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
@@ -398,14 +485,22 @@ class Documents extends React.Component {
                     }
                     return fetch(`${config.apiUrl}/docdef/create`, requestOptions)
                     .then( () => {
-                        this.setState({submitted: false, loading: false},
+                        this.setState({
+                            ...this.state,
+                            submitted: false,
+                            loading: false
+                        },
                             ()=> {
                                 this.hideModal(event),
                                 handleSelectionReload();
                             })
                     })
                     .catch( err => {
-                        this.setState({submitted: false, loading: false},
+                        this.setState({
+                            ...this.state,
+                            submitted: false,
+                            loading: false
+                        },
                             ()=> {
                                 this.hideModal(event),
                                 handleSelectionReload();
@@ -470,6 +565,7 @@ class Documents extends React.Component {
     handleFileChange(event){
         if(event.target.files.length > 0) {
             this.setState({
+                ...this.state,
                 fileName: event.target.files[0].name
             });
         }
@@ -491,6 +587,7 @@ class Documents extends React.Component {
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
+            ...this.state,
             docDef: {
                 ...docDef,
                 [name]: value
@@ -518,14 +615,17 @@ class Documents extends React.Component {
                 let obj = findObj(selection.project.docdefs,value);
                 if (obj) {
                     this.setState({
+                        ...this.state,
                         fileName: obj.field
                     });
                     if (!!obj.row2){
                         this.setState({
+                            ...this.state,
                             multi: true
                         });
                     } else {
                         this.setState({
+                            ...this.state,
                             multi: false
                         })
                     }
@@ -540,11 +640,13 @@ class Documents extends React.Component {
         if (selection.project) {
             if (selectAllRows) {
                 this.setState({
+                    ...this.state,
                     selectedRows: [],
                     selectAllRows: false
                 });
             } else {
                 this.setState({
+                    ...this.state,
                     selectedRows: this.filterName(selection.project.docfields).map(s => s._id),
                     selectAllRows: true
                 });
@@ -603,7 +705,9 @@ class Documents extends React.Component {
             loading,
             deletingDoc,
             docDef,
-            newRow
+            newRow,
+            docField,
+            newRowColor
         } = this.state;
 
         const ArrLocation = [
@@ -747,68 +851,60 @@ class Documents extends React.Component {
                             </thead>
                             <tbody className="full-height" style={{overflowY:'auto'}}>
                                 {newRow &&
-                                    <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow">
+                                    <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow" style={{height: '40px', lineHeight: '17.8571px'}}>
                                         <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}></td>
                                         {multi &&
-                                            <td className="text-nowrap" style={{padding:0}} data-type="newrow">
-                                                <select className="form-control" data-type="newrow" name="worksheet" value={docDef.worksheet} onChange={event => this.handleChangeNewRow(event)}>
-                                                    {ArrSheet && arraySorted(ArrSheet, "worksheet").map(option => {
-                                                    return (
-                                                        <option 
-                                                            key={option._id}
-                                                            value={option._id}
-                                                        >
-                                                            {option.worksheet}
-                                                        </option>
-                                                    );
-                                                    })}
-                                                </select>                                            
-                                            </td>
+                                            <NewRowSelect 
+                                                name="worksheet"
+                                                value={docField.worksheet}
+                                                options={ArrSheet}
+                                                optionText="worksheet"
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                            />
                                         }
-                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
-                                            <select className="form-control" data-type="newrow" name="location" value={docDef.location} onChange={event => this.handleChangeNewRow(event)}>
-                                                    {ArrLocation && arraySorted(ArrLocation, "location").map(option => {
-                                                    return (
-                                                        <option
-                                                            key={option._id}
-                                                            value={option._id}
-                                                        >
-                                                            {option.location}
-                                                        </option>
-                                                    );
-                                                    })}
-                                            </select>                                             
-                                        </td>    
-                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
-                                            <input type="number" data-type="newrow" min="0" step="1" className="form-control" name="row" value={docDef.row} onChange={event => this.handleChangeNewRow(event)} />
-                                        </td>
-                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
-                                            <input type="number" data-type="newrow" min="0" step="1" className="form-control" name="col" value={docDef.col} onChange={event => this.handleChangeNewRow(event)} />
-                                        </td>
-                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
-                                            <select className="form-control" data-type="newrow" name="fieldId" value={docDef.fieldId} onChange={event => this.handleChangeNewRow(event)}>
-                                                <option key="0" value="0">Select field...</option>
-                                                {selection && selection.project && arraySorted(selection.project.fields, "custom").map(option => {
-                                                    return (
-                                                        <option
-                                                            key={option._id}
-                                                            value={option._id}
-                                                        >
-                                                            {option.custom}
-                                                        </option>
-                                                    );
-                                                })}
-                                            </select>                                             
-                                            {/* <input className="form-control" data-type="newrow" name="custom" value={docDef.custom} onChange={event => this.handleChangeNewRow(event)} /> */}
-                                        </td>
-                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
-                                            <input className="form-control" data-type="newrow" name="param" value={docDef.param} onChange={event => this.handleChangeNewRow(event)} />
-                                        </td>
+                                        <NewRowSelect 
+                                            name="location"
+                                            value={docField.location}
+                                            options={ArrLocation}
+                                            optionText="location"
+                                            onChange={event => this.handleChangeNewRow(event)}
+                                            color={newRowColor}
+                                        />                                        
+                                        <NewRowInput
+                                            type="number"
+                                            name="row"
+                                            value={docField.row}
+                                            onChange={event => this.handleChangeNewRow(event)}
+                                            color={newRowColor}
+                                        />                                        
+                                        <NewRowInput
+                                            type="number"
+                                            name="col"
+                                            value={docField.col}
+                                            onChange={event => this.handleChangeNewRow(event)}
+                                            color={newRowColor}
+                                        />                                         
+                                        <NewRowSelect 
+                                            name="fieldId"
+                                            value={docField.fieldId}
+                                            options={selection && selection.project && selection.project.fields}
+                                            optionText="custom"
+                                            onChange={event => this.handleChangeNewRow(event)}
+                                            color={newRowColor}
+                                        />                                        
+                                        <NewRowInput
+                                            type="text"
+                                            name="param"
+                                            value={docField.param}
+                                            onChange={event => this.handleChangeNewRow(event)}
+                                            color={newRowColor}
+                                        />                                         
                                     </tr>                                
                                 }
 
                             {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
-                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
+                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>
                                     <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
                                         <TableSelectionRow
                                             id={s._id}
@@ -816,7 +912,6 @@ class Documents extends React.Component {
                                             callback={this.updateSelectedRows}
                                         />
                                     </td>
-                                    {/* <td>{s.fields.custom}</td> */}
                                     {multi &&
                                         <TableSelect 
                                             collection="docfield"
@@ -835,7 +930,6 @@ class Documents extends React.Component {
                                         options={ArrLocation}
                                         optionText="location"                                  
                                     />
-                                    {/* <td>{s.forShow}</td> */}
                                     <TableInput 
                                         collection="docfield"
                                         objectId={s._id}
@@ -843,7 +937,6 @@ class Documents extends React.Component {
                                         fieldValue={s.row}
                                         fieldType="number"
                                     />
-                                    {/* <td>{s.forSelect}</td> */}
                                     <TableInput 
                                         collection="docfield"
                                         objectId={s._id}
@@ -851,7 +944,6 @@ class Documents extends React.Component {
                                         fieldValue={s.col}
                                         fieldType="number"
                                     />
-                                    {/* <td>{s.align}</td> */}
                                     <TableSelect 
                                         collection="docfield"
                                         objectId={s._id}
@@ -860,7 +952,6 @@ class Documents extends React.Component {
                                         options={selection.project.fields}
                                         optionText="custom"                                  
                                     />
-                                    {/* <td>{s.edit}</td> */}
                                     <TableInput 
                                         collection="docfield"
                                         objectId={s._id}
