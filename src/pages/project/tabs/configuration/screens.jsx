@@ -2,6 +2,8 @@ import React from 'react';
 import config from 'config';
 import { authHeader } from '../../../../_helpers';
 import NewRowCheckBox from '../../../../_components/project-table/new-row-check-box';
+import NewRowInput from '../../../../_components/project-table/new-row-input';
+import NewRowSelect from '../../../../_components/project-table/new-row-select';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
 import TableCheckBox from '../../../../_components/project-table/table-check-box';
@@ -287,7 +289,7 @@ class Screens extends React.Component {
         if (array) {
           return arraySorted(array, 'fields.custom').filter(function (element) {
             return (doesMatch(selectedScreen, element.screenId, 'Id')
-            && doesMatch(custom, element.fields.custom, 'String')
+            && element.fields && doesMatch(custom, element.fields.custom, 'String')
             && doesMatch(forShow, element.forShow, 'Number')
             && doesMatch(forSelect, element.forSelect, 'Number')
             && doesMatch(align, element.align, 'Select')
@@ -417,13 +419,26 @@ class Screens extends React.Component {
                                                     );
                                                 })}
                                             </select>                                           
-                                        </td>   
-                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
-                                            <input type="number" data-type="newrow" min="0" step="1" className="form-control" name="forShow" value={fieldName.forShow} onChange={event => this.handleChangeNewRow(event)} />
                                         </td>
-                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
-                                            <input type="number" data-type="newrow" min="0" step="1" className="form-control" name="forSelect" value={fieldName.forSelect} onChange={event => this.handleChangeNewRow(event)} />
-                                        </td>
+                                        {/* <NewRowSelect 
+                                        name="fieldId"
+                                        value={fieldName.fieldId}
+                                        options={selection && selection.project && selection.project.fields}
+                                        optionText="custom"
+                                        onChange={event => this.handleChangeNewRow(event)}
+                                        /> */}
+                                        <NewRowInput
+                                            type="number"
+                                            name="forShow"
+                                            value={fieldName.forShow}
+                                            onChange={event => this.handleChangeNewRow(event)}
+                                        />
+                                        <NewRowInput
+                                            type="number"
+                                            name="forSelect"
+                                            value={fieldName.forSelect}
+                                            onChange={event => this.handleChangeNewRow(event)}
+                                        />                                      
                                         <td className="text-nowrap" style={{padding:0}} data-type="newrow">
                                             <select className="form-control" data-type="newrow" name="align" value={fieldName.align} onChange={event => this.handleChangeNewRow(event)}>
                                                 <option key="0" value="0">Select alignment...</option>
@@ -439,14 +454,18 @@ class Screens extends React.Component {
                                                 })}
                                             </select>                                             
                                         </td>
-                                        <td className="text-nowrap" style={{padding:0}} data-type="newrow">
-                                            {/* <input className="form-control" type="checkbox" data-type="newrow" name="edit" value={fieldName.edit} onChange={event => this.handleChangeNewRow(event)} /> */}
-                                            <NewRowCheckBox
-                                                name="edit"
-                                                checked={fieldName.edit}
-                                                onChange={event => this.handleChangeNewRow(event)}
-                                            />
-                                        </td>
+                                        {/* <NewRowSelect 
+                                            name="align"
+                                            value={fieldName.align}
+                                            options={arrAlign}
+                                            optionText="name"
+                                            onChange={event => this.handleChangeNewRow(event)}
+                                        /> */}
+                                        <NewRowCheckBox
+                                            name="edit"
+                                            checked={fieldName.edit}
+                                            onChange={event => this.handleChangeNewRow(event)}
+                                        />
                                     </tr>                                
                                 }
                             {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
@@ -458,7 +477,6 @@ class Screens extends React.Component {
                                             callback={this.updateSelectedRows}
                                         />
                                     </td>
-                                    {/* <td>{s.fields.custom}</td> */}
                                     <TableSelect 
                                         collection="fieldname"
                                         objectId={s._id}
@@ -467,7 +485,6 @@ class Screens extends React.Component {
                                         options={selection.project.fields}
                                         optionText="custom"                                  
                                     />
-                                    {/* <td>{s.forShow}</td> */}
                                     <TableInput 
                                         collection="fieldname"
                                         objectId={s._id}
@@ -475,7 +492,6 @@ class Screens extends React.Component {
                                         fieldValue={s.forShow}
                                         fieldType="number"
                                     />
-                                    {/* <td>{s.forSelect}</td> */}
                                     <TableInput 
                                         collection="fieldname"
                                         objectId={s._id}
@@ -483,7 +499,6 @@ class Screens extends React.Component {
                                         fieldValue={s.forSelect}
                                         fieldType="number"
                                     />
-                                    {/* <td>{s.align}</td> */}
                                     <TableSelect 
                                         collection="fieldname"
                                         objectId={s._id}
@@ -492,7 +507,6 @@ class Screens extends React.Component {
                                         options={arrAlign}
                                         optionText="name"                                  
                                     />
-                                    {/* <td>{s.edit}</td> */}
                                     <TableCheckBox 
                                         collection="fieldname"
                                         objectId={s._id}

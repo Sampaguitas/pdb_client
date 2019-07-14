@@ -569,7 +569,7 @@ class Documents extends React.Component {
             && doesMatch(location, element.location, 'Select')
             && doesMatch(row, element.row, 'Number')
             && doesMatch(col, element.col, 'Number')
-            && doesMatch(custom, element.fields.custom, 'String')
+            && element.fields && doesMatch(custom, element.fields.custom, 'String')
             );
           });
         } else {
