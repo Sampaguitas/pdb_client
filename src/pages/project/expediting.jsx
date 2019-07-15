@@ -6,63 +6,13 @@ import Layout from '../../_components/layout';
 import ProjectTable from '../../_components/project-table/project-table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-// function findObj(array, field, search) {
-//     if (!_.isEmpty(array) && search) {
-//         return array.find((function(element) {
-//             return _.isEqual(element[`${field}`], search);
-//         }));
-//     } else {
-//         return [];
-//     }
-// }
-
-function arrayRemove(arr, value) {
-
-    return arr.filter(function(ele){
-        return ele != value;
-    });
- 
- }
-
-function resolve(path, obj) {
-    return path.split('.').reduce(function(prev, curr) {
-        return prev ? prev[curr] : null
-    }, obj || self)
-}
-
-function arraySorted(array, field) {
-    if (array) {
-        const newArray = array
-        newArray.sort(function(a,b){
-            if (resolve(field, a) < resolve(field, b)) {
-                return -1;
-            } else if ((resolve(field, a) > resolve(field, b))) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        return newArray;             
-    }
-}
-
-function returnScreenHeaders(selection, screen) {
-    if (selection.project) {
-        return selection.project.fieldnames.filter(function(element) {
-            return (_.isEqual(element.screenId, screen) && !!element.forShow); 
-        });
-    } else {
-        return [];
-    }
-}
-
 class Expediting extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            projectId:''  
+            projectId:'',
+            screenId: '5cd2b642fd333616dc360b63'  
         };
-        //this.returnScreenHeaders = this.returnScreenHeaders.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
     }
 
@@ -75,8 +25,6 @@ class Expediting extends React.Component {
         }
         dispatch(projectActions.getAll()); 
     }
-
-
 
     handleSelectionReload(event){
         const { dispatch, location } = this.props
@@ -163,7 +111,7 @@ class Expediting extends React.Component {
 
         ]
 
-        const screen = "5cd2b642fd333616dc360b63"
+        const { screenId }= this.state;
         const { alert, selection } = this.props;
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
@@ -171,30 +119,11 @@ class Expediting extends React.Component {
                 <h2>Expediting : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="expediting" className="full-height">
-                <div className="btn-group-vertical pull-right">
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}> 
-                        <span><FontAwesomeIcon icon="cog" className="fas fa-3x"/></span>
-                    </button>
-                    <button className="btn btn-outline-leeuwen-blue"style={{width: '50px', height: '50px'}}>
-                        <span><FontAwesomeIcon icon="filter" className="far fa-3x"/></span>
-                    </button>
-                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.handleSelectionReload(event)} style={{width: '50px', height: '50px'}}>
-                        <span><FontAwesomeIcon icon="sync-alt" className="far fa-3x"/></span>
-                    </button>
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
-                        <span><FontAwesomeIcon icon="unlock" className="fas fa-3x"/></span>
-                    </button>
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
-                        <span><FontAwesomeIcon icon="download" className="fas fa-3x"/></span>
-                    </button>
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
-                        <span><FontAwesomeIcon icon="upload" className="fas fa-3x"/></span>
-                    </button>
-                </div>
                  {selection && 
                     <ProjectTable
-                        screenHeaders={arraySorted(returnScreenHeaders(selection, screen), "forShow")}
-                        // screenHeaders={testScreenHeader}
+                        selection={selection}
+                        screenId={screenId}
+                        handleSelectionReload={this.handleSelectionReload}
                     />
                  }
                 </div>

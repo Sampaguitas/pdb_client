@@ -12,6 +12,47 @@ import TableCheckBox from '../../_components/project-table/table-check-box';
 import TableSelectionRow from '../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../_components/project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+function arrayRemove(arr, value) {
+
+    return arr.filter(function(ele){
+        return ele != value;
+    });
+ 
+ }
+
+function resolve(path, obj) {
+    return path.split('.').reduce(function(prev, curr) {
+        return prev ? prev[curr] : null
+    }, obj || self)
+}
+
+function arraySorted(array, field) {
+    if (array) {
+        const newArray = array
+        newArray.sort(function(a,b){
+            if (resolve(field, a) < resolve(field, b)) {
+                return -1;
+            } else if ((resolve(field, a) > resolve(field, b))) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        return newArray;             
+    }
+}
+
+function returnScreenHeaders(selection, screenId) {
+    if (selection.project) {
+        return selection.project.fieldnames.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        });
+    } else {
+        return [];
+    }
+}
+
 class ProjectTable extends Component {
     constructor(props) {
         super(props);
@@ -36,17 +77,37 @@ class ProjectTable extends Component {
     }
     
     render() {
-        const { screenHeaders } = this.props;
+        const { selection, screenId, handleSelectionReload } = this.props;
         const { header } = this.state;
         return (
             <div>
+                <div className="btn-group-vertical pull-right">
+                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}> 
+                        <span><FontAwesomeIcon icon="cog" className="fas fa-3x"/></span>
+                    </button>
+                    <button className="btn btn-outline-leeuwen-blue"style={{width: '50px', height: '50px'}}>
+                        <span><FontAwesomeIcon icon="filter" className="far fa-3x"/></span>
+                    </button>
+                    <button className="btn btn-outline-leeuwen-blue" onClick={event => handleSelectionReload(event)} style={{width: '50px', height: '50px'}}>
+                        <span><FontAwesomeIcon icon="sync-alt" className="far fa-3x"/></span>
+                    </button>
+                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
+                        <span><FontAwesomeIcon icon="unlock" className="fas fa-3x"/></span>
+                    </button>
+                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
+                        <span><FontAwesomeIcon icon="download" className="fas fa-3x"/></span>
+                    </button>
+                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
+                        <span><FontAwesomeIcon icon="upload" className="fas fa-3x"/></span>
+                    </button>
+                </div>
                 <div className="row full-height ml-1">
                     <div className="full-height table-responsive"> 
                         <table className="table table-hover table-bordered table-sm">
                             <thead>
                                 <tr>
-                                    {screenHeaders && 
-                                        screenHeaders.map(screenHeader => {
+                                    {selection && 
+                                        arraySorted(returnScreenHeaders(selection, screenId), "forShow").map(screenHeader => {
                                             switch (screenHeader.fields.type) {
                                                 case "String":
                                                     return ( 
@@ -91,7 +152,7 @@ class ProjectTable extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                
+
                             </tbody>
                         </table>
                     </div>
