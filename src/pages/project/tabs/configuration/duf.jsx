@@ -1,6 +1,8 @@
 import React from 'react';
 import config from 'config';
 import { authHeader } from '../../../../_helpers';
+import HeaderInput from '../../../../_components/project-table/header-input';
+import HeaderSelect from '../../../../_components/project-table/header-select';
 import NewRowCreate from '../../../../_components/project-table/new-row-create';
 import NewRowInput from '../../../../_components/project-table/new-row-input';
 import NewRowSelect from '../../../../_components/project-table/new-row-select';
@@ -57,12 +59,14 @@ function doesMatch(search, array, type) {
                 return !!String(array).match(new RegExp(search, "i"));
                 //return array == Number(search);
             case 'Boolean':
-                if (Number(search) == 1) {
-                    return true; //any
-                } else if (Number(search) == 2) {
-                    return !!array == 1; //true
-                } else if (Number(search) == 3) {
-                    return !!array == 0; //false
+                if(search == 'any') {
+                    return true; //any or equal
+                } else if (search == 'true' && !!array) {
+                    return true; //true
+                } else if (search == 'false' && !array) {
+                    return true; //true
+                } else {
+                    return false;
                 }
             case 'Select':
                 if(search == 'any' || _.isEqual(search, array)) {
@@ -361,12 +365,27 @@ class Duf extends React.Component {
                                     checked={selectAllRows}
                                     onChange={this.toggleSelectAllRow}                                        
                                 />
-                                <th style={{width: '15%'}}>Column<br/>
+                                {/* <th style={{width: '15%'}}>Column<br/>
                                     <input type="number" min="0" step="1" className="form-control" name="forShow" value={forShow} onChange={this.handleChangeHeader} />
-                                </th>
-                                <th>Field<br/>
+                                </th> */}
+                                <HeaderInput
+                                    type="number"
+                                    title="Column"
+                                    name="forShow"
+                                    value={forShow}
+                                    onChange={this.handleChangeHeader}
+                                    width={'15%'}
+                                />                                
+                                {/* <th>Field<br/>
                                     <input className="form-control" name="custom" value={custom} onChange={this.handleChangeHeader} />
-                                </th>
+                                </th> */}
+                                <HeaderInput
+                                    type="text"
+                                    title="Field"
+                                    name="custom"
+                                    value={custom}
+                                    onChange={this.handleChangeHeader}
+                                />                
                             </tr>
                         </thead>
                         <tbody className="full-height" style={{overflowY:'auto'}}>

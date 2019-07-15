@@ -7,6 +7,7 @@ import Modal from "../../../../_components/modal/modal.js"
 import Input from '../../../../_components/input';
 import CheckBox from '../../../../_components/check-box';
 import Select from '../../../../_components/select';
+import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
 import HeaderInput from '../../../../_components/project-table/header-input';
 import HeaderSelect from '../../../../_components/project-table/header-select';
 import NewRowCreate from '../../../../_components/project-table/new-row-create';
@@ -74,7 +75,7 @@ function findObj(array, search) {
 function doesMatch(search, array, type) {
     if (!search) {
         return true;
-    } else if (!array && search) {
+    } else if (!array && search != 'any' && search != 'false') {
         return false;
     } else {
         switch(type) {
@@ -88,12 +89,21 @@ function doesMatch(search, array, type) {
                 return !!String(array).match(new RegExp(search, "i"));
                 //return array == Number(search);
             case 'Boolean':
-                if (Number(search) == 1) {
-                    return true; //any
-                } else if (Number(search) == 2) {
-                    return !!array == 1; //true
-                } else if (Number(search) == 3) {
-                    return !!array == 0; //false
+                // if (Number(search) == 1) {
+                //     return true; //any
+                // } else if (Number(search) == 2) {
+                //     return !!array == 1; //true
+                // } else if (Number(search) == 3) {
+                //     return !!array == 0; //false
+                // }
+                if(search == 'any') {
+                    return true; //any or equal
+                } else if (search == 'true' && !!array) {
+                    return true; //true
+                } else if (search == 'false' && !array) {
+                    return true; //true
+                }else {
+                    return false;
                 }
             case 'Select':
                 if(search == 'any' || _.isEqual(search, array)) {
@@ -597,9 +607,6 @@ class Documents extends React.Component {
 
     handleChangeTemplate(event) {
         const { selection } = this.props;
-        // const { selectedTemplate } = this.state;
-        // const target = event.target;
-        // const name = target.name;
         const value =  event.target.value;
         this.setState({
             ...this.state,
@@ -685,8 +692,6 @@ class Documents extends React.Component {
         const { 
             tab,
             selection,
-            //handleDeleteDocDef,
-            //handleDeleteDocFields,
         } = this.props
         
         const {
@@ -778,7 +783,6 @@ class Documents extends React.Component {
                                         <form className="col-12 mb-3" encType="multipart/form-data" onSubmit={this.handleUploadFile}>
                                             <div className="input-group">
                                                 <div className="input-group-prepend">
-                                                    {/* <input type="file" style={{visibility: 'hidden', position: 'absolute'}}/> */}
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
                                                     <input
                                                         type="file"

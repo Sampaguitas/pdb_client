@@ -63,15 +63,15 @@ function doesMatch(search, array, type) {
                 return !!String(array).match(new RegExp(search, "i"));
                 //return array == Number(search);
             case 'Boolean':
-                    if(search == 'any') {
-                        return true; //any or equal
-                    } else if (search == 'true' && !!array) {
-                        return true; //true
-                    } else if (search == 'false' && !array) {
-                        return true; //true
-                    }else {
-                        return false;
-                    }                
+                if(search == 'any') {
+                    return true; //any or equal
+                } else if (search == 'true' && !!array) {
+                    return true; //true
+                } else if (search == 'false' && !array) {
+                    return true; //true
+                } else {
+                    return false;
+                }                
             case 'Select':
                 if(search == 'any' || _.isEqual(search, array)) {
                     return true; //any or equal
