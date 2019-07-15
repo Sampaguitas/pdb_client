@@ -47,7 +47,7 @@ class ProjectTable extends Component {
                                 <tr>
                                     {screenHeaders && 
                                         screenHeaders.map(screenHeader => {
-                                            switch (screenHeader.type) {
+                                            switch (screenHeader.fields.type) {
                                                 case "String":
                                                     return ( 
                                                         <HeaderInput
