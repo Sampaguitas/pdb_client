@@ -350,15 +350,10 @@ class Duf extends React.Component {
                                 </th>
                             </tr>
                             <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
-                                <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
-                                    <TableSelectionAllRow
-                                        // selectAllRows={selectAllRows}
-                                        // toggleSelectAllRow={this.toggleSelectAllRow}
-                                        // selectedScreen={selectedScreen}
-                                        checked={selectAllRows}
-                                        onChange={this.toggleSelectAllRow}                                        
-                                    />
-                                </th>
+                                <TableSelectionAllRow
+                                    checked={selectAllRows}
+                                    onChange={this.toggleSelectAllRow}                                        
+                                />
                                 <th style={{width: '15%'}}>Column<br/>
                                     <input type="number" min="0" step="1" className="form-control" name="forShow" value={forShow} onChange={this.handleChangeHeader} />
                                 </th>
@@ -390,14 +385,11 @@ class Duf extends React.Component {
                             }
                             {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
                                 <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>
-                                    <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
-                                        <TableSelectionRow
-                                            id={s._id}
-                                            selectAllRows={this.state.selectAllRows}
-                                            callback={this.updateSelectedRows}
-                                        />
-                                    </td>                                    
-                                    {/* <td>{s.forShow}</td> */}
+                                    <TableSelectionRow
+                                        id={s._id}
+                                        selectAllRows={this.state.selectAllRows}
+                                        callback={this.updateSelectedRows}
+                                    />                                  
                                     <TableInput 
                                         collection="fieldname"
                                         objectId={s._id}
@@ -405,7 +397,6 @@ class Duf extends React.Component {
                                         fieldValue={s.forShow}
                                         fieldType="number"
                                     />
-                                    {/* <td>{s.fields.custom}</td> */}
                                     <TableSelect 
                                         collection="fieldname"
                                         objectId={s._id}

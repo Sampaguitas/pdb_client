@@ -7,6 +7,9 @@ import Modal from "../../../../_components/modal/modal.js"
 import Input from '../../../../_components/input';
 import CheckBox from '../../../../_components/check-box';
 import Select from '../../../../_components/select';
+import HeaderInput from '../../../../_components/project-table/header-input';
+import HeaderSelect from '../../../../_components/project-table/header-select';
+import NewRowCreate from '../../../../_components/project-table/new-row-create';
 import NewRowCheckBox from '../../../../_components/project-table/new-row-check-box';
 import NewRowInput from '../../../../_components/project-table/new-row-input';
 import NewRowSelect from '../../../../_components/project-table/new-row-select';
@@ -93,7 +96,7 @@ function doesMatch(search, array, type) {
                     return !!array == 0; //false
                 }
             case 'Select':
-                if(search.toLowerCase() == 'any' || _.isEqual(search, array)) {
+                if(search == 'any' || _.isEqual(search, array)) {
                     return true; //any or equal
                 } else {
                     return false;
@@ -107,6 +110,7 @@ class Documents extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            worksheet: '',
             location: '',
             row: '',
             col: '',
@@ -134,6 +138,7 @@ class Documents extends React.Component {
             newRowColor: 'inherit',
 
         }
+        this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
@@ -157,60 +162,66 @@ class Documents extends React.Component {
         //this.docConf = this.docConf.bind(this);
     }
 
-    onFocusRow(event) {
-        event.preventDefault();
+    cerateNewRow(event) {
+        event.preventDefault()
         const { handleSelectionReload } = this.props;
-        const { selectedTemplate, newRowFocus, docField } = this.state;
-        if (selectedTemplate !='0' && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-            this.setState({
-                ...this.state,
-                creatingNewRow: true
-            }, () => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify(docField)
-                };
-                return fetch(`${config.apiUrl}/docField/create`, requestOptions)
-                .then( () => {
-                    this.setState({
-                        ...this.state,
-                        creatingNewRow: false,
-                        newRowColor: 'green'
-                    }, () => {
-                        setTimeout(() => {
-                            this.setState({
-                                ...this.state,
-                                newRowColor: 'inherit',
-                                newRow:false,
-                                docField:{},
-                                newRowFocus: false
-                            }, () => {
-                                handleSelectionReload();
-                            });
-                        }, 1000);
-                    });
-                })
-                .catch( () => {
-                    this.setState({
-                        ...this.state,
-                        creatingNewRow: false,
-                        newRowColor: 'red'
-                    }, () => {
-                        setTimeout(() => {
-                            this.setState({
-                                ...this.state,
-                                newRowColor: 'inherit',
-                                newRow:false,
-                                docField:{},
-                                newRowFocus: false
-                            }, () => {
-                                handleSelectionReload();
-                            });
-                        }, 1000);
-                    });
+        const { docField } = this.state;
+        this.setState({
+            ...this.state,
+            creatingNewRow: true
+        }, () => {
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: JSON.stringify(docField)
+            };
+            return fetch(`${config.apiUrl}/docField/create`, requestOptions)
+            .then( () => {
+                this.setState({
+                    ...this.state,
+                    creatingNewRow: false,
+                    newRowColor: 'green'
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            ...this.state,
+                            newRowColor: 'inherit',
+                            newRow:false,
+                            docField:{},
+                            newRowFocus: false
+                        }, () => {
+                            handleSelectionReload();
+                        });
+                    }, 1000);
+                });
+            })
+            .catch( () => {
+                this.setState({
+                    ...this.state,
+                    creatingNewRow: false,
+                    newRowColor: 'red'
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            ...this.state,
+                            newRowColor: 'inherit',
+                            newRow:false,
+                            docField:{},
+                            newRowFocus: false
+                        }, () => {
+                            handleSelectionReload();
+                        });
+                    }, 1000);
                 });
             });
+        });
+    }
+
+    onFocusRow(event) {
+        event.preventDefault();
+        const { selectedTemplate, newRowFocus } = this.state;
+        if (selectedTemplate !='0' && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+            this.cerateNewRow(event);
         }
     }
 
@@ -644,7 +655,8 @@ class Documents extends React.Component {
     
     filterName(array){
         
-        const { 
+        const {
+            worksheet,
             location,
             row,
             col,
@@ -656,6 +668,7 @@ class Documents extends React.Component {
         if (array) {
           return arraySorted(array, 'fields.custom').filter(function (element) {
             return (doesMatch(selectedTemplate, element.docdefId, 'Id')
+            && doesMatch(worksheet, element.worksheet, 'Select')
             && doesMatch(location, element.location, 'Select')
             && doesMatch(row, element.row, 'Number')
             && doesMatch(col, element.col, 'Number')
@@ -677,6 +690,7 @@ class Documents extends React.Component {
         } = this.props
         
         const {
+            worksheet,
             location,
             row,
             col,
@@ -725,10 +739,10 @@ class Documents extends React.Component {
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
                 <div className="row full-height">
-                    <div className="table-responsive full-height">
+                    <div className="table-responsive full-height" >
                         <table className="table table-hover table-bordered table-sm" >
                             <thead>
-                                <tr className="text-center" onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
+                                <tr className="text-center">
                                     <th colSpan={multi ? '7' : '6'}>
                                         <div className="col-12 mb-3">
                                             <div className="input-group">
@@ -800,47 +814,69 @@ class Documents extends React.Component {
                                         </div>
                                     </th>
                                 </tr>
-                                <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
-                                    <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
-                                        <TableSelectionAllRow
-                                            checked={selectAllRows}
-                                            onChange={this.toggleSelectAllRow}
-                                        />
-                                    </th>
+                                <tr>
+                                    <TableSelectionAllRow
+                                        checked={selectAllRows}
+                                        onChange={this.toggleSelectAllRow}
+                                    />
                                     {multi &&
-                                        <th style={{width: '15%'}}>Worksheet<br/>
-                                            <select className="form-control" name="worksheet" value={worksheet} onChange={this.handleChangeHeader}>
-                                                <option key="0" value="Any">Any</option>
-                                                <option key="1" value="Sheet1">Sheet1</option>
-                                                <option key="2" value="Sheet2">Sheet2</option>
-                                            </select>
-                                        </th>
+                                        <HeaderSelect
+                                            title="Worksheet"
+                                            name="worksheet"
+                                            value={worksheet}
+                                            options={ArrSheet}
+                                            optionText="worksheet"
+                                            onChange={this.handleChangeHeader}
+                                            width ='15%'                                        
+                                        />                                        
                                     }
-                                    <th style={{width: '15%'}}>Location<br/>
-                                        <select className="form-control" name="location" value={location} onChange={this.handleChangeHeader}>
-                                            <option key="0" value="Any">Any</option>
-                                            <option key="1" value="Header">Header</option>
-                                            <option key="2" value="Line">Line</option>
-                                        </select>
-                                    </th>
-                                    <th style={{width: '15%'}}>Row<br/>
-                                        <input type="number" min="0" step="1" className="form-control" name="row" value={row} onChange={this.handleChangeHeader} />
-                                    </th>
-                                    <th style={{width: '15%'}}>Col<br/>
-                                        <input type="number" min="0" step="1" className="form-control" name="col" value={col} onChange={this.handleChangeHeader} />
-                                    </th>
-                                    <th>Field<br/>
-                                        <input className="form-control" name="custom" value={custom} onChange={this.handleChangeHeader} />
-                                    </th>
-                                    <th>Parameter<br/>
-                                        <input className="form-control" name="param" value={param} onChange={this.handleChangeHeader} />
-                                    </th>                              
+                                    <HeaderSelect
+                                        title="Location"
+                                        name="location"
+                                        value={location}
+                                        options={ArrLocation}
+                                        optionText="location"
+                                        onChange={this.handleChangeHeader}
+                                        width ='15%'                                        
+                                    />
+                                    <HeaderInput
+                                        type="number"
+                                        title="Row"
+                                        name="row"
+                                        value={row}
+                                        onChange={this.handleChangeHeader}
+                                        width ='15%'
+                                    />
+                                    <HeaderInput
+                                        type="number"
+                                        title="Col"
+                                        name="col"
+                                        value={col}
+                                        onChange={this.handleChangeHeader}
+                                        width ='15%'
+                                    />
+                                    <HeaderInput
+                                        type="text"
+                                        title="Field"
+                                        name="custom"
+                                        value={custom}
+                                        onChange={this.handleChangeHeader}
+                                    />
+                                    <HeaderInput
+                                        type="text"
+                                        title="Parameter"
+                                        name="param"
+                                        value={param}
+                                        onChange={this.handleChangeHeader}
+                                    />
                                 </tr>
                             </thead>
                             <tbody className="full-height" style={{overflowY:'auto'}}>
                                 {newRow &&
                                     <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow" style={{height: '40px', lineHeight: '17.8571px'}}>
-                                        <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}></td>
+                                        <NewRowCreate
+                                            onClick={ event => this.cerateNewRow(event)}
+                                        />
                                         {multi &&
                                             <NewRowSelect 
                                                 name="worksheet"
@@ -892,14 +928,12 @@ class Documents extends React.Component {
                                 }
 
                             {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
-                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>
-                                    <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
-                                        <TableSelectionRow
-                                            id={s._id}
-                                            selectAllRows={this.state.selectAllRows}
-                                            callback={this.updateSelectedRows}
-                                        />
-                                    </td>
+                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>                                   
+                                    <TableSelectionRow
+                                        id={s._id}
+                                        selectAllRows={this.state.selectAllRows}
+                                        callback={this.updateSelectedRows}
+                                    />
                                     {multi &&
                                         <TableSelect 
                                             collection="docfield"

@@ -1,6 +1,9 @@
 import React from 'react';
 import config from 'config';
 import { authHeader } from '../../../../_helpers';
+import HeaderInput from '../../../../_components/project-table/header-input';
+import HeaderSelect from '../../../../_components/project-table/header-select';
+import NewRowCreate from '../../../../_components/project-table/new-row-create';
 import NewRowCheckBox from '../../../../_components/project-table/new-row-check-box';
 import NewRowInput from '../../../../_components/project-table/new-row-input';
 import NewRowSelect from '../../../../_components/project-table/new-row-select';
@@ -102,6 +105,7 @@ class Screens extends React.Component {
             //creating new row
             newRowColor: 'inherit',
         }
+        this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
@@ -113,60 +117,66 @@ class Screens extends React.Component {
         this.filterName = this.filterName.bind(this);
     }
 
-    onFocusRow(event) {
+    cerateNewRow(event) {
         event.preventDefault();
         const { handleSelectionReload } = this.props;
-        const { selectedScreen, newRowFocus, fieldName } = this.state;
-        if (selectedScreen && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-            this.setState({
-                ...this.state,
-                creatingNewRow: true
-            }, () => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify(fieldName)
-                };
-                return fetch(`${config.apiUrl}/fieldName/create`, requestOptions)
-                .then( () => {
-                    this.setState({
-                        ...this.state,
-                        creatingNewRow: false,
-                        newRowColor: 'green'
-                    }, () => {
-                        setTimeout( () => {
-                            this.setState({
-                                ...this.state,
-                                newRowColor: 'inherit',
-                                newRow:false,
-                                fieldName:{},
-                                newRowFocus: false
-                            }, () => {
-                                handleSelectionReload();
-                            });
-                        }, 1000);                                
-                    });
-                })
-                .catch( () => {
-                    this.setState({
-                        ...this.state,
-                        creatingNewRow: false,
-                        newRowColor: 'red'
-                    }, () => {
-                        setTimeout(() => {
-                            this.setState({
-                                ...this.state,
-                                newRowColor: 'inherit',
-                                newRow:false,
-                                fieldName:{},
-                                newRowFocus: false                                    
-                            }, () => {
-                                handleSelectionReload();
-                            });
-                        }, 1000);                                                      
-                    });
+        const { fieldName } = this.state;
+        this.setState({
+            ...this.state,
+            creatingNewRow: true
+        }, () => {
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: JSON.stringify(fieldName)
+            };
+            return fetch(`${config.apiUrl}/fieldName/create`, requestOptions)
+            .then( () => {
+                this.setState({
+                    ...this.state,
+                    creatingNewRow: false,
+                    newRowColor: 'green'
+                }, () => {
+                    setTimeout( () => {
+                        this.setState({
+                            ...this.state,
+                            newRowColor: 'inherit',
+                            newRow:false,
+                            fieldName:{},
+                            newRowFocus: false
+                        }, () => {
+                            handleSelectionReload();
+                        });
+                    }, 1000);                                
+                });
+            })
+            .catch( () => {
+                this.setState({
+                    ...this.state,
+                    creatingNewRow: false,
+                    newRowColor: 'red'
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            ...this.state,
+                            newRowColor: 'inherit',
+                            newRow:false,
+                            fieldName:{},
+                            newRowFocus: false                                    
+                        }, () => {
+                            handleSelectionReload();
+                        });
+                    }, 1000);                                                      
                 });
             });
+        });
+    }
+
+    onFocusRow(event) {
+        event.preventDefault();
+        const { selectedScreen, newRowFocus } = this.state;
+        if (selectedScreen && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+            this.cerateNewRow(event);
         }
     }
 
@@ -267,7 +277,6 @@ class Screens extends React.Component {
     }
     
 	toggleSelectAllRow() {
-        //event.preventDefault();
         const { selectAllRows } = this.state;
         const { selection } = this.props;
         if (selection.project) {
@@ -342,7 +351,6 @@ class Screens extends React.Component {
             selection, 
             tab,
             screens,
-            //handleDeleteFieldNames,
         } = this.props;
         
         const {
@@ -360,7 +368,6 @@ class Screens extends React.Component {
             newRow,
             newRowColor
         } = this.state;
-//selectAllRows
 
         const arrAlign = [
             { _id: 'left', name: 'Left' },
@@ -374,7 +381,7 @@ class Screens extends React.Component {
                 <div className="table-responsive full-height">
                     <table className="table table-hover table-bordered table-sm" >
                         <thead>
-                            <tr className="text-center" onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
+                            <tr className="text-center">
                                 <th colSpan="6" >
                                     <div className="col-12 mb-3">
                                         <div className="input-group">
@@ -405,13 +412,11 @@ class Screens extends React.Component {
                                     </div>                                  
                                 </th>
                             </tr>
-                            <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
-                                <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
-                                    <TableSelectionAllRow
-                                        checked={selectAllRows}
-                                        onChange={this.toggleSelectAllRow}
-                                    />
-                                </th>
+                            <tr>
+                                <TableSelectionAllRow
+                                    checked={selectAllRows}
+                                    onChange={this.toggleSelectAllRow}
+                                />
                                 <th>Field<br/>
                                     <input className="form-control" name="custom" value={custom} onChange={this.handleChangeHeader} />
                                 </th>
@@ -441,7 +446,9 @@ class Screens extends React.Component {
                         <tbody className="full-height" style={{overflowY:'auto'}}>
                                 {newRow &&
                                     <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow" style={{height: '40px', lineHeight: '17.8571px'}}>
-                                        <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}></td>
+                                        <NewRowCreate
+                                            onClick={ event => this.cerateNewRow(event)}
+                                        />
                                         <NewRowSelect 
                                             name="fieldId"
                                             value={fieldName.fieldId}
@@ -482,13 +489,11 @@ class Screens extends React.Component {
                                 }
                             {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
                                 <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>
-                                    <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
-                                        <TableSelectionRow
-                                            id={s._id}
-                                            selectAllRows={this.state.selectAllRows}
-                                            callback={this.updateSelectedRows}
-                                        />
-                                    </td>
+                                    <TableSelectionRow
+                                        id={s._id}
+                                        selectAllRows={this.state.selectAllRows}
+                                        callback={this.updateSelectedRows}
+                                    />
                                     <TableSelect 
                                         collection="fieldname"
                                         objectId={s._id}
