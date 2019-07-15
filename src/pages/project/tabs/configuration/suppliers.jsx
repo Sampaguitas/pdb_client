@@ -1,8 +1,10 @@
 import React from 'react';
 import config from 'config';
-//Components
 import { authHeader } from '../../../../_helpers';
-import Modal from "../../../../_components/modal/modal.js"
+import Modal from "../../../../_components/modal/modal.js";
+import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
+import HeaderInput from '../../../../_components/project-table/header-input';
+import HeaderSelect from '../../../../_components/project-table/header-select';
 import CheckBox from '../../../../_components/check-box';
 import Input from '../../../../_components/input';
 import Select from '../../../../_components/select';
@@ -25,31 +27,67 @@ function arraySorted(array, field) {
     }
 }
 
+// function doesMatch(search, array, type) {
+//     if (!search) {
+//         return true;
+//     } else if (!array && search) {
+//         return false;
+//     } else {
+//         switch(type) {
+//             case 'String':
+//                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
+//                 return !!array.match(new RegExp(search, "i"));
+//             case 'Number': 
+//                 return array == Number(search);
+//             case 'Boolean':
+//                 if (Number(search) == 1) {
+//                 return true; //any
+//                 } else if (Number(search) == 2) {
+//                 return !!array == 1; //true
+//                 } else if (Number(search) == 3) {
+//                 return !!array == 0; //false
+//                 }
+//             default: return true;
+//         }
+//     }
+// }
+
 function doesMatch(search, array, type) {
     if (!search) {
         return true;
-    } else if (!array && search) {
+    } else if (!array && search != 'any' && search != 'false') {
         return false;
     } else {
         switch(type) {
+            case 'Id':
+                return _.isEqual(search, array);
             case 'String':
                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
                 return !!array.match(new RegExp(search, "i"));
-            case 'Number': 
-                return array == Number(search);
+            case 'Number':
+                search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
+                return !!String(array).match(new RegExp(search, "i"));
+                //return array == Number(search);
             case 'Boolean':
-                if (Number(search) == 1) {
-                return true; //any
-                } else if (Number(search) == 2) {
-                return !!array == 1; //true
-                } else if (Number(search) == 3) {
-                return !!array == 0; //false
+                if(search == 'any') {
+                    return true; //any or equal
+                } else if (search == 'true' && !!array) {
+                    return true; //true
+                } else if (search == 'false' && !array) {
+                    return true; //true
+                } else {
+                    return false;
+                }                
+            case 'Select':
+                if(search == 'any' || _.isEqual(search, array)) {
+                    return true; //any or equal
+                } else {
+                    return false;
                 }
             default: return true;
         }
     }
 }
-
 class Suppliers extends React.Component {
     constructor(props) {
         super(props);
@@ -70,23 +108,15 @@ class Suppliers extends React.Component {
             submitted: false,
             loading: false,
             deleting: false
-            //submittedSupplier: false,
-            //showSupplierModal: false 
         }
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
-        //this.handleResponse = this.handleResponse.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.handleChangeSupplier = this.handleChangeSupplier.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
-        //brought from Configs
-        //this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
-        // this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
-        //this.handleShowSupplierModal=this.handleShowSupplierModal.bind(this);
-        //this.handleHideSupplierModal=this.handleHideSupplierModal.bind(this);
     };
     //brought from Configs
     handleSubmit(event) {
@@ -146,7 +176,6 @@ class Suppliers extends React.Component {
                                 handleSelectionReload();
                             });
                     });
-                    //dispatch(supplierActions.update(supplier));
                 });
             } else {
                 console.log('supplier name or Id is missing')
@@ -154,11 +183,9 @@ class Suppliers extends React.Component {
         });
     }
 
-    //brought from Configs
     handleDelete(event, id) {
         event.preventDefault();
         const { handleSelectionReload } = this.props;
-        //dispatch(supplierActions.delete(id));
         if (id) {
             this.setState({ submitted: true, deleting: true }, () => {
                 const requestOptions = {
@@ -185,37 +212,6 @@ class Suppliers extends React.Component {
         }
 
     }
-
-    // handleResponse(response) {
-    //     return response.text().then(text => {
-    //         if (text == 'Unauthorized') {
-    //             logout();
-    //             location.reload(true);
-    //         }
-    //         const data = text && JSON.parse(text);
-    //         if (!response.ok) {
-    //             if (response.status === 401) {
-    //                 // auto logout if 401 response returned from api
-    //                 logout();
-    //                 location.reload(true);
-    //             }
-    //             const error = (data && data.message) || response.statusText;
-    //             return Promise.reject(error);
-    //         }
-    //         return data;
-    //     });
-    // }
-
-
-
-    //brought from Configs
-    // handleShowSupplierModal(event) {
-    //     this.setState({showSupplierModal: true});
-    // }
-    //brought from Configs
-    // handleHideSupplierModal(event) {
-    //     this.setState({showSupplierModal: false});
-    // } 
 
     showModal() {
         const { projectId } = this.props
@@ -434,15 +430,7 @@ class Suppliers extends React.Component {
 
         const { 
             tab,
-            // handleSubmitSupplier,
-            // handleDeleteSupplier,
-            // SupplierUpdating,
-            // SupplierCreating,
-            // SupplierDeleting,
-            // submittedSupplier,
-            // showSupplierModal,
             selection,                  
-            // currentUser
         } = this.props
 
         const { 
@@ -483,25 +471,67 @@ class Suppliers extends React.Component {
                              <div className="card-body table-responsive full-height"> {/* style={{display: 'block', overflow: 'scroll', height: '100%'}} */}
                                 <table className="table table-hover table-bordered table-sm"> {/*table-bordered*/}
                                     <thead>
-                                        <tr>
-                                            <th>Name<br /> {/* className="text-nowrap" style={{minWidth: '100px'}}*/}
+                                        <tr> {/* th className="text-nowrap" style={{minWidth: '100px'}}*/}
+                                            {/* <th>Name<br /> 
                                                 <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
-                                            </th>
-                                            <th>Registered Name<br />
+                                            </th> */}
+                                            <HeaderInput
+                                                type="text"
+                                                title="Name"
+                                                name="name"
+                                                value={name}
+                                                onChange={this.handleChangeHeader}
+                                            />                                            
+                                            {/* <th>Registered Name<br />
                                                 <input className="form-control" name="registeredName" value={registeredName} onChange={this.handleChangeHeader} />                                            
-                                            </th>
-                                            <th>Contact<br />
+                                            </th> */}
+                                            <HeaderInput
+                                                type="text"
+                                                title="Registered Name"
+                                                name="registeredName"
+                                                value={registeredName}
+                                                onChange={this.handleChangeHeader}
+                                            />
+                                            {/* <th>Contact<br />
                                                 <input className="form-control" name="contact" value={contact} onChange={this.handleChangeHeader} />
-                                            </th>
-                                            <th>Position<br />
+                                            </th> */}
+                                            <HeaderInput
+                                                type="text"
+                                                title="Contact"
+                                                name="contact"
+                                                value={contact}
+                                                onChange={this.handleChangeHeader}
+                                            />                                            
+                                            {/* <th>Position<br />
                                                 <input className="form-control" name="position" value={position} onChange={this.handleChangeHeader} />
-                                            </th>
-                                            <th>City<br />
+                                            </th> */}
+                                            <HeaderInput
+                                                type="text"
+                                                title="Position"
+                                                name="position"
+                                                value={position}
+                                                onChange={this.handleChangeHeader}
+                                            />                                            
+                                            {/* <th>City<br />
                                                 <input className="form-control" name="city" value={city} onChange={this.handleChangeHeader} />
-                                            </th>
-                                            <th>Country<br />
+                                            </th> */}
+                                            <HeaderInput
+                                                type="text"
+                                                title="City"
+                                                name="city"
+                                                value={city}
+                                                onChange={this.handleChangeHeader}
+                                            />                                            
+                                            {/* <th>Country<br />
                                                 <input className="form-control" name="country" value={country} onChange={this.handleChangeHeader} />
-                                            </th>
+                                            </th> */}
+                                            <HeaderInput
+                                                type="text"
+                                                title="Country"
+                                                name="country"
+                                                value={country}
+                                                onChange={this.handleChangeHeader}
+                                            />                                             
                                         </tr>
                                     </thead>
                                     <tbody>

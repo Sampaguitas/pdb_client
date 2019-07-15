@@ -1,5 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
+import HeaderInput from '../../../../_components/project-table/header-input';
 import TableInput from '../../../../_components/project-table/table-input'
 
 //https://stackoverflow.com/questions/4244896/dynamically-access-object-property-using-variable
@@ -28,22 +30,34 @@ function arraySorted(array, field) {
 function doesMatch(search, array, type) {
     if (!search) {
         return true;
-    } else if (!array) {
-        return true;
+    } else if (!array && search != 'any' && search != 'false') {
+        return false;
     } else {
         switch(type) {
+            case 'Id':
+                return _.isEqual(search, array);
             case 'String':
                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
                 return !!array.match(new RegExp(search, "i"));
-            case 'Number': 
-                return array == Number(search);
+            case 'Number':
+                search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
+                return !!String(array).match(new RegExp(search, "i"));
+                //return array == Number(search);
             case 'Boolean':
-                if (Number(search) == 1) {
-                return true; //any
-                } else if (Number(search) == 2) {
-                return !!array == 1; //true
-                } else if (Number(search) == 3) {
-                return !!array == 0; //false
+                if(search == 'any') {
+                    return true; //any or equal
+                } else if (search == 'true' && !!array) {
+                    return true; //true
+                } else if (search == 'false' && !array) {
+                    return true; //true
+                } else {
+                    return false;
+                }                
+            case 'Select':
+                if(search == 'any' || _.isEqual(search, array)) {
+                    return true; //any or equal
+                } else {
+                    return false;
                 }
             default: return true;
         }
@@ -116,18 +130,34 @@ class Fields extends React.Component {
                         <table className="table table-hover table-bordered table-sm" >
                             <thead>
                                 <tr>
-                                    <th className="text-nowrap">Field Name<br/>
-                                        <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
-                                    </th>
-                                    <th className="text-nowrap">From Table<br/>
-                                        <input className="form-control" name="fromTbl" value={fromTbl} onChange={this.handleChangeHeader} />
-                                    </th>
-                                    <th className="text-nowrap">Type<br/>
-                                        <input className="form-control" name="type" value={type} onChange={this.handleChangeHeader} />
-                                    </th>
-                                    <th className="text-nowrap">Custom Name<br/>
-                                        <input className="form-control" name="custom" value={custom} onChange={this.handleChangeHeader} />
-                                    </th>
+                                    <HeaderInput
+                                        type="text"
+                                        title="Field Name"
+                                        name="name"
+                                        value={name}
+                                        onChange={this.handleChangeHeader}
+                                    />
+                                    <HeaderInput
+                                        type="text"
+                                        title="From Table"
+                                        name="fromTbl"
+                                        value={fromTbl}
+                                        onChange={this.handleChangeHeader}
+                                    />                                    
+                                    <HeaderInput
+                                        type="text"
+                                        title="Type"
+                                        name="type"
+                                        value={type}
+                                        onChange={this.handleChangeHeader}
+                                    />                                    
+                                    <HeaderInput
+                                        type="text"
+                                        title="Custom Name"
+                                        name="custom"
+                                        value={custom}
+                                        onChange={this.handleChangeHeader}
+                                    />                                      
                                 </tr>
                             </thead>
                             <tbody className="full-height" style={{overflowY:'auto'}}>
