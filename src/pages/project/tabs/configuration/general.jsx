@@ -1,46 +1,106 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 //Components
-import CheckBox from '../../../../_components/check-box';
+import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
+import HeaderInput from '../../../../_components/project-table/header-input';
 import Input from '../../../../_components/input';
 import Select from '../../../../_components/select';
 import TableCheckBoxRole from '../../../../_components/project-table/table-check-box-role';
 
 const _ = require('lodash');
 
+// function arraySorted(array, field) {
+//     if (array) {
+//         const newArray = array
+//         newArray.sort(function(a,b){
+//             if (a[field] < b[field]) {
+//                 return -1;
+//             }
+//             if (a[field] > b[field]) {
+//                 return 1;
+//             }
+//             return 0;
+//         });
+//         return newArray;
+//     }
+// }
+
+function resolve(path, obj) {
+    return path.split('.').reduce(function(prev, curr) {
+        return prev ? prev[curr] : null
+    }, obj || self)
+}
+
 function arraySorted(array, field) {
     if (array) {
         const newArray = array
         newArray.sort(function(a,b){
-            if (a[field] < b[field]) {
+            if (resolve(field, a) < resolve(field, b)) {
                 return -1;
-            }
-            if (a[field] > b[field]) {
+            } else if ((resolve(field, a) > resolve(field, b))) {
                 return 1;
+            } else {
+                return 0;
             }
-            return 0;
         });
-        return newArray;
+        return newArray;             
     }
 }
+
+// function doesMatch(search, array, type) {
+//     if (!search) {
+//         return true;
+//     } else {
+//         switch(type) {
+//             case 'String':
+//                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
+//                 return !!array.match(new RegExp(search, "i"));
+//             case 'Number': 
+//                 return array == Number(search);
+//             case 'Boolean':
+//                 if (Number(search) == 1) {
+//                 return true;
+//                 } else if (Number(search) == 2) {
+//                 return !!array == 1;
+//                 } else if (Number(search) == 3) {
+//                 return !!array == 0;
+//                 }
+//             default: return true;
+//         }
+//     }
+// }
 
 function doesMatch(search, array, type) {
     if (!search) {
         return true;
+    } else if (!array && search != 'any' && search != 'false') {
+        return false;
     } else {
         switch(type) {
+            case 'Id':
+                return _.isEqual(search, array);
             case 'String':
                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
                 return !!array.match(new RegExp(search, "i"));
-            case 'Number': 
-                return array == Number(search);
+            case 'Number':
+                search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
+                return !!String(array).match(new RegExp(search, "i"));
+                //return array == Number(search);
             case 'Boolean':
-                if (Number(search) == 1) {
-                return true;
-                } else if (Number(search) == 2) {
-                return !!array == 1;
-                } else if (Number(search) == 3) {
-                return !!array == 0;
+                if(search == 'any') {
+                    return true; //any or equal
+                } else if (search == 'true' && !!array) {
+                    return true; //true
+                } else if (search == 'false' && !array) {
+                    return true; //true
+                } else {
+                    return false;
+                }                
+            case 'Select':
+                if(search == 'any' || _.isEqual(search, array)) {
+                    return true; //any or equal
+                } else {
+                    return false;
                 }
             default: return true;
         }
@@ -235,47 +295,96 @@ class General extends React.Component {
                                 <table className="table table-hover table-bordered table-sm" >
                                     <thead>
                                         <tr>
-                                            <th scope="col" style={{width: '10%'}}>Initials<br />
+                                            {/* <th scope="col" style={{width: '10%'}}>Initials<br />
                                                 <input className="form-control" name="userName" value={userName} onChange={this.handleChangeHeader} />
-                                            </th>
-                                            <th scope="col">User<br />
+                                            </th> */}
+                                            <HeaderInput
+                                                type="text"
+                                                title="Initials"
+                                                name="userName"
+                                                value={userName}
+                                                onChange={this.handleChangeHeader}
+                                            />                                            
+                                            {/* <th scope="col">User<br />
                                                 <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
-                                            </th>
-                                            <th scope="col" style={{width: '10%'}}>Expediting<br />
+                                            </th> */}
+                                            <HeaderInput
+                                                type="text"
+                                                title="User"
+                                                name="name"
+                                                value={name}
+                                                onChange={this.handleChangeHeader}
+                                            />                                             
+                                            {/* <th scope="col" style={{width: '10%'}}>Expediting<br />
                                                 <select className="form-control" name="isExpediting" value={isExpediting} onChange={this.handleChangeHeader}>
                                                     <option key="1" value="1">Any</option>
                                                     <option key="2" value="2">True</option> 
                                                     <option key="3" value="3">False</option>  
                                                 </select>
-                                            </th>
-                                            <th scope="col" style={{width: '10%'}}>Inspection<br />
+                                            </th> */}
+                                            <HeaderCheckBox 
+                                                title="Expediting"
+                                                name="isExpediting"
+                                                value={isExpediting}
+                                                onChange={this.handleChangeHeader}
+                                                width ='10%'
+                                            />                                            
+                                            {/* <th scope="col" style={{width: '10%'}}>Inspection<br />
                                                 <select className="form-control" name="isInspection" value={isInspection} onChange={this.handleChangeHeader}>
                                                     <option key="1" value="1">Any</option>
                                                     <option key="2" value="2">True</option> 
                                                     <option key="3" value="3">False</option>  
                                                 </select>
-                                            </th>
-                                            <th scope="col" style={{width: '10%'}}>Shipping<br />
+                                            </th> */}
+                                            <HeaderCheckBox 
+                                                title="Inspection"
+                                                name="isInspection"
+                                                value={isInspection}
+                                                onChange={this.handleChangeHeader}
+                                                width ='10%'
+                                            /> 
+                                            {/* <th scope="col" style={{width: '10%'}}>Shipping<br />
                                                 <select className="form-control" name="isShipping" value={isShipping} onChange={this.handleChangeHeader}>
                                                     <option key="1" value="1">Any</option>
                                                     <option key="2" value="2">True</option> 
                                                     <option key="3" value="3">False</option>  
                                                 </select>                                                
-                                            </th>
-                                            <th scope="col" style={{width: '10%'}}>Warehouse<br />
+                                            </th> */}
+                                            <HeaderCheckBox 
+                                                title="Shipping"
+                                                name="isShipping"
+                                                value={isShipping}
+                                                onChange={this.handleChangeHeader}
+                                                width ='10%'
+                                            /> 
+                                            {/* <th scope="col" style={{width: '10%'}}>Warehouse<br />
                                                 <select className="form-control" name="isWarehouse" value={isWarehouse} onChange={this.handleChangeHeader}>
                                                     <option key="1" value="1">Any</option>
                                                     <option key="2" value="2">True</option> 
                                                     <option key="3" value="3">False</option>  
                                                 </select>
-                                            </th>
-                                            <th scope="col" style={{width: '10%'}}>Config<br />
+                                            </th> */}
+                                            <HeaderCheckBox 
+                                                title="Warehouse"
+                                                name="isWarehouse"
+                                                value={isWarehouse}
+                                                onChange={this.handleChangeHeader}
+                                                width ='10%'
+                                            />
+                                            {/* <th scope="col" style={{width: '10%'}}>Config<br />
                                                 <select className="form-control" name="isConfiguration" value={isConfiguration} onChange={this.handleChangeHeader}>
                                                     <option key="1" value="1">Any</option>
                                                     <option key="2" value="2">True</option> 
                                                     <option key="3" value="3">False</option>  
                                                 </select>
-                                            </th>
+                                            </th> */}
+                                            <HeaderCheckBox 
+                                                title="Config"
+                                                name="isConfiguration"
+                                                value={isConfiguration}
+                                                onChange={this.handleChangeHeader}
+                                                width ='10%'
+                                            />                                            
                                         </tr>
                                     </thead>
                                     <tbody>

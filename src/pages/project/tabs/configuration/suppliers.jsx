@@ -2,55 +2,31 @@ import React from 'react';
 import config from 'config';
 import { authHeader } from '../../../../_helpers';
 import Modal from "../../../../_components/modal/modal.js";
-import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
 import HeaderInput from '../../../../_components/project-table/header-input';
-import HeaderSelect from '../../../../_components/project-table/header-select';
-import CheckBox from '../../../../_components/check-box';
 import Input from '../../../../_components/input';
-import Select from '../../../../_components/select';
-import SupplierRow from '../../../../_components/project-table/supplier-row.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
+function resolve(path, obj) {
+    return path.split('.').reduce(function(prev, curr) {
+        return prev ? prev[curr] : null
+    }, obj || self)
+}
 
 function arraySorted(array, field) {
     if (array) {
         const newArray = array
         newArray.sort(function(a,b){
-            if (a[field] < b[field]) {
+            if (resolve(field, a) < resolve(field, b)) {
                 return -1;
-            }
-            if (a[field] > b[field]) {
+            } else if ((resolve(field, a) > resolve(field, b))) {
                 return 1;
+            } else {
+                return 0;
             }
-            return 0;
         });
-        return newArray;
+        return newArray;             
     }
 }
-
-// function doesMatch(search, array, type) {
-//     if (!search) {
-//         return true;
-//     } else if (!array && search) {
-//         return false;
-//     } else {
-//         switch(type) {
-//             case 'String':
-//                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
-//                 return !!array.match(new RegExp(search, "i"));
-//             case 'Number': 
-//                 return array == Number(search);
-//             case 'Boolean':
-//                 if (Number(search) == 1) {
-//                 return true; //any
-//                 } else if (Number(search) == 2) {
-//                 return !!array == 1; //true
-//                 } else if (Number(search) == 3) {
-//                 return !!array == 0; //false
-//                 }
-//             default: return true;
-//         }
-//     }
-// }
 
 function doesMatch(search, array, type) {
     if (!search) {
@@ -67,7 +43,6 @@ function doesMatch(search, array, type) {
             case 'Number':
                 search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
                 return !!String(array).match(new RegExp(search, "i"));
-                //return array == Number(search);
             case 'Boolean':
                 if(search == 'any') {
                     return true; //any or equal
@@ -118,7 +93,7 @@ class Suppliers extends React.Component {
         this.filterName = this.filterName.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
     };
-    //brought from Configs
+
     handleSubmit(event) {
         event.preventDefault();
         const { supplier } = this.state;
@@ -472,9 +447,6 @@ class Suppliers extends React.Component {
                                 <table className="table table-hover table-bordered table-sm"> {/*table-bordered*/}
                                     <thead>
                                         <tr> {/* th className="text-nowrap" style={{minWidth: '100px'}}*/}
-                                            {/* <th>Name<br /> 
-                                                <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
-                                            </th> */}
                                             <HeaderInput
                                                 type="text"
                                                 title="Name"
@@ -482,9 +454,6 @@ class Suppliers extends React.Component {
                                                 value={name}
                                                 onChange={this.handleChangeHeader}
                                             />                                            
-                                            {/* <th>Registered Name<br />
-                                                <input className="form-control" name="registeredName" value={registeredName} onChange={this.handleChangeHeader} />                                            
-                                            </th> */}
                                             <HeaderInput
                                                 type="text"
                                                 title="Registered Name"
@@ -492,9 +461,6 @@ class Suppliers extends React.Component {
                                                 value={registeredName}
                                                 onChange={this.handleChangeHeader}
                                             />
-                                            {/* <th>Contact<br />
-                                                <input className="form-control" name="contact" value={contact} onChange={this.handleChangeHeader} />
-                                            </th> */}
                                             <HeaderInput
                                                 type="text"
                                                 title="Contact"
@@ -502,9 +468,6 @@ class Suppliers extends React.Component {
                                                 value={contact}
                                                 onChange={this.handleChangeHeader}
                                             />                                            
-                                            {/* <th>Position<br />
-                                                <input className="form-control" name="position" value={position} onChange={this.handleChangeHeader} />
-                                            </th> */}
                                             <HeaderInput
                                                 type="text"
                                                 title="Position"
@@ -512,9 +475,6 @@ class Suppliers extends React.Component {
                                                 value={position}
                                                 onChange={this.handleChangeHeader}
                                             />                                            
-                                            {/* <th>City<br />
-                                                <input className="form-control" name="city" value={city} onChange={this.handleChangeHeader} />
-                                            </th> */}
                                             <HeaderInput
                                                 type="text"
                                                 title="City"
@@ -522,9 +482,6 @@ class Suppliers extends React.Component {
                                                 value={city}
                                                 onChange={this.handleChangeHeader}
                                             />                                            
-                                            {/* <th>Country<br />
-                                                <input className="form-control" name="country" value={country} onChange={this.handleChangeHeader} />
-                                            </th> */}
                                             <HeaderInput
                                                 type="text"
                                                 title="Country"
