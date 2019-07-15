@@ -105,6 +105,7 @@ class User extends React.Component {
                                             submitted={submitted}
                                             inline={false}
                                             required={true}
+                                            autocomplete="current-password"
                                         />
                                         <Input
                                             title="New Password"
@@ -115,6 +116,7 @@ class User extends React.Component {
                                             submitted={submitted}
                                             inline={false}
                                             required={true}
+                                            autocomplete="new-password"
                                         />
                                         <Input
                                             title="Confirm Password"
@@ -125,6 +127,7 @@ class User extends React.Component {
                                             submitted={submitted}
                                             inline={false}
                                             required={true}
+                                            autocomplete="new-password"
                                         />
                                         <button type="submit" className="btn btn-leeuwen btn-full btn-lg mb-3" onClick={this.handleSubmit}>
                                             {userUpdating ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
