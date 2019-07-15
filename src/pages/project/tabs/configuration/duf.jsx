@@ -1,7 +1,7 @@
 import React from 'react';
 import config from 'config';
 import { authHeader } from '../../../../_helpers';
-import NewRowCheckBox from '../../../../_components/project-table/new-row-check-box';
+import NewRowCreate from '../../../../_components/project-table/new-row-create';
 import NewRowInput from '../../../../_components/project-table/new-row-input';
 import NewRowSelect from '../../../../_components/project-table/new-row-select';
 import TableInput from '../../../../_components/project-table/table-input';
@@ -97,6 +97,7 @@ class Duf extends React.Component {
             //creating new row
             newRowColor: 'inherit',
         }
+        this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
@@ -107,60 +108,66 @@ class Duf extends React.Component {
         this.filterName = this.filterName.bind(this);
     }
 
-    onFocusRow(event) {
+    cerateNewRow(event) {
         event.preventDefault();
         const { handleSelectionReload } = this.props;
-        const { selectedScreen, newRowFocus, fieldName } = this.state;
-        if (selectedScreen && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-            this.setState({
-                ...this.state,
-                creatingNewRow: true
-            }, () => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify(fieldName)
-                };
-                return fetch(`${config.apiUrl}/fieldName/create`, requestOptions)
-                .then( () => {
-                    this.setState({
-                        ...this.state,
-                        creatingNewRow: false,
-                        newRowColor: 'green'
-                    }, () => {
-                        setTimeout(() => {
-                            this.setState({
-                                ...this.state,
-                                newRowColor: 'inherit',
-                                newRow:false,
-                                fieldName:{},
-                                newRowFocus: false
-                            }, () => {
-                                handleSelectionReload();
-                            });
-                        }, 1000);                                
-                    });
-                })
-                .catch( () => {
-                    this.setState({
-                        ...this.state,
-                        creatingNewRow: false,
-                        newRowColor: 'red'
-                    }, () => {
-                        setTimeout(() => {
-                            this.setState({
-                                ...this.state,
-                                newRowColor: 'inherit',
-                                newRow:false,
-                                fieldName:{},
-                                newRowFocus: false                                    
-                            }, () => {
-                                handleSelectionReload();
-                            });
-                        }, 1000);                                                       
-                    });
+        const { fieldName } = this.state;
+        this.setState({
+            ...this.state,
+            creatingNewRow: true
+        }, () => {
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: JSON.stringify(fieldName)
+            };
+            return fetch(`${config.apiUrl}/fieldName/create`, requestOptions)
+            .then( () => {
+                this.setState({
+                    ...this.state,
+                    creatingNewRow: false,
+                    newRowColor: 'green'
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            ...this.state,
+                            newRowColor: 'inherit',
+                            newRow:false,
+                            fieldName:{},
+                            newRowFocus: false
+                        }, () => {
+                            handleSelectionReload();
+                        });
+                    }, 1000);                                
+                });
+            })
+            .catch( () => {
+                this.setState({
+                    ...this.state,
+                    creatingNewRow: false,
+                    newRowColor: 'red'
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            ...this.state,
+                            newRowColor: 'inherit',
+                            newRow:false,
+                            fieldName:{},
+                            newRowFocus: false                                    
+                        }, () => {
+                            handleSelectionReload();
+                        });
+                    }, 1000);                                                       
                 });
             });
+        });        
+    }
+
+    onFocusRow(event) {
+        event.preventDefault();
+        const { selectedScreen, newRowFocus } = this.state;
+        if (selectedScreen && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+            this.cerateNewRow(event);
         }
     }
 
@@ -337,7 +344,7 @@ class Duf extends React.Component {
                 <div className="table-responsive full-height">
                     <table className="table table-hover table-bordered table-sm" >
                         <thead>
-                            <tr className="text-center"onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
+                            <tr className="text-center">
                                 <th colSpan="3" >
                                     <div className="col-12 text-right">
                                         <button className="btn btn-leeuwen-blue bt-lg mr-3" onClick={event => this.toggleNewRow(event)}>
@@ -349,7 +356,7 @@ class Duf extends React.Component {
                                     </div>                                  
                                 </th>
                             </tr>
-                            <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
+                            <tr>
                                 <TableSelectionAllRow
                                     checked={selectAllRows}
                                     onChange={this.toggleSelectAllRow}                                        
@@ -365,7 +372,10 @@ class Duf extends React.Component {
                         <tbody className="full-height" style={{overflowY:'auto'}}>
                             {newRow && 
                                 <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow" style={{height: '40px', lineHeight: '17.8571px'}}>
-                                    <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}></td>
+                                    {/* <td style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}></td> */}
+                                    <NewRowCreate
+                                        onClick={ event => this.cerateNewRow(event)}
+                                    />                                    
                                     <NewRowInput
                                         type="number"
                                         name="forShow"
