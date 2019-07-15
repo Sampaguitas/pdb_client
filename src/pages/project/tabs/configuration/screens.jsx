@@ -1,6 +1,7 @@
 import React from 'react';
 import config from 'config';
 import { authHeader } from '../../../../_helpers';
+import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
 import HeaderInput from '../../../../_components/project-table/header-input';
 import HeaderSelect from '../../../../_components/project-table/header-select';
 import NewRowCreate from '../../../../_components/project-table/new-row-create';
@@ -48,8 +49,8 @@ function arraySorted(array, field) {
 function doesMatch(search, array, type) {
     if (!search) {
         return true;
-    } else if (!array && search) {
-        return false;
+    // } else if (!array && search) {
+    //     return false;
     } else {
         switch(type) {
             case 'Id':
@@ -62,13 +63,22 @@ function doesMatch(search, array, type) {
                 return !!String(array).match(new RegExp(search, "i"));
                 //return array == Number(search);
             case 'Boolean':
-                if (Number(search) == 1) {
-                    return true; //any
-                } else if (Number(search) == 2) {
-                    return !!array == 1; //true
-                } else if (Number(search) == 3) {
-                    return !!array == 0; //false
-                }
+                    if(search == 'any') {
+                        return true; //any or equal
+                    } else if (search == 'true' && !!array) {
+                        return true; //true
+                    } else if (search == 'false' && !array) {
+                        return true; //true
+                    }else {
+                        return false;
+                    }                
+                // if (Number(search) == 1) {
+                //     return true;
+                //     } else if (Number(search) == 2) {
+                //     return !!array == 1;
+                //     } else if (Number(search) == 3) {
+                //     return !!array == 0;
+                //     }
             case 'Select':
                 if(search == 'any' || _.isEqual(search, array)) {
                     return true; //any or equal
@@ -84,8 +94,8 @@ class Screens extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            align: 'any',
-            edit: 1,
+            align: '',
+            edit: '',
             forSelect: '',
             forShow: '',
             screenId: '',
@@ -338,7 +348,7 @@ class Screens extends React.Component {
             && doesMatch(forShow, element.forShow, 'Number')
             && doesMatch(forSelect, element.forSelect, 'Number')
             && doesMatch(align, element.align, 'Select')
-            // && doesMatch(edit, element.edit, 'Boolean')
+            && doesMatch(edit, element.edit, 'Boolean')
             );
           });
         } else {
@@ -417,30 +427,69 @@ class Screens extends React.Component {
                                     checked={selectAllRows}
                                     onChange={this.toggleSelectAllRow}
                                 />
-                                <th>Field<br/>
+                                {/* <th>Field<br/>
                                     <input className="form-control" name="custom" value={custom} onChange={this.handleChangeHeader} />
-                                </th>
-                                <th style={{width: '15%'}}>For Show<br/>
+                                </th> */}
+                                <HeaderInput
+                                    type="text"
+                                    title="Field"
+                                    name="custom"
+                                    value={custom}
+                                    onChange={this.handleChangeHeader}
+                                />
+                                {/* <th style={{width: '15%'}}>For Show<br/>
                                     <input type="number" min="0" step="1" className="form-control" name="forShow" value={forShow} onChange={this.handleChangeHeader} />
-                                </th>
-                                <th style={{width: '15%'}}>For Select<br/>
+                                </th> */}
+                                <HeaderInput
+                                    type="number"
+                                    title="For Show"
+                                    name="forShow"
+                                    value={forShow}
+                                    onChange={this.handleChangeHeader}
+                                    width={'15%'}
+                                />                                
+                                {/* <th style={{width: '15%'}}>For Select<br/>
                                     <input type="number" min="0" step="1" className="form-control" name="forSelect" value={forSelect} onChange={this.handleChangeHeader} />
-                                </th>
-                                <th scope="col" style={{width: '15%'}}>Align<br />
+                                </th> */}
+                                <HeaderInput
+                                    type="number"
+                                    title="For Select"
+                                    name="forSelect"
+                                    value={forSelect}
+                                    onChange={this.handleChangeHeader}
+                                    width={'15%'}
+                                />                                 
+                                {/* <th scope="col" style={{width: '15%'}}>Align<br />
                                     <select className="form-control" name="align" value={align} onChange={this.handleChangeHeader}>
                                         <option key="0" value="any">Any</option>
                                         <option key="1" value="left">Left</option>
                                         <option key="2" value="center">Center</option>
                                         <option key="3" value="right">Right</option>                     
                                     </select>
-                                </th>
-                                <th scope="col" style={{width: '10%'}}>Disable<br />
+                                </th> */}
+                                <HeaderSelect
+                                        title="Location"
+                                        name="align"
+                                        value={align}
+                                        options={arrAlign}
+                                        optionText="name"
+                                        onChange={this.handleChangeHeader}
+                                        width ='15%'                                        
+                                />                         
+                                {/* <th scope="col" style={{width: '10%'}}>Disable<br />
                                     <select className="form-control" name="edit" value={edit} onChange={this.handleChangeHeader}>
                                         <option key="1" value="1">Any</option>
                                         <option key="2" value="2">True</option> 
                                         <option key="3" value="3">False</option>                    
                                     </select>
-                                </th>
+                                </th> */}
+                                <HeaderCheckBox 
+                                    title="Disable"
+                                    name="edit"
+                                    value={edit}
+                                    onChange={this.handleChangeHeader}
+                                    width ='10%'
+                                />
                             </tr>
                         </thead>
                         <tbody className="full-height" style={{overflowY:'auto'}}>
