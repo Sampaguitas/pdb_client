@@ -420,9 +420,6 @@ class Screens extends React.Component {
                                     checked={selectAllRows}
                                     onChange={this.toggleSelectAllRow}
                                 />
-                                {/* <th>Field<br/>
-                                    <input className="form-control" name="custom" value={custom} onChange={this.handleChangeHeader} />
-                                </th> */}
                                 <HeaderInput
                                     type="text"
                                     title="Field"
@@ -430,9 +427,6 @@ class Screens extends React.Component {
                                     value={custom}
                                     onChange={this.handleChangeHeader}
                                 />
-                                {/* <th style={{width: '15%'}}>For Show<br/>
-                                    <input type="number" min="0" step="1" className="form-control" name="forShow" value={forShow} onChange={this.handleChangeHeader} />
-                                </th> */}
                                 <HeaderInput
                                     type="number"
                                     title="For Show"
@@ -441,9 +435,6 @@ class Screens extends React.Component {
                                     onChange={this.handleChangeHeader}
                                     width={'15%'}
                                 />                                
-                                {/* <th style={{width: '15%'}}>For Select<br/>
-                                    <input type="number" min="0" step="1" className="form-control" name="forSelect" value={forSelect} onChange={this.handleChangeHeader} />
-                                </th> */}
                                 <HeaderInput
                                     type="number"
                                     title="For Select"
@@ -452,14 +443,6 @@ class Screens extends React.Component {
                                     onChange={this.handleChangeHeader}
                                     width={'15%'}
                                 />                                 
-                                {/* <th scope="col" style={{width: '15%'}}>Align<br />
-                                    <select className="form-control" name="align" value={align} onChange={this.handleChangeHeader}>
-                                        <option key="0" value="any">Any</option>
-                                        <option key="1" value="left">Left</option>
-                                        <option key="2" value="center">Center</option>
-                                        <option key="3" value="right">Right</option>                     
-                                    </select>
-                                </th> */}
                                 <HeaderSelect
                                         title="Location"
                                         name="align"
@@ -469,13 +452,6 @@ class Screens extends React.Component {
                                         onChange={this.handleChangeHeader}
                                         width ='15%'                                        
                                 />                         
-                                {/* <th scope="col" style={{width: '10%'}}>Disable<br />
-                                    <select className="form-control" name="edit" value={edit} onChange={this.handleChangeHeader}>
-                                        <option key="1" value="1">Any</option>
-                                        <option key="2" value="2">True</option> 
-                                        <option key="3" value="3">False</option>                    
-                                    </select>
-                                </th> */}
                                 <HeaderCheckBox 
                                     title="Disable"
                                     name="edit"

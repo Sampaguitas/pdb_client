@@ -5,7 +5,7 @@ class HeaderCheckBox extends Component{
         const { title, name, value, onChange, width } = this.props;
         return (
             <th style={{width: `${width ? width : 'auto'}` }}>
-                <div class="form-group">
+                <div className="form-group">
                     <label htmlFor={name}>{title}</label>
                     <select
                         className="form-control"

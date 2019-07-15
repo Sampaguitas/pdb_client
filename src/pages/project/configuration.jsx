@@ -37,21 +37,10 @@ class Configuration extends React.Component {
         this.state = {
             submittedProject: false,
             projectId: ''
-            // submittedSupplier: false,
-            // showSupplierModal: false 
         }
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.handleSubmitProject=this.handleSubmitProject.bind(this);
         this.handleDeleteProject=this.handleDeleteProject.bind(this);
-        // this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
-        // this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
-        // this.handleShowSupplierModal=this.handleShowSupplierModal.bind(this);
-        // this.handleHideSupplierModal=this.handleHideSupplierModal.bind(this);
-        //this.handleDeleteFieldNames = this.handleDeleteFieldNames.bind(this);
-        //this.handleDeleteDocFields = this.handleDeleteDocFields.bind(this);
-        //this.handleDeleteDocDef = this.handleDeleteDocDef.bind(this);
-        // this.handleDeleteFieldNamesApi = this.handleDeleteFieldNamesApi.bind(this);
-        // this.handleResponse = this.handleResponse.bind(this);
 
     }
 
@@ -92,93 +81,12 @@ class Configuration extends React.Component {
         }
     }
 
-    // handleSubmitSupplier(event, supplier) {
-    //     event.preventDefault();
-    //     const { dispatch } = this.props;
-    //     this.setState({ submittedSupplier: true });
-    //     if (supplier._id && supplier.name && supplier.projectId) {
-    //         dispatch(supplierActions.create(supplier));
-    //         this.setState({submittedSupplier: false},
-    //             ()=> {this.handleHideSupplierModal(event)});
-    //     } else if (supplier.name && supplier.projectId){
-    //         dispatch(supplierActions.update(supplier));
-    //         this.setState({submittedSupplier: false},
-    //             ()=> {this.handleHideSupplierModal(event)})
-    //     }
-    // }
-
     handleDeleteProject(event, id) {
         event.preventDefault();
         const { dispatch } = this.props
         dispatch(projectActions.delete(id));
     }
 
-    // handleDeleteSupplier(event, id) {
-    //     event.preventDefault();
-    //     const { dispatch } = this.props
-    //     dispatch(supplierActions.delete(id));
-    // }
-
-    // handleDeleteFieldNames(event, id) {
-    //     event.preventDefault();
-    //     console.log('fields:',id);
-    //     const requestOptions = {
-    //         method: 'DELETE',
-    //         headers: { ...authHeader()},
-    //     };
-    
-    //     return fetch(`${config.apiUrl}/fieldName/delete?id=${JSON.stringify(id)}`, requestOptions)
-    //     .then(this.handleSelectionReload());
-    // }
-
-    // handleDeleteDocFields(event, id) {
-
-    // }
-
-    // handleDeleteDocDef(event, id) {
-        
-    // }
-
-    // handleDeleteFieldNamesApi(id){
-    //     event.preventDefault();
-    //     console.log('fields:',id);
-    //     const requestOptions = {
-    //         method: 'DELETE',
-    //         headers: { ...authHeader()},
-    //     };
-    
-    //     return fetch(`${config.apiUrl}/fieldName/delete?id=${JSON.stringify(id)}`, requestOptions).then(this.handleResponse);
-    // }
-
-    // handleResponse(response) {
-    //     return response.text().then(text => {
-    //         if (text == 'Unauthorized') {
-    //             logout();
-    //             location.reload(true);
-    //         }
-    //         const data = text && JSON.parse(text);
-    //         if (!response.ok) {
-    //             if (response.status === 401) {
-    //                 // auto logout if 401 response returned from api
-    //                 logout();
-    //                 location.reload(true);
-    //             }
-    //             const error = (data && data.message) || response.statusText;
-    //             return Promise.reject(error);
-    //         }
-    //         return data;
-            
-    //     });
-    // }
-
-
-    // handleShowSupplierModal(event) {
-    //     this.setState({showSupplierModal: true});
-    // }
-
-    // handleHideSupplierModal(event) {
-    //     this.setState({showSupplierModal: false});
-    // }    
     render() {
         const { 
                 alert,  
@@ -190,15 +98,11 @@ class Configuration extends React.Component {
                 currencies,
                 screens,
                 selection,
-                // supplierUpdating,
-                // supplierDeleting,
             } = this.props;
         
             const { 
                 submittedProject, 
                 projectId,
-                // submittedSupplier,
-                // showSupplierModal 
             } = this.state
 
             // let currentUser = JSON.parse(localStorage.getItem('user'));

@@ -9,22 +9,6 @@ import TableCheckBoxRole from '../../../../_components/project-table/table-check
 
 const _ = require('lodash');
 
-// function arraySorted(array, field) {
-//     if (array) {
-//         const newArray = array
-//         newArray.sort(function(a,b){
-//             if (a[field] < b[field]) {
-//                 return -1;
-//             }
-//             if (a[field] > b[field]) {
-//                 return 1;
-//             }
-//             return 0;
-//         });
-//         return newArray;
-//     }
-// }
-
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
         return prev ? prev[curr] : null
@@ -46,29 +30,6 @@ function arraySorted(array, field) {
         return newArray;             
     }
 }
-
-// function doesMatch(search, array, type) {
-//     if (!search) {
-//         return true;
-//     } else {
-//         switch(type) {
-//             case 'String':
-//                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
-//                 return !!array.match(new RegExp(search, "i"));
-//             case 'Number': 
-//                 return array == Number(search);
-//             case 'Boolean':
-//                 if (Number(search) == 1) {
-//                 return true;
-//                 } else if (Number(search) == 2) {
-//                 return !!array == 1;
-//                 } else if (Number(search) == 3) {
-//                 return !!array == 0;
-//                 }
-//             default: return true;
-//         }
-//     }
-// }
 
 function doesMatch(search, array, type) {
     if (!search) {
@@ -295,9 +256,6 @@ class General extends React.Component {
                                 <table className="table table-hover table-bordered table-sm" >
                                     <thead>
                                         <tr>
-                                            {/* <th scope="col" style={{width: '10%'}}>Initials<br />
-                                                <input className="form-control" name="userName" value={userName} onChange={this.handleChangeHeader} />
-                                            </th> */}
                                             <HeaderInput
                                                 type="text"
                                                 title="Initials"
@@ -305,9 +263,6 @@ class General extends React.Component {
                                                 value={userName}
                                                 onChange={this.handleChangeHeader}
                                             />                                            
-                                            {/* <th scope="col">User<br />
-                                                <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
-                                            </th> */}
                                             <HeaderInput
                                                 type="text"
                                                 title="User"
@@ -315,13 +270,6 @@ class General extends React.Component {
                                                 value={name}
                                                 onChange={this.handleChangeHeader}
                                             />                                             
-                                            {/* <th scope="col" style={{width: '10%'}}>Expediting<br />
-                                                <select className="form-control" name="isExpediting" value={isExpediting} onChange={this.handleChangeHeader}>
-                                                    <option key="1" value="1">Any</option>
-                                                    <option key="2" value="2">True</option> 
-                                                    <option key="3" value="3">False</option>  
-                                                </select>
-                                            </th> */}
                                             <HeaderCheckBox 
                                                 title="Expediting"
                                                 name="isExpediting"
@@ -329,13 +277,6 @@ class General extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 width ='10%'
                                             />                                            
-                                            {/* <th scope="col" style={{width: '10%'}}>Inspection<br />
-                                                <select className="form-control" name="isInspection" value={isInspection} onChange={this.handleChangeHeader}>
-                                                    <option key="1" value="1">Any</option>
-                                                    <option key="2" value="2">True</option> 
-                                                    <option key="3" value="3">False</option>  
-                                                </select>
-                                            </th> */}
                                             <HeaderCheckBox 
                                                 title="Inspection"
                                                 name="isInspection"
@@ -343,13 +284,6 @@ class General extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 width ='10%'
                                             /> 
-                                            {/* <th scope="col" style={{width: '10%'}}>Shipping<br />
-                                                <select className="form-control" name="isShipping" value={isShipping} onChange={this.handleChangeHeader}>
-                                                    <option key="1" value="1">Any</option>
-                                                    <option key="2" value="2">True</option> 
-                                                    <option key="3" value="3">False</option>  
-                                                </select>                                                
-                                            </th> */}
                                             <HeaderCheckBox 
                                                 title="Shipping"
                                                 name="isShipping"
@@ -357,13 +291,6 @@ class General extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 width ='10%'
                                             /> 
-                                            {/* <th scope="col" style={{width: '10%'}}>Warehouse<br />
-                                                <select className="form-control" name="isWarehouse" value={isWarehouse} onChange={this.handleChangeHeader}>
-                                                    <option key="1" value="1">Any</option>
-                                                    <option key="2" value="2">True</option> 
-                                                    <option key="3" value="3">False</option>  
-                                                </select>
-                                            </th> */}
                                             <HeaderCheckBox 
                                                 title="Warehouse"
                                                 name="isWarehouse"
@@ -371,13 +298,6 @@ class General extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 width ='10%'
                                             />
-                                            {/* <th scope="col" style={{width: '10%'}}>Config<br />
-                                                <select className="form-control" name="isConfiguration" value={isConfiguration} onChange={this.handleChangeHeader}>
-                                                    <option key="1" value="1">Any</option>
-                                                    <option key="2" value="2">True</option> 
-                                                    <option key="3" value="3">False</option>  
-                                                </select>
-                                            </th> */}
                                             <HeaderCheckBox 
                                                 title="Config"
                                                 name="isConfiguration"
