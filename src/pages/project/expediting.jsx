@@ -46,13 +46,23 @@ function arraySorted(array, field) {
     }
 }
 
+function returnScreenHeaders(selection, screen) {
+    if (selection.project) {
+        return selection.project.fieldnames.filter(function(element) {
+            return (_.isEqual(element.screenId, screen) && !!element.forShow); 
+        });
+    } else {
+        return [];
+    }
+}
+
 class Expediting extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             projectId:''  
         };
-        this.returnScreenHeaders = this.returnScreenHeaders.bind(this);
+        //this.returnScreenHeaders = this.returnScreenHeaders.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
     }
 
@@ -66,15 +76,7 @@ class Expediting extends React.Component {
         dispatch(projectActions.getAll()); 
     }
 
-    returnScreenHeaders(selection, screen) {
-        if (selection.project) {
-            return selection.project.fieldnames.filter(function(element) {
-                return (_.isEqual(element.screenId, screen) && !!element.forShow); 
-            });
-        } else {
-            return [];
-        }
-    }
+
 
     handleSelectionReload(event){
         const { dispatch, location } = this.props
@@ -176,22 +178,22 @@ class Expediting extends React.Component {
                     <button className="btn btn-outline-leeuwen-blue"style={{width: '50px', height: '50px'}}>
                         <span><FontAwesomeIcon icon="filter" className="far fa-3x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue"style={{width: '50px', height: '50px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.handleSelectionReload(event)} style={{width: '50px', height: '50px'}}>
                         <span><FontAwesomeIcon icon="sync-alt" className="far fa-3x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue"style={{width: '50px', height: '50px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
                         <span><FontAwesomeIcon icon="unlock" className="fas fa-3x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue"style={{width: '50px', height: '50px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
                         <span><FontAwesomeIcon icon="download" className="fas fa-3x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue"style={{width: '50px', height: '50px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
                         <span><FontAwesomeIcon icon="upload" className="fas fa-3x"/></span>
                     </button>
                 </div>
                  {selection && 
                     <ProjectTable
-                        screenHeaders={this.returnScreenHeaders(selection, screen)}
+                        screenHeaders={arraySorted(returnScreenHeaders(selection, screen), "forShow")}
                         // screenHeaders={testScreenHeader}
                     />
                  }
