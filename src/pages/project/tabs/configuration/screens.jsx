@@ -49,8 +49,8 @@ function arraySorted(array, field) {
 function doesMatch(search, array, type) {
     if (!search) {
         return true;
-    // } else if (!array && search) {
-    //     return false;
+    } else if (!array && search != 'any' && search != 'false') {
+        return false;
     } else {
         switch(type) {
             case 'Id':
@@ -72,13 +72,6 @@ function doesMatch(search, array, type) {
                     }else {
                         return false;
                     }                
-                // if (Number(search) == 1) {
-                //     return true;
-                //     } else if (Number(search) == 2) {
-                //     return !!array == 1;
-                //     } else if (Number(search) == 3) {
-                //     return !!array == 0;
-                //     }
             case 'Select':
                 if(search == 'any' || _.isEqual(search, array)) {
                     return true; //any or equal
