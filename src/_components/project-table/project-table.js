@@ -67,6 +67,8 @@ class ProjectTable extends Component {
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.filterName = this.filterName.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
+        this.matchingHeader = this.matchingHeader.bind(this);
+        this.matchingField = this.matchingField.bind(this);
     }
 
     handleChangeHeader(event) {
@@ -156,6 +158,112 @@ class ProjectTable extends Component {
             });
         }       
     }
+
+    matchingHeader(screenHeader, header){
+        switch (screenHeader.fields.type) {
+            case "String":
+                return ( 
+                    <HeaderInput
+                        type="text"
+                        title={screenHeader.fields.custom}
+                        name={screenHeader._id}
+                        value={header[screenHeader._id]}
+                        onChange={this.handleChangeHeader}
+                        key={screenHeader._id}
+                    />
+                );
+            case "Number":
+                return ( 
+                    <HeaderInput
+                        type="number"
+                        title={screenHeader.fields.custom}
+                        name={screenHeader._id}
+                        value={header[screenHeader._id]}
+                        onChange={this.handleChangeHeader}
+                        key={screenHeader._id}
+                    />
+                );
+            default: 
+                return ( 
+                    <HeaderInput
+                        type="text"
+                        title={screenHeader.fields.custom}
+                        name={screenHeader._id}
+                        value={header[screenHeader._id]}
+                        onChange={this.handleChangeHeader}
+                        key={screenHeader._id}
+                    />
+                );                                                                                                  
+        }        
+    }
+
+    matchingField(screenBody, screenHeader) {
+        let mf = screenBody[screenHeader.fields.name]
+        if(!mf){
+            return <td></td>
+        } else {
+            switch (screenHeader.fields.type) {
+                case "String":
+                        return ( 
+                            <TableInput
+                                collection={screenHeader.fields.fromTbl}
+                                objectId={screenHeader.fieldId}
+                                fieldName={screenHeader.fields.name}
+                                fieldValue={mf}
+                                fieldType="text"
+                                textNoWrap={true}
+                                key={screenHeader._id}
+                            />
+                        );                    
+                case "Number":
+                        return ( 
+                            <TableInput
+                                collection={screenHeader.fields.fromTbl}
+                                objectId={screenHeader.fieldId}
+                                fieldName={screenHeader.fields.name}
+                                fieldValue={mf}
+                                fieldType="number"
+                                textNoWrap={true}
+                                key={screenHeader._id}
+                            />
+                        ); 
+                case "Date":
+                        return ( 
+                            <TableInput
+                                collection={screenHeader.fields.fromTbl}
+                                objectId={screenHeader.fieldId}
+                                fieldName={screenHeader.fields.name}
+                                fieldValue={mf}
+                                fieldType="date"
+                                textNoWrap={true}
+                                key={screenHeader._id}
+                            />
+                        ); 
+                case "Boolean":
+                        return ( 
+                            <TableCheckBox
+                                collection={screenHeader.fields.fromTbl}
+                                objectId={screenHeader.fieldId}
+                                fieldName={screenHeader.fields.name}
+                                fieldValue={mf}
+                                key={screenHeader._id}
+                            />
+                        );
+                default: 
+                return ( 
+                    <TableInput
+                        collection={screenHeader.fields.fromTbl}
+                        objectId={screenHeader.fieldId}
+                        fieldName={screenHeader.fields.name}
+                        fieldValue={mf}
+                        fieldType="text"
+                        textNoWrap={true}
+                        key={screenHeader._id}
+                    />
+                );
+            }                 
+        }
+    }
     
     render() {
         const { handleSelectionReload, screenHeaders, screenBodys } = this.props;
@@ -184,7 +292,7 @@ class ProjectTable extends Component {
                 </div>
                 <div className="row ml-1 full-height">
                     <div className="table-responsive full-height" > 
-                        <table className="table table-hover table-bordered table-sm">
+                        <table className="table table-hover table-bordered table-sm text-nowrap">
                             <thead>                                   
                                 {screenHeaders && (
                                     <tr>
@@ -192,46 +300,43 @@ class ProjectTable extends Component {
                                             checked={selectAllRows}
                                             onChange={this.toggleSelectAllRow}
                                         />
-                                        {screenHeaders.map(screenHeader => {
-                                            switch (screenHeader.fields.type) {
-                                                case "String":
-                                                    return ( 
-                                                        <HeaderInput
-                                                            type="text"
-                                                            title={screenHeader.fields.custom}
-                                                            name={screenHeader._id}
-                                                            value={header[screenHeader._id]}
-                                                            onChange={this.handleChangeHeader}
-                                                            key={screenHeader._id}
-                                                            textNoWrap={true}
-                                                        />
-                                                    );
-                                                case "Number":
-                                                    return ( 
-                                                        <HeaderInput
-                                                            type="number"
-                                                            title={screenHeader.fields.custom}
-                                                            name={screenHeader._id}
-                                                            value={header[screenHeader._id]}
-                                                            onChange={this.handleChangeHeader}
-                                                            key={screenHeader._id}
-                                                            textNoWrap={true}
-                                                        />
-                                                    );
-                                                default: 
-                                                    return ( 
-                                                        <HeaderInput
-                                                            type="text"
-                                                            title={screenHeader.fields.custom}
-                                                            name={screenHeader._id}
-                                                            value={header[screenHeader._id]}
-                                                            onChange={this.handleChangeHeader}
-                                                            key={screenHeader._id}
-                                                            textNoWrap={true}
-                                                        />
-                                                    );                                                                                                  
-                                            }
-                                        })}
+                                        {screenHeaders.map(screenHeader => this.matchingHeader(screenHeader, header))}
+                                        {/* //     switch (screenHeader.fields.type) {
+                                        //         case "String":
+                                        //             return ( 
+                                        //                 <HeaderInput
+                                        //                     type="text"
+                                        //                     title={screenHeader.fields.custom}
+                                        //                     name={screenHeader._id}
+                                        //                     value={header[screenHeader._id]}
+                                        //                     onChange={this.handleChangeHeader}
+                                        //                     key={screenHeader._id}
+                                        //                 />
+                                        //             );
+                                        //         case "Number":
+                                        //             return ( 
+                                        //                 <HeaderInput
+                                        //                     type="number"
+                                        //                     title={screenHeader.fields.custom}
+                                        //                     name={screenHeader._id}
+                                        //                     value={header[screenHeader._id]}
+                                        //                     onChange={this.handleChangeHeader}
+                                        //                     key={screenHeader._id}
+                                        //                 />
+                                        //             );
+                                        //         default: 
+                                        //             return ( 
+                                        //                 <HeaderInput
+                                        //                     type="text"
+                                        //                     title={screenHeader.fields.custom}
+                                        //                     name={screenHeader._id}
+                                        //                     value={header[screenHeader._id]}
+                                        //                     onChange={this.handleChangeHeader}
+                                        //                     key={screenHeader._id}
+                                        //                 />
+                                        //             );                                                                                                  
+                                        //     }
+                                        // })} */}
                                     </tr>
                                 )}
                             </thead>                                
@@ -244,9 +349,7 @@ class ProjectTable extends Component {
                                                 selectAllRows={this.state.selectAllRows}
                                                 callback={this.updateSelectedRows}
                                             />
-                                            {screenHeaders.map(screenHeader => {
-                                                return (<td>{screenHeader.fields.name}</td>)
-                                            })}
+                                            {screenHeaders.map(screenHeader => this.matchingField(screenBody, screenHeader))}
                                         </tr>
                                     )
                                 })}
