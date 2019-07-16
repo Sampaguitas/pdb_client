@@ -6,12 +6,63 @@ import Layout from '../../_components/layout';
 import ProjectTable from '../../_components/project-table/project-table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+function arrayRemove(arr, value) {
+
+    return arr.filter(function(ele){
+        return ele != value;
+    });
+ 
+ }
+
+function resolve(path, obj) {
+    return path.split('.').reduce(function(prev, curr) {
+        return prev ? prev[curr] : null
+    }, obj || self)
+}
+
+function arraySorted(array, field) {
+    if (array) {
+        const newArray = array
+        newArray.sort(function(a,b){
+            if (resolve(field, a) < resolve(field, b)) {
+                return -1;
+            } else if ((resolve(field, a) > resolve(field, b))) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+        return newArray;             
+    }
+}
+
+function returnScreenHeaders(selection, screenId) {
+    if (selection.project) {
+        return selection.project.fieldnames.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        });
+    } else {
+        return [];
+    }
+}
+
+function returnScreenBodys(selection, fromTbl) {
+    if (selection.project) {
+        return selection.project.pos
+    } else {
+        return [];
+    }    
+}
+
+
 class Expediting extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             projectId:'',
-            screenId: '5cd2b642fd333616dc360b63'  
+            screenId: '5cd2b642fd333616dc360b63',
+            fromTbl: 'pos',
+            
         };
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
     }
@@ -38,7 +89,7 @@ class Expediting extends React.Component {
     }
 
     render() {
-        const { screenId }= this.state;
+        const { screenId, fromTbl }= this.state;
         const { alert, selection } = this.props;
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
@@ -46,8 +97,10 @@ class Expediting extends React.Component {
                 <h2>Expediting : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="expediting" className="full-height">
-                    {selection && 
+                    {selection && selection.project && 
                         <ProjectTable
+                            screenHeaders={arraySorted(returnScreenHeaders(selection, screenId), "forShow")}
+                            screenBodys={selection.project.pos}
                             selection={selection}
                             screenId={screenId}
                             handleSelectionReload={this.handleSelectionReload}

@@ -45,13 +45,13 @@ class PackingDetails extends React.Component {
                 <h2>Shipping - Packing details : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="packingdetails" className="full-height">
-                    {selection && 
+                    {/* {selection && 
                         <ProjectTable
                             selection={selection}
                             screenId={screenId}
                             handleSelectionReload={this.handleSelectionReload}
                         />
-                    }
+                    } */}
                 </div>
             </Layout>
         );

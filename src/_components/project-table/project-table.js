@@ -57,9 +57,16 @@ class ProjectTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            header: {}
+            header: {},
+            selectedRows: [],
+            selectAllRows: false,
         };
-        this.handleChangeHeader = this.handleChangeHeader.bind(this);  
+        this.onFocusRow = this.onFocusRow.bind(this);
+        this.onBlurRow = this.onBlurRow.bind(this);
+        this.handleChangeHeader = this.handleChangeHeader.bind(this);
+        this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
+        this.filterName = this.filterName.bind(this);
+        this.updateSelectedRows = this.updateSelectedRows.bind(this);
     }
 
     handleChangeHeader(event) {
@@ -75,12 +82,86 @@ class ProjectTable extends Component {
             } 
         });
     }
+
+    onFocusRow(event) {
+        // event.preventDefault();
+        // const { selectedTemplate, newRowFocus } = this.state;
+        // if (selectedTemplate !='0' && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+        //     this.cerateNewRow(event);
+        // }
+    }
+
+    onBlurRow(event){
+        // event.preventDefault()
+        // if (event.currentTarget.dataset['type'] == 'newrow'){
+        //     this.setState({
+        //         ...this.state,
+        //         newRowFocus: true
+        //     });
+        // }
+    }
+
+    toggleSelectAllRow() {
+        // const { selectAllRows } = this.state;
+        // const { selection } = this.props;
+        // if (selection.project) {
+        //     if (selectAllRows) {
+        //         this.setState({
+        //             ...this.state,
+        //             selectedRows: [],
+        //             selectAllRows: false
+        //         });
+        //     } else {
+        //         this.setState({
+        //             ...this.state,
+        //             selectedRows: this.filterName(selection.project.docfields).map(s => s._id),
+        //             selectAllRows: true
+        //         });
+        //     }         
+        // }
+    }
+
+    filterName(array){
+        
+        // const {
+        //     header
+        // } = this.state;
+
+        // if (array) {
+        //   return arraySorted(array, 'fields.custom').filter(function (element) {
+        //     return (doesMatch(selectedTemplate, element.docdefId, 'Id')
+        //     && doesMatch(worksheet, element.worksheet, 'Select')
+        //     && doesMatch(location, element.location, 'Select')
+        //     && doesMatch(row, element.row, 'Number')
+        //     && doesMatch(col, element.col, 'Number')
+        //     && element.fields && doesMatch(custom, element.fields.custom, 'String')
+        //     );
+        //   });
+        // } else {
+        //     return [];
+        // }
+    }
+
+    updateSelectedRows(id) {
+        const { selectedRows } = this.state;
+        if (selectedRows.includes(id)) {
+            this.setState({
+                ...this.state,
+                selectedRows: arrayRemove(selectedRows, id)
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedRows: [...selectedRows, id]
+            });
+        }       
+    }
     
     render() {
-        const { selection, screenId, handleSelectionReload } = this.props;
-        const { header } = this.state;
+        const { handleSelectionReload, screenHeaders, screenBodys } = this.props;
+        const { header,selectAllRows  } = this.state;
         return (
-            <div>
+            <div className="full-height">
                 <div className="btn-group-vertical pull-right">
                     <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}> 
                         <span><FontAwesomeIcon icon="cog" className="fas fa-3x"/></span>
@@ -101,13 +182,17 @@ class ProjectTable extends Component {
                         <span><FontAwesomeIcon icon="upload" className="fas fa-3x"/></span>
                     </button>
                 </div>
-                <div className="row full-height ml-1">
-                    <div className="full-height table-responsive"> 
+                <div className="row ml-1 full-height">
+                    <div className="table-responsive full-height" > 
                         <table className="table table-hover table-bordered table-sm">
-                            <thead>
-                                <tr>
-                                    {selection && 
-                                        arraySorted(returnScreenHeaders(selection, screenId), "forShow").map(screenHeader => {
+                            <thead>                                   
+                                {screenHeaders && (
+                                    <tr>
+                                        <TableSelectionAllRow
+                                            checked={selectAllRows}
+                                            onChange={this.toggleSelectAllRow}
+                                        />
+                                        {screenHeaders.map(screenHeader => {
                                             switch (screenHeader.fields.type) {
                                                 case "String":
                                                     return ( 
@@ -146,13 +231,25 @@ class ProjectTable extends Component {
                                                         />
                                                     );                                                                                                  
                                             }
-
-                                        })
-                                    }
-                                </tr>
-                            </thead>
-                            <tbody>
-
+                                        })}
+                                    </tr>
+                                )}
+                            </thead>                                
+                            <tbody className="full-height">
+                                {screenBodys && screenBodys.map(screenBody => {
+                                    return (
+                                        <tr key={screenBody._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>
+                                            <TableSelectionRow
+                                                id={screenBody._id}
+                                                selectAllRows={this.state.selectAllRows}
+                                                callback={this.updateSelectedRows}
+                                            />
+                                            {screenHeaders.map(screenHeader => {
+                                                return (<td>{screenHeader.fields.name}</td>)
+                                            })}
+                                        </tr>
+                                    )
+                                })}
                             </tbody>
                         </table>
                     </div>

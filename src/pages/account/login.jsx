@@ -70,6 +70,7 @@ class Login extends React.Component {
                   placeholder="Email"
                   icon="user"
                   submitted={submitted}
+                  autoComplete="email"
                 />
                 <InputIcon
                   title="Password"
@@ -80,6 +81,7 @@ class Login extends React.Component {
                   placeholder="Password"
                   icon="lock"
                   submitted={submitted}
+                  autoComplete="current-password"
                 />
                 <hr />
                 <button

@@ -17,6 +17,7 @@ const InputIcon = (props) => (
                 value={props.value}
                 onChange={props.onChange}
                 placeholder={props.placeholder}
+                autoComplete={props.autoComplete}
             />
         </div>
         {props.submitted && !props.value &&

@@ -616,25 +616,25 @@ class Documents extends React.Component {
             inputKey: Date.now(),
             fileName:''
         }, () => {
-            
             if (selection.project) {
                 let obj = findObj(selection.project.docdefs,value);
                 if (obj) {
                     this.setState({
                         ...this.state,
                         fileName: obj.field
+                    }, () => {
+                        if (!!obj.row2){
+                            this.setState({
+                                ...this.state,
+                                multi: true
+                            });
+                        } else {
+                            this.setState({
+                                ...this.state,
+                                multi: false
+                            })
+                        }
                     });
-                    if (!!obj.row2){
-                        this.setState({
-                            ...this.state,
-                            multi: true
-                        });
-                    } else {
-                        this.setState({
-                            ...this.state,
-                            multi: false
-                        })
-                    }
                 }
             }
         });
