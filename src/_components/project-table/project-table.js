@@ -207,7 +207,7 @@ class ProjectTable extends Component {
                         return ( 
                             <TableInput
                                 collection={screenHeader.fields.fromTbl}
-                                objectId={screenHeader.fieldId}
+                                objectId={screenBody._id}
                                 fieldName={screenHeader.fields.name}
                                 fieldValue={mf}
                                 fieldType="text"
@@ -219,7 +219,7 @@ class ProjectTable extends Component {
                         return ( 
                             <TableInput
                                 collection={screenHeader.fields.fromTbl}
-                                objectId={screenHeader.fieldId}
+                                objectId={screenBody._id}
                                 fieldName={screenHeader.fields.name}
                                 fieldValue={mf}
                                 fieldType="number"
@@ -231,7 +231,7 @@ class ProjectTable extends Component {
                         return ( 
                             <TableInput
                                 collection={screenHeader.fields.fromTbl}
-                                objectId={screenHeader.fieldId}
+                                objectId={screenBody._id}
                                 fieldName={screenHeader.fields.name}
                                 fieldValue={mf}
                                 fieldType="date"
@@ -243,7 +243,7 @@ class ProjectTable extends Component {
                         return ( 
                             <TableCheckBox
                                 collection={screenHeader.fields.fromTbl}
-                                objectId={screenHeader.fieldId}
+                                objectId={screenBody._id}
                                 fieldName={screenHeader.fields.name}
                                 fieldValue={mf}
                                 key={screenHeader._id}
@@ -253,7 +253,7 @@ class ProjectTable extends Component {
                 return ( 
                     <TableInput
                         collection={screenHeader.fields.fromTbl}
-                        objectId={screenHeader.fieldId}
+                        objectId={screenBody._id}
                         fieldName={screenHeader.fields.name}
                         fieldValue={mf}
                         fieldType="text"
@@ -301,42 +301,6 @@ class ProjectTable extends Component {
                                             onChange={this.toggleSelectAllRow}
                                         />
                                         {screenHeaders.map(screenHeader => this.matchingHeader(screenHeader, header))}
-                                        {/* //     switch (screenHeader.fields.type) {
-                                        //         case "String":
-                                        //             return ( 
-                                        //                 <HeaderInput
-                                        //                     type="text"
-                                        //                     title={screenHeader.fields.custom}
-                                        //                     name={screenHeader._id}
-                                        //                     value={header[screenHeader._id]}
-                                        //                     onChange={this.handleChangeHeader}
-                                        //                     key={screenHeader._id}
-                                        //                 />
-                                        //             );
-                                        //         case "Number":
-                                        //             return ( 
-                                        //                 <HeaderInput
-                                        //                     type="number"
-                                        //                     title={screenHeader.fields.custom}
-                                        //                     name={screenHeader._id}
-                                        //                     value={header[screenHeader._id]}
-                                        //                     onChange={this.handleChangeHeader}
-                                        //                     key={screenHeader._id}
-                                        //                 />
-                                        //             );
-                                        //         default: 
-                                        //             return ( 
-                                        //                 <HeaderInput
-                                        //                     type="text"
-                                        //                     title={screenHeader.fields.custom}
-                                        //                     name={screenHeader._id}
-                                        //                     value={header[screenHeader._id]}
-                                        //                     onChange={this.handleChangeHeader}
-                                        //                     key={screenHeader._id}
-                                        //                 />
-                                        //             );                                                                                                  
-                                        //     }
-                                        // })} */}
                                     </tr>
                                 )}
                             </thead>                                

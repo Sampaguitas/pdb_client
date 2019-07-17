@@ -18,6 +18,7 @@ class TableInput extends Component{
         this.onChange = this.onChange.bind(this);
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
+        this.formatText = this.formatText.bind(this);
 
     }
     componentDidMount(){
@@ -89,6 +90,16 @@ class TableInput extends Component{
         }
     }
 
+    formatText(fieldValue, fieldType){
+        switch(fieldType){
+            case "number":
+                return new Intl.NumberFormat().format(fieldValue);
+            // case "date":
+            //     return new Intl.DateTimeFormat().format(fieldValue);
+            default: return fieldValue
+        }
+    }
+
     render() {
         const { fieldValue, fieldType, color } = this.state
 
@@ -115,7 +126,7 @@ class TableInput extends Component{
             </td>
         ):
         (
-        <td onClick={() => this.onFocus()} style={{color:color}}>{fieldValue}</td> //onDoubleClick
+        <td onClick={() => this.onFocus()} style={{color:color}}>{this.formatText(fieldValue, fieldType)}</td> //onDoubleClick
         );
     }
 }
