@@ -94,8 +94,8 @@ class TableInput extends Component{
         switch(fieldType){
             case "number":
                 return new Intl.NumberFormat().format(fieldValue);
-            // case "date":
-            //     return new Intl.DateTimeFormat().format(fieldValue);
+            case "date":
+                return new Intl.DateTimeFormat().format(new Date(fieldValue));
             default: return fieldValue
         }
     }
