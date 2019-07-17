@@ -200,10 +200,10 @@ class ProjectTable extends Component {
 
     matchingField(screenBody, screenHeader, sub) {
         if (screenHeader.fields.fromTbl == "po") {
-            let mf = screenBody[screenHeader.fields.name]
-            if(!mf){
-                return <td></td>
-            } else {
+            // let mf = screenBody[screenHeader.fields.name]
+            // if(!mf){
+            //     return <td></td>
+            // } else {
                 switch (screenHeader.fields.type) {
                     case "String":
                             return ( 
@@ -211,7 +211,7 @@ class ProjectTable extends Component {
                                     collection={screenHeader.fields.fromTbl}
                                     objectId={screenBody._id}
                                     fieldName={screenHeader.fields.name}
-                                    fieldValue={mf}
+                                    fieldValue={screenBody[screenHeader.fields.name]}
                                     fieldType="text"
                                     textNoWrap={true}
                                     key={screenHeader._id}
@@ -223,7 +223,7 @@ class ProjectTable extends Component {
                                     collection={screenHeader.fields.fromTbl}
                                     objectId={screenBody._id}
                                     fieldName={screenHeader.fields.name}
-                                    fieldValue={mf}
+                                    fieldValue={screenBody[screenHeader.fields.name]}
                                     fieldType="number"
                                     textNoWrap={true}
                                     key={screenHeader._id}
@@ -235,7 +235,7 @@ class ProjectTable extends Component {
                                     collection={screenHeader.fields.fromTbl}
                                     objectId={screenBody._id}
                                     fieldName={screenHeader.fields.name}
-                                    fieldValue={mf}
+                                    fieldValue={screenBody[screenHeader.fields.name]}
                                     fieldType="date"
                                     textNoWrap={true}
                                     key={screenHeader._id}
@@ -247,7 +247,7 @@ class ProjectTable extends Component {
                                     collection={screenHeader.fields.fromTbl}
                                     objectId={screenBody._id}
                                     fieldName={screenHeader.fields.name}
-                                    fieldValue={mf}
+                                    fieldValue={screenBody[screenHeader.fields.name]}
                                     key={screenHeader._id}
                                 />
                             );
@@ -257,19 +257,19 @@ class ProjectTable extends Component {
                             collection={screenHeader.fields.fromTbl}
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
-                            fieldValue={mf}
+                            fieldValue={screenBody[screenHeader.fields.name]}
                             fieldType="text"
                             textNoWrap={true}
                             key={screenHeader._id}
                         />
                     );
                 }                 
-            }
+            // }
         } else if (screenHeader.fields.fromTbl == "sub") {
-            let mf = sub[screenHeader.fields.name]
-            if(!mf){
-                return <td></td>
-            } else {
+            // let mf = sub[screenHeader.fields.name]
+            // if(!mf){
+            //     return <td></td>
+            // } else {
                 switch (screenHeader.fields.type) {
                     case "String":
                             return ( 
@@ -277,7 +277,7 @@ class ProjectTable extends Component {
                                     collection={screenHeader.fields.fromTbl}
                                     objectId={sub._id}
                                     fieldName={screenHeader.fields.name}
-                                    fieldValue={mf}
+                                    fieldValue={sub[screenHeader.fields.name]}
                                     fieldType="text"
                                     textNoWrap={true}
                                     key={screenHeader._id}
@@ -289,7 +289,7 @@ class ProjectTable extends Component {
                                     collection={screenHeader.fields.fromTbl}
                                     objectId={sub._id}
                                     fieldName={screenHeader.fields.name}
-                                    fieldValue={mf}
+                                    fieldValue={sub[screenHeader.fields.name]}
                                     fieldType="number"
                                     textNoWrap={true}
                                     key={screenHeader._id}
@@ -301,7 +301,7 @@ class ProjectTable extends Component {
                                     collection={screenHeader.fields.fromTbl}
                                     objectId={sub._id}
                                     fieldName={screenHeader.fields.name}
-                                    fieldValue={mf}
+                                    fieldValue={sub[screenHeader.fields.name]}
                                     fieldType="date"
                                     textNoWrap={true}
                                     key={screenHeader._id}
@@ -313,7 +313,7 @@ class ProjectTable extends Component {
                                     collection={screenHeader.fields.fromTbl}
                                     objectId={sub._id}
                                     fieldName={screenHeader.fields.name}
-                                    fieldValue={mf}
+                                    fieldValue={sub[screenHeader.fields.name]}
                                     key={screenHeader._id}
                                 />
                             );
@@ -323,14 +323,14 @@ class ProjectTable extends Component {
                             collection={screenHeader.fields.fromTbl}
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
-                            fieldValue={mf}
+                            fieldValue={sub[screenHeader.fields.name]}
                             fieldType="text"
                             textNoWrap={true}
                             key={screenHeader._id}
                         />
                     );
-                }                 
-            }            
+                }
+            // }            
         } else {
             return <td></td>
         }

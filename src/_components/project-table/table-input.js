@@ -95,7 +95,11 @@ class TableInput extends Component{
             case "number":
                 return new Intl.NumberFormat().format(fieldValue);
             case "date":
-                return new Intl.DateTimeFormat().format(new Date(fieldValue));
+                if(!fieldValue){
+                    return fieldValue
+                } else {
+                    return new Intl.DateTimeFormat().format(new Date(fieldValue));
+                }
             default: return fieldValue
         }
     }
