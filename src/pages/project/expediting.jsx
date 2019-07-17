@@ -204,7 +204,15 @@ export { connectedExpediting as Expediting };
 //         qty: 47499,
 //         sch: `0,625"`,
 //         size: "36",
-//         subs: [],
+//         subs: [
+//             {
+//                 daveId: 265105,
+//                 poId: "5cca24b91646ee372e36c6a3",
+//                 splitQty: 47499,
+//                 __v: 0,
+//                 _id: "5ccb2cccde7f2a100d0f8298",
+//             }            
+//         ],
 //         supContrDate: "2019-08-15T20:00:00.000Z",
 //         supDelCondition: "TBA",
 //         udfPoD1: "2019-04-22T20:00:00.000Z",
