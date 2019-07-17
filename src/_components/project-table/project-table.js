@@ -69,6 +69,7 @@ class ProjectTable extends Component {
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.matchingHeader = this.matchingHeader.bind(this);
         this.matchingField = this.matchingField.bind(this);
+        this.matchingRow = this.matchingRow.bind(this);
     }
 
     handleChangeHeader(event) {
@@ -197,71 +198,161 @@ class ProjectTable extends Component {
         }        
     }
 
-    matchingField(screenBody, screenHeader) {
-        let mf = screenBody[screenHeader.fields.name]
-        if(!mf){
-            return <td></td>
+    matchingField(screenBody, screenHeader, sub) {
+        if (screenHeader.fields.fromTbl == "po") {
+            let mf = screenBody[screenHeader.fields.name]
+            if(!mf){
+                return <td></td>
+            } else {
+                switch (screenHeader.fields.type) {
+                    case "String":
+                            return ( 
+                                <TableInput
+                                    collection={screenHeader.fields.fromTbl}
+                                    objectId={screenBody._id}
+                                    fieldName={screenHeader.fields.name}
+                                    fieldValue={mf}
+                                    fieldType="text"
+                                    textNoWrap={true}
+                                    key={screenHeader._id}
+                                />
+                            );                    
+                    case "Number":
+                            return ( 
+                                <TableInput
+                                    collection={screenHeader.fields.fromTbl}
+                                    objectId={screenBody._id}
+                                    fieldName={screenHeader.fields.name}
+                                    fieldValue={mf}
+                                    fieldType="number"
+                                    textNoWrap={true}
+                                    key={screenHeader._id}
+                                />
+                            ); 
+                    case "Date":
+                            return ( 
+                                <TableInput
+                                    collection={screenHeader.fields.fromTbl}
+                                    objectId={screenBody._id}
+                                    fieldName={screenHeader.fields.name}
+                                    fieldValue={mf}
+                                    fieldType="date"
+                                    textNoWrap={true}
+                                    key={screenHeader._id}
+                                />
+                            ); 
+                    case "Boolean":
+                            return ( 
+                                <TableCheckBox
+                                    collection={screenHeader.fields.fromTbl}
+                                    objectId={screenBody._id}
+                                    fieldName={screenHeader.fields.name}
+                                    fieldValue={mf}
+                                    key={screenHeader._id}
+                                />
+                            );
+                    default: 
+                    return ( 
+                        <TableInput
+                            collection={screenHeader.fields.fromTbl}
+                            objectId={screenBody._id}
+                            fieldName={screenHeader.fields.name}
+                            fieldValue={mf}
+                            fieldType="text"
+                            textNoWrap={true}
+                            key={screenHeader._id}
+                        />
+                    );
+                }                 
+            }
+        } else if (screenHeader.fields.fromTbl == "sub") {
+            let mf = sub[screenHeader.fields.name]
+            if(!mf){
+                return <td></td>
+            } else {
+                switch (screenHeader.fields.type) {
+                    case "String":
+                            return ( 
+                                <TableInput
+                                    collection={screenHeader.fields.fromTbl}
+                                    objectId={sub._id}
+                                    fieldName={screenHeader.fields.name}
+                                    fieldValue={mf}
+                                    fieldType="text"
+                                    textNoWrap={true}
+                                    key={screenHeader._id}
+                                />
+                            );                    
+                    case "Number":
+                            return ( 
+                                <TableInput
+                                    collection={screenHeader.fields.fromTbl}
+                                    objectId={sub._id}
+                                    fieldName={screenHeader.fields.name}
+                                    fieldValue={mf}
+                                    fieldType="number"
+                                    textNoWrap={true}
+                                    key={screenHeader._id}
+                                />
+                            ); 
+                    case "Date":
+                            return ( 
+                                <TableInput
+                                    collection={screenHeader.fields.fromTbl}
+                                    objectId={sub._id}
+                                    fieldName={screenHeader.fields.name}
+                                    fieldValue={mf}
+                                    fieldType="date"
+                                    textNoWrap={true}
+                                    key={screenHeader._id}
+                                />
+                            ); 
+                    case "Boolean":
+                            return ( 
+                                <TableCheckBox
+                                    collection={screenHeader.fields.fromTbl}
+                                    objectId={sub._id}
+                                    fieldName={screenHeader.fields.name}
+                                    fieldValue={mf}
+                                    key={screenHeader._id}
+                                />
+                            );
+                    default: 
+                    return ( 
+                        <TableInput
+                            collection={screenHeader.fields.fromTbl}
+                            objectId={sub._id}
+                            fieldName={screenHeader.fields.name}
+                            fieldValue={mf}
+                            fieldType="text"
+                            textNoWrap={true}
+                            key={screenHeader._id}
+                        />
+                    );
+                }                 
+            }            
         } else {
-            switch (screenHeader.fields.type) {
-                case "String":
-                        return ( 
-                            <TableInput
-                                collection={screenHeader.fields.fromTbl}
-                                objectId={screenBody._id}
-                                fieldName={screenHeader.fields.name}
-                                fieldValue={mf}
-                                fieldType="text"
-                                textNoWrap={true}
-                                key={screenHeader._id}
-                            />
-                        );                    
-                case "Number":
-                        return ( 
-                            <TableInput
-                                collection={screenHeader.fields.fromTbl}
-                                objectId={screenBody._id}
-                                fieldName={screenHeader.fields.name}
-                                fieldValue={mf}
-                                fieldType="number"
-                                textNoWrap={true}
-                                key={screenHeader._id}
-                            />
-                        ); 
-                case "Date":
-                        return ( 
-                            <TableInput
-                                collection={screenHeader.fields.fromTbl}
-                                objectId={screenBody._id}
-                                fieldName={screenHeader.fields.name}
-                                fieldValue={mf}
-                                fieldType="date"
-                                textNoWrap={true}
-                                key={screenHeader._id}
-                            />
-                        ); 
-                case "Boolean":
-                        return ( 
-                            <TableCheckBox
-                                collection={screenHeader.fields.fromTbl}
-                                objectId={screenBody._id}
-                                fieldName={screenHeader.fields.name}
-                                fieldValue={mf}
-                                key={screenHeader._id}
-                            />
-                        );
-                default: 
-                return ( 
-                    <TableInput
-                        collection={screenHeader.fields.fromTbl}
-                        objectId={screenBody._id}
-                        fieldName={screenHeader.fields.name}
-                        fieldValue={mf}
-                        fieldType="text"
-                        textNoWrap={true}
-                        key={screenHeader._id}
-                    />
+            return <td></td>
+        }
+
+    }
+
+    matchingRow(screenBody){
+        const { screenHeaders } = this.props
+        if(screenBody.subs){
+            return screenBody.subs.map(sub => {
+                return  (
+                    <tr key={sub._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>
+                        <TableSelectionRow
+                            id={sub._id}
+                            selectAllRows={this.state.selectAllRows}
+                            callback={this.updateSelectedRows}
+                        />
+                        {screenHeaders.map(screenHeader => this.matchingField(screenBody, screenHeader, sub))}
+                    </tr>                
                 );
-            }                 
+    
+            })
         }
     }
     
@@ -305,7 +396,7 @@ class ProjectTable extends Component {
                                 )}
                             </thead>                                
                             <tbody className="full-height">
-                                {screenBodys && screenBodys.map(screenBody => {
+                                {/* {screenBodys && screenBodys.map(screenBody => {
                                     return (
                                         <tr key={screenBody._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>
                                             <TableSelectionRow
@@ -316,7 +407,8 @@ class ProjectTable extends Component {
                                             {screenHeaders.map(screenHeader => this.matchingField(screenBody, screenHeader))}
                                         </tr>
                                     )
-                                })}
+                                })} */}
+                                {screenBodys && screenBodys.map(screenBody => this.matchingRow(screenBody))}
                             </tbody>
                         </table>
                     </div>

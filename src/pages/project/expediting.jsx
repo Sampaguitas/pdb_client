@@ -46,14 +46,6 @@ function returnScreenHeaders(selection, screenId) {
     }
 }
 
-function returnScreenBodys(selection, fromTbl) {
-    if (selection.project) {
-        return selection.project.pos
-    } else {
-        return [];
-    }    
-}
-
 
 class Expediting extends React.Component {
     constructor(props) {
@@ -61,8 +53,6 @@ class Expediting extends React.Component {
         this.state = {
             projectId:'',
             screenId: '5cd2b642fd333616dc360b63',
-            fromTbl: 'pos',
-            
         };
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
     }
@@ -89,7 +79,7 @@ class Expediting extends React.Component {
     }
 
     render() {
-        const { screenId, fromTbl }= this.state;
+        const { screenId }= this.state;
         const { alert, selection } = this.props;
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
@@ -196,3 +186,36 @@ export { connectedExpediting as Expediting };
         //     }
 
         // ]
+
+
+// const testPO =[
+//     {
+//         clCode: "TX-231 (Webster NSC)",
+//         clDescription: "LINE PIPE, API 5L, SAWL, NOM OD 36IN, GR X70, WT 0.625IN, BEVELED END, ONSHORE; NON-SOUR; LIQUID SERVICE",
+//         clPo: "4540145372",
+//         clPoItem: 10,
+//         clPoRev: "0",
+//         daveId: 273514,
+//         description: "SAWL  PIPES",
+//         devRemarks: "Bare",
+//         id: "5cca24b91646ee372e36c6a3",
+//         material: "API 5L GR X70M",
+//         projectId: "5cc98cffab2a306e44a8fea8",
+//         qty: 47499,
+//         sch: `0,625"`,
+//         size: "36",
+//         subs: [],
+//         supContrDate: "2019-08-15T20:00:00.000Z",
+//         supDelCondition: "TBA",
+//         udfPoD1: "2019-04-22T20:00:00.000Z",
+//         unitPrice: 146.03,
+//         uom: "ft",
+//         vlContDelDate: "2019-09-29T20:00:00.000Z",
+//         vlDelCondition: "TBA",
+//         vlPoItemX: "0",
+//         vlPoX: "LIB-004",
+//         __v: 0,
+//         _id: "5cca24b91646ee372e36c6a3",
+//     }
+
+// ]
