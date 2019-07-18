@@ -52,7 +52,7 @@ class User extends React.Component {
             stateUser.newPassword &&
             stateUser.confirmPassword
           ) {
-            dispatch(userActions.changePwd(stateUser));
+            dispatch(userActions.changePwd(encodeURI(stateUser)));
           }
     }
 

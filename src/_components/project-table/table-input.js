@@ -37,7 +37,7 @@ class TableInput extends Component{
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
             ...this.state,
-            [name]: value
+            [name]: value //decodeURI(
         });
     }
 
@@ -55,7 +55,7 @@ class TableInput extends Component{
             const requestOptions = {
                 method: 'PUT',
                 headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: `{"${fieldName}":"${fieldValue}"}`
+                body: `{"${fieldName}":"${encodeURI(fieldValue)}"}` //encodeURI
             };
             return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
             .then( () => {
@@ -96,11 +96,11 @@ class TableInput extends Component{
                 return new Intl.NumberFormat().format(fieldValue);
             case "date":
                 if(!fieldValue){
-                    return fieldValue
+                    return fieldValue; // decodeURI
                 } else {
                     return new Intl.DateTimeFormat().format(new Date(fieldValue));
                 }
-            default: return fieldValue
+            default: return fieldValue; //decodeURI
         }
     }
 
