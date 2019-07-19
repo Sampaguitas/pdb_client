@@ -5,18 +5,19 @@ import './table-check-box-role.css'
 
 class TableCheckBoxRole extends Component {
     render(){
+        const {id, checked, onChange, disabled } = this.props;
         return (
             <div>
                 <label className="fancy-table-check-box-role">
                 <input
-                    name={this.props.id}
+                    name={id}
                     type="checkbox"
-                    checked={this.props.checked}
-                    onChange={this.props.onChange}
-                    disabled={this.props.disabled}
+                    checked={checked}
+                    onChange={onChange}
+                    disabled={disabled}
                 />
-                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: '#0070C0', margin: '0%', padding: 'auto', textAlign: 'center', width: '100%'}}/>
-                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: '#adb5bd', margin: '0%', padding: 'auto', textAlign: 'center', width: '100%'}}/>  
+                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', margin: '0%', padding: 'auto', textAlign: 'center', width: '100%'}}/>
+                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', margin: '0%', padding: 'auto', textAlign: 'center', width: '100%'}}/>  
                 </label>
             </div>
         );

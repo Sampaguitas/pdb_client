@@ -6,15 +6,12 @@ class TableSelectionAllRow extends Component {
     render(){
         const { checked, onChange } = this.props
         return (
-            <th style={{ width: '30px', alignItems: 'center', justifyContent: 'center'}}>
-                <div>
-                    <label className="fancy-table-selection-all-row">
+            <th style={{ width: '30px', minWidth: '30px', alignItems: 'center', justifyContent: 'center'}}>
+                <label className="fancy-table-selection-all-row" style={{margin: '0px'}}>
                     <input type="checkbox" name="fieldValue" checked={checked} onChange={onChange}/>
-                        <FontAwesomeIcon icon="check" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/> 
-                        <FontAwesomeIcon icon="check" className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/> {/*#ededed*/}
-                    </label>
-
-                </div>
+                    <FontAwesomeIcon icon="check" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto',  textAlign: 'center', width: '100%'}}/> 
+                    <FontAwesomeIcon icon="check" className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/> {/*#ededed*/}
+                </label>
             </th>
         );
     }

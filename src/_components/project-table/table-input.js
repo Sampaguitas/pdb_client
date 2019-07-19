@@ -12,8 +12,9 @@ class TableInput extends Component{
             fieldName: '',
             fieldValue: '',
             fieldType: '',
-            color: 'inherit',
-            editing: false
+            color: '#0070C0',
+            editing: false,
+            disabled: false
         }
         this.onChange = this.onChange.bind(this);
         this.onFocus = this.onFocus.bind(this);
@@ -27,6 +28,7 @@ class TableInput extends Component{
             objectId: this.props.objectId,
             fieldName: this.props.fieldName,
             fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
+            disabled: this.props.disabled ? this.props.disabled : false,
             fieldType: this.props.fieldType,
         });
     }
@@ -42,16 +44,19 @@ class TableInput extends Component{
     }
 
     onFocus() {
-        this.setState({ editing: true }, () => {
-            this.refs.input.focus();
-        });
+        const { disabled } = this.props;
+        if(!disabled){
+            this.setState({ editing: true }, () => {
+                this.refs.input.focus();
+            });
+        }
     }
 
     onBlur(event){
         event.preventDefault();
-
-        const { collection, objectId, fieldName, fieldValue } = this.state      
-        if (collection && objectId && fieldName) {
+        const { disabled } = this.props;
+        const { collection, objectId, fieldName, fieldValue } = this.state    
+        if (!disabled && collection && objectId && fieldName) {
             const requestOptions = {
                 method: 'PUT',
                 headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -67,7 +72,7 @@ class TableInput extends Component{
                     setTimeout(() => {
                         this.setState({
                             ...this.state,
-                            color: 'inherit',
+                            color: '#0070C0',
                         });
                     }, 1000);
                 });
@@ -82,7 +87,7 @@ class TableInput extends Component{
                     setTimeout(() => {
                         this.setState({
                             ...this.state,
-                            color: 'inherit',
+                            color: '#0070C0',
                         });
                     }, 1000);
                 });                
@@ -105,7 +110,7 @@ class TableInput extends Component{
     }
 
     render() {
-        const { fieldValue, fieldType, color } = this.state
+        const { fieldValue, fieldType, color, disabled } = this.state
 
         return this.state.editing ? (
             <td className="text-nowrap" style={{padding:0}}>
@@ -117,6 +122,7 @@ class TableInput extends Component{
                     value={fieldValue}
                     onChange={this.onChange}
                     onBlur={this.onBlur}
+                    disabled={disabled}
                     // style={{
                     //     margin: 0,
                     //     borderRadius:0,
@@ -130,7 +136,7 @@ class TableInput extends Component{
             </td>
         ):
         (
-        <td onClick={() => this.onFocus()} style={{color:color}}>{this.formatText(fieldValue, fieldType)}</td> //onDoubleClick
+        <td onClick={() => this.onFocus()} style={{color: disabled ? 'inherit' : color}}>{this.formatText(fieldValue, fieldType)}</td> //onDoubleClick
         );
     }
 }

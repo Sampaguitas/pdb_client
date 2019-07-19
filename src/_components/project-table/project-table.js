@@ -208,6 +208,7 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
+                            disabled={screenHeader.edit}
                             fieldType="text"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -220,6 +221,7 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
+                            disabled={screenHeader.edit}
                             fieldType="number"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -232,6 +234,7 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
+                            disabled={screenHeader.edit}
                             fieldType="date"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -244,6 +247,7 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
+                            disabled={screenHeader.edit}
                             key={screenHeader._id}
                         />
                     );
@@ -254,6 +258,7 @@ class ProjectTable extends Component {
                         objectId={screenBody._id}
                         fieldName={screenHeader.fields.name}
                         fieldValue={screenBody[screenHeader.fields.name]}
+                        disabled={screenHeader.edit}
                         fieldType="text"
                         textNoWrap={true}
                         key={screenHeader._id}
@@ -269,6 +274,7 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
+                            disabled={screenHeader.edit}
                             fieldType="text"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -281,6 +287,7 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
+                            disabled={screenHeader.edit}
                             fieldType="number"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -293,6 +300,7 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
+                            disabled={screenHeader.edit}
                             fieldType="date"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -305,6 +313,7 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
+                            disabled={screenHeader.edit}
                             key={screenHeader._id}
                         />
                     );
@@ -315,6 +324,7 @@ class ProjectTable extends Component {
                         objectId={sub._id}
                         fieldName={screenHeader.fields.name}
                         fieldValue={sub[screenHeader.fields.name]}
+                        disabled={screenHeader.edit}
                         fieldType="text"
                         textNoWrap={true}
                         key={screenHeader._id}

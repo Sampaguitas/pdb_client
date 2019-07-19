@@ -8,6 +8,7 @@ class NewRowCreate extends Component {
             <td
                 style={{
                     width: '30px',
+                    minWidth: '30px',
                     alignItems: 'center',
                     justifyContent: 'center'
                 }}

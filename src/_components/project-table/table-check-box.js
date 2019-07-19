@@ -18,7 +18,8 @@ class TableCheckBox extends Component {
             objectId: '',
             fieldName: '',
             fieldValue: false,
-            color: 'inherit'
+            color: '#0070C0',
+            disabled: false,
         }
         this.onChange = this.onChange.bind(this);
     }
@@ -28,7 +29,8 @@ class TableCheckBox extends Component {
             collection: this.props.collection,
             objectId: this.props.objectId,
             fieldName: this.props.fieldName,
-            fieldValue: this.props.fieldValue ? this.props.fieldValue: false,
+            fieldValue: this.props.fieldValue ? this.props.fieldValue : false,
+            disabled: this.props.disabled ? this.props.disabled : false
         });
     }
 
@@ -56,7 +58,7 @@ class TableCheckBox extends Component {
                         setTimeout(() => {
                             this.setState({
                                 ...this.state,
-                                color: 'inherit',
+                                color: '#0070C0',
                             });
                         }, 1000);                         
                     });
@@ -70,7 +72,7 @@ class TableCheckBox extends Component {
                         setTimeout(() => {
                             this.setState({
                                 ...this.state,
-                                color: 'inherit',
+                                color: '#0070C0',
                             });
                         }, 1000);
                     }); 
@@ -93,8 +95,8 @@ class TableCheckBox extends Component {
                     onChange={this.onChange}
                     disabled={disabled}
                 />
-                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: `${color == 'inherit' ? '#0070C0' : color}`, padding: 'auto', textAlign: 'center', width: '100%'}}/>
-                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: `${color == 'inherit' ? '#adb5bd' : color}`, padding: 'auto', textAlign: 'center', width: '100%'}}/>                
+                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: disabled ? '#adb5bd' : color, padding: 'auto', textAlign: 'center', width: '100%'}}/>
+                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: disabled ? '#adb5bd' : color, padding: 'auto', textAlign: 'center', width: '100%'}}/>                
                 </label>
             </div>
             </td>

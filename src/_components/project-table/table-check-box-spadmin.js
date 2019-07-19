@@ -62,28 +62,31 @@ class TableCheckBoxSuperAdmin extends Component {
         }));
     }
 
-    componentDidMount(){     
+    componentDidMount(){   
+        const { id, checked } = this.props  
         this.setState({ 
             user: {
-                id: this.props.id,
-                isSuperAdmin: this.props.checked
+                id: id,
+                isSuperAdmin: checked
             }
         })
     }
     render(){
+        const { user } = this.state;
+        const { disabled } = this.props;
         return (
             <div data-type="checkbox">
                 <label className="table-check-box-spadmin" data-type="checkbox">
                 <input
                     name="isSuperAdmin"
                     type="checkbox"
-                    checked={this.state.user.isSuperAdmin}
+                    checked={user.isSuperAdmin}
                     onChange={this.handleInputChange}
-                    disabled={this.props.disabled}
+                    disabled={disabled}
                     data-type="checkbox"
                 />
-                <FontAwesomeIcon data-type="checkbox" icon="check-square" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/>
-                <FontAwesomeIcon data-type="checkbox" icon={["far", "square"]} className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/> 
+                <FontAwesomeIcon data-type="checkbox" icon="check-square" className="checked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/>
+                <FontAwesomeIcon data-type="checkbox" icon={["far", "square"]} className="unchecked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/> 
                 </label>
 
             </div>

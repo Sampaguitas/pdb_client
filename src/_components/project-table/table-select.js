@@ -35,10 +35,11 @@ class TableSelect extends Component{
             objectId: '',
             fieldName: '',
             fieldValue: '',
-            color: 'inherit',
+            color: '#0070C0',
             editing: false,
             options:[],
             optionText: '',
+            disabled: false
         }
         this.onChange = this.onChange.bind(this);
         this.onFocus = this.onFocus.bind(this);
@@ -51,6 +52,7 @@ class TableSelect extends Component{
             objectId: this.props.objectId,
             fieldName: this.props.fieldName,
             fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
+            disabled: this.props.disabled ? this.props.disabled : false,
             options: this.props.options,
             optionText: this.props.optionText
         });
@@ -92,7 +94,7 @@ class TableSelect extends Component{
                     setTimeout(() => {
                         this.setState({
                             ...this.state,
-                            color: 'inherit',
+                            color: '#0070C0',
                         });
                     }, 1000);                    
                 });
@@ -107,7 +109,7 @@ class TableSelect extends Component{
                     setTimeout(() => {
                         this.setState({
                             ...this.state,
-                            color: 'inherit',
+                            color: '#0070C0',
                         });
                     }, 1000);
                 });                
@@ -134,7 +136,7 @@ class TableSelect extends Component{
     }
 
     render() {
-        const { fieldValue, color, options, optionText } = this.state
+        const { fieldValue, color, options, optionText, disabled } = this.state
 
         return this.state.editing ? (
             <td className="text-nowrap" style={{padding:0}}>
@@ -145,6 +147,7 @@ class TableSelect extends Component{
                     value={fieldValue}
                     onChange={this.onChange}
                     onBlur={this.onBlur}
+                    disabled={disabled}
                     // style={{
                     //     margin: 0,
                     //     borderRadius:0,
@@ -167,7 +170,7 @@ class TableSelect extends Component{
             </td>
         ):
         (
-        <td onClick={() => this.onFocus()} style={{color: color}}>{ this.selectedName(options, fieldValue)}</td> //onDoubleClick
+        <td onClick={() => this.onFocus()} style={{color: disabled ? 'inherit' : color}}>{ this.selectedName(options, fieldValue)}</td> //onDoubleClick
         );
     }
 }
