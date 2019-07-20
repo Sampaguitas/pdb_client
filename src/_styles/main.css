@@ -177,11 +177,11 @@ h5 {
 
 .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
   padding: 6px;
-  line-height: 1;
+  line-height: 1.47;
   vertical-align: middle;
   margin: 0px;
   min-width: 75px;
-  height: '40px'
+  height: 35px;
 }
 
 
