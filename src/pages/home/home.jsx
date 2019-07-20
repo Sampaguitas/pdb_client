@@ -50,7 +50,7 @@ class Home extends React.Component {
             opco:'',
             erp: '',
             // projects: [],
-            loaded: false
+            loaded: false,
         };
         this.filterName = this.filterName.bind(this);
         this.handleChange = this.handleChange.bind(this);

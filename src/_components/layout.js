@@ -9,22 +9,27 @@ import { callbackify } from 'util';
 class Layout extends Component {
     constructor(props) {
         super(props);
-        this.toggleCollapse = this.toggleCollapse.bind(this)
         this.state = {
-            collapsed: false
+            collapsed: true
         }
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
+
     toggleCollapse() {
-        this.setState({ collapsed: !this.state.collapsed });
+        const { collapsed } = this.state;
+        this.setState({
+            collapsed: !collapsed
+        });
     }
 
     render() {
         const { alert } = this.props;
+        const { collapsed } = this.state;
         return (
             <div className="full-height">
-                <HeaderBarMenu id="headerbar" className={this.state.collapsed ? "collapsed" : ''} collapsed={this.state.collapsed} toggleCollapse={this.toggleCollapse}/>
-                <SideBarMenu className={this.state.collapsed ? "collapsed" : ''} collapsed={this.state.collapsed} toggleCollapse={this.toggleCollapse} accesses={this.props.accesses}/>
-                <div id="content" className={this.state.collapsed ? "collapsed" : ''} style={{height: `calc(100% - ${alert.message ? '190px' : '145px'})`}}>
+                <HeaderBarMenu id="headerbar" className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={this.toggleCollapse}/>
+                <SideBarMenu className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={this.toggleCollapse} accesses={this.props.accesses}/>
+                <div id="content" className={collapsed ? "collapsed" : ''} style={{height: `calc(100% - ${alert.message ? '190px' : '145px'})`}}>
                     {this.props.children}
                 </div>
                 <Footer />
