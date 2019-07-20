@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 class HeaderInput extends Component{
+
     render() {
         const { type, title, name, value, onChange, width, textNoWrap } = this.props;
         return (

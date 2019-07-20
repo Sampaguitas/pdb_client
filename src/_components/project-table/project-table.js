@@ -15,6 +15,10 @@ import TableSelectionRow from '../../_components/project-table/table-selection-r
 import TableSelectionAllRow from '../../_components/project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+function baseTen(number) {
+    return number.toString().length > 2 ? number : '0' + number;
+}
+
 function arrayRemove(arr, value) {
 
     return arr.filter(function(ele){
@@ -63,6 +67,7 @@ class ProjectTable extends Component {
             selectedRows: [],
             selectAllRows: false,
         };
+        this.resetHeaders = this.resetHeaders.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
@@ -75,13 +80,29 @@ class ProjectTable extends Component {
         this.matchingRow = this.matchingRow.bind(this);
     }
 
+    resetHeaders(event) {
+        event.preventDefault();
+        let tmpObj = this.state.header;
+        Object.keys(tmpObj).forEach(function(index) {
+            tmpObj[index] = ''
+        }, () => {
+            this.setState({
+                ...this.state,
+                header: tmpObj
+            });
+        });
+    }
+
     downloadTable(event){
         event.preventDefault();
         const { screen } = this.props;
-        console.log(screen);
-        var wb = XLSX.utils.table_to_book(document.getElementById('myProjectTable'), {sheet:screen});
+        var currentDate = new Date();
+        var date = currentDate.getDate();
+        var month = currentDate.getMonth();
+        var year = currentDate.getFullYear();
+        var wb = XLSX.utils.table_to_book(document.getElementById('myProjectTable')); //, {sheet:screen}
         var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
-        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), `${screen}.xlsx`);
+        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`);
         function s2ab(s) {
             var buf = new ArrayBuffer(s.length);
             var view = new Uint8Array(buf);
@@ -91,6 +112,7 @@ class ProjectTable extends Component {
     }
 
     handleChangeHeader(event) {
+        event.preventDefault();
         const target = event.target;
         const name = target.name;
         const { header } = this.state;
@@ -384,7 +406,7 @@ class ProjectTable extends Component {
                     <button className="btn btn-outline-leeuwen-blue" style={{width: '40px', height: '40px'}}> 
                         <span><FontAwesomeIcon icon="cog" className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.resetHeaders(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="filter" className="far fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" onClick={event => handleSelectionReload(event)} style={{width: '40px', height: '40px'}}>
