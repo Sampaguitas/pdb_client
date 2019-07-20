@@ -47,7 +47,8 @@
     "redux-thunk": "^2.2.0",
     "terser": "3.14.1",
     "webpack": "^4.33.0",
-    "webpack-dev-middleware": "^3.7.0"
+    "webpack-dev-middleware": "^3.7.0",
+    "xlsx": "^0.14.3"
   },
   "engines": {
     "node": "8.15.0",

@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 import HeaderCheckBox from '../../_components/project-table/header-check-box';
 import HeaderInput from '../../_components/project-table/header-input';
 import HeaderSelect from '../../_components/project-table/header-select';
@@ -61,6 +63,7 @@ class ProjectTable extends Component {
             selectedRows: [],
             selectAllRows: false,
         };
+        this.downloadTable = this.downloadTable.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
@@ -70,6 +73,19 @@ class ProjectTable extends Component {
         this.matchingHeader = this.matchingHeader.bind(this);
         this.matchingField = this.matchingField.bind(this);
         this.matchingRow = this.matchingRow.bind(this);
+    }
+
+    downloadTable(event){
+        event.preventDefault();
+        var wb = XLSX.utils.table_to_book(document.getElementById('myProjectTable'), {sheet:"Sheet JS"});
+        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'test.xlsx');
+        function s2ab(s) {
+            var buf = new ArrayBuffer(s.length);
+            var view = new Uint8Array(buf);
+            for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+            return buf;
+        }
     }
 
     handleChangeHeader(event) {
@@ -375,7 +391,7 @@ class ProjectTable extends Component {
                     <button className="btn btn-outline-leeuwen-blue" onClick={event => toggleUnlock(event)} style={{width: '50px', height: '50px'}}>
                         <span><FontAwesomeIcon icon="unlock" className="fas fa-3x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.downloadTable(event)} style={{width: '50px', height: '50px'}}>
                         <span><FontAwesomeIcon icon="download" className="fas fa-3x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
