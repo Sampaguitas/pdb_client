@@ -383,7 +383,7 @@ class ProjectTable extends Component {
         if(screenBody.subs){
             return screenBody.subs.map(sub => {
                 return  (
-                    <tr key={sub._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>
+                    <tr key={sub._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}> {/*style={{height: '30px', lineHeight: '17.8571px'}}*/}
                         <TableSelectionRow
                             id={sub._id}
                             selectAllRows={this.state.selectAllRows}

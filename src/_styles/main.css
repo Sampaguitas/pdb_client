@@ -175,6 +175,15 @@ h5 {
   font-size: 1em; /* 1.25em 22.4px/16=1.4em */
 }
 
+.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
+  padding: 8px;
+  line-height: 1.333;
+  vertical-align: middle;
+  margin: 0px;
+  min-width: 75px;
+  height: '40px'
+}
+
 
 
 

@@ -25,7 +25,7 @@ class TableSelectionRow extends Component {
 
     componentDidUpdate(prevProps) {
         if(prevProps.selectAllRows !== this.props.selectAllRows) {
-            this.setState({ fieldValue: this.props.selectAllRows })
+            this.setState({ fieldValue: this.props.selectAllRows });
         }
     }
 
@@ -35,8 +35,8 @@ class TableSelectionRow extends Component {
             <td style={{ width: '30px', minWidth: '30px', alignItems: 'center', justifyContent: 'center'}}>
                 <label className="fancy-table-selection-row" style={{margin: '0px'}}>
                     <input type="checkbox" name="fieldValue" checked={fieldValue} onChange={this.onChange}/>
-                    <FontAwesomeIcon icon="check" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%'}}/> 
-                    <FontAwesomeIcon icon="check" className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%'}}/> {/*#ededed*/}
+                    <FontAwesomeIcon icon="check" className="checked fa-lg" style={{color: '#0070C0', padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/> 
+                    <FontAwesomeIcon icon="check" className="unchecked fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/> {/*#ededed*/}
                 </label>
             </td>
         );

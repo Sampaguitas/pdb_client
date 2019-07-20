@@ -15,10 +15,7 @@ class NewRowCreate extends Component {
             >
             <div onClick={onClick}>
                 <FontAwesomeIcon
-                    icon="plus"
-                    className="fas fa-lg"
-                    style={{color: '#adb5bd'}}
-                    
+                    icon="plus" className="fas fa-lg" style={{color: '#adb5bd', padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}  
                 />
             </div>
         </td>

@@ -877,7 +877,7 @@ class Documents extends React.Component {
                             </thead>
                             <tbody className="full-height" style={{overflowY:'auto'}}>
                                 {newRow &&
-                                    <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow" style={{height: '40px', lineHeight: '17.8571px'}}>
+                                    <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow"> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}
                                         <NewRowCreate
                                             onClick={ event => this.cerateNewRow(event)}
                                         />
@@ -932,7 +932,7 @@ class Documents extends React.Component {
                                 }
 
                             {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
-                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow} style={{height: '40px', lineHeight: '17.8571px'}}>                                   
+                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}                                   
                                     <TableSelectionRow
                                         id={s._id}
                                         selectAllRows={this.state.selectAllRows}
