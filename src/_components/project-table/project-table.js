@@ -77,9 +77,11 @@ class ProjectTable extends Component {
 
     downloadTable(event){
         event.preventDefault();
-        var wb = XLSX.utils.table_to_book(document.getElementById('myProjectTable'), {sheet:"Sheet JS"});
+        const { screen } = this.props;
+        console.log(screen);
+        var wb = XLSX.utils.table_to_book(document.getElementById('myProjectTable'), {sheet:screen});
         var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
-        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), 'test.xlsx');
+        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), `${screen}.xlsx`);
         function s2ab(s) {
             var buf = new ArrayBuffer(s.length);
             var view = new Uint8Array(buf);
@@ -374,28 +376,28 @@ class ProjectTable extends Component {
     }
     
     render() {
-        const { handleSelectionReload, toggleUnlock, screenHeaders, screenBodys } = this.props;
+        const { handleSelectionReload, toggleUnlock, screenHeaders, screenBodys, unlocked } = this.props;
         const { header,selectAllRows  } = this.state;
         return (
             <div className="full-height">
                 <div className="btn-group-vertical pull-right">
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}> 
-                        <span><FontAwesomeIcon icon="cog" className="fas fa-3x"/></span>
+                    <button className="btn btn-outline-leeuwen-blue" style={{width: '40px', height: '40px'}}> 
+                        <span><FontAwesomeIcon icon="cog" className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
-                        <span><FontAwesomeIcon icon="filter" className="far fa-3x"/></span>
+                    <button className="btn btn-outline-leeuwen-blue" style={{width: '40px', height: '40px'}}>
+                        <span><FontAwesomeIcon icon="filter" className="far fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" onClick={event => handleSelectionReload(event)} style={{width: '50px', height: '50px'}}>
-                        <span><FontAwesomeIcon icon="sync-alt" className="far fa-3x"/></span>
+                    <button className="btn btn-outline-leeuwen-blue" onClick={event => handleSelectionReload(event)} style={{width: '40px', height: '40px'}}>
+                        <span><FontAwesomeIcon icon="sync-alt" className="far fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" onClick={event => toggleUnlock(event)} style={{width: '50px', height: '50px'}}>
-                        <span><FontAwesomeIcon icon="unlock" className="fas fa-3x"/></span>
+                    <button className="btn btn-outline-leeuwen-blue" onClick={event => toggleUnlock(event)} style={{width: '40px', height: '40px'}}>
+                        <span><FontAwesomeIcon icon={unlocked ? "lock" : "unlock"} className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.downloadTable(event)} style={{width: '50px', height: '50px'}}>
-                        <span><FontAwesomeIcon icon="download" className="fas fa-3x"/></span>
+                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.downloadTable(event)} style={{width: '40px', height: '40px'}}>
+                        <span><FontAwesomeIcon icon="download" className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
-                        <span><FontAwesomeIcon icon="upload" className="fas fa-3x"/></span>
+                    <button className="btn btn-outline-leeuwen-blue" style={{width: '40px', height: '40px'}}>
+                        <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
                     </button>
                 </div>
                 <div className="row ml-1 full-height">

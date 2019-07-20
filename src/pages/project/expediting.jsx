@@ -53,7 +53,8 @@ class Expediting extends React.Component {
         this.state = {
             projectId:'',
             screenId: '5cd2b642fd333616dc360b63',
-            unlocked: false
+            unlocked: false,
+            screen: 'expediting'
         };
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -91,7 +92,7 @@ class Expediting extends React.Component {
     }
 
     render() {
-        const { screenId, unlocked }= this.state;
+        const { screen, screenId, unlocked }= this.state;
         const { alert, selection } = this.props;
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
@@ -108,6 +109,7 @@ class Expediting extends React.Component {
                             handleSelectionReload={this.handleSelectionReload}
                             toggleUnlock={this.toggleUnlock}
                             unlocked={unlocked}
+                            screen={screen}
 
                         />
                     }
