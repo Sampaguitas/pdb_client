@@ -40,8 +40,8 @@ class Certificates extends React.Component {
         const { screenId }= this.state;
         const { alert, selection } = this.props;
         return (
-            <Layout accesses={selection.project && selection.project.accesses}>
-                {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
+            <Layout alert={this.props.alert} accesses={selection.project && selection.project.accesses}>
+                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <h2>Inspection - Certificates : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="certificates" className="full-height">

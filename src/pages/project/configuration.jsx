@@ -107,8 +107,8 @@ class Configuration extends React.Component {
 
             // let currentUser = JSON.parse(localStorage.getItem('user'));
         return (
-            <Layout accesses={selection.project && selection.project.accesses}>
-                {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
+            <Layout alert={this.props.alert} accesses={selection.project && selection.project.accesses}>
+                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <h2>Configuration : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="configuration" className="full-height">

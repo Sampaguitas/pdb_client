@@ -98,8 +98,8 @@ class Home extends React.Component {
         const { number, name, opco, erp } = this.state;
         const { alert, projects } = this.props;
         return (
-            <Layout>
-                {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
+            <Layout alert={this.props.alert}>
+                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <h2>Overview</h2>
                 <hr />
                 <div id="overview" className="full-height">

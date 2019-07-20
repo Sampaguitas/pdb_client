@@ -60,9 +60,8 @@ class User extends React.Component {
         const { user, alert, userUpdating } = this.props;
         const { submitted, stateUser } = this.state
         return (
-            <Layout>
+            <Layout alert={this.props.alert}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-                <br />
                 <div id="user">
                     <h2>User Information</h2>
                     <hr />

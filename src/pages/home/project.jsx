@@ -206,8 +206,8 @@ class Project extends React.Component {
         let user = JSON.parse(localStorage.getItem('user'));
         {users.items && loaded === false && this.stateReload()}
         return (
-            <Layout>
-                {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
+            <Layout alert={this.props.alert}>
+                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <div id="setting" className="full-height">
                     <h2>Add project</h2>
                     <hr />

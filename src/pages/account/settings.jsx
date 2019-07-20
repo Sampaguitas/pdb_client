@@ -237,8 +237,8 @@ handleSubmit(event) {
     const { registering, userUpdating, userDeleting, alert, opcos } = this.props;
     let currentUser = JSON.parse(localStorage.getItem('user'));
     return (
-      <Layout>
-        {alert.message ? <div className={`alert ${alert.type}`}>{alert.message}</div>: <br />}
+      <Layout alert={this.props.alert}>
+        {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
         <div id="setting" className="full-height">
           <h2>Add or Update user</h2>
           <hr />
