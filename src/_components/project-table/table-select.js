@@ -39,7 +39,7 @@ class TableSelect extends Component{
             editing: false,
             options:[],
             optionText: '',
-            disabled: false
+            // disabled: false
         }
         this.onChange = this.onChange.bind(this);
         this.onFocus = this.onFocus.bind(this);
@@ -52,7 +52,7 @@ class TableSelect extends Component{
             objectId: this.props.objectId,
             fieldName: this.props.fieldName,
             fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
-            disabled: this.props.disabled ? this.props.disabled : false,
+            // disabled: this.props.disabled ? this.props.disabled : false,
             options: this.props.options,
             optionText: this.props.optionText
         });
@@ -69,52 +69,59 @@ class TableSelect extends Component{
     }
 
     onFocus() {
-        this.setState({ editing: true }, () => {
-            this.refs.input.focus();
-        });
+        const { disabled } = this.props;
+        if(!disabled){
+            this.setState({ editing: true }, () => {
+                this.refs.input.focus();
+            });
+        }
     }
 
     onBlur(event){
         event.preventDefault();
-        this.setState({editing:false});
-        const { collection, objectId, fieldName, fieldValue } = this.state      
-        if (collection && objectId && fieldName && objectId) {
-            const requestOptions = {
-                method: 'PUT',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: `{"${fieldName}":"${fieldValue}"}`
-            };
-            return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
-            .then( () => {
-                this.setState({
-                    ...this.state,
-                    editing: false,
-                    color: 'green',                    
-                }, () => {
-                    setTimeout(() => {
-                        this.setState({
-                            ...this.state,
-                            color: '#0070C0',
-                        });
-                    }, 1000);                    
+        const {disabled} = this.props;
+        // if(!disabled){
+        //     this.setState({editing:false});
+            const { collection, objectId, fieldName, fieldValue } = this.state      
+            if (!disabled && collection && objectId && fieldName && objectId) {
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: `{"${fieldName}":"${fieldValue}"}`
+                };
+                return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        ...this.state,
+                        editing: false,
+                        color: 'green',                    
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                color: '#0070C0',
+                            });
+                        }, 1000);                    
+                    });
+                })
+                .catch( () => {
+                    this.setState({
+                        ...this.state,
+                        editing: false,
+                        color: 'red',
+                        fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                color: '#0070C0',
+                            });
+                        }, 1000);
+                    });                
                 });
-            })
-            .catch( () => {
-                this.setState({
-                    ...this.state,
-                    editing: false,
-                    color: 'red',
-                    fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
-                }, () => {
-                    setTimeout(() => {
-                        this.setState({
-                            ...this.state,
-                            color: '#0070C0',
-                        });
-                    }, 1000);
-                });                
-            });
-        }
+            }
+        // }
+
     }
 
 
@@ -136,7 +143,8 @@ class TableSelect extends Component{
     }
 
     render() {
-        const { fieldValue, color, options, optionText, disabled } = this.state
+        const { disabled } = this.props;
+        const { fieldValue, color, options, optionText } = this.state
 
         return this.state.editing ? (
             <td className="text-nowrap" style={{padding:0}}>

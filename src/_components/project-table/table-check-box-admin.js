@@ -33,6 +33,7 @@ class TableCheckBoxAdmin extends Component {
         };
         return fetch(`${config.apiUrl}/user/setAdmin?id=${user.id}`, requestOptions).then(this.handleResponse);
     }
+    
     handleResponse(response) {
         return response.text().then(text => {
             const data = text && JSON.parse(text);

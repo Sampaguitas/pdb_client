@@ -14,7 +14,7 @@ class TableInput extends Component{
             fieldType: '',
             color: '#0070C0',
             editing: false,
-            disabled: false
+            // disabled: false
         }
         this.onChange = this.onChange.bind(this);
         this.onFocus = this.onFocus.bind(this);
@@ -28,7 +28,7 @@ class TableInput extends Component{
             objectId: this.props.objectId,
             fieldName: this.props.fieldName,
             fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
-            disabled: this.props.disabled ? this.props.disabled : false,
+            // disabled: this.props.disabled ? this.props.disabled : false,
             fieldType: this.props.fieldType,
         });
     }
@@ -110,7 +110,8 @@ class TableInput extends Component{
     }
 
     render() {
-        const { fieldValue, fieldType, color, disabled } = this.state
+        const { disabled } = this.props;
+        const { fieldValue, fieldType, color } = this.state
 
         return this.state.editing ? (
             <td className="text-nowrap" style={{padding:0}}>

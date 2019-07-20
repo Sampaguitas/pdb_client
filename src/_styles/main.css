@@ -155,25 +155,24 @@ body {
   padding: 15px;
 }
 
-
 h1 {
-  font-size: 2.5rem; /* 30px/16=2.5em */
+  font-size: 2rem; /* 2.5rem 30px/16=2.5em */
 }
 
 h2 {
-  font-size: 2em; /* 25px/16=1.875em */
+  font-size: 1.75em; /* 2em 25px/16=1.875em */
 }
 
 h3 {
-  font-size: 1.75em; /* 20px/16=2.5em */
+  font-size: 1.5em; /* 1.75em 20px/16=2.5em */
 }
 
 h4 {
-  font-size: 1.5em; /* 15px/16=2.5em */
+  font-size: 1.25em; /* 1.5em 15px/16=2.5em */
 }
 
 h5 {
-  font-size: 1.25em; /* 22.4px/16=1.4em */
+  font-size: 1em; /* 1.25em 22.4px/16=1.4em */
 }
 
 

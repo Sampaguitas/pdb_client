@@ -53,12 +53,14 @@ class Expediting extends React.Component {
         this.state = {
             projectId:'',
             screenId: '5cd2b642fd333616dc360b63',
+            unlocked: false
         };
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
+        this.toggleUnlock = this.toggleUnlock.bind(this);
     }
 
     componentDidMount() {
-        const { dispatch, location } = this.props
+        const { dispatch, location } = this.props;
         var qs = queryString.parse(location.search);
         if (qs.id) {
             this.setState({projectId: qs.id}),
@@ -68,7 +70,7 @@ class Expediting extends React.Component {
     }
 
     handleSelectionReload(event){
-        const { dispatch, location } = this.props
+        const { dispatch, location } = this.props;
         var qs = queryString.parse(location.search);
         if (qs.id) {
             this.setState({projectId: qs.id}),
@@ -78,8 +80,18 @@ class Expediting extends React.Component {
         dispatch(projectActions.getAll());    
     }
 
+    toggleUnlock(event) {
+        event.preventDefault()
+        const { unlocked } = this.state;
+        this.setState({
+            unlocked: !unlocked
+        }, () => {
+            console.log(this.state.unlocked);
+        });
+    }
+
     render() {
-        const { screenId }= this.state;
+        const { screenId, unlocked }= this.state;
         const { alert, selection } = this.props;
         return (
             <Layout accesses={selection.project && selection.project.accesses}>
@@ -94,6 +106,9 @@ class Expediting extends React.Component {
                             selection={selection}
                             screenId={screenId}
                             handleSelectionReload={this.handleSelectionReload}
+                            toggleUnlock={this.toggleUnlock}
+                            unlocked={unlocked}
+
                         />
                     }
                 </div>

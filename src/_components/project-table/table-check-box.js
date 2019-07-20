@@ -19,7 +19,7 @@ class TableCheckBox extends Component {
             fieldName: '',
             fieldValue: false,
             color: '#0070C0',
-            disabled: false,
+            // disabled: false,
         }
         this.onChange = this.onChange.bind(this);
     }
@@ -30,7 +30,7 @@ class TableCheckBox extends Component {
             objectId: this.props.objectId,
             fieldName: this.props.fieldName,
             fieldValue: this.props.fieldValue ? this.props.fieldValue : false,
-            disabled: this.props.disabled ? this.props.disabled : false
+            // disabled: this.props.disabled ? this.props.disabled : false
         });
     }
 
@@ -82,7 +82,8 @@ class TableCheckBox extends Component {
     }
 
     render(){
-        const { fieldValue, disabled, color } = this.state
+        const { disabled } = this.props;
+        const { fieldValue, color } = this.state;
         return (
             <td>
              <div>

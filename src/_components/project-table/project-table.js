@@ -199,6 +199,7 @@ class ProjectTable extends Component {
     }
 
     matchingField(screenBody, screenHeader, sub) {
+        const { unlocked } = this.props;
         if (screenHeader.fields.fromTbl == "po") {
             switch (screenHeader.fields.type) {
                 case "String":
@@ -208,7 +209,7 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
-                            disabled={screenHeader.edit}
+                            disabled={unlocked ? false : screenHeader.edit}
                             fieldType="text"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -221,7 +222,7 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
-                            disabled={screenHeader.edit}
+                            disabled={unlocked ? false : screenHeader.edit}
                             fieldType="number"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -234,7 +235,7 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
-                            disabled={screenHeader.edit}
+                            disabled={unlocked ? false : screenHeader.edit}
                             fieldType="date"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -247,7 +248,7 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
-                            disabled={screenHeader.edit}
+                            disabled={unlocked ? false : screenHeader.edit}
                             key={screenHeader._id}
                         />
                     );
@@ -258,7 +259,7 @@ class ProjectTable extends Component {
                         objectId={screenBody._id}
                         fieldName={screenHeader.fields.name}
                         fieldValue={screenBody[screenHeader.fields.name]}
-                        disabled={screenHeader.edit}
+                        disabled={unlocked ? false : screenHeader.edit}
                         fieldType="text"
                         textNoWrap={true}
                         key={screenHeader._id}
@@ -274,7 +275,7 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
-                            disabled={screenHeader.edit}
+                            disabled={unlocked ? false : screenHeader.edit}
                             fieldType="text"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -287,7 +288,7 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
-                            disabled={screenHeader.edit}
+                            disabled={unlocked ? false : screenHeader.edit}
                             fieldType="number"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -300,7 +301,7 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
-                            disabled={screenHeader.edit}
+                            disabled={unlocked ? false : screenHeader.edit}
                             fieldType="date"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -313,7 +314,7 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
-                            disabled={screenHeader.edit}
+                            disabled={unlocked ? false : screenHeader.edit}
                             key={screenHeader._id}
                         />
                     );
@@ -324,7 +325,7 @@ class ProjectTable extends Component {
                         objectId={sub._id}
                         fieldName={screenHeader.fields.name}
                         fieldValue={sub[screenHeader.fields.name]}
-                        disabled={screenHeader.edit}
+                        disabled={unlocked ? false : screenHeader.edit}
                         fieldType="text"
                         textNoWrap={true}
                         key={screenHeader._id}
@@ -357,7 +358,7 @@ class ProjectTable extends Component {
     }
     
     render() {
-        const { handleSelectionReload, screenHeaders, screenBodys } = this.props;
+        const { handleSelectionReload, toggleUnlock, screenHeaders, screenBodys } = this.props;
         const { header,selectAllRows  } = this.state;
         return (
             <div className="full-height">
@@ -365,13 +366,13 @@ class ProjectTable extends Component {
                     <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}> 
                         <span><FontAwesomeIcon icon="cog" className="fas fa-3x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue"style={{width: '50px', height: '50px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
                         <span><FontAwesomeIcon icon="filter" className="far fa-3x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" onClick={event => handleSelectionReload(event)} style={{width: '50px', height: '50px'}}>
                         <span><FontAwesomeIcon icon="sync-alt" className="far fa-3x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" onClick={event => toggleUnlock(event)} style={{width: '50px', height: '50px'}}>
                         <span><FontAwesomeIcon icon="unlock" className="fas fa-3x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" style={{width: '50px', height: '50px'}}>
@@ -383,7 +384,7 @@ class ProjectTable extends Component {
                 </div>
                 <div className="row ml-1 full-height">
                     <div className="table-responsive full-height" > 
-                        <table className="table table-hover table-bordered table-sm text-nowrap">
+                        <table className="table table-hover table-bordered table-sm text-nowrap" id="myProjectTable">
                             <thead>                                   
                                 {screenHeaders && (
                                     <tr>
