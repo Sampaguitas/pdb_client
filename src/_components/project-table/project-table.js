@@ -250,6 +250,7 @@ class ProjectTable extends Component {
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
                             disabled={unlocked ? false : screenHeader.edit}
+                            align={screenHeader.align}
                             fieldType="text"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -263,6 +264,7 @@ class ProjectTable extends Component {
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
                             disabled={unlocked ? false : screenHeader.edit}
+                            align={screenHeader.align}
                             fieldType="number"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -276,6 +278,7 @@ class ProjectTable extends Component {
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
                             disabled={unlocked ? false : screenHeader.edit}
+                            align={screenHeader.align}
                             fieldType="date"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -289,6 +292,7 @@ class ProjectTable extends Component {
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
                             disabled={unlocked ? false : screenHeader.edit}
+                            align={screenHeader.align}
                             key={screenHeader._id}
                         />
                     );
@@ -300,6 +304,7 @@ class ProjectTable extends Component {
                         fieldName={screenHeader.fields.name}
                         fieldValue={screenBody[screenHeader.fields.name]}
                         disabled={unlocked ? false : screenHeader.edit}
+                        align={screenHeader.align}
                         fieldType="text"
                         textNoWrap={true}
                         key={screenHeader._id}
@@ -316,6 +321,7 @@ class ProjectTable extends Component {
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
                             disabled={unlocked ? false : screenHeader.edit}
+                            align={screenHeader.align}
                             fieldType="text"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -329,6 +335,7 @@ class ProjectTable extends Component {
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
                             disabled={unlocked ? false : screenHeader.edit}
+                            align={screenHeader.align}
                             fieldType="number"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -342,6 +349,7 @@ class ProjectTable extends Component {
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
                             disabled={unlocked ? false : screenHeader.edit}
+                            align={screenHeader.align}
                             fieldType="date"
                             textNoWrap={true}
                             key={screenHeader._id}
@@ -366,6 +374,7 @@ class ProjectTable extends Component {
                         fieldName={screenHeader.fields.name}
                         fieldValue={sub[screenHeader.fields.name]}
                         disabled={unlocked ? false : screenHeader.edit}
+                        align={screenHeader.align}
                         fieldType="text"
                         textNoWrap={true}
                         key={screenHeader._id}

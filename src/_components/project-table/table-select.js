@@ -143,7 +143,7 @@ class TableSelect extends Component{
     }
 
     render() {
-        const { disabled } = this.props;
+        const { disabled, align } = this.props;
         const { fieldValue, color, options, optionText } = this.state
 
         return this.state.editing ? (
@@ -178,7 +178,7 @@ class TableSelect extends Component{
             </td>
         ):
         (
-        <td onClick={() => this.onFocus()} style={{color: disabled ? 'inherit' : color}}>{ this.selectedName(options, fieldValue)}</td> //onDoubleClick
+        <td onClick={() => this.onFocus()} style={{color: disabled ? 'inherit' : color}} align={align ? align : 'left'}>{ this.selectedName(options, fieldValue)}</td> //onDoubleClick
         );
     }
 }

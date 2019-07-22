@@ -110,7 +110,7 @@ class TableInput extends Component{
     }
 
     render() {
-        const { disabled } = this.props;
+        const { disabled, align } = this.props;
         const { fieldValue, fieldType, color } = this.state
 
         return this.state.editing ? (
@@ -137,7 +137,7 @@ class TableInput extends Component{
             </td>
         ):
         (
-        <td onClick={() => this.onFocus()} style={{color: disabled ? 'inherit' : color}}>{this.formatText(fieldValue, fieldType)}</td> //onDoubleClick
+        <td onClick={() => this.onFocus()} style={{color: disabled ? 'inherit' : color}} align={align ? align : 'left'}>{this.formatText(fieldValue, fieldType)}</td> //onDoubleClick
         );
     }
 }
