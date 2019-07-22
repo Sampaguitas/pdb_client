@@ -12,7 +12,7 @@ class TableInput extends Component{
             fieldName: '',
             fieldValue: '',
             fieldType: '',
-            color: '#0070C0',
+            color: '#180F5E', //'#0070C0'
             editing: false,
             // disabled: false
         }
@@ -72,7 +72,7 @@ class TableInput extends Component{
                     setTimeout(() => {
                         this.setState({
                             ...this.state,
-                            color: '#0070C0',
+                            color: '#180F5E',
                         });
                     }, 1000);
                 });
@@ -87,7 +87,7 @@ class TableInput extends Component{
                     setTimeout(() => {
                         this.setState({
                             ...this.state,
-                            color: '#0070C0',
+                            color: '#180F5E',
                         });
                     }, 1000);
                 });                
