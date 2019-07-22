@@ -119,7 +119,7 @@ class Home extends React.Component {
                                     </div>    
                                 </div>
                                 <div className="card-body table-responsive">
-                                    <table className="table table-hover table-bordered table-sm">
+                                    <table className="table table-hover table-bordered table-sm table-striped">
                                         <thead>
                                             <tr>
                                                 <th scope="col" style={{width: '15%'}}>Nr<br />
