@@ -27,7 +27,7 @@ class HeaderSelect extends Component{
     render() {
         const { title, name, value, options, optionText, onChange, width } = this.props;
         return (
-            <th style={{width: `${width ? width : 'auto'}` }}>
+            <th style={{width: `${width ? width : 'auto'}`}}>
                 <div className="form-group">
                     <label htmlFor={name}>{title}</label>
                     <select
