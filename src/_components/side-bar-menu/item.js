@@ -15,7 +15,7 @@ class Item extends Component {
         }
     }
     render() {
-        const { item, collapsed, projectId } = this.props
+        const { item, collapsed, projectId, show, handleItemOver } = this.props
         return (
             <li>
                 {projectId ?
@@ -26,9 +26,9 @@ class Item extends Component {
                     >
                         <FontAwesomeIcon icon={item.icon} className="item-icon" name={item.icon}/>
                         {!collapsed &&
-                        <span className="item-text">{item.title}
+                        <span className="item-text" onMouseEnter={event => handleItemOver(event, item.title)}>{item.title}
                                 {item.child &&
-                                <FontAwesomeIcon icon="angle-right" className="item-arrow" />
+                                <FontAwesomeIcon icon={show == item.title ? "angle-down" : "angle-right"} className="item-arrow float-right" style={{margin: '0px', verticalAlign: 'middle'}}/>
                                 }
                         </span>
                         }
@@ -42,7 +42,7 @@ class Item extends Component {
                         {!collapsed &&
                         <span className="item-text">{item.title}
                                 {item.child &&
-                                <FontAwesomeIcon icon="angle-right" className="item-arrow" />
+                                <FontAwesomeIcon icon={show == item.title ? "angle-down" : "angle-right"} className="item-arrow float-right" style={{margin: '0px', verticalAlign: 'middle'}}/>
                                 }
                         </span>
                         }
@@ -51,7 +51,7 @@ class Item extends Component {
                 {(!collapsed && item.child) &&
                     <div className="dropdown">
                     <div name="show-animation"> {/*transition */}
-                        {this.state.show &&
+                        {show == item.title &&
                         <ul>
                             {item.child.map((subitem)=>
                                 <SubItem key={subitem.id} item={subitem} projectId={projectId}/>

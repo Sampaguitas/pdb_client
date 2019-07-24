@@ -39,6 +39,10 @@ class TableCheckBox extends Component {
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
+        console.log("collection:", collection);
+        console.log("objectId:", objectId);
+        console.log("fieldName:",fieldName);
+        console.log("fieldValue:",fieldValue);
         this.setState({
             ...this.state,
             [name]: value
@@ -50,7 +54,8 @@ class TableCheckBox extends Component {
                     body: `{"${fieldName}":${fieldValue}}`
                 };
                 return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
-                .then( () => {
+                .then( (responce) => {
+                    console.log("responce:", JSON.stringify(responce));
                     this.setState({
                         ...this.state,
                         color: 'green',

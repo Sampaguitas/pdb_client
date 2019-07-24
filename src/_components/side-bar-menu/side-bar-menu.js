@@ -84,12 +84,14 @@ class SideBarMenu extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            projectId: ''
+            projectId: '',
+            show: '',
         }
         this.isHome=this.isHome.bind(this);
         this.isLoggedIn=this.isLoggedIn.bind(this);
         this.mouseLeave=this.mouseLeave.bind(this);
         this.menuList = this.menuList.bind(this);
+        this.handleItemOver = this.handleItemOver.bind(this);
     }
     componentDidMount(){
         var qs = queryString.parse(window.location.search);
@@ -114,6 +116,14 @@ class SideBarMenu extends Component {
     }
     mouseLeave(){
         this.MobileItem = null
+    }
+
+    handleItemOver(event, title){
+        event.preventDefault();
+        console.log('title:', title);
+        this.setState({
+            show: title
+        });
     }
 
     menuList(menu){
@@ -143,7 +153,7 @@ class SideBarMenu extends Component {
     }
 
     render() {
-        const { projectId } = this.state
+        const { projectId, show } = this.state
         return (
             <div>
                 {this.isLoggedIn() && 
@@ -155,11 +165,11 @@ class SideBarMenu extends Component {
                         {
                             this.isHome() ?
                                 this.menuList(home_menu).map((item) => 
-                                    <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} />
+                                    <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} show={show} handleItemOver={this.handleItemOver}/>
                                 )
                             :
                                 this.menuList(project_menu).map((item) => 
-                                    <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} />
+                                    <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} show={show} handleItemOver={this.handleItemOver}/>
                                 )
                         }
                         </ul>
