@@ -346,7 +346,7 @@ class Duf extends React.Component {
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
             <div className="row full-height">
                 <div className="table-responsive full-height">
-                    <table className="table table-hover table-bordered table-sm table-striped" >
+                    <table className="table table-hover table-bordered table-sm" >
                         <thead>
                             <tr className="text-center">
                                 <th colSpan="3" >

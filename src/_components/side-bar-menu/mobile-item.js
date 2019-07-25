@@ -32,7 +32,7 @@ class MobileItem extends Component {
                             {item && <span /> }
                             </transition>
                         </div>
-                        {(collapsed && item.child) &&
+                        {collapsed && item && item.child &&
                         <div className="dropdown">
                             <translation name="show-animation">
                                 <ul >

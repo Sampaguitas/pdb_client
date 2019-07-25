@@ -86,6 +86,7 @@ class SideBarMenu extends Component {
         this.state = {
             projectId: '',
             show: '',
+            // mobileItem: null,
         }
         this.isHome=this.isHome.bind(this);
         this.isLoggedIn=this.isLoggedIn.bind(this);
@@ -153,26 +154,34 @@ class SideBarMenu extends Component {
     }
 
     render() {
-        const { projectId, show } = this.state
+        const { collapsed } = this.props;
+        const { projectId, show, mobileItem } = this.state
         return (
             <div>
                 {this.isLoggedIn() && 
-                    <div id="sidebar-menu" className={this.props.collapsed ? 'collapsed' : undefined} onMouseLeave={this.mouseLeave}>
+                    <div id="sidebar-menu" className={collapsed ? 'collapsed' : undefined} onMouseLeave={this.mouseLeave}>
                         <NavLink to={{ pathname: '/' }} tag="div" className="sidebar-logo">
-                            <img src={this.props.collapsed ? icon : logo} />
+                            <img src={collapsed ? icon : logo} />
                         </NavLink>
                         <ul className="default-list menu-list">
                         {
                             this.isHome() ?
                                 this.menuList(home_menu).map((item) => 
-                                    <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} show={show} handleItemOver={this.handleItemOver}/>
+                                    <Item item={item} key={item.id} projectId={projectId} collapsed={collapsed} show={show} handleItemOver={this.handleItemOver}/>
                                 )
                             :
                                 this.menuList(project_menu).map((item) => 
-                                    <Item item={item} key={item.id} projectId={projectId} collapsed={this.props.collapsed} show={show} handleItemOver={this.handleItemOver}/>
+                                    <Item item={item} key={item.id} projectId={projectId} collapsed={collapsed} show={show} handleItemOver={this.handleItemOver}/>
                                 )
                         }
                         </ul>
+                        {/* {collapsed && 
+                            <ul className="mobile-list menu-list" style={{top: `${mobileItemPos}px`}}> 
+                                <MobileItem
+                                item={mobileItem}/>
+                            </ul>                        
+                        } */}
+
                         <button className="collapse-btn" onClick={this.props.toggleCollapse}>
                         <FontAwesomeIcon icon="arrows-alt-h" name="arrows-alt-h" />
                         </button>

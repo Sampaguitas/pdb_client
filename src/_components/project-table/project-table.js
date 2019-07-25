@@ -433,7 +433,7 @@ class ProjectTable extends Component {
                 </div>
                 <div className="row ml-1 full-height">
                     <div className="table-responsive full-height" > 
-                        <table className="table table-hover table-bordered table-sm text-nowrap table-striped" id="myProjectTable">
+                        <table className="table table-hover table-bordered table-sm text-nowrap" id="myProjectTable">
                             <thead>                                   
                                 {screenHeaders && (
                                     <tr>

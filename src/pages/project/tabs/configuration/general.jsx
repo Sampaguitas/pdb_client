@@ -253,7 +253,7 @@ class General extends React.Component {
                                 <h5>Set user roles</h5>
                             </div>
                             <div className="card-body table-responsive">
-                                <table className="table table-hover table-bordered table-sm table-striped" >
+                                <table className="table table-hover table-bordered table-sm" >
                                     <thead>
                                         <tr>
                                             <HeaderInput

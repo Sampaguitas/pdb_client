@@ -243,7 +243,7 @@ class Opco extends React.Component {
                                     </div>  
                                 </div>
                                 <div className="card-body table-responsive">
-                                    <table className="table table-hover table-bordered table-sm table-striped">
+                                    <table className="table table-hover table-bordered table-sm">
                                         <thead>
                                             <tr>
                                                 <th>Code<br />
