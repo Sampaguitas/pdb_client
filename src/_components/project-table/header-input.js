@@ -6,8 +6,13 @@ class HeaderInput extends Component{
         const { type, title, name, value, onChange, width, textNoWrap } = this.props;
         return (
             <th style={{width: `${width ? width : 'auto'}`, whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}` }}>
-                <div className="form-group">
-                    <label htmlFor={name}>{title}</label>
+                <div className="form-group" style={{marginBottom: '0px'}}>
+                    <label
+                        htmlFor={name}
+                        style={{marginBottom: '0px'}}
+                    >
+                        {title}
+                    </label>
                     <input
                         className="form-control"
                         id={name}
@@ -15,6 +20,7 @@ class HeaderInput extends Component{
                         type={type}
                         value={value}
                         onChange={onChange}
+                        style={{padding: '.375rem .75rem'}}
                     />
                 </div>
             </th>

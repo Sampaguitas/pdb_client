@@ -74,6 +74,7 @@ class Opco extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
         this.handleDeletOpco = this.handleDeletOpco.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
     }
 
     componentDidMount() {
@@ -241,6 +242,12 @@ class Opco extends React.Component {
         this.setState({ submitted: false });
     }
 
+    onKeyPress(event) {
+        if (event.which === 13 /* prevent form submit on key Enter */) {
+            event.preventDefault();
+        }
+    }
+
     render() {
         const { alert, opcoCreating, opcoUpdating, opcoDeleting, locales, regions, opcos } = this.props;
         const { opco, show, code, name, city, country, locale, region, submitted } = this.state;
@@ -309,7 +316,11 @@ class Opco extends React.Component {
                             title={opco.id ? 'Update opco' : 'Add opco'}
                         >
                             <div className="col-12">
-                                <form name="form" onSubmit={this.handleSubmit}>
+                                <form
+                                    name="form"
+                                    onSubmit={this.handleSubmit}
+                                    onKeyPress={this.onKeyPress}
+                                >
                                     <Input
                                         title="Code"
                                         name="code"
@@ -397,7 +408,7 @@ class Opco extends React.Component {
                                         <div className="row">
                                             <div className="col-6">
                                                 <button
-                                                    type="submit"
+                                                    // type="submit"
                                                     className="btn btn-outline-dark btn-lg"
                                                     onClick={(event) => {this.handleDeletOpco(event, opco.id)}}
                                                 >

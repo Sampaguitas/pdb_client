@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import config from 'config';
+// import config from 'config';
 import { currencyActions, opcoActions, projectActions, supplierActions, userActions, erpActions, screenActions, fieldnameActions  } from '../../_actions';
-import { authHeader } from '../../_helpers';
+// import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -13,7 +13,7 @@ import Fields from './tabs/configuration/fields';
 import Screens from './tabs/configuration/screens';
 import Documents from './tabs/configuration/documents';
 import Duf from './tabs/configuration/duf';
-import { EventEmitter } from 'events';
+// import { EventEmitter } from 'events';
 
 const tabs = [
     {index: 0, id: 'general', label: 'General', component: General, active: true, isLoaded: false},
@@ -26,10 +26,10 @@ const tabs = [
 
 const _ = require('lodash');
 
-function logout() {
-    // remove user from local storage to log user out
-    localStorage.removeItem('user');
-}
+// function logout() {
+//     // remove user from local storage to log user out
+//     localStorage.removeItem('user');
+// }
 
 class Configuration extends React.Component {
     constructor(props) {
@@ -105,7 +105,6 @@ class Configuration extends React.Component {
                 projectId,
             } = this.state
 
-            // let currentUser = JSON.parse(localStorage.getItem('user'));
         return (
             <Layout alert={this.props.alert} accesses={selection.project && selection.project.accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -126,19 +125,7 @@ class Configuration extends React.Component {
                         currencies={currencies}
                         screens={screens}
                         selection={selection}
-                        // handleSubmitSupplier={this.handleSubmitSupplier}
-                        // handleDeleteSupplier={this.handleDeleteSupplier}
-                        // supplierUpdating={supplierUpdating}
-                        // supplierDeleting={supplierDeleting}
-                        // submittedSupplier={submittedSupplier}
-                        // showSupplierModal={showSupplierModal}
-                        // handleShowSupplierModal={this.handleShowSupplierModal}
-                        // handleHideSupplierModal={this.handleHideSupplierModal}
-                        //handleDeleteFieldNames={this.handleDeleteFieldNames}
-                        //handleDeleteDocFields={this.handleDeleteDocFields}
-                        //handleDeleteDocDef={this.handleDeleteDocDef}
                         projectId={projectId}
-                        // currentUser = {currentUser}
                     />
                 </div>
             </Layout>
@@ -149,13 +136,10 @@ class Configuration extends React.Component {
 function mapStateToProps(state) {
     const { alert, currencies, opcos, users, selection, erps, screens  } = state;
     const { projectUpdating, projectDeleting } = state.projects;
-    // const { supplierUpdating, supplierDeleting } = state.suppliers;
     return {
         alert,
         projectUpdating,
-        projectDeleting,
-        // supplierUpdating,
-        // supplierDeleting,        
+        projectDeleting,      
         users,
         erps,
         opcos,

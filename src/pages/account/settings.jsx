@@ -373,7 +373,8 @@ class Settings extends React.Component {
                     <form
                       name="form"
                       onSubmit={event => this.handleSubmit(event)}
-                      onKeyPress={this.onKeyPress}>
+                      onKeyPress={this.onKeyPress}
+                    >
                       <Input
                         title="Initials"
                         name="userName"

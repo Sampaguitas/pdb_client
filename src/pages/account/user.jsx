@@ -23,6 +23,7 @@ class User extends React.Component {
         }
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
     }
 
     componentDidMount() {
@@ -54,6 +55,12 @@ class User extends React.Component {
           ) {
             dispatch(userActions.changePwd(encodeURI(stateUser)));
           }
+    }
+
+    onKeyPress(event) {
+        if (event.which === 13 /* prevent form submit on key Enter */) {
+          event.preventDefault();
+        }
     }
 
     render() {
@@ -94,7 +101,9 @@ class User extends React.Component {
                             <div className="card">
                                 <div className="card-header">Change Password</div>
                                 <div className="card-body">
-                                    <form>
+                                    <form
+                                    onKeyPress={this.onKeyPress}
+                                    >
                                         <Input
                                             title="Current Password"
                                             name="oldPassword"

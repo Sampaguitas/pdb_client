@@ -73,7 +73,8 @@ class Project extends React.Component {
             loaded: false,
             submitted: false
         };
-
+        this.getScrollWidthY = this.getScrollWidthY.bind(this);
+        this.getTblBound = this.getTblBound.bind(this);
         this.handleChangeProject = this.handleChangeProject.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
@@ -82,6 +83,7 @@ class Project extends React.Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.accessibleArray = this.accessibleArray.bind(this);
         this.gotoPage = this.gotoPage.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
     }
     componentDidMount() {
         const { dispatch, projects } = this.props;
@@ -92,6 +94,33 @@ class Project extends React.Component {
         dispatch(projectActions.getAll());
         dispatch(userActions.getAll());
     }
+
+    getTblBound() {
+        const tblContainer = document.getElementById("tblContainer");
+        if (!tblContainer) {
+            return {};
+        }
+        const rect = tblContainer.getBoundingClientRect();
+        return {
+            left: rect.left,
+            top: rect.top + window.scrollY,
+            width: rect.width || rect.right - rect.left,
+            height: rect.height || rect.bottom - rect.top
+        };
+    }    
+
+    getScrollWidthY() {
+        var scroll = document.getElementById("tblBody");
+        if (!scroll) {
+            return 0;
+        } else {
+            if(scroll.clientHeight == scroll.scrollHeight){
+                return 0;
+            } else {
+                return 15;
+            }
+        }
+    }    
 
     handleChangeProject(event) {
         const { project } = this.state;
@@ -199,11 +228,19 @@ class Project extends React.Component {
         history.push({pathname: page});
     }
 
+    onKeyPress(event) {
+        if (event.which === 13 /* prevent form submit on key Enter */) {
+          event.preventDefault();
+        }
+    }
+
     render() {
         const { alert, currencies, erps, projectCreating, opcos, projects, users } = this.props;
         const { project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, loaded, submitted } = this.state;
         const { projectUsers } = this.state.project;
-        let user = JSON.parse(localStorage.getItem('user'));
+        const tblBound = this.getTblBound();
+        const tblScrollWidth = this.getScrollWidthY();
+        // let user = JSON.parse(localStorage.getItem('user'));
         {users.items && loaded === false && this.stateReload()}
         return (
             <Layout alert={this.props.alert}>
@@ -213,7 +250,7 @@ class Project extends React.Component {
                     <hr />
                     <div className="row full-height">
                         <div className="col-md-8 col-sm-12 mb-sm-3 full-height">
-                            <div className="card full-height">
+                            <div className="card full-height" id="tblContainer">
                                 <div className="card-header">
                                     <div className="row">
                                         <div className="col-8">
@@ -226,45 +263,45 @@ class Project extends React.Component {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="card-body table-responsive">
+                                <div className="card-body"> {/* table-responsive */}
                                     <table className="table table-hover table-bordered table-sm">
                                         <thead>
-                                            <tr>
-                                                <th scope="col" style={{width: '10%'}}>Initials<br />
+                                            <tr style={{display: 'block', height: '62px'}}>
+                                                <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>Initials<br />
                                                     <input className="form-control" name="userName" value={userName} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th scope="col">User<br />
+                                                <th scope="col" style={{width: `${tblBound.width*0.40 + 'px'}`}}>User<br />
                                                     <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th scope="col" align="center" style={{width: '10%'}}>Expediting<br />
+                                                <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>Expediting<br />
                                                     <select className="form-control" name="isExpediting" value={isExpediting} onChange={this.handleChangeHeader}>
                                                         <option key="1" value="1">Any</option>
                                                         <option key="2" value="2">True</option> 
                                                         <option key="3" value="3">False</option>  
                                                     </select>
                                                 </th>
-                                                <th scope="col" style={{width: '10%'}}>Inspection<br />
+                                                <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>Inspection<br />
                                                     <select className="form-control" name="isInspection" value={isInspection} onChange={this.handleChangeHeader}>
                                                         <option key="1" value="1">Any</option>
                                                         <option key="2" value="2">True</option> 
                                                         <option key="3" value="3">False</option>  
                                                     </select>
                                                 </th>
-                                                <th scope="col" style={{width: '10%'}}>Shipping<br />
+                                                <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>Shipping<br />
                                                     <select className="form-control" name="isShipping" value={isShipping} onChange={this.handleChangeHeader}>
                                                         <option key="1" value="1">Any</option>
                                                         <option key="2" value="2">True</option> 
                                                         <option key="3" value="3">False</option>  
                                                     </select>                                                
                                                 </th>
-                                                <th scope="col" style={{width: '10%'}}>Warehouse<br />
+                                                <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>Warehouse<br />
                                                     <select className="form-control" name="isWarehouse" value={isWarehouse} onChange={this.handleChangeHeader}>
                                                         <option key="1" value="1">Any</option>
                                                         <option key="2" value="2">True</option> 
                                                         <option key="3" value="3">False</option>  
                                                     </select>
                                                 </th>
-                                                <th scope="col" style={{width: '10%'}}>Config<br />
+                                                <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>Config<br />
                                                     <select className="form-control" name="isConfiguration" value={isConfiguration} onChange={this.handleChangeHeader}>
                                                         <option key="1" value="1">Any</option>
                                                         <option key="2" value="2">True</option> 
@@ -273,55 +310,55 @@ class Project extends React.Component {
                                                 </th>
                                             </tr>
                                         </thead>
-                                            <tbody>
-                                                {projectUsers && this.filterName(projectUsers).map(u => (
-                                                   <tr key={u.userId}>
-                                                    <td>{u.userName}</td>
-                                                    <td>{u.name}</td>
-                                                    <td>
-                                                        <TableCheckBoxRole
-                                                            id={u.userId}
-                                                            checked={u.isExpediting}
-                                                            onChange={(event) => {this.handleIsRole(event, 'isExpediting')}}
-                                                            disabled={false}
-                                                            
-                                                        />   
-                                                    </td>
-                                                    <td>
-                                                        <TableCheckBoxRole
-                                                            id={u.userId}
-                                                            checked={u.isInspection}
-                                                            onChange={(event) => {this.handleIsRole(event, 'isInspection')}}
-                                                            disabled={false}
-                                                        />   
-                                                    </td>
-                                                    <td>
-                                                        <TableCheckBoxRole
-                                                            id={u.userId}
-                                                            checked={u.isShipping}
-                                                            onChange={(event) => {this.handleIsRole(event, 'isShipping')}}
-                                                            disabled={false}
-                                                        />   
-                                                    </td>
-                                                    <td>
-                                                        <TableCheckBoxRole
-                                                            id={u.userId}
-                                                            checked={u.isWarehouse}
-                                                            onChange={(event) => {this.handleIsRole(event, 'isWarehouse')}}
-                                                            disabled={false}
-                                                        />
-                                                    </td>
-                                                    <td>
-                                                        <TableCheckBoxRole
-                                                            id={u.userId}
-                                                            checked={u.isConfiguration}
-                                                            onChange={(event) => {this.handleIsRole(event, 'isConfiguration')}}
-                                                            disabled={false}
-                                                        />
-                                                    </td>
-                                                   </tr> 
-                                                ))}
-                                            </tbody>
+                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblBody">
+                                            {projectUsers && this.filterName(projectUsers).map(u => (
+                                                <tr key={u.userId}>
+                                                <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>{u.userName}</td>
+                                                <td style={{width: `${tblBound.width*0.40 + 'px'}`}}>{u.name}</td>
+                                                <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
+                                                    <TableCheckBoxRole
+                                                        id={u.userId}
+                                                        checked={u.isExpediting}
+                                                        onChange={(event) => {this.handleIsRole(event, 'isExpediting')}}
+                                                        disabled={false}
+                                                        
+                                                    />   
+                                                </td>
+                                                <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
+                                                    <TableCheckBoxRole
+                                                        id={u.userId}
+                                                        checked={u.isInspection}
+                                                        onChange={(event) => {this.handleIsRole(event, 'isInspection')}}
+                                                        disabled={false}
+                                                    />   
+                                                </td>
+                                                <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
+                                                    <TableCheckBoxRole
+                                                        id={u.userId}
+                                                        checked={u.isShipping}
+                                                        onChange={(event) => {this.handleIsRole(event, 'isShipping')}}
+                                                        disabled={false}
+                                                    />   
+                                                </td>
+                                                <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
+                                                    <TableCheckBoxRole
+                                                        id={u.userId}
+                                                        checked={u.isWarehouse}
+                                                        onChange={(event) => {this.handleIsRole(event, 'isWarehouse')}}
+                                                        disabled={false}
+                                                    />
+                                                </td>
+                                                <td style={{width: `${tblBound.width*0.10-tblScrollWidth + 'px'}`}}>
+                                                    <TableCheckBoxRole
+                                                        id={u.userId}
+                                                        checked={u.isConfiguration}
+                                                        onChange={(event) => {this.handleIsRole(event, 'isConfiguration')}}
+                                                        disabled={false}
+                                                    />
+                                                </td>
+                                                </tr> 
+                                            ))}
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -332,7 +369,10 @@ class Project extends React.Component {
                                     <h5>General information</h5>
                                 </div>
                                 <div className="card-body">
-                                <form onSubmit={this.handleSubmit}>
+                                <form 
+                                    onSubmit={this.handleSubmit}
+                                    onKeyPress={this.onKeyPress}
+                                >
                                         <Select
                                             title="Copy settings from project"
                                             name="copyId"

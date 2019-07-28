@@ -28,14 +28,20 @@ class HeaderSelect extends Component{
         const { title, name, value, options, optionText, onChange, width } = this.props;
         return (
             <th style={{width: `${width ? width : 'auto'}`}}>
-                <div className="form-group">
-                    <label htmlFor={name}>{title}</label>
+                <div className="form-group" style={{marginBottom: '0px'}}>
+                    <label
+                        htmlFor={name}
+                        style={{marginBottom: '0px'}}
+                    >
+                        {title}
+                    </label>
                     <select
                         className="form-control"
                         id={name}
                         name={name}
                         value={value}
                         onChange={onChange}
+                        style={{padding: '.375rem .75rem'}}
                     >
                         <option value="any">Any</option>
                         {options && arraySorted(options, optionText).map(option => {
