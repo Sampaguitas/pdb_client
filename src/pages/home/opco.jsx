@@ -2,16 +2,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import config from 'config';
 import { opcoActions, localeActions, regionActions } from '../../_actions';
-// import { authHeader } from '../../_helpers';
-// import CheckBox from '../../_components/check-box';
 import Modal from "../../_components/modal/modal.js"
 import Input from '../../_components/input';
 import Layout from '../../_components/layout';
 import Select from '../../_components/select';
-// import { users } from '../../_reducers/users.reducer';
-// import OpcoRow from '../../_components/project-table/opco-row.js';
 
 function arraySorted(array, field) {
     if (array) {
@@ -66,7 +61,6 @@ class Opco extends React.Component {
             city: "",
             country: "",
             region: "",
-            locale: "",
             submitted: false,
             show: false,
         };
@@ -109,13 +103,14 @@ class Opco extends React.Component {
             return {};
         }
         const rect = tblContainer.getBoundingClientRect();
+        console.log('height:', rect.height);
         return {
             left: rect.left,
             top: rect.top + window.scrollY,
             width: rect.width || rect.right - rect.left,
             height: rect.height || rect.bottom - rect.top
         };
-    }    
+    }
 
     showModal() {
         this.setState({
@@ -173,14 +168,13 @@ class Opco extends React.Component {
     }
 
     filterName(opcos){
-        const { code, name, city, country, locale, region } = this.state
+        const { code, name, city, country, region } = this.state
         if (opcos.items) {
           return arraySorted(opcos.items, 'name').filter(function (opco) {
             return (doesMatch(code, opco.code, 'String') 
             && doesMatch(name, opco.name, 'String') 
             && doesMatch(city, opco.city, 'String')
             && doesMatch(country, opco.country, 'String')
-            // && doesMatch(locale, opco.locale.name, 'String')
             && doesMatch(region, opco.region.name, 'String'));
           });
         }
@@ -277,44 +271,33 @@ class Opco extends React.Component {
                                     <table className="table table-hover table-bordered table-sm">
                                         <thead>
                                             <tr style={{display: 'block', height: '62px'}}>
-                                                <th style={{width: `${tblBound.width*0.20 + 'px'}`}}>Code<br />
+                                                <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>Code<br />
                                                     <input className="form-control" name="code" value={code} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th style={{width: `${tblBound.width*0.20 + 'px'}`}}>Name<br />
+                                                <th scope="col" style={{width: `${tblBound.width*0.40 + 'px'}`}}>Name<br />
                                                     <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th style={{width: `${tblBound.width*0.20 + 'px'}`}}>City<br />
+                                                <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>City<br />
                                                     <input className="form-control" name="city" value={city} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th style={{width: `${tblBound.width*0.20 + 'px'}`}}>Country<br />
+                                                <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>Country<br />
                                                     <input className="form-control" name="country" value={country} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th style={{width: `${tblBound.width*0.20 + 'px'}`}}>Region<br />
+                                                <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>Region<br />
                                                     <input className="form-control" name="region" value={region} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                {/* <th>Locale<br />
-                                                    <input className="form-control" name="locale" value={locale} onChange={this.handleChangeHeader} />
-                                                </th> */}
                                             </tr>
                                         </thead>
                                         <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblBody">
-                                            {/* {opcos.items && this.filterName(opcos).map((o) =>
-                                                <OpcoRow 
-                                                    opco={o}
-                                                    handleOnclick={this.handleOnclick}
-                                                    key={o._id} 
-                                                />
-                                            )} */}
-                                            {opcos.items && this.filterName(opcos).map((o) => {
-                                                <tr key={o._id} onClick={(event) => this.handleOnclick(event, o._id)}>
-                                                    <td style={{width: `${tblBound.width*0.20 + 'px'}`}}>{o.code}</td>
-                                                    <td style={{width: `${tblBound.width*0.20 + 'px'}`}}>{o.name}</td>
-                                                    <td style={{width: `${tblBound.width*0.20 + 'px'}`}}>{o.city}</td>
-                                                    <td style={{width: `${tblBound.width*0.20 + 'px'}`}}>{o.country}</td>
-                                                    <td style={{width: `${tblBound.width*0.20-tblScrollWidth + 'px'}`}}>{o.region.name}</td>
-                                                    {/* <td>{o.locale.name}</td> */}
+                                            {opcos.items && this.filterName(opcos).map((o) =>
+                                                <tr key={o._id} onClick={(event) => handleOnclick(event, o._id)}>
+                                                    <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{o.code}</td>
+                                                    <td style={{width: `${tblBound.width*0.40 + 'px'}`}}>{o.name}</td>
+                                                    <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{o.city}</td>
+                                                    <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{o.country}</td>
+                                                    <td style={{width: `${tblBound.width*0.15-tblScrollWidth + 'px'}`}}>{o.region.name}</td>
                                                 </tr>
-                                            })}
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
