@@ -2,16 +2,16 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import config from 'config';
+// import config from 'config';
 import { opcoActions, localeActions, regionActions } from '../../_actions';
-import { authHeader } from '../../_helpers';
-import CheckBox from '../../_components/check-box';
+// import { authHeader } from '../../_helpers';
+// import CheckBox from '../../_components/check-box';
 import Modal from "../../_components/modal/modal.js"
 import Input from '../../_components/input';
 import Layout from '../../_components/layout';
 import Select from '../../_components/select';
-import { users } from '../../_reducers/users.reducer';
-import OpcoRow from '../../_components/project-table/opco-row.js';
+// import { users } from '../../_reducers/users.reducer';
+// import OpcoRow from '../../_components/project-table/opco-row.js';
 
 function arraySorted(array, field) {
     if (array) {
@@ -70,6 +70,8 @@ class Opco extends React.Component {
             submitted: false,
             show: false,
         };
+        this.getScrollWidthY = this.getScrollWidthY.bind(this);
+        this.getTblBound = this.getTblBound.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.handleChangeOpco = this.handleChangeOpco.bind(this);
@@ -87,6 +89,33 @@ class Opco extends React.Component {
         dispatch(regionActions.getAll());
         var qs = queryString.parse(location.search);
     }
+
+    getScrollWidthY() {
+        var scroll = document.getElementById("tblBody");
+        if (!scroll) {
+            return 0;
+        } else {
+            if(scroll.clientHeight == scroll.scrollHeight){
+                return 0;
+            } else {
+                return 15;
+            }
+        }
+    }
+
+    getTblBound() {
+        const tblContainer = document.getElementById("tblContainer");
+        if (!tblContainer) {
+            return {};
+        }
+        const rect = tblContainer.getBoundingClientRect();
+        return {
+            left: rect.left,
+            top: rect.top + window.scrollY,
+            width: rect.width || rect.right - rect.left,
+            height: rect.height || rect.bottom - rect.top
+        };
+    }    
 
     showModal() {
         this.setState({
@@ -151,7 +180,7 @@ class Opco extends React.Component {
             && doesMatch(name, opco.name, 'String') 
             && doesMatch(city, opco.city, 'String')
             && doesMatch(country, opco.country, 'String')
-            && doesMatch(locale, opco.locale.name, 'String')
+            // && doesMatch(locale, opco.locale.name, 'String')
             && doesMatch(region, opco.region.name, 'String'));
           });
         }
@@ -221,6 +250,8 @@ class Opco extends React.Component {
     render() {
         const { alert, opcoCreating, opcoUpdating, opcoDeleting, locales, regions, opcos } = this.props;
         const { opco, show, code, name, city, country, locale, region, submitted } = this.state;
+        const tblBound = this.getTblBound();
+        const tblScrollWidth = this.getScrollWidthY();
         return (
             <Layout alert={this.props.alert}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -229,7 +260,7 @@ class Opco extends React.Component {
                 <div id="opco" className="full-height">
                     <div className="row full-height" >
                         <div className="col-12 full-height">
-                            <div className="card full-height">
+                            <div className="card full-height" id="tblContainer">
                                 <div className="card-header">
                                     <div className="row">
                                         <div className="col-8">
@@ -242,38 +273,48 @@ class Opco extends React.Component {
                                         </div>
                                     </div>  
                                 </div>
-                                <div className="card-body table-responsive">
+                                <div className="card-body"> {/* table-responsive */}
                                     <table className="table table-hover table-bordered table-sm">
                                         <thead>
-                                            <tr>
-                                                <th>Code<br />
+                                            <tr style={{display: 'block', height: '62px'}}>
+                                                <th style={{width: `${tblBound.width*0.20 + 'px'}`}}>Code<br />
                                                     <input className="form-control" name="code" value={code} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th>Name<br />
+                                                <th style={{width: `${tblBound.width*0.20 + 'px'}`}}>Name<br />
                                                     <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th>City<br />
+                                                <th style={{width: `${tblBound.width*0.20 + 'px'}`}}>City<br />
                                                     <input className="form-control" name="city" value={city} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th>Country<br />
+                                                <th style={{width: `${tblBound.width*0.20 + 'px'}`}}>Country<br />
                                                     <input className="form-control" name="country" value={country} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th>Region<br />
+                                                <th style={{width: `${tblBound.width*0.20 + 'px'}`}}>Region<br />
                                                     <input className="form-control" name="region" value={region} onChange={this.handleChangeHeader} />
                                                 </th>
-                                                <th>Locale<br />
+                                                {/* <th>Locale<br />
                                                     <input className="form-control" name="locale" value={locale} onChange={this.handleChangeHeader} />
-                                                </th>
+                                                </th> */}
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            {opcos.items && this.filterName(opcos).map((o) =>
+                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblBody">
+                                            {/* {opcos.items && this.filterName(opcos).map((o) =>
                                                 <OpcoRow 
                                                     opco={o}
                                                     handleOnclick={this.handleOnclick}
                                                     key={o._id} 
                                                 />
-                                            )}
+                                            )} */}
+                                            {opcos.items && this.filterName(opcos).map((o) => {
+                                                <tr key={o._id} onClick={(event) => this.handleOnclick(event, o._id)}>
+                                                    <td style={{width: `${tblBound.width*0.20 + 'px'}`}}>{o.code}</td>
+                                                    <td style={{width: `${tblBound.width*0.20 + 'px'}`}}>{o.name}</td>
+                                                    <td style={{width: `${tblBound.width*0.20 + 'px'}`}}>{o.city}</td>
+                                                    <td style={{width: `${tblBound.width*0.20 + 'px'}`}}>{o.country}</td>
+                                                    <td style={{width: `${tblBound.width*0.20-tblScrollWidth + 'px'}`}}>{o.region.name}</td>
+                                                    {/* <td>{o.locale.name}</td> */}
+                                                </tr>
+                                            })}
                                         </tbody>
                                     </table>
                                 </div>

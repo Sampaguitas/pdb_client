@@ -174,7 +174,7 @@ class Home extends React.Component {
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}}>
+                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblBody">
                                             {projects.items && this.withoutProjectMaster(projects).map((project) =>
                                                 <tr key={project._id} onClick={(event) => this.handleOnclick(event, project)}>
                                                     <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{project.number}</td>
