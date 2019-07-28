@@ -1,21 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
-import { history } from '../../_helpers';
-import queryString from 'query-string';
-// import { Modal, Button } from 'react-bootstrap';
 import { userActions, opcoActions } from "../../_actions";
-
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
-//Components
 import TableCheckBoxAdmin from "../../_components/project-table/table-check-box-admin";
 import TableCheckBoxSuperAdmin from "../../_components/project-table/table-check-box-spadmin";
-import UserRow from '../../_components/project-table/user-row.js';
 import Modal from "../../_components/modal/modal.js"
 import Input from "../../_components/input";
 import Select from '../../_components/select';
 import Layout from "../../_components/layout";
-//import { users } from "../../_reducers/users.reducer";
 
 function arraySorted(array, field) {
   if (array) {
@@ -85,6 +77,8 @@ class Settings extends React.Component {
       show: false,
       submitted: false
     };
+    this.getScrollWidthY = this.getScrollWidthY.bind(this);
+    this.getTblBound = this.getTblBound.bind(this);
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.handleChangeUser = this.handleChangeUser.bind(this);
@@ -93,11 +87,40 @@ class Settings extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleOnclick = this.handleOnclick.bind(this);
     this.accessibleArray = this.accessibleArray.bind(this);
+    this.checkBoxDisabled = this.checkBoxDisabled.bind(this);
   }
 
   componentDidMount() {
     this.props.dispatch(userActions.getAll());
     this.props.dispatch(opcoActions.getAll());
+  }
+
+  getScrollWidthY() {
+    var scroll = document.getElementById("tblBody");
+    if (!scroll) {
+        return 0;
+    } else {
+        if(scroll.clientHeight == scroll.scrollHeight){
+            return 0;
+        } else {
+            return 18;
+        }
+    }
+  }
+
+  getTblBound() {
+    const tblContainer = document.getElementById("tblContainer");
+    if (!tblContainer) {
+      return {};
+    }
+    const rect = tblContainer.getBoundingClientRect();
+    console.log('height:', rect.height);
+    return {
+      left: rect.left,
+      top: rect.top + window.scrollY,
+      width: rect.width || rect.right - rect.left,
+      height: rect.height || rect.bottom - rect.top
+    };
   }
 
   showModal() {
@@ -158,58 +181,55 @@ class Settings extends React.Component {
         && doesMatch(isSuperAdmin, user.isSuperAdmin, 'Boolean'));
       });
     }
-}
+  }
 
-accessibleArray(items, sortBy) {
-  let user = JSON.parse(localStorage.getItem('user'));
-  if (items) {
-      return arraySorted(items, sortBy).filter(function (item) {
-          if (user.isSuperAdmin) {
-              return true;
-          } else {
-              return _.isEqual(user.regionId, item.regionId);
-          }
-      });
+  accessibleArray(items, sortBy) {
+    let user = JSON.parse(localStorage.getItem('user'));
+    if (items) {
+        return arraySorted(items, sortBy).filter(function (item) {
+            if (user.isSuperAdmin) {
+                return true;
+            } else {
+                return _.isEqual(user.regionId, item.regionId);
+            }
+        });
+    }
   }
-}
   
-handleSubmit(event) {
-  event.preventDefault();
-  this.setState({ submitted: true });
-  const { user } = this.state;
-  const { dispatch } = this.props;
-  if (
-    user.id &&
-    user.userName &&
-    user.name &&
-    user.opcoId &&
-    user.email
-  ) {
-    dispatch(userActions.update(user));
-    this.hideModal();
-    this.setState({ submitted: false });
-  } else if (
-    user.userName &&
-    user.name &&
-    user.email &&
-    user.password &&
-    user.confirmPassword
-  ) {
-    dispatch(userActions.register(user));
-    this.hideModal();
-    this.setState({ submitted: false });
+  handleSubmit(event) {
+    event.preventDefault();
+    this.setState({ submitted: true });
+    const { user } = this.state;
+    const { dispatch } = this.props;
+    if (
+      user.id &&
+      user.userName &&
+      user.name &&
+      user.opcoId &&
+      user.email
+    ) {
+      dispatch(userActions.update(user));
+      this.hideModal();
+      this.setState({ submitted: false });
+    } else if (
+      user.userName &&
+      user.name &&
+      user.email &&
+      user.password &&
+      user.confirmPassword
+    ) {
+      dispatch(userActions.register(user));
+      this.hideModal();
+      this.setState({ submitted: false });
+    }
   }
-}
 
   handleOnclick(event, id) {
-    // event.preventDefault();
-    console.log('type:', event.target.dataset.type);
-    console.log('id:',id);
     const { users } = this.props
     let currentUser = JSON.parse(localStorage.getItem('user'));
     //if (event.target.type != 'checkbox' && this.props.users.items) {
-    if (event.target.dataset['type'] != 'checkbox' && this.props.users.items) {
-      let found = this.props.users.items.find(element => element.id === id);
+    if (event.target.dataset['type'] != 'checkbox' && users.items) {
+      let found = users.items.find(element => element.id === id);
       if (canClick(found, currentUser)) {
         this.setState({
           user: {
@@ -230,12 +250,28 @@ handleSubmit(event) {
     this.props.dispatch(userActions.delete(id));
     this.hideModal();
     this.setState({ submitted: false });
-}
+  }
+
+  checkBoxDisabled(user, type) {
+    let currentUser = JSON.parse(localStorage.getItem('user'));
+    if (_.isEqual(user.id, currentUser.id)) {
+        return true;
+    } else if (type === 'isSuperAdmin' && !currentUser.isSuperAdmin) {
+        return true;
+    } else if (_.isEqual(currentUser.regionId, user.opco.regionId)) {
+        return false;
+    } else if (currentUser.isSuperAdmin) {
+        return false;
+    } else {
+        return true;
+    }
+  }
 
   render() {
     const { user, userName, name, opco, region, isAdmin, isSuperAdmin, submitted } = this.state;
     const { registering, userUpdating, userDeleting, alert, opcos } = this.props;
-    let currentUser = JSON.parse(localStorage.getItem('user'));
+    const tblBound = this.getTblBound();
+    const tblScrollWidth = this.getScrollWidthY();
     return (
       <Layout alert={this.props.alert}>
         {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -244,7 +280,7 @@ handleSubmit(event) {
           <hr />
           <div className="row full-height">
             <div className="col-12 full-height">
-              <div className="card full-height">
+              <div className="card full-height" id="tblContainer">
                 <div className="card-header">
                   <div className="row">
                     <div className="col-8">
@@ -258,30 +294,30 @@ handleSubmit(event) {
                   </div>
                   
                 </div>
-                <div className="card-body table-responsive">
+                <div className="card-body"> {/* table-responsive */}
                   <table className="table table-hover table-bordered table-sm">
                     <thead>
-                      <tr>
-                        <th scope="col" style={{width: '10%'}}>Initials<br />
+                      <tr style={{display: 'block', height: '62px'}}>
+                        <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>Initials<br />
                           <input className="form-control" name="userName" value={userName} onChange={this.handleChangeHeader} />
                         </th>
-                        <th scope="col">Name<br />
+                        <th scope="col" style={{width: `${tblBound.width*0.30 + 'px'}`}}>Name<br />
                           <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
                         </th>
-                        <th scope="col">Operating Company<br />
+                        <th scope="col" style={{width: `${tblBound.width*0.35 + 'px'}`}}>Operating Company<br />
                           <input className="form-control" name="opco" value={opco} onChange={this.handleChangeHeader} />
                         </th>
-                        <th scope="col" style={{width: '15%'}}>Region<br />
+                        <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>Region<br />
                           <input className="form-control" name="region" value={region} onChange={this.handleChangeHeader} />
                         </th>
-                        <th scope="col" style={{width: '10%'}}>Admin<br />
+                        <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>Admin<br />
                         <select className="form-control" name="isAdmin" value={isAdmin} onChange={this.handleChangeHeader}>
                           <option key="1" value="1">Any</option>
-                          <option key="2" value="2">True</option> 
-                          <option key="3" value="3">False</option>                    
+                          <option key="2" value="2">True</option>
+                          <option key="3" value="3">False</option>                  
                         </select>
                         </th>
-                        <th scope="col" style={{width: '10%'}}>SpAdmin<br />
+                        <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>SpAdmin<br />
                         <select className="form-control" name="isSuperAdmin" value={isSuperAdmin} onChange={this.handleChangeHeader}>
                           <option key="1" value="1">Any</option>
                           <option key="2" value="2">True</option> 
@@ -290,15 +326,32 @@ handleSubmit(event) {
                         </th>
                       </tr>
                     </thead>
-                    <tbody>
-                      {this.props.users.items && this.filterName(this.props.users).map((user) => 
-                          <UserRow 
-                            user={user}
-                            currentUser={currentUser}
-                            handleOnclick={(event) => this.handleOnclick(event, user._id)}
-                            handleInputChange={this.handleInputChange}
-                            key={user._id} 
-                            />
+                    <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblBody">
+                      {this.props.users.items && this.filterName(this.props.users).map((u) =>
+                        <tr key={u._id} onClick={(event) => this.handleOnclick(event, u._id)}>
+                          <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>{u.userName}</td>
+                          <td style={{width: `${tblBound.width*0.30 + 'px'}`}}>{u.name}</td>
+                          <td style={{width: `${tblBound.width*0.35 + 'px'}`}}>{u.opco.name}</td>
+                          <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{u.opco.region.name}</td>
+                          <td style={{width: `${tblBound.width*0.10 + 'px'}`}} data-type="checkbox">
+                              <TableCheckBoxAdmin
+                                  id={u._id}
+                                  checked={u.isAdmin}
+                                  onChange={this.handleInputChange}
+                                  disabled={this.checkBoxDisabled(u,'isAdmin')}
+                                  data-type="checkbox"
+                              />
+                          </td>
+                          <td style={{width: `${tblBound.width*0.10-tblScrollWidth + 'px'}`}} data-type="checkbox">
+                              <TableCheckBoxSuperAdmin
+                                  id={u._id}
+                                  checked={u.isSuperAdmin}
+                                  onChange={this.handleInputChange}
+                                  disabled={this.checkBoxDisabled(u,'isSuperAdmin')}
+                                  data-type="checkbox"
+                              />
+                          </td>
+                        </tr>                      
                       )}
                     </tbody>
                   </table>
@@ -382,7 +435,7 @@ handleSubmit(event) {
                             <div className="row">
                                 <div className="col-6">
                                     <button
-                                        type="submit"
+                                        // type="submit"
                                         className="btn btn-outline-dark btn-lg"
                                         onClick={(event) => {this.handleDeletUser(event, this.state.user.id)}}
                                     >
