@@ -88,6 +88,7 @@ class Settings extends React.Component {
     this.handleOnclick = this.handleOnclick.bind(this);
     this.accessibleArray = this.accessibleArray.bind(this);
     this.checkBoxDisabled = this.checkBoxDisabled.bind(this);
+    this.onKeyPress = this.onKeyPress.bind(this);
   }
 
   componentDidMount() {
@@ -114,7 +115,6 @@ class Settings extends React.Component {
       return {};
     }
     const rect = tblContainer.getBoundingClientRect();
-    console.log('height:', rect.height);
     return {
       left: rect.left,
       top: rect.top + window.scrollY,
@@ -267,6 +267,12 @@ class Settings extends React.Component {
     }
   }
 
+  onKeyPress(event) {
+    if (event.which === 13 /* prevent form submit on key Enter */) {
+      event.preventDefault();
+    }
+  }
+
   render() {
     const { user, userName, name, opco, region, isAdmin, isSuperAdmin, submitted } = this.state;
     const { registering, userUpdating, userDeleting, alert, opcos } = this.props;
@@ -328,11 +334,11 @@ class Settings extends React.Component {
                     </thead>
                     <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblBody">
                       {this.props.users.items && this.filterName(this.props.users).map((u) =>
-                        <tr key={u._id} onClick={(event) => this.handleOnclick(event, u._id)}>
-                          <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>{u.userName}</td>
-                          <td style={{width: `${tblBound.width*0.30 + 'px'}`}}>{u.name}</td>
-                          <td style={{width: `${tblBound.width*0.35 + 'px'}`}}>{u.opco.name}</td>
-                          <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{u.opco.region.name}</td>
+                        <tr key={u._id}> {/* onClick={(event) => this.handleOnclick(event, u._id)} */}
+                          <td style={{width: `${tblBound.width*0.10 + 'px'}`}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.userName}</td>
+                          <td style={{width: `${tblBound.width*0.30 + 'px'}`}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.name}</td>
+                          <td style={{width: `${tblBound.width*0.35 + 'px'}`}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.name}</td>
+                          <td style={{width: `${tblBound.width*0.15 + 'px'}`}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.region.name}</td>
                           <td style={{width: `${tblBound.width*0.10 + 'px'}`}} data-type="checkbox">
                               <TableCheckBoxAdmin
                                   id={u._id}
@@ -364,7 +370,10 @@ class Settings extends React.Component {
               title={this.state.user.id ? 'Update user' : 'Add user'}
             >
               <div className="col-12">
-                    <form name="form" onSubmit={this.handleSubmit}>
+                    <form
+                      name="form"
+                      onSubmit={event => this.handleSubmit(event)}
+                      onKeyPress={this.onKeyPress}>
                       <Input
                         title="Initials"
                         name="userName"
