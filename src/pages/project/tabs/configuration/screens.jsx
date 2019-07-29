@@ -386,33 +386,39 @@ class Screens extends React.Component {
                         <thead>
                             <tr className="text-center">
                                 <th colSpan="6" >
-                                    <div className="col-12 mb-3">
-                                        <div className="input-group">
-                                            <div className="input-group-prepend">
-                                                <span className="input-group-text">Select Screen</span>
-                                            </div>
-                                            <select className="form-control" name="selectedScreen" value={selectedScreen} onChange={this.handleChangeScreen}>
-                                                {
-                                                    screens.items && arraySorted(screens.items, "name").map((screen) =>  {        
-                                                        return (
-                                                            <option 
-                                                                key={screen._id}
-                                                                value={screen._id}>{screen.name}
-                                                            </option>
-                                                        );
-                                                    })
-                                                }
-                                            </select>
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text">Select Screen</span>
+                                        </div>
+                                        <select className="form-control mr-2" name="selectedScreen" value={selectedScreen} onChange={this.handleChangeScreen}>
+                                            {
+                                                screens.items && arraySorted(screens.items, "name").map((screen) =>  {        
+                                                    return (
+                                                        <option 
+                                                            key={screen._id}
+                                                            value={screen._id}>{screen.name}
+                                                        </option>
+                                                    );
+                                                })
+                                            }
+                                        </select>
+                                        <div className="pull-right"> {/* col-12 text-right */}
+                                            <button 
+                                                className="btn btn-leeuwen-blue bt-lg mr-2"
+                                                onClick={event => this.toggleNewRow(event)}
+                                                style={{height: '34px'}}
+                                            >
+                                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
+                                            </button>
+                                            <button
+                                                className="btn btn-leeuwen bt-lg"
+                                                onClick={ (event) => this.handleDelete(event, selectedRows)}
+                                                style={{height: '34px'}}
+                                            >
+                                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
+                                            </button>                                     
                                         </div>
                                     </div>
-                                    <div className="col-12 text-right">
-                                        <button className="btn btn-leeuwen-blue bt-lg mr-3" onClick={event => this.toggleNewRow(event)}>
-                                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
-                                        </button>
-                                        <button className="btn btn-leeuwen bt-lg" onClick={ (event) => this.handleDelete(event, selectedRows)}>
-                                            <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
-                                        </button>                                     
-                                    </div>                                  
                                 </th>
                             </tr>
                             <tr>

@@ -749,7 +749,10 @@ class Documents extends React.Component {
                             <thead>
                                 <tr className="text-center">
                                     <th colSpan={multi ? '7' : '6'}>
-                                        <div className="col-12 mb-3">
+                                        <div
+                                            className="col-12 mb-2"
+                                            style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
+                                        >
                                             <div className="input-group">
                                                 <div className="input-group-prepend">
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Document</span>
@@ -780,7 +783,12 @@ class Documents extends React.Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        <form className="col-12 mb-3" encType="multipart/form-data" onSubmit={this.handleUploadFile}>
+                                        <form
+                                            className="col-12"
+                                            encType="multipart/form-data"
+                                            onSubmit={this.handleUploadFile}
+                                            style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
+                                        >
                                             <div className="input-group">
                                                 <div className="input-group-prepend">
                                                     <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
@@ -796,26 +804,32 @@ class Documents extends React.Component {
                                                     />
                                                 </div>
                                                 <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
-                                                <div className="input-group-append">
+                                                <div className="input-group-append mr-2">
                                                     <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
                                                         <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>
                                                     </button>
                                                     <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={ (event) => this.handleDownloadFile(event)}>
                                                         <span><FontAwesomeIcon icon="download" className="fa-lg mr-2"/>Download</span>
                                                     </button>  
-                                                </div>                                                
+                                                </div>
+                                                <div className="pull-right"> {/* col-12 text-right */}
+                                                    <button
+                                                        className="btn btn-leeuwen-blue bt-lg mr-2"
+                                                        onClick={event => this.toggleNewRow(event)}
+                                                        style={{height: '34px'}}
+                                                    >
+                                                        <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
+                                                    </button>                                               
+                                                    <button
+                                                        className="btn btn-leeuwen bt-lg"
+                                                        onClick={ (event) => this.handleDeleteDocFields(event, selectedRows)}
+                                                        style={{height: '34px'}}
+                                                    >
+                                                        <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
+                                                    </button> 
+                                                </div>        
                                             </div>
                                         </form>
-                                        <div className="col-12 text-right">
-                                            {/* <div className="row"> */}
-                                                <button className="btn btn-leeuwen-blue bt-lg mr-3" onClick={event => this.toggleNewRow(event)}>
-                                                    <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
-                                                </button>                                               
-                                                <button className="btn btn-leeuwen bt-lg" onClick={ (event) => this.handleDeleteDocFields(event, selectedRows)}>
-                                                    <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
-                                                </button> 
-                                            {/* </div> */}
-                                        </div>
                                     </th>
                                 </tr>
                                 <tr>

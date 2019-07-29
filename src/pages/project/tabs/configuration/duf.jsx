@@ -349,12 +349,20 @@ class Duf extends React.Component {
                     <table className="table table-hover table-bordered table-sm" >
                         <thead>
                             <tr className="text-center">
-                                <th colSpan="3" >
-                                    <div className="col-12 text-right">
-                                        <button className="btn btn-leeuwen-blue bt-lg mr-3" onClick={event => this.toggleNewRow(event)}>
+                                <th colSpan="3">
+                                    <div className="pull-right"> {/* col-12 text-right */}
+                                        <button
+                                            className="btn btn-leeuwen-blue bt-lg mr-3"
+                                            onClick={event => this.toggleNewRow(event)}
+                                            style={{height: '34px'}}
+                                        >
                                             <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
                                         </button>
-                                        <button className="btn btn-leeuwen bt-lg" onClick={ (event) => this.handleDelete(event, selectedRows)}>
+                                        <button
+                                            className="btn btn-leeuwen bt-lg"
+                                            onClick={ (event) => this.handleDelete(event, selectedRows)}
+                                            style={{height: '34px'}}
+                                        >
                                             <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
                                         </button>                                     
                                     </div>                                  
