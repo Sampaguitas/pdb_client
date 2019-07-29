@@ -84,6 +84,8 @@ class Suppliers extends React.Component {
             loading: false,
             deleting: false
         }
+        this.getScrollWidthY = this.getScrollWidthY.bind(this);
+        this.getTblBound = this.getTblBound.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.showModal = this.showModal.bind(this);
@@ -92,7 +94,35 @@ class Suppliers extends React.Component {
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
     };
+
+    getTblBound() {
+        const tblSupplierContainer = document.getElementById("tblSupplierContainer");
+        if (!tblSupplierContainer) {
+            return {};
+        }
+        const rect = tblSupplierContainer.getBoundingClientRect();
+        return {
+            left: rect.left,
+            top: rect.top + window.scrollY,
+            width: rect.width || rect.right - rect.left,
+            height: rect.height || rect.bottom - rect.top
+        };
+    }    
+
+    getScrollWidthY() {
+        var scroll = document.getElementById("tblSupplierBody");
+        if (!scroll) {
+            return 0;
+        } else {
+            if(scroll.clientHeight == scroll.scrollHeight){
+                return 0;
+            } else {
+                return 15;
+            }
+        }
+    }     
 
     handleSubmit(event) {
         event.preventDefault();
@@ -399,7 +429,13 @@ class Suppliers extends React.Component {
             submitted: false,
           });
         }
-      }
+    }
+
+    onKeyPress(event) {
+        if (event.which === 13 /* prevent form submit on key Enter */) {
+            event.preventDefault();
+        }
+    } 
 
     render() {
 
@@ -425,12 +461,14 @@ class Suppliers extends React.Component {
             loading,
             deleting,     
         } = this.state;
-        
+
+        const tblBound = this.getTblBound();
+        const tblScrollWidth = this.getScrollWidthY();
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
                 <div className="row full-height">
                     <div className="col-12 full-height">
-                        <div className="card full-height">
+                        <div className="card full-height" id="tblSupplierContainer">
                             <div className="card-header">
                                 <div className="row">
                                     <div className="col-8">
@@ -443,16 +481,17 @@ class Suppliers extends React.Component {
                                     </div>
                                 </div>
                             </div>
-                             <div className="card-body table-responsive full-height"> {/* style={{display: 'block', overflow: 'scroll', height: '100%'}} */}
+                             <div className="card-body"> {/*  table-responsive full-height*/}
                                 <table className="table table-hover table-bordered table-sm"> {/*table-bordered*/}
                                     <thead>
-                                        <tr> {/* th className="text-nowrap" style={{minWidth: '100px'}}*/}
+                                        <tr style={{display: tblBound.width ? 'block' : 'table-row', height: '62px'}}> {/*  */}
                                             <HeaderInput
                                                 type="text"
                                                 title="Name"
                                                 name="name"
                                                 value={name}
                                                 onChange={this.handleChangeHeader}
+                                                width ={tblBound.width ? `${tblBound.width*0.166667+ 'px'}`: '16.6667%'}
                                             />                                            
                                             <HeaderInput
                                                 type="text"
@@ -460,6 +499,7 @@ class Suppliers extends React.Component {
                                                 name="registeredName"
                                                 value={registeredName}
                                                 onChange={this.handleChangeHeader}
+                                                width ={tblBound.width ? `${tblBound.width*0.166667+ 'px'}`: '16.6667%'}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -467,6 +507,7 @@ class Suppliers extends React.Component {
                                                 name="contact"
                                                 value={contact}
                                                 onChange={this.handleChangeHeader}
+                                                width ={tblBound.width ? `${tblBound.width*0.166667+ 'px'}`: '16.6667%'}
                                             />                                            
                                             <HeaderInput
                                                 type="text"
@@ -474,6 +515,7 @@ class Suppliers extends React.Component {
                                                 name="position"
                                                 value={position}
                                                 onChange={this.handleChangeHeader}
+                                                width ={tblBound.width ? `${tblBound.width*0.166667+ 'px'}`: '16.6667%'}
                                             />                                            
                                             <HeaderInput
                                                 type="text"
@@ -481,6 +523,7 @@ class Suppliers extends React.Component {
                                                 name="city"
                                                 value={city}
                                                 onChange={this.handleChangeHeader}
+                                                width ={tblBound.width ? `${tblBound.width*0.166667+ 'px'}`: '16.6667%'}
                                             />                                            
                                             <HeaderInput
                                                 type="text"
@@ -488,21 +531,27 @@ class Suppliers extends React.Component {
                                                 name="country"
                                                 value={country}
                                                 onChange={this.handleChangeHeader}
+                                                width ={tblBound.width ? `${tblBound.width*0.166667+ 'px'}`: '16.6667%'}
                                             />                                             
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        {selection && selection.project && this.filterName(selection).map((s) =>
-                                            <tr key={s._id} onClick={(event) => this.handleOnclick(event, s._id)}>
-                                                <td>{s.name}</td>
-                                                <td>{s.registeredName}</td>
-                                                <td>{s.contact}</td>
-                                                <td>{s.position}</td>
-                                                <td>{s.city}</td>
-                                                <td>{s.country}</td>
-                                            </tr>
-                                        )}
-                                    </tbody>    
+                                    {tblBound.width ?
+                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}}  id="tblSupplierBody">
+                                            {selection && selection.project && this.filterName(selection).map((s) =>
+                                                <tr key={s._id} onClick={(event) => this.handleOnclick(event, s._id)}>
+                                                    <td style={{width: tblBound.width ? `${tblBound.width*0.166667 + 'px'}`: '16.6667%'}}>{s.name}</td>
+                                                    <td style={{width: tblBound.width ? `${tblBound.width*0.166667 + 'px'}`: '16.6667%'}}>{s.registeredName}</td>
+                                                    <td style={{width: tblBound.width ? `${tblBound.width*0.166667 + 'px'}`: '16.6667%'}}>{s.contact}</td>
+                                                    <td style={{width: tblBound.width ? `${tblBound.width*0.166667 + 'px'}`: '16.6667%'}}>{s.position}</td>
+                                                    <td style={{width: tblBound.width ? `${tblBound.width*0.166667 + 'px'}`: '16.6667%'}}>{s.city}</td>
+                                                    <td style={{width: tblBound.width ? `${tblBound.width*0.166667-tblScrollWidth + 'px'}`: '16.6667%'}}>{s.country}</td>
+                                                </tr>
+                                            )}
+                                        </tbody> 
+                                    :
+                                        <tbody />                                    
+                                    }
+  
                                 </table>
                                 <Modal
                                     show={show} //showSupplierModal
@@ -510,7 +559,10 @@ class Suppliers extends React.Component {
                                     title={supplier.id ? 'Update supplier' : 'Add supplier'}
                                 >
                                     <div className="col-12">
-                                        <form name="form">
+                                        <form
+                                            name="form"
+                                            onKeyPress={this.onKeyPress}
+                                        >
                                             <Input
                                                 title="Name"
                                                 name="name"
