@@ -352,7 +352,7 @@ class Duf extends React.Component {
                                 <th colSpan="3">
                                     <div className="pull-right"> {/* col-12 text-right */}
                                         <button
-                                            className="btn btn-leeuwen-blue bt-lg mr-3"
+                                            className="btn btn-leeuwen-blue bt-lg mr-2"
                                             onClick={event => this.toggleNewRow(event)}
                                             style={{height: '34px'}}
                                         >
