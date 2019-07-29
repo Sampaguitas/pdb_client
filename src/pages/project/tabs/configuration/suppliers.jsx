@@ -98,11 +98,11 @@ class Suppliers extends React.Component {
     };
 
     getTblBound() {
-        const tblSupplierContainer = document.getElementById("tblSupplierContainer");
-        if (!tblSupplierContainer) {
+        const tblContainer = document.getElementById("tblSupplierContainer");
+        if (!tblContainer) {
             return {};
         }
-        const rect = tblSupplierContainer.getBoundingClientRect();
+        const rect = tblContainer.getBoundingClientRect();
         return {
             left: rect.left,
             top: rect.top + window.scrollY,
@@ -531,7 +531,7 @@ class Suppliers extends React.Component {
                                                 name="country"
                                                 value={country}
                                                 onChange={this.handleChangeHeader}
-                                                width ={tblBound.width ? `${tblBound.width*0.166667+ 'px'}`: '16.6667%'}
+                                                width={tblBound.width ? `${tblBound.width*0.166667+ 'px'}`: '16.6667%'}
                                             />                                             
                                         </tr>
                                     </thead>
