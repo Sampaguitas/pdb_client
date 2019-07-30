@@ -75,8 +75,8 @@ class Fields extends React.Component {
             loaded: false,
             show: false,
         }
-        this.getScrollWidthY = this.getScrollWidthY.bind(this);
         this.getTblBound = this.getTblBound.bind(this);
+        this.getScrollWidthY = this.getScrollWidthY.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
     }
@@ -159,7 +159,7 @@ class Fields extends React.Component {
         return ( 
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
                 <div className="row full-height">
-                    <div className="full-height table-responsive" id="tblFieldsContainer"> {/* table-responsive */}
+                    <div className="table-responsive full-height" id="tblFieldsContainer"> {/* table-responsive */}
                         <table className="table table-hover table-bordered table-sm" >
                             <thead>
                                 <tr style={{display: tblBound.width ? 'block' : 'table-row', height: '62px'}}>

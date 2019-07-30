@@ -108,6 +108,8 @@ class Screens extends React.Component {
             //creating new row
             newRowColor: 'inherit',
         }
+        this.getTblBound = this.getTblBound.bind(this);
+        this.getScrollWidthY = this.getScrollWidthY.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
@@ -399,14 +401,14 @@ class Screens extends React.Component {
             newRowColor
         } = this.state;
 
+        const tblBound = this.getTblBound();
+        const tblScrollWidth = this.getScrollWidthY();
+
         const arrAlign = [
             { _id: 'left', name: 'Left' },
             { _id: 'center', name: 'Center' },
             { _id: 'right', name: 'Right' },
         ]
-
-        const tblBound = this.getTblBound();
-        const tblScrollWidth = this.getScrollWidthY();
 
         return (
             
@@ -511,9 +513,20 @@ class Screens extends React.Component {
                             </tr>
                         </thead>
                         {tblBound.width ?
-                            <tbody style={{display:'block', height: `${tblBound.height-12-45-63 + 'px'}`, overflow:'auto'}}  id="tblScreensBody">
+                            <tbody
+                                id="tblScreensBody"
+                                style={{
+                                    display:'block',
+                                    height: `${tblBound.height-12-45-63 + 'px'}`,
+                                    overflow:'auto'
+                                }} 
+                            >
                                 {newRow &&
-                                    <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow"> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}
+                                    <tr
+                                        onBlur={this.onBlurRow}
+                                        onFocus={this.onFocusRow}
+                                        data-type="newrow"
+                                    >
                                         <NewRowCreate
                                             onClick={ event => this.cerateNewRow(event)}
                                         />
