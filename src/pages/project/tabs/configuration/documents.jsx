@@ -148,6 +148,8 @@ class Documents extends React.Component {
             newRowColor: 'inherit',
 
         }
+        this.getTblBound = this.getTblBound.bind(this);
+        this.getScrollWidthY = this.getScrollWidthY.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
@@ -171,6 +173,33 @@ class Documents extends React.Component {
         
         //this.docConf = this.docConf.bind(this);
     }
+
+    getTblBound() {
+        const tblContainer = document.getElementById("tblDocumentsContainer");
+        if (!tblContainer) {
+            return {};
+        }
+        const rect = tblContainer.getBoundingClientRect();
+        return {
+            left: rect.left,
+            top: rect.top + window.scrollY,
+            width: rect.width || rect.right - rect.left,
+            height: rect.height || rect.bottom - rect.top
+        };
+    }    
+
+    getScrollWidthY() {
+        var scroll = document.getElementById("tblDocumentsBody");
+        if (!scroll) {
+            return 0;
+        } else {
+            if(scroll.clientHeight == scroll.scrollHeight){
+                return 0;
+            } else {
+                return 15;
+            }
+        }
+    }    
 
     cerateNewRow(event) {
         event.preventDefault()
@@ -717,6 +746,9 @@ class Documents extends React.Component {
             newRowColor
         } = this.state;
 
+        const tblBound = this.getTblBound();
+        const tblScrollWidth = this.getScrollWidthY();
+
         const ArrLocation = [
             { _id: 'Header', location: 'Header'},
             { _id: 'Line', location: 'Line'}
@@ -728,26 +760,32 @@ class Documents extends React.Component {
         ]
 
         const ArrType = [
-            {_id: '5d1927121424114e3884ac7e', code: 'ESR01' , name: 'Expediting status report'},
-            {_id: '5d1927131424114e3884ac80', code: 'PL01' , name: 'Packing List'},
-            {_id: '5d1927141424114e3884ac84', code: 'SM01' , name: 'Shipping Mark'},
-            {_id: '5d1927131424114e3884ac81', code: 'PN01' , name: 'Packing Note'},
-            {_id: '5d1927141424114e3884ac83', code: 'SI01' , name: 'Shipping Invoice'}
+            {_id: '5d1927121424114e3884ac7e', code: 'ESR01' , name: 'Expediting status report'}, //ESR01 Expediting status report
+            {_id: '5d1927131424114e3884ac80', code: 'PL01' , name: 'Packing List'}, //PL01 Packing List
+            {_id: '5d1927141424114e3884ac84', code: 'SM01' , name: 'Shipping Mark'}, //SM01 Shipping Mark
+            {_id: '5d1927131424114e3884ac81', code: 'PN01' , name: 'Packing Note'}, //PN01 Packing Note
+            {_id: '5d1927141424114e3884ac83', code: 'SI01' , name: 'Shipping Invoice'} //SI01 Shipping Invoice
         ]
         
-        '5d1927121424114e3884ac7e', //ESR01 Expediting status report
-        '5d1927131424114e3884ac80', //PL01 Packing List
-        '5d1927141424114e3884ac84', //SM01 Shipping Mark
-        '5d1927131424114e3884ac81', //PN01 Packing Note
-        '5d1927141424114e3884ac83' //SI01 Shipping Invoice
+        // '5d1927121424114e3884ac7e', //ESR01 Expediting status report
+        // '5d1927131424114e3884ac80', //PL01 Packing List
+        // '5d1927141424114e3884ac84', //SM01 Shipping Mark
+        // '5d1927131424114e3884ac81', //PN01 Packing Note
+        // '5d1927141424114e3884ac83' //SI01 Shipping Invoice
 
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
                 <div className="row full-height">
-                    <div className="table-responsive full-height" >
+                    <div className="table-responsive full-height" id="tblDocumentsContainer">
                         <table className="table table-hover table-bordered table-sm" >
                             <thead>
-                                <tr className="text-center">
+                                <tr
+                                    className="text-center"
+                                    style={{
+                                        //display: tblBound.width ? 'block' : 'table-row',
+                                        height: '84px'
+                                    }}                                    
+                                >
                                     <th colSpan={multi ? '7' : '6'}>
                                         <div
                                             className="col-12 mb-2"
@@ -832,7 +870,12 @@ class Documents extends React.Component {
                                         </form>
                                     </th>
                                 </tr>
-                                <tr>
+                                <tr
+                                    style={{
+                                        display: tblBound.width ? 'block' : 'table-row',
+                                        height: '63px'
+                                    }}                            
+                                >
                                     <TableSelectionAllRow
                                         checked={selectAllRows}
                                         onChange={this.toggleSelectAllRow}
@@ -845,7 +888,7 @@ class Documents extends React.Component {
                                             options={ArrSheet}
                                             optionText="worksheet"
                                             onChange={this.handleChangeHeader}
-                                            width ='15%'                                        
+                                            width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}                                        
                                         />                                        
                                     }
                                     <HeaderSelect
@@ -855,7 +898,7 @@ class Documents extends React.Component {
                                         options={ArrLocation}
                                         optionText="location"
                                         onChange={this.handleChangeHeader}
-                                        width ='15%'                                        
+                                        width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}                                        
                                     />
                                     <HeaderInput
                                         type="number"
@@ -863,7 +906,7 @@ class Documents extends React.Component {
                                         name="row"
                                         value={row}
                                         onChange={this.handleChangeHeader}
-                                        width ='15%'
+                                        width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
                                     />
                                     <HeaderInput
                                         type="number"
@@ -871,7 +914,7 @@ class Documents extends React.Component {
                                         name="col"
                                         value={col}
                                         onChange={this.handleChangeHeader}
-                                        width ='15%'
+                                        width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
                                     />
                                     <HeaderInput
                                         type="text"
@@ -879,6 +922,7 @@ class Documents extends React.Component {
                                         name="custom"
                                         value={custom}
                                         onChange={this.handleChangeHeader}
+                                        width ={tblBound.width ? `${tblBound.width*0.40+ 'px'}`: '40%'}
                                     />
                                     <HeaderInput
                                         type="text"
@@ -886,122 +930,145 @@ class Documents extends React.Component {
                                         name="param"
                                         value={param}
                                         onChange={this.handleChangeHeader}
+                                        width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}
                                     />
                                 </tr>
                             </thead>
-                            <tbody className="full-height" style={{overflowY:'auto'}}>
-                                {newRow &&
-                                    <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow"> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}
-                                        <NewRowCreate
-                                            onClick={ event => this.cerateNewRow(event)}
-                                        />
-                                        {multi &&
+                            {tblBound.width ?
+                                <tbody
+                                    id="tblDocumentsBody"
+                                    style={{
+                                        display:'block',
+                                        height: `${tblBound.height-12-84-63 + 'px'}`,
+                                        overflow:'auto'
+                                    }}
+                                >
+                                    {newRow &&
+                                        <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow"> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}
+                                            <NewRowCreate
+                                                onClick={ event => this.cerateNewRow(event)}
+                                            />
+                                            {multi &&
+                                                <NewRowSelect 
+                                                    name="worksheet"
+                                                    value={docField.worksheet}
+                                                    options={ArrSheet}
+                                                    optionText="worksheet"
+                                                    onChange={event => this.handleChangeNewRow(event)}
+                                                    color={newRowColor}
+                                                    width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}
+                                                />
+                                            }
                                             <NewRowSelect 
-                                                name="worksheet"
-                                                value={docField.worksheet}
-                                                options={ArrSheet}
-                                                optionText="worksheet"
+                                                name="location"
+                                                value={docField.location}
+                                                options={ArrLocation}
+                                                optionText="location"
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
-                                            />
-                                        }
-                                        <NewRowSelect 
-                                            name="location"
-                                            value={docField.location}
-                                            options={ArrLocation}
-                                            optionText="location"
-                                            onChange={event => this.handleChangeNewRow(event)}
-                                            color={newRowColor}
-                                        />                                        
-                                        <NewRowInput
-                                            type="number"
-                                            name="row"
-                                            value={docField.row}
-                                            onChange={event => this.handleChangeNewRow(event)}
-                                            color={newRowColor}
-                                        />                                        
-                                        <NewRowInput
-                                            type="number"
-                                            name="col"
-                                            value={docField.col}
-                                            onChange={event => this.handleChangeNewRow(event)}
-                                            color={newRowColor}
-                                        />                                         
-                                        <NewRowSelect 
-                                            name="fieldId"
-                                            value={docField.fieldId}
-                                            options={selection && selection.project && selection.project.fields}
-                                            optionText="custom"
-                                            onChange={event => this.handleChangeNewRow(event)}
-                                            color={newRowColor}
-                                        />                                        
-                                        <NewRowInput
-                                            type="text"
-                                            name="param"
-                                            value={docField.param}
-                                            onChange={event => this.handleChangeNewRow(event)}
-                                            color={newRowColor}
-                                        />                                         
-                                    </tr>                                
-                                }
-
-                            {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
-                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}                                   
-                                    <TableSelectionRow
-                                        id={s._id}
-                                        selectAllRows={this.state.selectAllRows}
-                                        callback={this.updateSelectedRows}
-                                    />
-                                    {multi &&
-                                        <TableSelect 
-                                            collection="docfield"
-                                            objectId={s._id}
-                                            fieldName="worksheet"
-                                            fieldValue={s.worksheet}
-                                            options={ArrSheet}
-                                            optionText="worksheet"                                 
-                                        />
+                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
+                                            />                                        
+                                            <NewRowInput
+                                                type="number"
+                                                name="row"
+                                                value={docField.row}
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
+                                            />                                        
+                                            <NewRowInput
+                                                type="number"
+                                                name="col"
+                                                value={docField.col}
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
+                                            />                                         
+                                            <NewRowSelect 
+                                                name="fieldId"
+                                                value={docField.fieldId}
+                                                options={selection && selection.project && selection.project.fields}
+                                                optionText="custom"
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                                width ={tblBound.width ? `${tblBound.width*0.40+ 'px'}`: '40%'}
+                                            />                                        
+                                            <NewRowInput
+                                                type="text"
+                                                name="param"
+                                                value={docField.param}
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                                width ={tblBound.width ? `${tblBound.width*0.15-tblScrollWidth+ 'px'}`: '15%'}
+                                            />                                         
+                                        </tr>                                
                                     }
-                                    <TableSelect 
-                                        collection="docfield"
-                                        objectId={s._id}
-                                        fieldName="location"
-                                        fieldValue={s.location}
-                                        options={ArrLocation}
-                                        optionText="location"                                  
-                                    />
-                                    <TableInput 
-                                        collection="docfield"
-                                        objectId={s._id}
-                                        fieldName="row"
-                                        fieldValue={s.row}
-                                        fieldType="number"
-                                    />
-                                    <TableInput 
-                                        collection="docfield"
-                                        objectId={s._id}
-                                        fieldName="col"
-                                        fieldValue={s.col}
-                                        fieldType="number"
-                                    />
-                                    <TableSelect 
-                                        collection="docfield"
-                                        objectId={s._id}
-                                        fieldName="fieldId"
-                                        fieldValue={s.fieldId}
-                                        options={selection.project.fields}
-                                        optionText="custom"                                  
-                                    />
-                                    <TableInput 
-                                        collection="docfield"
-                                        objectId={s._id}
-                                        fieldName="param"
-                                        fieldValue={s.param}
-                                        fieldType="text"
-                                    />
-                                </tr>
-                            )}
-                        </tbody>
+                                    {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
+                                        <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}                                   
+                                            <TableSelectionRow
+                                                id={s._id}
+                                                selectAllRows={this.state.selectAllRows}
+                                                callback={this.updateSelectedRows}
+                                            />
+                                            {multi &&
+                                                <TableSelect 
+                                                    collection="docfield"
+                                                    objectId={s._id}
+                                                    fieldName="worksheet"
+                                                    fieldValue={s.worksheet}
+                                                    options={ArrSheet}
+                                                    optionText="worksheet"
+                                                    width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}                                 
+                                                />
+                                            }
+                                            <TableSelect 
+                                                collection="docfield"
+                                                objectId={s._id}
+                                                fieldName="location"
+                                                fieldValue={s.location}
+                                                options={ArrLocation}
+                                                optionText="location"
+                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}                                  
+                                            />
+                                            <TableInput 
+                                                collection="docfield"
+                                                objectId={s._id}
+                                                fieldName="row"
+                                                fieldValue={s.row}
+                                                fieldType="number"
+                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
+                                            />
+                                            <TableInput 
+                                                collection="docfield"
+                                                objectId={s._id}
+                                                fieldName="col"
+                                                fieldValue={s.col}
+                                                fieldType="number"
+                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
+                                            />
+                                            <TableSelect 
+                                                collection="docfield"
+                                                objectId={s._id}
+                                                fieldName="fieldId"
+                                                fieldValue={s.fieldId}
+                                                options={selection.project.fields}
+                                                optionText="custom"
+                                                width ={tblBound.width ? `${tblBound.width*0.40+ 'px'}`: '40%'}                                  
+                                            />
+                                            <TableInput 
+                                                collection="docfield"
+                                                objectId={s._id}
+                                                fieldName="param"
+                                                fieldValue={s.param}
+                                                fieldType="text"
+                                                width ={tblBound.width ? `${tblBound.width*0.15-tblScrollWidth+ 'px'}`: '15%'}
+                                            />
+                                        </tr>
+                                    )}
+                                </tbody>
+                            :
+                                <tbody />
+                            }
                         </table>
                         <Modal
                             show={show}
