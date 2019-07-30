@@ -170,6 +170,7 @@ class Documents extends React.Component {
         this.handleFileChange=this.handleFileChange.bind(this);
         this.fileInput = React.createRef();
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
         
         //this.docConf = this.docConf.bind(this);
     }
@@ -716,6 +717,12 @@ class Documents extends React.Component {
         }
     }
 
+    onKeyPress(event) {
+        if (event.which === 13 /* prevent form submit on key Enter */) {
+          event.preventDefault();
+        }
+    }
+
     render() {
 
         const { 
@@ -1076,7 +1083,10 @@ class Documents extends React.Component {
                             title={docDef.id ? 'Update Document' : 'Add Document'}
                         >
                             <div className="col-12">
-                                <form name="form">
+                                <form
+                                    name="form"
+                                    onKeyPress={this.onKeyPress}
+                                >
                                     <Input
                                         title="Description"
                                         name="description"

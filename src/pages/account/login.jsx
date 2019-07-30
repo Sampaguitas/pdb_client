@@ -13,10 +13,7 @@ import "./login.css";
 class Login extends React.Component {
   constructor(props) {
     super(props);
-
-    // reset login status
     this.props.dispatch(userActions.logout());
-
     this.state = {
       email: "",
       password: "",
@@ -24,6 +21,7 @@ class Login extends React.Component {
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.onKeyPress = this.onKeyPress.bind(this);
   }
 
   handleChange(e) {
@@ -38,6 +36,12 @@ class Login extends React.Component {
     const { dispatch } = this.props;
     if (email && password) {
       dispatch(userActions.login(email, encodeURI(password)));
+    }
+  }
+
+  onKeyPress(event) {
+    if (event.which === 13 /* prevent form submit on key Enter */) {
+      event.preventDefault();
     }
   }
 
@@ -60,7 +64,11 @@ class Login extends React.Component {
               <br />
               <img src={pdb} className="img-fluid" alt="Project Database" />
               <hr />
-              <form name="form" onSubmit={this.handleSubmit}>
+              <form
+                name="form"
+                onSubmit={this.handleSubmit}
+                onKeyPress={this.onKeyPress}
+              >
                 <InputIcon
                   title="Email"
                   name="email"
