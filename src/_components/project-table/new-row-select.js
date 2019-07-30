@@ -63,15 +63,37 @@ class NewRowSelect extends Component{
     }
 
     render() {
-        return this.state.editing ? (
-            <td className="text-nowrap" style={{padding:0}}>
+        const {
+            align,
+            color,
+            disabled,
+            name,
+            onChange,
+            options,
+            optionText,
+            textNoWrap,
+            value,
+            width
+        } = this.props;
+
+        const { editing } = this.state;
+
+        return editing ? (
+            <td
+                style={{
+                    width: `${width ? width : 'auto'}`,
+                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
+                    padding: '0px'
+                }}
+            >
                 <select
                     ref='input'
                     className="form-control"
-                    name={this.props.name}
-                    value={this.props.value}
-                    onChange={this.props.onChange}
+                    name={name}
+                    value={value}
+                    onChange={onChange}
                     onBlur={this.onBlur}
+                    disabled={disabled}
                     // style={{
                     //     margin: 0,
                     //     borderRadius:0,
@@ -83,11 +105,11 @@ class NewRowSelect extends Component{
                     // }}
                 >
                     <option>Select...</option>
-                    {this.props.options && arraySorted(this.props.options, this.props.optionText).map(option => {
+                    {options && arraySorted(options, optionText).map(option => {
                         return (
                             <option
                                 key={option._id}
-                                value={option._id}>{option[this.props.optionText]}
+                                value={option._id}>{option[optionText]}
                             </option>
                         );
                     })}                    
@@ -95,7 +117,19 @@ class NewRowSelect extends Component{
             </td>
         )
         :
-        (<td onClick={() => this.onFocus()} style={{color: this.props.color}}>{ this.selectedName(this.props.options, this.props.value)}</td>);
+        (
+            <td
+                onClick={() => this.onFocus()}
+                style={{
+                    color: disabled ? 'inherit' : color,
+                    width: `${width ? width : 'auto'}`,
+                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`
+                }}
+                align={align ? align : 'left'}
+            >
+                {this.selectedName(options, value)}
+            </td>
+        );
     }
 }
 

@@ -110,11 +110,28 @@ class TableInput extends Component{
     }
 
     render() {
-        const { disabled, align, width, textNoWrap } = this.props;
-        const { fieldValue, fieldType, color } = this.state
+        const {
+            align,
+            disabled,
+            textNoWrap,
+            width
+        } = this.props;
 
-        return this.state.editing ? (
-            <td style={{width: `${width ? width : 'auto'}`, whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`, padding: '0px' }}>
+        const {
+            color,
+            editing,
+            fieldValue,
+            fieldType
+        } = this.state;
+
+        return editing ? (
+            <td
+                style={{
+                    width: `${width ? width : 'auto'}`,
+                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
+                    padding: '0px'
+                }}
+            >
                 <input
                     ref='input'
                     className="form-control"
@@ -137,13 +154,17 @@ class TableInput extends Component{
             </td>
         ):
         (
-        <td 
-            onClick={() => this.onFocus()}
-            style={{color: disabled ? 'inherit' : color, width: `${width ? width : 'auto'}`, whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`}}
-            align={align ? align : 'left'}
-        >
-            {this.formatText(fieldValue, fieldType)}
-        </td> //onDoubleClick
+            <td 
+                onClick={() => this.onFocus()}
+                style={{
+                    color: disabled ? 'inherit' : color,
+                    width: `${width ? width : 'auto'}`,
+                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`
+                }}
+                align={align ? align : 'left'}
+            >
+                {this.formatText(fieldValue, fieldType)}
+            </td> //onDoubleClick
         );
     }
 }

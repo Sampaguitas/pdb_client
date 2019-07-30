@@ -11,27 +11,51 @@ class NewRowInput extends Component{
     }
 
     onFocus() {
-        this.setState({ editing: true }, () => {
+        this.setState({
+            editing: true
+        }, () => {
             this.refs.input.focus();
         });
     }
 
     onBlur(event){
         event.preventDefault();
-        this.setState({editing:false});
+        this.setState({
+            editing:false
+        });
     }
 
     render() {
-        return this.state.editing ? (
-            <td className="text-nowrap" style={{padding:0}}>
+        const {
+            color,
+            disabled,
+            type,
+            name, 
+            onChange,
+            textNoWrap,
+            value, 
+            width
+        } = this.props;
+
+        const { editing } = this.state;
+
+        return editing ? (
+            <td 
+                style={{
+                    width: `${width ? width : 'auto'}`,
+                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
+                    padding: '0px' 
+                }}
+            >
                 <input
                     ref='input'
                     className="form-control"
-                    type={this.props.type}
-                    name={this.props.name}
-                    value={this.props.value}
-                    onChange={this.props.onChange}
+                    type={type}
+                    name={name}
+                    value={value}
+                    onChange={onChange}
                     onBlur={this.onBlur}
+                    disabled={disabled}
                     // style={{
                     //     margin: 0,
                     //     borderRadius:0,
@@ -45,7 +69,18 @@ class NewRowInput extends Component{
             </td>
         )
         :
-        (<td onClick={() => this.onFocus()} style={{color: this.props.color}}>{this.props.value}</td>);
+        (
+            <td
+                onClick={() => this.onFocus()}
+                style={{
+                    color: disabled ? 'inherit' : color,
+                    width: `${width ? width : 'auto'}`,
+                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`
+                }}
+            >
+                {value}
+            </td>
+        );
     }
 }
 

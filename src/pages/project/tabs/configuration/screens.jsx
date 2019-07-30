@@ -120,6 +120,33 @@ class Screens extends React.Component {
         this.filterName = this.filterName.bind(this);
     }
 
+    getTblBound() {
+        const tblContainer = document.getElementById("tblScreensContainer");
+        if (!tblContainer) {
+            return {};
+        }
+        const rect = tblContainer.getBoundingClientRect();
+        return {
+            left: rect.left,
+            top: rect.top + window.scrollY,
+            width: rect.width || rect.right - rect.left,
+            height: rect.height || rect.bottom - rect.top
+        };
+    }    
+
+    getScrollWidthY() {
+        var scroll = document.getElementById("tblScreensBody");
+        if (!scroll) {
+            return 0;
+        } else {
+            if(scroll.clientHeight == scroll.scrollHeight){
+                return 0;
+            } else {
+                return 15;
+            }
+        }
+    }
+
     cerateNewRow(event) {
         event.preventDefault();
         const { handleSelectionReload } = this.props;
@@ -377,14 +404,24 @@ class Screens extends React.Component {
             { _id: 'center', name: 'Center' },
             { _id: 'right', name: 'Right' },
         ]
+
+        const tblBound = this.getTblBound();
+        const tblScrollWidth = this.getScrollWidthY();
+
         return (
             
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
             <div className="row full-height">
-                <div className="table-responsive full-height">
+                <div className="table-responsive full-height" id="tblScreensContainer">
                     <table className="table table-hover table-bordered table-sm" >
                         <thead>
-                            <tr className="text-center">
+                            <tr
+                                className="text-center"
+                                style={{
+                                    //display: tblBound.width ? 'block' : 'table-row',
+                                    height: '45px'
+                                }}
+                            >
                                 <th colSpan="6" >
                                     <div className="input-group">
                                         <div className="input-group-prepend">
@@ -421,7 +458,12 @@ class Screens extends React.Component {
                                     </div>
                                 </th>
                             </tr>
-                            <tr>
+                            <tr
+                                style={{
+                                    display: tblBound.width ? 'block' : 'table-row',
+                                    height: '63px'
+                                }}
+                            >
                                 <TableSelectionAllRow
                                     checked={selectAllRows}
                                     onChange={this.toggleSelectAllRow}
@@ -432,6 +474,7 @@ class Screens extends React.Component {
                                     name="custom"
                                     value={custom}
                                     onChange={this.handleChangeHeader}
+                                    width={tblBound.width ? `${tblBound.width*0.45-30+ 'px'}`: 'calc(45% - 30px)'}
                                 />
                                 <HeaderInput
                                     type="number"
@@ -439,7 +482,7 @@ class Screens extends React.Component {
                                     name="forShow"
                                     value={forShow}
                                     onChange={this.handleChangeHeader}
-                                    width={'15%'}
+                                    width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}
                                 />                                
                                 <HeaderInput
                                     type="number"
@@ -447,7 +490,7 @@ class Screens extends React.Component {
                                     name="forSelect"
                                     value={forSelect}
                                     onChange={this.handleChangeHeader}
-                                    width={'15%'}
+                                    width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}
                                 />                                 
                                 <HeaderSelect
                                         title="Location"
@@ -456,18 +499,19 @@ class Screens extends React.Component {
                                         options={arrAlign}
                                         optionText="name"
                                         onChange={this.handleChangeHeader}
-                                        width ='15%'                                        
+                                        width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}                                        
                                 />                         
                                 <HeaderCheckBox 
                                     title="Disable"
                                     name="edit"
                                     value={edit}
                                     onChange={this.handleChangeHeader}
-                                    width ='10%'
+                                    width ={tblBound.width ? `${tblBound.width*0.10+ 'px'}`: '10%'}
                                 />
                             </tr>
                         </thead>
-                        <tbody className="full-height" style={{overflowY:'auto'}}>
+                        {tblBound.width ?
+                            <tbody style={{display:'block', height: `${tblBound.height-12-45-63 + 'px'}`, overflow:'auto'}}  id="tblScreensBody">
                                 {newRow &&
                                     <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow"> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}
                                         <NewRowCreate
@@ -480,6 +524,7 @@ class Screens extends React.Component {
                                             optionText="custom"
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            width={tblBound.width ? `${tblBound.width*0.45-30 + 'px'}`: 'calc(45% - 30px)'}
                                         />
                                         <NewRowInput
                                             type="number"
@@ -487,6 +532,8 @@ class Screens extends React.Component {
                                             value={fieldName.forShow}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}
+
                                         />
                                         <NewRowInput
                                             type="number"
@@ -494,6 +541,7 @@ class Screens extends React.Component {
                                             value={fieldName.forSelect}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}
                                         />                                      
                                         <NewRowSelect 
                                             name="align"
@@ -502,62 +550,73 @@ class Screens extends React.Component {
                                             optionText="name"
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}
                                         />
                                         <NewRowCheckBox
                                             name="edit"
                                             checked={fieldName.edit}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            width={tblBound.width ? `${tblBound.width*0.10-tblScrollWidth + 'px'}`: '10%'}
                                         />
-                                    </tr>                                
+                                    </tr>                               
                                 }
-                            {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
-                                <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}
-                                    <TableSelectionRow
-                                        id={s._id}
-                                        selectAllRows={this.state.selectAllRows}
-                                        callback={this.updateSelectedRows}
-                                    />
-                                    <TableSelect 
-                                        collection="fieldname"
-                                        objectId={s._id}
-                                        fieldName="fieldId"
-                                        fieldValue={s.fieldId}
-                                        options={selection.project.fields}
-                                        optionText="custom"                                  
-                                    />
-                                    <TableInput 
-                                        collection="fieldname"
-                                        objectId={s._id}
-                                        fieldName="forShow"
-                                        fieldValue={s.forShow}
-                                        fieldType="number"
-                                    />
-                                    <TableInput 
-                                        collection="fieldname"
-                                        objectId={s._id}
-                                        fieldName="forSelect"
-                                        fieldValue={s.forSelect}
-                                        fieldType="number"
-                                    />
-                                    <TableSelect 
-                                        collection="fieldname"
-                                        objectId={s._id}
-                                        fieldName="align"
-                                        fieldValue={s.align}
-                                        options={arrAlign}
-                                        optionText="name"                                  
-                                    />
-                                    <TableCheckBox 
-                                        collection="fieldname"
-                                        objectId={s._id}
-                                        fieldName="edit"
-                                        fieldValue={s.edit}
-                                        fieldType="checkbox"
-                                    />
-                                </tr>
-                            )}
-                        </tbody>
+                                {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
+                                    <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}
+                                        <TableSelectionRow
+                                            id={s._id}
+                                            selectAllRows={this.state.selectAllRows}
+                                            callback={this.updateSelectedRows}
+                                        />
+                                        <TableSelect 
+                                            collection="fieldname"
+                                            objectId={s._id}
+                                            fieldName="fieldId"
+                                            fieldValue={s.fieldId}
+                                            options={selection.project.fields}
+                                            optionText="custom"
+                                            width={tblBound.width ? `${tblBound.width*0.45-30 + 'px'}`: 'calc(45% - 30px)'}                                  
+                                        />
+                                        <TableInput 
+                                            collection="fieldname"
+                                            objectId={s._id}
+                                            fieldName="forShow"
+                                            fieldValue={s.forShow}
+                                            fieldType="number"
+                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}
+                                        />
+                                        <TableInput 
+                                            collection="fieldname"
+                                            objectId={s._id}
+                                            fieldName="forSelect"
+                                            fieldValue={s.forSelect}
+                                            fieldType="number"
+                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}
+                                        />
+                                        <TableSelect 
+                                            collection="fieldname"
+                                            objectId={s._id}
+                                            fieldName="align"
+                                            fieldValue={s.align}
+                                            options={arrAlign}
+                                            optionText="name"
+                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}                                 
+                                        />
+                                        <TableCheckBox 
+                                            collection="fieldname"
+                                            objectId={s._id}
+                                            fieldName="edit"
+                                            fieldValue={s.edit}
+                                            fieldType="checkbox"
+                                            width={tblBound.width ? `${tblBound.width*0.10-tblScrollWidth + 'px'}`: '10%'}
+                                        />
+                                    </tr>
+                                )}
+                            </tbody>
+                        :
+                            <tbody />
+                        }
+
                     </table>
                 </div>
             </div> 

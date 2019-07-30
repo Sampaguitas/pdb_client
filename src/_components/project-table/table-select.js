@@ -124,8 +124,6 @@ class TableSelect extends Component{
 
     }
 
-
-
     selectedName(arr, search) {
         const { optionText } = this.state;
         if (arr && search) {
@@ -143,11 +141,29 @@ class TableSelect extends Component{
     }
 
     render() {
-        const { disabled, align } = this.props;
-        const { fieldValue, color, options, optionText } = this.state
+        const {
+            align,
+            disabled,
+            textNoWrap,
+            width
+        } = this.props;
 
-        return this.state.editing ? (
-            <td className="text-nowrap" style={{padding:0}}>
+        const {
+            color,
+            editing,
+            fieldValue,
+            options,
+            optionText
+        } = this.state;
+
+        return editing ? (
+            <td
+                style={{
+                    width: `${width ? width : 'auto'}`,
+                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
+                    padding: '0px'
+                }}
+            >
                 <select
                     ref='input'
                     className="form-control"
@@ -178,7 +194,17 @@ class TableSelect extends Component{
             </td>
         ):
         (
-        <td onClick={() => this.onFocus()} style={{color: disabled ? 'inherit' : color}} align={align ? align : 'left'}>{ this.selectedName(options, fieldValue)}</td> //onDoubleClick
+            <td
+                onClick={() => this.onFocus()}
+                style={{
+                    color: disabled ? 'inherit' : color,
+                    width: `${width ? width : 'auto'}`,
+                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`
+                }}
+                align={align ? align : 'left'}
+            >
+                {this.selectedName(options, fieldValue)}
+            </td> //onDoubleClick
         );
     }
 }

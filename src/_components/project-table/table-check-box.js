@@ -39,10 +39,6 @@ class TableCheckBox extends Component {
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
-        console.log("collection:", collection);
-        console.log("objectId:", objectId);
-        console.log("fieldName:",fieldName);
-        console.log("fieldValue:",fieldValue);
         this.setState({
             ...this.state,
             [name]: value
@@ -55,7 +51,6 @@ class TableCheckBox extends Component {
                 };
                 return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
                 .then( (responce) => {
-                    console.log("responce:", JSON.stringify(responce));
                     this.setState({
                         ...this.state,
                         color: 'green',
@@ -87,24 +82,60 @@ class TableCheckBox extends Component {
     }
 
     render(){
-        const { disabled } = this.props;
-        const { fieldValue, color } = this.state;
+        const {
+            disabled,
+            width
+        } = this.props;
+        
+        const {
+            color,
+            fieldValue,
+        } = this.state;
+        
         return (
-            <td>
-             <div>
-                <label className="fancy-table-checkbox">
-                <input
-                    ref="input"
-                    type='checkbox'
-                    name='fieldValue'
-                    checked={fieldValue}
-                    onChange={this.onChange}
-                    disabled={disabled}
-                />
-                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: disabled ? '#adb5bd' : color, padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/>
-                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: disabled ? '#adb5bd' : color, padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/>                
-                </label>
-            </div>
+            <td 
+            style={{
+                width: `${width ? width : 'auto'}`,
+                // whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
+                // padding: '0px'
+            }}            
+            >
+                <div>
+                    <label className="fancy-table-checkbox">
+                        <input
+                            ref="input"
+                            type='checkbox'
+                            name='fieldValue'
+                            checked={fieldValue}
+                            onChange={this.onChange}
+                            disabled={disabled}
+                        />
+                        <FontAwesomeIcon
+                            icon="check-square"
+                            className="checked fa-lg"
+                            style={{
+                                color: disabled ? '#adb5bd' : color,
+                                padding: 'auto',
+                                textAlign: 'center',
+                                width: '100%',
+                                margin: '0px',
+                                verticalAlign: 'middle'
+                            }}
+                        />
+                        <FontAwesomeIcon
+                            icon={["far", "square"]}
+                            className="unchecked fa-lg"
+                            style={{
+                                color: disabled ? '#adb5bd' : color,
+                                padding: 'auto',
+                                textAlign: 'center',
+                                width: '100%',
+                                margin: '0px',
+                                verticalAlign: 'middle'
+                            }}
+                        />                
+                    </label>
+                </div>
             </td>
         );
     }
