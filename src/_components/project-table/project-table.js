@@ -249,7 +249,8 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
-                            disabled={unlocked ? false : screenHeader.edit}
+                            disabled={screenHeader.edit}
+                            unlocked={unlocked}
                             align={screenHeader.align}
                             fieldType="text"
                             textNoWrap={true}
@@ -263,7 +264,8 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
-                            disabled={unlocked ? false : screenHeader.edit}
+                            disabled={screenHeader.edit}
+                            unlocked={unlocked}
                             align={screenHeader.align}
                             fieldType="number"
                             textNoWrap={true}
@@ -277,7 +279,8 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
-                            disabled={unlocked ? false : screenHeader.edit}
+                            disabled={screenHeader.edit}
+                            unlocked={unlocked}
                             align={screenHeader.align}
                             fieldType="date"
                             textNoWrap={true}
@@ -291,7 +294,8 @@ class ProjectTable extends Component {
                             objectId={screenBody._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={screenBody[screenHeader.fields.name]}
-                            disabled={unlocked ? false : screenHeader.edit}
+                            disabled={screenHeader.edit}
+                            unlocked={unlocked}
                             align={screenHeader.align}
                             key={screenHeader._id}
                         />
@@ -303,7 +307,8 @@ class ProjectTable extends Component {
                         objectId={screenBody._id}
                         fieldName={screenHeader.fields.name}
                         fieldValue={screenBody[screenHeader.fields.name]}
-                        disabled={unlocked ? false : screenHeader.edit}
+                        disabled={screenHeader.edit}
+                        unlocked={unlocked}
                         align={screenHeader.align}
                         fieldType="text"
                         textNoWrap={true}
@@ -320,7 +325,8 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
-                            disabled={unlocked ? false : screenHeader.edit}
+                            disabled={screenHeader.edit}
+                            unlocked={unlocked}
                             align={screenHeader.align}
                             fieldType="text"
                             textNoWrap={true}
@@ -334,7 +340,8 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
-                            disabled={unlocked ? false : screenHeader.edit}
+                            disabled={screenHeader.edit}
+                            unlocked={unlocked}
                             align={screenHeader.align}
                             fieldType="number"
                             textNoWrap={true}
@@ -348,7 +355,8 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
-                            disabled={unlocked ? false : screenHeader.edit}
+                            disabled={screenHeader.edit}
+                            unlocked={unlocked}
                             align={screenHeader.align}
                             fieldType="date"
                             textNoWrap={true}
@@ -362,7 +370,8 @@ class ProjectTable extends Component {
                             objectId={sub._id}
                             fieldName={screenHeader.fields.name}
                             fieldValue={sub[screenHeader.fields.name]}
-                            disabled={unlocked ? false : screenHeader.edit}
+                            disabled={screenHeader.edit}
+                            unlocked={unlocked}
                             key={screenHeader._id}
                         />
                     );
@@ -373,7 +382,8 @@ class ProjectTable extends Component {
                         objectId={sub._id}
                         fieldName={screenHeader.fields.name}
                         fieldValue={sub[screenHeader.fields.name]}
-                        disabled={unlocked ? false : screenHeader.edit}
+                        disabled={screenHeader.edit}
+                        unlocked={unlocked}
                         align={screenHeader.align}
                         fieldType="text"
                         textNoWrap={true}
@@ -422,7 +432,7 @@ class ProjectTable extends Component {
                         <span><FontAwesomeIcon icon="sync-alt" className="far fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" onClick={event => toggleUnlock(event)} style={{width: '40px', height: '40px'}}>
-                        <span><FontAwesomeIcon icon={unlocked ? "lock" : "unlock"} className="fas fa-2x"/></span>
+                        <span><FontAwesomeIcon icon={unlocked ? "unlock" : "lock"} className="fas fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" onClick={event => this.downloadTable(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="download" className="fas fa-2x"/></span>

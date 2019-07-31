@@ -84,6 +84,7 @@ class TableCheckBox extends Component {
     render(){
         const {
             disabled,
+            unlocked,
             width
         } = this.props;
         
@@ -108,13 +109,13 @@ class TableCheckBox extends Component {
                             name='fieldValue'
                             checked={fieldValue}
                             onChange={this.onChange}
-                            disabled={disabled}
+                            disabled={unlocked ? false : disabled}
                         />
                         <FontAwesomeIcon
                             icon="check-square"
                             className="checked fa-lg"
                             style={{
-                                color: disabled ? '#adb5bd' : color,
+                                color: disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : '#adb5bd' : color,
                                 padding: 'auto',
                                 textAlign: 'center',
                                 width: '100%',
@@ -126,7 +127,7 @@ class TableCheckBox extends Component {
                             icon={["far", "square"]}
                             className="unchecked fa-lg"
                             style={{
-                                color: disabled ? '#adb5bd' : color,
+                                color: disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : '#adb5bd' : color,
                                 padding: 'auto',
                                 textAlign: 'center',
                                 width: '100%',

@@ -69,8 +69,8 @@ class TableSelect extends Component{
     }
 
     onFocus() {
-        const { disabled } = this.props;
-        if(!disabled){
+        const { disabled, unlocked } = this.props;
+        if(unlocked || !disabled){
             this.setState({ editing: true }, () => {
                 this.refs.input.focus();
             });
@@ -79,11 +79,11 @@ class TableSelect extends Component{
 
     onBlur(event){
         event.preventDefault();
-        const {disabled} = this.props;
+        const {disabled, unlocked} = this.props;
         // if(!disabled){
         //     this.setState({editing:false});
             const { collection, objectId, fieldName, fieldValue } = this.state      
-            if (!disabled && collection && objectId && fieldName && objectId) {
+            if ((unlocked || !disabled) && collection && objectId && fieldName && objectId) {
                 const requestOptions = {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -145,6 +145,7 @@ class TableSelect extends Component{
             align,
             disabled,
             textNoWrap,
+            unlocked,
             width
         } = this.props;
 
@@ -171,7 +172,7 @@ class TableSelect extends Component{
                     value={fieldValue}
                     onChange={this.onChange}
                     onBlur={this.onBlur}
-                    disabled={disabled}
+                    disabled={unlocked ? false : disabled}
                     // style={{
                     //     margin: 0,
                     //     borderRadius:0,
@@ -197,7 +198,7 @@ class TableSelect extends Component{
             <td
                 onClick={() => this.onFocus()}
                 style={{
-                    color: disabled ? 'inherit' : color,
+                    color: disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color,
                     width: `${width ? width : 'auto'}`,
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`
                 }}
