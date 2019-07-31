@@ -97,7 +97,7 @@ class Settings extends React.Component {
   }
 
   getScrollWidthY() {
-    var scroll = document.getElementById("tblBody");
+    var scroll = document.getElementById("tblSettingsBody");
     if (!scroll) {
         return 0;
     } else {
@@ -110,7 +110,7 @@ class Settings extends React.Component {
   }
 
   getTblBound() {
-    const tblContainer = document.getElementById("tblContainer");
+    const tblContainer = document.getElementById("tblSettingsContainer");
     if (!tblContainer) {
       return {};
     }
@@ -286,7 +286,7 @@ class Settings extends React.Component {
           <hr />
           <div className="row full-height">
             <div className="col-12 full-height">
-              <div className="card full-height" id="tblContainer">
+              <div className="card full-height" id="tblSettingsContainer">
                 <div className="card-header">
                   <div className="row">
                     <div className="col-8">
@@ -332,7 +332,7 @@ class Settings extends React.Component {
                         </th>
                       </tr>
                     </thead>
-                    <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblBody">
+                    <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblSettingsBody">
                       {this.props.users.items && this.filterName(this.props.users).map((u) =>
                         <tr key={u._id}> {/* onClick={(event) => this.handleOnclick(event, u._id)} */}
                           <td style={{width: `${tblBound.width*0.10 + 'px'}`}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.userName}</td>

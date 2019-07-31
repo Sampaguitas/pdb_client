@@ -86,7 +86,7 @@ class Opco extends React.Component {
     }
 
     getScrollWidthY() {
-        var scroll = document.getElementById("tblBody");
+        var scroll = document.getElementById("tblOpcoBody");
         if (!scroll) {
             return 0;
         } else {
@@ -99,7 +99,7 @@ class Opco extends React.Component {
     }
 
     getTblBound() {
-        const tblContainer = document.getElementById("tblContainer");
+        const tblContainer = document.getElementById("tblOpcoContainer");
         if (!tblContainer) {
             return {};
         }
@@ -261,7 +261,7 @@ class Opco extends React.Component {
                 <div id="opco" className="full-height">
                     <div className="row full-height" >
                         <div className="col-12 full-height">
-                            <div className="card full-height" id="tblContainer">
+                            <div className="card full-height" id="tblOpcoContainer">
                                 <div className="card-header">
                                     <div className="row">
                                         <div className="col-8">
@@ -295,7 +295,7 @@ class Opco extends React.Component {
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblBody">
+                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblOpcoBody">
                                             {opcos.items && this.filterName(opcos).map((o) =>
                                                 <tr key={o._id} onClick={(event) => this.handleOnclick(event, o._id)}>
                                                     <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{o.code}</td>

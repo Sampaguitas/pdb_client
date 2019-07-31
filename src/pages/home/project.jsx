@@ -96,7 +96,7 @@ class Project extends React.Component {
     }
 
     getTblBound() {
-        const tblContainer = document.getElementById("tblContainer");
+        const tblContainer = document.getElementById("tblProjectContainer");
         if (!tblContainer) {
             return {};
         }
@@ -110,7 +110,7 @@ class Project extends React.Component {
     }    
 
     getScrollWidthY() {
-        var scroll = document.getElementById("tblBody");
+        var scroll = document.getElementById("tblProjectBody");
         if (!scroll) {
             return 0;
         } else {
@@ -250,7 +250,7 @@ class Project extends React.Component {
                     <hr />
                     <div className="row full-height">
                         <div className="col-md-8 col-sm-12 mb-sm-3 full-height">
-                            <div className="card full-height" id="tblContainer">
+                            <div className="card full-height" id="tblProjectContainer">
                                 <div className="card-header">
                                     <div className="row">
                                         <div className="col-8">
@@ -310,7 +310,7 @@ class Project extends React.Component {
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblBody">
+                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblProjectBody">
                                             {projectUsers && this.filterName(projectUsers).map(u => (
                                                 <tr key={u.userId}>
                                                 <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>{u.userName}</td>

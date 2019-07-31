@@ -59,7 +59,7 @@ class Home extends React.Component {
     }
 
     getScrollWidthY() {
-        var scroll = document.getElementById("tblBody");
+        var scroll = document.getElementById("tblHomeBody");
         if (!scroll) {
             return 0;
         } else {
@@ -72,7 +72,7 @@ class Home extends React.Component {
     }
 
     getTblBound() {
-        const tblContainer = document.getElementById("tblContainer");
+        const tblContainer = document.getElementById("tblHomeContainer");
         if (!tblContainer) {
             return {};
         }
@@ -143,7 +143,7 @@ class Home extends React.Component {
                 <div id="overview" className="full-height">
                     <div className="row full-height">
                         <div className="col-12 full-height">
-                            <div className="card full-height" id="tblContainer">
+                            <div className="card full-height" id="tblHomeContainer">
                                 <div className="card-header">
                                     <div className="row">
                                         <div className="col-8">
@@ -174,7 +174,7 @@ class Home extends React.Component {
                                                 </th>
                                             </tr>
                                         </thead>
-                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblBody">
+                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblHomeBody">
                                             {projects.items && this.withoutProjectMaster(projects).map((project) =>
                                                 <tr key={project._id} onClick={(event) => this.handleOnclick(event, project)}>
                                                     <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{project.number}</td>
