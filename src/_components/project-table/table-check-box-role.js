@@ -7,19 +7,17 @@ class TableCheckBoxRole extends Component {
     render(){
         const {id, checked, onChange, disabled } = this.props;
         return (
-            <div>
-                <label className="fancy-table-check-box-role">
-                <input
-                    name={id}
-                    type="checkbox"
-                    checked={checked}
-                    onChange={onChange}
-                    disabled={disabled}
-                />
-                <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', margin: '0%', padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/>
-                <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', margin: '0%', padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/>  
-                </label>
-            </div>
+            <label className="fancy-table-check-box-role">
+            <input
+                name={id}
+                type="checkbox"
+                checked={checked}
+                onChange={onChange}
+                disabled={disabled}
+            />
+            <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', margin: '0%', padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/>
+            <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', margin: '0%', padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/>  
+            </label>
         );
     }
 };

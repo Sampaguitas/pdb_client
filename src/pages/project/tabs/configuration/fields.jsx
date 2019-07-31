@@ -160,7 +160,7 @@ class Fields extends React.Component {
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
                 <div className="row full-height">
                     <div className="table-responsive full-height" id="tblFieldsContainer"> {/* table-responsive */}
-                        <table className="table table-striped table-bordered table-sm" > {/* table-hover */}
+                        <table className="table table-hover table-bordered table-sm" > {/* table-hover */}
                             <thead>
                                 <tr style={{display: tblBound.width ? 'block' : 'table-row', height: '62px'}}>
                                     <HeaderInput

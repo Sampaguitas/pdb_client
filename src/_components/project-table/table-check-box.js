@@ -101,7 +101,6 @@ class TableCheckBox extends Component {
                 // padding: '0px'
             }}            
             >
-                <div>
                     <label className="fancy-table-checkbox">
                         <input
                             ref="input"
@@ -136,7 +135,6 @@ class TableCheckBox extends Component {
                             }}
                         />                
                     </label>
-                </div>
             </td>
         );
     }
