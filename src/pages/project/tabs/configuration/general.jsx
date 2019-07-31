@@ -291,7 +291,7 @@ class General extends React.Component {
                                 <h5>Set user roles</h5>
                             </div>
                             <div className="card-body"> {/* table-responsive */}
-                                <table className="table table-hover table-bordered table-sm">
+                                <table className="table table-striped table-bordered table-sm"> {/* table-hover */}
                                     <thead>
                                         <tr style={{display: tblBound.width ? 'block' : 'table-row', height: '62px'}}>
                                             <HeaderInput

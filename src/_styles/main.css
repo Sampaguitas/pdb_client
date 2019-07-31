@@ -185,13 +185,9 @@ h5 {
   font-size: 12px;
 }
 
-.table-hover> tbody> tr:hover{
-  background-color:#c9dde1; /*#A7A9AC
-  /*color:#FFFFFF;*/
-}
+/* .table-hover> tbody> tr:hover{
+  background-color: #A8052C; 
+  color:#FFFFFF;
+} */
 
-
-
-
-
-
+/* #c9dde1 #A8052C #A7A9AC*/

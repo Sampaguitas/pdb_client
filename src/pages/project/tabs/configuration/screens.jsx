@@ -415,7 +415,7 @@ class Screens extends React.Component {
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
             <div className="row full-height">
                 <div className="table-responsive full-height" id="tblScreensContainer">
-                    <table className="table table-hover table-bordered table-sm" >
+                    <table className="table table-striped table-bordered table-sm" > {/* table-hover */}
                         <thead>
                             <tr
                                 className="text-center"
