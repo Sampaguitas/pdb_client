@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 //FontAwesome
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+// import './side-bar-menu.scss';
 //Components
 import SubItem from './sub-item.js'
 import { itemMixin } from './mixin'
