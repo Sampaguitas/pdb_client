@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
+import { NavLink, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { userActions } from "../../_actions";
@@ -104,6 +104,14 @@ class Login extends React.Component {
                   )}
                   Login
                 </button>
+                <NavLink
+                  to={{
+                    pathname: "/requestpwd"
+                  }}
+                  className="btn btn-link" tag="a"
+                >
+                  Forgot your password?
+                </NavLink>
                 <br />
                 {alert.message && (
                   <div className={`alert ${alert.type}`}>{alert.message}</div>

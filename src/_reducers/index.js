@@ -12,6 +12,7 @@ import { opcos } from './opcos.reducer';
 import { projects } from './projects.reducer';
 import { regions } from './regions.reducer';
 import { registration } from './registration.reducer';
+import { requestpwd } from './requestpwd.reducer';
 import { screens } from './screens.reducer';
 import { selection } from './selection.reducer';
 import { suppliers } from './suppliers.reducer';
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
   projects,
   regions,
   registration,
+  requestpwd,
   screens,
   selection,
   suppliers,

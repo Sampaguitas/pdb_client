@@ -11,6 +11,7 @@ import { Home } from '../pages/home/home.jsx';
 
 import { NotFound } from '../pages/account/notfound.jsx';
 import { Login } from '../pages/account/login.jsx';
+import { RequestPwd } from '../pages/account/requestpwd';
 import { User } from '../pages/account/user.jsx';
 import { Settings } from '../pages/account/settings.jsx';
 import { Opco } from '../pages/home/opco.jsx';
@@ -64,6 +65,7 @@ class App extends React.Component {
                 <div>
                     <Route path="/notfound" component={NotFound} user={user}/>
                     <Route path="/login" component={Login} user={user}/>
+                    <Route path="/requestpwd" component={RequestPwd} user={user}/>
                     <PrivateRoute exact path="/" component={Home} user={user}/>
                     <PrivateRoute path="/user" component={User} user={user}/>
                     <PrivateRoute path="/settings" component={Settings} user={user}/>

@@ -11,6 +11,7 @@ export const userService = {
     changePwd,
     setAdmin,
     setSpAdmin,
+    requestPwd,
     delete: _delete
 };
 
@@ -105,6 +106,16 @@ function setSpAdmin(user) {
     };
 
     return fetch(`${config.apiUrl}/user/setSpAdmin?id=${user.id}`, requestOptions).then(handleResponse);
+}
+
+function requestPwd(email) {
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+    };
+
+    return fetch(`${config.apiUrl}/user/requestPwd`, requestOptions).then(handleResponse);
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

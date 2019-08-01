@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import HeaderBarMenu from "./header-bar-menu/header-bar-menu.js"
-import SideBarMenu from "./side-bar-menu/side-bar-menu.js"
-import Footer from "./footer.js"
+import HeaderBarMenu from "./header-bar-menu/header-bar-menu.js";
+import SideBarMenu from "./side-bar-menu/side-bar-menu.js";
+import Footer from "./footer.js";
 import "../_styles/bootstrap.min.css";
-import { callbackify } from 'util';
+import { callbackify, inherits } from 'util';
 // import "../_styles/main.css";
+
+function isLoggedIn() {
+    return localStorage.getItem("user") !== null;
+}
 
 class Layout extends Component {
     constructor(props) {
