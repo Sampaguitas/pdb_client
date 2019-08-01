@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { NavLink, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import { userActions } from "../../_actions";
 import Layout from "../../_components/layout";
 import InputIcon from "../../_components/input-icon";
@@ -49,7 +48,10 @@ class Login extends React.Component {
     const { alert, loggingIn } = this.props;
     const { email, password, submitted } = this.state;
     return (
-      <Layout alert={this.props.alert}>
+      <Layout
+        alert={this.props.alert}
+        background={true}
+      >
         <div
           id="login-card"
           className="row justify-content-center align-self-center"

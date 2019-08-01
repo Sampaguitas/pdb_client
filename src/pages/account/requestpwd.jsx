@@ -1,13 +1,12 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
-
+import { NavLink, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { userActions } from "../../_actions";
 import Layout from "../../_components/layout";
 import InputIcon from "../../_components/input-icon";
 import logo from "../../_assets/logo.svg";
 import pdb from "../../_assets/pdb.svg";
-import Background from '../../_assets/background.jpg';
 import "./login.css";
 
 class RequestPwd extends React.Component {
@@ -48,18 +47,13 @@ class RequestPwd extends React.Component {
     const { alert, requesting } = this.props;
     const { email, submitted } = this.state;
     return (
-      <Layout alert={this.props.alert}>
-        {/* <div
-            style={{
-                backgroundImage: `url(${Background})`,
-                backgroundPosition: 'center',
-                backgroundSize: 'cover',
-                backgroundRepeat: 'no-repeat'
-            }}
-        > */}
+      <Layout
+        alert={this.props.alert}
+        background={true}
+      >
             <div
-            id="login-card"
-            className="row justify-content-center align-self-center"
+              id="login-card"
+              className="row justify-content-center align-self-center"
             >
             <div className="card card-login">
                 <div className="card-body">
@@ -101,6 +95,14 @@ class RequestPwd extends React.Component {
                         )}
                         Get a new password
                         </button>
+                        <NavLink
+                          to={{
+                            pathname: "/login"
+                          }}
+                          className="btn btn-link" tag="a"
+                        >
+                          Go back to login page
+                        </NavLink>
                         <br />
                         {alert.message && (
                         <div className={`alert ${alert.type}`}>{alert.message}</div>
