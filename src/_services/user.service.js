@@ -12,6 +12,7 @@ export const userService = {
     setAdmin,
     setSpAdmin,
     requestPwd,
+    resetPwd,
     delete: _delete
 };
 
@@ -112,10 +113,20 @@ function requestPwd(email) {
     const requestOptions = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
+        body: JSON.stringify({email})
     };
 
     return fetch(`${config.apiUrl}/user/requestPwd`, requestOptions).then(handleResponse);
+}
+
+function resetPwd(user) {
+    const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({user})
+    };
+
+    return fetch(`${config.apiUrl}/user/resetPwd`, requestOptions).then(handleResponse);
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript

@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { userActions } from "../../_actions";
@@ -154,7 +154,7 @@ class ResetPwd extends React.Component {
 
 function mapStateToProps(state) {
   const { alert } = state;
-  const { reseting } = state.requestpwd;
+  const { reseting } = state.resetpwd;
   return {
     alert,
     reseting

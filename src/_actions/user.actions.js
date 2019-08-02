@@ -13,6 +13,7 @@ export const userActions = {
     setAdmin,
     setSpAdmin,
     requestPwd,
+    resetPwd,
     delete: _delete
 };
 
@@ -186,6 +187,28 @@ function requestPwd(email) {
     function request(email) { return { type: userConstants.REQUESTPWD_REQUEST, email } }
     function success(email) { return { type: userConstants.REQUESTPWD_SUCCESS, email } }
     function failure(email, error) { return { type: userConstants.REQUESTPWD_FAILURE, email, error } }
+}
+
+function resetPwd(uesr) {
+    return dispatch => {
+        dispatch(request(uesr));
+
+        userService.resetPwd(uesr)
+            .then(
+                response => {
+                    dispatch(success(response)),
+                    dispatch(alertActions.success('Your Passowrd has been changed'));
+                },
+                error => {
+                    dispatch(failure(error.toString()))
+                    dispatch(alertActions.error(error.toString()));
+                }
+            );
+    };
+
+    function request(uesr) { return { type: userConstants.REQUESTPWD_REQUEST, uesr } }
+    function success(uesr) { return { type: userConstants.REQUESTPWD_SUCCESS, uesr } }
+    function failure(uesr, error) { return { type: userConstants.REQUESTPWD_FAILURE, uesr, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript
