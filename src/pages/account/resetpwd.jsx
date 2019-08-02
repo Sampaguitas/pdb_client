@@ -30,6 +30,7 @@ class ResetPwd extends React.Component {
 
   componentDidMount() {
     const { location } = this.props;
+    const { user } = this.state;
     var qs = queryString.parse(location.search);
     if (qs.id && qs.token) {
         this.setState({
