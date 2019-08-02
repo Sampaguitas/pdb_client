@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { NavLink, Link } from 'react-router-dom';
+import queryString from 'query-string';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { userActions } from "../../_actions";
 import Layout from "../../_components/layout";
@@ -9,31 +10,56 @@ import logo from "../../_assets/logo.svg";
 import pdb from "../../_assets/pdb.svg";
 import "./login.css";
 
-class RequestPwd extends React.Component {
+class ResetPwd extends React.Component {
   constructor(props) {
     super(props);
     this.props.dispatch(userActions.logout());
     this.state = {
-      email: "",
-      submitted: false,
+        user: {
+            userId: '',
+            token: '',
+            newPassword: '',
+            confirmPassword: '',
+        },
+        submitted: false,
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.onKeyPress = this.onKeyPress.bind(this);
   }
 
+  componentDidMount() {
+    const { location } = this.props;
+    var qs = queryString.parse(location.search);
+    if (qs.id && qs.token) {
+        this.setState({
+            user: {
+                ...user,
+                userId: qs.id,
+                token: qs.token
+            }
+        });
+    }
+  }
+
   handleChange(e) {
+    const { user } = this.state;
     const { name, value } = e.target;
-    this.setState({ [name]: value });
+    this.setState({
+        user: {
+            ...user,
+            [name]: value
+        }
+    });
   }
 
   handleSubmit(e) {
     e.preventDefault();
     this.setState({ submitted: true });
-    const { email } = this.state;
+    const { user } = this.state;
     const { dispatch } = this.props;
-    if (email) {
-      dispatch(userActions.requestPwd(email));
+    if (user.newPassword && user.confirmPassword) {
+      dispatch(userActions.resetPwd(user));
     }
   }
 
@@ -44,8 +70,8 @@ class RequestPwd extends React.Component {
   }
 
   render() {
-    const { alert, requesting } = this.props;
-    const { email, submitted } = this.state;
+    const { alert, reseting } = this.props;
+    const { user, submitted } = this.state;
     return (
       <Layout
         alert={this.props.alert}
@@ -65,35 +91,45 @@ class RequestPwd extends React.Component {
                     <br />
                     <img src={pdb} className="img-fluid" alt="Project Database" />
                     <hr />
-                    <p>Please provide your email address and we'll send you instructions on how to change your password</p>
                     <form
                         name="form"
                         onSubmit={this.handleSubmit}
                         onKeyPress={this.onKeyPress}
                     >
                         <InputIcon
-                        title="Email"
-                        name="email"
-                        type="email"
-                        value={email}
-                        onChange={this.handleChange}
-                        placeholder="Email"
-                        icon="user"
-                        submitted={submitted}
-                        autoComplete="email"
+                            title="New Password"
+                            name="newPassword"
+                            type="password"
+                            value={user.newPassword}
+                            onChange={this.handleChange}
+                            placeholder="New Password"
+                            icon="lock"
+                            submitted={submitted}
+                            autoComplete="new-password"
+                        />
+                        <InputIcon
+                            title="Confirm Password"
+                            name="confirmPassword"
+                            type="password"
+                            value={user.confirmPassword}
+                            onChange={this.handleChange}
+                            placeholder="Confirm Password"
+                            icon="lock"
+                            submitted={submitted}
+                            autoComplete="new-password"
                         />
                         <hr />
                         <button
                         type="submit"
                         className="btn btn-leeuwen btn-full btn-lg"
                         >
-                        {requesting && (
+                        {reseting && (
                             <FontAwesomeIcon
                             icon="spinner"
                             className="fa-pulse fa-1x fa-fw"
                             />
                         )}
-                        Get a new password
+                        Reset your password
                         </button>
                         <NavLink
                           to={{
@@ -118,12 +154,12 @@ class RequestPwd extends React.Component {
 
 function mapStateToProps(state) {
   const { alert } = state;
-  const { requesting } = state.requestpwd;
+  const { reseting } = state.requestpwd;
   return {
     alert,
-    requesting
+    reseting
   };
 }
 
-const connectedRequestPwd = connect(mapStateToProps)(RequestPwd);
-export { connectedRequestPwd as RequestPwd };
+const connectedResetPwd = connect(mapStateToProps)(ResetPwd);
+export { connectedResetPwd as ResetPwd };
