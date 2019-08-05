@@ -123,7 +123,7 @@ function resetPwd(user) {
     const requestOptions = {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({user})
+        body: JSON.stringify(user)
     };
 
     return fetch(`${config.apiUrl}/user/resetPwd`, requestOptions).then(handleResponse);

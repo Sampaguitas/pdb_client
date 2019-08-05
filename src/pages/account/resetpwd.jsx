@@ -56,10 +56,14 @@ class ResetPwd extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
-    this.setState({ submitted: true });
     const { user } = this.state;
     const { dispatch } = this.props;
+    this.setState({
+      ...this.state,
+      submitted: true
+    });
     if (user.newPassword && user.confirmPassword) {
+      console.log('state:', this.state);
       dispatch(userActions.resetPwd(user));
     }
   }

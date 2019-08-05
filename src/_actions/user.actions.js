@@ -189,11 +189,11 @@ function requestPwd(email) {
     function failure(email, error) { return { type: userConstants.REQUESTPWD_FAILURE, email, error } }
 }
 
-function resetPwd(uesr) {
+function resetPwd(user) {
     return dispatch => {
-        dispatch(request(uesr));
+        dispatch(request(user));
 
-        userService.resetPwd(uesr)
+        userService.resetPwd(user)
             .then(
                 response => {
                     dispatch(success(response)),
@@ -206,9 +206,9 @@ function resetPwd(uesr) {
             );
     };
 
-    function request(uesr) { return { type: userConstants.REQUESTPWD_REQUEST, uesr } }
-    function success(uesr) { return { type: userConstants.REQUESTPWD_SUCCESS, uesr } }
-    function failure(uesr, error) { return { type: userConstants.REQUESTPWD_FAILURE, uesr, error } }
+    function request(user) { return { type: userConstants.REQUESTPWD_REQUEST, user } }
+    function success(user) { return { type: userConstants.REQUESTPWD_SUCCESS, user } }
+    function failure(user, error) { return { type: userConstants.REQUESTPWD_FAILURE, user, error } }
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript
