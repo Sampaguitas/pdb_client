@@ -5,6 +5,7 @@ import { projectActions } from '../../_actions';
 import Layout from '../../_components/layout';
 import ProjectTable from '../../_components/project-table/project-table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import HeaderInput from '../../_components/project-table/header-input';
 
 function arrayRemove(arr, value) {
 
@@ -20,13 +21,21 @@ function resolve(path, obj) {
     }, obj || self)
 }
 
-function arraySorted(array, field) {
+function arraySorted(array, fieldOne, fieldTwo, fieldThree) {
     if (array) {
         const newArray = array
         newArray.sort(function(a,b){
-            if (resolve(field, a) < resolve(field, b)) {
+            if (resolve(fieldOne, a) < resolve(fieldOne, b)) {
                 return -1;
-            } else if ((resolve(field, a) > resolve(field, b))) {
+            } else if (resolve(fieldOne, a) > resolve(fieldOne, b)) {
+                return 1;
+            } else if (fieldTwo && resolve(fieldTwo, a) < resolve(fieldTwo, b)) {
+                return -1;
+            } else if (fieldTwo && resolve(fieldTwo, a) > resolve(fieldTwo, b)) {
+                return 1;
+            } else if (fieldThree && resolve(fieldThree, a) < resolve(fieldThree, b)) {
+                return -1;
+            } else if (fieldThree && resolve(fieldThree, a) > resolve(fieldThree, b)) {
                 return 1;
             } else {
                 return 0;
@@ -46,7 +55,6 @@ function returnScreenHeaders(selection, screenId) {
     }
 }
 
-
 class Expediting extends React.Component {
     constructor(props) {
         super(props);
@@ -54,10 +62,14 @@ class Expediting extends React.Component {
             projectId:'',
             screenId: '5cd2b642fd333616dc360b63',
             unlocked: false,
-            screen: 'expediting'
+            screen: 'expediting',
+            screenBodys: [],
+            loaded: false,
+
         };
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
+        this.testBodys = this.testBodys.bind(this);
     }
 
     componentDidMount() {
@@ -76,7 +88,6 @@ class Expediting extends React.Component {
         if (qs.id) {
             this.setState({projectId: qs.id}),
             dispatch(projectActions.getById(qs.id));
-            console.log('stateReload');
         }
         dispatch(projectActions.getAll());    
     }
@@ -87,13 +98,276 @@ class Expediting extends React.Component {
         this.setState({
             unlocked: !unlocked
         }, () => {
-            console.log(this.state.unlocked);
         });
     }
 
+    testBodys(){
+        // event.preventDefault();
+        const { selection } = this.props;
+        const { screenId, unlocked } = this.state;
+        let screenHeaders = arraySorted(returnScreenHeaders(selection, screenId), 'forShow')
+        if (selection.project) {
+            let arryBody =[];
+            arraySorted(selection.project.pos, 'clPo', 'clPoRev', 'clPoItem').map(po => {
+                if (po.subs) {
+                    po.subs.map(sub => {
+                        let arryRow = [];
+                        screenHeaders.map(screenHeader => {
+                            if (screenHeader.fields.fromTbl == 'po') {
+                                switch (screenHeader.fields.type) {
+                                    case "String":
+                                        arryRow.push({
+                                            collection: screenHeader.fields.fromTbl,
+                                            objectId: po._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: "text",
+                                        });
+                                        break;
+                                    case "Number":
+                                        arryRow.push({
+                                            collection: screenHeader.fields.fromTbl,
+                                            objectId: po._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: "number",
+                                        });
+                                        break;
+                                    case "Date":                                       
+                                        arryRow.push({
+                                            collection: screenHeader.fields.fromTbl,
+                                            objectId: po._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: "date",
+                                        });
+                                        break;
+                                    default:
+                                        arryRow.push({
+                                            collection: screenHeader.fields.fromTbl,
+                                            objectId: po._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: "text",
+                                        });
+                                }
+                            } else if (screenHeader.fields.fromTbl == 'sub'){
+                                switch (screenHeader.fields.type) {
+                                    case "String":
+                                        arryRow.push({
+                                            collection: screenHeader.fields.fromTbl,
+                                            objectId: sub._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: sub[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: "text",
+                                        });
+                                        break;
+                                    case "Number":
+                                        arryRow.push({
+                                            collection: screenHeader.fields.fromTbl,
+                                            objectId: sub._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: sub[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: "number",
+                                        });
+                                        break;
+                                    case "Date":                                       
+                                        arryRow.push({
+                                            collection: screenHeader.fields.fromTbl,
+                                            objectId: sub._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: sub[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: "date",
+                                        });
+                                        break;
+                                    default:
+                                        arryRow.push({
+                                            collection: screenHeader.fields.fromTbl,
+                                            objectId: sub._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: sub[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: "text",
+                                        });
+                                }
+                            // } else if (screenHeader.fields.fromTbl == 'certificate'){
+                            //     switch (screenHeader.fields.type) {
+                            //         case "String":
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: certificate._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: certificate[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "text",
+                            //             });
+                            //             break;
+                            //         case "Number":
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: certificate._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: certificate[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "number",
+                            //             });
+                            //             break;
+                            //         case "Date":                                       
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: certificate._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: certificate[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "date",
+                            //             });
+                            //             break;
+                            //         default:
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: certificate._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: certificate[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "text",
+                            //             });
+                            //     }
+                            // } else if (screenHeader.fields.fromTbl == 'packitem'){
+                            //     switch (screenHeader.fields.type) {
+                            //         case "String":
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: packitem._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: packitem[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "text",
+                            //             });
+                            //             break;
+                            //         case "Number":
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: packitem._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: packitem[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "number",
+                            //             });
+                            //             break;
+                            //         case "Date":                                       
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: packitem._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: packitem[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "date",
+                            //             });
+                            //             break;
+                            //         default:
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: packitem._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: packitem[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "text",
+                            //             });
+                            //     }
+                            // } else if (screenHeader.fields.fromTbl == 'collipack'){
+                            //     switch (screenHeader.fields.type) {
+                            //         case "String":
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: collipack._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: collipack[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "text",
+                            //             });
+                            //             break;
+                            //         case "Number":
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: collipack._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: collipack[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "number",
+                            //             });
+                            //             break;
+                            //         case "Date":                                       
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: collipack._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: collipack[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "date",
+                            //             });
+                            //             break;
+                            //         default:
+                            //             arryRow.push({
+                            //                 collection: screenHeader.fields.fromTbl,
+                            //                 objectId: collipack._id,
+                            //                 fieldName: screenHeader.fields.name,
+                            //                 fieldValue: collipack[screenHeader.fields.name],
+                            //                 disabled: screenHeader.edit,
+                            //                 align: screenHeader.align,
+                            //                 fieldType: "text",
+                            //             });
+                            //     }
+                            } else {
+                                arryRow.push({});
+                            }
+                        }); //packitem //collipack
+                        let objectRow  = { _id: sub._id, fields: arryRow }
+                        arryBody.push(objectRow);
+                    });
+                }
+            });
+            this.setState({
+                screenBodys: arryBody,
+                loaded: true
+            });
+        } else {
+            this.setState({
+                screenBodys: [],
+                loaded: true
+            });
+        }
+    }
+
     render() {
-        const { screen, screenId, unlocked }= this.state;
+        const { screen, screenId, screenBodys, unlocked, loaded }= this.state;
         const { alert, selection } = this.props;
+        { selection.project && loaded == false && this.testBodys()}
         return (
             <Layout alert={this.props.alert} accesses={selection.project && selection.project.accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -103,14 +377,13 @@ class Expediting extends React.Component {
                     {selection && selection.project && 
                         <ProjectTable
                             screenHeaders={arraySorted(returnScreenHeaders(selection, screenId), "forShow")}
-                            screenBodys={selection.project.pos}
-                            selection={selection}
+                            screenBodys={screenBodys}
                             screenId={screenId}
                             handleSelectionReload={this.handleSelectionReload}
                             toggleUnlock={this.toggleUnlock}
                             unlocked={unlocked}
                             screen={screen}
-
+                            screenBodys={screenBodys}
                         />
                     }
                 </div>
@@ -129,118 +402,3 @@ function mapStateToProps(state) {
 
 const connectedExpediting = connect(mapStateToProps)(Expediting);
 export { connectedExpediting as Expediting };
-
-
-// const testScreenHeader = [
-//     {
-//         align: "center",
-//         daveId: 4606,
-//         edit: false,
-//         fieldId: "5cd15ac5b81c9a31121737da",
-//         fields: {
-//             custom: "Contr Del Condition",
-//             daveId: 2650,
-//             fromTbl: "po",
-//             name: "vlDelCondition",
-//             projectId: "5cc98cf2ab2a306e44a8fe7f",
-//             type: "String",
-//             __v: 0,
-//             _id: "5cd15ac5b81c9a31121737da",
-
-//         },
-//         forShow: 150,
-//         id: "5cd2f6dad1c62721cd12c065",
-//         projectId: "5cc98cf2ab2a306e44a8fe7f",
-//         screenId: "5cd2b642fd333616dc360b63",
-//         __v: 0,
-//         _id: "5cd2f6dad1c62721cd12c065",
-//     },
-//     {
-//         align: "center",
-//         daveId: 4614,
-//         edit: false,
-//         fieldId: "5cd15ac5b81c9a31121737dc",
-//         fields: {
-//             custom: "Description Client",
-//             daveId: 2652,
-//             fromTbl: "po",
-//             name: "clDescription",
-//             projectId: "5cc98cf2ab2a306e44a8fe7f",
-//             type: "String",
-//             __v: 0,
-//             _id: "5cd15ac5b81c9a31121737dc"
-//         },
-//         forSelect: 520,
-//         forShow: 520,
-//         id: "5cd2f6dbd1c62721cd12c06d",
-//         projectId: "5cc98cf2ab2a306e44a8fe7f",
-//         screenId: "5cd2b642fd333616dc360b63",
-//         __v: 0,
-//         _id: "5cd2f6dbd1c62721cd12c06d",
-//     },
-//     {
-//         align: "center",
-//         daveId: 4618,
-//         edit: false,
-//         fieldId: "5cd15ac5b81c9a31121737dd",
-//         fields: {
-//             custom: "Remarks / Deviation / Altern",
-//             daveId: 2653,
-//             fromTbl: "po",
-//             name: "devRemarks",
-//             projectId: "5cc98cf2ab2a306e44a8fe7f",
-//             type: "String",
-//             __v: 0,
-//             _id: "5cd15ac5b81c9a31121737dd"
-//         },
-//         forSelect: 110,
-//         forShow: 110,
-//         id: "5cd2f6dcd1c62721cd12c071",
-//         projectId: "5cc98cf2ab2a306e44a8fe7f",
-//         screenId: "5cd2b642fd333616dc360b63",
-//         __v: 0,
-//         _id: "5cd2f6dcd1c62721cd12c071",
-//     }
-
-// ]
-
-
-// const testPO =[
-//     {
-//         clCode: "TX-231 (Webster NSC)",
-//         clDescription: "LINE PIPE, API 5L, SAWL, NOM OD 36IN, GR X70, WT 0.625IN, BEVELED END, ONSHORE; NON-SOUR; LIQUID SERVICE",
-//         clPo: "4540145372",
-//         clPoItem: 10,
-//         clPoRev: "0",
-//         daveId: 273514,
-//         description: "SAWL  PIPES",
-//         devRemarks: "Bare",
-//         id: "5cca24b91646ee372e36c6a3",
-//         material: "API 5L GR X70M",
-//         projectId: "5cc98cffab2a306e44a8fea8",
-//         qty: 47499,
-//         sch: `0,625"`,
-//         size: "36",
-//         subs: [
-//             {
-//                 daveId: 265105,
-//                 poId: "5cca24b91646ee372e36c6a3",
-//                 splitQty: 47499,
-//                 __v: 0,
-//                 _id: "5ccb2cccde7f2a100d0f8298",
-//             }            
-//         ],
-//         supContrDate: "2019-08-15T20:00:00.000Z",
-//         supDelCondition: "TBA",
-//         udfPoD1: "2019-04-22T20:00:00.000Z",
-//         unitPrice: 146.03,
-//         uom: "ft",
-//         vlContDelDate: "2019-09-29T20:00:00.000Z",
-//         vlDelCondition: "TBA",
-//         vlPoItemX: "0",
-//         vlPoX: "LIB-004",
-//         __v: 0,
-//         _id: "5cca24b91646ee372e36c6a3",
-//     }
-
-// ]
