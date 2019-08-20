@@ -78,7 +78,7 @@ class Certificates extends React.Component {
             this.setState({projectId: qs.id}),
             dispatch(projectActions.getById(qs.id));
         }
-        dispatch(projectActions.getAll()); 
+        // dispatch(projectActions.getAll()); 
     }
 
     handleSelectionReload(event){
@@ -88,7 +88,7 @@ class Certificates extends React.Component {
             this.setState({projectId: qs.id}),
             dispatch(projectActions.getById(qs.id));
         }
-        dispatch(projectActions.getAll());    
+        // dispatch(projectActions.getAll());    
     }
 
     toggleUnlock(event) {
