@@ -62,7 +62,7 @@ class RequestPwd extends React.Component {
                     <br />
                     <img src={pdb} className="img-fluid" alt="Project Database" />
                     <hr />
-                    <p>Please provide your email address and we'll send you instructions on how to change your password</p>
+                    <p>Please provide your email address and we'll send you instructions on how to change your password.</p>
                     <form
                         name="form"
                         onSubmit={this.handleSubmit}
