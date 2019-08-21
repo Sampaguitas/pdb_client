@@ -189,6 +189,7 @@ class Opco extends React.Component {
         const { dispatch } = this.props;
         if (
             opco.id &&
+            opco.code &&
             opco.name &&
             opco.address &&
             opco.city &&
@@ -200,6 +201,7 @@ class Opco extends React.Component {
             this.hideModal();
             // this.setState({ submitted: false });
         } else if (
+            opco.code &&
             opco.name &&
             opco.address &&
             opco.city &&
@@ -380,7 +382,7 @@ class Opco extends React.Component {
                                         onChange={this.handleChangeOpco}
                                         submitted={submitted}
                                         inline={false}
-                                        required={false}
+                                        required={true}
                                     />
                                     <Select
                                         title="Region"

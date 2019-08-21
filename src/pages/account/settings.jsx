@@ -216,6 +216,7 @@ class Settings extends React.Component {
     } else if (
       user.userName &&
       user.name &&
+      user.opcoId &&
       user.email &&
       user.password &&
       user.confirmPassword
