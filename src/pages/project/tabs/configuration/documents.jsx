@@ -832,6 +832,7 @@ class Documents extends React.Component {
                                             className="col-12"
                                             encType="multipart/form-data"
                                             onSubmit={this.handleUploadFile}
+                                            onKeyPress={this.onKeyPress}
                                             style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
                                         >
                                             <div className="input-group">

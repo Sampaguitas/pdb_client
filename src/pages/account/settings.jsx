@@ -74,8 +74,9 @@ class Settings extends React.Component {
       isSuperAdmin: 0,
       users: [],
       loaded: false,
-      show: false,
-      submitted: false
+      submitted: false,
+      show: false
+      
     };
     this.getScrollWidthY = this.getScrollWidthY.bind(this);
     this.getTblBound = this.getTblBound.bind(this);
@@ -147,6 +148,7 @@ class Settings extends React.Component {
         password: "",
         confirmPassword: ""
       },
+      submitted: false,
       show: false
     });
   }
@@ -372,7 +374,6 @@ class Settings extends React.Component {
               <div className="col-12">
                     <form
                       name="form"
-                      onSubmit={event => this.handleSubmit(event)}
                       onKeyPress={this.onKeyPress}
                     >
                       <Input
@@ -445,7 +446,6 @@ class Settings extends React.Component {
                             <div className="row">
                                 <div className="col-6">
                                     <button
-                                        // type="submit"
                                         className="btn btn-outline-dark btn-lg"
                                         onClick={(event) => {this.handleDeletUser(event, this.state.user.id)}}
                                     >
@@ -460,8 +460,8 @@ class Settings extends React.Component {
                                 </div>
                                 <div className="col-6">
                                     <button
-                                        type="submit"
                                         className="btn btn-outline-leeuwen btn-lg"
+                                        onClick={event => this.handleSubmit(event)}
                                     >
                                         {userUpdating && (
                                             <FontAwesomeIcon
@@ -475,8 +475,8 @@ class Settings extends React.Component {
                             </div>
                         :
                             <button
-                                type="submit"
                                 className="btn btn-outline-leeuwen btn-lg btn-full"
+                                onClick={event => this.handleSubmit(event)}
                             >
                                 {registering && (
                                     <FontAwesomeIcon

@@ -141,6 +141,7 @@ class Opco extends React.Component {
             localeId: "",
             regionId: "",
           },
+          submitted: false,
           show: false
         });
       }
@@ -197,7 +198,7 @@ class Opco extends React.Component {
         ) {
             dispatch(opcoActions.update(opco));
             this.hideModal();
-            this.setState({ submitted: false });
+            // this.setState({ submitted: false });
         } else if (
             opco.name &&
             opco.address &&
@@ -208,7 +209,7 @@ class Opco extends React.Component {
         ){
             dispatch(opcoActions.create(opco));
             this.hideModal();
-            this.setState({ submitted: false });
+            // this.setState({ submitted: false });
         }
     }
 

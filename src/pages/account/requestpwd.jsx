@@ -65,7 +65,6 @@ class RequestPwd extends React.Component {
                     <p>Please provide your email address and we'll send you instructions on how to change your password.</p>
                     <form
                         name="form"
-                        onSubmit={this.handleSubmit}
                         onKeyPress={this.onKeyPress}
                     >
                         <InputIcon
@@ -81,8 +80,9 @@ class RequestPwd extends React.Component {
                         />
                         <hr />
                         <button
-                        type="submit"
-                        className="btn btn-leeuwen btn-full btn-lg"
+                          type="submit"
+                          className="btn btn-leeuwen btn-full btn-lg"
+                          onClick={this.handleSubmit}
                         >
                         {requesting && (
                             <FontAwesomeIcon

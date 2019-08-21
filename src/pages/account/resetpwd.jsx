@@ -95,7 +95,6 @@ class ResetPwd extends React.Component {
                     <hr />
                     <form
                         name="form"
-                        onSubmit={this.handleSubmit}
                         onKeyPress={this.onKeyPress}
                     >
                         <InputIcon
@@ -124,6 +123,7 @@ class ResetPwd extends React.Component {
                         <button
                         type="submit"
                         className="btn btn-leeuwen btn-full btn-lg"
+                        onClick={this.handleSubmit}
                         >
                         {reseting && (
                             <FontAwesomeIcon

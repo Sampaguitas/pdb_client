@@ -65,7 +65,6 @@ class Login extends React.Component {
               <hr />
               <form
                 name="form"
-                onSubmit={this.handleSubmit}
                 onKeyPress={this.onKeyPress}
               >
                 <InputIcon
@@ -94,6 +93,7 @@ class Login extends React.Component {
                 <button
                   type="submit"
                   className="btn btn-leeuwen btn-full btn-lg"
+                  onClick={this.handleSubmit}
                 >
                   {loggingIn && (
                     <FontAwesomeIcon
