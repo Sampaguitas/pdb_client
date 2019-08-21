@@ -28,11 +28,11 @@ class Layout extends Component {
     }
 
     render() {
-        const { alert, background } = this.props;
-        const { collapsed } = this.state;
+        const { alert } = this.props;
+        const { collapsed, background } = this.state;
         return (
             <div className="full-height">
-                {background?
+                {/* {background?
                     <div
                         id="content"
                         className="full-height"
@@ -48,7 +48,7 @@ class Layout extends Component {
                     >
                         {this.props.children}
                     </div>
-                :
+                : */}
                 <div className="full-height">
                     <HeaderBarMenu id="headerbar" className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={this.toggleCollapse}/>
                     <SideBarMenu className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={this.toggleCollapse} accesses={this.props.accesses}/>
@@ -57,7 +57,7 @@ class Layout extends Component {
                     </div>
                     <Footer />
                 </div>
-                }
+                {/* } */}
             </div>
         )
     }

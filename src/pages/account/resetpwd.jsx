@@ -78,12 +78,9 @@ class ResetPwd extends React.Component {
     const { alert, reseting } = this.props;
     const { user, submitted } = this.state;
     return (
-      <Layout
-        alert={this.props.alert}
-        background={true}
-      >
+      <Layout alert={this.props.alert} background={true}>
             <div
-              id="login-card"
+              id="resetpwd-card"
               className="row justify-content-center align-self-center"
             >
             <div className="card card-login">

@@ -1,7 +1,9 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import Layout from '../../_components/layout';
-import "./notfound.css";
+import logo from "../../_assets/logo.svg";
+import pdb from "../../_assets/pdb.svg";
+// import "./notfound.css";
 
 class NotFound extends React.Component {
   constructor(props) {
@@ -17,22 +19,36 @@ class NotFound extends React.Component {
 
   render() {
     return (
-        <div className="row">
-            <div className="col-md-12">
-                <div className="error-template">
-                    <h1>Ooops!</h1>
-                    <h2>404 Not Found</h2>
-                    <div className="error-details">
-                        Sorry, an error has occured, Requested page not found!
-                    </div>
-                    <div className="error-actions">
-                        <button type="submit" className="btn btn-leeuwen " onClick={this.handleSubmit}>
-                            Take Me Home
-                        </button>
-                    </div>
-                </div>
+      <Layout alert={this.props.alert} background={true}>
+        <div
+          id="notfound-card"
+          className="row justify-content-center align-self-center"
+        >
+          <div className="card card-login">
+            <div className="card-body">
+              <img
+                src={logo}
+                className="img-fluid"
+                alt="Van Leeuwen Pipe and Tube"
+              />
+              <br />
+              <img src={pdb} className="img-fluid" alt="Project Database" />
+              <hr />
+              <h2>#404 Not Found</h2>
+              <p>The page requested was not found!</p>
+              <p>Click on the button below to go back to the login page.</p>
+              <hr />
+              <button
+                type="submit"
+                className="btn btn-leeuwen btn-full btn-lg"
+                onClick={this.handleSubmit}
+              >
+                Go back to login page
+              </button>
             </div>
+          </div>
         </div>
+      </Layout>
     );
   }
 }

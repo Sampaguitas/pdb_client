@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 
 //Redux
 import { connect } from 'react-redux';
@@ -64,32 +64,35 @@ class App extends React.Component {
         return (
             <Router history={history}>
                 <div>
-                    <Route path="/notfound" component={NotFound} user={user}/>
-                    <Route path="/login" component={Login} user={user}/>
-                    <Route path="/requestpwd" component={RequestPwd} user={user}/>
-                    <Route path="/resetpwd" component={ResetPwd} user={user}/>
-                    <PrivateRoute exact path="/" component={Home} user={user}/>
-                    <PrivateRoute path="/user" component={User} user={user}/>
-                    <PrivateRoute path="/settings" component={Settings} user={user}/>
-                    <PrivateRoute path="/opco" component={Opco} user={user}/>
-                    <PrivateRoute path="/project" component={Project} user={user}/>
-                    <PrivateRoute path="/dashboard" component={Dashboard} user={user}/>
-                    <PrivateRoute path="/duf" component={Duf} user={user}/>
-                    <PrivateRoute path="/expediting" component={Expediting} user={user}/>
-                    <PrivateRoute path="/inspection" component={Inspection} user={user}/>
-                    <PrivateRoute path="/releasedata" component={ReleaseData} user={user}/>
-                    <PrivateRoute path="/certificates" component={Certificates} user={user}/>
-                    <PrivateRoute path="/shipping" component={Shipping} user={user}/>
-                    <PrivateRoute path="/transportdocs" component={TransportDocuments} user={user}/>
-                    <PrivateRoute path="/packingdetails" component={PackingDetails} user={user}/>
-                    <PrivateRoute path="/warehouse" component={Warehouse} user={user}/>
-                    <PrivateRoute path="/goodsreceipt" component={GoodsReceipt} user={user}/>
-                    <PrivateRoute path="/stockmanagement" component={StockManagement} user={user}/>
-                    <PrivateRoute path="/callofforder" component={CallOffOrder} user={user}/>
-                    <PrivateRoute path="/pickinglists" component={PickingLists} user={user}/>
-                    <PrivateRoute path="/outgoingshipments" component={OutgoingShipments} user={user}/>
-                    <PrivateRoute path="/projectwarhouse" component={ProjectWarhouse} user={user}/>
-                    <PrivateRoute path="/configuration" component={Configuration} user={user}/>
+                    <Switch>
+                        <Route path="/notfound" component={NotFound} user={user}/>
+                        <Route path="/login" component={Login} user={user}/>
+                        <Route path="/requestpwd" component={RequestPwd} user={user}/>
+                        <Route path="/resetpwd" component={ResetPwd} user={user}/>
+                        <PrivateRoute exact path="/" component={Home} user={user}/>
+                        <PrivateRoute path="/user" component={User} user={user}/>
+                        <PrivateRoute path="/settings" component={Settings} user={user}/>
+                        <PrivateRoute path="/opco" component={Opco} user={user}/>
+                        <PrivateRoute path="/project" component={Project} user={user}/>
+                        <PrivateRoute path="/dashboard" component={Dashboard} user={user}/>
+                        <PrivateRoute path="/duf" component={Duf} user={user}/>
+                        <PrivateRoute path="/expediting" component={Expediting} user={user}/>
+                        <PrivateRoute path="/inspection" component={Inspection} user={user}/>
+                        <PrivateRoute path="/releasedata" component={ReleaseData} user={user}/>
+                        <PrivateRoute path="/certificates" component={Certificates} user={user}/>
+                        <PrivateRoute path="/shipping" component={Shipping} user={user}/>
+                        <PrivateRoute path="/transportdocs" component={TransportDocuments} user={user}/>
+                        <PrivateRoute path="/packingdetails" component={PackingDetails} user={user}/>
+                        <PrivateRoute path="/warehouse" component={Warehouse} user={user}/>
+                        <PrivateRoute path="/goodsreceipt" component={GoodsReceipt} user={user}/>
+                        <PrivateRoute path="/stockmanagement" component={StockManagement} user={user}/>
+                        <PrivateRoute path="/callofforder" component={CallOffOrder} user={user}/>
+                        <PrivateRoute path="/pickinglists" component={PickingLists} user={user}/>
+                        <PrivateRoute path="/outgoingshipments" component={OutgoingShipments} user={user}/>
+                        <PrivateRoute path="/projectwarhouse" component={ProjectWarhouse} user={user}/>
+                        <PrivateRoute path="/configuration" component={Configuration} user={user}/>
+                        <Route component={NotFound} user={user}/>
+                    </Switch>
                 </div>
             </Router>
         );
