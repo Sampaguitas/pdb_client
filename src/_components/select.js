@@ -18,6 +18,7 @@ class Select extends Component {
                         value={this.props.value}
                         onChange={this.props.onChange}
                         disabled={this.props.disabled}
+                        style={{cursor: 'pointer'}}
                     >
                         <option defaultValue="" disabled hidden>{this.props.placeholder}</option>
                         {this.props.options && this.props.options.map(option => {

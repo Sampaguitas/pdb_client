@@ -85,8 +85,34 @@ class TableCheckBoxSuperAdmin extends Component {
                 disabled={disabled}
                 data-type="checkbox"
             />
-            <FontAwesomeIcon data-type="checkbox" icon="check-square" className="checked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/>
-            <FontAwesomeIcon data-type="checkbox" icon={["far", "square"]} className="unchecked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/> 
+            <FontAwesomeIcon
+                data-type="checkbox"
+                icon="check-square"
+                className="checked fa-lg"
+                style={{
+                    color: disabled ? '#adb5bd' : '#0070C0',
+                    padding: 'auto',
+                    textAlign: 'center',
+                    width: '100%',
+                    margin: '0px',
+                    verticalAlign: 'middle',
+                    cursor: disabled ? 'auto' : 'pointer'
+                }}
+            />
+            <FontAwesomeIcon
+                data-type="checkbox"
+                icon={["far", "square"]}
+                className="unchecked fa-lg"
+                style={{
+                    color: disabled ? '#adb5bd' : '#0070C0',
+                    padding: 'auto',
+                    textAlign: 'center',
+                    width: '100%',
+                    margin: '0px',
+                    verticalAlign: 'middle',
+                    cursor: disabled ? 'auto' : 'pointer'
+                }}
+            /> 
             </label>
         );
     }

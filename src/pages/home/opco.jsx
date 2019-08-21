@@ -300,7 +300,7 @@ class Opco extends React.Component {
                                         </thead>
                                         <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblOpcoBody">
                                             {opcos.items && this.filterName(opcos).map((o) =>
-                                                <tr key={o._id} onClick={(event) => this.handleOnclick(event, o._id)}>
+                                                <tr key={o._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, o._id)}>
                                                     <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{o.code}</td>
                                                     <td style={{width: `${tblBound.width*0.40 + 'px'}`}}>{o.name}</td>
                                                     <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{o.city}</td>

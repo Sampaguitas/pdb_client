@@ -200,7 +200,8 @@ class TableSelect extends Component{
                 style={{
                     color: disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color,
                     width: `${width ? width : 'auto'}`,
-                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`
+                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
+                    cursor: unlocked ? 'pointer' : disabled ? 'auto' : 'pointer'
                 }}
                 align={align ? align : 'left'}
             >

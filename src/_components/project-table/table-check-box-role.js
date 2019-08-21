@@ -15,8 +15,33 @@ class TableCheckBoxRole extends Component {
                 onChange={onChange}
                 disabled={disabled}
             />
-            <FontAwesomeIcon icon="check-square" className="checked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', margin: '0%', padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/>
-            <FontAwesomeIcon icon={["far", "square"]} className="unchecked fa-lg" style={{color: disabled ? '#adb5bd' : '#0070C0', margin: '0%', padding: 'auto', textAlign: 'center', width: '100%', margin: '0px', verticalAlign: 'middle'}}/>  
+            <FontAwesomeIcon
+                icon="check-square"
+                className="checked fa-lg"
+                style={{
+                    color: disabled ? '#adb5bd' : '#0070C0',
+                    margin: '0%', padding: 'auto',
+                    textAlign: 'center',
+                    width: '100%',
+                    margin: '0px',
+                    verticalAlign: 'middle',
+                    cursor: disabled ? 'auto' : 'pointer'
+                }}
+            />
+            <FontAwesomeIcon
+                icon={["far", "square"]}
+                className="unchecked fa-lg"
+                style={{
+                    color: disabled ? '#adb5bd' : '#0070C0',
+                    margin: '0%',
+                    padding: 'auto',
+                    textAlign: 'center',
+                    width: '100%',
+                    margin: '0px',
+                    verticalAlign: 'middle',
+                    cursor: disabled ? 'auto' : 'pointer'
+                }}
+            />  
             </label>
         );
     }

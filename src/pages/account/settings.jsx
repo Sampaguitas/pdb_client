@@ -338,10 +338,10 @@ class Settings extends React.Component {
                     <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblSettingsBody">
                       {this.props.users.items && this.filterName(this.props.users).map((u) =>
                         <tr key={u._id}> {/* onClick={(event) => this.handleOnclick(event, u._id)} */}
-                          <td style={{width: `${tblBound.width*0.10 + 'px'}`}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.userName}</td>
-                          <td style={{width: `${tblBound.width*0.30 + 'px'}`}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.name}</td>
-                          <td style={{width: `${tblBound.width*0.35 + 'px'}`}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.name}</td>
-                          <td style={{width: `${tblBound.width*0.15 + 'px'}`}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.region.name}</td>
+                          <td style={{width: `${tblBound.width*0.10 + 'px'}`, cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.userName}</td>
+                          <td style={{width: `${tblBound.width*0.30 + 'px'}`, cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.name}</td>
+                          <td style={{width: `${tblBound.width*0.35 + 'px'}`, cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.name}</td>
+                          <td style={{width: `${tblBound.width*0.15 + 'px'}`, cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.region.name}</td>
                           <td style={{width: `${tblBound.width*0.10 + 'px'}`}} data-type="checkbox">
                               <TableCheckBoxAdmin
                                   id={u._id}

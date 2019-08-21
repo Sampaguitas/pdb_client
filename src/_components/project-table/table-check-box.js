@@ -131,7 +131,8 @@ class TableCheckBox extends Component {
                                 textAlign: 'center',
                                 width: '100%',
                                 margin: '0px',
-                                verticalAlign: 'middle'
+                                verticalAlign: 'middle',
+                                cursor: unlocked ? 'pointer' : disabled ? 'auto' : 'pointer'
                             }}
                         />                
                     </label>

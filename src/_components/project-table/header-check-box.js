@@ -18,7 +18,10 @@ class HeaderCheckBox extends Component{
                         name={name}
                         value={value}
                         onChange={onChange}
-                        style={{padding: '.375rem .75rem'}}
+                        style={{
+                            padding: '.375rem .75rem',
+                            cursor: 'pointer'
+                        }}
                     >
                         <option key="1" value="any">Any</option>
                         <option key="2" value="true">True</option> 

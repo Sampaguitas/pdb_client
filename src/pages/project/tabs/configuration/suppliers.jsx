@@ -534,7 +534,7 @@ class Suppliers extends React.Component {
                                     {tblBound.width ?
                                         <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}}  id="tblSupplierBody">
                                             {selection && selection.project && this.filterName(selection).map((s) =>
-                                                <tr key={s._id} onClick={(event) => this.handleOnclick(event, s._id)}>
+                                                <tr key={s._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, s._id)}>
                                                     <td style={{width: tblBound.width ? `${tblBound.width*0.166667 + 'px'}`: '16.6667%'}}>{s.name}</td>
                                                     <td style={{width: tblBound.width ? `${tblBound.width*0.166667 + 'px'}`: '16.6667%'}}>{s.registeredName}</td>
                                                     <td style={{width: tblBound.width ? `${tblBound.width*0.166667 + 'px'}`: '16.6667%'}}>{s.contact}</td>

@@ -23,7 +23,8 @@ class NewRowCreate extends Component {
                         textAlign: 'center',
                         width: '100%',
                         margin: '0px',
-                        verticalAlign: 'middle'
+                        verticalAlign: 'middle',
+                        cursor: 'pointer'
                     }}  
                 />
             </div>

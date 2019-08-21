@@ -313,49 +313,49 @@ class Project extends React.Component {
                                         <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblProjectBody">
                                             {projectUsers && this.filterName(projectUsers).map(u => (
                                                 <tr key={u.userId}>
-                                                <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>{u.userName}</td>
-                                                <td style={{width: `${tblBound.width*0.40 + 'px'}`}}>{u.name}</td>
-                                                <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
-                                                    <TableCheckBoxRole
-                                                        id={u.userId}
-                                                        checked={u.isExpediting}
-                                                        onChange={(event) => {this.handleIsRole(event, 'isExpediting')}}
-                                                        disabled={false}
-                                                        
-                                                    />   
-                                                </td>
-                                                <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
-                                                    <TableCheckBoxRole
-                                                        id={u.userId}
-                                                        checked={u.isInspection}
-                                                        onChange={(event) => {this.handleIsRole(event, 'isInspection')}}
-                                                        disabled={false}
-                                                    />   
-                                                </td>
-                                                <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
-                                                    <TableCheckBoxRole
-                                                        id={u.userId}
-                                                        checked={u.isShipping}
-                                                        onChange={(event) => {this.handleIsRole(event, 'isShipping')}}
-                                                        disabled={false}
-                                                    />   
-                                                </td>
-                                                <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
-                                                    <TableCheckBoxRole
-                                                        id={u.userId}
-                                                        checked={u.isWarehouse}
-                                                        onChange={(event) => {this.handleIsRole(event, 'isWarehouse')}}
-                                                        disabled={false}
-                                                    />
-                                                </td>
-                                                <td style={{width: `${tblBound.width*0.10-tblScrollWidth + 'px'}`}}>
-                                                    <TableCheckBoxRole
-                                                        id={u.userId}
-                                                        checked={u.isConfiguration}
-                                                        onChange={(event) => {this.handleIsRole(event, 'isConfiguration')}}
-                                                        disabled={false}
-                                                    />
-                                                </td>
+                                                    <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>{u.userName}</td>
+                                                    <td style={{width: `${tblBound.width*0.40 + 'px'}`}}>{u.name}</td>
+                                                    <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
+                                                        <TableCheckBoxRole
+                                                            id={u.userId}
+                                                            checked={u.isExpediting}
+                                                            onChange={(event) => {this.handleIsRole(event, 'isExpediting')}}
+                                                            disabled={false}
+                                                            
+                                                        />   
+                                                    </td>
+                                                    <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
+                                                        <TableCheckBoxRole
+                                                            id={u.userId}
+                                                            checked={u.isInspection}
+                                                            onChange={(event) => {this.handleIsRole(event, 'isInspection')}}
+                                                            disabled={false}
+                                                        />   
+                                                    </td>
+                                                    <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
+                                                        <TableCheckBoxRole
+                                                            id={u.userId}
+                                                            checked={u.isShipping}
+                                                            onChange={(event) => {this.handleIsRole(event, 'isShipping')}}
+                                                            disabled={false}
+                                                        />   
+                                                    </td>
+                                                    <td style={{width: `${tblBound.width*0.10 + 'px'}`}}>
+                                                        <TableCheckBoxRole
+                                                            id={u.userId}
+                                                            checked={u.isWarehouse}
+                                                            onChange={(event) => {this.handleIsRole(event, 'isWarehouse')}}
+                                                            disabled={false}
+                                                        />
+                                                    </td>
+                                                    <td style={{width: `${tblBound.width*0.10-tblScrollWidth + 'px'}`}}>
+                                                        <TableCheckBoxRole
+                                                            id={u.userId}
+                                                            checked={u.isConfiguration}
+                                                            onChange={(event) => {this.handleIsRole(event, 'isConfiguration')}}
+                                                            disabled={false}
+                                                        />
+                                                    </td>
                                                 </tr> 
                                             ))}
                                         </tbody>

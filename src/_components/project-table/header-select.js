@@ -41,7 +41,10 @@ class HeaderSelect extends Component{
                         name={name}
                         value={value}
                         onChange={onChange}
-                        style={{padding: '.375rem .75rem'}}
+                        style={{
+                            padding: '.375rem .75rem',
+                            cursor: 'pointer'
+                        }}
                     >
                         <option value="any">Any</option>
                         {options && arraySorted(options, optionText).map(option => {
