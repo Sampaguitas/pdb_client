@@ -581,7 +581,7 @@ class Suppliers extends React.Component {
                                                 onChange={this.handleChangeSupplier}
                                                 submitted={submitted}
                                                 inline={false}
-                                                required={true}
+                                                required={false}
                                             />
                                             <Input
                                                 title="Contact"
@@ -611,7 +611,7 @@ class Suppliers extends React.Component {
                                                 onChange={this.handleChangeSupplier}
                                                 submitted={submitted}
                                                 inline={false}
-                                                required={true}
+                                                required={false}
                                             />
                                             <Input
                                                 title="Fax"
@@ -651,7 +651,7 @@ class Suppliers extends React.Component {
                                                 onChange={this.handleChangeSupplier}
                                                 submitted={submitted}
                                                 inline={false}
-                                                required={true}
+                                                required={false}
                                             />
                                             <Input
                                                 title="Country"
@@ -661,7 +661,7 @@ class Suppliers extends React.Component {
                                                 onChange={this.handleChangeSupplier}
                                                 submitted={submitted}
                                                 inline={false}
-                                                required={true}
+                                                required={false}
                                             />
                                             <div className="modal-footer">
                                                 {supplier.id ?
