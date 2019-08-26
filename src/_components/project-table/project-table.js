@@ -381,7 +381,7 @@ class ProjectTable extends Component {
                     </button>
                 </div>
                 <div className="row ml-1 full-height">
-                    <div className="table-responsive full-height" > 
+                    <div className="table-responsive custom-table-container" > 
                         <table className="table table-bordered table-sm text-nowrap table-striped" id="myProjectTable">
                             <thead>                                   
                                 {screenHeaders && (

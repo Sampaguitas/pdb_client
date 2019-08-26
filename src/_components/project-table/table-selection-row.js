@@ -34,7 +34,7 @@ class TableSelectionRow extends Component {
     render(){
         const { fieldValue } = this.state;
         return (
-            <td
+            <th
                 style={{
                     width: '30px',
                     minWidth: '30px',
@@ -78,7 +78,7 @@ class TableSelectionRow extends Component {
                         }}
                     /> {/*#ededed*/}
                 </label>
-            </td>
+            </th>
         );
     }
 };
