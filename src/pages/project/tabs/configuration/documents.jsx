@@ -33,13 +33,41 @@ function resolve(path, obj) {
     }, obj || self)
 }
 
-function arraySorted(array, field) {
+// function arraySorted(array, field) {
+//     if (array) {
+//         const newArray = array
+//         newArray.sort(function(a,b){
+//             if (resolve(field, a) < resolve(field, b)) {
+//                 return -1;
+//             } else if ((resolve(field, a) > resolve(field, b))) {
+//                 return 1;
+//             } else {
+//                 return 0;
+//             }
+//         });
+//         return newArray;             
+//     }
+// }
+
+function arraySorted(array, fieldOne, fieldTwo, fieldThree, fieldFour) {
     if (array) {
         const newArray = array
         newArray.sort(function(a,b){
-            if (resolve(field, a) < resolve(field, b)) {
+            if (resolve(fieldOne, a) < resolve(fieldOne, b)) {
                 return -1;
-            } else if ((resolve(field, a) > resolve(field, b))) {
+            } else if (resolve(fieldOne, a) > resolve(fieldOne, b)) {
+                return 1;
+            } else if (fieldTwo && resolve(fieldTwo, a) < resolve(fieldTwo, b)) {
+                return -1;
+            } else if (fieldTwo && resolve(fieldTwo, a) > resolve(fieldTwo, b)) {
+                return 1;
+            } else if (fieldThree && resolve(fieldThree, a) < resolve(fieldThree, b)) {
+                return -1;
+            } else if (fieldThree && resolve(fieldThree, a) > resolve(fieldThree, b)) {
+                return 1;
+            } else if (fieldFour && resolve(fieldFour, a) < resolve(fieldFour, b)) {
+                return -1;
+            } else if (fieldFour && resolve(fieldFour, a) > resolve(fieldFour, b)) {
                 return 1;
             } else {
                 return 0;
@@ -721,7 +749,7 @@ class Documents extends React.Component {
         } = this.state;
 
         if (array) {
-          return arraySorted(array, 'fields.custom').filter(function (element) {
+          return arraySorted(array, 'worksheet', 'location', 'row', 'col').filter(function (element) {
             return (doesMatch(selectedTemplate, element.docdefId, 'Id')
             && doesMatch(worksheet, element.worksheet, 'Select')
             && doesMatch(location, element.location, 'Select')
