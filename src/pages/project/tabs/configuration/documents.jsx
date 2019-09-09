@@ -166,6 +166,7 @@ class Documents extends React.Component {
         // this.handleChangeField = this.handleChangeFields.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleDownloadFile = this.handleDownloadFile.bind(this);
+        this.handlePreviewFile = this.handlePreviewFile.bind(this);
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleFileChange=this.handleFileChange.bind(this);
         this.fileInput = React.createRef();
@@ -601,6 +602,23 @@ class Documents extends React.Component {
         }
     }
 
+    handlePreviewFile(event) {
+        event.preventDefault();
+        const { selection } = this.props;
+        const { selectedTemplate, fileName } = this.state;
+        if (selection.project && selectedTemplate != "0" && fileName) {
+            let obj = findObj(selection.project.docdefs,selectedTemplate);
+             if (obj) {
+                const requestOptions = {
+                    method: 'GET',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                };
+                return fetch(`${config.apiUrl}/template/preview?project=${selection.project.number}&docDef=${selectedTemplate}&file=${obj.field}`, requestOptions)
+                    .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
+             }
+        }
+    }
+
     handleFileChange(event){
         if(event.target.files.length > 0) {
             this.setState({
@@ -856,7 +874,10 @@ class Documents extends React.Component {
                                                     </button>
                                                     <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={ (event) => this.handleDownloadFile(event)}>
                                                         <span><FontAwesomeIcon icon="download" className="fa-lg mr-2"/>Download</span>
-                                                    </button>  
+                                                    </button>
+                                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={ (event) => this.handlePreviewFile(event)}>
+                                                        <span><FontAwesomeIcon icon="eye" className="fa-lg mr-2"/>Preview</span>
+                                                    </button>   
                                                 </div>
                                                 <div className="pull-right"> {/* col-12 text-right */}
                                                     <button
