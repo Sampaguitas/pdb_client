@@ -213,61 +213,63 @@ class Documents extends React.Component {
                 return 15;
             }
         }
-    }    
+    }
 
     cerateNewRow(event) {
         event.preventDefault()
         const { handleSelectionReload } = this.props;
         const { docField } = this.state;
-        this.setState({
-            ...this.state,
-            creatingNewRow: true
-        }, () => {
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify(docField)
-            };
-            return fetch(`${config.apiUrl}/docField/create`, requestOptions)
-            .then( () => {
-                this.setState({
-                    ...this.state,
-                    creatingNewRow: false,
-                    newRowColor: 'green'
-                }, () => {
-                    setTimeout(() => {
-                        this.setState({
-                            ...this.state,
-                            newRowColor: 'inherit',
-                            newRow:false,
-                            docField:{},
-                            newRowFocus: false
-                        }, () => {
-                            handleSelectionReload();
-                        });
-                    }, 1000);
-                });
-            })
-            .catch( () => {
-                this.setState({
-                    ...this.state,
-                    creatingNewRow: false,
-                    newRowColor: 'red'
-                }, () => {
-                    setTimeout(() => {
-                        this.setState({
-                            ...this.state,
-                            newRowColor: 'inherit',
-                            newRow:false,
-                            docField:{},
-                            newRowFocus: false
-                        }, () => {
-                            handleSelectionReload();
-                        });
-                    }, 1000);
+        if (docField.location && docField.row && docField.col && docField.fieldId) {
+            this.setState({
+                ...this.state,
+                creatingNewRow: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(docField)
+                };
+                return fetch(`${config.apiUrl}/docField/create`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false,
+                        newRowColor: 'green'
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                docField:{},
+                                newRowFocus: false
+                            }, () => {
+                                handleSelectionReload();
+                            });
+                        }, 1000);
+                    });
+                })
+                .catch( () => {
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false,
+                        newRowColor: 'red'
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                docField:{},
+                                newRowFocus: false
+                            }, () => {
+                                handleSelectionReload();
+                            });
+                        }, 1000);
+                    });
                 });
             });
-        });
+        }
     }
 
     onFocusRow(event) {
