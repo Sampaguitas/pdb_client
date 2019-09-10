@@ -33,22 +33,6 @@ function resolve(path, obj) {
     }, obj || self)
 }
 
-// function arraySorted(array, field) {
-//     if (array) {
-//         const newArray = array
-//         newArray.sort(function(a,b){
-//             if (resolve(field, a) < resolve(field, b)) {
-//                 return -1;
-//             } else if ((resolve(field, a) > resolve(field, b))) {
-//                 return 1;
-//             } else {
-//                 return 0;
-//             }
-//         });
-//         return newArray;             
-//     }
-// }
-
 function arraySorted(array, fieldOne, fieldTwo, fieldThree, fieldFour) {
     if (array) {
         const newArray = array
@@ -641,7 +625,7 @@ class Documents extends React.Component {
                     method: 'GET',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 };
-                return fetch(`${config.apiUrl}/template/preview?project=${selection.project.number}&docDef=${selectedTemplate}&file=${obj.field}`, requestOptions)
+                return fetch(`${config.apiUrl}/template/preview?project=${selection.project.number}&docDef=${selectedTemplate}`, requestOptions)
                     .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
              }
         }
