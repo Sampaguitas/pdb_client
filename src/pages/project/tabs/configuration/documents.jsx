@@ -627,7 +627,7 @@ class Documents extends React.Component {
                     method: 'GET',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 };
-                return fetch(`${config.apiUrl}/template/preview?project=${selection.project.number}&docDef=${selectedTemplate}`, requestOptions)
+                return fetch(`${config.apiUrl}/template/preview?docDef=${selectedTemplate}`, requestOptions) //project=${selection.project.number}&
                     .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
              }
         }
