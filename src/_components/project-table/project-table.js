@@ -381,7 +381,7 @@ class ProjectTable extends Component {
                         <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
                     </button>
                 </div>
-                <div className="row ml-1 full-height">
+                <div className="row ml-1 full-height" style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd'}}>
                     <div className="table-responsive custom-table-container" > 
                         <table className="table table-bordered table-sm text-nowrap table-striped" id="myProjectTable">
                             <thead>                                   
