@@ -140,16 +140,16 @@ class Expediting extends React.Component {
         const { screenId, unlocked } = this.state;
         let screenHeaders = arraySorted(returnScreenHeaders(selection, screenId), 'forShow')
         if (selection.project) {
-            let arryBody =[];
+            let arrayBody =[];
             arraySorted(selection.project.pos, 'clPo', 'clPoRev', 'clPoItem').map(po => {
                 if (po.subs) {
                     po.subs.map(sub => {
-                        let arryRow = [];
+                        let arrayRow = [];
                         screenHeaders.map(screenHeader => {
                             if (screenHeader.fields.fromTbl == 'po') {
                                 switch (screenHeader.fields.type) {
                                     case "String":
-                                        arryRow.push({
+                                        arrayRow.push({
                                             collection: screenHeader.fields.fromTbl,
                                             objectId: po._id,
                                             fieldName: screenHeader.fields.name,
@@ -160,7 +160,7 @@ class Expediting extends React.Component {
                                         });
                                         break;
                                     case "Number":
-                                        arryRow.push({
+                                        arrayRow.push({
                                             collection: screenHeader.fields.fromTbl,
                                             objectId: po._id,
                                             fieldName: screenHeader.fields.name,
@@ -171,7 +171,7 @@ class Expediting extends React.Component {
                                         });
                                         break;
                                     case "Date":                                       
-                                        arryRow.push({
+                                        arrayRow.push({
                                             collection: screenHeader.fields.fromTbl,
                                             objectId: po._id,
                                             fieldName: screenHeader.fields.name,
@@ -182,7 +182,7 @@ class Expediting extends React.Component {
                                         });
                                         break;
                                     default:
-                                        arryRow.push({
+                                        arrayRow.push({
                                             collection: screenHeader.fields.fromTbl,
                                             objectId: po._id,
                                             fieldName: screenHeader.fields.name,
@@ -195,7 +195,7 @@ class Expediting extends React.Component {
                             } else if (screenHeader.fields.fromTbl == 'sub'){
                                 switch (screenHeader.fields.type) {
                                     case "String":
-                                        arryRow.push({
+                                        arrayRow.push({
                                             collection: screenHeader.fields.fromTbl,
                                             objectId: sub._id,
                                             fieldName: screenHeader.fields.name,
@@ -206,7 +206,7 @@ class Expediting extends React.Component {
                                         });
                                         break;
                                     case "Number":
-                                        arryRow.push({
+                                        arrayRow.push({
                                             collection: screenHeader.fields.fromTbl,
                                             objectId: sub._id,
                                             fieldName: screenHeader.fields.name,
@@ -217,7 +217,7 @@ class Expediting extends React.Component {
                                         });
                                         break;
                                     case "Date":                                       
-                                        arryRow.push({
+                                        arrayRow.push({
                                             collection: screenHeader.fields.fromTbl,
                                             objectId: sub._id,
                                             fieldName: screenHeader.fields.name,
@@ -228,7 +228,7 @@ class Expediting extends React.Component {
                                         });
                                         break;
                                     default:
-                                        arryRow.push({
+                                        arrayRow.push({
                                             collection: screenHeader.fields.fromTbl,
                                             objectId: sub._id,
                                             fieldName: screenHeader.fields.name,
@@ -239,16 +239,16 @@ class Expediting extends React.Component {
                                         });
                                 }
                             } else {
-                                arryRow.push({});
+                                arrayRow.push({});
                             }
                         });
-                        let objectRow  = { _id: sub._id, fields: arryRow }
-                        arryBody.push(objectRow);
+                        let objectRow  = { _id: sub._id, fields: arrayRow }
+                        arrayBody.push(objectRow);
                     });
                 }
             });
             this.setState({
-                screenBodys: arryBody,
+                screenBodys: arrayBody,
                 loaded: true
             });
         } else {
