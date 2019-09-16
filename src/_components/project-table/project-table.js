@@ -361,7 +361,7 @@ class ProjectTable extends Component {
         const { header,selectAllRows  } = this.state;
         return (
             <div className="full-height">
-                <div className="btn-group-vertical pull-right">
+                <div className="btn-group-vertical pull-right" style={{marginLeft: '16px'}}>
                     <button className="btn btn-outline-leeuwen-blue" style={{width: '40px', height: '40px'}}> 
                         <span><FontAwesomeIcon icon="cog" className="fas fa-2x"/></span>
                     </button>
