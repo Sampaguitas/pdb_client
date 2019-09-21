@@ -1,6 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
+import config from 'config';
+import { saveAs } from 'file-saver';
+import { authHeader } from '../../../_helpers';
 import { projectActions } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table'
@@ -458,7 +461,7 @@ class ReleaseData extends React.Component {
     }
 
     render() {
-        const { screen, screenId, screenBodys, unlocked, loaded, selectedTemplate, selectedField, updateValue }= this.state;
+        const { projectId, screen, screenId, screenBodys, unlocked, loaded, selectedTemplate, selectedField, updateValue }= this.state;
         const { alert, selection } = this.props;
         { selection.project && loaded == false && this.testBodys()}
         return (
@@ -522,6 +525,7 @@ class ReleaseData extends React.Component {
                             <ProjectTable
                                 screenHeaders={arraySorted(returnScreenHeaders(selection, screenId), "forShow")}
                                 screenBodys={screenBodys}
+                                projectId={projectId}
                                 screenId={screenId}
                                 handleSelectionReload={this.handleSelectionReload}
                                 toggleUnlock={this.toggleUnlock}

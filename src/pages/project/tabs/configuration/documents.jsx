@@ -67,7 +67,8 @@ function docConf(array) {
         '5d1927131424114e3884ac80', //PL01 Packing List
         '5d1927141424114e3884ac84', //SM01 Shipping Mark
         '5d1927131424114e3884ac81', //PN01 Packing Note
-        '5d1927141424114e3884ac83' //SI01 Shipping Invoice
+        '5d1927141424114e3884ac83', //SI01 Shipping Invoice
+        '5d1927131424114e3884ac7f' //NFI01 Notification for inspection
     ];
     return array.filter(function (element) {
         return tpeOf.includes(element.doctypeId);

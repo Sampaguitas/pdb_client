@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import XLSX from 'xlsx';
+//import XLSX from 'xlsx';
 // import Excel from 'exceljs';
+import config from 'config';
 import { saveAs } from 'file-saver';
+import { authHeader } from '../../_helpers';
 import HeaderCheckBox from '../../_components/project-table/header-check-box';
 import HeaderInput from '../../_components/project-table/header-input';
 import HeaderSelect from '../../_components/project-table/header-select';
@@ -151,20 +153,32 @@ class ProjectTable extends Component {
 
     downloadTable(event){
         event.preventDefault();
-        const { screen } = this.props;
+        const { projectId, screenId, screen } = this.props;
         var currentDate = new Date();
         var date = currentDate.getDate();
         var month = currentDate.getMonth();
         var year = currentDate.getFullYear();
-        var wb = XLSX.utils.table_to_book(document.getElementById('myProjectTable')); //, {sheet:screen}
-        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
-        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`);
-        function s2ab(s) {
-            var buf = new ArrayBuffer(s.length);
-            var view = new Uint8Array(buf);
-            for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
-            return buf;
-        }
+        const requestOptions = {
+            method: 'GET',
+            headers: { ...authHeader(), 'Content-Type': 'application/json'},
+        };
+        return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}`, requestOptions)
+        .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+
+        // const { screen } = this.props;
+        // var currentDate = new Date();
+        // var date = currentDate.getDate();
+        // var month = currentDate.getMonth();
+        // var year = currentDate.getFullYear();
+        // var wb = XLSX.utils.table_to_book(document.getElementById('myProjectTable')); //, {sheet:screen}
+        // var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+        // saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`);
+        // function s2ab(s) {
+        //     var buf = new ArrayBuffer(s.length);
+        //     var view = new Uint8Array(buf);
+        //     for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+        //     return buf;
+        // }
     }
 
     uploadTable(event) {

@@ -362,7 +362,7 @@ class PackingDetails extends React.Component {
     }
 
     render() {
-        const { screen, screenId, screenBodys, unlocked, loaded }= this.state;
+        const { projectId, screen, screenId, screenBodys, unlocked, loaded }= this.state;
         const { alert, selection } = this.props;
         { selection.project && loaded == false && this.testBodys()}
         return (
@@ -375,6 +375,7 @@ class PackingDetails extends React.Component {
                         <ProjectTable
                             screenHeaders={arraySorted(returnScreenHeaders(selection, screenId), "forShow")}
                             screenBodys={screenBodys}
+                            projectId={projectId}
                             screenId={screenId}
                             handleSelectionReload={this.handleSelectionReload}
                             toggleUnlock={this.toggleUnlock}

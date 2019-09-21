@@ -1,11 +1,11 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { projectActions } from '../../_actions';
-import Layout from '../../_components/layout';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../_helpers';
+import { projectActions } from '../../_actions';
+import Layout from '../../_components/layout';
 import ProjectTable from '../../_components/project-table/project-table';
 import ProjectTableNew from '../../_components/project-table/project-table-new';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -273,7 +273,6 @@ class Expediting extends React.Component {
         event.preventDefault();
         const { selection } = this.props;
         const { selectedTemplate } = this.state;
-        console.log('selectedTemplate:',selectedTemplate);
         if (selectedTemplate != "0") {
             let obj = findObj(selection.project.docdefs,selectedTemplate);
              if (obj) {
@@ -327,7 +326,7 @@ class Expediting extends React.Component {
 
 
     render() {
-        const { screen, screenId, screenBodys, unlocked, loaded, selectedTemplate, selectedField, updateValue }= this.state;
+        const { projectId, screen, screenId, screenBodys, unlocked, loaded, selectedTemplate, selectedField, updateValue }= this.state;
         const { alert, selection } = this.props;
         { selection.project && loaded == false && this.testBodys()}
         return (
@@ -393,6 +392,7 @@ class Expediting extends React.Component {
                                 screenHeaders={arraySorted(returnScreenHeaders(selection, screenId), "forShow")}
                                 screenBodys={screenBodys}
                                 screenId={screenId}
+                                projectId={projectId}
                                 handleSelectionReload={this.handleSelectionReload}
                                 toggleUnlock={this.toggleUnlock}
                                 unlocked={unlocked}
