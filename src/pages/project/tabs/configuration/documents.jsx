@@ -489,12 +489,12 @@ class Documents extends React.Component {
     handleSubmitDocDef(event) {
         event.preventDefault();
         const { docDef } = this.state;
-        const { handleSelectionReload } = this.props
+        const { handleSelectionReload } = this.props;
         this.setState({
             ...this.state,
             submitted: true
         }, () => {
-            if (docDef.id && docDef.description && docDef.doctypeId && docDef.projectId) {
+            if (docDef.id && docDef.description && docDef.doctypeId && docDef.row1 && docDef.col1 && docDef.projectId) {
                 this.setState({
                     ...this.state,
                     loading: true
@@ -528,7 +528,7 @@ class Documents extends React.Component {
                             });
                     });
                 });
-            } else if (docDef.description && docDef.doctypeId && docDef.projectId){
+            } else if (docDef.description && docDef.doctypeId && docDef.row1 && docDef.col1 && docDef.projectId){
                 this.setState({
                     ...this.state,
                     loading: true
@@ -887,10 +887,10 @@ class Documents extends React.Component {
                                                     <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
                                                         <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>
                                                     </button>
-                                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={ (event) => this.handleDownloadFile(event)}>
+                                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleDownloadFile(event)}>
                                                         <span><FontAwesomeIcon icon="download" className="fa-lg mr-2"/>Download</span>
                                                     </button>
-                                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={ (event) => this.handlePreviewFile(event)}>
+                                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handlePreviewFile(event)}>
                                                         <span><FontAwesomeIcon icon="eye" className="fa-lg mr-2"/>Preview</span>
                                                     </button>   
                                                 </div>
