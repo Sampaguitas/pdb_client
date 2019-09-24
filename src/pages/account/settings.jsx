@@ -4,7 +4,7 @@ import { userActions, opcoActions } from "../../_actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableCheckBoxAdmin from "../../_components/project-table/table-check-box-admin";
 import TableCheckBoxSuperAdmin from "../../_components/project-table/table-check-box-spadmin";
-import Modal from "../../_components/modal/modal.js"
+import Modal from "../../_components/modal";
 import Input from "../../_components/input";
 import Select from '../../_components/select';
 import Layout from "../../_components/layout";

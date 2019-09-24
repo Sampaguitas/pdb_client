@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../../../_helpers';
-import Modal from "../../../../_components/modal/modal.js"
+import Modal from "../../../../_components/modal";
 import Input from '../../../../_components/input';
 import CheckBox from '../../../../_components/check-box';
 import Select from '../../../../_components/select';

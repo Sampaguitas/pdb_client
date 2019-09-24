@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import "./modal.css";
+
 
 class Modal extends React.Component {
   render() {
@@ -8,8 +8,8 @@ class Modal extends React.Component {
         return null;
     }
     return (
-        <div className="modal" role="dialog" style={{display: 'block', overflow: 'scroll'}}>
-            <div className="modal-dialog" role="document">
+        <div className="modal" tabIndex="-1" role="dialog" style={{display: 'block', overflowY: 'auto'}}> {/* style={{display: 'block', overflow: 'scroll'}} */}
+            <div className={this.props.size ? `modal-dialog ${this.props.size}` : 'modal-dialog'} role="document">
                 <div className="modal-content">
                     <div className="modal-header">
                         <h5 className="modal-title">{this.props.title}</h5>

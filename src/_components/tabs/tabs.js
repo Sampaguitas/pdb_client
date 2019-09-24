@@ -45,18 +45,6 @@ class Tabs extends Component {
             currencies,
             screens,
             selection,
-            // handleSubmitSupplier,
-            // handleDeleteSupplier,
-            // supplierUpdating,
-            // supplierDeleting,
-            // submittedSupplier,
-            // showSupplierModal,
-            // handleShowSupplierModal,
-            // handleHideSupplierModal,
-            //handleDeleteFieldNames,
-            //handleDeleteDocFields,
-            //handleDeleteDocDef,
-            // currentUser,
             projectId,
         } = this.props
 
@@ -95,18 +83,6 @@ class Tabs extends Component {
                                 currencies={currencies}
                                 screens={screens}
                                 selection={selection}
-                                // handleSubmitSupplier={handleSubmitSupplier}
-                                // handleDeleteSupplier={handleDeleteSupplier}
-                                // supplierUpdating={supplierUpdating}
-                                // supplierDeleting={supplierDeleting}
-                                // submittedSupplier={submittedSupplier}
-                                // showSupplierModal={showSupplierModal}
-                                // handleShowSupplierModal={handleShowSupplierModal}
-                                // handleHideSupplierModal={handleHideSupplierModal}
-                                //handleDeleteFieldNames={handleDeleteFieldNames}
-                                //handleDeleteDocFields={handleDeleteDocFields}
-                                //handleDeleteDocDef={handleDeleteDocDef}
-                                // currentUser={currentUser}
                                 projectId={projectId}
                             />
                         </div>

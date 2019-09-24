@@ -323,10 +323,19 @@ class Expediting extends React.Component {
         event.preventDefault();
     }
 
-
-
     render() {
-        const { projectId, screen, screenId, screenBodys, unlocked, loaded, selectedTemplate, selectedField, updateValue }= this.state;
+        const { 
+            projectId, 
+            screen, 
+            screenId, 
+            screenBodys, 
+            unlocked, 
+            loaded, 
+            selectedTemplate, 
+            selectedField, 
+            updateValue,
+            showModalSettings
+        }= this.state;
         const { alert, selection } = this.props;
         { selection.project && loaded == false && this.testBodys()}
         return (

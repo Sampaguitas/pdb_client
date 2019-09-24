@@ -12,10 +12,13 @@ import NewRowCheckBox from '../../_components/project-table/new-row-check-box';
 import NewRowInput from '../../_components/project-table/new-row-input';
 import NewRowSelect from '../../_components/project-table/new-row-select';
 import TableInput from '../../_components/project-table/table-input';
+import Modal from "../../_components/modal";
 import TableSelect from '../../_components/project-table/table-select';
 import TableCheckBox from '../../_components/project-table/table-check-box';
 import TableSelectionRow from '../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../_components/project-table/table-selection-all-row';
+import TabForSelect from './tab-for-select';
+import TabForShow from './tab-for-show';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
@@ -114,6 +117,25 @@ class ProjectTable extends Component {
             header: {},
             selectedRows: [],
             selectAllRows: false,
+            showModalSettings: false,
+            tabs: [
+                {
+                    index: 0, 
+                    id: 'forShow', 
+                    label: 'for Show', 
+                    component: TabForShow, 
+                    active: true, 
+                    isLoaded: false
+                },
+                {
+                    index: 1, 
+                    id: 'forSelect', 
+                    label: 'for Select', 
+                    component: TabForSelect, 
+                    active: false, 
+                    isLoaded: false
+                }
+            ]
         };
         
         this.resetHeaders = this.resetHeaders.bind(this);
@@ -127,6 +149,8 @@ class ProjectTable extends Component {
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.matchingHeader = this.matchingHeader.bind(this);
         this.MatchingRow = this.MatchingRow.bind(this);
+        this.toggleModalSettings = this.toggleModalSettings.bind(this);
+        this.handleModalTabClick = this.handleModalTabClick.bind(this);
     }
 
     componentDidMount() {
@@ -164,21 +188,6 @@ class ProjectTable extends Component {
         };
         return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}`, requestOptions)
         .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
-
-        // const { screen } = this.props;
-        // var currentDate = new Date();
-        // var date = currentDate.getDate();
-        // var month = currentDate.getMonth();
-        // var year = currentDate.getFullYear();
-        // var wb = XLSX.utils.table_to_book(document.getElementById('myProjectTable')); //, {sheet:screen}
-        // var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
-        // saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`);
-        // function s2ab(s) {
-        //     var buf = new ArrayBuffer(s.length);
-        //     var view = new Uint8Array(buf);
-        //     for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
-        //     return buf;
-        // }
     }
 
     uploadTable(event) {
@@ -369,14 +378,36 @@ class ProjectTable extends Component {
             </tr>
         )
     }
+
+    toggleModalSettings() {
+        const { showModalSettings } = this.state;
+        this.setState({
+            showModalSettings: !showModalSettings
+        });
+    }
+
+
+    handleModalTabClick(event, tab){
+        event.preventDefault();
+        // const { handleSelectionReload } = this.props
+        const { tabs } = this.state; // 1. Get tabs from state
+        tabs.forEach((t) => {t.active = false}); //2. Reset all tabs
+        tab.isLoaded = true; // 3. set current tab as active
+        tab.active = true;
+        this.setState({
+            tabs // 4. update state
+        })
+        // handleSelectionReload(event); //reload selection state
+
+    }
     
     render() {
         const { handleSelectionReload, toggleUnlock, screenHeaders, screenBodys, unlocked } = this.props;
-        const { header,selectAllRows  } = this.state;
+        const { header,selectAllRows, showModalSettings, tabs  } = this.state;
         return (
             <div className="full-height">
                 <div className="btn-group-vertical pull-right" style={{marginLeft: '5px'}}>
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '40px', height: '40px'}}> 
+                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.toggleModalSettings(event)} style={{width: '40px', height: '40px'}}> 
                         <span><FontAwesomeIcon icon="cog" className="fas fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" onClick={event => this.resetHeaders(event)} style={{width: '40px', height: '40px'}}>
@@ -414,8 +445,40 @@ class ProjectTable extends Component {
                             </tbody>
                         </table>
                     </div>
-
                 </div>
+                <Modal
+                    show={showModalSettings}
+                    hideModal={this.toggleModalSettings}
+                    title="Table Settings"
+                    size="modal-xl"
+                >
+                    <div id="modal-tabs">
+                        <ul className="nav nav-tabs">
+                        {tabs.map((tab) => 
+                            <li className={tab.active ? 'nav-item active' : 'nav-item'} key={tab.index}>
+                                <a className="nav-link" href={'#'+ tab.id} data-toggle="tab" onClick={event => this.handleModalTabClick(event,tab)} id={tab.id + '-tab'} aria-controls={tab.id} role="tab">
+                                    {tab.label}
+                                </a>
+                            </li>                        
+                        )}
+                        </ul>
+                        <div className="tab-content" id="modal-nav-tabContent">
+                            {tabs.map(tab =>
+                                <div
+                                    className={tab.active ? "tab-pane fade show active" : "tab-pane fade"}
+                                    id={tab.id}
+                                    role="tabpanel"
+                                    aria-labelledby={tab.id + '-tab'}
+                                    key={tab.index}
+                                >
+                                    <tab.component 
+                                        tab={tab}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </Modal>
             </div>
         );
     }

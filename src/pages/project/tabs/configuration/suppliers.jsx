@@ -1,7 +1,7 @@
 import React from 'react';
 import config from 'config';
 import { authHeader } from '../../../../_helpers';
-import Modal from "../../../../_components/modal/modal.js";
+import Modal from "../../../../_components/modal";
 import HeaderInput from '../../../../_components/project-table/header-input';
 import Input from '../../../../_components/input';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

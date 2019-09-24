@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { opcoActions, localeActions, regionActions } from '../../_actions';
-import Modal from "../../_components/modal/modal.js"
+import Modal from "../../_components/modal";
 import Input from '../../_components/input';
 import Layout from '../../_components/layout';
 import Select from '../../_components/select';
@@ -317,6 +317,7 @@ class Opco extends React.Component {
                             show={show}
                             hideModal={this.hideModal}
                             title={opco.id ? 'Update opco' : 'Add opco'}
+                            // size="modal-xl"
                         >
                             <div className="col-12">
                                 <form
