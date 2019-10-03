@@ -83,6 +83,7 @@ class Dashboard extends React.Component {
     //     });
     // }
 
+    
     render() {
         const { projectId, data } = this.state;
         const { alert, selection } = this.props;
