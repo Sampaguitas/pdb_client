@@ -8,27 +8,23 @@ import { Line } from 'react-chartjs-2';
 class LineChart extends Component {
 
     render() {
-        
-        var newLegendClickHandler = function(e, legendItem) {
-            var index = legendItem.datasetIndex;
-            var ci = this.chart;
-            var meta = ci.getDatasetMeta(index);
-        
-            // See controller.isDatasetVisible comment
-            meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
-        
-            // We hid a dataset ... rerender the chart
-            ci.update();
-        }
 
+        const {onLegendClick} = this.props;
 
-        // const { data } = this.props;
         const options = {
             legend: {
                 display: true,
                 position: 'right',
-                onClick: newLegendClickHandler
-                },
+                onClick: function(e, legendItem) {
+                    onLegendClick(legendItem);
+                    var index = legendItem.datasetIndex;
+                    var ci = this.chart;
+                    var meta = ci.getDatasetMeta(index);
+                    meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+                    ci.update();
+                    
+                }
+            },
             tooltips: {
                mode: 'label',
                label: 'mylabel',
@@ -67,7 +63,7 @@ class LineChart extends Component {
             }
         }
 
-        const {data, height, onElementsClick, getElementsAtEvent } = this.props;
+        const {data, height} = this.props; //onElementsClick, getElementsAtEvent, getDatasetAtEvent 
 
         return <Line
             data={data} 
@@ -75,6 +71,7 @@ class LineChart extends Component {
             height={height}
             // onElementsClick={onElementsClick}
             // getElementsAtEvent={getElementsAtEvent}
+            // getDatasetAtEvent={getDatasetAtEvent}
         />;
     }
 }

@@ -26,17 +26,17 @@ class Dashboard extends React.Component {
             period: 'week',
             clPo:'',
             clPoRev: '',
+            lines: ['contract', 'rfiExp', 'rfiAct', 'released', 'shipExp', 'shipAct', 'delExp', 'delAct'],
             data: {},
             error: '',
-            loading: false      
+            loading: false     
         };
         this.fetchData = this.fetchData.bind(this);
-        this.onElementsClick = this.onElementsClick.bind(this);
-        this.getElementsAtEvent = this.getElementsAtEvent.bind(this);
         this.downloadLineChart = this.downloadLineChart.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.generateOptionClPo = this.generateOptionClPo.bind(this);
         this.generateOptionclPoRev = this.generateOptionclPoRev.bind(this);
+        this.onLegendClick = this.onLegendClick.bind(this);
     }
 
     componentDidMount() {
@@ -50,13 +50,13 @@ class Dashboard extends React.Component {
 
     fetchData() {
         // event.preventDefault();
-        const { projectId, clPo, clPoRev, unit, period } = this.state;
+        const { projectId, unit, period, clPo, clPoRev, lines } = this.state;
         this.setState({loading: true});
         const requestOptions = {
             method: 'GET',
             headers: { ...authHeader(), 'Content-Type': 'application/json'},
         };
-        return fetch(`${config.apiUrl}/dashboard/getLineChart?projectId=${projectId}&clPo=${clPo}&clPoRev=${clPoRev}&unit=${unit}&period=${period}`, requestOptions)
+        return fetch(`${config.apiUrl}/dashboard/getLineChart?projectId=${projectId}&unit=${unit}&period=${period}&clPo=${clPo}&clPoRev=${clPoRev}&lines=${lines}`, requestOptions)
         .then(responce => responce.text().then(text => {
             const data = text && JSON.parse(text);
             if (!responce.ok) {
@@ -80,14 +80,13 @@ class Dashboard extends React.Component {
 
     downloadLineChart(event) {
         event.preventDefault();
-        const { projectId, clPo, clPoRev, unit, period } = this.state;
+        const { projectId, unit, period, clPo, clPoRev, lines } = this.state;
         this.setState({loading: true});
         const requestOptions = {
             method: 'GET',
             headers: { ...authHeader(), 'Content-Type': 'application/json'},
         };
-        return fetch(`${config.apiUrl}/dashboard/downloadLineChart?projectId=${projectId}&clPo=${clPo}&clPoRev=${clPoRev}&unit=${unit}&period=${period}`, requestOptions)
-        // .then(res => res.blob()).then(blob => saveAs(blob, 'Chart.xlsx'));
+        return fetch(`${config.apiUrl}/dashboard/downloadLineChart?projectId=${projectId}&unit=${unit}&period=${period}&clPo=${clPo}&clPoRev=${clPoRev}&lines=${lines}`, requestOptions)
         .then(responce => {
             if (!responce.ok) {
                 if (responce.status === 401) {
@@ -105,15 +104,6 @@ class Dashboard extends React.Component {
         });
     }
 
-    onElementsClick(elems) {
-        console.log('onElementsClick')
-        elems.map(elem => console.log('elem:', elem));
-    }
-
-    getElementsAtEvent(elems) {
-        console.log('getElementsAtEvent')
-        elems.map(elem => console.log('elem:', elem));
-    }
 
     handleChange(event) {
         event.preventDefault();
@@ -187,6 +177,20 @@ class Dashboard extends React.Component {
         }
     }
 
+    onLegendClick(legendItem){
+        let { lines } = this.state;
+        if (!legendItem.hidden && lines.indexOf(legendItem.text) > -1) {
+            let tempArray = lines;
+            let index = tempArray.indexOf(legendItem.text);
+            tempArray.splice(index, 1);
+            this.setState({lines: tempArray});
+        } else if (legendItem.hidden && !lines.indexOf(legendItem.text) > -1) {
+            let tempArray = lines;
+            tempArray.push(legendItem.text);
+            this.setState({lines: tempArray});
+        }
+    }
+
     render() {
         const { projectId, unit, period, clPo, clPoRev, data, loading } = this.state;
         const { alert, selection } = this.props;
@@ -229,7 +233,11 @@ class Dashboard extends React.Component {
                         </div>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
-                        <Line data={data} height={100} onElementsClick={this.onElementsClick} getElementsAtEvent={this.getElementsAtEvent}/>
+                        <Line
+                            data={data}
+                            height={100}
+                            onLegendClick={this.onLegendClick}
+                        />
                     </div>
                 </div> 
             </Layout>
