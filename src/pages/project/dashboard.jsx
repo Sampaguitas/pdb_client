@@ -24,14 +24,18 @@ class Dashboard extends React.Component {
             unit: 'qty',
             period: 'week',
             clPo:'',
+            clPoRev: '',
             data: {},
             error: '',
             loading: false      
         };
         this.fetchData = this.fetchData.bind(this);
         this.onElementsClick = this.onElementsClick.bind(this);
+        this.getElementsAtEvent = this.getElementsAtEvent.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.generateOptionClPo = this.generateOptionClPo.bind(this);
+        this.generateOptionclPoRev = this.generateOptionclPoRev.bind(this);
     }
 
     componentDidMount() {
@@ -45,13 +49,13 @@ class Dashboard extends React.Component {
 
     fetchData() {
         // event.preventDefault();
-        const { projectId, unit, period } = this.state;
+        const { projectId, clPo, clPoRev, unit, period } = this.state;
         this.setState({loading: true});
         const requestOptions = {
             method: 'GET',
             headers: { ...authHeader(), 'Content-Type': 'application/json'},
         };
-        return fetch(`${config.apiUrl}/dashboard/getLineChart?projectId=${projectId}&unit=${unit}&period=${period}`, requestOptions)
+        return fetch(`${config.apiUrl}/dashboard/getLineChart?projectId=${projectId}&clPo=${clPo}&clPoRev=${clPoRev}&unit=${unit}&period=${period}`, requestOptions)
         .then(responce => responce.text().then(text => {
             const data = text && JSON.parse(text);
             if (!responce.ok) {
@@ -78,18 +82,89 @@ class Dashboard extends React.Component {
     }
 
     onElementsClick(elems) {
-        console.log('elems:', elems);
+        console.log('onElementsClick')
+        elems.map(elem => console.log('elem:', elem));
+    }
+
+    getElementsAtEvent(elems) {
+        console.log('getElementsAtEvent')
+        elems.map(elem => console.log('elem:', elem));
     }
 
     handleChange(event) {
         event.preventDefault();
         const name = event.target.name;
         const value = event.target.value;
-        this.setState({ [name]: value}, this.fetchData);
+        if (name === 'clPo') {
+            this.setState({clPoRev: '', clPo: value}, this.fetchData);
+        } else {
+            this.setState({ [name]: value}, this.fetchData);
+        }
+    }
+
+    generateOptionClPo(selection) {
+        if (selection.project) {
+            let clPos = selection.project.pos.reduce(function (accumulator, currentValue) {
+                if (accumulator.indexOf(currentValue.clPo) === -1) {
+                    accumulator.push(currentValue.clPo)
+                }
+                return accumulator;
+            }, []);
+            if (!_.isEmpty(clPos)) {
+                let filteredPos = clPos.sort(function(a, b) {
+                    if (a < b) {
+                        return -1;
+                    } else if (a > b) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+                return filteredPos.map(po => {
+                    return (
+                        <option
+                            key={po}
+                            value={po}>{po}
+                        </option>
+                    );
+                });
+            }
+
+        }
+    }
+
+    generateOptionclPoRev(selection, clPo) {
+        if (selection.project) {
+            let clPoRevs = selection.project.pos.reduce(function (accumulator, currentValue) {
+                if (accumulator.indexOf(currentValue.clPoRev) === -1 && (clPo ? currentValue.clPo === clPo : true)) {
+                    accumulator.push(currentValue.clPoRev)
+                }
+                return accumulator;
+            }, []);
+            if (!_.isEmpty(clPoRevs)) {
+                let filteredPoRevs = clPoRevs.sort(function(a, b) {
+                    if (a < b) {
+                        return -1;
+                    } else if (a > b) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+                return filteredPoRevs.map(rev => {
+                    return (
+                        <option
+                            key={rev}
+                            value={rev}>{rev}
+                        </option>
+                    );
+                });
+            }
+        }
     }
 
     render() {
-        const { projectId, unit, period, clPo, data, loading } = this.state;
+        const { projectId, unit, period, clPo, clPoRev, data, loading } = this.state;
         const { alert, selection } = this.props;
 
         return (
@@ -105,6 +180,11 @@ class Dashboard extends React.Component {
                             </div>
                             <select className="form-control" name="clPo" value={clPo} onChange={this.handleChange}>
                                 <option key="0" value="">Select Po...</option>
+                                {this.generateOptionClPo(selection)}
+                            </select>
+                            <select className="form-control" name="clPoRev" value={clPoRev} onChange={this.handleChange}>
+                                <option key="0" value="">Select Revision...</option>
+                                {this.generateOptionclPoRev(selection, clPo)}
                             </select>
                             <select className="form-control" name="unit" value={unit} onChange={this.handleChange}>
                                 <option key="0" value="qty">Quantity</option>
@@ -125,7 +205,7 @@ class Dashboard extends React.Component {
                         </div>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
-                        <Line data={data} height={100} onElementsClick={this.onElementsClick}/>
+                        <Line data={data} height={100} onElementsClick={this.onElementsClick} getElementsAtEvent={this.getElementsAtEvent}/>
                     </div>
                 </div> 
             </Layout>
