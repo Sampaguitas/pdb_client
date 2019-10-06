@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
+import { saveAs } from 'file-saver';
 import { authHeader } from '../../_helpers';
 import { projectActions } from '../../_actions';
 import Layout from '../../_components/layout';
@@ -32,7 +33,7 @@ class Dashboard extends React.Component {
         this.fetchData = this.fetchData.bind(this);
         this.onElementsClick = this.onElementsClick.bind(this);
         this.getElementsAtEvent = this.getElementsAtEvent.bind(this);
-        this.handleGenerateFile = this.handleGenerateFile.bind(this);
+        this.downloadLineChart = this.downloadLineChart.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.generateOptionClPo = this.generateOptionClPo.bind(this);
         this.generateOptionclPoRev = this.generateOptionclPoRev.bind(this);
@@ -77,8 +78,31 @@ class Dashboard extends React.Component {
         }));
     }
 
-    handleGenerateFile(event) {
+    downloadLineChart(event) {
         event.preventDefault();
+        const { projectId, clPo, clPoRev, unit, period } = this.state;
+        this.setState({loading: true});
+        const requestOptions = {
+            method: 'GET',
+            headers: { ...authHeader(), 'Content-Type': 'application/json'},
+        };
+        return fetch(`${config.apiUrl}/dashboard/downloadLineChart?projectId=${projectId}&clPo=${clPo}&clPoRev=${clPoRev}&unit=${unit}&period=${period}`, requestOptions)
+        // .then(res => res.blob()).then(blob => saveAs(blob, 'Chart.xlsx'));
+        .then(responce => {
+            if (!responce.ok) {
+                if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
+                }
+                this.setState({
+                    loading: false,
+                    error: 'an error has occured'
+                });
+            } else {
+                this.setState({loading: false});
+                responce.blob().then(blob => saveAs(blob, 'Chart.xlsx'));
+            }
+        });
     }
 
     onElementsClick(elems) {
@@ -198,7 +222,7 @@ class Dashboard extends React.Component {
                                 <option key="4" value="quarter">Quarters</option>
                             </select>
                             <div className="input-group-append">
-                                <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleGenerateFile(event)}>
+                                <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.downloadLineChart(event)}>
                                     <span><FontAwesomeIcon icon={loading ? 'spinner' : 'file-chart-line'} className={loading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Generate</span>
                                 </button>
                             </div>
