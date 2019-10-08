@@ -49,7 +49,6 @@ class Dashboard extends React.Component {
     }
 
     fetchData() {
-        // event.preventDefault();
         const { projectId, unit, period, clPo, clPoRev, lines } = this.state;
         this.setState({loading: true});
         const requestOptions = {
