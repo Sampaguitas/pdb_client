@@ -7,7 +7,7 @@ import { authHeader } from '../../_helpers';
 import { projectActions } from '../../_actions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import './dashboard.css';
+// import './dashboard.css';
 
 import Line from '../../_components/chart/line';
 // import Chart from 'chart.js';
@@ -200,7 +200,7 @@ class Dashboard extends React.Component {
                 <h2>Dashboard : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="dashboard" className="full-height">
-                    <div className="action-row row ml-1 mb-5 mr-1" style={{height: '34px'}}>
+                    <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
                         <div className="input-group">
                             <div className="input-group-prepend">
                                 <span className="input-group-text" style={{width: '95px'}}>Select Units</span>
@@ -216,6 +216,7 @@ class Dashboard extends React.Component {
                             <select className="form-control" name="unit" value={unit} onChange={this.handleChange}>
                                 <option key="0" value="qty">Quantity</option>
                                 <option key="1" value="value">Value</option>
+                                <option key="2" value="weight">Weight</option>
                             </select>
                             <select className="form-control" name="period" value={period} onChange={this.handleChange}>
                                 <option key="0" value="day">Days</option>

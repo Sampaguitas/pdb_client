@@ -17,7 +17,7 @@ function arrayRemove(arr, value) {
         return ele != value;
     });
  
- }
+}
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {

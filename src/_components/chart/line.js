@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 // import Chart from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
-
-
-
 class LineChart extends Component {
 
     render() {
@@ -69,6 +66,7 @@ class LineChart extends Component {
             data={data} 
             options={options} 
             height={height}
+            responsive={true}
             // onElementsClick={onElementsClick}
             // getElementsAtEvent={getElementsAtEvent}
             // getDatasetAtEvent={getDatasetAtEvent}
