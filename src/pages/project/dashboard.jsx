@@ -23,7 +23,7 @@ class Dashboard extends React.Component {
         this.state = {
             projectId: '',
             unit: 'qty',
-            period: 'week',
+            period: 'quarter',
             clPo:'',
             clPoRev: '',
             lines: ['contract', 'rfiExp', 'rfiAct', 'released', 'shipExp', 'shipAct', 'delExp', 'delAct'],
