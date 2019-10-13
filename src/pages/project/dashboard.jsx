@@ -95,7 +95,7 @@ class Dashboard extends React.Component {
             headers: authHeader()
         };
 
-        return fetch(`${config.apiUrl}/po/getRevisions?ProjectId=${projectId}`, requestOptions)
+        return fetch(`${config.apiUrl}/po/getRevisions?projectId=${projectId}`, requestOptions)
         .then(responce => responce.text().then(text => {
             const data = text && JSON.parse(text);
             if (!responce.ok) {
