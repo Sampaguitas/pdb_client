@@ -30,9 +30,11 @@ class Dashboard extends React.Component {
             revisions: [],
             lines: ['contract', 'rfiExp', 'rfiAct', 'released', 'shipExp', 'shipAct', 'delExp', 'delAct'],
             data: {},
-            error: '',
+            // error: '',
             loadingChart: false,
-            loadingProject: false,     
+            loadingProject: false,
+            alert: {}
+
         };
         this.getProject = this.getProject.bind(this);
         this.getRevisions = this.getRevisions.bind(this);
@@ -48,16 +50,25 @@ class Dashboard extends React.Component {
         const { dispatch, location } = this.props
         var qs = queryString.parse(location.search);
         if (qs.id) {
-            this.setState({projectId: qs.id});
+            this.setState({
+                projectId: qs.id,
+                alert: {
+                    type:'',
+                    message:''
+                }
+            });
             this.getProject(qs.id); 
             this.fetchData(qs.id);
             this.getRevisions(qs.id);
+            // this.getAccesses(qs.id);
             // dispatch(projectActions.getById(qs.id));
         }
     }
 
     getProject(projectId) {
-        this.setState({loadingProject: true});
+        this.setState({
+            loadingProject: true,
+        });
 
         const requestOptions = {
             method: 'GET',
@@ -75,7 +86,10 @@ class Dashboard extends React.Component {
                 const error = (data && data.message) || Response.statusText;
                 this.setState({
                     loadingProject: false,
-                    error: error
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: error  
+                    }
                 });
             } else {
                 this.setState({
@@ -106,7 +120,10 @@ class Dashboard extends React.Component {
                 const error = (data && data.message) || Response.statusText;
                 this.setState({
                     loadingProject: false,
-                    error: error
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: error  
+                    }
                 });
             } else {
                 console.log('revisions:', revisions);
@@ -136,7 +153,10 @@ class Dashboard extends React.Component {
                 const error = (data && data.message) || Response.statusText;
                 this.setState({
                     loadingChart: false,
-                    error: error
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: error  
+                    }
                 });
             } else {
                 this.setState({
@@ -164,7 +184,10 @@ class Dashboard extends React.Component {
                 }
                 this.setState({
                     loadingChart: false,
-                    error: 'an error has occured'
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: 'an error has occured'  
+                    }
                 });
             } else {
                 this.setState({loadingChart: false});
@@ -267,8 +290,8 @@ class Dashboard extends React.Component {
     }
 
     render() {
-        const { projectId, projectName, unit, period, clPo, clPoRev, revisions, data, loadingChart } = this.state;
-        const { alert, selection } = this.props;
+        const { alert, projectId, projectName, unit, period, clPo, clPoRev, revisions, data, loadingChart } = this.state;
+        const { selection } = this.props; //alert
 
         return (
             <Layout alert={this.props.alert} accesses={selection.project && selection.project.accesses }>
@@ -321,13 +344,13 @@ class Dashboard extends React.Component {
     }
 }
 
-function mapStateToProps(state) {
-    const { alert, selection } = state;
-    return {
-        alert,
-        selection,
-    };
-}
+// function mapStateToProps(state) {
+//     const { alert, selection } = state;
+//     return {
+//         alert,
+//         selection,
+//     };
+// }
 
 const connectedDashboard = connect(mapStateToProps)(Dashboard);
 export { connectedDashboard as Dashboard };
