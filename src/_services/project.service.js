@@ -38,7 +38,7 @@ function getById(id) {
         headers: authHeader()
     };
 
-    return fetch(`${config.apiUrl}/project/findOne/?id=${id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/project/selection/?id=${id}`, requestOptions).then(handleResponse);
 }
 
 function update(project) {

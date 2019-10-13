@@ -22,15 +22,20 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {
             projectId: '',
+            projectName: '',
             unit: 'qty',
             period: 'quarter',
             clPo:'',
             clPoRev: '',
+            revisions: [],
             lines: ['contract', 'rfiExp', 'rfiAct', 'released', 'shipExp', 'shipAct', 'delExp', 'delAct'],
             data: {},
             error: '',
-            loading: false     
+            loadingChart: false,
+            loadingProject: false,     
         };
+        this.getProject = this.getProject.bind(this);
+        this.getRevisions = this.getRevisions.bind(this);
         this.fetchData = this.fetchData.bind(this);
         this.downloadLineChart = this.downloadLineChart.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -43,14 +48,79 @@ class Dashboard extends React.Component {
         const { dispatch, location } = this.props
         var qs = queryString.parse(location.search);
         if (qs.id) {
-            this.setState({projectId: qs.id}, this.fetchData);
-            dispatch(projectActions.getById(qs.id));
+            this.setState({projectId: qs.id});
+            this.getProject(qs.id); 
+            this.fetchData(qs.id);
+            this.getRevisions(qs.id);
+            // dispatch(projectActions.getById(qs.id));
         }
     }
 
-    fetchData() {
-        const { projectId, unit, period, clPo, clPoRev, lines } = this.state;
-        this.setState({loading: true});
+    getProject(projectId) {
+        this.setState({loadingProject: true});
+
+        const requestOptions = {
+            method: 'GET',
+            headers: authHeader()
+        };
+
+        return fetch(`${config.apiUrl}/project/findOne/?id=${projectId}`, requestOptions)
+        .then(responce => responce.text().then(text => {
+            const data = text && JSON.parse(text);
+            if (!responce.ok) {
+                if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
+                }
+                const error = (data && data.message) || Response.statusText;
+                this.setState({
+                    loadingProject: false,
+                    error: error
+                });
+            } else {
+                this.setState({
+                    loadingProject: false,
+                    projectName: data.name
+                });
+            }
+        }));
+    }
+
+    getRevisions(projectId) {
+        const { revisions } = this.state;
+        this.setState({loadingProject: true});
+
+        const requestOptions = {
+            method: 'GET',
+            headers: authHeader()
+        };
+
+        return fetch(`${config.apiUrl}/po/getRevisions?ProjectId=${projectId}`, requestOptions)
+        .then(responce => responce.text().then(text => {
+            const data = text && JSON.parse(text);
+            if (!responce.ok) {
+                if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
+                }
+                const error = (data && data.message) || Response.statusText;
+                this.setState({
+                    loadingProject: false,
+                    error: error
+                });
+            } else {
+                console.log('revisions:', revisions);
+                this.setState({
+                    loadingProject: false,
+                    revisions: data
+                });
+            }
+        }));
+    }
+
+    fetchData(projectId) {
+        const { unit, period, clPo, clPoRev, lines } = this.state;
+        this.setState({loadingChart: true});
         const requestOptions = {
             method: 'GET',
             headers: { ...authHeader(), 'Content-Type': 'application/json'},
@@ -65,12 +135,12 @@ class Dashboard extends React.Component {
                 }
                 const error = (data && data.message) || Response.statusText;
                 this.setState({
-                    loading: false,
+                    loadingChart: false,
                     error: error
                 });
             } else {
                 this.setState({
-                    loading: false,
+                    loadingChart: false,
                     data: data
                 });
             }
@@ -80,7 +150,7 @@ class Dashboard extends React.Component {
     downloadLineChart(event) {
         event.preventDefault();
         const { projectId, unit, period, clPo, clPoRev, lines } = this.state;
-        this.setState({loading: true});
+        this.setState({loadingChart: true});
         const requestOptions = {
             method: 'GET',
             headers: { ...authHeader(), 'Content-Type': 'application/json'},
@@ -93,11 +163,11 @@ class Dashboard extends React.Component {
                     location.reload(true);
                 }
                 this.setState({
-                    loading: false,
+                    loadingChart: false,
                     error: 'an error has occured'
                 });
             } else {
-                this.setState({loading: false});
+                this.setState({loadingChart: false});
                 responce.blob().then(blob => saveAs(blob, 'Chart.xlsx'));
             }
         });
@@ -106,18 +176,24 @@ class Dashboard extends React.Component {
 
     handleChange(event) {
         event.preventDefault();
+        const { projectId } = this.state;
         const name = event.target.name;
         const value = event.target.value;
         if (name === 'clPo') {
-            this.setState({clPoRev: '', clPo: value}, this.fetchData);
+            this.setState({clPoRev: '', clPo: value}, () => {
+                this.fetchData(projectId);
+            });
+            
         } else {
-            this.setState({ [name]: value}, this.fetchData);
+            this.setState({ [name]: value}, () => {
+                this.fetchData(projectId);
+            });
         }
     }
 
-    generateOptionClPo(selection) {
-        if (selection.project) {
-            let clPos = selection.project.pos.reduce(function (accumulator, currentValue) {
+    generateOptionClPo(revisions) {
+        if (revisions) {
+            let clPos = revisions.reduce(function (accumulator, currentValue) {
                 if (accumulator.indexOf(currentValue.clPo) === -1) {
                     accumulator.push(currentValue.clPo)
                 }
@@ -133,10 +209,10 @@ class Dashboard extends React.Component {
                         return 0;
                     }
                 });
-                return filteredPos.map(po => {
+                return filteredPos.map(function (po, index){
                     return (
                         <option
-                            key={po}
+                            key={index}
                             value={po}>{po}
                         </option>
                     );
@@ -146,9 +222,9 @@ class Dashboard extends React.Component {
         }
     }
 
-    generateOptionclPoRev(selection, clPo) {
-        if (selection.project) {
-            let clPoRevs = selection.project.pos.reduce(function (accumulator, currentValue) {
+    generateOptionclPoRev(revisions, clPo) {
+        if (revisions) {
+            let clPoRevs = revisions.reduce(function (accumulator, currentValue) {
                 if (accumulator.indexOf(currentValue.clPoRev) === -1 && (clPo ? currentValue.clPo === clPo : true)) {
                     accumulator.push(currentValue.clPoRev)
                 }
@@ -164,10 +240,10 @@ class Dashboard extends React.Component {
                         return 0;
                     }
                 });
-                return filteredPoRevs.map(rev => {
+                return filteredPoRevs.map(function (rev, index){
                     return (
                         <option
-                            key={rev}
+                            key={index}
                             value={rev}>{rev}
                         </option>
                     );
@@ -183,7 +259,7 @@ class Dashboard extends React.Component {
             let index = tempArray.indexOf(legendItem.text);
             tempArray.splice(index, 1);
             this.setState({lines: tempArray});
-        } else if (legendItem.hidden && !lines.indexOf(legendItem.text) > -1) {
+        } else if (legendItem.hidden && lines.indexOf(legendItem.text) === -1) {
             let tempArray = lines;
             tempArray.push(legendItem.text);
             this.setState({lines: tempArray});
@@ -191,13 +267,13 @@ class Dashboard extends React.Component {
     }
 
     render() {
-        const { projectId, unit, period, clPo, clPoRev, data, loading } = this.state;
+        const { projectId, projectName, unit, period, clPo, clPoRev, revisions, data, loadingChart } = this.state;
         const { alert, selection } = this.props;
 
         return (
             <Layout alert={this.props.alert} accesses={selection.project && selection.project.accesses }>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-                <h2>Dashboard : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Dashboard : {projectName ? projectName : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="dashboard" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
@@ -207,11 +283,11 @@ class Dashboard extends React.Component {
                             </div>
                             <select className="form-control" name="clPo" value={clPo} onChange={this.handleChange}>
                                 <option key="0" value="">Select Po...</option>
-                                {this.generateOptionClPo(selection)}
+                                {this.generateOptionClPo(revisions)}
                             </select>
                             <select className="form-control" name="clPoRev" value={clPoRev} onChange={this.handleChange}>
                                 <option key="0" value="">Select Revision...</option>
-                                {this.generateOptionclPoRev(selection, clPo)}
+                                {this.generateOptionclPoRev(revisions, clPo)}
                             </select>
                             <select className="form-control" name="unit" value={unit} onChange={this.handleChange}>
                                 <option key="0" value="qty">Quantity</option>
@@ -227,7 +303,7 @@ class Dashboard extends React.Component {
                             </select>
                             <div className="input-group-append">
                                 <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.downloadLineChart(event)}>
-                                    <span><FontAwesomeIcon icon={loading ? 'spinner' : 'file-chart-line'} className={loading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Generate</span>
+                                    <span><FontAwesomeIcon icon={loadingChart ? 'spinner' : 'file-chart-line'} className={loadingChart ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Generate</span>
                                 </button>
                             </div>
                         </div>
