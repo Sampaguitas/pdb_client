@@ -55,7 +55,7 @@ class Configuration extends React.Component {
         dispatch(erpActions.getAll());
         dispatch(opcoActions.getAll());
         dispatch(userActions.getAll());
-        dispatch(projectActions.getAll());
+        // dispatch(projectActions.getAll());
         dispatch(screenActions.getAll());
     }
 
@@ -68,7 +68,7 @@ class Configuration extends React.Component {
             dispatch(projectActions.getById(qs.id));
             console.log('stateReload');
         }
-        dispatch(projectActions.getAll());     
+        // dispatch(projectActions.getAll());     
     }
 
     handleSubmitProject(event, project) {

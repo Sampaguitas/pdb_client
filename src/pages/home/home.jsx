@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { opcoActions, projectActions } from '../../_actions';
+import { opcoActions, projectActions, accessActions } from '../../_actions';
 import { history } from '../../_helpers';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -88,8 +88,9 @@ class Home extends React.Component {
 
     componentDidMount() {
         const { dispatch } = this.props
-        dispatch(opcoActions.getAll());
+        // dispatch(opcoActions.getAll());
         dispatch(projectActions.getAll());
+        dispatch(accessActions.clear());
     }
 
     handleOnclick(event, project) {
@@ -196,11 +197,11 @@ class Home extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, opcos, projects } = state;
+    const { alert, projects } = state; //opcos
     const { projectLoading } = state.projects;
     return {
         alert,
-        opcos,
+        // opcos,
         projects,
         projectLoading,
     };

@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../_helpers';
-import { projectActions } from '../../_actions';
+import { accessActions } from '../../_actions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import './dashboard.css';
@@ -60,8 +60,7 @@ class Dashboard extends React.Component {
             this.getProject(qs.id); 
             this.fetchData(qs.id);
             this.getRevisions(qs.id);
-            // this.getAccesses(qs.id);
-            // dispatch(projectActions.getById(qs.id));
+            dispatch(accessActions.getAll(qs.id));
         }
     }
 
@@ -290,11 +289,12 @@ class Dashboard extends React.Component {
     }
 
     render() {
-        const { alert, projectId, projectName, unit, period, clPo, clPoRev, revisions, data, loadingChart } = this.state;
-        const { selection } = this.props; //alert
+        const { projectName, unit, period, clPo, clPoRev, revisions, data, loadingChart } = this.state;
+        const { accesses } = this.props; //alert
+        const alert = this.props.alert ? this.props.alert : this.state.alert;
 
         return (
-            <Layout alert={this.props.alert} accesses={selection.project && selection.project.accesses }>
+            <Layout alert={alert} accesses={accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <h2>Dashboard : {projectName ? projectName : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
@@ -344,13 +344,13 @@ class Dashboard extends React.Component {
     }
 }
 
-// function mapStateToProps(state) {
-//     const { alert, selection } = state;
-//     return {
-//         alert,
-//         selection,
-//     };
-// }
+function mapStateToProps(state) {
+    const { alert, accesses } = state;
+    return {
+        alert,
+        accesses,
+    };
+}
 
 const connectedDashboard = connect(mapStateToProps)(Dashboard);
 export { connectedDashboard as Dashboard };
