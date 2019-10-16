@@ -112,6 +112,20 @@ class SideBarMenu extends Component {
             case '/project': return true;
             case '/dashboard': return false;
             case '/duf': return false;
+            case '/expediting': return false;
+            case '/inspection': return false;
+            case '/releasedata': return false;
+            case '/shipping': return false;
+            case '/transportdocs': return false;
+            case '/packingdetails': return false;
+            case '/warehouse': return false;
+            case '/goodsreceipt': return false;
+            case '/stockmanagement': return false;
+            case '/callofforder': return false;
+            case '/pickinglists': return false;
+            case '/outgoingshipments': return false;
+            case '/projectwarhouse': return false;
+            case '/configuration': return false;
             default: true
         }
     }

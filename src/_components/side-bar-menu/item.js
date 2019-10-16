@@ -25,13 +25,13 @@ class Item extends Component {
                         }} tag="a"
                     >
                         <FontAwesomeIcon icon={item.icon} className="item-icon" name={item.icon}/>
-                        {!collapsed &&
+                        {/* {!collapsed && */}
                         <span className="item-text" onMouseEnter={event => handleItemOver(event, item.title)}>{item.title}
                                 {item.child &&
                                 <FontAwesomeIcon icon={show == item.title ? "angle-down" : "angle-right"} className="item-arrow float-right" style={{margin: '0px', verticalAlign: 'middle'}}/>
                                 }
                         </span>
-                        }
+                        {/*}}*/}
                     </NavLink>
                 :
                     <NavLink to={{ 
@@ -50,7 +50,7 @@ class Item extends Component {
                 }
                 {(!collapsed && item.child) &&
                     <div className="dropdown">
-                    <div name="show-animation"> {/*transition */}
+                    <div name="show-animation">
                         {show == item.title &&
                         <ul>
                             {item.child.map((subitem)=>

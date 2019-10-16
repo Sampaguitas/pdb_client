@@ -69,11 +69,11 @@ class User extends React.Component {
         return (
             <Layout alert={this.props.alert}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-                <div id="user">
-                    <h2>User Information</h2>
-                    <hr />
+                <h2>User Information</h2>
+                <hr />
+                <div id="user" className="full-height">
                     <div className="row">
-                        <div className="col-md-8 col-sm-12 mb-sm-3">
+                        <div className="col-md-8 col-sm-12 mb-sm-3 pr-md-0">
                             <div className="card mb-3">
                                 <div className="card-header">User Details</div>
                                 <div className="card-body">
