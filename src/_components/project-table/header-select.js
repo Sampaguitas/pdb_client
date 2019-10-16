@@ -46,7 +46,7 @@ class HeaderSelect extends Component{
                             cursor: 'pointer'
                         }}
                     >
-                        <option value="any">Any</option>
+                        {/* <option value="any">Any</option> */}
                         {options && arraySorted(options, optionText).map(option => {
                             return (
                                 <option

@@ -7,6 +7,7 @@ import Modal from "../../_components/modal";
 import Input from '../../_components/input';
 import Layout from '../../_components/layout';
 import Select from '../../_components/select';
+import HeaderInput from '../../_components/project-table/header-input';
 
 function arraySorted(array, field) {
     if (array) {
@@ -262,7 +263,90 @@ class Opco extends React.Component {
                 <h2>Add or Update operation company</h2>
                 <hr />
                 <div id="opco" className="full-height">
-                    <div className="row full-height" >
+                    <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                        <div className="ml-auto pull-right">
+                            <button
+                                className="btn btn-leeuwen-blue bt-lg"
+                                onClick={this.showModal}
+                                style={{height: '34px'}}
+                            >
+                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create Opco</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                        <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
+                            <div className="table-responsive custom-table-container" >
+                                <table className="table table-hover table-bordered table-sm">
+                                    <thead>
+                                        <tr>
+                                            <HeaderInput
+                                                type="text"
+                                                title="Code"
+                                                name="code"
+                                                value={code}
+                                                onChange={this.handleChangeHeader}
+                                                width="15%" 
+                                            />
+                                            <HeaderInput
+                                                type="text"
+                                                title="Name"
+                                                name="name"
+                                                value={name}
+                                                onChange={this.handleChangeHeader}
+                                                width="40%" 
+                                            />
+                                            <HeaderInput
+                                                type="text"
+                                                title="City"
+                                                name="city"
+                                                value={city}
+                                                onChange={this.handleChangeHeader}
+                                                width="15%" 
+                                            />
+                                            <HeaderInput
+                                                type="text"
+                                                title="Country"
+                                                name="country"
+                                                value={country}
+                                                onChange={this.handleChangeHeader}
+                                                width="15%" 
+                                            />
+                                            <HeaderInput
+                                                type="text"
+                                                title="Region"
+                                                name="region"
+                                                value={region}
+                                                onChange={this.handleChangeHeader}
+                                                width="15%" 
+                                            />
+                                        </tr>
+                                    </thead>
+                                    <tbody className="full-height">
+                                        {opcos.items && this.filterName(opcos).map((o) =>
+                                            <tr key={o._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, o._id)}>
+                                                <td>{o.code}</td>
+                                                <td>{o.name}</td>
+                                                <td>{o.city}</td>
+                                                <td>{o.country}</td>
+                                                <td>{o.region.name}</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+
+
+                    
+                    {/* <div className="row full-height" >
                         <div className="col-12 full-height">
                             <div className="card full-height" id="tblOpcoContainer">
                                 <div className="card-header">
@@ -277,7 +361,7 @@ class Opco extends React.Component {
                                         </div>
                                     </div>  
                                 </div>
-                                <div className="card-body"> {/* table-responsive */}
+                                <div className="card-body">
                                     <table className="table table-hover table-bordered table-sm">
                                         <thead>
                                             <tr style={{display: 'block', height: '62px'}}>
@@ -312,7 +396,9 @@ class Opco extends React.Component {
                                     </table>
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
+
+
                         <Modal
                             show={show}
                             hideModal={this.hideModal}
@@ -458,7 +544,7 @@ class Opco extends React.Component {
                                 </form>
                             </div>
                         </Modal>
-                    </div>
+                    {/* </div> */}
                 </div>
             </Layout>
         );

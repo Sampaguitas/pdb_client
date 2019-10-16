@@ -189,15 +189,15 @@ class General extends React.Component {
         const { accesses } = this.props.selection.project;
         const { project } = this.state;
         var userArray = []
-        var i
+        // var i
         if (users.items) {
-            for(i=0;i<users.items.length;i++){
+            for(var i=0;i<users.items.length;i++){
                 var result = _.find(accesses, { 'userId' : users.items[i]._id });
                 if (result) {
                     let NewUserArrayElement = {
-                        'userId': result.user._id,
-                        'userName': result.user.userName,
-                        'name': result.user.name,
+                        'userId': users.items[i]._id, //result.user._id,
+                        'userName': users.items[i].userName, //result.user.userName,
+                        'name': users.items[i].name, // result.user.name,
                         'isExpediting': result.isExpediting,
                         'isInspection': result.isInspection,
                         'isShipping': result.isShipping,

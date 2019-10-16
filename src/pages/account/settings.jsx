@@ -8,6 +8,8 @@ import Modal from "../../_components/modal";
 import Input from "../../_components/input";
 import Select from '../../_components/select';
 import Layout from "../../_components/layout";
+import HeaderInput from '../../_components/project-table/header-input';
+import HeaderCheckBox from '../../_components/project-table/header-check-box';
 
 function arraySorted(array, field) {
   if (array) {
@@ -38,11 +40,11 @@ function doesMatch(search, array, type) {
           case 'Number': 
               return array == Number(search);
           case 'Boolean':
-            if (Number(search) == 1) {
+            if (search == 'any') {
               return true;
-            } else if (Number(search) == 2) {
+            } else if (search == 'true') {
               return !!array == 1;
-            } else if (Number(search) == 3) {
+            } else if (search == 'false') {
               return !!array == 0;
             }
           default: return true;
@@ -78,8 +80,8 @@ class Settings extends React.Component {
       show: false
       
     };
-    this.getScrollWidthY = this.getScrollWidthY.bind(this);
-    this.getTblBound = this.getTblBound.bind(this);
+    // this.getScrollWidthY = this.getScrollWidthY.bind(this);
+    // this.getTblBound = this.getTblBound.bind(this);
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.handleChangeUser = this.handleChangeUser.bind(this);
@@ -95,33 +97,6 @@ class Settings extends React.Component {
   componentDidMount() {
     this.props.dispatch(userActions.getAll());
     this.props.dispatch(opcoActions.getAll());
-  }
-
-  getScrollWidthY() {
-    var scroll = document.getElementById("tblSettingsBody");
-    if (!scroll) {
-        return 0;
-    } else {
-        if(scroll.clientHeight == scroll.scrollHeight){
-            return 0;
-        } else {
-            return 18;
-        }
-    }
-  }
-
-  getTblBound() {
-    const tblContainer = document.getElementById("tblSettingsContainer");
-    if (!tblContainer) {
-      return {};
-    }
-    const rect = tblContainer.getBoundingClientRect();
-    return {
-      left: rect.left,
-      top: rect.top + window.scrollY,
-      width: rect.width || rect.right - rect.left,
-      height: rect.height || rect.bottom - rect.top
-    };
   }
 
   showModal() {
@@ -279,70 +254,86 @@ class Settings extends React.Component {
   render() {
     const { user, userName, name, opco, region, isAdmin, isSuperAdmin, submitted } = this.state;
     const { registering, userUpdating, userDeleting, alert, opcos } = this.props;
-    const tblBound = this.getTblBound();
-    const tblScrollWidth = this.getScrollWidthY();
+
     return (
       <Layout alert={this.props.alert}>
         {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-        <div id="setting" className="full-height">
           <h2>Add or Update user</h2>
           <hr />
-          <div className="row full-height">
-            <div className="col-12 full-height">
-              <div className="card full-height" id="tblSettingsContainer">
-                <div className="card-header">
-                  <div className="row">
-                    <div className="col-8">
-                      <h5>Users</h5>
-                    </div>
-                    <div className="col-4 text-right">
-                      <div className="modal-link" >
-                        <FontAwesomeIcon icon="plus" className="red" name="plus" onClick={this.showModal}/>
-                      </div>
-                    </div>
-                  </div>
-                  
-                </div>
-                <div className="card-body"> {/* table-responsive */}
+          <div id="setting" className="full-height">
+            <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+              <div className="ml-auto pull-right">
+                  <button
+                      className="btn btn-leeuwen-blue bt-lg"
+                      onClick={this.showModal}
+                      style={{height: '34px'}}
+                  >
+                      <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create User</span>
+                  </button>
+              </div>
+            </div>
+            <div className="" style={{height: 'calc(100% - 44px)'}}>
+              <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
+                <div className="table-responsive custom-table-container" >
                   <table className="table table-hover table-bordered table-sm">
                     <thead>
-                      <tr style={{display: 'block', height: '62px'}}>
-                        <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>Initials<br />
-                          <input className="form-control" name="userName" value={userName} onChange={this.handleChangeHeader} />
-                        </th>
-                        <th scope="col" style={{width: `${tblBound.width*0.30 + 'px'}`}}>Name<br />
-                          <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
-                        </th>
-                        <th scope="col" style={{width: `${tblBound.width*0.35 + 'px'}`}}>Operating Company<br />
-                          <input className="form-control" name="opco" value={opco} onChange={this.handleChangeHeader} />
-                        </th>
-                        <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>Region<br />
-                          <input className="form-control" name="region" value={region} onChange={this.handleChangeHeader} />
-                        </th>
-                        <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>Admin<br />
-                        <select className="form-control" name="isAdmin" value={isAdmin} onChange={this.handleChangeHeader}>
-                          <option key="1" value="1">Any</option>
-                          <option key="2" value="2">True</option>
-                          <option key="3" value="3">False</option>                  
-                        </select>
-                        </th>
-                        <th scope="col" style={{width: `${tblBound.width*0.10 + 'px'}`}}>SpAdmin<br />
-                        <select className="form-control" name="isSuperAdmin" value={isSuperAdmin} onChange={this.handleChangeHeader}>
-                          <option key="1" value="1">Any</option>
-                          <option key="2" value="2">True</option> 
-                          <option key="3" value="3">False</option>  
-                        </select>
-                        </th>
+                      <tr>
+                        <HeaderInput
+                            type="text"
+                            title="Initials"
+                            name="userName"
+                            value={userName}
+                            onChange={this.handleChangeHeader}
+                            width="10%" 
+                        />
+                        <HeaderInput
+                            type="text"
+                            title="Name"
+                            name="name"
+                            value={name}
+                            onChange={this.handleChangeHeader}
+                            width="30%" 
+                        />
+                        <HeaderInput
+                            type="text"
+                            title="Operating Company"
+                            name="opco"
+                            value={opco}
+                            onChange={this.handleChangeHeader}
+                            width="30%"
+                        />
+                        <HeaderInput
+                            type="text"
+                            title="Region"
+                            name="region"
+                            value={region}
+                            onChange={this.handleChangeHeader}
+                            width="10%"
+                        />
+                        <HeaderCheckBox
+                            title="Admin"
+                            name="isAdmin"
+                            value={isAdmin}
+                            onChange={this.handleChangeHeader}
+                            width="10%"
+                        />
+                        <HeaderCheckBox
+                            title="SpAdmin"
+                            name="isSuperAdmin"
+                            value={isSuperAdmin}
+                            onChange={this.handleChangeHeader}
+                            width="10%"
+                        />
                       </tr>
                     </thead>
-                    <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblSettingsBody">
+                    <tbody className="full-height">
                       {this.props.users.items && this.filterName(this.props.users).map((u) =>
-                        <tr key={u._id}> {/* onClick={(event) => this.handleOnclick(event, u._id)} */}
-                          <td style={{width: `${tblBound.width*0.10 + 'px'}`, cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.userName}</td>
-                          <td style={{width: `${tblBound.width*0.30 + 'px'}`, cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.name}</td>
-                          <td style={{width: `${tblBound.width*0.35 + 'px'}`, cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.name}</td>
-                          <td style={{width: `${tblBound.width*0.15 + 'px'}`, cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.region.name}</td>
-                          <td style={{width: `${tblBound.width*0.10 + 'px'}`}} data-type="checkbox">
+                        <tr key={u._id}>
+                          <td onClick={(event) => this.handleOnclick(event, u._id)}>{u.userName}</td>
+                          <td onClick={(event) => this.handleOnclick(event, u._id)}>{u.name}</td>
+                          <td onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.name}</td>
+                          <td onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.region.name}</td>
+                          <td data-type="checkbox">
                               <TableCheckBoxAdmin
                                   id={u._id}
                                   checked={u.isAdmin}
@@ -351,7 +342,7 @@ class Settings extends React.Component {
                                   data-type="checkbox"
                               />
                           </td>
-                          <td style={{width: `${tblBound.width*0.10-tblScrollWidth + 'px'}`}} data-type="checkbox">
+                          <td data-type="checkbox">
                               <TableCheckBoxSuperAdmin
                                   id={u._id}
                                   checked={u.isSuperAdmin}
@@ -367,6 +358,7 @@ class Settings extends React.Component {
                 </div>
               </div>
             </div>
+
             <Modal
               show={this.state.show}
               hideModal={this.hideModal}
@@ -492,7 +484,6 @@ class Settings extends React.Component {
                     </form>
               </div>
             </Modal>
-          </div>
         </div>
       </Layout>
     );

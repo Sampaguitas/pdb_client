@@ -4,6 +4,7 @@ import { opcoActions, projectActions, accessActions } from '../../_actions';
 import { history } from '../../_helpers';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import HeaderInput from '../../_components/project-table/header-input';
 import './home.css';
 
 function projectSorted(project) {
@@ -49,8 +50,6 @@ class Home extends React.Component {
             erp: '',
             loaded: false,
         };
-        this.getScrollWidthY = this.getScrollWidthY.bind(this);
-        this.getTblBound = this.getTblBound.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
         this.filterName = this.filterName.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -58,37 +57,10 @@ class Home extends React.Component {
         this.withoutProjectMaster = this.withoutProjectMaster.bind(this);
     }
 
-    getScrollWidthY() {
-        var scroll = document.getElementById("tblHomeBody");
-        if (!scroll) {
-            return 0;
-        } else {
-            if(scroll.clientHeight == scroll.scrollHeight){
-                return 0;
-            } else {
-                return 15;
-            }
-        }
-    }
-
-    getTblBound() {
-        const tblContainer = document.getElementById("tblHomeContainer");
-        if (!tblContainer) {
-            return {};
-        }
-        const rect = tblContainer.getBoundingClientRect();
-        console.log('height:', rect.height);
-        return {
-            left: rect.left,
-            top: rect.top + window.scrollY,
-            width: rect.width || rect.right - rect.left,
-            height: rect.height || rect.bottom - rect.top
-        };
-    }
-
     componentDidMount() {
         const { dispatch } = this.props
         // dispatch(opcoActions.getAll());
+        dispatch(projectActions.clearSelection());
         dispatch(projectActions.getAll());
         dispatch(accessActions.clear());
     }
@@ -102,7 +74,10 @@ class Home extends React.Component {
     }
 
     handleChange(event) {
+        console.log('toto');
         const { name, value } = event.target;
+        console.log('name:',name);
+        console.log('value:',value);
         this.setState({
             [name]: value
         });
@@ -134,59 +109,78 @@ class Home extends React.Component {
     render() {
         const { number, name, opco, erp, tblWidth, tblHeight  } = this.state;
         const { alert, projects } = this.props;
-        const tblBound = this.getTblBound();
-        const tblScrollWidth = this.getScrollWidthY();
+        // const tblBound = this.getTblBound();
+        // const tblScrollWidth = this.getScrollWidthY();
         return (
             <Layout alert={this.props.alert}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <h2>Overview</h2>
                 <hr />
                 <div id="overview" className="full-height">
-                    <div className="row full-height">
-                        <div className="col-12 full-height">
-                            <div className="card full-height" id="tblHomeContainer">
-                                <div className="card-header">
-                                    <div className="row">
-                                        <div className="col-8">
-                                            <h5>Select your project</h5>
-                                        </div>
-                                        <div className="col-4 text-right">
-                                            <div className="modal-link" >
-                                                <FontAwesomeIcon icon="plus" className="red" name="plus" onClick={this.gotoProject}/>
-                                            </div>
-                                        </div>
-                                    </div>    
-                                </div>
-                                <div className="card-body"> {/* table-responsive */}
-                                    <table className="table table-hover table-bordered table-sm">
-                                        <thead>
-                                            <tr style={{display: 'block', height: '62px'}}>
-                                                <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>Nr<br />
-                                                <input className="form-control" name="number" value={number} onChange={this.handleChange} />
-                                                </th>
-                                                <th scope="col" style={{width: `${tblBound.width*0.35 + 'px'}`}}>Project<br />
-                                                <input className="form-control" name="name" value={name} onChange={this.handleChange} />
-                                                </th>
-                                                <th scope="col" style={{width: `${tblBound.width*0.35 + 'px'}`}}>Opco<br />
-                                                <input className="form-control" name="opco" value={opco} onChange={this.handleChange} />
-                                                </th>
-                                                <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>ERP<br />
-                                                <input className="form-control" name="erp" value={erp} onChange={this.handleChange} />
-                                                </th>
+                    <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                        <div className="ml-auto pull-right">
+                            <button
+                                className="btn btn-leeuwen-blue bt-lg"
+                                onClick={this.gotoProject}
+                                style={{height: '34px'}}
+                            >
+                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create Project</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div className="" style={{height: 'calc(100% - 44px)'}}>   
+                        <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
+                            <div className="table-responsive custom-table-container" >
+                                <table className="table table-hover table-bordered table-sm">
+                                    <thead>
+                                        <tr>
+                                            <HeaderInput
+                                                type="number"
+                                                title="Nr"
+                                                name="number"
+                                                value={number}
+                                                onChange={this.handleChange}
+                                                width="10%"
+                                                
+                                            />
+                                            <HeaderInput
+                                                type="text"
+                                                title="Project"
+                                                name="name"
+                                                value={name}
+                                                onChange={this.handleChange}
+                                                width="40%"
+                                            />
+                                            <HeaderInput
+                                                type="text"
+                                                title="Opco"
+                                                name="opco"
+                                                value={opco}
+                                                onChange={this.handleChange}
+                                                width="40%"
+                                            />
+                                            <HeaderInput
+                                                type="text"
+                                                title="ERP"
+                                                name="erp"
+                                                value={erp}
+                                                onChange={this.handleChange}
+                                                width="10%"
+                                            />
+                                        </tr>
+                                    </thead>
+                                    <tbody className="full-height">
+                                        {projects.items && this.withoutProjectMaster(projects).map((project) =>
+                                            <tr key={project._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, project)}>
+                                                <td>{project.number}</td>
+                                                <td>{project.name}</td>
+                                                <td>{project.opco.name}</td>
+                                                <td>{project.erp.name}</td>
                                             </tr>
-                                        </thead>
-                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblHomeBody">
-                                            {projects.items && this.withoutProjectMaster(projects).map((project) =>
-                                                <tr key={project._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, project)}>
-                                                    <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{project.number}</td>
-                                                    <td style={{width: `${tblBound.width*0.35 + 'px'}`}}>{project.name}</td>
-                                                    <td style={{width: `${tblBound.width*0.35 + 'px'}`}}>{project.opco.name}</td>
-                                                    <td style={{width: `${tblBound.width*0.15-tblScrollWidth + 'px'}`}}>{project.erp.name}</td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                        )}
+                                    </tbody>
+                                    
+                                </table>
                             </div>
                         </div>
                     </div>

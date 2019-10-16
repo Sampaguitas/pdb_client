@@ -190,6 +190,9 @@ h5 {
 
 
 /* ///////////////////////////////////////////////// */
+
+
+
 .custom-table-container {
   overflow:scroll;
   widows: 100%;
@@ -207,7 +210,7 @@ h5 {
 
 }
 
-.custom-table-container thead th:first-child {
+.custom-table-container .rowSelection thead th:first-child {
   left: -1px !important;
   z-index: 2;
 }

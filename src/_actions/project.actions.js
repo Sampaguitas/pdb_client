@@ -8,7 +8,9 @@ export const projectActions = {
     getAll,
     getById,
     update,
-    delete: _delete
+    delete: _delete,
+    clearSelection,
+    clearProjects
 };
 
 function create(project) {
@@ -111,3 +113,12 @@ function _delete(id) {
     function success(id) { return { type: projectConstants.DELETE_SUCCESS, id } }
     function failure(id, error) { return { type: projectConstants.DELETE_FAILURE, id, error } }
 }
+
+function clearSelection() {
+    return { type: projectConstants.CLEAR_SELECTION };
+}
+
+function clearProjects() {
+    return { type: projectConstants.CLEAR_PROJECTS };
+}
+

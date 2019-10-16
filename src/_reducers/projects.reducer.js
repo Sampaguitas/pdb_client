@@ -99,6 +99,8 @@ export function projects(state = {}, action) {
                     return project;
                 })
             };
+        case projectConstants.CLEAR_PROJECTS:
+            return {};
         default:
             return state
     }

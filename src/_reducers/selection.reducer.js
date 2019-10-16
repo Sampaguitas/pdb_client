@@ -16,6 +16,8 @@ export function selection(state = {}, action) {
       };
     case projectConstants.GET_FAILURE:
       return {};
+    case projectConstants.CLEAR_SELECTION:
+        return {};    
     default:
       return state
   }
