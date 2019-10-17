@@ -204,7 +204,7 @@ h5 {
   position: sticky !important;
   top: -1px !important;
   z-index: 1;
-  background-color:white;
+  background-color:#f8f9fa;
   box-shadow: 0px 0px 1px #ddd !important;
   box-sizing: border-box;
 
