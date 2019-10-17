@@ -65,8 +65,8 @@ class Opco extends React.Component {
             submitted: false,
             show: false,
         };
-        this.getScrollWidthY = this.getScrollWidthY.bind(this);
-        this.getTblBound = this.getTblBound.bind(this);
+        // this.getScrollWidthY = this.getScrollWidthY.bind(this);
+        // this.getTblBound = this.getTblBound.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.handleChangeOpco = this.handleChangeOpco.bind(this);
@@ -86,33 +86,33 @@ class Opco extends React.Component {
         var qs = queryString.parse(location.search);
     }
 
-    getScrollWidthY() {
-        var scroll = document.getElementById("tblOpcoBody");
-        if (!scroll) {
-            return 0;
-        } else {
-            if(scroll.clientHeight == scroll.scrollHeight){
-                return 0;
-            } else {
-                return 15;
-            }
-        }
-    }
+    // getScrollWidthY() {
+    //     var scroll = document.getElementById("tblOpcoBody");
+    //     if (!scroll) {
+    //         return 0;
+    //     } else {
+    //         if(scroll.clientHeight == scroll.scrollHeight){
+    //             return 0;
+    //         } else {
+    //             return 15;
+    //         }
+    //     }
+    // }
 
-    getTblBound() {
-        const tblContainer = document.getElementById("tblOpcoContainer");
-        if (!tblContainer) {
-            return {};
-        }
-        const rect = tblContainer.getBoundingClientRect();
-        console.log('height:', rect.height);
-        return {
-            left: rect.left,
-            top: rect.top + window.scrollY,
-            width: rect.width || rect.right - rect.left,
-            height: rect.height || rect.bottom - rect.top
-        };
-    }
+    // getTblBound() {
+    //     const tblContainer = document.getElementById("tblOpcoContainer");
+    //     if (!tblContainer) {
+    //         return {};
+    //     }
+    //     const rect = tblContainer.getBoundingClientRect();
+    //     console.log('height:', rect.height);
+    //     return {
+    //         left: rect.left,
+    //         top: rect.top + window.scrollY,
+    //         width: rect.width || rect.right - rect.left,
+    //         height: rect.height || rect.bottom - rect.top
+    //     };
+    // }
 
     showModal() {
         this.setState({
@@ -255,8 +255,8 @@ class Opco extends React.Component {
     render() {
         const { alert, opcoCreating, opcoUpdating, opcoDeleting, locales, regions, opcos } = this.props;
         const { opco, show, code, name, city, country, locale, region, submitted } = this.state;
-        const tblBound = this.getTblBound();
-        const tblScrollWidth = this.getScrollWidthY();
+        // const tblBound = this.getTblBound();
+        // const tblScrollWidth = this.getScrollWidthY();
         return (
             <Layout alert={this.props.alert}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
@@ -337,66 +337,6 @@ class Opco extends React.Component {
                             </div>
                         </div>
                     </div>
-
-
-
-
-
-
-
-
-                    
-                    {/* <div className="row full-height" >
-                        <div className="col-12 full-height">
-                            <div className="card full-height" id="tblOpcoContainer">
-                                <div className="card-header">
-                                    <div className="row">
-                                        <div className="col-8">
-                                            <h5>Operation companies</h5>
-                                        </div>
-                                        <div className="col-4 text-right">
-                                            <div className="modal-link" >
-                                                <FontAwesomeIcon icon="plus" className="red" name="plus" onClick={this.showModal}/>
-                                            </div> 
-                                        </div>
-                                    </div>  
-                                </div>
-                                <div className="card-body">
-                                    <table className="table table-hover table-bordered table-sm">
-                                        <thead>
-                                            <tr style={{display: 'block', height: '62px'}}>
-                                                <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>Code<br />
-                                                    <input className="form-control" name="code" value={code} onChange={this.handleChangeHeader} />
-                                                </th>
-                                                <th scope="col" style={{width: `${tblBound.width*0.40 + 'px'}`}}>Name<br />
-                                                    <input className="form-control" name="name" value={name} onChange={this.handleChangeHeader} />
-                                                </th>
-                                                <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>City<br />
-                                                    <input className="form-control" name="city" value={city} onChange={this.handleChangeHeader} />
-                                                </th>
-                                                <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>Country<br />
-                                                    <input className="form-control" name="country" value={country} onChange={this.handleChangeHeader} />
-                                                </th>
-                                                <th scope="col" style={{width: `${tblBound.width*0.15 + 'px'}`}}>Region<br />
-                                                    <input className="form-control" name="region" value={region} onChange={this.handleChangeHeader} />
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody style={{display:'block', height: `${tblBound.height-36-25-62 + 'px'}`, overflow:'auto'}} id="tblOpcoBody">
-                                            {opcos.items && this.filterName(opcos).map((o) =>
-                                                <tr key={o._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, o._id)}>
-                                                    <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{o.code}</td>
-                                                    <td style={{width: `${tblBound.width*0.40 + 'px'}`}}>{o.name}</td>
-                                                    <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{o.city}</td>
-                                                    <td style={{width: `${tblBound.width*0.15 + 'px'}`}}>{o.country}</td>
-                                                    <td style={{width: `${tblBound.width*0.15-tblScrollWidth + 'px'}`}}>{o.region.name}</td>
-                                                </tr>
-                                            )}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div> */}
 
 
                         <Modal

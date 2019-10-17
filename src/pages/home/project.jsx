@@ -75,8 +75,8 @@ class Project extends React.Component {
             loaded: false,
             submitted: false
         };
-        this.getScrollWidthY = this.getScrollWidthY.bind(this);
-        this.getTblBound = this.getTblBound.bind(this);
+        // this.getScrollWidthY = this.getScrollWidthY.bind(this);
+        // this.getTblBound = this.getTblBound.bind(this);
         this.handleChangeProject = this.handleChangeProject.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
@@ -97,32 +97,32 @@ class Project extends React.Component {
         dispatch(userActions.getAll());
     }
 
-    getTblBound() {
-        const tblContainer = document.getElementById("tblProjectContainer");
-        if (!tblContainer) {
-            return {};
-        }
-        const rect = tblContainer.getBoundingClientRect();
-        return {
-            left: rect.left,
-            top: rect.top + window.scrollY,
-            width: rect.width || rect.right - rect.left,
-            height: rect.height || rect.bottom - rect.top
-        };
-    }    
+    // getTblBound() {
+    //     const tblContainer = document.getElementById("tblProjectContainer");
+    //     if (!tblContainer) {
+    //         return {};
+    //     }
+    //     const rect = tblContainer.getBoundingClientRect();
+    //     return {
+    //         left: rect.left,
+    //         top: rect.top + window.scrollY,
+    //         width: rect.width || rect.right - rect.left,
+    //         height: rect.height || rect.bottom - rect.top
+    //     };
+    // }    
 
-    getScrollWidthY() {
-        var scroll = document.getElementById("tblProjectBody");
-        if (!scroll) {
-            return 0;
-        } else {
-            if(scroll.clientHeight == scroll.scrollHeight){
-                return 0;
-            } else {
-                return 15;
-            }
-        }
-    }    
+    // getScrollWidthY() {
+    //     var scroll = document.getElementById("tblProjectBody");
+    //     if (!scroll) {
+    //         return 0;
+    //     } else {
+    //         if(scroll.clientHeight == scroll.scrollHeight){
+    //             return 0;
+    //         } else {
+    //             return 15;
+    //         }
+    //     }
+    // }    
 
     handleChangeProject(event) {
         const { project } = this.state;
@@ -240,8 +240,8 @@ class Project extends React.Component {
         const { alert, currencies, erps, projectCreating, opcos, projects, users } = this.props;
         const { project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, loaded, submitted } = this.state;
         const { projectUsers } = this.state.project;
-        const tblBound = this.getTblBound();
-        const tblScrollWidth = this.getScrollWidthY();
+        // const tblBound = this.getTblBound();
+        // const tblScrollWidth = this.getScrollWidthY();
         // let user = JSON.parse(localStorage.getItem('user'));
         {users.items && loaded === false && this.stateReload()}
         return (
