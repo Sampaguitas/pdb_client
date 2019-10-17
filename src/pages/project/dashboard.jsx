@@ -316,7 +316,7 @@ class Dashboard extends React.Component {
                                 <option key="0" value="value">Value</option>
                                 <option key="1" value="pcs">Qty (Pcs)</option>
                                 <option key="2" value="mtr">Qty (Mtr/Ft)</option>
-                                {/* <option key="3" value="weight">Weight (Kgs/Lbs)</option> */}
+                                <option key="3" value="weight">Weight (Kgs/Lbs)</option>
                             </select>
                             <select className="form-control" name="period" value={period} onChange={this.handleChange}>
                                 <option key="0" value="day">Days</option>
