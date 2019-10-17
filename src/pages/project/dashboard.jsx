@@ -23,7 +23,7 @@ class Dashboard extends React.Component {
         this.state = {
             projectId: '',
             projectName: '',
-            unit: 'qty',
+            unit: 'value',
             period: 'quarter',
             clPo:'',
             clPoRev: '',
@@ -302,7 +302,7 @@ class Dashboard extends React.Component {
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
                         <div className="input-group">
                             <div className="input-group-prepend">
-                                <span className="input-group-text" style={{width: '95px'}}>Select Units</span>
+                                <span className="input-group-text" style={{width: '95px'}}>Select Params</span>
                             </div>
                             <select className="form-control" name="clPo" value={clPo} onChange={this.handleChange}>
                                 <option key="0" value="">Select Po...</option>
@@ -313,9 +313,10 @@ class Dashboard extends React.Component {
                                 {this.generateOptionclPoRev(revisions, clPo)}
                             </select>
                             <select className="form-control" name="unit" value={unit} onChange={this.handleChange}>
-                                <option key="0" value="qty">Quantity</option>
-                                <option key="1" value="value">Value</option>
-                                {/* <option key="2" value="weight">Weight</option> */}
+                                <option key="0" value="value">Value</option>
+                                <option key="1" value="pcs">Qty (Pcs)</option>
+                                <option key="2" value="mtr">Qty (Mtr/Ft)</option>
+                                {/* <option key="3" value="weight">Weight (Kgs/Lbs)</option> */}
                             </select>
                             <select className="form-control" name="period" value={period} onChange={this.handleChange}>
                                 <option key="0" value="day">Days</option>
