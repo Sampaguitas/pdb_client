@@ -65,8 +65,6 @@ class Opco extends React.Component {
             submitted: false,
             show: false,
         };
-        // this.getScrollWidthY = this.getScrollWidthY.bind(this);
-        // this.getTblBound = this.getTblBound.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.handleChangeOpco = this.handleChangeOpco.bind(this);
@@ -85,34 +83,6 @@ class Opco extends React.Component {
         dispatch(regionActions.getAll());
         var qs = queryString.parse(location.search);
     }
-
-    // getScrollWidthY() {
-    //     var scroll = document.getElementById("tblOpcoBody");
-    //     if (!scroll) {
-    //         return 0;
-    //     } else {
-    //         if(scroll.clientHeight == scroll.scrollHeight){
-    //             return 0;
-    //         } else {
-    //             return 15;
-    //         }
-    //     }
-    // }
-
-    // getTblBound() {
-    //     const tblContainer = document.getElementById("tblOpcoContainer");
-    //     if (!tblContainer) {
-    //         return {};
-    //     }
-    //     const rect = tblContainer.getBoundingClientRect();
-    //     console.log('height:', rect.height);
-    //     return {
-    //         left: rect.left,
-    //         top: rect.top + window.scrollY,
-    //         width: rect.width || rect.right - rect.left,
-    //         height: rect.height || rect.bottom - rect.top
-    //     };
-    // }
 
     showModal() {
         this.setState({

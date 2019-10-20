@@ -29,7 +29,8 @@ export function fieldnames(state = {}, action) {
             };
         case fieldnameConstants.GETALL_REQUEST:
             return {
-                loading: true
+                loading: true,
+                items: state.items //keep existing state during request
             };
         case fieldnameConstants.GETALL_SUCCESS:
             return {

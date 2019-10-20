@@ -29,7 +29,8 @@ export function opcos(state = {}, action) {
             };
         case opcoConstants.GETALL_REQUEST:
             return {
-                opcoLoading: true
+                opcoLoading: true,
+                items: state.items //keep existing state during request
             };
         case opcoConstants.GETALL_SUCCESS:
             return {

@@ -29,7 +29,8 @@ export function suppliers(state = {}, action) {
             };
         case supplierConstants.GETALL_REQUEST:
             return {
-                loading: true
+                loading: true,
+                items: state.items //keep existing state during request
             };
         case supplierConstants.GETALL_SUCCESS:
             return {

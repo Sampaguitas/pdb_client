@@ -4,7 +4,8 @@ export function users(state = {}, action) {
   switch (action.type) {
     case userConstants.GETALL_REQUEST:
       return {
-        userLoading: true
+        userLoading: true,
+        items: state.items //keep existing state during request
       };
     case userConstants.GETALL_SUCCESS:
       return {

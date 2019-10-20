@@ -29,7 +29,8 @@ export function currencies(state = {}, action) {
             };
         case currencyConstants.GETALL_REQUEST:
             return {
-                loading: true
+                loading: true,
+                items: state.items //keep existing state during request
             };
         case currencyConstants.GETALL_SUCCESS:
             return {

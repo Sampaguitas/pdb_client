@@ -29,7 +29,8 @@ export function regions(state = {}, action) {
             };
         case regionConstants.GETALL_REQUEST:
             return {
-                loading: true
+                loading: true,
+                items: state.items //keep existing state during request
             };
         case regionConstants.GETALL_SUCCESS:
             return {

@@ -29,7 +29,8 @@ export function projects(state = {}, action) {
             };
         case projectConstants.GETALL_REQUEST:
             return {
-                projectLoading: true
+                projectLoading: true,
+                items: state.items //keep existing state during request
             };
         case projectConstants.GETALL_SUCCESS:
             return {
