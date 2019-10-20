@@ -161,8 +161,8 @@ class Documents extends React.Component {
             newRowColor: 'inherit',
 
         }
-        this.getTblBound = this.getTblBound.bind(this);
-        this.getScrollWidthY = this.getScrollWidthY.bind(this);
+        // this.getTblBound = this.getTblBound.bind(this);
+        // this.getScrollWidthY = this.getScrollWidthY.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
@@ -189,32 +189,32 @@ class Documents extends React.Component {
         //this.docConf = this.docConf.bind(this);
     }
 
-    getTblBound() {
-        const tblContainer = document.getElementById("tblDocumentsContainer");
-        if (!tblContainer) {
-            return {};
-        }
-        const rect = tblContainer.getBoundingClientRect();
-        return {
-            left: rect.left,
-            top: rect.top + window.scrollY,
-            width: rect.width || rect.right - rect.left,
-            height: rect.height || rect.bottom - rect.top
-        };
-    }    
+    // getTblBound() {
+    //     const tblContainer = document.getElementById("tblDocumentsContainer");
+    //     if (!tblContainer) {
+    //         return {};
+    //     }
+    //     const rect = tblContainer.getBoundingClientRect();
+    //     return {
+    //         left: rect.left,
+    //         top: rect.top + window.scrollY,
+    //         width: rect.width || rect.right - rect.left,
+    //         height: rect.height || rect.bottom - rect.top
+    //     };
+    // }    
 
-    getScrollWidthY() {
-        var scroll = document.getElementById("tblDocumentsBody");
-        if (!scroll) {
-            return 0;
-        } else {
-            if(scroll.clientHeight == scroll.scrollHeight){
-                return 0;
-            } else {
-                return 15;
-            }
-        }
-    }
+    // getScrollWidthY() {
+    //     var scroll = document.getElementById("tblDocumentsBody");
+    //     if (!scroll) {
+    //         return 0;
+    //     } else {
+    //         if(scroll.clientHeight == scroll.scrollHeight){
+    //             return 0;
+    //         } else {
+    //             return 15;
+    //         }
+    //     }
+    // }
 
     cerateNewRow(event) {
         event.preventDefault()
@@ -787,8 +787,8 @@ class Documents extends React.Component {
             newRowColor
         } = this.state;
 
-        const tblBound = this.getTblBound();
-        const tblScrollWidth = this.getScrollWidthY();
+        // const tblBound = this.getTblBound();
+        // const tblScrollWidth = this.getScrollWidthY();
 
         const ArrLocation = [
             { _id: 'Header', location: 'Header'},
@@ -816,448 +816,434 @@ class Documents extends React.Component {
 
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
-                <div className="row full-height">
-                    <div className="table-responsive full-height" id="tblDocumentsContainer">
-                        <table className="table table-hover table-bordered table-sm" > {/* table-hover */}
-                            <thead>
-                                <tr
-                                    className="text-center"
-                                    style={{
-                                        //display: tblBound.width ? 'block' : 'table-row',
-                                        height: '84px'
-                                    }}                                    
+                <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                    <div className="input-group">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text" style={{width: '95px'}}>Select Document</span>
+                        </div>
+                        <select className="form-control" name="selectedTemplate" value={selectedTemplate} defaultValue="0" placeholder="Select Template..." onChange={this.handleChangeTemplate}>
+                            <option key="0" value="0">Select document...</option>
+                        {
+                            selection.project && arraySorted(docConf(selection.project.docdefs), "name").map((p) =>  {        
+                                return (
+                                    <option 
+                                        key={p._id}
+                                        value={p._id}>{p.name}
+                                    </option>
+                                );
+                            })
+                        }
+                        </select>
+                        <div className="input-group-append">
+                            <button className="btn btn-leeuwen-blue btn-lg" onClick={(event) => this.handleOnclick(event, selectedTemplate)}>
+                                <span><FontAwesomeIcon icon="edit" className="fa-lg"/></span>
+                            </button>
+                            <button className="btn btn-dark btn-lg" onClick={this.showModal}>
+                                <span><FontAwesomeIcon icon="plus" className="fa-lg"/></span>
+                            </button>
+                            <button className="btn btn-leeuwen btn-lg" onClick={ (event) => this.handleDeleteDocDef(event, selectedTemplate)}>
+                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg"/></span>
+                            </button>  
+                        </div>
+                    </div>
+                </div>
+                <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                    <form
+                        className="col-12"
+                        encType="multipart/form-data"
+                        onSubmit={this.handleUploadFile}
+                        onKeyPress={this.onKeyPress}
+                        style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
+                    >
+                        <div className="input-group">
+                            <div className="input-group-prepend">
+                                <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
+                                <input
+                                    type="file"
+                                    name="fileInput"
+                                    id="fileInput"
+                                    ref={this.fileInput}
+                                    className="custom-file-input"
+                                    style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
+                                    onChange={this.handleFileChange}
+                                    key={this.state.inputKey}
+                                />
+                            </div>
+                            <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
+                            <div className="input-group-append mr-2">
+                                <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
+                                    <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>
+                                </button>
+                                <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleDownloadFile(event)}>
+                                    <span><FontAwesomeIcon icon="download" className="fa-lg mr-2"/>Download</span>
+                                </button>
+                                <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handlePreviewFile(event)}>
+                                    <span><FontAwesomeIcon icon="eye" className="fa-lg mr-2"/>Preview</span>
+                                </button>   
+                            </div>
+                            <div className="pull-right">
+                                <button
+                                    className="btn btn-leeuwen-blue bt-lg mr-2"
+                                    onClick={event => this.toggleNewRow(event)}
+                                    style={{height: '34px'}}
                                 >
-                                    <th colSpan={multi ? '7' : '6'}>
-                                        <div
-                                            className="col-12 mb-2"
-                                            style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
-                                        >
-                                            <div className="input-group">
-                                                <div className="input-group-prepend">
-                                                    <span className="input-group-text" style={{width: '95px'}}>Select Document</span>
-                                                </div>
-                                                <select className="form-control" name="selectedTemplate" value={selectedTemplate} defaultValue="0" placeholder="Select Template..." onChange={this.handleChangeTemplate}>
-                                                    <option key="0" value="0">Select document...</option>
-                                                {
-                                                    selection.project && arraySorted(docConf(selection.project.docdefs), "name").map((p) =>  {        
-                                                        return (
-                                                            <option 
-                                                                key={p._id}
-                                                                value={p._id}>{p.name}
-                                                            </option>
-                                                        );
-                                                    })
-                                                }
-                                                </select>
-                                                <div className="input-group-append">
-                                                    <button className="btn btn-leeuwen-blue btn-lg" onClick={(event) => this.handleOnclick(event, selectedTemplate)}>
-                                                        <span><FontAwesomeIcon icon="edit" className="fa-lg"/></span>
-                                                    </button>
-                                                    <button className="btn btn-dark btn-lg" onClick={this.showModal}>
-                                                        <span><FontAwesomeIcon icon="plus" className="fa-lg"/></span>
-                                                    </button>
-                                                    <button className="btn btn-leeuwen btn-lg" onClick={ (event) => this.handleDeleteDocDef(event, selectedTemplate)}>
-                                                        <span><FontAwesomeIcon icon="trash-alt" className="fa-lg"/></span>
-                                                    </button>  
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <form
-                                            className="col-12"
-                                            encType="multipart/form-data"
-                                            onSubmit={this.handleUploadFile}
-                                            onKeyPress={this.onKeyPress}
-                                            style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
-                                        >
-                                            <div className="input-group">
-                                                <div className="input-group-prepend">
-                                                    <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
-                                                    <input
-                                                        type="file"
-                                                        name="fileInput"
-                                                        id="fileInput"
-                                                        ref={this.fileInput}
-                                                        className="custom-file-input"
-                                                        style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
-                                                        onChange={this.handleFileChange}
-                                                        key={this.state.inputKey}
-                                                    />
-                                                </div>
-                                                <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
-                                                <div className="input-group-append mr-2">
-                                                    <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
-                                                        <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>
-                                                    </button>
-                                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleDownloadFile(event)}>
-                                                        <span><FontAwesomeIcon icon="download" className="fa-lg mr-2"/>Download</span>
-                                                    </button>
-                                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handlePreviewFile(event)}>
-                                                        <span><FontAwesomeIcon icon="eye" className="fa-lg mr-2"/>Preview</span>
-                                                    </button>   
-                                                </div>
-                                                <div className="pull-right"> {/* col-12 text-right */}
-                                                    <button
-                                                        className="btn btn-leeuwen-blue bt-lg mr-2"
-                                                        onClick={event => this.toggleNewRow(event)}
-                                                        style={{height: '34px'}}
-                                                    >
-                                                        <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
-                                                    </button>                                               
-                                                    <button
-                                                        className="btn btn-leeuwen bt-lg"
-                                                        onClick={ (event) => this.handleDeleteDocFields(event, selectedRows)}
-                                                        style={{height: '34px'}}
-                                                    >
-                                                        <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
-                                                    </button> 
-                                                </div>        
-                                            </div>
-                                        </form>
-                                    </th>
-                                </tr>
-                                <tr
-                                    style={{
-                                        display: tblBound.width ? 'block' : 'table-row',
-                                        height: '63px'
-                                    }}                            
+                                    <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
+                                </button>                                               
+                                <button
+                                    className="btn btn-leeuwen bt-lg"
+                                    onClick={ (event) => this.handleDeleteDocFields(event, selectedRows)}
+                                    style={{height: '34px'}}
                                 >
-                                    <TableSelectionAllRow
-                                        checked={selectAllRows}
-                                        onChange={this.toggleSelectAllRow}
-                                    />
-                                    {multi &&
+                                    <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
+                                </button> 
+                            </div>        
+                        </div>
+                    </form>
+                </div>
+                <div className="" style={{height: 'calc(100% - 88px)'}}>
+                    <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
+                        <div className="table-responsive custom-table-container custom-table-container__fixed-row">
+                            <table className="table table-hover table-bordered table-sm" >
+                                <thead>
+                                    <tr>
+                                        <TableSelectionAllRow
+                                            checked={selectAllRows}
+                                            onChange={this.toggleSelectAllRow}
+                                        />
+                                        {multi &&
+                                            <HeaderSelect
+                                                title="Worksheet"
+                                                name="worksheet"
+                                                value={worksheet}
+                                                options={ArrSheet}
+                                                optionText="worksheet"
+                                                onChange={this.handleChangeHeader}
+                                                width ="15%"
+                                            />                                        
+                                        }
                                         <HeaderSelect
-                                            title="Worksheet"
-                                            name="worksheet"
-                                            value={worksheet}
-                                            options={ArrSheet}
-                                            optionText="worksheet"
+                                            title="Location"
+                                            name="location"
+                                            value={location}
+                                            options={ArrLocation}
+                                            optionText="location"
                                             onChange={this.handleChangeHeader}
-                                            width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}                                        
-                                        />                                        
-                                    }
-                                    <HeaderSelect
-                                        title="Location"
-                                        name="location"
-                                        value={location}
-                                        options={ArrLocation}
-                                        optionText="location"
-                                        onChange={this.handleChangeHeader}
-                                        width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}                                        
-                                    />
-                                    <HeaderInput
-                                        type="number"
-                                        title="Row"
-                                        name="row"
-                                        value={row}
-                                        onChange={this.handleChangeHeader}
-                                        width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
-                                    />
-                                    <HeaderInput
-                                        type="number"
-                                        title="Col"
-                                        name="col"
-                                        value={col}
-                                        onChange={this.handleChangeHeader}
-                                        width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
-                                    />
-                                    <HeaderInput
-                                        type="text"
-                                        title="Field"
-                                        name="custom"
-                                        value={custom}
-                                        onChange={this.handleChangeHeader}
-                                        width ={tblBound.width ? `${tblBound.width*0.40+ 'px'}`: '40%'}
-                                    />
-                                    <HeaderInput
-                                        type="text"
-                                        title="Parameter"
-                                        name="param"
-                                        value={param}
-                                        onChange={this.handleChangeHeader}
-                                        width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}
-                                    />
-                                </tr>
-                            </thead>
-                            {tblBound.width ?
-                                <tbody
-                                    id="tblDocumentsBody"
-                                    style={{
-                                        display:'block',
-                                        height: `${tblBound.height-12-84-63 + 'px'}`,
-                                        overflow:'auto'
-                                    }}
-                                >
-                                    {newRow &&
-                                        <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow"> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}
-                                            <NewRowCreate
-                                                onClick={ event => this.cerateNewRow(event)}
-                                            />
-                                            {multi &&
+                                            width ={multi ? '10%' : '15%'}                                        
+                                        />
+                                        <HeaderInput
+                                            type="number"
+                                            title="Row"
+                                            name="row"
+                                            value={row}
+                                            onChange={this.handleChangeHeader}
+                                            width ={multi ? '10%': '15%'}
+                                        />
+                                        <HeaderInput
+                                            type="number"
+                                            title="Col"
+                                            name="col"
+                                            value={col}
+                                            onChange={this.handleChangeHeader}
+                                            width ={multi ? '10%': '15%'}
+                                        />
+                                        <HeaderInput
+                                            type="text"
+                                            title="Field"
+                                            name="custom"
+                                            value={custom}
+                                            onChange={this.handleChangeHeader}
+                                            width ="40%"
+                                        />
+                                        <HeaderInput
+                                            type="text"
+                                            title="Parameter"
+                                            name="param"
+                                            value={param}
+                                            onChange={this.handleChangeHeader}
+                                            width ="15%"
+                                        />
+                                    </tr>
+                                </thead>
+                                {/* {tblBound.width ? */}
+                                    <tbody
+                                        // id="tblDocumentsBody"
+                                        // style={{
+                                        //     display:'block',
+                                        //     height: `${tblBound.height-12-84-63 + 'px'}`,
+                                        //     overflow:'auto'
+                                        // }}
+                                    >
+                                        {newRow &&
+                                            <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow">
+                                                <NewRowCreate
+                                                    onClick={ event => this.cerateNewRow(event)}
+                                                />
+                                                {multi &&
+                                                    <NewRowSelect 
+                                                        name="worksheet"
+                                                        value={docField.worksheet}
+                                                        options={ArrSheet}
+                                                        optionText="worksheet"
+                                                        onChange={event => this.handleChangeNewRow(event)}
+                                                        color={newRowColor}
+                                                        // width ="15%"
+                                                    />
+                                                }
                                                 <NewRowSelect 
-                                                    name="worksheet"
-                                                    value={docField.worksheet}
-                                                    options={ArrSheet}
-                                                    optionText="worksheet"
+                                                    name="location"
+                                                    value={docField.location}
+                                                    options={ArrLocation}
+                                                    optionText="location"
                                                     onChange={event => this.handleChangeNewRow(event)}
                                                     color={newRowColor}
-                                                    width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}
+                                                    // width ={multi ? '10%': '15%'}
+                                                />                                        
+                                                <NewRowInput
+                                                    type="number"
+                                                    name="row"
+                                                    value={docField.row}
+                                                    onChange={event => this.handleChangeNewRow(event)}
+                                                    color={newRowColor}
+                                                    // width ={multi ? '10%': '15%'}
+                                                />                                        
+                                                <NewRowInput
+                                                    type="number"
+                                                    name="col"
+                                                    value={docField.col}
+                                                    onChange={event => this.handleChangeNewRow(event)}
+                                                    color={newRowColor}
+                                                    // width ={multi ? '10%': '15%'}
+                                                />                                         
+                                                <NewRowSelect 
+                                                    name="fieldId"
+                                                    value={docField.fieldId}
+                                                    options={selection && selection.project && selection.project.fields}
+                                                    optionText="custom"
+                                                    onChange={event => this.handleChangeNewRow(event)}
+                                                    color={newRowColor}
+                                                    // width ="40%"
+                                                />                                        
+                                                <NewRowInput
+                                                    type="text"
+                                                    name="param"
+                                                    value={docField.param}
+                                                    onChange={event => this.handleChangeNewRow(event)}
+                                                    color={newRowColor}
+                                                    // width ="15%"
+                                                />                                         
+                                            </tr>                                
+                                        }
+                                        {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
+                                            <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>                                  
+                                                <TableSelectionRow
+                                                    id={s._id}
+                                                    selectAllRows={this.state.selectAllRows}
+                                                    callback={this.updateSelectedRows}
                                                 />
-                                            }
-                                            <NewRowSelect 
-                                                name="location"
-                                                value={docField.location}
-                                                options={ArrLocation}
-                                                optionText="location"
-                                                onChange={event => this.handleChangeNewRow(event)}
-                                                color={newRowColor}
-                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
-                                            />                                        
-                                            <NewRowInput
-                                                type="number"
-                                                name="row"
-                                                value={docField.row}
-                                                onChange={event => this.handleChangeNewRow(event)}
-                                                color={newRowColor}
-                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
-                                            />                                        
-                                            <NewRowInput
-                                                type="number"
-                                                name="col"
-                                                value={docField.col}
-                                                onChange={event => this.handleChangeNewRow(event)}
-                                                color={newRowColor}
-                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
-                                            />                                         
-                                            <NewRowSelect 
-                                                name="fieldId"
-                                                value={docField.fieldId}
-                                                options={selection && selection.project && selection.project.fields}
-                                                optionText="custom"
-                                                onChange={event => this.handleChangeNewRow(event)}
-                                                color={newRowColor}
-                                                width ={tblBound.width ? `${tblBound.width*0.40+ 'px'}`: '40%'}
-                                            />                                        
-                                            <NewRowInput
-                                                type="text"
-                                                name="param"
-                                                value={docField.param}
-                                                onChange={event => this.handleChangeNewRow(event)}
-                                                color={newRowColor}
-                                                width ={tblBound.width ? `${tblBound.width*0.15-tblScrollWidth+ 'px'}`: '15%'}
-                                            />                                         
-                                        </tr>                                
-                                    }
-                                    {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
-                                        <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}                                   
-                                            <TableSelectionRow
-                                                id={s._id}
-                                                selectAllRows={this.state.selectAllRows}
-                                                callback={this.updateSelectedRows}
-                                            />
-                                            {multi &&
+                                                {multi &&
+                                                    <TableSelect 
+                                                        collection="docfield"
+                                                        objectId={s._id}
+                                                        fieldName="worksheet"
+                                                        fieldValue={s.worksheet}
+                                                        options={ArrSheet}
+                                                        optionText="worksheet"
+                                                        // width ="15%"                                 
+                                                    />
+                                                }
                                                 <TableSelect 
                                                     collection="docfield"
                                                     objectId={s._id}
-                                                    fieldName="worksheet"
-                                                    fieldValue={s.worksheet}
-                                                    options={ArrSheet}
-                                                    optionText="worksheet"
-                                                    width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}                                 
+                                                    fieldName="location"
+                                                    fieldValue={s.location}
+                                                    options={ArrLocation}
+                                                    optionText="location"
+                                                    // width ={multi ? '10%': '15%'}                                  
                                                 />
-                                            }
-                                            <TableSelect 
-                                                collection="docfield"
-                                                objectId={s._id}
-                                                fieldName="location"
-                                                fieldValue={s.location}
-                                                options={ArrLocation}
-                                                optionText="location"
-                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}                                  
-                                            />
-                                            <TableInput 
-                                                collection="docfield"
-                                                objectId={s._id}
-                                                fieldName="row"
-                                                fieldValue={s.row}
-                                                fieldType="number"
-                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
-                                            />
-                                            <TableInput 
-                                                collection="docfield"
-                                                objectId={s._id}
-                                                fieldName="col"
-                                                fieldValue={s.col}
-                                                fieldType="number"
-                                                width ={tblBound.width ? multi ? `${tblBound.width*0.10+ 'px'}`: `${tblBound.width*0.15+ 'px'}`: multi ? '10%': '15%'}
-                                            />
-                                            <TableSelect 
-                                                collection="docfield"
-                                                objectId={s._id}
-                                                fieldName="fieldId"
-                                                fieldValue={s.fieldId}
-                                                options={selection.project.fields}
-                                                optionText="custom"
-                                                width ={tblBound.width ? `${tblBound.width*0.40+ 'px'}`: '40%'}                                  
-                                            />
-                                            <TableInput 
-                                                collection="docfield"
-                                                objectId={s._id}
-                                                fieldName="param"
-                                                fieldValue={s.param}
-                                                fieldType="text"
-                                                width ={tblBound.width ? `${tblBound.width*0.15-tblScrollWidth+ 'px'}`: '15%'}
-                                            />
-                                        </tr>
-                                    )}
-                                </tbody>
-                            :
-                                <tbody />
-                            }
-                        </table>
-                        <Modal
-                            show={show}
-                            hideModal={this.hideModal}
-                            title={docDef.id ? 'Update Document' : 'Add Document'}
-                        >
-                            <div className="col-12">
-                                <form
-                                    name="form"
-                                    onKeyPress={this.onKeyPress}
-                                >
-                                    <Input
-                                        title="Description"
-                                        name="description"
-                                        type="text"
-                                        value={docDef.description}
-                                        onChange={this.handleChangeDocDef}
-                                        submitted={submitted}
-                                        inline={false}
-                                        required={true}
-                                    />
-                                    <Select
-                                        title="Document Type"
-                                        name="doctypeId"
-                                        options={ArrType}
-                                        value={docDef.doctypeId}
-                                        onChange={this.handleChangeDocDef}
-                                        placeholder=""
-                                        submitted={submitted}
-                                        inline={false}
-                                        required={true}
-                                        disabled={docDef.id ? true : false}
-                                    />
-                                    {docDef.doctypeId == '5d1927131424114e3884ac80' &&
-                                        <CheckBox
-                                        title="Master and Detail sheet"
-                                        name="detail"
-                                        checked={docDef.detail}
-                                        onChange={this.handleChangeDocDef}
-                                        disabled={false}
+                                                <TableInput 
+                                                    collection="docfield"
+                                                    objectId={s._id}
+                                                    fieldName="row"
+                                                    fieldValue={s.row}
+                                                    fieldType="number"
+                                                    // width ={multi ? '10%': '15%'}
+                                                />
+                                                <TableInput 
+                                                    collection="docfield"
+                                                    objectId={s._id}
+                                                    fieldName="col"
+                                                    fieldValue={s.col}
+                                                    fieldType="number"
+                                                    // width ={multi ? '10%': '15%'}
+                                                />
+                                                <TableSelect 
+                                                    collection="docfield"
+                                                    objectId={s._id}
+                                                    fieldName="fieldId"
+                                                    fieldValue={s.fieldId}
+                                                    options={selection.project.fields}
+                                                    optionText="custom"
+                                                    // width ="40%"                                  
+                                                />
+                                                <TableInput 
+                                                    collection="docfield"
+                                                    objectId={s._id}
+                                                    fieldName="param"
+                                                    fieldValue={s.param}
+                                                    fieldType="text"
+                                                    // width ="15%"
+                                                />
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                {/* :
+                                    <tbody />
+                                } */}
+                            </table>
+                            <Modal
+                                show={show}
+                                hideModal={this.hideModal}
+                                title={docDef.id ? 'Update Document' : 'Add Document'}
+                            >
+                                <div className="col-12">
+                                    <form
+                                        name="form"
+                                        onKeyPress={this.onKeyPress}
+                                    >
+                                        <Input
+                                            title="Description"
+                                            name="description"
+                                            type="text"
+                                            value={docDef.description}
+                                            onChange={this.handleChangeDocDef}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
                                         />
-                                    }
-                                    <Input
-                                        title="Start Row (Sheet1)"
-                                        name="row1"
-                                        type="number"
-                                        value={docDef.row1}
-                                        onChange={this.handleChangeDocDef}
-                                        submitted={submitted}
-                                        inline={false}
-                                        required={true}
-                                    />
-                                    <Input
-                                        title="Last Column (Sheet1)"
-                                        name="col1"
-                                        type="number"
-                                        value={docDef.col1}
-                                        onChange={this.handleChangeDocDef}
-                                        submitted={submitted}
-                                        inline={false}
-                                        required={true}
-                                    />
-                                    {docDef.doctypeId == '5d1927131424114e3884ac80' && docDef.detail == true &&
-                                        <div>
-                                            <Input
-                                                title="Start Row (Sheet2)"
-                                                name="row2"
-                                                type="number"
-                                                value={docDef.row2}
-                                                onChange={this.handleChangeDocDef}
-                                                submitted={submitted}
-                                                inline={false}
-                                                required={docDef.detail == true}
+                                        <Select
+                                            title="Document Type"
+                                            name="doctypeId"
+                                            options={ArrType}
+                                            value={docDef.doctypeId}
+                                            onChange={this.handleChangeDocDef}
+                                            placeholder=""
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                            disabled={docDef.id ? true : false}
+                                        />
+                                        {docDef.doctypeId == '5d1927131424114e3884ac80' &&
+                                            <CheckBox
+                                            title="Master and Detail sheet"
+                                            name="detail"
+                                            checked={docDef.detail}
+                                            onChange={this.handleChangeDocDef}
+                                            disabled={false}
                                             />
-                                            <Input
-                                                title="Last Column (Sheet2)"
-                                                name="col2"
-                                                type="number"
-                                                value={docDef.col2}
-                                                onChange={this.handleChangeDocDef}
-                                                submitted={submitted}
-                                                inline={false}
-                                                required={docDef.detail == true}
-                                            />
-                                        </div>
-                                    }
-
-                                    <div className="modal-footer">
-                                        {docDef.id ?
-                                            <div className="row">
-                                                <div className="col-6">
-                                                    <button
-                                                        type="submit"
-                                                        className="btn btn-outline-dark btn-lg"
-                                                        onClick={(event) => this.handleDeleteDocDef(event, docDef.id)}
-                                                    >
-                                                        {deletingDoc && (
-                                                            <FontAwesomeIcon
-                                                                icon="spinner"
-                                                                className="fa-pulse fa-1x fa-fw" 
-                                                            />
-                                                        )}
-                                                        Delete
-                                                    </button>
-                                                </div>
-                                                <div className="col-6">
-                                                    <button
-                                                        type="submit"
-                                                        className="btn btn-outline-leeuwen btn-lg"
-                                                        onClick={(event) => this.handleSubmitDocDef(event, docDef)}
-                                                    >
-                                                        {loading && (
-                                                            <FontAwesomeIcon
-                                                                icon="spinner"
-                                                                className="fa-pulse fa-1x fa-fw" 
-                                                            />
-                                                        )}
-                                                        Update
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        :
-                                            <button
-                                                type="submit"
-                                                className="btn btn-outline-leeuwen btn-lg btn-full"
-                                                onClick={(event) => this.handleSubmitDocDef(event, docDef)}
-                                            >
-                                                {loading && (
-                                                    <FontAwesomeIcon
-                                                        icon="spinner"
-                                                        className="fa-pulse fa-1x fa-fw" 
-                                                    />
-                                                )}
-                                                Create
-                                            </button>
                                         }
-                                    </div>
-                                </form>
-                            </div>
-                        </Modal>
+                                        <Input
+                                            title="Start Row (Sheet1)"
+                                            name="row1"
+                                            type="number"
+                                            value={docDef.row1}
+                                            onChange={this.handleChangeDocDef}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Input
+                                            title="Last Column (Sheet1)"
+                                            name="col1"
+                                            type="number"
+                                            value={docDef.col1}
+                                            onChange={this.handleChangeDocDef}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        {docDef.doctypeId == '5d1927131424114e3884ac80' && docDef.detail == true &&
+                                            <div>
+                                                <Input
+                                                    title="Start Row (Sheet2)"
+                                                    name="row2"
+                                                    type="number"
+                                                    value={docDef.row2}
+                                                    onChange={this.handleChangeDocDef}
+                                                    submitted={submitted}
+                                                    inline={false}
+                                                    required={docDef.detail == true}
+                                                />
+                                                <Input
+                                                    title="Last Column (Sheet2)"
+                                                    name="col2"
+                                                    type="number"
+                                                    value={docDef.col2}
+                                                    onChange={this.handleChangeDocDef}
+                                                    submitted={submitted}
+                                                    inline={false}
+                                                    required={docDef.detail == true}
+                                                />
+                                            </div>
+                                        }
+
+                                        <div className="modal-footer">
+                                            {docDef.id ?
+                                                <div className="row">
+                                                    <div className="col-6">
+                                                        <button
+                                                            type="submit"
+                                                            className="btn btn-outline-dark btn-lg"
+                                                            onClick={(event) => this.handleDeleteDocDef(event, docDef.id)}
+                                                        >
+                                                            {deletingDoc && (
+                                                                <FontAwesomeIcon
+                                                                    icon="spinner"
+                                                                    className="fa-pulse fa-1x fa-fw" 
+                                                                />
+                                                            )}
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                    <div className="col-6">
+                                                        <button
+                                                            type="submit"
+                                                            className="btn btn-outline-leeuwen btn-lg"
+                                                            onClick={(event) => this.handleSubmitDocDef(event, docDef)}
+                                                        >
+                                                            {loading && (
+                                                                <FontAwesomeIcon
+                                                                    icon="spinner"
+                                                                    className="fa-pulse fa-1x fa-fw" 
+                                                                />
+                                                            )}
+                                                            Update
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            :
+                                                <button
+                                                    type="submit"
+                                                    className="btn btn-outline-leeuwen btn-lg btn-full"
+                                                    onClick={(event) => this.handleSubmitDocDef(event, docDef)}
+                                                >
+                                                    {loading && (
+                                                        <FontAwesomeIcon
+                                                            icon="spinner"
+                                                            className="fa-pulse fa-1x fa-fw" 
+                                                        />
+                                                    )}
+                                                    Create
+                                                </button>
+                                            }
+                                        </div>
+                                    </form>
+                                </div>
+                            </Modal>
+                        </div>
                     </div>
                 </div>    
             </div>
-            );
+        );
     }
 }
 
