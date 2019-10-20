@@ -5,7 +5,7 @@ import { history } from '../../_helpers';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeaderInput from '../../_components/project-table/header-input';
-import './home.css';
+// import './home.css';
 
 function projectSorted(project) {
     if (project.items) {
@@ -120,7 +120,7 @@ class Home extends React.Component {
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
                         <div className="ml-auto pull-right">
                             <button
-                                className="btn btn-leeuwen-blue bt-lg"
+                                className="btn btn-leeuwen-blue btn-lg"
                                 onClick={this.gotoProject}
                                 style={{height: '34px'}}
                             >

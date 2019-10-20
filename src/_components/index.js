@@ -1,7 +1,6 @@
 export * from './card';
 export * from './header-bar-menu';
 export * from './modal';
-export * from './project-card';
 export * from './side-bar-menu';
 export * from './check-box';
 export * from './footer';

@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import Layout from '../../_components/layout';
 import logo from "../../_assets/logo.svg";
 import pdb from "../../_assets/pdb.svg";
-// import "./notfound.css";
 
 class NotFound extends React.Component {
   constructor(props) {

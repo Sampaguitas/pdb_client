@@ -11,6 +11,12 @@ html, body, #app, #app>div {
   padding-top: 15px;
   padding-bottom: 15px;
 }
+
+
+/* .btn-lg {
+  font-size: 1.25rem !important;
+  font-weight: 400 !important;
+} */
 .btn-full {
   width: 100%;
 }
@@ -259,6 +265,30 @@ h5 {
     color: #fff;
   }
 
+  .no-padding {
+    padding: 0;
+  }
+  .no-padding .list-group-item {
+    border: 0 !important;
+    border-radius: 0 !important;
+  }
+  .padding {
+    padding-top: 15px;
+  }
+  .col-md-3 {
+    margin-bottom: 15px;
+  }
+  
+  .list-group-item {
+    cursor: pointer;
+  }
 
+  /* .input-group-text {
+    font-weight: 400 !important;
+  } */
+
+  .input-group>label, .input-group>select {
+    font-weight: 400 !important;
+  }
 
 

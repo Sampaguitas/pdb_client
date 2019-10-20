@@ -266,7 +266,7 @@ class Opco extends React.Component {
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
                         <div className="ml-auto pull-right">
                             <button
-                                className="btn btn-leeuwen-blue bt-lg"
+                                className="btn btn-leeuwen-blue btn-lg"
                                 onClick={this.showModal}
                                 style={{height: '34px'}}
                             >

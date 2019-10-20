@@ -161,8 +161,6 @@ class Documents extends React.Component {
             newRowColor: 'inherit',
 
         }
-        // this.getTblBound = this.getTblBound.bind(this);
-        // this.getScrollWidthY = this.getScrollWidthY.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
@@ -185,36 +183,7 @@ class Documents extends React.Component {
         this.fileInput = React.createRef();
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
-        
-        //this.docConf = this.docConf.bind(this);
     }
-
-    // getTblBound() {
-    //     const tblContainer = document.getElementById("tblDocumentsContainer");
-    //     if (!tblContainer) {
-    //         return {};
-    //     }
-    //     const rect = tblContainer.getBoundingClientRect();
-    //     return {
-    //         left: rect.left,
-    //         top: rect.top + window.scrollY,
-    //         width: rect.width || rect.right - rect.left,
-    //         height: rect.height || rect.bottom - rect.top
-    //     };
-    // }    
-
-    // getScrollWidthY() {
-    //     var scroll = document.getElementById("tblDocumentsBody");
-    //     if (!scroll) {
-    //         return 0;
-    //     } else {
-    //         if(scroll.clientHeight == scroll.scrollHeight){
-    //             return 0;
-    //         } else {
-    //             return 15;
-    //         }
-    //     }
-    // }
 
     cerateNewRow(event) {
         event.preventDefault()
@@ -883,14 +852,14 @@ class Documents extends React.Component {
                             </div>
                             <div className="pull-right">
                                 <button
-                                    className="btn btn-leeuwen-blue bt-lg mr-2"
+                                    className="btn btn-leeuwen-blue btn-lg mr-2"
                                     onClick={event => this.toggleNewRow(event)}
                                     style={{height: '34px'}}
                                 >
                                     <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
                                 </button>                                               
                                 <button
-                                    className="btn btn-leeuwen bt-lg"
+                                    className="btn btn-leeuwen btn-lg"
                                     onClick={ (event) => this.handleDeleteDocFields(event, selectedRows)}
                                     style={{height: '34px'}}
                                 >
@@ -964,141 +933,118 @@ class Documents extends React.Component {
                                         />
                                     </tr>
                                 </thead>
-                                {/* {tblBound.width ? */}
-                                    <tbody
-                                        // id="tblDocumentsBody"
-                                        // style={{
-                                        //     display:'block',
-                                        //     height: `${tblBound.height-12-84-63 + 'px'}`,
-                                        //     overflow:'auto'
-                                        // }}
-                                    >
-                                        {newRow &&
-                                            <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow">
-                                                <NewRowCreate
-                                                    onClick={ event => this.cerateNewRow(event)}
-                                                />
-                                                {multi &&
-                                                    <NewRowSelect 
-                                                        name="worksheet"
-                                                        value={docField.worksheet}
-                                                        options={ArrSheet}
-                                                        optionText="worksheet"
-                                                        onChange={event => this.handleChangeNewRow(event)}
-                                                        color={newRowColor}
-                                                        // width ="15%"
-                                                    />
-                                                }
+                                <tbody>
+                                    {newRow &&
+                                        <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow">
+                                            <NewRowCreate
+                                                onClick={ event => this.cerateNewRow(event)}
+                                            />
+                                            {multi &&
                                                 <NewRowSelect 
-                                                    name="location"
-                                                    value={docField.location}
-                                                    options={ArrLocation}
-                                                    optionText="location"
+                                                    name="worksheet"
+                                                    value={docField.worksheet}
+                                                    options={ArrSheet}
+                                                    optionText="worksheet"
                                                     onChange={event => this.handleChangeNewRow(event)}
                                                     color={newRowColor}
-                                                    // width ={multi ? '10%': '15%'}
-                                                />                                        
-                                                <NewRowInput
-                                                    type="number"
-                                                    name="row"
-                                                    value={docField.row}
-                                                    onChange={event => this.handleChangeNewRow(event)}
-                                                    color={newRowColor}
-                                                    // width ={multi ? '10%': '15%'}
-                                                />                                        
-                                                <NewRowInput
-                                                    type="number"
-                                                    name="col"
-                                                    value={docField.col}
-                                                    onChange={event => this.handleChangeNewRow(event)}
-                                                    color={newRowColor}
-                                                    // width ={multi ? '10%': '15%'}
-                                                />                                         
-                                                <NewRowSelect 
-                                                    name="fieldId"
-                                                    value={docField.fieldId}
-                                                    options={selection && selection.project && selection.project.fields}
-                                                    optionText="custom"
-                                                    onChange={event => this.handleChangeNewRow(event)}
-                                                    color={newRowColor}
-                                                    // width ="40%"
-                                                />                                        
-                                                <NewRowInput
-                                                    type="text"
-                                                    name="param"
-                                                    value={docField.param}
-                                                    onChange={event => this.handleChangeNewRow(event)}
-                                                    color={newRowColor}
-                                                    // width ="15%"
-                                                />                                         
-                                            </tr>                                
-                                        }
-                                        {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
-                                            <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>                                  
-                                                <TableSelectionRow
-                                                    id={s._id}
-                                                    selectAllRows={this.state.selectAllRows}
-                                                    callback={this.updateSelectedRows}
                                                 />
-                                                {multi &&
-                                                    <TableSelect 
-                                                        collection="docfield"
-                                                        objectId={s._id}
-                                                        fieldName="worksheet"
-                                                        fieldValue={s.worksheet}
-                                                        options={ArrSheet}
-                                                        optionText="worksheet"
-                                                        // width ="15%"                                 
-                                                    />
-                                                }
+                                            }
+                                            <NewRowSelect 
+                                                name="location"
+                                                value={docField.location}
+                                                options={ArrLocation}
+                                                optionText="location"
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                            />                                        
+                                            <NewRowInput
+                                                type="number"
+                                                name="row"
+                                                value={docField.row}
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                            />                                        
+                                            <NewRowInput
+                                                type="number"
+                                                name="col"
+                                                value={docField.col}
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                            />                                         
+                                            <NewRowSelect 
+                                                name="fieldId"
+                                                value={docField.fieldId}
+                                                options={selection && selection.project && selection.project.fields}
+                                                optionText="custom"
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                            />                                        
+                                            <NewRowInput
+                                                type="text"
+                                                name="param"
+                                                value={docField.param}
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                            />                                         
+                                        </tr>                                
+                                    }
+                                    {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
+                                        <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>                                  
+                                            <TableSelectionRow
+                                                id={s._id}
+                                                selectAllRows={this.state.selectAllRows}
+                                                callback={this.updateSelectedRows}
+                                            />
+                                            {multi &&
                                                 <TableSelect 
                                                     collection="docfield"
                                                     objectId={s._id}
-                                                    fieldName="location"
-                                                    fieldValue={s.location}
-                                                    options={ArrLocation}
-                                                    optionText="location"
-                                                    // width ={multi ? '10%': '15%'}                                  
+                                                    fieldName="worksheet"
+                                                    fieldValue={s.worksheet}
+                                                    options={ArrSheet}
+                                                    optionText="worksheet"
                                                 />
-                                                <TableInput 
-                                                    collection="docfield"
-                                                    objectId={s._id}
-                                                    fieldName="row"
-                                                    fieldValue={s.row}
-                                                    fieldType="number"
-                                                    // width ={multi ? '10%': '15%'}
-                                                />
-                                                <TableInput 
-                                                    collection="docfield"
-                                                    objectId={s._id}
-                                                    fieldName="col"
-                                                    fieldValue={s.col}
-                                                    fieldType="number"
-                                                    // width ={multi ? '10%': '15%'}
-                                                />
-                                                <TableSelect 
-                                                    collection="docfield"
-                                                    objectId={s._id}
-                                                    fieldName="fieldId"
-                                                    fieldValue={s.fieldId}
-                                                    options={selection.project.fields}
-                                                    optionText="custom"
-                                                    // width ="40%"                                  
-                                                />
-                                                <TableInput 
-                                                    collection="docfield"
-                                                    objectId={s._id}
-                                                    fieldName="param"
-                                                    fieldValue={s.param}
-                                                    fieldType="text"
-                                                    // width ="15%"
-                                                />
-                                            </tr>
-                                        )}
-                                    </tbody>
-                                {/* :
-                                    <tbody />
-                                } */}
+                                            }
+                                            <TableSelect 
+                                                collection="docfield"
+                                                objectId={s._id}
+                                                fieldName="location"
+                                                fieldValue={s.location}
+                                                options={ArrLocation}
+                                                optionText="location"
+                                            />
+                                            <TableInput 
+                                                collection="docfield"
+                                                objectId={s._id}
+                                                fieldName="row"
+                                                fieldValue={s.row}
+                                                fieldType="number"
+                                            />
+                                            <TableInput 
+                                                collection="docfield"
+                                                objectId={s._id}
+                                                fieldName="col"
+                                                fieldValue={s.col}
+                                                fieldType="number"
+                                            />
+                                            <TableSelect 
+                                                collection="docfield"
+                                                objectId={s._id}
+                                                fieldName="fieldId"
+                                                fieldValue={s.fieldId}
+                                                options={selection.project.fields}
+                                                optionText="custom"
+                                            />
+                                            <TableInput 
+                                                collection="docfield"
+                                                objectId={s._id}
+                                                fieldName="param"
+                                                fieldValue={s.param}
+                                                fieldType="text"
+                                            />
+                                        </tr>
+                                    )}
+                                </tbody>
                             </table>
                             <Modal
                                 show={show}

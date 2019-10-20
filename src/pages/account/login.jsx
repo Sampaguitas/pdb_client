@@ -7,7 +7,6 @@ import Layout from "../../_components/layout";
 import InputIcon from "../../_components/input-icon";
 import logo from "../../_assets/logo.svg";
 import pdb from "../../_assets/pdb.svg";
-import "./login.css";
 
 class Login extends React.Component {
   constructor(props) {

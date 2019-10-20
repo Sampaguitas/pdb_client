@@ -42,7 +42,7 @@ class HeaderBarMenu extends Component {
                                     <button onClick={this.userPage} className="btn btn-outline-leeuwen-blue btn-round header-button" type="button" title="User-Page">
                                         <span><FontAwesomeIcon icon="user" className="fa-2x"/></span>
                                     </button>
-                                    <button onClick={this.settingsPage} className={isAdmin ? "btn btn-outline-leeuwen-blue btn-round header-button" : "hidden"} type="button">
+                                    <button onClick={this.settingsPage} className={isAdmin ? "btn btn-outline-leeuwen-blue btn-round header-button" : "hidden"} type="button" title="Settings">
                                         <span><FontAwesomeIcon icon="cog" className="fa-2x"/></span>
                                     </button>
                                         <button onClick={this.logout} className="btn btn-outline-leeuwen btn-round header-button" type="button" title="Log-Out">
