@@ -427,7 +427,7 @@ class ProjectTable extends Component {
                     </button>
                 </div>
                 <div className="row ml-1 full-height" style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd'}}>
-                    <div className="table-responsive custom-table-container rowSelection" > 
+                    <div className="table-responsive custom-table-container custom-table-container__fixed-row" > 
                         <table className="table table-bordered table-sm text-nowrap table-striped" id="myProjectTable">
                             <thead>                                   
                                 {screenHeaders && (

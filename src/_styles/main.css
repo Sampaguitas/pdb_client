@@ -204,13 +204,13 @@ h5 {
   position: sticky !important;
   top: -1px !important;
   z-index: 1;
-  background-color:#f8f9fa;
+  background-color:white;
   box-shadow: 0px 0px 1px #ddd !important;
   box-sizing: border-box;
 
 }
 
-.custom-table-container .rowSelection thead th:first-child {
+.custom-table-container__fixed-row thead th:first-child {
   left: -1px !important;
   z-index: 2;
 }

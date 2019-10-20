@@ -101,8 +101,8 @@ class Duf extends React.Component {
             //creating new row
             newRowColor: 'inherit',
         }
-        this.getTblBound = this.getTblBound.bind(this);
-        this.getScrollWidthY = this.getScrollWidthY.bind(this);
+        // this.getTblBound = this.getTblBound.bind(this);
+        // this.getScrollWidthY = this.getScrollWidthY.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
@@ -114,32 +114,32 @@ class Duf extends React.Component {
         this.filterName = this.filterName.bind(this);
     }
 
-    getTblBound() {
-        const tblContainer = document.getElementById("tblDufContainer");
-        if (!tblContainer) {
-            return {};
-        }
-        const rect = tblContainer.getBoundingClientRect();
-        return {
-            left: rect.left,
-            top: rect.top + window.scrollY,
-            width: rect.width || rect.right - rect.left,
-            height: rect.height || rect.bottom - rect.top
-        };
-    }    
+    // getTblBound() {
+    //     const tblContainer = document.getElementById("tblDufContainer");
+    //     if (!tblContainer) {
+    //         return {};
+    //     }
+    //     const rect = tblContainer.getBoundingClientRect();
+    //     return {
+    //         left: rect.left,
+    //         top: rect.top + window.scrollY,
+    //         width: rect.width || rect.right - rect.left,
+    //         height: rect.height || rect.bottom - rect.top
+    //     };
+    // }    
 
-    getScrollWidthY() {
-        var scroll = document.getElementById("tblDufBody");
-        if (!scroll) {
-            return 0;
-        } else {
-            if(scroll.clientHeight == scroll.scrollHeight){
-                return 0;
-            } else {
-                return 15;
-            }
-        }
-    }
+    // getScrollWidthY() {
+    //     var scroll = document.getElementById("tblDufBody");
+    //     if (!scroll) {
+    //         return 0;
+    //     } else {
+    //         if(scroll.clientHeight == scroll.scrollHeight){
+    //             return 0;
+    //         } else {
+    //             return 15;
+    //         }
+    //     }
+    // }
 
     cerateNewRow(event) {
         event.preventDefault();
@@ -371,137 +371,156 @@ class Duf extends React.Component {
             newRowColor
         } = this.state;
 
-        const tblBound = this.getTblBound();
-        const tblScrollWidth = this.getScrollWidthY();
+        // const tblBound = this.getTblBound();
+        // const tblScrollWidth = this.getScrollWidthY();
 
         return ( 
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
-            <div className="row full-height">
-                <div className="table-responsive full-height" id="tblDufContainer">
-                    <table className="table table-hover table-bordered table-sm" > {/* table-hover */}
-                        <thead>
-                            <tr
-                                className="text-center"
-                                style={{
-                                    //display: tblBound.width ? 'block' : 'table-row',
-                                    height: '45px'
-                                }}
-                            >
-                                <th colSpan="3">
-                                    <div className="pull-right"> {/* col-12 text-right */}
-                                        <button
-                                            className="btn btn-leeuwen-blue bt-lg mr-2"
-                                            onClick={event => this.toggleNewRow(event)}
-                                            style={{height: '34px'}}
+                <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                    <div className="ml-auto pull-right">
+                        <button
+                            className="btn btn-leeuwen-blue bt-lg mr-2"
+                            onClick={event => this.toggleNewRow(event)}
+                            style={{height: '34px'}}
+                        >
+                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
+                        </button>
+                        <button
+                            className="btn btn-leeuwen bt-lg"
+                            onClick={ (event) => this.handleDelete(event, selectedRows)}
+                            style={{height: '34px'}}
+                        >
+                            <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
+                        </button>
+                    </div>
+                </div>
+            <div className="" style={{height: 'calc(100% - 44px)'}}>
+                <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
+                    <div className="table-responsive custom-table-container custom-table-container__fixed-row">
+                        <table className="table table-hover table-bordered table-sm" >
+                            <thead>
+                                {/* <tr
+                                    className="text-center"
+                                    style={{
+                                        height: '45px'
+                                    }}
+                                >
+                                    <th colSpan="3">
+                                        <div className="pull-right">
+                                            <button
+                                                className="btn btn-leeuwen-blue bt-lg mr-2"
+                                                onClick={event => this.toggleNewRow(event)}
+                                                style={{height: '34px'}}
+                                            >
+                                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
+                                            </button>
+                                            <button
+                                                className="btn btn-leeuwen bt-lg"
+                                                onClick={ (event) => this.handleDelete(event, selectedRows)}
+                                                style={{height: '34px'}}
+                                            >
+                                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
+                                            </button>                                     
+                                        </div>                                  
+                                    </th>
+                                </tr> */}
+                                <tr
+                                    // style={{
+                                    //     display: tblBound.width ? 'block' : 'table-row',
+                                    //     height: '63px'
+                                    // }}
+                                >
+                                    <TableSelectionAllRow
+                                        checked={selectAllRows}
+                                        onChange={this.toggleSelectAllRow}                                        
+                                    />
+                                    <HeaderInput
+                                        type="number"
+                                        title="Column"
+                                        name="forShow"
+                                        value={forShow}
+                                        onChange={this.handleChangeHeader}
+                                        width="calc(15% - 30px)"
+                                    />                                
+                                    <HeaderInput
+                                        type="text"
+                                        title="Field"
+                                        name="custom"
+                                        value={custom}
+                                        onChange={this.handleChangeHeader}
+                                        width="85%"
+                                    />                
+                                </tr>
+                            </thead>
+                            {/* {tblBound.width ? */}
+                                <tbody
+                                    // id="tblDufBody"
+                                    // style={{
+                                    //     display:'block',
+                                    //     height: `${tblBound.height-12-45-63 + 'px'}`,
+                                    //     overflow:'auto'
+                                    // }}
+                                >
+                                    {newRow && 
+                                        <tr
+                                            onBlur={this.onBlurRow}
+                                            onFocus={this.onFocusRow}
+                                            data-type="newrow"
                                         >
-                                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
-                                        </button>
-                                        <button
-                                            className="btn btn-leeuwen bt-lg"
-                                            onClick={ (event) => this.handleDelete(event, selectedRows)}
-                                            style={{height: '34px'}}
-                                        >
-                                            <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
-                                        </button>                                     
-                                    </div>                                  
-                                </th>
-                            </tr>
-                            <tr
-                                style={{
-                                    display: tblBound.width ? 'block' : 'table-row',
-                                    height: '63px'
-                                }}
-                            >
-                                <TableSelectionAllRow
-                                    checked={selectAllRows}
-                                    onChange={this.toggleSelectAllRow}                                        
-                                />
-                                <HeaderInput
-                                    type="number"
-                                    title="Column"
-                                    name="forShow"
-                                    value={forShow}
-                                    onChange={this.handleChangeHeader}
-                                    width={tblBound.width ? `${tblBound.width*0.15-30 + 'px'}`: 'calc(15% - 30px)'}
-                                />                                
-                                <HeaderInput
-                                    type="text"
-                                    title="Field"
-                                    name="custom"
-                                    value={custom}
-                                    onChange={this.handleChangeHeader}
-                                    width={tblBound.width ? `${tblBound.width*0.85 + 'px'}`: '85%'}
-                                />                
-                            </tr>
-                        </thead>
-                        {tblBound.width ?
-                            <tbody
-                                id="tblDufBody"
-                                style={{
-                                    display:'block',
-                                    height: `${tblBound.height-12-45-63 + 'px'}`,
-                                    overflow:'auto'
-                                }}
-                            >
-                                {newRow && 
-                                    <tr
-                                        onBlur={this.onBlurRow}
-                                        onFocus={this.onFocusRow}
-                                        data-type="newrow"
-                                    >
-                                        <NewRowCreate
-                                            onClick={ event => this.cerateNewRow(event)}
-                                        />                                    
-                                        <NewRowInput
-                                            type="number"
-                                            name="forShow"
-                                            value={fieldName.forShow}
-                                            onChange={event => this.handleChangeNewRow(event)}
-                                            color={newRowColor}
-                                            width={tblBound.width ? `${tblBound.width*0.15-30 + 'px'}`: 'calc(15% - 30px)'}
-                                        />
-                                        <NewRowSelect 
-                                            name="fieldId"
-                                            value={fieldName.fieldId}
-                                            options={selection && selection.project && selection.project.fields}
-                                            optionText="custom"
-                                            onChange={event => this.handleChangeNewRow(event)}
-                                            color={newRowColor}
-                                            width={tblBound.width ? `${tblBound.width*0.85-tblScrollWidth + 'px'}`: '85%'}
-                                        />
-                                    </tr>                            
-                                }
-                                {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
-                                    <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}
-                                        <TableSelectionRow
-                                            id={s._id}
-                                            selectAllRows={this.state.selectAllRows}
-                                            callback={this.updateSelectedRows}
-                                        />                                  
-                                        <TableInput 
-                                            collection="fieldname"
-                                            objectId={s._id}
-                                            fieldName="forShow"
-                                            fieldValue={s.forShow}
-                                            fieldType="number"
-                                            width={tblBound.width ? `${tblBound.width*0.15-30 + 'px'}`: 'calc(15% - 30px)'}
-                                        />
-                                        <TableSelect 
-                                            collection="fieldname"
-                                            objectId={s._id}
-                                            fieldName="fieldId"
-                                            fieldValue={s.fieldId}
-                                            options={selection.project.fields}
-                                            optionText="custom"
-                                            width={tblBound.width ? `${tblBound.width*0.85-tblScrollWidth + 'px'}`: '85%'}                                 
-                                        />
-                                    </tr>
-                                )}
-                            </tbody>
-                        :
-                            <tbody />
-                        }
-                    </table>
+                                            <NewRowCreate
+                                                onClick={ event => this.cerateNewRow(event)}
+                                            />                                    
+                                            <NewRowInput
+                                                type="number"
+                                                name="forShow"
+                                                value={fieldName.forShow}
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                                // width={tblBound.width ? `${tblBound.width*0.15-30 + 'px'}`: 'calc(15% - 30px)'}
+                                            />
+                                            <NewRowSelect 
+                                                name="fieldId"
+                                                value={fieldName.fieldId}
+                                                options={selection && selection.project && selection.project.fields}
+                                                optionText="custom"
+                                                onChange={event => this.handleChangeNewRow(event)}
+                                                color={newRowColor}
+                                                // width={tblBound.width ? `${tblBound.width*0.85-tblScrollWidth + 'px'}`: '85%'}
+                                            />
+                                        </tr>                            
+                                    }
+                                    {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
+                                        <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
+                                            <TableSelectionRow
+                                                id={s._id}
+                                                selectAllRows={this.state.selectAllRows}
+                                                callback={this.updateSelectedRows}
+                                            />                                  
+                                            <TableInput 
+                                                collection="fieldname"
+                                                objectId={s._id}
+                                                fieldName="forShow"
+                                                fieldValue={s.forShow}
+                                                fieldType="number"
+                                                // width={tblBound.width ? `${tblBound.width*0.15-30 + 'px'}`: 'calc(15% - 30px)'}
+                                            />
+                                            <TableSelect 
+                                                collection="fieldname"
+                                                objectId={s._id}
+                                                fieldName="fieldId"
+                                                fieldValue={s.fieldId}
+                                                options={selection.project.fields}
+                                                optionText="custom"
+                                                // width={tblBound.width ? `${tblBound.width*0.85-tblScrollWidth + 'px'}`: '85%'}                                 
+                                            />
+                                        </tr>
+                                    )}
+                                </tbody>
+                            {/* :
+                                <tbody />
+                            } */}
+                        </table>
+                    </div>
                 </div>
             </div> 
         </div>

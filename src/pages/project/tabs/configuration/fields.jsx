@@ -75,37 +75,8 @@ class Fields extends React.Component {
             loaded: false,
             show: false,
         }
-        this.getTblBound = this.getTblBound.bind(this);
-        this.getScrollWidthY = this.getScrollWidthY.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
-    }
-
-    getTblBound() {
-        const tblContainer = document.getElementById("tblFieldsContainer");
-        if (!tblContainer) {
-            return {};
-        }
-        const rect = tblContainer.getBoundingClientRect();
-        return {
-            left: rect.left,
-            top: rect.top + window.scrollY,
-            width: rect.width || rect.right - rect.left,
-            height: rect.height || rect.bottom - rect.top
-        };
-    }    
-
-    getScrollWidthY() {
-        var scroll = document.getElementById("tblFieldsBody");
-        if (!scroll) {
-            return 0;
-        } else {
-            if(scroll.clientHeight == scroll.scrollHeight){
-                return 0;
-            } else {
-                return 15;
-            }
-        }
     }
 
     handleChangeHeader(event) {
@@ -153,23 +124,20 @@ class Fields extends React.Component {
             type
         } = this.state;
 
-        const tblBound = this.getTblBound();
-        const tblScrollWidth = this.getScrollWidthY();
-
         return ( 
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
-                <div className="row full-height">
-                    <div className="table-responsive full-height" id="tblFieldsContainer"> {/* table-responsive */}
-                        <table className="table table-hover table-bordered table-sm" > {/* table-hover */}
+                <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
+                    <div className="table-responsive custom-table-container">
+                        <table className="table table-hover table-bordered table-sm" >
                             <thead>
-                                <tr style={{display: tblBound.width ? 'block' : 'table-row', height: '62px'}}>
+                                <tr>
                                     <HeaderInput
                                         type="text"
                                         title="Field Name"
                                         name="name"
                                         value={name}
                                         onChange={this.handleChangeHeader}
-                                        width ={tblBound.width ? `${tblBound.width*0.25+ 'px'}`: '25%'}
+                                        // width ="25%"
                                     />
                                     <HeaderInput
                                         type="text"
@@ -177,7 +145,7 @@ class Fields extends React.Component {
                                         name="fromTbl"
                                         value={fromTbl}
                                         onChange={this.handleChangeHeader}
-                                        width ={tblBound.width ? `${tblBound.width*0.25+ 'px'}`: '25%'}
+                                        // width ="25%"
                                     />                                    
                                     <HeaderInput
                                         type="text"
@@ -185,7 +153,7 @@ class Fields extends React.Component {
                                         name="type"
                                         value={type}
                                         onChange={this.handleChangeHeader}
-                                        width ={tblBound.width ? `${tblBound.width*0.25+ 'px'}`: '25%'}
+                                        // width ="25%"
                                     />                                    
                                     <HeaderInput
                                         type="text"
@@ -193,31 +161,27 @@ class Fields extends React.Component {
                                         name="custom"
                                         value={custom}
                                         onChange={this.handleChangeHeader}
-                                        width ={tblBound.width ? `${tblBound.width*0.25+ 'px'}`: '25%'}
+                                        // width ="25%"
                                     />                                      
                                 </tr>
                             </thead>
-                            {tblBound.width ?
-                                <tbody style={{display:'block', height: `${tblBound.height-20-62 + 'px'}`, overflow:'auto'}}  id="tblFieldsBody">
-                                    {selection && selection.project && this.filterName(selection.project.fields).map((s) =>
-                                        <tr key={s._id}>
-                                            <td style={{width: tblBound.width ? `${tblBound.width*0.25 + 'px'}`: '25%'}}>{s.name}</td>
-                                            <td style={{width: tblBound.width ? `${tblBound.width*0.25 + 'px'}`: '25%'}}>{s.fromTbl}</td>
-                                            <td style={{width: tblBound.width ? `${tblBound.width*0.25 + 'px'}`: '25%'}}>{s.type}</td>
-                                            <TableInput 
-                                                collection="field"
-                                                objectId={s._id}
-                                                fieldName="custom"
-                                                fieldValue={s.custom}
-                                                fieldType="text"
-                                                width={tblBound.width ? `${tblBound.width*0.25-tblScrollWidth + 'px'}`: '25%'}
-                                            />
-                                        </tr>
-                                    )}
-                                </tbody>
-                            :
-                                <tbody />
-                            }
+                            <tbody className="full-height">
+                                {selection && selection.project && this.filterName(selection.project.fields).map((s) =>
+                                    <tr key={s._id}>
+                                        <td>{s.name}</td>
+                                        <td>{s.fromTbl}</td>
+                                        <td>{s.type}</td>
+                                        <TableInput 
+                                            collection="field"
+                                            objectId={s._id}
+                                            fieldName="custom"
+                                            fieldValue={s.custom}
+                                            fieldType="text"
+                                            // width="25%"
+                                        />
+                                    </tr>
+                                )}
+                            </tbody>
                         </table>
                     </div>
                 </div> 
