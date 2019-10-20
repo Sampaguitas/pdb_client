@@ -108,8 +108,6 @@ class Screens extends React.Component {
             //creating new row
             newRowColor: 'inherit',
         }
-        this.getTblBound = this.getTblBound.bind(this);
-        this.getScrollWidthY = this.getScrollWidthY.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
@@ -120,33 +118,6 @@ class Screens extends React.Component {
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeScreen = this.handleChangeScreen.bind(this);
         this.filterName = this.filterName.bind(this);
-    }
-
-    getTblBound() {
-        const tblContainer = document.getElementById("tblScreensContainer");
-        if (!tblContainer) {
-            return {};
-        }
-        const rect = tblContainer.getBoundingClientRect();
-        return {
-            left: rect.left,
-            top: rect.top + window.scrollY,
-            width: rect.width || rect.right - rect.left,
-            height: rect.height || rect.bottom - rect.top
-        };
-    }    
-
-    getScrollWidthY() {
-        var scroll = document.getElementById("tblScreensBody");
-        if (!scroll) {
-            return 0;
-        } else {
-            if(scroll.clientHeight == scroll.scrollHeight){
-                return 0;
-            } else {
-                return 15;
-            }
-        }
     }
 
     cerateNewRow(event) {
@@ -401,9 +372,6 @@ class Screens extends React.Component {
             newRowColor
         } = this.state;
 
-        const tblBound = this.getTblBound();
-        const tblScrollWidth = this.getScrollWidthY();
-
         const arrAlign = [
             { _id: 'left', name: 'Left' },
             { _id: 'center', name: 'Center' },
@@ -413,114 +381,94 @@ class Screens extends React.Component {
         return (
             
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
-            <div className="row full-height">
-                <div className="table-responsive full-height" id="tblScreensContainer">
-                    <table className="table table-hover table-bordered table-sm" > {/* table-hover */}
-                        <thead>
-                            <tr
-                                className="text-center"
-                                style={{
-                                    //display: tblBound.width ? 'block' : 'table-row',
-                                    height: '45px'
-                                }}
+                <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                    <div className="input-group">
+                        <div className="input-group-prepend">
+                            <span className="input-group-text">Select Screen</span>
+                        </div>
+                        <select className="form-control mr-2" name="selectedScreen" value={selectedScreen} onChange={this.handleChangeScreen}>
+                            {
+                                screens.items && arraySorted(screens.items, "name").map((screen) =>  {        
+                                    return (
+                                        <option 
+                                            key={screen._id}
+                                            value={screen._id}>{screen.name}
+                                        </option>
+                                    );
+                                })
+                            }
+                        </select>
+                        <div className="pull-right"> {/* col-12 text-right */}
+                            <button 
+                                className="btn btn-leeuwen-blue bt-lg mr-2"
+                                onClick={event => this.toggleNewRow(event)}
+                                style={{height: '34px'}}
                             >
-                                <th colSpan="6" >
-                                    <div className="input-group">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">Select Screen</span>
-                                        </div>
-                                        <select className="form-control mr-2" name="selectedScreen" value={selectedScreen} onChange={this.handleChangeScreen}>
-                                            {
-                                                screens.items && arraySorted(screens.items, "name").map((screen) =>  {        
-                                                    return (
-                                                        <option 
-                                                            key={screen._id}
-                                                            value={screen._id}>{screen.name}
-                                                        </option>
-                                                    );
-                                                })
-                                            }
-                                        </select>
-                                        <div className="pull-right"> {/* col-12 text-right */}
-                                            <button 
-                                                className="btn btn-leeuwen-blue bt-lg mr-2"
-                                                onClick={event => this.toggleNewRow(event)}
-                                                style={{height: '34px'}}
-                                            >
-                                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
-                                            </button>
-                                            <button
-                                                className="btn btn-leeuwen bt-lg"
-                                                onClick={ (event) => this.handleDelete(event, selectedRows)}
-                                                style={{height: '34px'}}
-                                            >
-                                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
-                                            </button>                                     
-                                        </div>
-                                    </div>
-                                </th>
-                            </tr>
-                            <tr
-                                style={{
-                                    display: tblBound.width ? 'block' : 'table-row',
-                                    height: '63px'
-                                }}
+                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
+                            </button>
+                            <button
+                                className="btn btn-leeuwen bt-lg"
+                                onClick={ (event) => this.handleDelete(event, selectedRows)}
+                                style={{height: '34px'}}
                             >
-                                <TableSelectionAllRow
-                                    checked={selectAllRows}
-                                    onChange={this.toggleSelectAllRow}
-                                />
-                                <HeaderInput
-                                    type="text"
-                                    title="Field"
-                                    name="custom"
-                                    value={custom}
-                                    onChange={this.handleChangeHeader}
-                                    width={tblBound.width ? `${tblBound.width*0.45-30+ 'px'}`: 'calc(45% - 30px)'}
-                                />
-                                <HeaderInput
-                                    type="number"
-                                    title="For Show"
-                                    name="forShow"
-                                    value={forShow}
-                                    onChange={this.handleChangeHeader}
-                                    width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}
-                                />                                
-                                <HeaderInput
-                                    type="number"
-                                    title="For Select"
-                                    name="forSelect"
-                                    value={forSelect}
-                                    onChange={this.handleChangeHeader}
-                                    width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}
-                                />                                 
-                                <HeaderSelect
-                                        title="Location"
-                                        name="align"
-                                        value={align}
-                                        options={arrAlign}
-                                        optionText="name"
+                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
+                            </button>                                     
+                        </div>
+                    </div>
+                </div>
+            <div className="" style={{height: 'calc(100% - 44px)'}}>
+                <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
+                    <div className="table-responsive custom-table-container custom-table-container__fixed-row">
+                        <table className="table table-hover table-bordered table-sm" >
+                            <thead>
+                                <tr>
+                                    <TableSelectionAllRow
+                                        checked={selectAllRows}
+                                        onChange={this.toggleSelectAllRow}
+                                    />
+                                    <HeaderInput
+                                        type="text"
+                                        title="Field"
+                                        name="custom"
+                                        value={custom}
                                         onChange={this.handleChangeHeader}
-                                        width ={tblBound.width ? `${tblBound.width*0.15+ 'px'}`: '15%'}                                        
-                                />                         
-                                <HeaderCheckBox 
-                                    title="Disable"
-                                    name="edit"
-                                    value={edit}
-                                    onChange={this.handleChangeHeader}
-                                    width ={tblBound.width ? `${tblBound.width*0.10+ 'px'}`: '10%'}
-                                />
-                            </tr>
-                        </thead>
-                        {tblBound.width ?
-                            <tbody
-                                id="tblScreensBody"
-                                style={{
-                                    display:'block',
-                                    height: `${tblBound.height-12-45-63 + 'px'}`,
-                                    overflow:'auto'
-                                }} 
-                            >
+                                        width="calc(45% - 30px)"
+                                    />
+                                    <HeaderInput
+                                        type="number"
+                                        title="For Show"
+                                        name="forShow"
+                                        value={forShow}
+                                        onChange={this.handleChangeHeader}
+                                        width ="15%"
+                                    />                                
+                                    <HeaderInput
+                                        type="number"
+                                        title="For Select"
+                                        name="forSelect"
+                                        value={forSelect}
+                                        onChange={this.handleChangeHeader}
+                                        width ="15%"
+                                    />                                 
+                                    <HeaderSelect
+                                            title="Location"
+                                            name="align"
+                                            value={align}
+                                            options={arrAlign}
+                                            optionText="name"
+                                            onChange={this.handleChangeHeader}
+                                            width ="15%"
+                                    />                         
+                                    <HeaderCheckBox 
+                                        title="Disable"
+                                        name="edit"
+                                        value={edit}
+                                        onChange={this.handleChangeHeader}
+                                        width ="10%"
+                                    />
+                                </tr>
+                            </thead>
+                            <tbody>
                                 {newRow &&
                                     <tr
                                         onBlur={this.onBlurRow}
@@ -537,7 +485,6 @@ class Screens extends React.Component {
                                             optionText="custom"
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
-                                            width={tblBound.width ? `${tblBound.width*0.45-30 + 'px'}`: 'calc(45% - 30px)'}
                                         />
                                         <NewRowInput
                                             type="number"
@@ -545,7 +492,6 @@ class Screens extends React.Component {
                                             value={fieldName.forShow}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
-                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}
 
                                         />
                                         <NewRowInput
@@ -554,7 +500,6 @@ class Screens extends React.Component {
                                             value={fieldName.forSelect}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
-                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}
                                         />                                      
                                         <NewRowSelect 
                                             name="align"
@@ -563,19 +508,17 @@ class Screens extends React.Component {
                                             optionText="name"
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
-                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}
                                         />
                                         <NewRowCheckBox
                                             name="edit"
                                             checked={fieldName.edit}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
-                                            width={tblBound.width ? `${tblBound.width*0.10-tblScrollWidth + 'px'}`: '10%'}
                                         />
                                     </tr>                               
                                 }
                                 {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
-                                    <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}> {/*style={{height: '40px', lineHeight: '17.8571px'}}*/}
+                                    <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
                                         <TableSelectionRow
                                             id={s._id}
                                             selectAllRows={this.state.selectAllRows}
@@ -588,7 +531,6 @@ class Screens extends React.Component {
                                             fieldValue={s.fieldId}
                                             options={selection.project.fields}
                                             optionText="custom"
-                                            width={tblBound.width ? `${tblBound.width*0.45-30 + 'px'}`: 'calc(45% - 30px)'}                                  
                                         />
                                         <TableInput 
                                             collection="fieldname"
@@ -596,7 +538,6 @@ class Screens extends React.Component {
                                             fieldName="forShow"
                                             fieldValue={s.forShow}
                                             fieldType="number"
-                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}
                                         />
                                         <TableInput 
                                             collection="fieldname"
@@ -604,7 +545,6 @@ class Screens extends React.Component {
                                             fieldName="forSelect"
                                             fieldValue={s.forSelect}
                                             fieldType="number"
-                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}
                                         />
                                         <TableSelect 
                                             collection="fieldname"
@@ -613,7 +553,6 @@ class Screens extends React.Component {
                                             fieldValue={s.align}
                                             options={arrAlign}
                                             optionText="name"
-                                            width={tblBound.width ? `${tblBound.width*0.15 + 'px'}`: '15%'}                                 
                                         />
                                         <TableCheckBox 
                                             collection="fieldname"
@@ -621,18 +560,14 @@ class Screens extends React.Component {
                                             fieldName="edit"
                                             fieldValue={s.edit}
                                             fieldType="checkbox"
-                                            width={tblBound.width ? `${tblBound.width*0.10-tblScrollWidth + 'px'}`: '10%'}
                                         />
                                     </tr>
                                 )}
                             </tbody>
-                        :
-                            <tbody />
-                        }
-
-                    </table>
+                        </table>
+                    </div>
                 </div>
-            </div> 
+            </div>
         </div>
         );
     }
