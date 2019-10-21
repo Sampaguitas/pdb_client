@@ -31,11 +31,14 @@ class Configuration extends React.Component {
         super(props);
         this.state = {
             submittedProject: false,
+            submittedSupplier: false,
             projectId: ''
         }
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.handleSubmitProject=this.handleSubmitProject.bind(this);
         this.handleDeleteProject=this.handleDeleteProject.bind(this);
+        this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
+        this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
 
     }
 
@@ -84,6 +87,27 @@ class Configuration extends React.Component {
         dispatch(projectActions.delete(id));
     }
 
+    handleSubmitSupplier(event, supplier, callback ) {
+        event.preventDefault();
+        const { dispatch } = this.props;
+        this.setState({ submittedSupplier: true }, () => {
+            if(supplier.id && supplier.name && supplier.projectId) {
+                dispatch(supplierActions.update(supplier));
+                this.setState({submittedSupplier: false }, () => callback )
+            } else if (supplier.name && supplier.projectId) {
+                dispatch(supplierActions.create(supplier))
+                this.setState({submittedSupplier: false }, () => callback );
+            }
+        });
+    }
+
+    handleDeleteSupplier(event, id, callback) {
+        event.preventDefault();
+        const { dispatch } = this.props;
+        dispatch(supplierActions.delete(id));
+        callback;
+    }
+
     render() {
         const {
                 accesses, 
@@ -102,6 +126,7 @@ class Configuration extends React.Component {
             const {
                 projectId,
                 submittedProject,
+                submittedSupplier
             } = this.state
 
         return (
@@ -116,6 +141,8 @@ class Configuration extends React.Component {
                         handleSelectionReload={this.handleSelectionReload}
                         handleSubmitProject={this.handleSubmitProject}
                         handleDeleteProject={this.handleDeleteProject}
+                        handleSubmitSupplier={this.handleSubmitSupplier}
+                        handleDeleteSupplier={this.handleDeleteSupplier}
                         //Props
                         accesses={accesses}
                         currencies={currencies}
@@ -130,6 +157,7 @@ class Configuration extends React.Component {
                         //State
                         projectId={projectId}
                         submittedProject={submittedProject} 
+                        submittedSupplier={submittedSupplier}
                     />
                 </div>
             </Layout>

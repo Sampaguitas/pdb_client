@@ -253,8 +253,6 @@ class General extends React.Component {
         } = this.state;  
 
         const { projectUsers } = this.state.project;
-        // const tblBound = this.getTblBound();
-        // const tblScrollWidth = this.getScrollWidthY();
         {users.items && !loaded && selection.project && this.stateReload()}
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">

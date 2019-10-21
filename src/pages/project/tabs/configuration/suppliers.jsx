@@ -309,7 +309,7 @@ class Suppliers extends React.Component {
         });
     }
 
-    filterName(selection){
+    filterName(suppliers){
         
         const { 
             name,
@@ -324,8 +324,8 @@ class Suppliers extends React.Component {
             country,
         } = this.state;
 
-        if (selection.project.suppliers) {
-          return arraySorted(selection.project.suppliers, 'name').filter(function (supplier) {
+        if (suppliers.items) {
+          return arraySorted(suppliers.items, 'name').filter(function (supplier) {
             return (doesMatch(name, supplier.name, 'String') 
             && doesMatch(registeredName, supplier.registeredName, 'String') 
             && doesMatch(contact, supplier.contact, 'String')
@@ -339,9 +339,9 @@ class Suppliers extends React.Component {
     }
 
     handleOnclick(event, id) {
-        const { project } = this.props.selection
-        if (event.target.type != 'checkbox' && project.suppliers) {
-          let found = project.suppliers.find(element => element._id === id);
+        const { suppliers } = this.props
+        if (event.target.type != 'checkbox' && suppliers.items) {
+          let found = suppliers.items.find(element => element._id === id);
           this.setState({
             supplier: {
               id: id,
@@ -404,7 +404,12 @@ class Suppliers extends React.Component {
 
         const { 
             tab,
-            selection,                  
+            //Functions
+            handleSubmitSupplier,
+            handleDeleteSupplier,
+            //Props
+            selection,
+            suppliers                  
         } = this.props
 
         const { 
@@ -491,7 +496,7 @@ class Suppliers extends React.Component {
                                     </tr>
                                 </thead>
                                 <tbody className="full-height">
-                                    {selection && selection.project && this.filterName(selection).map((s) =>
+                                    {suppliers.items && this.filterName(suppliers).map((s) =>
                                         <tr key={s._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, s._id)}>
                                             <td>{s.name}</td>
                                             <td>{s.registeredName}</td>
@@ -620,7 +625,8 @@ class Suppliers extends React.Component {
                                                         <button
                                                             type="submit"
                                                             className="btn btn-leeuwen btn-lg"
-                                                            onClick={(event) => this.handleDelete(event, supplier.id)}
+                                                            // onClick={(event) => this.handleDelete(event, supplier.id)}
+                                                            onClick={(event) => handleDeleteSupplier(event, supplier.id, this.hideModal(event))}
                                                         >
                                                             {deleting && (
                                                                 <FontAwesomeIcon
@@ -635,7 +641,8 @@ class Suppliers extends React.Component {
                                                         <button
                                                             type="submit"
                                                             className="btn btn-leeuwen-blue btn-lg" //handleSubmitSupplier
-                                                            onClick={(event) => this.handleSubmit(event, supplier)}
+                                                            // onClick={(event) => this.handleSubmit(event, supplier)}
+                                                            onClick={(event) => handleSubmitSupplier(event, supplier, this.hideModal(event))}
                                                         >
                                                             {loading && (
                                                                 <FontAwesomeIcon
@@ -651,7 +658,8 @@ class Suppliers extends React.Component {
                                                 <button
                                                     type="submit"
                                                     className="btn btn-leeuwen-blue btn-lg btn-full"
-                                                    onClick={(event) => this.handleSubmit(event, supplier)}
+                                                    // onClick={(event) => this.handleSubmit(event, supplier)}
+                                                    onClick={(event) => handleSubmitSupplier(event, supplier, this.hideModal(event))}
                                                 >
                                                     {loading && (
                                                         <FontAwesomeIcon

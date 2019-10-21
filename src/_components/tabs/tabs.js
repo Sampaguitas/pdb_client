@@ -37,6 +37,8 @@ class Tabs extends Component {
             handleSelectionReload,
             handleSubmitProject,
             handleDeleteProject,
+            handleSubmitSupplier,
+            handleDeleteSupplier,
             //Props
             accesses,
             currencies,
@@ -80,6 +82,8 @@ class Tabs extends Component {
                                 handleSelectionReload={handleSelectionReload}
                                 handleSubmitProject={handleSubmitProject}
                                 handleDeleteProject={handleDeleteProject}
+                                handleSubmitSupplier={handleSubmitSupplier}
+                                handleDeleteSupplier={handleDeleteSupplier}
                                 //Props
                                 accesses={accesses}
                                 currencies={currencies}
