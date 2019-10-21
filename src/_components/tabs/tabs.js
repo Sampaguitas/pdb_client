@@ -33,19 +33,24 @@ class Tabs extends Component {
         const { tabs  } = this.state
         
         const {
+            //Functions
             handleSelectionReload,
             handleSubmitProject,
             handleDeleteProject,
-            projectUpdating,
-            projectDeleting,
-            submittedProject,
-            users,
+            //Props
+            accesses,
+            currencies,
             erps,
             opcos,
-            currencies,
+            projectDeleting,
+            projectUpdating,
             screens,
             selection,
+            suppliers,
+            users,
+            //State
             projectId,
+            submittedProject,
         } = this.props
 
         return (
@@ -71,19 +76,24 @@ class Tabs extends Component {
                         >
                             <tab.component
                                 tab={tab}
+                                //Functions
                                 handleSelectionReload={handleSelectionReload}
                                 handleSubmitProject={handleSubmitProject}
                                 handleDeleteProject={handleDeleteProject}
-                                projectUpdating={projectUpdating}
-                                projectDeleting={projectDeleting}
-                                submittedProject={submittedProject}
-                                users={users}
+                                //Props
+                                accesses={accesses}
+                                currencies={currencies}
                                 erps={erps}
                                 opcos={opcos}
-                                currencies={currencies}
+                                projectDeleting={projectDeleting}
+                                projectUpdating={projectUpdating}
                                 screens={screens}
                                 selection={selection}
+                                suppliers={suppliers}
+                                users={users}
+                                //State
                                 projectId={projectId}
+                                submittedProject={submittedProject}
                             />
                         </div>
                     )}

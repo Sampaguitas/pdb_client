@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 // import config from 'config';
-import { currencyActions, opcoActions, projectActions, supplierActions, userActions, erpActions, screenActions, fieldnameActions  } from '../../_actions';
+import { accessActions, currencyActions, erpActions, opcoActions, projectActions, supplierActions, screenActions, userActions  } from '../../_actions';
 // import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs';
@@ -26,11 +26,6 @@ const tabs = [
 
 const _ = require('lodash');
 
-// function logout() {
-//     // remove user from local storage to log user out
-//     localStorage.removeItem('user');
-// }
-
 class Configuration extends React.Component {
     constructor(props) {
         super(props);
@@ -48,15 +43,18 @@ class Configuration extends React.Component {
         const { dispatch, location } = this.props
         var qs = queryString.parse(location.search);
         if (qs.id) {
-            this.setState({projectId: qs.id}),
+            //State items with projectId
+            this.setState({projectId: qs.id});
+            dispatch(accessActions.getAll(qs.id));
             dispatch(projectActions.getById(qs.id));
+            dispatch(supplierActions.getAll(qs.id));
         }
+        //State items without projectId
         dispatch(currencyActions.getAll());
         dispatch(erpActions.getAll());
         dispatch(opcoActions.getAll());
-        dispatch(userActions.getAll());
-        // dispatch(projectActions.getAll());
         dispatch(screenActions.getAll());
+        dispatch(userActions.getAll());
     }
 
     handleSelectionReload(event){
@@ -87,44 +85,51 @@ class Configuration extends React.Component {
     }
 
     render() {
-        const { 
-                alert,  
-                projectUpdating,
-                projectDeleting,
-                users,
+        const {
+                accesses, 
+                alert,
+                currencies,
                 erps,
                 opcos,
-                currencies,
+                projectUpdating,
+                projectDeleting,
                 screens,
                 selection,
+                suppliers,
+                users,
             } = this.props;
         
-            const { 
-                submittedProject, 
+            const {
                 projectId,
+                submittedProject,
             } = this.state
 
         return (
-            <Layout alert={this.props.alert} accesses={selection.project && selection.project.accesses}>
+            <Layout alert={alert} accesses={accesses}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                 <h2>Configuration : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="configuration" className="full-height">
                     <Tabs
                         tabs={tabs}
+                        //Functions
                         handleSelectionReload={this.handleSelectionReload}
                         handleSubmitProject={this.handleSubmitProject}
                         handleDeleteProject={this.handleDeleteProject}
-                        projectUpdating={projectUpdating}
-                        projectDeleting={projectDeleting}
-                        submittedProject={submittedProject}                    
-                        users={users}
+                        //Props
+                        accesses={accesses}
+                        currencies={currencies}
                         erps={erps}
                         opcos={opcos}
-                        currencies={currencies}
+                        projectDeleting={projectDeleting}
+                        projectUpdating={projectUpdating}
                         screens={screens}
                         selection={selection}
+                        suppliers={suppliers}
+                        users={users}
+                        //State
                         projectId={projectId}
+                        submittedProject={submittedProject} 
                     />
                 </div>
             </Layout>
@@ -133,18 +138,20 @@ class Configuration extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, currencies, opcos, users, selection, erps, screens  } = state;
-    const { projectUpdating, projectDeleting } = state.projects;
+    const { accesses, alert, currencies, erps, opcos, screens, selection, suppliers, users } = state;
+    const { projectDeleting, projectUpdating } = state.projects;
     return {
+        accesses,
         alert,
-        projectUpdating,
-        projectDeleting,      
-        users,
+        currencies,
         erps,
         opcos,
-        currencies,
+        projectDeleting,
+        projectUpdating,
         screens,
         selection,
+        suppliers,
+        users,
     };
 }
 

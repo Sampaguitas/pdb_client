@@ -157,8 +157,8 @@ class General extends React.Component {
     } 
 
     stateReload(event){
-        const { users, selection } = this.props;
-        const { accesses } = this.props.selection.project;
+        const { users, selection, accesses } = this.props;
+        // const { accesses } = this.props.selection.project;
         const { project } = this.state;
         var userArray = []
         // var i
@@ -223,19 +223,21 @@ class General extends React.Component {
 
     render() {
 
-        const { 
+        const {
+            tab,
+            //Functions
             handleSubmitProject,
             handleDeleteProject,
-            projectUpdating,
-            projectDeleting,
-            submittedProject,
+            //Props
+            currencies,
             erps,
             opcos,
-            currencies,
+            projectDeleting,
+            projectUpdating,
             selection,
-            users,                  
-            tab,
-            // currentUser
+            users,
+            //State
+            submittedProject,
         } = this.props
 
         const {
