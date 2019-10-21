@@ -17,8 +17,9 @@ class NotFound extends React.Component {
   }
 
   render() {
+    const { alert } = this.props;
     return (
-      <Layout alert={this.props.alert} background={true}>
+      <Layout alert={alert} background={true}>
         <div
           id="notfound-card"
           className="row justify-content-center align-self-center"

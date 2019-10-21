@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 // import config from 'config';
-import { accessActions, currencyActions, erpActions, opcoActions, projectActions, supplierActions, screenActions, userActions  } from '../../_actions';
+import { accessActions, alertActions, currencyActions, erpActions, opcoActions, projectActions, supplierActions, screenActions, userActions  } from '../../_actions';
 // import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs';
@@ -34,6 +34,7 @@ class Configuration extends React.Component {
             submittedSupplier: false,
             projectId: ''
         }
+        this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.handleSubmitProject=this.handleSubmitProject.bind(this);
         this.handleDeleteProject=this.handleDeleteProject.bind(this);
@@ -60,14 +61,27 @@ class Configuration extends React.Component {
         dispatch(userActions.getAll());
     }
 
+    handleClearAlert(event){
+        event.preventDefault;
+        const { dispatch } = this.props;
+        dispatch(alertActions.clear());
+    }
+
     handleSelectionReload(event){
         // event.preventDefault();
         const { dispatch, location } = this.props
         var qs = queryString.parse(location.search);
         if (qs.id) {
             this.setState({projectId: qs.id}),
+            dispatch(accessActions.getAll(qs.id));
             dispatch(projectActions.getById(qs.id));
+            dispatch(supplierActions.getAll(qs.id));
         }
+        dispatch(currencyActions.getAll());
+        dispatch(erpActions.getAll());
+        dispatch(opcoActions.getAll());
+        dispatch(screenActions.getAll());
+        dispatch(userActions.getAll());
         // dispatch(projectActions.getAll());     
     }
 
@@ -131,7 +145,13 @@ class Configuration extends React.Component {
 
         return (
             <Layout alert={alert} accesses={accesses}>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+                {alert.message && 
+                    <div className={`alert ${alert.type}`}>{alert.message}
+                        <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                            <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                        </button>
+                    </div>
+                }
                 <h2>Configuration : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="configuration" className="full-height">

@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { accessActions, opcoActions, projectActions, supplierActions, userActions } from "../../_actions";
+import { accessActions, alertActions, opcoActions, projectActions, supplierActions, userActions } from "../../_actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableCheckBoxAdmin from "../../_components/project-table/table-check-box-admin";
 import TableCheckBoxSuperAdmin from "../../_components/project-table/table-check-box-spadmin";
@@ -80,6 +80,7 @@ class Settings extends React.Component {
       show: false
       
     };
+    this.handleClearAlert = this.handleClearAlert.bind(this);
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.handleChangeUser = this.handleChangeUser.bind(this);
@@ -101,6 +102,12 @@ class Settings extends React.Component {
     //Get users and opcos
     dispatch(userActions.getAll());
     dispatch(opcoActions.getAll());
+  }
+
+  handleClearAlert(event){
+    event.preventDefault;
+    const { dispatch } = this.props;
+    dispatch(alertActions.clear());
   }
 
   showModal() {
@@ -260,8 +267,14 @@ class Settings extends React.Component {
     const { registering, userUpdating, userDeleting, alert, opcos } = this.props;
 
     return (
-      <Layout alert={this.props.alert}>
-        {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+      <Layout alert={alert}>
+        {alert.message && 
+          <div className={`alert ${alert.type}`}>{alert.message}
+            <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+              <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+            </button>
+          </div>
+        }
           <h2>Settings</h2>
           <hr />
           <div id="setting" className="full-height">

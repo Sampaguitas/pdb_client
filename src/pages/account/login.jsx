@@ -47,7 +47,7 @@ class Login extends React.Component {
     const { alert, loggingIn } = this.props;
     const { email, password, submitted } = this.state;
     return (
-      <Layout alert={this.props.alert} background={true}>
+      <Layout alert={alert} background={true}>
         <div
           id="login-card"
           className="row justify-content-center align-self-center"

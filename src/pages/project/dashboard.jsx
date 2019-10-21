@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../_helpers';
-import { accessActions } from '../../_actions';
+import { accessActions, alertActions } from '../../_actions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import './dashboard.css';
@@ -36,6 +36,7 @@ class Dashboard extends React.Component {
             alert: {}
 
         };
+        this.handleClearAlert = this.handleClearAlert.bind(this);
         this.getProject = this.getProject.bind(this);
         this.getRevisions = this.getRevisions.bind(this);
         this.fetchData = this.fetchData.bind(this);
@@ -62,6 +63,18 @@ class Dashboard extends React.Component {
             this.getRevisions(qs.id);
             dispatch(accessActions.getAll(qs.id));
         }
+    }
+
+    handleClearAlert(event){
+        event.preventDefault;
+        const { dispatch } = this.props;
+        this.setState({ 
+            alert: {
+                type:'',
+                message:'' 
+            } 
+        });
+        dispatch(alertActions.clear());
     }
 
     getProject(projectId) {
@@ -294,7 +307,13 @@ class Dashboard extends React.Component {
 
         return (
             <Layout alert={alert} accesses={accesses}>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+                {alert.message && 
+                    <div className={`alert ${alert.type}`}>{alert.message}
+                        <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                            <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                        </button>
+                    </div>
+                }
                 <h2>Dashboard : {projectName ? projectName : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="dashboard" className="full-height">
@@ -345,10 +364,10 @@ class Dashboard extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, accesses } = state;
+    const { accesses, alert } = state;
     return {
-        alert,
         accesses,
+        alert,
     };
 }
 

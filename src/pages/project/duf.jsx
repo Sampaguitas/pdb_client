@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { projectActions } from '../../_actions';
+import { accessActions, alertActions, projectActions } from '../../_actions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -12,16 +12,25 @@ class Duf extends React.Component {
             projectId: '',
             fileName: '' 
         };
+        this.handleClearAlert = this.handleClearAlert.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleDownloadFile = this.handleDownloadFile.bind(this);
+    }
+
+    handleClearAlert(event){
+        event.preventDefault;
+        const { dispatch } = this.props;
+        dispatch(alertActions.clear());
     }
 
     componentDidMount() {
         const { dispatch, location } = this.props
         var qs = queryString.parse(location.search);
         if (qs.id) {
+            this.setState({projectId: qs.id});
             dispatch(projectActions.getById(qs.id));
+            dispatch(accessActions.getAll(qs.id));
         }
     }
 
@@ -66,11 +75,17 @@ class Duf extends React.Component {
     }
 
     render() {
-        const { alert, selection } = this.props;
+        const { accesses, alert, selection } = this.props;
         const { fileName } = this.state;
         return (
-            <Layout alert={this.props.alert} accesses={selection.project && selection.project.accesses}>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+            <Layout alert={alert} accesses={accesses}>
+                {alert.message && 
+                    <div className={`alert ${alert.type}`}>{alert.message}
+                        <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                            <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                        </button>
+                    </div>
+                }
                 <h2>Upload DUF : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="duf" className="full-height">
@@ -97,7 +112,7 @@ class Duf extends React.Component {
                                     />
                                 </div>
                                 <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
-                                <div className="input-group-append mr-2">
+                                <div className="input-group-append">
                                     <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
                                         <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>
                                     </button>
@@ -119,8 +134,9 @@ class Duf extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, selection } = state;
+    const { accesses, alert, selection } = state;
     return {
+        accesses,
         alert,
         selection
     };

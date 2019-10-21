@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { accessActions, currencyActions, erpActions, opcoActions, projectActions, supplierActions, userActions } from '../../_actions';
+import { alertActions, accessActions, currencyActions, erpActions, opcoActions, projectActions, supplierActions, userActions } from '../../_actions';
 import { history } from '../../_helpers';
 import CheckBox from '../../_components/check-box';
 import TableCheckBoxRole from '../../_components/project-table/table-check-box-role';
@@ -75,6 +75,7 @@ class Project extends React.Component {
             loaded: false,
             submitted: false
         };
+        this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleChangeProject = this.handleChangeProject.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
@@ -97,7 +98,13 @@ class Project extends React.Component {
         dispatch(opcoActions.getAll());
         dispatch(projectActions.getAll());
         dispatch(userActions.getAll());
-    }  
+    }
+    
+    handleClearAlert(event){
+        event.preventDefault;
+        const { dispatch } = this.props;
+        dispatch(alertActions.clear());
+    }
 
     handleChangeProject(event) {
         const { project } = this.state;
@@ -217,197 +224,202 @@ class Project extends React.Component {
         const { projectUsers } = this.state.project;
         {users.items && loaded === false && this.stateReload()}
         return (
-            <Layout alert={this.props.alert}>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-                {/* <div id="setting" className="full-height"> */}
-                    <h2>Add project</h2>
-                    <hr />
-                    <div id="project" className="full-height">
-                        <div className="col-md-8 mb-md-0 col-sm-12 mb-sm-3 full-height">
-                            <div className="row full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
-                                <div className="table-responsive custom-table-container">
-                                    <table className="table table-hover table-bordered table-sm">
-                                        <thead>
-                                            <tr>
-                                                <HeaderInput
-                                                    type="text"
-                                                    title="Initials"
-                                                    name="userName"
-                                                    value={userName}
-                                                    onChange={this.handleChangeHeader}
-                                                    width="10%" 
+            <Layout alert={alert}>
+               {alert.message && 
+                    <div className={`alert ${alert.type}`}>{alert.message}
+                        <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                            <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                        </button>
+                    </div>
+                }
+                <h2>Add project</h2>
+                <hr />
+                <div id="project" className="full-height">
+                    <div className="col-md-8 mb-md-0 col-sm-12 mb-sm-3 full-height">
+                        <div className="row full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
+                            <div className="table-responsive custom-table-container">
+                                <table className="table table-hover table-bordered table-sm">
+                                    <thead>
+                                        <tr>
+                                            <HeaderInput
+                                                type="text"
+                                                title="Initials"
+                                                name="userName"
+                                                value={userName}
+                                                onChange={this.handleChangeHeader}
+                                                width="10%" 
+                                            />
+                                            <HeaderInput
+                                                type="text"
+                                                title="User"
+                                                name="name"
+                                                value={name}
+                                                onChange={this.handleChangeHeader}
+                                                width="40%" 
+                                            />
+                                            <HeaderCheckBox
+                                                title="Expediting"
+                                                name="isExpediting"
+                                                value={isExpediting}
+                                                onChange={this.handleChangeHeader}
+                                                width="10%"
+                                            />
+                                            <HeaderCheckBox
+                                                title="Inspection"
+                                                name="isInspection"
+                                                value={isInspection}
+                                                onChange={this.handleChangeHeader}
+                                                width="10%"
+                                            />
+                                            <HeaderCheckBox
+                                                title="Shipping"
+                                                name="isShipping"
+                                                value={isShipping}
+                                                onChange={this.handleChangeHeader}
+                                                width="10%"
+                                            />
+                                            <HeaderCheckBox
+                                                title="Warehouse"
+                                                name="isWarehouse"
+                                                value={isWarehouse}
+                                                onChange={this.handleChangeHeader}
+                                                width="10%"
+                                            />
+                                            <HeaderCheckBox
+                                                title="Config"
+                                                name="isConfiguration"
+                                                value={isConfiguration}
+                                                onChange={this.handleChangeHeader}
+                                                width="10%"
+                                            />
+                                        </tr>
+                                    </thead>
+                                    <tbody className="full-height">
+                                        {projectUsers && this.filterName(projectUsers).map(u => (
+                                            <tr key={u.userId}>
+                                                <td>{u.userName}</td>
+                                                <td>{u.name}</td>
+                                                <TableCheckBoxRole
+                                                    id={u.userId}
+                                                    checked={u.isExpediting}
+                                                    onChange={(event) => {this.handleIsRole(event, 'isExpediting')}}
+                                                    disabled={false}
+                                                    
+                                                />   
+                                                <TableCheckBoxRole
+                                                    id={u.userId}
+                                                    checked={u.isInspection}
+                                                    onChange={(event) => {this.handleIsRole(event, 'isInspection')}}
+                                                    disabled={false}
+                                                />   
+                                                <TableCheckBoxRole
+                                                    id={u.userId}
+                                                    checked={u.isShipping}
+                                                    onChange={(event) => {this.handleIsRole(event, 'isShipping')}}
+                                                    disabled={false}
+                                                />   
+                                                <TableCheckBoxRole
+                                                    id={u.userId}
+                                                    checked={u.isWarehouse}
+                                                    onChange={(event) => {this.handleIsRole(event, 'isWarehouse')}}
+                                                    disabled={false}
                                                 />
-                                                <HeaderInput
-                                                    type="text"
-                                                    title="User"
-                                                    name="name"
-                                                    value={name}
-                                                    onChange={this.handleChangeHeader}
-                                                    width="40%" 
+                                                <TableCheckBoxRole
+                                                    id={u.userId}
+                                                    checked={u.isConfiguration}
+                                                    onChange={(event) => {this.handleIsRole(event, 'isConfiguration')}}
+                                                    disabled={false}
                                                 />
-                                                <HeaderCheckBox
-                                                    title="Expediting"
-                                                    name="isExpediting"
-                                                    value={isExpediting}
-                                                    onChange={this.handleChangeHeader}
-                                                    width="10%"
-                                                />
-                                                <HeaderCheckBox
-                                                    title="Inspection"
-                                                    name="isInspection"
-                                                    value={isInspection}
-                                                    onChange={this.handleChangeHeader}
-                                                    width="10%"
-                                                />
-                                                <HeaderCheckBox
-                                                    title="Shipping"
-                                                    name="isShipping"
-                                                    value={isShipping}
-                                                    onChange={this.handleChangeHeader}
-                                                    width="10%"
-                                                />
-                                                <HeaderCheckBox
-                                                    title="Warehouse"
-                                                    name="isWarehouse"
-                                                    value={isWarehouse}
-                                                    onChange={this.handleChangeHeader}
-                                                    width="10%"
-                                                />
-                                                <HeaderCheckBox
-                                                    title="Config"
-                                                    name="isConfiguration"
-                                                    value={isConfiguration}
-                                                    onChange={this.handleChangeHeader}
-                                                    width="10%"
-                                                />
-                                            </tr>
-                                        </thead>
-                                        <tbody className="full-height">
-                                            {projectUsers && this.filterName(projectUsers).map(u => (
-                                                <tr key={u.userId}>
-                                                    <td>{u.userName}</td>
-                                                    <td>{u.name}</td>
-                                                    <TableCheckBoxRole
-                                                        id={u.userId}
-                                                        checked={u.isExpediting}
-                                                        onChange={(event) => {this.handleIsRole(event, 'isExpediting')}}
-                                                        disabled={false}
-                                                        
-                                                    />   
-                                                    <TableCheckBoxRole
-                                                        id={u.userId}
-                                                        checked={u.isInspection}
-                                                        onChange={(event) => {this.handleIsRole(event, 'isInspection')}}
-                                                        disabled={false}
-                                                    />   
-                                                    <TableCheckBoxRole
-                                                        id={u.userId}
-                                                        checked={u.isShipping}
-                                                        onChange={(event) => {this.handleIsRole(event, 'isShipping')}}
-                                                        disabled={false}
-                                                    />   
-                                                    <TableCheckBoxRole
-                                                        id={u.userId}
-                                                        checked={u.isWarehouse}
-                                                        onChange={(event) => {this.handleIsRole(event, 'isWarehouse')}}
-                                                        disabled={false}
-                                                    />
-                                                    <TableCheckBoxRole
-                                                        id={u.userId}
-                                                        checked={u.isConfiguration}
-                                                        onChange={(event) => {this.handleIsRole(event, 'isConfiguration')}}
-                                                        disabled={false}
-                                                    />
-                                                </tr> 
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-md-4 col-sm-12 pl-md-3 p-sm-0">
-                            <div className="card">
-                                <div className="card-header">
-                                    <h5>General information</h5>
-                                </div>
-                                <div className="card-body">
-                                <form 
-                                    onSubmit={this.handleSubmit}
-                                    onKeyPress={this.onKeyPress}
-                                >
-                                        <Select
-                                            title="Copy settings from project"
-                                            name="copyId"
-                                            options={arraySorted(projects.items, 'name')}
-                                            value={project.copyId}
-                                            onChange={this.handleChangeProject}
-                                            placeholder=""
-                                            submitted={submitted}
-                                            inline={false}
-                                            required={true}
-                                        />
-                                        <Input
-                                            title="Name"
-                                            name="name"
-                                            type="text"
-                                            value={project.name}
-                                            onChange={this.handleChangeProject}
-                                            submitted={submitted}
-                                            inline={false}
-                                            required={true}
-                                        />
-                                        <Select
-                                            title="ERP"
-                                            name="erpId"
-                                            options={arraySorted(erps.items, 'name')}
-                                            value={project.erpId}
-                                            onChange={this.handleChangeProject}
-                                            placeholder=""
-                                            submitted={submitted}
-                                            inline={false}
-                                            required={true}
-                                        />
-                                        <Select
-                                            title="OPCO"
-                                            name="opcoId"
-                                            options={this.accessibleArray(opcos.items, 'name')}
-                                            value={project.opcoId}
-                                            onChange={this.handleChangeProject}
-                                            placeholder=""
-                                            submitted={submitted}
-                                            inline={false}
-                                            required={true}
-                                        />
-                                        <Select
-                                            title="Currency"
-                                            name="currencyId"
-                                            options={arraySorted(currencies.items, 'name')}
-                                            value={project.currencyId}
-                                            onChange={this.handleChangeProject}
-                                            placeholder=""
-                                            submitted={submitted}
-                                            inline={false}
-                                            required={true}
-                                        />
-                                        <div className="text-right">
-                                            <button
-                                                type="submit"
-                                                className="btn btn-leeuwen-blue btn-full btn-lg mb-3"
-                                            >
-                                                {projectCreating && (
-                                                    <FontAwesomeIcon
-                                                        icon="spinner"
-                                                        className="fa-pulse fa-1x fa-fw"
-                                                    />
-                                                )}    
-                                                Create Project
-                                            </button>
-                                        </div>
-                                    </form>                                
-                                </div>
+                                            </tr> 
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
+                    <div className="col-md-4 col-sm-12 pl-md-3 p-sm-0">
+                        <div className="card">
+                            <div className="card-header">
+                                <h5>General information</h5>
+                            </div>
+                            <div className="card-body">
+                            <form 
+                                onSubmit={this.handleSubmit}
+                                onKeyPress={this.onKeyPress}
+                            >
+                                    <Select
+                                        title="Copy settings from project"
+                                        name="copyId"
+                                        options={arraySorted(projects.items, 'name')}
+                                        value={project.copyId}
+                                        onChange={this.handleChangeProject}
+                                        placeholder=""
+                                        submitted={submitted}
+                                        inline={false}
+                                        required={true}
+                                    />
+                                    <Input
+                                        title="Name"
+                                        name="name"
+                                        type="text"
+                                        value={project.name}
+                                        onChange={this.handleChangeProject}
+                                        submitted={submitted}
+                                        inline={false}
+                                        required={true}
+                                    />
+                                    <Select
+                                        title="ERP"
+                                        name="erpId"
+                                        options={arraySorted(erps.items, 'name')}
+                                        value={project.erpId}
+                                        onChange={this.handleChangeProject}
+                                        placeholder=""
+                                        submitted={submitted}
+                                        inline={false}
+                                        required={true}
+                                    />
+                                    <Select
+                                        title="OPCO"
+                                        name="opcoId"
+                                        options={this.accessibleArray(opcos.items, 'name')}
+                                        value={project.opcoId}
+                                        onChange={this.handleChangeProject}
+                                        placeholder=""
+                                        submitted={submitted}
+                                        inline={false}
+                                        required={true}
+                                    />
+                                    <Select
+                                        title="Currency"
+                                        name="currencyId"
+                                        options={arraySorted(currencies.items, 'name')}
+                                        value={project.currencyId}
+                                        onChange={this.handleChangeProject}
+                                        placeholder=""
+                                        submitted={submitted}
+                                        inline={false}
+                                        required={true}
+                                    />
+                                    <div className="text-right">
+                                        <button
+                                            type="submit"
+                                            className="btn btn-leeuwen-blue btn-full btn-lg mb-3"
+                                        >
+                                            {projectCreating && (
+                                                <FontAwesomeIcon
+                                                    icon="spinner"
+                                                    className="fa-pulse fa-1x fa-fw"
+                                                />
+                                            )}    
+                                            Create Project
+                                        </button>
+                                    </div>
+                                </form>                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </Layout>
         );
     }

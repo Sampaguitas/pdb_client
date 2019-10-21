@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { accessActions, localeActions, opcoActions, projectActions, regionActions, supplierActions } from '../../_actions';
+import { alertActions, accessActions, localeActions, opcoActions, projectActions, regionActions, supplierActions } from '../../_actions';
 import Modal from "../../_components/modal";
 import Input from '../../_components/input';
 import Layout from '../../_components/layout';
@@ -65,6 +65,7 @@ class Opco extends React.Component {
             submitted: false,
             show: false,
         };
+        this.handleClearAlert = this.handleClearAlert.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.handleChangeOpco = this.handleChangeOpco.bind(this);
@@ -87,6 +88,12 @@ class Opco extends React.Component {
         dispatch(localeActions.getAll());
         dispatch(regionActions.getAll());
         // var qs = queryString.parse(location.search);
+    }
+
+    handleClearAlert(event){
+        event.preventDefault;
+        const { dispatch } = this.props;
+        dispatch(alertActions.clear());
     }
 
     showModal() {
@@ -229,12 +236,16 @@ class Opco extends React.Component {
 
     render() {
         const { alert, opcoCreating, opcoUpdating, opcoDeleting, locales, regions, opcos } = this.props;
-        const { opco, show, code, name, city, country, locale, region, submitted } = this.state;
-        // const tblBound = this.getTblBound();
-        // const tblScrollWidth = this.getScrollWidthY();
+        const { opco, show, code, name, city, country, region, submitted } = this.state;
         return (
-            <Layout alert={this.props.alert}>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+            <Layout alert={alert}>
+                {alert.message && 
+                    <div className={`alert ${alert.type}`}>{alert.message}
+                        <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                            <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                        </button>
+                    </div>
+                }
                 <h2>Add operation company</h2>
                 <hr />
                 <div id="opco" className="full-height">

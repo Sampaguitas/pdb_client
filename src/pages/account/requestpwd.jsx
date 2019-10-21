@@ -46,7 +46,7 @@ class RequestPwd extends React.Component {
     const { alert, requesting } = this.props;
     const { email, submitted } = this.state;
     return (
-      <Layout alert={this.props.alert} background={true}>
+      <Layout alert={alert} background={true}>
             <div
               id="requestpwd-card"
               className="row justify-content-center align-self-center"

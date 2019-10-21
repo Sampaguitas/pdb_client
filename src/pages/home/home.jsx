@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { accessActions, projectActions, supplierActions } from '../../_actions';
+import { alertActions, accessActions, projectActions, supplierActions } from '../../_actions';
 import { history } from '../../_helpers';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -50,6 +50,7 @@ class Home extends React.Component {
             erp: '',
             loaded: false,
         };
+        this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
         this.filterName = this.filterName.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -65,6 +66,12 @@ class Home extends React.Component {
         dispatch(supplierActions.clear());
         // Get Projects
         dispatch(projectActions.getAll());
+    }
+
+    handleClearAlert(event){
+        event.preventDefault;
+        const { dispatch } = this.props;
+        dispatch(alertActions.clear());
     }
 
     handleOnclick(event, project) {
@@ -106,11 +113,17 @@ class Home extends React.Component {
     }
 
     render() {
-        const { number, name, opco, erp, tblWidth, tblHeight  } = this.state;
+        const { number, name, opco, erp  } = this.state;
         const { alert, projects } = this.props;
         return (
-            <Layout alert={this.props.alert}>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+            <Layout alert={alert}>
+                {alert.message && 
+                    <div className={`alert ${alert.type}`}>{alert.message}
+                        <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                            <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                        </button>
+                    </div>
+                }
                 <h2>Overview</h2>
                 <hr />
                 <div id="overview" className="full-height">

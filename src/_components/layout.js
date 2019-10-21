@@ -32,23 +32,6 @@ class Layout extends Component {
         const { collapsed, background } = this.state;
         return (
             <div className="full-height">
-                {/* {background?
-                    <div
-                        id="content"
-                        className="full-height"
-                        style={{
-                            backgroundImage: `url(${Background})`,
-                            backgroundPosition: 'center',
-                            backgroundSize: 'cover',
-                            backgroundRepeat: 'no-repeat',
-                            width:'100%',
-                            padding:'0px',
-                            margin: '0px',
-                        }}
-                    >
-                        {this.props.children}
-                    </div>
-                : */}
                 <div className="full-height">
                     <HeaderBarMenu id="headerbar" className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={this.toggleCollapse}/>
                     <SideBarMenu className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={this.toggleCollapse} accesses={this.props.accesses}/>
@@ -57,7 +40,6 @@ class Layout extends Component {
                     </div>
                     <Footer />
                 </div>
-                {/* } */}
             </div>
         )
     }

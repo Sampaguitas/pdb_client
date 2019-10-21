@@ -21,6 +21,7 @@ function create(supplier) {
                 supplier => {
                     dispatch(success());
                     dispatch(alertActions.success('supplier successfully created'));
+                    dispatch(supplierActions.getAll(supplier.projectId));
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -73,8 +74,9 @@ function update(supplier) {
         supplierService.update(supplier)
             .then(
                 supplier => {
-                    dispatch(success(supplier)),
-                    dispatch(alertActions.success('supplier successfully updated'))
+                    dispatch(success(supplier));
+                    dispatch(alertActions.success('supplier successfully updated'));
+                    dispatch(supplierActions.getAll(supplier.projectId));
                 },
                 error => dispatch(failure(error.toString()))
             );
@@ -92,7 +94,10 @@ function _delete(id) {
 
         supplierService.delete(id)
             .then(
-                supplier => dispatch(success(id)),
+                supplier => {
+                    dispatch(success(id));
+                    dispatch(supplierActions.getAll(supplier.projectId));
+                },
                 error => dispatch(failure(id, error.toString()))
             );
     };

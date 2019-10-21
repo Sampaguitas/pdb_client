@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { accessActions, projectActions, supplierActions, userActions } from '../../_actions';
+import { alertActions, accessActions, projectActions, supplierActions, userActions } from '../../_actions';
 import { authHeader } from '../../_helpers';
 import config from 'config';
 //Components
@@ -21,6 +21,7 @@ class User extends React.Component {
             },
             submitted:false,
         }
+        this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
@@ -34,6 +35,12 @@ class User extends React.Component {
         dispatch(supplierActions.clear());
         //Get users
         dispatch(userActions.getAll());
+    }
+
+    handleClearAlert(event){
+        event.preventDefault;
+        const { dispatch } = this.props;
+        dispatch(alertActions.clear());
     }
 
     handleChange(event){
@@ -73,8 +80,14 @@ class User extends React.Component {
         const { user, alert, userUpdating } = this.props;
         const { submitted, stateUser } = this.state
         return (
-            <Layout alert={this.props.alert}>
-                {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
+            <Layout alert={alert}>
+                {alert.message && 
+                    <div className={`alert ${alert.type}`}>{alert.message}
+                        <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                            <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                        </button>
+                    </div>
+                }
                 <h2>User Page</h2>
                 <hr />
                 <div id="user" className="full-height">
