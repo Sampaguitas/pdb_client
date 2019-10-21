@@ -619,7 +619,7 @@ class Suppliers extends React.Component {
                                                     <div className="col-6">
                                                         <button
                                                             type="submit"
-                                                            className="btn btn-outline-dark btn-lg"
+                                                            className="btn btn-leeuwen btn-lg"
                                                             onClick={(event) => this.handleDelete(event, supplier.id)}
                                                         >
                                                             {deleting && (
@@ -634,7 +634,7 @@ class Suppliers extends React.Component {
                                                     <div className="col-6">
                                                         <button
                                                             type="submit"
-                                                            className="btn btn-outline-leeuwen btn-lg" //handleSubmitSupplier
+                                                            className="btn btn-leeuwen-blue btn-lg" //handleSubmitSupplier
                                                             onClick={(event) => this.handleSubmit(event, supplier)}
                                                         >
                                                             {loading && (
@@ -650,7 +650,7 @@ class Suppliers extends React.Component {
                                             :
                                                 <button
                                                     type="submit"
-                                                    className="btn btn-outline-leeuwen btn-lg btn-full"
+                                                    className="btn btn-leeuwen-blue btn-lg btn-full"
                                                     onClick={(event) => this.handleSubmit(event, supplier)}
                                                 >
                                                     {loading && (

@@ -414,7 +414,7 @@ class General extends React.Component {
                                         <div>
                                             <button
                                                 type="submit"
-                                                className="btn btn-outline-dark btn-lg"
+                                                className="btn btn-leeuwen btn-lg"
                                                 onClick={(event) => { handleDeleteProject(event, project.id)}} 
                                                 style={{ marginRight: 10 }}
                                             >
@@ -424,11 +424,11 @@ class General extends React.Component {
                                                         className="fa-pulse fa-1x fa-fw" 
                                                     /> 
                                                 )}
-                                                Remove
+                                                Delete
                                             </button>
                                             <button
                                                 type="submit"
-                                                className="btn btn-lg btn-outline-leeuwen"
+                                                className="btn btn-leeuwen-blue btn-lg"
                                                 onClick={(event) => { handleSubmitProject(event, project)} }
                                             >
                                                 {projectUpdating && (

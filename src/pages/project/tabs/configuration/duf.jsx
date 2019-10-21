@@ -350,7 +350,7 @@ class Duf extends React.Component {
                             onClick={event => this.toggleNewRow(event)}
                             style={{height: '34px'}}
                         >
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add New Field</span>
+                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Field</span>
                         </button>
                         <button
                             className="btn btn-leeuwen btn-lg"
