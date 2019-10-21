@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { userActions, opcoActions } from "../../_actions";
+import { accessActions, opcoActions, projectActions, supplierActions, userActions } from "../../_actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableCheckBoxAdmin from "../../_components/project-table/table-check-box-admin";
 import TableCheckBoxSuperAdmin from "../../_components/project-table/table-check-box-spadmin";
@@ -80,8 +80,6 @@ class Settings extends React.Component {
       show: false
       
     };
-    // this.getScrollWidthY = this.getScrollWidthY.bind(this);
-    // this.getTblBound = this.getTblBound.bind(this);
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.handleChangeUser = this.handleChangeUser.bind(this);
@@ -95,8 +93,14 @@ class Settings extends React.Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(userActions.getAll());
-    this.props.dispatch(opcoActions.getAll());
+    const { dispatch } = this.props;
+    //Clear Selection
+    dispatch(accessActions.clear());
+    dispatch(projectActions.clearSelection());
+    dispatch(supplierActions.clear());
+    //Get users and opcos
+    dispatch(userActions.getAll());
+    dispatch(opcoActions.getAll());
   }
 
   showModal() {

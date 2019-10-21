@@ -100,6 +100,8 @@ export function suppliers(state = {}, action) {
                     return supplier;
                 })
             };
+        case supplierConstants.CLEAR:
+            return {};
         default:
             return state
     }

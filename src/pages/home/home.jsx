@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { opcoActions, projectActions, accessActions } from '../../_actions';
+import { accessActions, projectActions, supplierActions } from '../../_actions';
 import { history } from '../../_helpers';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -62,6 +62,7 @@ class Home extends React.Component {
         // dispatch(opcoActions.getAll());
         dispatch(projectActions.clearSelection());
         dispatch(accessActions.clear());
+        dispatch(supplierActions.clear());
         dispatch(projectActions.getAll());
     }
 

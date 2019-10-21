@@ -8,7 +8,8 @@ export const supplierActions = {
     getAll,
     getById,
     update,
-    delete: _delete
+    delete: _delete,
+    clear
 };
 
 function create(supplier) {
@@ -99,4 +100,8 @@ function _delete(id) {
     function request(id) { return { type: supplierConstants.DELETE_REQUEST, id } }
     function success(id) { return { type: supplierConstants.DELETE_SUCCESS, id } }
     function failure(id, error) { return { type: supplierConstants.DELETE_FAILURE, id, error } }
+}
+
+function clear() {
+    return { type: supplierConstants.CLEAR };
 }
