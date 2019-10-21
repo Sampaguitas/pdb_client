@@ -11,19 +11,18 @@ function isLoggedIn() {
 }
 class HeaderBarMenu extends Component {
 
-    logout() {
-        window.location.href = "/login";
-    }
+    // logout() {
+    //     window.location.href = "/login";
+    // }
 
-    userPage(){
-        // <Redirect to="/user" />
-        window.location.href = "/user";
-    }
+    // userPage(){
+    //     window.location.href = "/user";
+    // }
         
-    settingsPage() {
-        // <Redirect to="/user" />
-        window.location.href = "/settings";
-    }
+    // settingsPage() {
+    //     window.location.href = "/settings";
+    // }
+
     render() {
         var isAdmin = false;
         try{
@@ -39,17 +38,22 @@ class HeaderBarMenu extends Component {
                                     <span><FontAwesomeIcon icon="bars" className="fa-2x" /></span>
                                 </span>
                                 <form className="form-inline ml-auto pull-right"> {/* "" */}
-                                    <button onClick={this.userPage} className="btn btn-outline-leeuwen-blue btn-round header-button" type="button" title="User-Page">
-                                        <span><FontAwesomeIcon icon="user" className="fa-2x"/></span>
-                                    </button>
-                                    <button onClick={this.settingsPage} className={isAdmin ? "btn btn-outline-leeuwen-blue btn-round header-button" : "hidden"} type="button" title="Settings">
-                                        <span><FontAwesomeIcon icon="cog" className="fa-2x"/></span>
-                                    </button>
-                                        <button onClick={this.logout} className="btn btn-outline-leeuwen btn-round header-button" type="button" title="Log-Out">
-                                        <span><FontAwesomeIcon icon="sign-out-alt" className="fa-2x"/></span>
-                                    </button>
+                                    <NavLink to="/user">
+                                        <button className="btn btn-outline-leeuwen-blue btn-round header-button" type="button" title="User-Page">
+                                            <span><FontAwesomeIcon icon="user" className="fa-2x"/></span>
+                                        </button>
+                                    </NavLink>
+                                    <NavLink to="/settings">
+                                        <button className={isAdmin ? "btn btn-outline-leeuwen-blue btn-round header-button" : "hidden"} type="button" title="Settings">
+                                            <span><FontAwesomeIcon icon="cog" className="fa-2x"/></span>
+                                        </button>
+                                    </NavLink>
+                                    <NavLink to="/login">
+                                        <button className="btn btn-outline-leeuwen btn-round header-button" type="button" title="Log-Out">
+                                            <span><FontAwesomeIcon icon="sign-out-alt" className="fa-2x"/></span>
+                                        </button>
+                                    </NavLink>
                                 </form>
-
                             </div>
                         </nav>
                     </div>

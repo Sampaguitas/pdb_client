@@ -61,8 +61,8 @@ class Home extends React.Component {
         const { dispatch } = this.props
         // dispatch(opcoActions.getAll());
         dispatch(projectActions.clearSelection());
-        dispatch(projectActions.getAll());
         dispatch(accessActions.clear());
+        dispatch(projectActions.getAll());
     }
 
     handleOnclick(event, project) {
@@ -109,8 +109,6 @@ class Home extends React.Component {
     render() {
         const { number, name, opco, erp, tblWidth, tblHeight  } = this.state;
         const { alert, projects } = this.props;
-        // const tblBound = this.getTblBound();
-        // const tblScrollWidth = this.getScrollWidthY();
         return (
             <Layout alert={this.props.alert}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
