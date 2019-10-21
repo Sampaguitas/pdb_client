@@ -75,7 +75,7 @@ class User extends React.Component {
         return (
             <Layout alert={this.props.alert}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-                <h2>User Information</h2>
+                <h2>User Page</h2>
                 <hr />
                 <div id="user" className="full-height">
                     <div className="row">
@@ -143,7 +143,7 @@ class User extends React.Component {
                                             required={true}
                                             autocomplete="new-password"
                                         />
-                                        <button type="submit" className="btn btn-leeuwen btn-full btn-lg mb-3" onClick={this.handleSubmit}>
+                                        <button type="submit" className="btn btn-leeuwen-blue btn-full btn-lg mb-3" onClick={this.handleSubmit}>
                                             {userUpdating ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
                                             Change Password
                                         </button>

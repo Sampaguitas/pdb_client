@@ -392,7 +392,7 @@ class Project extends React.Component {
                                         <div className="text-right">
                                             <button
                                                 type="submit"
-                                                className="btn btn-leeuwen btn-full btn-lg mb-3"
+                                                className="btn btn-leeuwen-blue btn-full btn-lg mb-3"
                                             >
                                                 {projectCreating && (
                                                     <FontAwesomeIcon
@@ -400,7 +400,7 @@ class Project extends React.Component {
                                                         className="fa-pulse fa-1x fa-fw"
                                                     />
                                                 )}    
-                                                Save Project
+                                                Create Project
                                             </button>
                                         </div>
                                     </form>                                

@@ -59,10 +59,11 @@ class Home extends React.Component {
 
     componentDidMount() {
         const { dispatch } = this.props
-        // dispatch(opcoActions.getAll());
-        dispatch(projectActions.clearSelection());
+        // Clear Selection
         dispatch(accessActions.clear());
+        dispatch(projectActions.clearSelection());
         dispatch(supplierActions.clear());
+        // Get Projects
         dispatch(projectActions.getAll());
     }
 

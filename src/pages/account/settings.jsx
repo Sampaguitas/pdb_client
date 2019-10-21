@@ -262,7 +262,7 @@ class Settings extends React.Component {
     return (
       <Layout alert={this.props.alert}>
         {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-          <h2>Add or Update user</h2>
+          <h2>Settings</h2>
           <hr />
           <div id="setting" className="full-height">
             <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
@@ -443,7 +443,7 @@ class Settings extends React.Component {
                             <div className="row">
                                 <div className="col-6">
                                     <button
-                                        className="btn btn-outline-dark btn-lg"
+                                        className="btn btn-leeuwen btn-lg"
                                         onClick={(event) => {this.handleDeletUser(event, this.state.user.id)}}
                                     >
                                         {userDeleting && (
@@ -457,7 +457,7 @@ class Settings extends React.Component {
                                 </div>
                                 <div className="col-6">
                                     <button
-                                        className="btn btn-outline-leeuwen btn-lg"
+                                        className="btn btn-leeuwen-blue btn-lg"
                                         onClick={event => this.handleSubmit(event)}
                                     >
                                         {userUpdating && (
@@ -472,7 +472,7 @@ class Settings extends React.Component {
                             </div>
                         :
                             <button
-                                className="btn btn-outline-leeuwen btn-lg btn-full"
+                                className="btn btn-leeuwen-blue btn-lg btn-full"
                                 onClick={event => this.handleSubmit(event)}
                             >
                                 {registering && (

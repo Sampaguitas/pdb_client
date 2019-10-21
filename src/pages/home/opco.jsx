@@ -235,7 +235,7 @@ class Opco extends React.Component {
         return (
             <Layout alert={this.props.alert}>
                 {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
-                <h2>Add or Update operation company</h2>
+                <h2>Add operation company</h2>
                 <hr />
                 <div id="opco" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
@@ -317,7 +317,7 @@ class Opco extends React.Component {
                         <Modal
                             show={show}
                             hideModal={this.hideModal}
-                            title={opco.id ? 'Update opco' : 'Add opco'}
+                            title={opco.id ? 'Update Opco' : 'Create Opco'}
                             // size="modal-xl"
                         >
                             <div className="col-12">
@@ -414,7 +414,7 @@ class Opco extends React.Component {
                                             <div className="col-6">
                                                 <button
                                                     // type="submit"
-                                                    className="btn btn-outline-dark btn-lg"
+                                                    className="btn btn-leeuwen btn-lg"
                                                     onClick={(event) => {this.handleDeletOpco(event, opco.id)}}
                                                 >
                                                     {opcoDeleting && (
@@ -429,7 +429,7 @@ class Opco extends React.Component {
                                             <div className="col-6">
                                                 <button
                                                     type="submit"
-                                                    className="btn btn-outline-leeuwen btn-lg"
+                                                    className="btn btn-leeuwen-blue btn-lg"
                                                 >
                                                     {opcoUpdating && (
                                                         <FontAwesomeIcon
@@ -444,7 +444,7 @@ class Opco extends React.Component {
                                     :
                                         <button
                                             type="submit"
-                                            className="btn btn-outline-leeuwen btn-lg btn-full"
+                                            className="btn btn-leeuwen-blue btn-lg btn-full"
                                         >
                                             {opcoCreating && (
                                                 <FontAwesomeIcon
