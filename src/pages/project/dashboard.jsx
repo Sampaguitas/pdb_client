@@ -125,7 +125,6 @@ class Dashboard extends React.Component {
                     }
                 });
             } else {
-                console.log('revisions:', revisions);
                 this.setState({
                     loadingProject: false,
                     revisions: data

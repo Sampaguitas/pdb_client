@@ -409,7 +409,6 @@ class ReleaseData extends React.Component {
         event.preventDefault();
         const { selection } = this.props;
         const { selectedTemplate } = this.state;
-        console.log('selectedTemplate:',selectedTemplate);
         if (selectedTemplate != "0") {
             let obj = findObj(selection.project.docdefs,selectedTemplate);
              if (obj) {

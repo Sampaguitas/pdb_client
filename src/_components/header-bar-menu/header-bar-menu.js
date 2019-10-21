@@ -2,26 +2,12 @@ import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 // Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// Style
-import './header-bar-menu.css'
 
 
 function isLoggedIn() {
     return localStorage.getItem("user") !== null;
 }
 class HeaderBarMenu extends Component {
-
-    // logout() {
-    //     window.location.href = "/login";
-    // }
-
-    // userPage(){
-    //     window.location.href = "/user";
-    // }
-        
-    // settingsPage() {
-    //     window.location.href = "/settings";
-    // }
 
     render() {
         var isAdmin = false;
@@ -39,17 +25,17 @@ class HeaderBarMenu extends Component {
                                 </span>
                                 <form className="form-inline ml-auto pull-right"> {/* "" */}
                                     <NavLink to="/user">
-                                        <button className="btn btn-outline-leeuwen-blue btn-round header-button" type="button" title="User-Page">
+                                        <button className="btn btn-outline-leeuwen-blue btn-round header-button" title="User-Page">
                                             <span><FontAwesomeIcon icon="user" className="fa-2x"/></span>
                                         </button>
                                     </NavLink>
                                     <NavLink to="/settings">
-                                        <button className={isAdmin ? "btn btn-outline-leeuwen-blue btn-round header-button" : "hidden"} type="button" title="Settings">
+                                        <button className={isAdmin ? "btn btn-outline-leeuwen-blue btn-round header-button" : "hidden"} title="Settings">
                                             <span><FontAwesomeIcon icon="cog" className="fa-2x"/></span>
                                         </button>
                                     </NavLink>
                                     <NavLink to="/login">
-                                        <button className="btn btn-outline-leeuwen btn-round header-button" type="button" title="Log-Out">
+                                        <button className="btn btn-outline-leeuwen btn-round header-button" title="Log-Out">
                                             <span><FontAwesomeIcon icon="sign-out-alt" className="fa-2x"/></span>
                                         </button>
                                     </NavLink>

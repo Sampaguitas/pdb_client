@@ -62,7 +62,6 @@ class ResetPwd extends React.Component {
       submitted: true
     });
     if (user.newPassword && user.confirmPassword) {
-      console.log('state:', this.state);
       dispatch(userActions.resetPwd(user));
     }
   }

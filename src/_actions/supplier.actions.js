@@ -19,7 +19,6 @@ function create(supplier) {
             .then(
                 supplier => {
                     dispatch(success());
-                    // history.push('/');
                     dispatch(alertActions.success('supplier successfully created'));
                 },
                 error => {
@@ -34,18 +33,18 @@ function create(supplier) {
     function failure(error) { return { type: supplierConstants.CREATE_FAILURE, error } }
 }
 
-function getAll() {
+function getAll(projectId) {
     return dispatch => {
-        dispatch(request());
+        dispatch(request(projectId));
 
-        supplierService.getAll()
+        supplierService.getAll(projectId)
             .then(
                 suppliers => dispatch(success(suppliers)),
                 error => dispatch(failure(error.toString()))
             );
     };
 
-    function request() { return { type: supplierConstants.GETALL_REQUEST } }
+    function request(projectId) { return { type: supplierConstants.GETALL_REQUEST, projectId } }
     function success(suppliers) { return { type: supplierConstants.GETALL_SUCCESS, suppliers } }
     function failure(error) { return { type: supplierConstants.GETALL_FAILURE, error } }
 }

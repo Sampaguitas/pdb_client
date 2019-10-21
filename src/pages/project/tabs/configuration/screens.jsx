@@ -251,7 +251,6 @@ class Screens extends React.Component {
                     });
                 })
                 .catch( err => {
-                    console.log(err),
                     this.setState({
                         ...this.state,
                         deleting: false

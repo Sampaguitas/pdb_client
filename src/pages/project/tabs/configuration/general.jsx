@@ -89,8 +89,7 @@ class General extends React.Component {
             isConfiguration: '',
             loaded: false,
         };
-        // this.getScrollWidthY = this.getScrollWidthY.bind(this);
-        // this.getTblBound = this.getTblBound.bind(this);
+        
         this.handleIsRole = this.handleIsRole.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
@@ -100,33 +99,6 @@ class General extends React.Component {
         this.handleIsRole = this.handleIsRole.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
     }
-
-    // getTblBound() {
-    //     const tblContainer = document.getElementById("tblContainer");
-    //     if (!tblContainer) {
-    //         return {};
-    //     }
-    //     const rect = tblContainer.getBoundingClientRect();
-    //     return {
-    //         left: rect.left,
-    //         top: rect.top + window.scrollY,
-    //         width: rect.width || rect.right - rect.left,
-    //         height: rect.height || rect.bottom - rect.top
-    //     };
-    // }    
-
-    // getScrollWidthY() {
-    //     var scroll = document.getElementById("tblBody");
-    //     if (!scroll) {
-    //         return 0;
-    //     } else {
-    //         if(scroll.clientHeight == scroll.scrollHeight){
-    //             return 0;
-    //         } else {
-    //             return 15;
-    //         }
-    //     }
-    // } 
 
     handleIsRole(event, role) {
         const { name } = event.target;

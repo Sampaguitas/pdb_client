@@ -98,7 +98,6 @@ class Suppliers extends React.Component {
     handleSubmit(event) {
         event.preventDefault();
         const { supplier } = this.state;
-        console.log('supplier:', supplier);
         const { handleSelectionReload } = this.props
         this.setState({ submitted: true }, () => {
             if (supplier.id && supplier.name && supplier.projectId) {
@@ -112,16 +111,13 @@ class Suppliers extends React.Component {
                     .then( () => {
                         this.setState({submitted: false, loading: false},
                             ()=> {
-                                console.log('successfuly updated'),
                                 this.hideModal(event),
                                 handleSelectionReload();
                             });
                     })
                     .catch( err => {
-                        console.log(err),
                         this.setState({submitted: false, loading: false},
                             ()=> {
-                                console.log('an error occured during update'),
                                 this.hideModal(event),
                                 handleSelectionReload();
                             });
@@ -138,16 +134,13 @@ class Suppliers extends React.Component {
                     .then( () => {
                         this.setState({submitted: false, loading: false},
                             ()=> {
-                                console.log('successfuly created'),
                                 this.hideModal(event),
                                 handleSelectionReload();
                             })
                     })
                     .catch( err => {
-                        console.log(err),
                         this.setState({submitted: false, loading: false},
                             ()=> {
-                                console.log('an error occured during create'),
                                 this.hideModal(event),
                                 handleSelectionReload();
                             });
@@ -177,7 +170,6 @@ class Suppliers extends React.Component {
                         });
                 })
                 .catch( err => {
-                    console.log(err),
                     this.setState({submitted: false, deleting: false},
                         ()=> {
                             this.hideModal(event),

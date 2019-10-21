@@ -192,7 +192,6 @@ class ProjectTable extends Component {
 
     uploadTable(event) {
         event.preventDefault();
-        // console.log('testBodys:',this.props.testBodys);
     }
 
     handleChangeHeader(event) {

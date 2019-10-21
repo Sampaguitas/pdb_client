@@ -74,10 +74,7 @@ class Home extends React.Component {
     }
 
     handleChange(event) {
-        console.log('toto');
         const { name, value } = event.target;
-        console.log('name:',name);
-        console.log('value:',value);
         this.setState({
             [name]: value
         });

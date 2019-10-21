@@ -47,7 +47,7 @@ function getAll(projectId) {
             );
     };
 
-    function request() { return { type: accessConstants.GET_REQUEST } }
+    function request(projectId) { return { type: accessConstants.GET_REQUEST, projectId } }
     function success(accesses) { return { type: accessConstants.GET_SUCCESS, accesses } }
     function failure(error) { return { type: accessConstants.GET_FAILURE, error } }
 }

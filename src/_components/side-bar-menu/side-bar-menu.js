@@ -135,7 +135,6 @@ class SideBarMenu extends Component {
 
     handleItemOver(event, title){
         event.preventDefault();
-        console.log('title:', title);
         this.setState({
             show: title
         });

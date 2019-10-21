@@ -66,7 +66,6 @@ class Configuration extends React.Component {
         if (qs.id) {
             this.setState({projectId: qs.id}),
             dispatch(projectActions.getById(qs.id));
-            console.log('stateReload');
         }
         // dispatch(projectActions.getAll());     
     }
