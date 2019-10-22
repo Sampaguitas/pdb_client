@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../_helpers';
-import { accessActions, alertActions } from '../../_actions';
+import { accessActions, alertActions, projectActions } from '../../_actions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import './dashboard.css';
@@ -22,23 +22,26 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {
             projectId: '',
-            projectName: '',
+            // projectName: '',
             unit: 'value',
             period: 'quarter',
             clPo:'',
             clPoRev: '',
-            revisions: [],
+            // revisions: [],
             lines: ['contract', 'rfiExp', 'rfiAct', 'released', 'shipExp', 'shipAct', 'delExp', 'delAct'],
             data: {},
             // error: '',
             loadingChart: false,
             loadingProject: false,
-            alert: {}
+            alert: {
+                type:'',
+                message:''
+            }
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
-        this.getProject = this.getProject.bind(this);
-        this.getRevisions = this.getRevisions.bind(this);
+        // this.getProject = this.getProject.bind(this);
+        // this.getRevisions = this.getRevisions.bind(this);
         this.fetchData = this.fetchData.bind(this);
         this.downloadLineChart = this.downloadLineChart.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -58,9 +61,10 @@ class Dashboard extends React.Component {
                     message:''
                 }
             });
-            this.getProject(qs.id); 
+            // this.getProject(qs.id); 
             this.fetchData(qs.id);
-            this.getRevisions(qs.id);
+            // this.getRevisions(qs.id);
+            dispatch(projectActions.getById(qs.id));
             dispatch(accessActions.getAll(qs.id));
         }
     }
@@ -77,74 +81,74 @@ class Dashboard extends React.Component {
         dispatch(alertActions.clear());
     }
 
-    getProject(projectId) {
-        this.setState({
-            loadingProject: true,
-        });
+    // getProject(projectId) {
+    //     this.setState({
+    //         loadingProject: true,
+    //     });
 
-        const requestOptions = {
-            method: 'GET',
-            headers: authHeader()
-        };
+    //     const requestOptions = {
+    //         method: 'GET',
+    //         headers: authHeader()
+    //     };
 
-        return fetch(`${config.apiUrl}/project/findOne/?id=${projectId}`, requestOptions)
-        .then(responce => responce.text().then(text => {
-            const data = text && JSON.parse(text);
-            if (!responce.ok) {
-                if (responce.status === 401) {
-                    localStorage.removeItem('user');
-                    location.reload(true);
-                }
-                const error = (data && data.message) || Response.statusText;
-                this.setState({
-                    loadingProject: false,
-                    alert: {
-                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                        message: error  
-                    }
-                });
-            } else {
-                this.setState({
-                    loadingProject: false,
-                    projectName: data.name
-                });
-            }
-        }));
-    }
+    //     return fetch(`${config.apiUrl}/project/findOne/?id=${projectId}`, requestOptions)
+    //     .then(responce => responce.text().then(text => {
+    //         const data = text && JSON.parse(text);
+    //         if (!responce.ok) {
+    //             if (responce.status === 401) {
+    //                 localStorage.removeItem('user');
+    //                 location.reload(true);
+    //             }
+    //             const error = (data && data.message) || Response.statusText;
+    //             this.setState({
+    //                 loadingProject: false,
+    //                 alert: {
+    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                     message: error  
+    //                 }
+    //             });
+    //         } else {
+    //             this.setState({
+    //                 loadingProject: false,
+    //                 projectName: data.name
+    //             });
+    //         }
+    //     }));
+    // }
 
-    getRevisions(projectId) {
-        const { revisions } = this.state;
-        this.setState({loadingProject: true});
+    // getRevisions(projectId) {
+    //     const { revisions } = this.state;
+    //     this.setState({loadingProject: true});
 
-        const requestOptions = {
-            method: 'GET',
-            headers: authHeader()
-        };
+    //     const requestOptions = {
+    //         method: 'GET',
+    //         headers: authHeader()
+    //     };
 
-        return fetch(`${config.apiUrl}/po/getRevisions?projectId=${projectId}`, requestOptions)
-        .then(responce => responce.text().then(text => {
-            const data = text && JSON.parse(text);
-            if (!responce.ok) {
-                if (responce.status === 401) {
-                    localStorage.removeItem('user');
-                    location.reload(true);
-                }
-                const error = (data && data.message) || Response.statusText;
-                this.setState({
-                    loadingProject: false,
-                    alert: {
-                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                        message: error  
-                    }
-                });
-            } else {
-                this.setState({
-                    loadingProject: false,
-                    revisions: data
-                });
-            }
-        }));
-    }
+    //     return fetch(`${config.apiUrl}/po/getRevisions?projectId=${projectId}`, requestOptions)
+    //     .then(responce => responce.text().then(text => {
+    //         const data = text && JSON.parse(text);
+    //         if (!responce.ok) {
+    //             if (responce.status === 401) {
+    //                 localStorage.removeItem('user');
+    //                 location.reload(true);
+    //             }
+    //             const error = (data && data.message) || Response.statusText;
+    //             this.setState({
+    //                 loadingProject: false,
+    //                 alert: {
+    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                     message: error  
+    //                 }
+    //             });
+    //         } else {
+    //             this.setState({
+    //                 loadingProject: false,
+    //                 revisions: data
+    //             });
+    //         }
+    //     }));
+    // }
 
     fetchData(projectId) {
         const { unit, period, clPo, clPoRev, lines } = this.state;
@@ -225,10 +229,10 @@ class Dashboard extends React.Component {
         }
     }
 
-    generateOptionClPo(revisions) {
-        if (revisions) {
-            let clPos = revisions.reduce(function (accumulator, currentValue) {
-                if (accumulator.indexOf(currentValue.clPo) === -1) {
+    generateOptionClPo(selection) {
+        if (selection.project) {
+            let clPos = selection.project.pos.reduce(function (accumulator, currentValue) {
+                if (!!currentValue.clPo && accumulator.indexOf(currentValue.clPo) === -1) {
                     accumulator.push(currentValue.clPo)
                 }
                 return accumulator;
@@ -252,14 +256,13 @@ class Dashboard extends React.Component {
                     );
                 });
             }
-
         }
     }
 
-    generateOptionclPoRev(revisions, clPo) {
-        if (revisions) {
-            let clPoRevs = revisions.reduce(function (accumulator, currentValue) {
-                if (accumulator.indexOf(currentValue.clPoRev) === -1 && (clPo ? currentValue.clPo === clPo : true)) {
+    generateOptionclPoRev(selection, clPo) {
+        if (selection.project) {
+            let clPoRevs = selection.project.pos.reduce(function (accumulator, currentValue) {
+                if (!!currentValue.clPoRev && accumulator.indexOf(currentValue.clPoRev) === -1 && (clPo ? currentValue.clPo === clPo : true)) {
                     accumulator.push(currentValue.clPoRev)
                 }
                 return accumulator;
@@ -301,8 +304,8 @@ class Dashboard extends React.Component {
     }
 
     render() {
-        const { projectName, unit, period, clPo, clPoRev, revisions, data, loadingChart } = this.state;
-        const { accesses } = this.props; //alert
+        const { unit, period, clPo, clPoRev, data, loadingChart } = this.state; //revisions projectName, 
+        const { accesses, selection } = this.props; //alert
         const alert = this.props.alert ? this.props.alert : this.state.alert;
 
         return (
@@ -314,7 +317,7 @@ class Dashboard extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Dashboard : {projectName ? projectName : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Dashboard : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="dashboard" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
@@ -324,11 +327,11 @@ class Dashboard extends React.Component {
                             </div>
                             <select className="form-control" name="clPo" value={clPo} onChange={this.handleChange}>
                                 <option key="0" value="">Select Po...</option>
-                                {this.generateOptionClPo(revisions)}
+                                {this.generateOptionClPo(selection)}
                             </select>
                             <select className="form-control" name="clPoRev" value={clPoRev} onChange={this.handleChange}>
                                 <option key="0" value="">Select Revision...</option>
-                                {this.generateOptionclPoRev(revisions, clPo)}
+                                {this.generateOptionclPoRev(selection, clPo)}
                             </select>
                             <select className="form-control" name="unit" value={unit} onChange={this.handleChange}>
                                 <option key="0" value="value">Value</option>
@@ -364,10 +367,11 @@ class Dashboard extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert } = state;
+    const { accesses, alert, selection } = state;
     return {
         accesses,
         alert,
+        selection
     };
 }
 
