@@ -6,7 +6,8 @@ export function selection(state = {}, action) {
       return {
         selecting: true,
         selected: false,
-        project: action.project
+        // project: action.project
+        project: state.project //keep existing state during request
       };
     case projectConstants.GET_SUCCESS:
       return {
