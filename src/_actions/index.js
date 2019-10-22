@@ -1,5 +1,6 @@
 export * from './alert.actions';
 export * from './access.actions';
+export * from './collitype.actions';
 export * from './currency.actions';
 export * from './doctype.actions';
 export * from './erp.actions';

@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux';
 
-import { alert } from './alert.reducer';
 import { accesses } from './accesses.reducer';
+import { alert } from './alert.reducer';
 import { authentication } from './authentication.reducer';
+import { collitypes } from './collitypes.reducer';
 import { currencies } from './currencies.reducer';
 import { doctypes } from './doctypes.reducer';
 import { erps } from './erps.reducer';
@@ -21,14 +22,15 @@ import { suppliers } from './suppliers.reducer';
 import { users } from './users.reducer';
 
 const rootReducer = combineReducers({
-  alert,
   accesses,
+  alert,
   authentication,
+  collitypes,
   currencies,
   doctypes,
   erps,
-  fields,
   fieldnames,
+  fields,
   locales,
   opcos,
   projects,
