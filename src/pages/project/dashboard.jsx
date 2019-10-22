@@ -7,13 +7,9 @@ import { authHeader } from '../../_helpers';
 import { accessActions, alertActions, projectActions } from '../../_actions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import './dashboard.css';
-
 import Line from '../../_components/chart/line';
-// import Chart from 'chart.js';
 
 function logout() {
-    // remove user from local storage to log user out
     localStorage.removeItem('user');
 }
 
@@ -22,15 +18,12 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {
             projectId: '',
-            // projectName: '',
             unit: 'value',
             period: 'quarter',
             clPo:'',
             clPoRev: '',
-            // revisions: [],
             lines: ['contract', 'rfiExp', 'rfiAct', 'released', 'shipExp', 'shipAct', 'delExp', 'delAct'],
             data: {},
-            // error: '',
             loadingChart: false,
             loadingProject: false,
             alert: {
@@ -40,8 +33,6 @@ class Dashboard extends React.Component {
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
-        // this.getProject = this.getProject.bind(this);
-        // this.getRevisions = this.getRevisions.bind(this);
         this.fetchData = this.fetchData.bind(this);
         this.downloadLineChart = this.downloadLineChart.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -80,75 +71,6 @@ class Dashboard extends React.Component {
         });
         dispatch(alertActions.clear());
     }
-
-    // getProject(projectId) {
-    //     this.setState({
-    //         loadingProject: true,
-    //     });
-
-    //     const requestOptions = {
-    //         method: 'GET',
-    //         headers: authHeader()
-    //     };
-
-    //     return fetch(`${config.apiUrl}/project/findOne/?id=${projectId}`, requestOptions)
-    //     .then(responce => responce.text().then(text => {
-    //         const data = text && JSON.parse(text);
-    //         if (!responce.ok) {
-    //             if (responce.status === 401) {
-    //                 localStorage.removeItem('user');
-    //                 location.reload(true);
-    //             }
-    //             const error = (data && data.message) || Response.statusText;
-    //             this.setState({
-    //                 loadingProject: false,
-    //                 alert: {
-    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                     message: error  
-    //                 }
-    //             });
-    //         } else {
-    //             this.setState({
-    //                 loadingProject: false,
-    //                 projectName: data.name
-    //             });
-    //         }
-    //     }));
-    // }
-
-    // getRevisions(projectId) {
-    //     const { revisions } = this.state;
-    //     this.setState({loadingProject: true});
-
-    //     const requestOptions = {
-    //         method: 'GET',
-    //         headers: authHeader()
-    //     };
-
-    //     return fetch(`${config.apiUrl}/po/getRevisions?projectId=${projectId}`, requestOptions)
-    //     .then(responce => responce.text().then(text => {
-    //         const data = text && JSON.parse(text);
-    //         if (!responce.ok) {
-    //             if (responce.status === 401) {
-    //                 localStorage.removeItem('user');
-    //                 location.reload(true);
-    //             }
-    //             const error = (data && data.message) || Response.statusText;
-    //             this.setState({
-    //                 loadingProject: false,
-    //                 alert: {
-    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                     message: error  
-    //                 }
-    //             });
-    //         } else {
-    //             this.setState({
-    //                 loadingProject: false,
-    //                 revisions: data
-    //             });
-    //         }
-    //     }));
-    // }
 
     fetchData(projectId) {
         const { unit, period, clPo, clPoRev, lines } = this.state;
@@ -304,8 +226,8 @@ class Dashboard extends React.Component {
     }
 
     render() {
-        const { unit, period, clPo, clPoRev, data, loadingChart } = this.state; //revisions projectName, 
-        const { accesses, selection } = this.props; //alert
+        const { unit, period, clPo, clPoRev, data, loadingChart } = this.state;
+        const { accesses, selection } = this.props;
         const alert = this.props.alert ? this.props.alert : this.state.alert;
 
         return (
