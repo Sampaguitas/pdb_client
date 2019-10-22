@@ -100,6 +100,8 @@ export function doctypes(state = {}, action) {
                     return doctype;
                 })
             };
+        case doctypeConstants.CLEAR:
+            return {};
         default:
             return state
     }

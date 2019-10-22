@@ -75,8 +75,9 @@ function update(collitype) {
         collitypeService.update(collitype)
             .then(
                 collitype => {
-                    dispatch(success(collitype)),
-                    dispatch(alertActions.success('Access successfully updated'))
+                    dispatch(success(collitype));
+                    dispatch(collitypeActions.getAll(collitype.projectId));
+                    dispatch(alertActions.success('Access successfully updated'));
                 },
                 error => dispatch(failure(error.toString()))
             );
@@ -95,7 +96,7 @@ function _delete(id) {
             .then(
                 collitype => {
                     dispatch(success(id)),
-                    dispatch(alertActions.success('Access successfully deleted')),
+                    dispatch(alertActions.success('Access successfully deleted'));
                     dispatch(collitypeService.getAll(collitype.projectId)) 
                 },
                 error => dispatch(failure(id, error.toString()))

@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { accessActions, alertActions, opcoActions, projectActions, supplierActions, userActions } from "../../_actions";
+import { accessActions, alertActions, fieldActions, opcoActions, projectActions, supplierActions, userActions } from "../../_actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableCheckBoxAdmin from "../../_components/project-table/table-check-box-admin";
 import TableCheckBoxSuperAdmin from "../../_components/project-table/table-check-box-spadmin";
@@ -97,6 +97,7 @@ class Settings extends React.Component {
     const { dispatch } = this.props;
     //Clear Selection
     dispatch(accessActions.clear());
+    dispatch(fieldActions.clear());
     dispatch(projectActions.clearSelection());
     dispatch(supplierActions.clear());
     //Get users and opcos

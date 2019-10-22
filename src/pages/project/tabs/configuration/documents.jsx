@@ -729,6 +729,7 @@ class Documents extends React.Component {
     render() {
 
         const { 
+            fields,
             tab,
             selection,
         } = this.props
@@ -971,7 +972,7 @@ class Documents extends React.Component {
                                             <NewRowSelect 
                                                 name="fieldId"
                                                 value={docField.fieldId}
-                                                options={selection && selection.project && selection.project.fields}
+                                                options={fields.items}
                                                 optionText="custom"
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
@@ -1029,7 +1030,7 @@ class Documents extends React.Component {
                                                 objectId={s._id}
                                                 fieldName="fieldId"
                                                 fieldValue={s.fieldId}
-                                                options={selection.project.fields}
+                                                options={fields.items}
                                                 optionText="custom"
                                             />
                                             <TableInput 

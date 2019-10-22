@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { alertActions, accessActions, localeActions, opcoActions, projectActions, regionActions, supplierActions } from '../../_actions';
+import { alertActions, accessActions, fieldActions, localeActions, opcoActions, projectActions, regionActions, supplierActions } from '../../_actions';
 import Modal from "../../_components/modal";
 import Input from '../../_components/input';
 import Layout from '../../_components/layout';
@@ -81,6 +81,7 @@ class Opco extends React.Component {
         const { dispatch } = this.props;
         // Clear Selection
         dispatch(accessActions.clear());
+        dispatch(fieldActions.clear());
         dispatch(projectActions.clearSelection());
         dispatch(supplierActions.clear());
         //Get opcos, locales, regions

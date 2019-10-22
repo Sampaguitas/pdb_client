@@ -8,7 +8,8 @@ export const doctypeActions = {
     getAll,
     getById,
     update,
-    delete: _delete
+    delete: _delete,
+    clear
 };
 
 function create(doctype) {
@@ -19,7 +20,7 @@ function create(doctype) {
             .then(
                 doctype => {
                     dispatch(success());
-                    // history.push('/');
+                    dispatch(doctypeService.getAll());
                     dispatch(alertActions.success('doctype successfully created'));
                 },
                 error => {
@@ -61,7 +62,7 @@ function getById(id) {
             );
     };
 
-    function request() { return { type: doctypeConstants.GET_REQUEST } }
+    function request(id) { return { type: doctypeConstants.GET_REQUEST, id } }
     function success(doctype) { return { type: doctypeConstants.GET_SUCCESS, doctype } }
     function failure(id, error) { return { type: doctypeConstants.GET_FAILURE, id, error } }
 }
@@ -73,8 +74,9 @@ function update(doctype) {
         doctypeService.update(doctype)
             .then(
                 doctype => {
-                    dispatch(success(doctype)),
-                    dispatch(alertActions.success('doctype successfully updated'))
+                    dispatch(success(doctype));
+                    dispatch(doctypeService.getAll());
+                    dispatch(alertActions.success('doctype successfully updated'));
                 },
                 error => dispatch(failure(error.toString()))
             );
@@ -92,7 +94,10 @@ function _delete(id) {
 
         doctypeService.delete(id)
             .then(
-                doctype => dispatch(success(id)),
+                doctype => {
+                    dispatch(success(id));
+                    dispatch(doctypeService.getAll());
+                },
                 error => dispatch(failure(id, error.toString()))
             );
     };
@@ -100,4 +105,8 @@ function _delete(id) {
     function request(id) { return { type: doctypeConstants.DELETE_REQUEST, id } }
     function success(id) { return { type: doctypeConstants.DELETE_SUCCESS, id } }
     function failure(id, error) { return { type: doctypeConstants.DELETE_FAILURE, id, error } }
+}
+
+function clear() {
+    return { type: doctypeConstants.CLEAR };
 }

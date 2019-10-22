@@ -23,13 +23,13 @@ function create(field) {
     return fetch(`${config.apiUrl}/field/create`, requestOptions).then(handleResponse);
 }
 
-function getAll() {
+function getAll(projectId) {
     const requestOptions = {
         method: 'GET',
         headers: authHeader(), 'Content-Type': 'application/json'
     };
 
-    return fetch(`${config.apiUrl}/field/findAll`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/field/findAll/?projectId=${projectId}`, requestOptions).then(handleResponse);
 }
 
 function getById(id) {

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 // import config from 'config';
-import { accessActions, alertActions, currencyActions, erpActions, opcoActions, projectActions, supplierActions, screenActions, userActions  } from '../../_actions';
+import { accessActions, alertActions, currencyActions, erpActions, fieldActions, opcoActions, projectActions, supplierActions, screenActions, userActions  } from '../../_actions';
 // import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs';
@@ -52,6 +52,7 @@ class Configuration extends React.Component {
             dispatch(accessActions.getAll(qs.id));
             dispatch(projectActions.getById(qs.id));
             dispatch(supplierActions.getAll(qs.id));
+            dispatch(fieldActions.getAll(qs.id));
         }
         //State items without projectId
         dispatch(currencyActions.getAll());
@@ -76,6 +77,7 @@ class Configuration extends React.Component {
             dispatch(accessActions.getAll(qs.id));
             dispatch(projectActions.getById(qs.id));
             dispatch(supplierActions.getAll(qs.id));
+            dispatch(fieldActions.getAll(qs.id));
         }
         dispatch(currencyActions.getAll());
         dispatch(erpActions.getAll());
@@ -128,6 +130,7 @@ class Configuration extends React.Component {
                 alert,
                 currencies,
                 erps,
+                fields,
                 opcos,
                 projectUpdating,
                 projectDeleting,
@@ -167,6 +170,7 @@ class Configuration extends React.Component {
                         accesses={accesses}
                         currencies={currencies}
                         erps={erps}
+                        fields={fields}
                         opcos={opcos}
                         projectDeleting={projectDeleting}
                         projectUpdating={projectUpdating}
@@ -186,13 +190,14 @@ class Configuration extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, currencies, erps, opcos, screens, selection, suppliers, users } = state;
+    const { accesses, alert, currencies, erps, fields, opcos, screens, selection, suppliers, users } = state;
     const { projectDeleting, projectUpdating } = state.projects;
     return {
         accesses,
         alert,
         currencies,
         erps,
+        fields,
         opcos,
         projectDeleting,
         projectUpdating,

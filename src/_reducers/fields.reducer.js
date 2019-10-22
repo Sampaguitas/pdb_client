@@ -100,6 +100,8 @@ export function fields(state = {}, action) {
                     return field;
                 })
             };
+        case fieldConstants.CLEAR:
+            return {};
         default:
             return state
     }

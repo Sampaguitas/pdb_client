@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../../_helpers';
-import { accessActions, alertActions, projectActions } from '../../../_actions';
+import { accessActions, alertActions, fieldActions, projectActions } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -112,6 +112,7 @@ class ReleaseData extends React.Component {
             this.setState({projectId: qs.id});
             dispatch(projectActions.getById(qs.id));
             dispatch(accessActions.getAll(qs.id));
+            dispatch(fieldActions.getAll(qs.id));
         }
         // dispatch(projectActions.getAll()); 
     }
@@ -129,6 +130,7 @@ class ReleaseData extends React.Component {
             this.setState({projectId: qs.id}),
             dispatch(projectActions.getById(qs.id));
             dispatch(accessActions.getAll(qs.id));
+            dispatch(fieldActions.getAll(qs.id));
         }
         // dispatch(projectActions.getAll());    
     }
@@ -431,8 +433,8 @@ class ReleaseData extends React.Component {
         }
     }
 
-    selectedFieldOptions(selection, screenId) {
-        if (selection.project) {
+    selectedFieldOptions(selection, fields, screenId) {
+        if (selection.project && fields.items) {
             let screenHeaders = returnScreenHeaders(selection, screenId);
             let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
                 if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
@@ -440,7 +442,7 @@ class ReleaseData extends React.Component {
                 }
                 return accumulator;
             }, []);
-            let fields = selection.project.fields.reduce(function (accumulator, currentValue) {
+            let fieldsFromHeader = fields.items.reduce(function (accumulator, currentValue) {
                 if (fieldIds.indexOf(currentValue._id) !== -1) {
                     accumulator.push({ 
                         value: currentValue._id,
@@ -449,7 +451,7 @@ class ReleaseData extends React.Component {
                 }
                 return accumulator;
             }, []);
-            return arraySorted(fields, 'name').map(field => {
+            return arraySorted(fieldsFromHeader, 'name').map(field => {
                 return (
                     <option 
                         key={field.value}
@@ -470,7 +472,7 @@ class ReleaseData extends React.Component {
 
     render() {
         const { projectId, screen, screenId, screenBodys, unlocked, loaded, selectedTemplate, selectedField, updateValue }= this.state;
-        const { accesses, alert, selection } = this.props;
+        const { accesses, alert, fields, selection } = this.props;
         { selection.project && loaded == false && this.testBodys()}
         return (
             <Layout alert={alert} accesses={accesses}>
@@ -495,7 +497,7 @@ class ReleaseData extends React.Component {
                             <div className="input-group">
                                     <select className="form-control" name="selectedField" value={selectedField} defaultValue="0" placeholder="Select field..." onChange={this.handleChange}>
                                         <option key="0" value="0">Select field...</option>
-                                        {this.selectedFieldOptions(selection, screenId)}
+                                        {this.selectedFieldOptions(selection, fields, screenId)}
                                     </select>
                                 <input className="form-control" name="updateValue" value={updateValue} onChange={this.handleChange}/>
                                 <div className="input-group-append mr-2">
@@ -545,7 +547,7 @@ class ReleaseData extends React.Component {
                                 toggleUnlock={this.toggleUnlock}
                                 unlocked={unlocked}
                                 screen={screen}
-                                screenBodys={screenBodys}
+                                // screenBodys={screenBodys}
                             />
                         }
                     </div>
@@ -557,10 +559,11 @@ class ReleaseData extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, selection } = state;
+    const { accesses, alert, fields, selection } = state;
     return {
         accesses,
         alert,
+        fields,
         selection
     };
 }

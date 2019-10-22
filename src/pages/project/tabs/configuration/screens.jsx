@@ -350,9 +350,10 @@ class Screens extends React.Component {
 
     render() {
         const {
+            fields,
+            screens,
             selection, 
             tab,
-            screens,
         } = this.props;
         
         const {
@@ -480,7 +481,7 @@ class Screens extends React.Component {
                                         <NewRowSelect 
                                             name="fieldId"
                                             value={fieldName.fieldId}
-                                            options={selection && selection.project && selection.project.fields}
+                                            options={fields.items}
                                             optionText="custom"
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
@@ -528,7 +529,7 @@ class Screens extends React.Component {
                                             objectId={s._id}
                                             fieldName="fieldId"
                                             fieldValue={s.fieldId}
-                                            options={selection.project.fields}
+                                            options={fields.items}
                                             optionText="custom"
                                         />
                                         <TableInput 

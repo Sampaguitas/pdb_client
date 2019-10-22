@@ -43,6 +43,7 @@ class Tabs extends Component {
             accesses,
             currencies,
             erps,
+            fields,
             opcos,
             projectDeleting,
             projectUpdating,
@@ -88,6 +89,7 @@ class Tabs extends Component {
                                 accesses={accesses}
                                 currencies={currencies}
                                 erps={erps}
+                                fields={fields}
                                 opcos={opcos}
                                 projectDeleting={projectDeleting}
                                 projectUpdating={projectUpdating}

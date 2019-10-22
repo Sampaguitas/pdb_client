@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { alertActions, accessActions, currencyActions, erpActions, opcoActions, projectActions, supplierActions, userActions } from '../../_actions';
+import { alertActions, accessActions, currencyActions, erpActions, fieldActions, opcoActions, projectActions, supplierActions, userActions } from '../../_actions';
 import { history } from '../../_helpers';
 import CheckBox from '../../_components/check-box';
 import TableCheckBoxRole from '../../_components/project-table/table-check-box-role';
@@ -90,6 +90,7 @@ class Project extends React.Component {
         const { dispatch } = this.props;
         //Clear Selection
         dispatch(accessActions.clear());
+        dispatch(fieldActions.clear());
         dispatch(projectActions.clearSelection());
         dispatch(supplierActions.clear());
         //Get currencies, erps, opcos, projects, users

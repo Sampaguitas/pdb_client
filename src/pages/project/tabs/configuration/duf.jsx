@@ -324,6 +324,7 @@ class Duf extends React.Component {
     render() {
 
         const {
+            fields,
             selection, 
             tab,
         } = this.props;
@@ -409,7 +410,7 @@ class Duf extends React.Component {
                                         <NewRowSelect 
                                             name="fieldId"
                                             value={fieldName.fieldId}
-                                            options={selection && selection.project && selection.project.fields}
+                                            options={fields.items}
                                             optionText="custom"
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
@@ -435,7 +436,7 @@ class Duf extends React.Component {
                                             objectId={s._id}
                                             fieldName="fieldId"
                                             fieldValue={s.fieldId}
-                                            options={selection.project.fields}
+                                            options={fields.items}
                                             optionText="custom"                                 
                                         />
                                     </tr>

@@ -8,7 +8,8 @@ export const fieldActions = {
     getAll,
     getById,
     update,
-    delete: _delete
+    delete: _delete,
+    clear
 };
 
 function create(field) {
@@ -19,7 +20,7 @@ function create(field) {
             .then(
                 field => {
                     dispatch(success());
-                    // history.push('/');
+                    dispatch(fieldService.getAll(field.projectId));
                     dispatch(alertActions.success('field successfully created'));
                 },
                 error => {
@@ -34,18 +35,18 @@ function create(field) {
     function failure(error) { return { type: fieldConstants.CREATE_FAILURE, error } }
 }
 
-function getAll() {
+function getAll(projectId) {
     return dispatch => {
-        dispatch(request());
+        dispatch(request(projectId));
 
-        fieldService.getAll()
+        fieldService.getAll(projectId)
             .then(
                 fields => dispatch(success(fields)),
                 error => dispatch(failure(error.toString()))
             );
     };
 
-    function request() { return { type: fieldConstants.GETALL_REQUEST } }
+    function request(projectId) { return { type: fieldConstants.GETALL_REQUEST, projectId } }
     function success(fields) { return { type: fieldConstants.GETALL_SUCCESS, fields } }
     function failure(error) { return { type: fieldConstants.GETALL_FAILURE, error } }
 }
@@ -61,7 +62,7 @@ function getById(id) {
             );
     };
 
-    function request() { return { type: fieldConstants.GET_REQUEST } }
+    function request(id) { return { type: fieldConstants.GET_REQUEST, id } }
     function success(field) { return { type: fieldConstants.GET_SUCCESS, field } }
     function failure(id, error) { return { type: fieldConstants.GET_FAILURE, id, error } }
 }
@@ -73,8 +74,9 @@ function update(field) {
         fieldService.update(field)
             .then(
                 field => {
-                    dispatch(success(field)),
-                    dispatch(alertActions.success('field successfully updated'))
+                    dispatch(success(field));
+                    dispatch(alertActions.success('field successfully updated'));
+                    dispatch(fieldActions.getAll(field.projectId));
                 },
                 error => dispatch(failure(error.toString()))
             );
@@ -92,7 +94,11 @@ function _delete(id) {
 
         fieldService.delete(id)
             .then(
-                field => dispatch(success(id)),
+                field => {
+                    dispatch(success(id));
+                    dispatch(fieldActions.success('Access successfully deleted'));
+                    dispatch(fieldActions.getAll(field.projectId));
+                },
                 error => dispatch(failure(id, error.toString()))
             );
     };
@@ -100,4 +106,8 @@ function _delete(id) {
     function request(id) { return { type: fieldConstants.DELETE_REQUEST, id } }
     function success(id) { return { type: fieldConstants.DELETE_SUCCESS, id } }
     function failure(id, error) { return { type: fieldConstants.DELETE_FAILURE, id, error } }
+}
+
+function clear() {
+    return { type: fieldConstants.CLEAR };
 }

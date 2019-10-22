@@ -113,6 +113,7 @@ class Fields extends React.Component {
     render() {
 
         const {
+            fields,
             selection, 
             tab,
         } = this.props;
@@ -166,16 +167,16 @@ class Fields extends React.Component {
                                 </tr>
                             </thead>
                             <tbody className="full-height">
-                                {selection && selection.project && this.filterName(selection.project.fields).map((s) =>
-                                    <tr key={s._id}>
-                                        <td>{s.name}</td>
-                                        <td>{s.fromTbl}</td>
-                                        <td>{s.type}</td>
+                                {fields && this.filterName(fields.items).map((f) =>
+                                    <tr key={f._id}>
+                                        <td>{f.name}</td>
+                                        <td>{f.fromTbl}</td>
+                                        <td>{f.type}</td>
                                         <TableInput 
                                             collection="field"
-                                            objectId={s._id}
+                                            objectId={f._id}
                                             fieldName="custom"
-                                            fieldValue={s.custom}
+                                            fieldValue={f.custom}
                                             fieldType="text"
                                             // width="25%"
                                         />

@@ -75,8 +75,9 @@ function update(access) {
         accessService.update(access)
             .then(
                 access => {
-                    dispatch(success(access)),
-                    dispatch(alertActions.success('Access successfully updated'))
+                    dispatch(success(access));
+                    dispatch(accessService.getAll(access.projectId));
+                    dispatch(alertActions.success('Access successfully updated'));
                 },
                 error => dispatch(failure(error.toString()))
             );
