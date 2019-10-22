@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { accessActions, projectActions, supplierActions, userActions } from "../../_actions";
 import Layout from '../../_components/layout';
 import logo from "../../_assets/logo.svg";
 import pdb from "../../_assets/pdb.svg";
@@ -9,6 +10,15 @@ class NotFound extends React.Component {
     super(props);
     this.state = {};
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(userActions.logout());
+    dispatch(accessActions.clear());
+    dispatch(projectActions.clearSelection());
+    dispatch(projectActions.clearProjects());
+    dispatch(supplierActions.clear());
   }
 
   handleSubmit(event){

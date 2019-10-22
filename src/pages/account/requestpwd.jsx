@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { NavLink, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { userActions } from "../../_actions";
+import { accessActions, projectActions, supplierActions, userActions } from "../../_actions";
 import Layout from "../../_components/layout";
 import InputIcon from "../../_components/input-icon";
 import logo from "../../_assets/logo.svg";
@@ -11,7 +11,6 @@ import pdb from "../../_assets/pdb.svg";
 class RequestPwd extends React.Component {
   constructor(props) {
     super(props);
-    this.props.dispatch(userActions.logout());
     this.state = {
       email: "",
       submitted: false,
@@ -19,6 +18,15 @@ class RequestPwd extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.onKeyPress = this.onKeyPress.bind(this);
+  }
+
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(userActions.logout());
+    dispatch(accessActions.clear());
+    dispatch(projectActions.clearSelection());
+    dispatch(projectActions.clearProjects());
+    dispatch(supplierActions.clear());
   }
 
   handleChange(e) {
