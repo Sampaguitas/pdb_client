@@ -15,20 +15,21 @@ export function projects(state = {}, action) {
             return {
                 error: action.error
             };
-        case projectConstants.GET_REQUEST:
-            return {
-                projectLoading: true
-            };
-        case projectConstants.GET_SUCCESS:
-            return {
-                items: action.projects
-            };
-        case projectConstants.GET_FAILURE:
-            return {
-                error: action.error
-            };
+        // case projectConstants.GET_REQUEST:
+        //     return {
+        //         projectLoading: true
+        //     };
+        // case projectConstants.GET_SUCCESS:
+        //     return {
+        //         items: action.projects
+        //     };
+        // case projectConstants.GET_FAILURE:
+        //     return {
+        //         error: action.error
+        //     };
         case projectConstants.GETALL_REQUEST:
-            return {
+            console.log('state:', state);    
+        return {  
                 projectLoading: true,
                 items: state.items //keep existing state during request
             };
