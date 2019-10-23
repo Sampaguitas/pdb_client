@@ -75,14 +75,24 @@ class TransportDocuments extends React.Component {
     }
 
     componentDidMount() {
-        const { dispatch, location } = this.props;
+        const { 
+            dispatch,
+            loadingAccesses,
+            loadingSelection, 
+            location 
+        } = this.props;
+
         var qs = queryString.parse(location.search);
         if (qs.id) {
+            //State items with projectId
             this.setState({projectId: qs.id});
-            dispatch(projectActions.getById(qs.id));
-            dispatch(accessActions.getAll(qs.id));
+            if (!loadingAccesses) {
+                dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingSelection) {
+                dispatch(projectActions.getById(qs.id));
+            }
         }
-        // dispatch(projectActions.getAll()); 
     }
 
     handleClearAlert(event){
@@ -95,11 +105,15 @@ class TransportDocuments extends React.Component {
         const { dispatch, location } = this.props;
         var qs = queryString.parse(location.search);
         if (qs.id) {
-            this.setState({projectId: qs.id}),
-            dispatch(projectActions.getById(qs.id));
-            dispatch(accessActions.getAll(qs.id));
-        }
-        // dispatch(projectActions.getAll());    
+            //State items with projectId
+            this.setState({projectId: qs.id});
+            if (!loadingAccesses) {
+                dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingSelection) {
+                dispatch(projectActions.getById(qs.id));
+            }
+        }  
     }
 
     toggleUnlock(event) {
@@ -410,9 +424,13 @@ class TransportDocuments extends React.Component {
 
 function mapStateToProps(state) {
     const { accesses, alert, selection } = state;
+    const { loadingAccesses } = accesses;
+    const { loadingSelection } = selection;
     return {
         accesses,
         alert,
+        loadingAccesses,
+        loadingSelection,
         selection
     };
 }

@@ -106,15 +106,28 @@ class ReleaseData extends React.Component {
     }
 
     componentDidMount() {
-        const { dispatch, location } = this.props;
+        const { 
+            dispatch,
+            loadingAccesses,
+            loadingFields,
+            loadingSelection, 
+            location 
+        } = this.props;
+        
         var qs = queryString.parse(location.search);
         if (qs.id) {
+            //State items with projectId
             this.setState({projectId: qs.id});
-            dispatch(projectActions.getById(qs.id));
-            dispatch(accessActions.getAll(qs.id));
-            dispatch(fieldActions.getAll(qs.id));
-        }
-        // dispatch(projectActions.getAll()); 
+            if (!loadingAccesses) {
+                dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingFields) {
+                dispatch(fieldActions.getAll(qs.id));
+            }
+            if (!loadingSelection) {
+                dispatch(projectActions.getById(qs.id));
+            }
+        } 
     }
 
     handleClearAlert(event){
@@ -124,15 +137,29 @@ class ReleaseData extends React.Component {
     }
 
     handleSelectionReload(event){
-        const { dispatch, location } = this.props;
+        const { 
+            dispatch,
+            loadingAccesses,
+            loadingFields,
+            loadingSelection, 
+            location 
+        } = this.props;
+
         var qs = queryString.parse(location.search);
         if (qs.id) {
-            this.setState({projectId: qs.id}),
-            dispatch(projectActions.getById(qs.id));
-            dispatch(accessActions.getAll(qs.id));
-            dispatch(fieldActions.getAll(qs.id));
+            //State items with projectId
+            this.setState({projectId: qs.id});
+            if (!loadingAccesses) {
+                dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingFields) {
+                dispatch(fieldActions.getAll(qs.id));
+            }
+            if (!loadingSelection) {
+                dispatch(projectActions.getById(qs.id));
+            }
         }
-        // dispatch(projectActions.getAll());    
+   
     }
 
     toggleUnlock(event) {
@@ -495,7 +522,7 @@ class ReleaseData extends React.Component {
                             style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
                         >
                             <div className="input-group">
-                                    <select className="form-control" name="selectedField" value={selectedField} defaultValue="0" placeholder="Select field..." onChange={this.handleChange}>
+                                    <select className="form-control" name="selectedField" value={selectedField} placeholder="Select field..." onChange={this.handleChange}>
                                         <option key="0" value="0">Select field...</option>
                                         {this.selectedFieldOptions(selection, fields, screenId)}
                                     </select>
@@ -515,7 +542,7 @@ class ReleaseData extends React.Component {
                                 <div className="input-group-prepend">
                                     <span className="input-group-text" style={{width: '95px'}}>Select Document</span>
                                 </div>
-                                <select className="form-control" name="selectedTemplate" value={selectedTemplate} defaultValue="0" placeholder="Select document..." onChange={this.handleChange}>
+                                <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select document..." onChange={this.handleChange}>
                                     <option key="0" value="0">Select document...</option>
                                 {
                                     selection.project && arraySorted(docConf(selection.project.docdefs), "name").map((p) =>  {        
@@ -560,10 +587,16 @@ class ReleaseData extends React.Component {
 
 function mapStateToProps(state) {
     const { accesses, alert, fields, selection } = state;
+    const { loadingAccesses } = accesses;
+    const { loadingFields } = fields;
+    const { loadingSelection } = selection;
     return {
         accesses,
         alert,
         fields,
+        loadingAccesses,
+        loadingFields,
+        loadingSelection,
         selection
     };
 }

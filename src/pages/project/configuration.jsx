@@ -44,22 +44,53 @@ class Configuration extends React.Component {
     }
 
     componentDidMount(){
-        const { dispatch, location } = this.props
+        const { 
+            currencies,
+            erps,
+            dispatch,
+            loadingAccesses,
+            loadingFields,
+            loadingSelection,
+            loadingSuppliers,
+            location,
+            opcos,
+            screens,
+            users
+        } = this.props;
+
         var qs = queryString.parse(location.search);
         if (qs.id) {
             //State items with projectId
             this.setState({projectId: qs.id});
-            dispatch(accessActions.getAll(qs.id));
-            dispatch(projectActions.getById(qs.id));
-            dispatch(supplierActions.getAll(qs.id));
-            dispatch(fieldActions.getAll(qs.id));
+            if (!loadingAccesses) {
+                dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingFields) {
+                dispatch(fieldActions.getAll(qs.id));
+            }
+            if (!loadingSelection) {
+                dispatch(projectActions.getById(qs.id));
+            }
+            if (!loadingSuppliers) {
+                dispatch(supplierActions.getAll(qs.id));
+            }
         }
         //State items without projectId
-        dispatch(currencyActions.getAll());
-        dispatch(erpActions.getAll());
-        dispatch(opcoActions.getAll());
-        dispatch(screenActions.getAll());
-        dispatch(userActions.getAll());
+        if (!currencies.items) {
+            dispatch(currencyActions.getAll());
+        }
+        if (!erps.items) {
+            dispatch(erpActions.getAll());
+        }
+        if (!opcos.items) {
+            dispatch(opcoActions.getAll());
+        }
+        if (!screens) {
+            dispatch(screenActions.getAll());
+        }
+        if (!users.items) {
+            dispatch(userActions.getAll());
+        }
     }
 
     handleClearAlert(event){
@@ -70,21 +101,53 @@ class Configuration extends React.Component {
 
     handleSelectionReload(event){
         // event.preventDefault();
-        const { dispatch, location } = this.props
+        const { 
+            currencies,
+            erps,
+            dispatch,
+            loadingAccesses,
+            loadingFields,
+            loadingSelection,
+            loadingSuppliers,
+            location,
+            opcos,
+            screens,
+            users
+        } = this.props;
+
         var qs = queryString.parse(location.search);
         if (qs.id) {
-            this.setState({projectId: qs.id}),
-            dispatch(accessActions.getAll(qs.id));
-            dispatch(projectActions.getById(qs.id));
-            dispatch(supplierActions.getAll(qs.id));
-            dispatch(fieldActions.getAll(qs.id));
+            //State items with projectId
+            this.setState({projectId: qs.id});
+            if (!loadingAccesses) {
+                dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingFields) {
+                dispatch(fieldActions.getAll(qs.id));
+            }
+            if (!loadingSelection) {
+                dispatch(projectActions.getById(qs.id));
+            }
+            if (!loadingSuppliers) {
+                dispatch(supplierActions.getAll(qs.id));
+            }
         }
-        dispatch(currencyActions.getAll());
-        dispatch(erpActions.getAll());
-        dispatch(opcoActions.getAll());
-        dispatch(screenActions.getAll());
-        dispatch(userActions.getAll());
-        // dispatch(projectActions.getAll());     
+        //State items without projectId
+        if (!currencies.items) {
+            dispatch(currencyActions.getAll());
+        }
+        if (!erps.items) {
+            dispatch(erpActions.getAll());
+        }
+        if (!opcos.items) {
+            dispatch(opcoActions.getAll());
+        }
+        if (!screens) {
+            dispatch(screenActions.getAll());
+        }
+        if (!users.items) {
+            dispatch(userActions.getAll());
+        }    
     }
 
     handleSubmitProject(event, project) {
@@ -192,12 +255,20 @@ class Configuration extends React.Component {
 function mapStateToProps(state) {
     const { accesses, alert, currencies, erps, fields, opcos, screens, selection, suppliers, users } = state;
     const { projectDeleting, projectUpdating } = state.projects;
+    const { loadingAccesses } = accesses;
+    const { loadingFields } = fields;
+    const { loadingSelection } = selection;
+    const { loadingSuppliers } = suppliers;
     return {
         accesses,
         alert,
         currencies,
         erps,
         fields,
+        loadingAccesses,
+        loadingFields,
+        loadingSelection,
+        loadingSuppliers,
         opcos,
         projectDeleting,
         projectUpdating,

@@ -354,7 +354,7 @@ class ProjectTable extends Component {
                     selectAllRows={selectAllRows}
                     callback={this.updateSelectedRows}
                 />
-                {screenBody.fields.map(field => {
+                {screenBody.fields.map(function (field, index) {
                     if (field.objectId) {
                         return (
                             <TableInput
@@ -367,11 +367,11 @@ class ProjectTable extends Component {
                                 align={field.align}
                                 fieldType={field.fieldType}
                                 textNoWrap={true}
-                                // key={field.key}
+                                key={index}
                             />
                         );                        
                     } else {
-                        return <td></td>
+                        return <td key={index}></td>
                     }
                 })}
             </tr>

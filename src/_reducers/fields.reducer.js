@@ -4,7 +4,7 @@ export function fields(state = {}, action) {
     switch (action.type) {
         case fieldConstants.CREATE_REQUEST:
             return {
-                loading: true,
+                creatingFields: true,
                 items: action.fields
             };
         case fieldConstants.CREATE_SUCCESS:
@@ -17,7 +17,7 @@ export function fields(state = {}, action) {
             };
         case fieldConstants.GET_REQUEST:
             return {
-                loading: true
+                loadingField: true
             };
         case fieldConstants.GET_SUCCESS:
             return {
@@ -29,7 +29,7 @@ export function fields(state = {}, action) {
             };
         case fieldConstants.GETALL_REQUEST:
             return {
-                loading: true,
+                loadingFields: true,
                 items: state.items //keep existing state during request
             };
         case fieldConstants.GETALL_SUCCESS:

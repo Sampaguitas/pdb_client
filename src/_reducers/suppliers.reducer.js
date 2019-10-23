@@ -4,7 +4,7 @@ export function suppliers(state = {}, action) {
     switch (action.type) {
         case supplierConstants.CREATE_REQUEST:
             return {
-                loading: true,
+                creatingSupplier: true,
                 items: action.suppliers
             };
         case supplierConstants.CREATE_SUCCESS:
@@ -17,7 +17,7 @@ export function suppliers(state = {}, action) {
             };
         case supplierConstants.GET_REQUEST:
             return {
-                loading: true
+                loadingSupplier: true
             };
         case supplierConstants.GET_SUCCESS:
             return {
@@ -29,7 +29,7 @@ export function suppliers(state = {}, action) {
             };
         case supplierConstants.GETALL_REQUEST:
             return {
-                loading: true,
+                loadingSuppliers: true,
                 items: state.items //keep existing state during request
             };
         case supplierConstants.GETALL_SUCCESS:

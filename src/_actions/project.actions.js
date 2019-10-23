@@ -21,7 +21,6 @@ function create(project) {
             .then(
                 project => {
                     dispatch(success(project)),
-                    // dispatch(projectActions.getAll()),
                     history.push({
                         pathname:'/configuration',
                         search: '?id=' + project._id

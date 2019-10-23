@@ -4,15 +4,12 @@ export function selection(state = {}, action) {
   switch (action.type) {
     case projectConstants.GET_REQUEST:
       return {
-        selecting: true,
-        selected: false,
+        loadingSelection: true,
         // project: action.project
         project: state.project //keep existing state during request
       };
     case projectConstants.GET_SUCCESS:
       return {
-        selecting: false,
-        selected: true,
         project: action.project
       };
     case projectConstants.GET_FAILURE:

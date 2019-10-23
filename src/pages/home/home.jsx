@@ -203,11 +203,10 @@ class Home extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, projects } = state; //opcos
+    const { alert, projects } = state;
     const { projectLoading } = state.projects;
     return {
         alert,
-        // opcos,
         projects,
         projectLoading,
     };

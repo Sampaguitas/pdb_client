@@ -25,7 +25,6 @@ function login(email, password) {
             .then(
                 user => { 
                     dispatch(success(user));
-                    dispatch(projectActions.getAll());
                     history.push('/');
                 },
                 error => {

@@ -4,7 +4,7 @@ export function accesses(state = {}, action) {
     switch (action.type) {
         case accessConstants.CREATE_REQUEST:
             return {
-                loading: true,
+                creatingAccess: true,
                 items: action.accesses
             };
         case accessConstants.CREATE_SUCCESS:
@@ -17,7 +17,7 @@ export function accesses(state = {}, action) {
             };
         case accessConstants.GET_REQUEST:
             return {
-                loading: true
+                loadingAccess: true
             };
         case accessConstants.GET_SUCCESS:
             return {
@@ -29,7 +29,7 @@ export function accesses(state = {}, action) {
             };
         case accessConstants.GETALL_REQUEST:
             return {
-                loading: true,
+                loadingAccesses: true,
                 items: state.items //keep existing state during request
             };
         case accessConstants.GETALL_SUCCESS:
