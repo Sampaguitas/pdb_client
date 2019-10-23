@@ -539,7 +539,7 @@ class ReleaseData extends React.Component {
                 <h2>Inspection - Release data : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="inspection" className="full-height">
-                <div className="action-row row ml-1 mb-2" style={{height: '34px', marginRight: '45px'}}> {/*, marginBottom: '10px' */}
+                <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
                         <button className="btn btn-leeuwen btn-lg mr-2" style={{height: '34px'}} onClick={event => this.handleSplitLine(event)}>
                             <span><FontAwesomeIcon icon="page-break" className="fa-lg mr-2"/>Split line</span>
                         </button>

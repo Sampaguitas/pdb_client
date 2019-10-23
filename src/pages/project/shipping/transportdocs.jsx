@@ -6,7 +6,8 @@ import { authHeader } from '../../../_helpers';
 import config from 'config';
 import { 
     accessActions, 
-    alertActions, 
+    alertActions,
+    fieldActions,
     projectActions 
 } from '../../../_actions';
 import ProjectTable from '../../../_components/project-table/project-table'

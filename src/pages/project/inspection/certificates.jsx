@@ -1,7 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { accessActions, alertActions, projectActions } from '../../../_actions';
+import { 
+    accessActions, 
+    alertActions,
+    fieldActions, 
+    projectActions 
+} from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
