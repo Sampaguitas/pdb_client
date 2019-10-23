@@ -42,6 +42,7 @@ class Tabs extends Component {
             //Props
             accesses,
             currencies,
+            docdefs,
             erps,
             fields,
             opcos,
@@ -88,6 +89,7 @@ class Tabs extends Component {
                                 //Props
                                 accesses={accesses}
                                 currencies={currencies}
+                                docdefs={docdefs}
                                 erps={erps}
                                 fields={fields}
                                 opcos={opcos}

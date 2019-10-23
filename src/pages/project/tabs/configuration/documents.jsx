@@ -349,9 +349,10 @@ class Documents extends React.Component {
 
       handleOnclick(event, id) {
           event.preventDefault();
-          const { project } = this.props.selection
-        if (id != '0' && project.docdefs) {
-          let found = project.docdefs.find(element => element._id === id);
+          const { docdefs } = this.props;
+        //   const { project } = this.props.selection
+        if (id != '0' && docdefs.items) {
+          let found = docdefs.items.find(element => element._id === id);
           this.setState({
             ...this.state,
             docDef: {
@@ -572,27 +573,27 @@ class Documents extends React.Component {
 
     handleDownloadFile(event) {
         event.preventDefault();
-        const { selection } = this.props;
+        const { selection, docdefs } = this.props;
         const { selectedTemplate, fileName } = this.state;
-        if (selection.project && selectedTemplate != "0" && fileName) {
-            let obj = findObj(selection.project.docdefs,selectedTemplate);
-             if (obj) {
-                const requestOptions = {
-                    method: 'GET',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                };
-                return fetch(`${config.apiUrl}/template/download?project=${selection.project.number}&file=${obj.field}`, requestOptions)
-                    .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
-             }
+        if (selection.project && docdefs.items && selectedTemplate != "0" && fileName) {
+            let obj = findObj(docdefs.items, selectedTemplate);
+            if (obj) {
+            const requestOptions = {
+                method: 'GET',
+                headers: { ...authHeader(), 'Content-Type': 'application/json'},
+            };
+            return fetch(`${config.apiUrl}/template/download?project=${selection.project.number}&file=${obj.field}`, requestOptions)
+                .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
+            }
         }
     }
 
     handlePreviewFile(event) {
         event.preventDefault();
-        const { selection } = this.props;
+        const { selection, docdefs } = this.props;
         const { selectedTemplate, fileName } = this.state;
-        if (selection.project && selectedTemplate != "0" && fileName) {
-            let obj = findObj(selection.project.docdefs,selectedTemplate);
+        if (selection.project && docdefs.items && selectedTemplate != "0" && fileName) {
+            let obj = findObj(docdefs.items, selectedTemplate);
              if (obj) {
                 const requestOptions = {
                     method: 'GET',
@@ -639,7 +640,7 @@ class Documents extends React.Component {
 
 
     handleChangeTemplate(event) {
-        const { selection } = this.props;
+        const { docdefs } = this.props;
         const value =  event.target.value;
         this.setState({
             ...this.state,
@@ -649,8 +650,8 @@ class Documents extends React.Component {
             inputKey: Date.now(),
             fileName:''
         }, () => {
-            if (selection.project) {
-                let obj = findObj(selection.project.docdefs,value);
+            if (docdefs.items) {
+                let obj = findObj(docdefs.items, value);
                 if (obj) {
                     this.setState({
                         ...this.state,
@@ -729,6 +730,7 @@ class Documents extends React.Component {
     render() {
 
         const { 
+            docdefs,
             fields,
             tab,
             selection,
@@ -788,10 +790,10 @@ class Documents extends React.Component {
                         <div className="input-group-prepend">
                             <span className="input-group-text" style={{width: '95px'}}>Select Document</span>
                         </div>
-                        <select className="form-control" name="selectedTemplate" value={selectedTemplate} defaultValue="0" placeholder="Select Template..." onChange={this.handleChangeTemplate}>
+                        <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select Template..." onChange={this.handleChangeTemplate}>
                             <option key="0" value="0">Select document...</option>
                         {
-                            selection.project && arraySorted(docConf(selection.project.docdefs), "name").map((p) =>  {        
+                            docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
                                 return (
                                     <option 
                                         key={p._id}

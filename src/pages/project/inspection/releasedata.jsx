@@ -4,7 +4,7 @@ import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../../_helpers';
-import { accessActions, alertActions, fieldActions, projectActions } from '../../../_actions';
+import { accessActions, alertActions, docdefActions, fieldActions, projectActions } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -109,6 +109,7 @@ class ReleaseData extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
+            loadingDocdefs,
             loadingFields,
             loadingSelection, 
             location 
@@ -120,6 +121,9 @@ class ReleaseData extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingDocdefs) {
+                dispatch(docdefActions.getAll(qs.id));
             }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
@@ -140,6 +144,7 @@ class ReleaseData extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
+            loadingDocdefs,
             loadingFields,
             loadingSelection, 
             location 
@@ -151,6 +156,9 @@ class ReleaseData extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingDocdefs) {
+                dispatch(docdefActions.getAll(qs.id));
             }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
@@ -445,10 +453,10 @@ class ReleaseData extends React.Component {
 
     handleGenerateFile(event) {
         event.preventDefault();
-        const { selection } = this.props;
+        const { docdefs } = this.props;
         const { selectedTemplate } = this.state;
         if (selectedTemplate != "0") {
-            let obj = findObj(selection.project.docdefs,selectedTemplate);
+            let obj = findObj(docdefs.items, selectedTemplate);
              if (obj) {
                 const requestOptions = {
                     method: 'GET',
@@ -498,8 +506,20 @@ class ReleaseData extends React.Component {
     }
 
     render() {
-        const { projectId, screen, screenId, screenBodys, unlocked, loaded, selectedTemplate, selectedField, updateValue }= this.state;
-        const { accesses, alert, fields, selection } = this.props;
+        const { 
+            projectId, 
+            screen, 
+            screenId, 
+            screenBodys, 
+            unlocked, 
+            loaded, 
+            selectedTemplate, 
+            selectedField, 
+            updateValue 
+        }= this.state;
+
+        const { accesses, alert, docdefs, fields, selection } = this.props;
+        
         { selection.project && loaded == false && this.testBodys()}
         return (
             <Layout alert={alert} accesses={accesses}>
@@ -545,7 +565,7 @@ class ReleaseData extends React.Component {
                                 <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select document..." onChange={this.handleChange}>
                                     <option key="0" value="0">Select document...</option>
                                 {
-                                    selection.project && arraySorted(docConf(selection.project.docdefs), "name").map((p) =>  {        
+                                    docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
                                         return (
                                             <option 
                                                 key={p._id}
@@ -586,13 +606,15 @@ class ReleaseData extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fields, selection } = state;
+    const { accesses, alert, docdefs, fields, selection } = state;
     const { loadingAccesses } = accesses;
+    const { loadingDocdefs } = docdefs;
     const { loadingFields } = fields;
     const { loadingSelection } = selection;
     return {
         accesses,
         alert,
+        docdefs,
         fields,
         loadingAccesses,
         loadingFields,

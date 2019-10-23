@@ -2,7 +2,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 // import config from 'config';
-import { accessActions, alertActions, currencyActions, erpActions, fieldActions, opcoActions, projectActions, supplierActions, screenActions, userActions  } from '../../_actions';
+import { 
+    accessActions, 
+    alertActions, 
+    docdefActions, 
+    currencyActions, 
+    erpActions, 
+    fieldActions, 
+    opcoActions, 
+    projectActions, 
+    supplierActions, 
+    screenActions, 
+    userActions  
+} from '../../_actions';
 // import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs';
@@ -49,6 +61,7 @@ class Configuration extends React.Component {
             erps,
             dispatch,
             loadingAccesses,
+            loadingDocdefs,
             loadingFields,
             loadingSelection,
             loadingSuppliers,
@@ -64,6 +77,9 @@ class Configuration extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingDocdefs) {
+                dispatch(docdefActions.getAll(qs.id));
             }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
@@ -106,6 +122,7 @@ class Configuration extends React.Component {
             erps,
             dispatch,
             loadingAccesses,
+            loadingDocdefs,
             loadingFields,
             loadingSelection,
             loadingSuppliers,
@@ -121,6 +138,9 @@ class Configuration extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingDocdefs) {
+                dispatch(docdefActions.getAll(qs.id));
             }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
@@ -192,6 +212,7 @@ class Configuration extends React.Component {
                 accesses, 
                 alert,
                 currencies,
+                docdefs,
                 erps,
                 fields,
                 opcos,
@@ -232,6 +253,7 @@ class Configuration extends React.Component {
                         //Props
                         accesses={accesses}
                         currencies={currencies}
+                        docdefs={docdefs}
                         erps={erps}
                         fields={fields}
                         opcos={opcos}
@@ -253,9 +275,23 @@ class Configuration extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, currencies, erps, fields, opcos, screens, selection, suppliers, users } = state;
+    const { 
+        accesses, 
+        alert, 
+        currencies, 
+        docdefs, 
+        erps, 
+        fields, 
+        opcos, 
+        screens, 
+        selection, 
+        suppliers, 
+        users 
+    } = state;
+
     const { projectDeleting, projectUpdating } = state.projects;
     const { loadingAccesses } = accesses;
+    const { loadingDocdefs } = docdefs;
     const { loadingFields } = fields;
     const { loadingSelection } = selection;
     const { loadingSuppliers } = suppliers;
@@ -263,9 +299,11 @@ function mapStateToProps(state) {
         accesses,
         alert,
         currencies,
+        docdefs,
         erps,
         fields,
         loadingAccesses,
+        loadingDocdefs,
         loadingFields,
         loadingSelection,
         loadingSuppliers,

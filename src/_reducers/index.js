@@ -5,6 +5,7 @@ import { alert } from './alert.reducer';
 import { authentication } from './authentication.reducer';
 import { collitypes } from './collitypes.reducer';
 import { currencies } from './currencies.reducer';
+import { docdefs } from './docdefs.reducer';
 import { doctypes } from './doctypes.reducer';
 import { erps } from './erps.reducer';
 import { fields } from './fields.reducer';
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   authentication,
   collitypes,
   currencies,
+  docdefs,
   doctypes,
   erps,
   fieldnames,

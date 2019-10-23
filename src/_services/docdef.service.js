@@ -1,7 +1,7 @@
 import config from 'config';
 import { authHeader } from '../_helpers';
 
-export const fieldnameService = {
+export const docdefService = {
     create,
     getAll,
     getById,
@@ -14,22 +14,22 @@ function logout() {
     localStorage.removeItem('user');
 }
 
-function create(fieldname) {
+function create(docdef) {
     const requestOptions = {
         method: 'POST',
         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(fieldname)
+        body: JSON.stringify(docdef)
     };
-    return fetch(`${config.apiUrl}/fieldname/create`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/docdef/create`, requestOptions).then(handleResponse);
 }
 
-function getAll() {
+function getAll(projectId) {
     const requestOptions = {
         method: 'GET',
         headers: authHeader(), 'Content-Type': 'application/json'
     };
 
-    return fetch(`${config.apiUrl}/fieldname/findAll`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/docdef/findAll?projectId=${projectId}`, requestOptions).then(handleResponse);
 }
 
 function getById(id) {
@@ -38,17 +38,17 @@ function getById(id) {
         headers: authHeader()
     };
 
-    return fetch(`${config.apiUrl}/fieldname/findOne/?id=${id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/docdef/findOne/?id=${id}`, requestOptions).then(handleResponse);
 }
 
-function update(fieldname) {
+function update(docdef) {
     const requestOptions = {
         method: 'PUT',
         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(fieldname)
+        body: JSON.stringify(docdef)
     };
 
-    return fetch(`${config.apiUrl}/fieldname/update?id=${fieldname.id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/docdef/update?id=${docdef.id}`, requestOptions).then(handleResponse);
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript
@@ -57,7 +57,7 @@ function _delete(id) {
         method: 'DELETE',
         headers: authHeader()
     };
-    return fetch(`${config.apiUrl}/fieldname/delete?id=${id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/docdef/delete?id=${id}`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {
