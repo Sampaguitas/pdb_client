@@ -83,6 +83,21 @@ function doesMatch(search, array, type) {
     }
 }
 
+function findCustomField(fields, fieldId){
+    if (fields.items && fieldId) {
+        let found = fields.items.find(function (element) {
+            return element._id === fieldId;
+        });
+        if (found) {
+            return found.custom;
+        } else {
+            return ''
+        }
+    } else {
+        return ''
+    }
+}
+
 class Screens extends React.Component {
     constructor(props) {
         super(props);
@@ -321,6 +336,8 @@ class Screens extends React.Component {
     }  
     
     filterName(array){
+
+        const { fields } = this.props;
         
         const { 
             align,
@@ -336,7 +353,7 @@ class Screens extends React.Component {
         if (array) {
           return arraySorted(array, 'fields.custom').filter(function (element) {
             return (doesMatch(selectedScreen, element.screenId, 'Id')
-            && element.fields && doesMatch(custom, element.fields.custom, 'String')
+            && element.fields && doesMatch(custom, findCustomField(fields, element.fieldId), 'String')
             && doesMatch(forShow, element.forShow, 'Number')
             && doesMatch(forSelect, element.forSelect, 'Number')
             && doesMatch(align, element.align, 'Select')

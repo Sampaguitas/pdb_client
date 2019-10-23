@@ -1,7 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { accessActions, alertActions, projectActions } from '../../../_actions';
+import { 
+    accessActions, 
+    alertActions,
+    fieldActions,
+    projectActions 
+} from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -75,6 +80,7 @@ class PackingDetails extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
+            loadingFields,
             loadingSelection, 
             location 
         } = this.props;
@@ -85,6 +91,9 @@ class PackingDetails extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingFields) {
+                dispatch(fieldActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -102,6 +111,7 @@ class PackingDetails extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
+            loadingFields,
             loadingSelection, 
             location 
         } = this.props;
@@ -111,6 +121,9 @@ class PackingDetails extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingFields) {
+                dispatch(fieldActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -391,7 +404,7 @@ class PackingDetails extends React.Component {
 
     render() {
         const { projectId, screen, screenId, screenBodys, unlocked, loaded }= this.state;
-        const { accesses, alert, selection } = this.props;
+        const { accesses, alert, fields, selection } = this.props;
         { selection.project && loaded == false && this.testBodys()}
         return (
             <Layout alert={alert} accesses={accesses}>
@@ -416,6 +429,7 @@ class PackingDetails extends React.Component {
                             unlocked={unlocked}
                             screen={screen}
                             screenBodys={screenBodys}
+                            fields={fields}
                         />
                     }
                 </div>
@@ -425,13 +439,16 @@ class PackingDetails extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, selection } = state;
+    const { accesses, alert, fields, selection } = state;
     const { loadingAccesses } = accesses;
+    const { loadingFields } = fields;
     const { loadingSelection } = selection;
     return {
         accesses,
         alert,
+        fields,
         loadingAccesses,
+        loadingFields,
         loadingSelection,
         selection
     };

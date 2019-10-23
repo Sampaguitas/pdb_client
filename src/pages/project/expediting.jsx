@@ -131,10 +131,10 @@ class Expediting extends React.Component {
                 dispatch(docdefActions.getAll(qs.id));
             }
             if (!loadingFields) {
-                dispatch(projectActions.getById(qs.id));
+                dispatch(fieldActions.getAll(qs.id));
             }
             if (!loadingSelection) {
-                dispatch(fieldActions.getAll(qs.id));
+                dispatch(projectActions.getById(qs.id));
             }
         } 
     }
@@ -165,10 +165,10 @@ class Expediting extends React.Component {
                 dispatch(docdefActions.getAll(qs.id));
             }
             if (!loadingFields) {
-                dispatch(projectActions.getById(qs.id));
+                dispatch(fieldActions.getAll(qs.id));
             }
             if (!loadingSelection) {
-                dispatch(fieldActions.getAll(qs.id));
+                dispatch(projectActions.getById(qs.id));
             }
         }   
     }
@@ -460,6 +460,7 @@ class Expediting extends React.Component {
                                 toggleUnlock={this.toggleUnlock}
                                 unlocked={unlocked}
                                 screen={screen}
+                                fields={fields}
                             />
                         }
                     </div>

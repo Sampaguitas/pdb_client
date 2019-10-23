@@ -76,7 +76,8 @@ class Certificates extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
-            loadingSelection,  
+            loadingFields,
+            loadingSelection,
             location 
         } = this.props;
 
@@ -86,6 +87,9 @@ class Certificates extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingFields) {
+                dispatch(fieldActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -100,13 +104,23 @@ class Certificates extends React.Component {
     }
 
     handleSelectionReload(event){
-        const { dispatch, location } = this.props;
+        const { 
+            dispatch,
+            loadingAccesses,
+            loadingFields,
+            loadingSelection,
+            location 
+        } = this.props;
+
         var qs = queryString.parse(location.search);
         if (qs.id) {
             //State items with projectId
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingFields) {
+                dispatch(fieldActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -388,7 +402,7 @@ class Certificates extends React.Component {
     render() {
         const { projectId, screen, screenId, screenBodys, unlocked, loaded }= this.state;
         
-        const { accesses, alert, selection } = this.props;
+        const { accesses, alert, fields, selection } = this.props;
 
         { selection.project && loaded == false && this.testBodys()}
         return (
@@ -414,6 +428,7 @@ class Certificates extends React.Component {
                             unlocked={unlocked}
                             screen={screen}
                             screenBodys={screenBodys}
+                            fields={fields}
                         />
                     }
                 </div> 
@@ -423,13 +438,16 @@ class Certificates extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, selection } = state;
+    const { accesses, alert, fields, selection } = state;
     const { loadingAccesses } = accesses;
+    const { loadingFields } = fields;
     const { loadingSelection } = selection;
     return {
         accesses,
         alert,
+        fields,
         loadingAccesses,
+        loadingFields,
         loadingSelection,
         selection
     };

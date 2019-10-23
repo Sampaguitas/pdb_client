@@ -129,6 +129,21 @@ function doesMatch(search, array, type) {
     }
 }
 
+function findCustomField(fields, fieldId){
+    if (fields.items && fieldId) {
+        let found = fields.items.find(function (element) {
+            return element._id === fieldId;
+        });
+        if (found) {
+            return found.custom;
+        } else {
+            return ''
+        }
+    } else {
+        return ''
+    }
+}
+
 class Documents extends React.Component {
     constructor(props) {
         super(props);
@@ -695,6 +710,8 @@ class Documents extends React.Component {
     }
     
     filterName(array){
+
+        const { fields } = this.props;
         
         const {
             worksheet,
@@ -713,7 +730,7 @@ class Documents extends React.Component {
             && doesMatch(location, element.location, 'Select')
             && doesMatch(row, element.row, 'Number')
             && doesMatch(col, element.col, 'Number')
-            && element.fields && doesMatch(custom, element.fields.custom, 'String')
+            && element.fields && doesMatch(custom, findCustomField(fields, element.fieldId), 'String')
             );
           });
         } else {

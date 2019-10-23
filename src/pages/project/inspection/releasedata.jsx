@@ -4,7 +4,13 @@ import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../../_helpers';
-import { accessActions, alertActions, docdefActions, fieldActions, projectActions } from '../../../_actions';
+import { 
+    accessActions, 
+    alertActions, 
+    docdefActions, 
+    fieldActions, 
+    projectActions 
+} from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -594,6 +600,7 @@ class ReleaseData extends React.Component {
                                 toggleUnlock={this.toggleUnlock}
                                 unlocked={unlocked}
                                 screen={screen}
+                                fields={fields}
                                 // screenBodys={screenBodys}
                             />
                         }
@@ -617,6 +624,7 @@ function mapStateToProps(state) {
         docdefs,
         fields,
         loadingAccesses,
+        loadingDocdefs,
         loadingFields,
         loadingSelection,
         selection

@@ -110,6 +110,21 @@ function doesMatch(search, array, type) {
 //     }
 // }
 
+function findCustomField(fields, fieldId){
+    if (fields.items && fieldId) {
+        let found = fields.items.find(function (element) {
+            return element._id === fieldId;
+        });
+        if (found) {
+            return found.custom;
+        } else {
+            return ''
+        }
+    } else {
+        return ''
+    }
+}
+
 class ProjectTable extends Component {
     constructor(props) {
         super(props);
@@ -307,12 +322,14 @@ class ProjectTable extends Component {
     }
 
     matchingHeader(screenHeader, header){
+        const { fields } = this.props;
         switch (screenHeader.fields.type) {
             case "String":
                 return ( 
                     <HeaderInput
                         type="text"
-                        title={screenHeader.fields.custom}
+                        // title={screenHeader.fields.custom}
+                        title={findCustomField(fields, screenHeader.fieldId)}
                         name={screenHeader.fieldId}
                         value={header[screenHeader.fieldId]}
                         onChange={this.handleChangeHeader}
@@ -323,7 +340,8 @@ class ProjectTable extends Component {
                 return ( 
                     <HeaderInput
                         type="number"
-                        title={screenHeader.fields.custom}
+                        // title={screenHeader.fields.custom}
+                        title={findCustomField(fields, screenHeader.fieldId)}
                         name={screenHeader.fieldId}
                         value={header[screenHeader.fieldId]}
                         onChange={this.handleChangeHeader}
@@ -334,7 +352,8 @@ class ProjectTable extends Component {
                 return ( 
                     <HeaderInput
                         type="text"
-                        title={screenHeader.fields.custom}
+                        // title={screenHeader.fields.custom}
+                        title={findCustomField(fields, screenHeader.fieldId)}
                         name={screenHeader.fieldId}
                         value={header[screenHeader.fieldId]}
                         onChange={this.handleChangeHeader}
