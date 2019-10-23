@@ -101,7 +101,7 @@ class Configuration extends React.Component {
         if (!opcos.items) {
             dispatch(opcoActions.getAll());
         }
-        if (!screens) {
+        if (!screens.items) {
             dispatch(screenActions.getAll());
         }
         if (!users.items) {
@@ -162,7 +162,7 @@ class Configuration extends React.Component {
         if (!opcos.items) {
             dispatch(opcoActions.getAll());
         }
-        if (!screens) {
+        if (!screens.items) {
             dispatch(screenActions.getAll());
         }
         if (!users.items) {

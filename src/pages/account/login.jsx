@@ -2,7 +2,14 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { NavLink, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { accessActions, fieldActions, projectActions, supplierActions, userActions } from "../../_actions";
+import { 
+  accessActions, 
+  docdefActions, 
+  fieldActions, 
+  projectActions, 
+  supplierActions, 
+  userActions 
+} from "../../_actions";
 import Layout from "../../_components/layout";
 import InputIcon from "../../_components/input-icon";
 import logo from "../../_assets/logo.svg";
@@ -27,9 +34,10 @@ class Login extends React.Component {
     dispatch(userActions.logout());
     //Clear Selection
     dispatch(accessActions.clear());
+    dispatch(docdefActions.clear());
     dispatch(fieldActions.clear());
     dispatch(projectActions.clearSelection());
-    dispatch(projectActions.clearProjects());
+    // dispatch(projectActions.clearProjects());
     dispatch(supplierActions.clear());
   }
 

@@ -1,6 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { alertActions, accessActions, fieldActions, projectActions, supplierActions } from '../../_actions';
+import { 
+    alertActions,
+    accessActions,
+    docdefActions,
+    fieldActions, 
+    projectActions, 
+    supplierActions 
+} from '../../_actions';
 import { history } from '../../_helpers';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -62,10 +69,10 @@ class Home extends React.Component {
         const { dispatch } = this.props
         // Clear Selection
         dispatch(accessActions.clear());
+        dispatch(docdefActions.clear());
         dispatch(fieldActions.clear());
         dispatch(projectActions.clearSelection());
         dispatch(supplierActions.clear());
-        
         // Get Projects
         dispatch(projectActions.getAll());
     }

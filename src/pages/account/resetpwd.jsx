@@ -3,7 +3,14 @@ import { connect } from "react-redux";
 import { NavLink } from 'react-router-dom';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { userActions } from "../../_actions";
+import { 
+  accessActions,
+  docdefActions,
+  fieldActions,
+  projectActions,
+  supplierActions,
+  userActions 
+} from "../../_actions";
 import Layout from "../../_components/layout";
 import InputIcon from "../../_components/input-icon";
 import logo from "../../_assets/logo.svg";
@@ -40,6 +47,13 @@ class ResetPwd extends React.Component {
             }
         });
     }
+    //Clear Selection
+    dispatch(accessActions.clear());
+    dispatch(docdefActions.clear());
+    dispatch(fieldActions.clear());
+    dispatch(projectActions.clearSelection());
+    // dispatch(projectActions.clearProjects());
+    dispatch(supplierActions.clear());
   }
 
   handleChange(e) {
