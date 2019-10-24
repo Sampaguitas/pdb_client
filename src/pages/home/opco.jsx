@@ -9,8 +9,11 @@ import {
     docfieldActions,
     fieldActions,
     fieldnameActions,
+    localeActions,
+    opcoActions,
     poActions,
-    projectActions, 
+    projectActions,
+    regionActions, 
     supplierActions,
 } from '../../_actions';
 import Modal from "../../_components/modal";

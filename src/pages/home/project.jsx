@@ -3,10 +3,13 @@ import { connect } from 'react-redux';
 import { 
     accessActions,
     collitypeActions,
+    currencyActions,
     docdefActions,
     docfieldActions,
+    erpActions,
     fieldActions,
     fieldnameActions,
+    opcoActions,
     poActions,
     projectActions, 
     supplierActions, 
