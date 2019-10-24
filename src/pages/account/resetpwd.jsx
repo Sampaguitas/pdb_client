@@ -5,9 +5,13 @@ import queryString from 'query-string';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
   accessActions,
+  collitypeActions,
   docdefActions,
+  docfieldActions,
   fieldActions,
-  projectActions,
+  fieldnameActions,
+  poActions,
+  projectActions, 
   supplierActions,
   userActions 
 } from "../../_actions";
@@ -49,10 +53,13 @@ class ResetPwd extends React.Component {
     }
     //Clear Selection
     dispatch(accessActions.clear());
+    dispatch(collitypeActions.clear());
     dispatch(docdefActions.clear());
+    dispatch(docfieldActions.clear());
     dispatch(fieldActions.clear());
+    dispatch(fieldnameActions.clear());
+    dispatch(poActions.clear());
     dispatch(projectActions.clearSelection());
-    // dispatch(projectActions.clearProjects());
     dispatch(supplierActions.clear());
   }
 

@@ -61,6 +61,8 @@ class PickingLists extends React.Component {
 
 function mapStateToProps(state) {
     const { accesses, alert, selection } = state;
+    const { loadingAccesses } = accesses;
+    const { loadingSelection } = selection;
     return {
         accesses,
         alert,

@@ -1,12 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { 
-    alertActions,
     accessActions,
+    collitypeActions,
     docdefActions,
-    fieldActions, 
+    docfieldActions,
+    fieldActions,
+    fieldnameActions,
+    poActions,
     projectActions, 
-    supplierActions 
+    supplierActions,
 } from '../../_actions';
 import { history } from '../../_helpers';
 import Layout from '../../_components/layout';
@@ -69,8 +72,12 @@ class Home extends React.Component {
         const { dispatch } = this.props
         // Clear Selection
         dispatch(accessActions.clear());
+        dispatch(collitypeActions.clear());
         dispatch(docdefActions.clear());
+        dispatch(docfieldActions.clear());
         dispatch(fieldActions.clear());
+        dispatch(fieldnameActions.clear());
+        dispatch(poActions.clear());
         dispatch(projectActions.clearSelection());
         dispatch(supplierActions.clear());
         // Get Projects

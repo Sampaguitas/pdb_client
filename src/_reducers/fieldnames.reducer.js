@@ -4,7 +4,7 @@ export function fieldnames(state = {}, action) {
     switch (action.type) {
         case fieldnameConstants.CREATE_REQUEST:
             return {
-                loading: true,
+                creatingFieldname: true,
                 items: action.fieldnames
             };
         case fieldnameConstants.CREATE_SUCCESS:
@@ -17,7 +17,7 @@ export function fieldnames(state = {}, action) {
             };
         case fieldnameConstants.GET_REQUEST:
             return {
-                loading: true
+                loadingFieldname: true
             };
         case fieldnameConstants.GET_SUCCESS:
             return {
@@ -29,7 +29,7 @@ export function fieldnames(state = {}, action) {
             };
         case fieldnameConstants.GETALL_REQUEST:
             return {
-                loading: true,
+                loadingFieldnames: true,
                 items: state.items //keep existing state during request
             };
         case fieldnameConstants.GETALL_SUCCESS:
@@ -100,6 +100,8 @@ export function fieldnames(state = {}, action) {
                     return fieldname;
                 })
             };
+        case fieldnameConstants.CLEAR:
+            return {};
         default:
             return state
     }

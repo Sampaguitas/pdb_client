@@ -4,8 +4,12 @@ import { NavLink, Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
   accessActions,
+  collitypeActions,
   docdefActions,
-  fieldActions, 
+  docfieldActions,
+  fieldActions,
+  fieldnameActions,
+  poActions,
   projectActions, 
   supplierActions, 
   userActions 
@@ -32,10 +36,13 @@ class RequestPwd extends React.Component {
     dispatch(userActions.logout());
     //Clear Selection
     dispatch(accessActions.clear());
+    dispatch(collitypeActions.clear());
     dispatch(docdefActions.clear());
+    dispatch(docfieldActions.clear());
     dispatch(fieldActions.clear());
+    dispatch(fieldnameActions.clear());
+    dispatch(poActions.clear());
     dispatch(projectActions.clearSelection());
-    // dispatch(projectActions.clearProjects());
     dispatch(supplierActions.clear());
   }
 

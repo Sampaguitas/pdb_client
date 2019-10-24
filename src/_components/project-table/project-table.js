@@ -100,9 +100,9 @@ function doesMatch(search, array, type) {
     }
 }
 
-// function returnScreenHeaders(selection, screenId) {
-//     if (selection.project) {
-//         return selection.project.fieldnames.filter(function(element) {
+// function returnScreenHeaders(fieldnames.items, screenId) {
+//     if (fieldnames.items) {
+//         return fieldnames.items.filter(function(element) {
 //             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
 //         });
 //     } else {
@@ -261,8 +261,8 @@ class ProjectTable extends Component {
 
     toggleSelectAllRow() {
         // const { selectAllRows } = this.state;
-        // const { selection } = this.props;
-        // if (selection.project) {
+        // const { docfields } = this.props;
+        // if (docfields.items) {
         //     if (selectAllRows) {
         //         this.setState({
         //             ...this.state,
@@ -272,7 +272,7 @@ class ProjectTable extends Component {
         //     } else {
         //         this.setState({
         //             ...this.state,
-        //             selectedRows: this.filterName(selection.project.docfields).map(s => s._id),
+        //             selectedRows: this.filterName(docfields.items).map(s => s._id),
         //             selectAllRows: true
         //         });
         //     }         
@@ -328,8 +328,8 @@ class ProjectTable extends Component {
                 return ( 
                     <HeaderInput
                         type="text"
-                        // title={screenHeader.fields.custom}
-                        title={findCustomField(fields, screenHeader.fieldId)}
+                        title={screenHeader.fields.custom}
+                        // title={findCustomField(fields, screenHeader.fieldId)}
                         name={screenHeader.fieldId}
                         value={header[screenHeader.fieldId]}
                         onChange={this.handleChangeHeader}
@@ -340,8 +340,8 @@ class ProjectTable extends Component {
                 return ( 
                     <HeaderInput
                         type="number"
-                        // title={screenHeader.fields.custom}
-                        title={findCustomField(fields, screenHeader.fieldId)}
+                        title={screenHeader.fields.custom}
+                        // title={findCustomField(fields, screenHeader.fieldId)}
                         name={screenHeader.fieldId}
                         value={header[screenHeader.fieldId]}
                         onChange={this.handleChangeHeader}
@@ -352,8 +352,8 @@ class ProjectTable extends Component {
                 return ( 
                     <HeaderInput
                         type="text"
-                        // title={screenHeader.fields.custom}
-                        title={findCustomField(fields, screenHeader.fieldId)}
+                        title={screenHeader.fields.custom}
+                        // title={findCustomField(fields, screenHeader.fieldId)}
                         name={screenHeader.fieldId}
                         value={header[screenHeader.fieldId]}
                         onChange={this.handleChangeHeader}

@@ -1,7 +1,7 @@
 import config from 'config';
 import { authHeader } from '../_helpers';
 
-export const fieldnameService = {
+export const poService = {
     create,
     getAll,
     getById,
@@ -14,13 +14,13 @@ function logout() {
     localStorage.removeItem('user');
 }
 
-function create(fieldname) {
+function create(po) {
     const requestOptions = {
         method: 'POST',
         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(fieldname)
+        body: JSON.stringify(po)
     };
-    return fetch(`${config.apiUrl}/fieldname/create`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/po/create`, requestOptions).then(handleResponse);
 }
 
 function getAll(projectId) {
@@ -29,7 +29,7 @@ function getAll(projectId) {
         headers: authHeader(), 'Content-Type': 'application/json'
     };
 
-    return fetch(`${config.apiUrl}/fieldname/findAll?projectId=${projectId}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/po/findAll?projectId=${projectId}`, requestOptions).then(handleResponse);
 }
 
 function getById(id) {
@@ -38,17 +38,17 @@ function getById(id) {
         headers: authHeader()
     };
 
-    return fetch(`${config.apiUrl}/fieldname/findOne/?id=${id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/po/findOne/?id=${id}`, requestOptions).then(handleResponse);
 }
 
-function update(fieldname) {
+function update(po) {
     const requestOptions = {
         method: 'PUT',
         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(fieldname)
+        body: JSON.stringify(po)
     };
 
-    return fetch(`${config.apiUrl}/fieldname/update?id=${fieldname.id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/po/update?id=${po.id}`, requestOptions).then(handleResponse);
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript
@@ -57,7 +57,7 @@ function _delete(id) {
         method: 'DELETE',
         headers: authHeader()
     };
-    return fetch(`${config.apiUrl}/fieldname/delete?id=${id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/po/delete?id=${id}`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

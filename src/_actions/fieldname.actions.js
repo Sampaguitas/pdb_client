@@ -8,7 +8,8 @@ export const fieldnameActions = {
     getAll,
     getById,
     update,
-    delete: _delete
+    delete: _delete,
+    clear
 };
 
 function create(fieldname) {
@@ -19,8 +20,8 @@ function create(fieldname) {
             .then(
                 fieldname => {
                     dispatch(success());
-                    // history.push('/');
                     dispatch(alertActions.success('fieldname successfully created'));
+                    dispatch(fieldnameActions.getAll(fieldname.projectId));
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -34,18 +35,18 @@ function create(fieldname) {
     function failure(error) { return { type: fieldnameConstants.CREATE_FAILURE, error } }
 }
 
-function getAll() {
+function getAll(projectId) {
     return dispatch => {
-        dispatch(request());
+        dispatch(request(projectId));
 
-        fieldnameService.getAll()
+        fieldnameService.getAll(projectId)
             .then(
                 fieldnames => dispatch(success(fieldnames)),
                 error => dispatch(failure(error.toString()))
             );
     };
 
-    function request() { return { type: fieldnameConstants.GETALL_REQUEST } }
+    function request(projectId) { return { type: fieldnameConstants.GETALL_REQUEST, projectId } }
     function success(fieldnames) { return { type: fieldnameConstants.GETALL_SUCCESS, fieldnames } }
     function failure(error) { return { type: fieldnameConstants.GETALL_FAILURE, error } }
 }
@@ -73,8 +74,9 @@ function update(fieldname) {
         fieldnameService.update(fieldname)
             .then(
                 fieldname => {
-                    dispatch(success(fieldname)),
-                    dispatch(alertActions.success('fieldname successfully updated'))
+                    dispatch(success(fieldname));
+                    dispatch(alertActions.success('fieldname successfully updated'));
+                    dispatch(fieldnameActions.getAll(fieldname.projectId));
                 },
                 error => dispatch(failure(error.toString()))
             );
@@ -92,7 +94,10 @@ function _delete(id) {
 
         fieldnameService.delete(id)
             .then(
-                fieldname => dispatch(success(id)),
+                fieldname => {
+                    dispatch(success(id));
+                    dispatch(fieldnameActions.getAll(fieldname.projectId));
+                },
                 error => dispatch(failure(id, error.toString()))
             );
     };
@@ -100,4 +105,8 @@ function _delete(id) {
     function request(id) { return { type: fieldnameConstants.DELETE_REQUEST, id } }
     function success(id) { return { type: fieldnameConstants.DELETE_SUCCESS, id } }
     function failure(id, error) { return { type: fieldnameConstants.DELETE_FAILURE, id, error } }
+}
+
+function clear() {
+    return { type: fieldnameConstants.CLEAR };
 }

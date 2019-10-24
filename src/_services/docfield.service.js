@@ -1,7 +1,7 @@
 import config from 'config';
 import { authHeader } from '../_helpers';
 
-export const fieldnameService = {
+export const docfieldService = {
     create,
     getAll,
     getById,
@@ -14,13 +14,13 @@ function logout() {
     localStorage.removeItem('user');
 }
 
-function create(fieldname) {
+function create(docfield) {
     const requestOptions = {
         method: 'POST',
         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(fieldname)
+        body: JSON.stringify(docfield)
     };
-    return fetch(`${config.apiUrl}/fieldname/create`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/docfield/create`, requestOptions).then(handleResponse);
 }
 
 function getAll(projectId) {
@@ -29,7 +29,7 @@ function getAll(projectId) {
         headers: authHeader(), 'Content-Type': 'application/json'
     };
 
-    return fetch(`${config.apiUrl}/fieldname/findAll?projectId=${projectId}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/docfield/findAll?projectId=${projectId}`, requestOptions).then(handleResponse);
 }
 
 function getById(id) {
@@ -38,17 +38,17 @@ function getById(id) {
         headers: authHeader()
     };
 
-    return fetch(`${config.apiUrl}/fieldname/findOne/?id=${id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/docfield/findOne/?id=${id}`, requestOptions).then(handleResponse);
 }
 
-function update(fieldname) {
+function update(docfield) {
     const requestOptions = {
         method: 'PUT',
         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(fieldname)
+        body: JSON.stringify(docfield)
     };
 
-    return fetch(`${config.apiUrl}/fieldname/update?id=${fieldname.id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/docfield/update?id=${docfield.id}`, requestOptions).then(handleResponse);
 }
 
 // prefixed function name with underscore because delete is a reserved word in javascript
@@ -57,7 +57,7 @@ function _delete(id) {
         method: 'DELETE',
         headers: authHeader()
     };
-    return fetch(`${config.apiUrl}/fieldname/delete?id=${id}`, requestOptions).then(handleResponse);
+    return fetch(`${config.apiUrl}/docfield/delete?id=${id}`, requestOptions).then(handleResponse);
 }
 
 function handleResponse(response) {

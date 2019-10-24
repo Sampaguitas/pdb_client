@@ -4,7 +4,9 @@ import queryString from 'query-string';
 import { 
     accessActions, 
     alertActions,
+    fieldnameActions,
     fieldActions,
+    poActions,
     projectActions 
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
@@ -49,9 +51,9 @@ function arraySorted(array, fieldOne, fieldTwo, fieldThree) {
     }
 }
 
-function returnScreenHeaders(selection, screenId) {
-    if (selection.project) {
-        return selection.project.fieldnames.filter(function(element) {
+function returnScreenHeaders(fieldnames, screenId) {
+    if (fieldnames.items) {
+        return fieldnames.items.filter(function(element) {
             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
         });
     } else {
@@ -80,7 +82,9 @@ class PackingDetails extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
+            loadingFieldnames,
             loadingFields,
+            loadingPos,
             loadingSelection, 
             location 
         } = this.props;
@@ -92,8 +96,14 @@ class PackingDetails extends React.Component {
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
             }
+            if (!loadingFieldnames) {
+                dispatch(fieldnameActions.getAll(qs.id));
+            }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
+            }
+            if (!loadingPos) {
+                dispatch(poActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -111,7 +121,9 @@ class PackingDetails extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
+            loadingFieldnames,
             loadingFields,
+            loadingPos,
             loadingSelection, 
             location 
         } = this.props;
@@ -122,8 +134,14 @@ class PackingDetails extends React.Component {
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
             }
+            if (!loadingFieldnames) {
+                dispatch(fieldnameActions.getAll(qs.id));
+            }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
+            }
+            if (!loadingPos) {
+                dispatch(poActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -141,12 +159,12 @@ class PackingDetails extends React.Component {
     }
 
     testBodys(){
-        const { selection } = this.props;
+        const { pos, fieldnames } = this.props;
         const { screenId } = this.state;
-        let screenHeaders = arraySorted(returnScreenHeaders(selection, screenId), 'forShow')
-        if (selection.project) {
+        let screenHeaders = arraySorted(returnScreenHeaders(fieldnames, screenId), 'forShow')
+        if (pos.items) {
             let arryBody =[];
-            arraySorted(selection.project.pos, 'clPo', 'clPoRev', 'clPoItem').map(po => {
+            arraySorted(pos.items, 'clPo', 'clPoRev', 'clPoItem').map(po => {
                 if (po.subs) {
                     po.subs.map(sub => {
                         let arryRow = [];
@@ -404,8 +422,8 @@ class PackingDetails extends React.Component {
 
     render() {
         const { projectId, screen, screenId, screenBodys, unlocked, loaded }= this.state;
-        const { accesses, alert, fields, selection } = this.props;
-        { selection.project && loaded == false && this.testBodys()}
+        const { accesses, alert, fieldnames, fields, pos, selection } = this.props;
+        {pos.items && fieldnames.items && loaded == false && this.testBodys()}
         return (
             <Layout alert={alert} accesses={accesses}>
                 {alert.message && 
@@ -420,7 +438,7 @@ class PackingDetails extends React.Component {
                 <div id="packingdetails" className="full-height">
                     {selection && selection.project && 
                         <ProjectTable
-                            screenHeaders={arraySorted(returnScreenHeaders(selection, screenId), "forShow")}
+                            screenHeaders={arraySorted(returnScreenHeaders(fieldnames, screenId), "forShow")}
                             screenBodys={screenBodys}
                             projectId={projectId}
                             screenId={screenId}
@@ -429,6 +447,7 @@ class PackingDetails extends React.Component {
                             unlocked={unlocked}
                             screen={screen}
                             screenBodys={screenBodys}
+                            fieldnames={fieldnames}
                             fields={fields}
                         />
                     }
@@ -439,17 +458,23 @@ class PackingDetails extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fields, selection } = state;
+    const { accesses, alert, fieldnames, fields, pos, selection } = state;
     const { loadingAccesses } = accesses;
+    const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
+    const { loadingPos } = pos;
     const { loadingSelection } = selection;
     return {
         accesses,
         alert,
+        fieldnames,
         fields,
         loadingAccesses,
+        loadingFieldnames,
         loadingFields,
+        loadingPos,
         loadingSelection,
+        pos,
         selection
     };
 }

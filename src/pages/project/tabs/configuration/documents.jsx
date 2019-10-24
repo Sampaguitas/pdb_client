@@ -691,8 +691,8 @@ class Documents extends React.Component {
     
     toggleSelectAllRow() {
         const { selectAllRows } = this.state;
-        const { selection } = this.props;
-        if (selection.project) {
+        const { docfields } = this.props;
+        if (docfields.items) {
             if (selectAllRows) {
                 this.setState({
                     ...this.state,
@@ -702,7 +702,7 @@ class Documents extends React.Component {
             } else {
                 this.setState({
                     ...this.state,
-                    selectedRows: this.filterName(selection.project.docfields).map(s => s._id),
+                    selectedRows: this.filterName(docfields.items).map(s => s._id),
                     selectAllRows: true
                 });
             }         
@@ -710,8 +710,6 @@ class Documents extends React.Component {
     }
     
     filterName(array){
-
-        const { fields } = this.props;
         
         const {
             worksheet,
@@ -730,7 +728,7 @@ class Documents extends React.Component {
             && doesMatch(location, element.location, 'Select')
             && doesMatch(row, element.row, 'Number')
             && doesMatch(col, element.col, 'Number')
-            && element.fields && doesMatch(custom, findCustomField(fields, element.fieldId), 'String')
+            && element.fields && doesMatch(custom, element.fields.custom, 'String')
             );
           });
         } else {
@@ -748,6 +746,7 @@ class Documents extends React.Component {
 
         const { 
             docdefs,
+            docfields,
             fields,
             tab,
             selection,
@@ -1005,7 +1004,7 @@ class Documents extends React.Component {
                                             />                                         
                                         </tr>                                
                                     }
-                                    {selection && selection.project && this.filterName(selection.project.docfields).map((s) =>
+                                    {docfields.items && this.filterName(docfields.items).map((s) =>
                                         <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>                                  
                                             <TableSelectionRow
                                                 id={s._id}

@@ -6,12 +6,14 @@ import { authentication } from './authentication.reducer';
 import { collitypes } from './collitypes.reducer';
 import { currencies } from './currencies.reducer';
 import { docdefs } from './docdefs.reducer';
+import { docfields } from './docfields.reducer';
 import { doctypes } from './doctypes.reducer';
 import { erps } from './erps.reducer';
 import { fields } from './fields.reducer';
 import { fieldnames } from './fieldnames.reducer';
 import { locales } from './locales.reducer';
 import { opcos } from './opcos.reducer';
+import { pos } from './pos.reducer';
 import { projects } from './projects.reducer';
 import { regions } from './regions.reducer';
 import { registration } from './registration.reducer';
@@ -29,12 +31,14 @@ const rootReducer = combineReducers({
   collitypes,
   currencies,
   docdefs,
+  docfields,
   doctypes,
   erps,
   fieldnames,
   fields,
   locales,
   opcos,
+  pos,
   projects,
   regions,
   registration,

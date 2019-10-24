@@ -1,9 +1,13 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { 
-  accessActions, 
-  docdefActions, 
-  fieldActions, 
+  accessActions,
+  collitypeActions,
+  docdefActions,
+  docfieldActions,
+  fieldActions,
+  fieldnameActions,
+  poActions,
   projectActions, 
   supplierActions, 
   userActions 
@@ -24,10 +28,13 @@ class NotFound extends React.Component {
     dispatch(userActions.logout());
     //Clear Selection
     dispatch(accessActions.clear());
+    dispatch(collitypeActions.clear());
     dispatch(docdefActions.clear());
+    dispatch(docfieldActions.clear());
     dispatch(fieldActions.clear());
+    dispatch(fieldnameActions.clear());
+    dispatch(poActions.clear());
     dispatch(projectActions.clearSelection());
-    // dispatch(projectActions.clearProjects());
     dispatch(supplierActions.clear());
   }
 

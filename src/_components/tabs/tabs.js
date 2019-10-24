@@ -43,7 +43,9 @@ class Tabs extends Component {
             accesses,
             currencies,
             docdefs,
+            docfields,
             erps,
+            fieldnames,
             fields,
             opcos,
             projectDeleting,
@@ -90,7 +92,9 @@ class Tabs extends Component {
                                 accesses={accesses}
                                 currencies={currencies}
                                 docdefs={docdefs}
+                                docfields={docfields}
                                 erps={erps}
+                                fieldnames={fieldnames}
                                 fields={fields}
                                 opcos={opcos}
                                 projectDeleting={projectDeleting}

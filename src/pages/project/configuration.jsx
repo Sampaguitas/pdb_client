@@ -5,9 +5,11 @@ import queryString from 'query-string';
 import { 
     accessActions, 
     alertActions, 
-    docdefActions, 
+    docdefActions,
+    docfieldActions, 
     currencyActions, 
-    erpActions, 
+    erpActions,
+    fieldnameActions, 
     fieldActions, 
     opcoActions, 
     projectActions, 
@@ -62,6 +64,8 @@ class Configuration extends React.Component {
             dispatch,
             loadingAccesses,
             loadingDocdefs,
+            loadingDocfields,
+            loadingFieldnames,
             loadingFields,
             loadingSelection,
             loadingSuppliers,
@@ -80,6 +84,12 @@ class Configuration extends React.Component {
             }
             if (!loadingDocdefs) {
                 dispatch(docdefActions.getAll(qs.id));
+            }
+            if (!loadingDocfields) {
+                dispatch(docfieldActions.getAll(qs.id));
+            }
+            if (!loadingFieldnames) {
+                dispatch(fieldnameActions.getAll(qs.id));
             }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
@@ -123,6 +133,8 @@ class Configuration extends React.Component {
             dispatch,
             loadingAccesses,
             loadingDocdefs,
+            loadingDocfields,
+            loadingFieldnames,
             loadingFields,
             loadingSelection,
             loadingSuppliers,
@@ -141,6 +153,12 @@ class Configuration extends React.Component {
             }
             if (!loadingDocdefs) {
                 dispatch(docdefActions.getAll(qs.id));
+            }
+            if (!loadingDocfields) {
+                dispatch(docfieldActions.getAll(qs.id));
+            }
+            if (!loadingFieldnames) {
+                dispatch(fieldnameActions.getAll(qs.id));
             }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
@@ -213,7 +231,9 @@ class Configuration extends React.Component {
                 alert,
                 currencies,
                 docdefs,
+                docfields,
                 erps,
+                fieldnames,
                 fields,
                 opcos,
                 projectUpdating,
@@ -254,7 +274,9 @@ class Configuration extends React.Component {
                         accesses={accesses}
                         currencies={currencies}
                         docdefs={docdefs}
+                        docfields={docfields}
                         erps={erps}
+                        fieldnames={fieldnames}
                         fields={fields}
                         opcos={opcos}
                         projectDeleting={projectDeleting}
@@ -279,8 +301,10 @@ function mapStateToProps(state) {
         accesses, 
         alert, 
         currencies, 
-        docdefs, 
-        erps, 
+        docdefs,
+        docfields,
+        erps,
+        fieldnames,
         fields, 
         opcos, 
         screens, 
@@ -292,6 +316,8 @@ function mapStateToProps(state) {
     const { projectDeleting, projectUpdating } = state.projects;
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
+    const { loadingDocfields } = docfields;
+    const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingSelection } = selection;
     const { loadingSuppliers } = suppliers;
@@ -300,10 +326,14 @@ function mapStateToProps(state) {
         alert,
         currencies,
         docdefs,
+        docfields,
         erps,
+        fieldnames,
         fields,
         loadingAccesses,
         loadingDocdefs,
+        loadingDocfields,
+        loadingFieldnames,
         loadingFields,
         loadingSelection,
         loadingSuppliers,

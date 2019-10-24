@@ -4,7 +4,15 @@ import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../_helpers';
-import { accessActions, alertActions, docdefActions, fieldActions, projectActions } from '../../_actions';
+import { 
+    accessActions, 
+    alertActions, 
+    docdefActions, 
+    fieldnameActions,
+    fieldActions,
+    poActions, 
+    projectActions 
+} from '../../_actions';
 import Layout from '../../_components/layout';
 import ProjectTable from '../../_components/project-table/project-table';
 import ProjectTableNew from '../../_components/project-table/project-table-new';
@@ -74,9 +82,9 @@ function findObj(array, search) {
     }
 }
 
-function returnScreenHeaders(selection, screenId) {
-    if (selection.project) {
-        return selection.project.fieldnames.filter(function(element) {
+function returnScreenHeaders(fieldnames, screenId) {
+    if (fieldnames.items) {
+        return fieldnames.items.filter(function(element) {
             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
         });
     } else {
@@ -116,7 +124,9 @@ class Expediting extends React.Component {
             dispatch,
             loadingAccesses,
             loadingDocdefs,
+            loadingFieldnames,
             loadingFields,
+            loadingPos,
             loadingSelection,
             location 
         } = this.props;
@@ -130,8 +140,14 @@ class Expediting extends React.Component {
             if (!loadingDocdefs) {
                 dispatch(docdefActions.getAll(qs.id));
             }
+            if (!loadingFieldnames) {
+                dispatch(fieldnameActions.getAll(qs.id));
+            }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
+            }
+            if (!loadingPos) {
+                dispatch(poActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -150,7 +166,9 @@ class Expediting extends React.Component {
             dispatch,
             loadingAccesses,
             loadingDocdefs,
+            loadingFieldnames,
             loadingFields,
+            loadingPos,
             loadingSelection,
             location 
         } = this.props;
@@ -164,8 +182,14 @@ class Expediting extends React.Component {
             if (!loadingDocdefs) {
                 dispatch(docdefActions.getAll(qs.id));
             }
+            if (!loadingFieldnames) {
+                dispatch(fieldnameActions.getAll(qs.id));
+            }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
+            }
+            if (!loadingPos) {
+                dispatch(poActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -183,12 +207,12 @@ class Expediting extends React.Component {
     }
 
     testBodys(){
-        const { selection } = this.props;
+        const { fieldnames, pos } = this.props;
         const { screenId, unlocked } = this.state;
-        let screenHeaders = arraySorted(returnScreenHeaders(selection, screenId), 'forShow')
-        if (selection.project) {
+        let screenHeaders = arraySorted(returnScreenHeaders(fieldnames, screenId), 'forShow')
+        if (pos.items) {
             let arrayBody =[];
-            arraySorted(selection.project.pos, 'clPo', 'clPoRev', 'clPoItem').map(po => {
+            arraySorted(pos.items, 'clPo', 'clPoRev', 'clPoItem').map(po => {
                 if (po.subs) {
                     po.subs.map(sub => {
                         let arrayRow = [];
@@ -332,9 +356,9 @@ class Expediting extends React.Component {
         }
     }
 
-    selectedFieldOptions(selection, fields, screenId) {
-        if (selection.project && fields.items) {
-            let screenHeaders = returnScreenHeaders(selection, screenId);
+    selectedFieldOptions(fieldnames, fields, screenId) {
+        if (fieldnames.items && fields.items) {
+            let screenHeaders = returnScreenHeaders(fieldnames, screenId);
             let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
                 if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
                     accumulator.push(currentValue.fieldId);
@@ -383,9 +407,9 @@ class Expediting extends React.Component {
             showModalSettings
         }= this.state;
 
-        const { accesses, alert, docdefs, fields, selection } = this.props;
+        const { accesses, alert, docdefs, fieldnames, fields, pos, selection } = this.props;
         
-        { selection.project && loaded == false && this.testBodys()}
+        {fieldnames.items, pos.items && loaded == false && this.testBodys()}
         return (
             <Layout alert={alert} accesses={accesses}>
                 {alert.message && 
@@ -409,7 +433,7 @@ class Expediting extends React.Component {
                             <div className="input-group">
                                     <select className="form-control" name="selectedField" value={selectedField} placeholder="Select field..." onChange={this.handleChange}>
                                         <option key="0" value="0">Select field...</option>
-                                        {this.selectedFieldOptions(selection, fields, screenId)}
+                                        {this.selectedFieldOptions(fieldnames, fields, screenId)}
                                     </select>
                                 <input className="form-control" name="updateValue" value={updateValue} onChange={this.handleChange}/>
                                 <div className="input-group-append mr-2">
@@ -452,7 +476,7 @@ class Expediting extends React.Component {
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {selection && selection.project && 
                             <ProjectTable
-                                screenHeaders={arraySorted(returnScreenHeaders(selection, screenId), "forShow")}
+                                screenHeaders={arraySorted(returnScreenHeaders(fieldnames, screenId), "forShow")}
                                 screenBodys={screenBodys}
                                 screenId={screenId}
                                 projectId={projectId}
@@ -460,6 +484,7 @@ class Expediting extends React.Component {
                                 toggleUnlock={this.toggleUnlock}
                                 unlocked={unlocked}
                                 screen={screen}
+                                fieldnames={fieldnames}
                                 fields={fields}
                             />
                         }
@@ -471,19 +496,26 @@ class Expediting extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, docdefs, fields, selection } = state;
+    const { accesses, alert, docdefs, fieldnames, fields, pos, selection } = state;
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
+    const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
+    const { loadingPos } = pos;
     const { loadingSelection } = selection;
     return {
         accesses,
         alert,
         docdefs,
+        fieldnames,
         fields,
         loadingAccesses,
+        loadingDocdefs,
         loadingFields,
+        loadingFieldnames,
+        loadingPos,
         loadingSelection,
+        pos,
         selection
     };
 }

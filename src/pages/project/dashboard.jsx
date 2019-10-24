@@ -4,7 +4,12 @@ import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../_helpers';
-import { accessActions, alertActions, projectActions } from '../../_actions';
+import { 
+    accessActions, 
+    alertActions,
+    poActions,
+    projectActions 
+} from '../../_actions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Line from '../../_components/chart/line';
@@ -44,7 +49,8 @@ class Dashboard extends React.Component {
     componentDidMount() {
         const {  
             dispatch,  
-            loadingAccesses, 
+            loadingAccesses,
+            loadingPos, 
             loadingSelection,
             location, 
         } = this.props;
@@ -61,6 +67,9 @@ class Dashboard extends React.Component {
             this.fetchData(qs.id);
             if (!loadingAccesses){
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingPos) {
+                dispatch(poActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -159,9 +168,9 @@ class Dashboard extends React.Component {
         }
     }
 
-    generateOptionClPo(selection) {
-        if (selection.project) {
-            let clPos = selection.project.pos.reduce(function (accumulator, currentValue) {
+    generateOptionClPo(pos) {
+        if (pos.items) {
+            let clPos = pos.items.reduce(function (accumulator, currentValue) {
                 if (!!currentValue.clPo && accumulator.indexOf(currentValue.clPo) === -1) {
                     accumulator.push(currentValue.clPo)
                 }
@@ -189,9 +198,9 @@ class Dashboard extends React.Component {
         }
     }
 
-    generateOptionclPoRev(selection, clPo) {
-        if (selection.project) {
-            let clPoRevs = selection.project.pos.reduce(function (accumulator, currentValue) {
+    generateOptionclPoRev(pos, clPo) {
+        if (pos.items) {
+            let clPoRevs = pos.items.reduce(function (accumulator, currentValue) {
                 if (!!currentValue.clPoRev && accumulator.indexOf(currentValue.clPoRev) === -1 && (clPo ? currentValue.clPo === clPo : true)) {
                     accumulator.push(currentValue.clPoRev)
                 }
@@ -235,7 +244,7 @@ class Dashboard extends React.Component {
 
     render() {
         const { unit, period, clPo, clPoRev, data, loadingChart } = this.state;
-        const { accesses, selection } = this.props;
+        const { accesses, pos, selection } = this.props;
         const alert = this.props.alert ? this.props.alert : this.state.alert;
 
         return (
@@ -257,11 +266,11 @@ class Dashboard extends React.Component {
                             </div>
                             <select className="form-control" name="clPo" value={clPo} onChange={this.handleChange}>
                                 <option key="0" value="">Select Po...</option>
-                                {this.generateOptionClPo(selection)}
+                                {this.generateOptionClPo(pos)}
                             </select>
                             <select className="form-control" name="clPoRev" value={clPoRev} onChange={this.handleChange}>
                                 <option key="0" value="">Select Revision...</option>
-                                {this.generateOptionclPoRev(selection, clPo)}
+                                {this.generateOptionclPoRev(pos, clPo)}
                             </select>
                             <select className="form-control" name="unit" value={unit} onChange={this.handleChange}>
                                 <option key="0" value="value">Value</option>
@@ -297,14 +306,17 @@ class Dashboard extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, selection } = state;
+    const { accesses, alert, pos, selection } = state;
     const { loadingAccesses } = accesses;
+    const { loadingPos } = pos;
     const { loadingSelection } = selection;
     return {
         accesses,
         alert,
         loadingAccesses,
+        loadingPos,
         loadingSelection,
+        pos,
         selection
     };
 }

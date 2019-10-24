@@ -1,11 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
 import { 
-  accessActions, 
-  alertActions,
-  docdefActions, 
-  fieldActions, 
-  opcoActions, 
+  accessActions,
+  collitypeActions,
+  docdefActions,
+  docfieldActions,
+  fieldActions,
+  fieldnameActions,
+  poActions,
   projectActions, 
   supplierActions, 
   userActions 
@@ -106,8 +108,12 @@ class Settings extends React.Component {
     const { dispatch } = this.props;
     //Clear Selection
     dispatch(accessActions.clear());
+    dispatch(collitypeActions.clear());
     dispatch(docdefActions.clear());
+    dispatch(docfieldActions.clear());
     dispatch(fieldActions.clear());
+    dispatch(fieldnameActions.clear());
+    dispatch(poActions.clear());
     dispatch(projectActions.clearSelection());
     dispatch(supplierActions.clear());
     //Get users and opcos

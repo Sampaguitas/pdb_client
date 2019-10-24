@@ -79,21 +79,6 @@ function doesMatch(search, array, type) {
     }
 }
 
-function findCustomField(fields, fieldId){
-    if (fields.items && fieldId) {
-        let found = fields.items.find(function (element) {
-            return element._id === fieldId;
-        });
-        if (found) {
-            return found.custom;
-        } else {
-            return ''
-        }
-    } else {
-        return ''
-    }
-}
-
 class Duf extends React.Component {
     constructor(props) {
         super(props);
@@ -124,7 +109,6 @@ class Duf extends React.Component {
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
-        // this.findCustomField = this.findCustomField.bind(this);
         this.filterName = this.filterName.bind(this);
     }
 
@@ -289,8 +273,8 @@ class Duf extends React.Component {
 	toggleSelectAllRow() {
         //event.preventDefault();
         const { selectAllRows } = this.state;
-        const { selection } = this.props;
-        if (selection.project) {
+        const { fieldnames } = this.props;
+        if (fieldnames.items) {
             if (selectAllRows) {
                 this.setState({
                     ...this.state,
@@ -300,7 +284,7 @@ class Duf extends React.Component {
             } else {
                 this.setState({
                     ...this.state,
-                    selectedRows: this.filterName(selection.project.fieldnames).map(s => s._id),
+                    selectedRows: this.filterName(fieldnames.items).map(s => s._id),
                     selectAllRows: true
                 });
             }         
@@ -321,7 +305,7 @@ class Duf extends React.Component {
     
     filterName(array){
 
-        const { fields } = this.props;
+        // const { fields } = this.props;
         
         const { 
             forShow,
@@ -332,7 +316,7 @@ class Duf extends React.Component {
         if (array) {
           return arraySorted(array, 'fields.custom').filter(function (element) {
             return (doesMatch(selectedScreen, element.screenId, 'Id')
-            && element.fields && doesMatch(custom, findCustomField(fields, element.fieldId), 'String')
+            && element.fields && doesMatch(custom, element.fields.custom, 'String')
             && doesMatch(forShow, element.forShow, 'Number')
             );
           });
@@ -344,6 +328,7 @@ class Duf extends React.Component {
     render() {
 
         const {
+            fieldnames,
             fields,
             selection, 
             tab,
@@ -437,7 +422,7 @@ class Duf extends React.Component {
                                         />
                                     </tr>                            
                                 }
-                                {selection && selection.project && this.filterName(selection.project.fieldnames).map((s) =>
+                                {fieldnames.items && this.filterName(fieldnames.items).map((s) =>
                                     <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
                                         <TableSelectionRow
                                             id={s._id}

@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { 
-    alertActions, 
-    accessActions, 
-    currencyActions, 
+    accessActions,
+    collitypeActions,
     docdefActions,
-    erpActions, 
-    fieldActions, 
-    opcoActions, 
+    docfieldActions,
+    fieldActions,
+    fieldnameActions,
+    poActions,
     projectActions, 
     supplierActions, 
     userActions 
@@ -101,8 +101,12 @@ class Project extends React.Component {
         const { dispatch } = this.props;
         //Clear Selection
         dispatch(accessActions.clear());
+        dispatch(collitypeActions.clear());
         dispatch(docdefActions.clear());
+        dispatch(docfieldActions.clear());
         dispatch(fieldActions.clear());
+        dispatch(fieldnameActions.clear());
+        dispatch(poActions.clear());
         dispatch(projectActions.clearSelection());
         dispatch(supplierActions.clear());
         //Get currencies, erps, opcos, projects, users

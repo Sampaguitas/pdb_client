@@ -1,12 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { 
-    alertActions, 
     accessActions,
-    docdefActions, 
-    fieldActions, 
+    collitypeActions,
+    docdefActions,
+    docfieldActions,
+    fieldActions,
+    fieldnameActions,
+    poActions,
     projectActions, 
-    supplierActions, 
+    supplierActions,
     userActions 
 } from '../../_actions';
 import { authHeader } from '../../_helpers';
@@ -39,8 +42,12 @@ class User extends React.Component {
         const { dispatch } = this.props;
         //Clear Selection
         dispatch(accessActions.clear());
+        dispatch(collitypeActions.clear());
         dispatch(docdefActions.clear());
+        dispatch(docfieldActions.clear());
         dispatch(fieldActions.clear());
+        dispatch(fieldnameActions.clear());
+        dispatch(poActions.clear());
         dispatch(projectActions.clearSelection());
         dispatch(supplierActions.clear());
         //Get users
