@@ -474,7 +474,7 @@ class Expediting extends React.Component {
                     </div>
 
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
-                        {selection && selection.project && 
+                        {fieldnames.items && screenBodys &&
                             <ProjectTable
                                 screenHeaders={arraySorted(returnScreenHeaders(fieldnames, screenId), "forShow")}
                                 screenBodys={screenBodys}
@@ -485,7 +485,7 @@ class Expediting extends React.Component {
                                 unlocked={unlocked}
                                 screen={screen}
                                 fieldnames={fieldnames}
-                                fields={fields}
+                                // fields={fields}
                             />
                         }
                     </div>

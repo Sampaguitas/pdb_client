@@ -1,9 +1,11 @@
 import React from 'react';
+import config from 'config';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { accessActions, alertActions, projectActions } from '../../_actions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { authHeader } from '../../_helpers';
 
 class Duf extends React.Component {
     constructor(props) {
@@ -68,17 +70,18 @@ class Duf extends React.Component {
     }
 
     handleDownloadFile(event){
+        console.log('toto');
         event.preventDefault();
         const { projectId } = this.state
         if(projectId) {
-            var data = new FormData()
-            data.append('file', this.fileInput.current.files[0]);
-            data.append('projectId', projectId);
+            // var data = new FormData()
+            // data.append('file', this.fileInput.current.files[0]);
+            // data.append('projectId', projectId);
             const requestOptions = {
                 method: 'GET',
                 headers: { ...authHeader(), 'Content-Type': 'application/json'},
             }
-            return fetch(`${config.apiUrl}/duf/download`, requestOptions)
+            return fetch(`${config.apiUrl}/duf/download?projectId=${projectId}`, requestOptions)
             .then(res => res.blob()).then(blob => saveAs(blob, 'Duf.xlsx'));         
         }  
 
