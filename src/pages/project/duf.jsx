@@ -12,12 +12,15 @@ class Duf extends React.Component {
         super(props);
         this.state = {
             projectId: '',
-            fileName: '' 
+            fileName: '',
+            inputKey: Date.now(),
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleDownloadFile = this.handleDownloadFile.bind(this);
+        this.handleFileChange=this.handleFileChange.bind(this);
+        this.dufInput = React.createRef();
     }
 
     handleClearAlert(event){
@@ -55,9 +58,9 @@ class Duf extends React.Component {
     handleUploadFile(event){
         event.preventDefault();
         const { projectId, fileName } = this.state
-        if(this.fileInput.current.files[0] && projectId && fileName) {
+        if(this.dufInput.current.files[0] && projectId && fileName) {
             var data = new FormData()
-            data.append('file', this.fileInput.current.files[0]);
+            data.append('file', this.dufInput.current.files[0]);
             data.append('projectId', projectId);
             const requestOptions = {
                 method: 'POST',
@@ -70,12 +73,11 @@ class Duf extends React.Component {
     }
 
     handleDownloadFile(event){
-        console.log('toto');
         event.preventDefault();
         const { projectId } = this.state
         if(projectId) {
             // var data = new FormData()
-            // data.append('file', this.fileInput.current.files[0]);
+            // data.append('file', this.dufInput.current.files[0]);
             // data.append('projectId', projectId);
             const requestOptions = {
                 method: 'GET',
@@ -85,6 +87,15 @@ class Duf extends React.Component {
             .then(res => res.blob()).then(blob => saveAs(blob, 'Duf.xlsx'));         
         }  
 
+    }
+
+    handleFileChange(event){
+        if(event.target.files.length > 0) {
+            this.setState({
+                ...this.state,
+                fileName: event.target.files[0].name
+            });
+        }
     }
 
     render() {
@@ -99,7 +110,7 @@ class Duf extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Upload DUF : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Data Upload File (DUF) : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="duf" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
@@ -115,16 +126,16 @@ class Duf extends React.Component {
                                     <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
                                     <input
                                         type="file"
-                                        name="fileInput"
-                                        id="fileInput"
-                                        ref={this.fileInput}
+                                        name="dufInput"
+                                        id="dufInput"
+                                        ref={this.dufInput}
                                         className="custom-file-input"
                                         style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
                                         onChange={this.handleFileChange}
                                         key={this.state.inputKey}
                                     />
                                 </div>
-                                <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
+                                <label type="text" className="form-control text-left" htmlFor="dufInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
                                 <div className="input-group-append">
                                     <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
                                         <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>

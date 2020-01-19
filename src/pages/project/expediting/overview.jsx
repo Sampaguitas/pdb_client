@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
-import { authHeader } from '../../_helpers';
+import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
     alertActions, 
@@ -12,12 +12,12 @@ import {
     fieldActions,
     poActions, 
     projectActions 
-} from '../../_actions';
-import Layout from '../../_components/layout';
-import ProjectTable from '../../_components/project-table/project-table';
-import ProjectTableNew from '../../_components/project-table/project-table-new';
+} from '../../../_actions';
+import Layout from '../../../_components/layout';
+import ProjectTable from '../../../_components/project-table/project-table';
+import ProjectTableNew from '../../../_components/project-table/project-table-new';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import HeaderInput from '../../_components/project-table/header-input';
+import HeaderInput from '../../../_components/project-table/header-input';
 import _ from 'lodash';
 
 function arrayRemove(arr, value) {
@@ -92,7 +92,7 @@ function returnScreenHeaders(fieldnames, screenId) {
     }
 }
 
-class Expediting extends React.Component {
+class Overview extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -419,9 +419,9 @@ class Expediting extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Expediting : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Overview : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
-                <div id="expediting" className="full-height">
+                <div id="overview" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
                         <button className="btn btn-leeuwen btn-lg mr-2" style={{height: '34px'}} onClick={event => this.handleSplitLine(event)}>
                             <span><FontAwesomeIcon icon="page-break" className="fa-lg mr-2"/>Split line</span>
@@ -520,5 +520,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedExpediting = connect(mapStateToProps)(Expediting);
-export { connectedExpediting as Expediting };
+const connectedOverview = connect(mapStateToProps)(Overview);
+export { connectedOverview as Overview };

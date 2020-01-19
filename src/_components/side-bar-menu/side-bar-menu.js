@@ -25,8 +25,14 @@ const home_menu = [
 
 const project_menu = [
     { id: 0, title: 'Dashboard', href: '/dashboard', icon: 'tachometer-alt' },
-    { id: 1, title: 'Upload DUF', href: '/duf', icon: 'upload', roles: ['isAdmin', 'isSuperAdmin'] },
-    { id: 2, title: 'Expediting', href: '/expediting', icon: 'stopwatch', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'] },
+    { id: 1, title: 'Data Upload File (DUF)', href: '/duf', icon: 'upload', roles: ['isAdmin', 'isSuperAdmin'] },
+    { id: 2, title: 'Expediting', href: '/expediting', icon: 'stopwatch', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'], child:
+        [
+            { id: 0, title: 'PO Overview', href: '/overview', icon: 'table', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'] },
+            { id: 1, title: 'Performance', href: '/performance', icon: 'chart-line', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'] },
+        ]
+    },
+    // { id: 2, title: 'Expediting', href: '/expediting', icon: 'stopwatch', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'] },
     { id: 3, title: 'Inspection', href: '/inspection', icon: 'search', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'], child:
         [
             { id: 0, title: 'Release data', href: '/releasedata', icon: 'clipboard-check', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'] },
@@ -105,27 +111,34 @@ class SideBarMenu extends Component {
     }
     isHome(){
         switch (window.location.pathname){
-            case '/': return true;
-            case '/user': return true;
-            case '/settings': return true;
-            case '/opco': return true;
-            case '/project': return true;
-            case '/dashboard': return false;
-            case '/duf': return false;
-            case '/expediting': return false;
-            case '/inspection': return false;
-            case '/releasedata': return false;
-            case '/shipping': return false;
-            case '/transportdocs': return false;
-            case '/packingdetails': return false;
-            case '/warehouse': return false;
-            case '/goodsreceipt': return false;
-            case '/stockmanagement': return false;
-            case '/callofforder': return false;
-            case '/pickinglists': return false;
-            case '/outgoingshipments': return false;
-            case '/projectwarhouse': return false;
-            case '/configuration': return false;
+            case '/':
+            case '/user':
+            case '/settings':
+            case '/opco':
+            case '/project':
+                return true;
+                break;
+            case '/dashboard':
+            case '/duf':
+            case '/expediting':
+            case '/overview':
+            case '/performance':
+            case '/inspection':
+            case '/releasedata':
+            case '/certificates':
+            case '/shipping':
+            case '/transportdocs':
+            case '/packingdetails':
+            case '/warehouse':
+            case '/goodsreceipt':
+            case '/stockmanagement':
+            case '/callofforder':
+            case '/pickinglists':
+            case '/outgoingshipments':
+            case '/projectwarhouse':
+            case '/configuration': 
+                return false;
+                break
             default: true
         }
     }

@@ -304,9 +304,6 @@ class Duf extends React.Component {
 
     
     filterName(array){
-
-        // const { fields } = this.props;
-        
         const { 
             forShow,
             custom,
