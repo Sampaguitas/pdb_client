@@ -6,6 +6,9 @@ import { accessActions, alertActions, projectActions } from '../../_actions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../_helpers';
+import _ from 'lodash';
+
+import HeaderInput from '../../_components/project-table/header-input';
 
 class Duf extends React.Component {
     constructor(props) {
@@ -14,6 +17,13 @@ class Duf extends React.Component {
             projectId: '',
             fileName: '',
             inputKey: Date.now(),
+            uploading: false,
+            downloading: false,
+            responce:{},
+            alert: {
+                type:'',
+                message:''
+            }
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
@@ -21,11 +31,18 @@ class Duf extends React.Component {
         this.handleDownloadFile = this.handleDownloadFile.bind(this);
         this.handleFileChange=this.handleFileChange.bind(this);
         this.dufInput = React.createRef();
+        this.handleChange = this.handleChange.bind(this);
     }
 
     handleClearAlert(event){
         event.preventDefault;
         const { dispatch } = this.props;
+        this.setState({ 
+            alert: {
+                type:'',
+                message:'' 
+            } 
+        });
         dispatch(alertActions.clear());
     }
 
@@ -59,6 +76,7 @@ class Duf extends React.Component {
         event.preventDefault();
         const { projectId, fileName } = this.state
         if(this.dufInput.current.files[0] && projectId && fileName) {
+            this.setState({uploading: true});
             var data = new FormData()
             data.append('file', this.dufInput.current.files[0]);
             data.append('projectId', projectId);
@@ -68,7 +86,41 @@ class Duf extends React.Component {
                 body: data
             }
             return fetch(`${config.apiUrl}/duf/upload`, requestOptions)
-            // .then(handleSelectionReload);            
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (!responce.ok) {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    const error = (data && data.message) || responce.statusText;
+                    this.setState({
+                        uploading: false,
+                        responce: {
+                            rejections: data.rejections,
+                            nProcessed: data.nProcessed,
+                            nRejected: data.nRejected,
+                            nAdded: data.nAdded,
+                            nEdited: data.nEdited
+                        },
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: error
+                        }
+                    });
+                } else {
+                    this.setState({
+                        uploading: false,
+                        responce: {
+                            rejections: data.rejections,
+                            nProcessed: data.nProcessed,
+                            nRejected: data.nRejected,
+                            nAdded: data.nAdded,
+                            nEdited: data.nEdited
+                        },
+                    });
+                }
+            }));            
         }        
     }
 
@@ -76,17 +128,31 @@ class Duf extends React.Component {
         event.preventDefault();
         const { projectId } = this.state
         if(projectId) {
-            // var data = new FormData()
-            // data.append('file', this.dufInput.current.files[0]);
-            // data.append('projectId', projectId);
+            this.setState({downloading: true});
             const requestOptions = {
                 method: 'GET',
                 headers: { ...authHeader(), 'Content-Type': 'application/json'},
             }
             return fetch(`${config.apiUrl}/duf/download?projectId=${projectId}`, requestOptions)
-            .then(res => res.blob()).then(blob => saveAs(blob, 'Duf.xlsx'));         
-        }  
-
+            .then(responce => {
+                if (!responce.ok) {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        downloading: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: 'an error has occured'  
+                        }
+                    });
+                } else {
+                    this.setState({downloading: false});
+                    responce.blob().then(blob => saveAs(blob, 'Duf.xlsx')); 
+                }
+            });        
+        } 
     }
 
     handleFileChange(event){
@@ -98,9 +164,24 @@ class Duf extends React.Component {
         }
     }
 
+    handleChange(event) {
+        const { name, value } = event.target;
+        this.setState({
+            [name]: value
+        });
+    }
+
     render() {
-        const { accesses, alert, selection } = this.props;
-        const { fileName } = this.state;
+        const { accesses, selection } = this.props;
+        
+        const { 
+            fileName,
+            responce,
+            downloading,
+            uploading,
+        } = this.state;
+
+        const alert = this.props.alert ? this.props.alert : this.state.alert;
         return (
             <Layout alert={alert} accesses={accesses}>
                 {alert.message && 
@@ -138,19 +219,51 @@ class Duf extends React.Component {
                                 <label type="text" className="form-control text-left" htmlFor="dufInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
                                 <div className="input-group-append">
                                     <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
-                                        <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>
+                                        <span><FontAwesomeIcon icon={uploading ? 'spinner' : 'upload'} className={uploading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Upload</span>
                                     </button>
                                     <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleDownloadFile(event)}>
-                                        <span><FontAwesomeIcon icon="download" className="fa-lg mr-2"/>Download</span>
+                                        <span><FontAwesomeIcon icon={downloading ? 'spinner' : 'download'} className={downloading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Download</span>
                                     </button> 
                                 </div>       
                             </div>
                         </form>                    
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
-
-                    </div>
-
+                    {!_.isEmpty(responce) &&
+                        <div className="ml-1 mr-1" style={{height: 'calc(100% - 44px)'}}>
+                            <div class="form-group table-resonsive" style={{height: '83px'}}>
+                                <strong>Total Processed:</strong> {responce.nProcessed}<br />
+                                <strong>Total records Added:</strong> {responce.nAdded}<br />
+                                <strong>Total Records Edited:</strong> {responce.nEdited}<br />
+                                <strong>Total Records Rejected:</strong> {responce.nRejected}<br />
+                                <hr />
+                            </div>
+                            {!_.isEmpty(responce.rejections) &&
+                                <div className="rejections" style={{height: 'calc(100% - 93px)'}}>
+                                    <h3>Rejections</h3>
+                                    <div className="" style={{height: 'calc(100% - 29px)'}}>
+                                        <div className="table-responcive custom-table-container">
+                                            <table className="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th style={{width: '10%'}}>Row</th>
+                                                        <th style={{width: '90%'}}>Reason</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {responce.rejections.map(rejection => {
+                                                        <tr>
+                                                            <td>{rejection.row}</td>
+                                                            <td>{rejection.reason}</td>
+                                                        </tr>
+                                                    })}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
                 </div>
             </Layout>
         );
