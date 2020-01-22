@@ -8,8 +8,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../_helpers';
 import _ from 'lodash';
 
-import HeaderInput from '../../_components/project-table/header-input';
-
 class Duf extends React.Component {
     constructor(props) {
         super(props);
@@ -90,6 +88,7 @@ class Duf extends React.Component {
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
                 if (!responce.ok) {
+                    console.log('responce not ok');
                     if (responce.status === 401) {
                         localStorage.removeItem('user');
                         location.reload(true);
@@ -106,10 +105,11 @@ class Duf extends React.Component {
                         },
                         alert: {
                             type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: error
+                            message: data.message
                         }
                     });
                 } else {
+                    console.log('responce ok')
                     this.setState({
                         uploading: false,
                         responce: {
@@ -175,9 +175,9 @@ class Duf extends React.Component {
     generateRejectionRows(responce){
         let temp =[]
         if (!_.isEmpty(responce.rejections)) {
-            responce.rejections.map(r => {
+            responce.rejections.map(function(r, index) {
                 temp.push(
-                <tr>
+                <tr key={index}>
                     <td>{r.row}</td>
                     <td>{r.reason}</td>
                 </tr>   
@@ -204,7 +204,7 @@ class Duf extends React.Component {
             uploading,
         } = this.state;
 
-        const alert = this.props.alert ? this.props.alert : this.state.alert;
+        const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
             <Layout alert={alert} accesses={accesses}>
                 {alert.message && 
@@ -274,12 +274,6 @@ class Duf extends React.Component {
                                                 </thead>
                                                 <tbody>
                                                     {this.generateRejectionRows(responce)}
-                                                    {/* {responce.rejections.map(r => {
-                                                        <tr>
-                                                            <td>{r.row}</td>
-                                                            <td>{r.reason}</td>
-                                                        </tr>
-                                                    })} */}
                                                 </tbody>
                                             </table>
                                         </div>
