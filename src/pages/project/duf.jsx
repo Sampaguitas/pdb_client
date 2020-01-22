@@ -32,6 +32,7 @@ class Duf extends React.Component {
         this.handleFileChange=this.handleFileChange.bind(this);
         this.dufInput = React.createRef();
         this.handleChange = this.handleChange.bind(this);
+        this.generateRejectionRows = this.generateRejectionRows.bind(this);
     }
 
     handleClearAlert(event){
@@ -171,6 +172,28 @@ class Duf extends React.Component {
         });
     }
 
+    generateRejectionRows(responce){
+        let temp =[]
+        if (!_.isEmpty(responce.rejections)) {
+            responce.rejections.map(r => {
+                temp.push(
+                <tr>
+                    <td>{r.row}</td>
+                    <td>{r.reason}</td>
+                </tr>   
+                );
+            });
+            return (temp);
+        } else {
+            return (
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            );
+        }
+    }
+
     render() {
         const { accesses, selection } = this.props;
         
@@ -230,7 +253,7 @@ class Duf extends React.Component {
                     </div>
                     {!_.isEmpty(responce) &&
                         <div className="ml-1 mr-1" style={{height: 'calc(100% - 44px)'}}>
-                            <div class="form-group table-resonsive" style={{height: '83px'}}>
+                            <div className="form-group table-resonsive" style={{height: '83px'}}>
                                 <strong>Total Processed:</strong> {responce.nProcessed}<br />
                                 <strong>Total records Added:</strong> {responce.nAdded}<br />
                                 <strong>Total Records Edited:</strong> {responce.nEdited}<br />
@@ -250,12 +273,13 @@ class Duf extends React.Component {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {responce.rejections.map(rejection => {
+                                                    {this.generateRejectionRows(responce)}
+                                                    {/* {responce.rejections.map(r => {
                                                         <tr>
-                                                            <td>{rejection.row}</td>
-                                                            <td>{rejection.reason}</td>
+                                                            <td>{r.row}</td>
+                                                            <td>{r.reason}</td>
                                                         </tr>
-                                                    })}
+                                                    })} */}
                                                 </tbody>
                                             </table>
                                         </div>
