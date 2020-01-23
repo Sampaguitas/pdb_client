@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import config from 'config';
 import { authHeader } from '../../_helpers';
 import propTypes from 'prop-types';
+import _ from 'lodash';
 
 class TableInput extends Component{
     constructor(props) {
@@ -98,13 +99,11 @@ class TableInput extends Component{
     formatText(fieldValue, fieldType){
         switch(fieldType){
             case "number":
-                return new Intl.NumberFormat().format(fieldValue);
+                return fieldValue === '' ? '' : new Intl.NumberFormat().format(fieldValue);
+                break;
             case "date":
-                if(!fieldValue){
-                    return fieldValue; // decodeURI
-                } else {
-                    return new Intl.DateTimeFormat().format(new Date(fieldValue));
-                }
+                return fieldValue ? new Intl.DateTimeFormat().format(new Date(fieldValue)) : '';
+                break;
             default: return fieldValue; //decodeURI
         }
     }
