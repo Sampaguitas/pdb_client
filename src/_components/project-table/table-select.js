@@ -10,10 +10,20 @@ function resolve(path, obj) {
     }, obj || self)
 }
 
-
-function arraySorted(array, field) {
+function arraySorted(array, field, fromTbls) {
     if (array) {
-        const newArray = array
+        let newArray = [];
+        if (!_.isEmpty(fromTbls)) {
+            newArray = array.reduce(function (accumulator, currentValue) {
+                if (['po'].indexOf(currentValue.fromTbl) != -1){
+                    accumulator.push(currentValue)
+                }
+                return accumulator
+            },[]);
+        } else {
+            newArray = array;
+        }
+
         newArray.sort(function(a,b){
             if (resolve(field, a) < resolve(field, b)) {
                 return -1;
@@ -39,6 +49,7 @@ class TableSelect extends Component{
             editing: false,
             options:[],
             optionText: '',
+            fromTbls: ''
             // disabled: false
         }
         this.onChange = this.onChange.bind(this);
@@ -54,7 +65,8 @@ class TableSelect extends Component{
             fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
             // disabled: this.props.disabled ? this.props.disabled : false,
             options: this.props.options,
-            optionText: this.props.optionText
+            optionText: this.props.optionText,
+            fromTbls: this.props.fromTbls
         });
     }
 
@@ -154,7 +166,8 @@ class TableSelect extends Component{
             editing,
             fieldValue,
             options,
-            optionText
+            optionText,
+            fromTbls
         } = this.state;
 
         return editing ? (
@@ -183,7 +196,7 @@ class TableSelect extends Component{
                     //     boxShadow: 'none',  
                     // }}
                 >
-                        {options && arraySorted(options, optionText).map(option => {
+                        {options && arraySorted(options, optionText, fromTbls).map(option => {
                             return (
                                 <option
                                     key={option._id}

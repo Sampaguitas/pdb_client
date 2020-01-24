@@ -322,6 +322,14 @@ class Duf extends React.Component {
         }
     }
 
+    // selectableOptions(fields, fromTbls) {
+    //     if (fields.items) {
+    //         return fields.items.reduce(f => {
+    //             return fromTbls.indexOf(f.fromTbl);
+    //         });
+    //     }
+    // }
+
     render() {
 
         const {
@@ -414,6 +422,7 @@ class Duf extends React.Component {
                                             value={fieldName.fieldId}
                                             options={fields.items}
                                             optionText="custom"
+                                            fromTbls={['po']}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
                                         />
@@ -439,7 +448,8 @@ class Duf extends React.Component {
                                             fieldName="fieldId"
                                             fieldValue={s.fieldId}
                                             options={fields.items}
-                                            optionText="custom"                                 
+                                            optionText="custom"
+                                            fromTbls={['po']}                               
                                         />
                                     </tr>
                                 )}

@@ -381,6 +381,11 @@ class Screens extends React.Component {
             { _id: 'right', name: 'Right' },
         ]
 
+        // const screenArray = [
+
+        // ]
+        //     id: '5cd2b642fd333616dc360b63'
+
         return (
             
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
