@@ -20,7 +20,6 @@ class TableInput extends Component{
             // disabled: false
         }
         this.onChange = this.onChange.bind(this);
-        this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.formatText = this.formatText.bind(this);
         this.onClick = this.onClick.bind(this);
@@ -34,18 +33,12 @@ class TableInput extends Component{
             objectId: this.props.objectId,
             fieldName: this.props.fieldName,
             fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
-            // disabled: this.props.disabled ? this.props.disabled : false,
             fieldType: this.props.fieldType,
-        });
-        // this.refs.input.addEventListener('keydown', (e) => {
-
-        // })
-        
+        });  
     }
 
     onChange(event) {
         const target = event.target;
-        // console.log('keyCode:', event.target.keyCode);
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
@@ -55,20 +48,9 @@ class TableInput extends Component{
         });
     }
 
-    onFocus() {
-        const { disabled, unlocked } = this.props;
-        if(unlocked || !disabled){
-            this.setState({ isEditing: true }, () => {
-                this.refs.input.focus();
-                // this.refs.input.select();
-                // this.refs.input.setSelectionRange(0, this.refs.input.value.length);
-            });
-        }
-    }
-
     onClick() {
         const { disabled, unlocked } = this.props;
-        const { isEditing, isSelected } = this.state;
+        const { isSelected } = this.state;
         if(unlocked || !disabled){
             if(!isSelected) {
                 this.setState({isSelected: true}, () => {
@@ -174,8 +156,7 @@ class TableInput extends Component{
                 style={{
                     width: `${width ? width : 'auto'}`,
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
-                    // padding: isSelected ? unlocked ? '0px' : disabled ? '5px': '0px' : '5px',
-                    padding: isSelected ? '0px' : '5px',
+                    padding: '0px',
                     cursor: unlocked ? 'pointer' : disabled ? 'auto' : 'pointer'
                 }}
                 className={tdClasses}
@@ -189,22 +170,12 @@ class TableInput extends Component{
                     onChange={this.onChange}
                     onBlur={this.onBlur}
                     disabled={unlocked ? false : disabled}
-                    // style={{
-                    //     margin: 0,
-                    //     borderRadius:0,
-                    //     borderColor: 'white',
-                    //     backgroundColor: 'inherit',
-                    //     color: 'inherit',
-                    //     WebkitBoxShadow: 'none',
-                    //     boxShadow: 'none',  
-                    // }}
                 />
             </td>
         ):
         (
             <td 
                 onClick={() => this.onClick()}
-                // onSelect={() => this.onSelect()}
                 style={{
                     color: disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color, //disabled ? !unlocked ? color != '#0070C0' ? color : '#A8052C' : 'inherit' : color
                     width: `${width ? width : 'auto'}`,

@@ -178,74 +178,44 @@ class ProjectTable extends Component {
     }
 
     keyHandler(e) {
-        // console.log('e.keyCode:', e.keyCode);
+
         let target = e.target;
-        let colIndex = target.parentElement.cellIndex;
-        // var nCols = target.parentElement.parentElement.childNodes.length;        
-        
+        let colIndex = target.parentElement.cellIndex;               
         let rowIndex = target.parentElement.parentElement.rowIndex;
         var nRows = target.parentElement.parentElement.parentElement.childNodes.length;
-        // console.log('target.className:', target.parentElement.className);
         
-    
         switch(e.keyCode) {
             case 9:// tab
                 if(target.parentElement.nextSibling) {
-                    // console.log('this is not the last col')
                     target.parentElement.nextSibling.click();
-                } else {
-                    // console.log('this is the last col')
                 }
                 break;
             case 13: //enter
                 if(rowIndex < nRows) {
-                    // console.log('this is not last row');
                     target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
-                } else {
-                    // console.log('this is the last row');
                 }
                 break;
             case 37: //left
                 if(colIndex > 1 && !target.parentElement.classList.contains('isEditing')) {
-                    console.log('isEditing:', target.parentElement.classList.contains('isEditing'));
-                    console.log('isSelected:', target.parentElement.classList.contains('isSelected'));
-                    console.log('table-cell:', target.parentElement.classList.contains('table-cell'));
-                    // console.log('this is not the first col');
                     target.parentElement.previousSibling.click();
-                } else {
-                    // console.log('this is the first col');
-                }
+                } 
                 break;
             case 38: //up
                 if(rowIndex > 1) {
-                    // console.log('this is not the first row');
                     target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();
-                } else {
-                    // console.log('this is the first row');
                 }
                 break;
             case 39: //right
                 if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
-                    console.log('isEditing:', target.parentElement.classList.contains('isEditing'));
-                    console.log('isSelected:', target.parentElement.classList.contains('isSelected'));
-                    console.log('table-cell:', target.parentElement.classList.contains('table-cell'));
-                    // console.log('this is not the last col');
                     target.parentElement.nextSibling.click();
-                } else {
-                    // console.log('this is the last col');
                 }
                 break;
             case 40: //down
                 if(rowIndex < nRows) {
-                    // console.log('this is not last row');
                     target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
-                    console.log(target.parentElement.parentElement.nextSibling.childNodes[colIndex]);
-                } else {
-                    // console.log('this is the last row');
                 }
                 break;
         }
-        // console.log('target.closest("td"):', target.closest('td'));
     }
 
     resetHeaders(event) {
@@ -488,8 +458,6 @@ class ProjectTable extends Component {
     
     
     render() {
-
-        
 
         const { handleSelectionReload, toggleUnlock, screenHeaders, screenBodys, unlocked } = this.props;
         const { header,selectAllRows, showModalSettings, tabs  } = this.state;
