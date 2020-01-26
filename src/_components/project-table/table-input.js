@@ -4,6 +4,7 @@ import { authHeader } from '../../_helpers';
 import propTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
+import moment from 'moment';
 
 class TableInput extends Component{
     constructor(props) {
@@ -23,6 +24,7 @@ class TableInput extends Component{
         this.onBlur = this.onBlur.bind(this);
         this.formatText = this.formatText.bind(this);
         this.onClick = this.onClick.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
 
     }
     
@@ -35,6 +37,14 @@ class TableInput extends Component{
             fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
             fieldType: this.props.fieldType,
         });  
+    }
+    onKeyDown(event) {
+        console.log('event.key:', event.key)
+        if (event.keyCode === 38 || event.keyCode === 40){
+            event.preventDefault();
+        } else {
+
+        }
     }
 
     onChange(event) {
@@ -50,12 +60,18 @@ class TableInput extends Component{
 
     onClick() {
         const { disabled, unlocked } = this.props;
-        const { isSelected } = this.state;
+        const { isSelected, fieldValue, fieldType } = this.state;
         if(unlocked || !disabled){
             if(!isSelected) {
                 this.setState({isSelected: true}, () => {
+                    // if (this.state.fieldType === 'date') {
+                    //     this.setState({
+                    //         fieldValue: new Date(fieldValue)
+                    //     })
+                    // }
                     setTimeout(() => {
                     this.refs.input.select();
+                    // console.log('fieldValue:',this.state.fieldValue);
                     }, 1);
                 });
             } else {
@@ -170,6 +186,7 @@ class TableInput extends Component{
                     onChange={this.onChange}
                     onBlur={this.onBlur}
                     disabled={unlocked ? false : disabled}
+                    onKeyDown={event => this.onKeyDown(event)}
                 />
             </td>
         ):
