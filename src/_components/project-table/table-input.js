@@ -29,7 +29,6 @@ class TableInput extends Component{
     }
     
     componentDidMount(){
-        const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         this.setState({
             collection: this.props.collection,
             objectId: this.props.objectId,
@@ -39,12 +38,9 @@ class TableInput extends Component{
         });  
     }
     onKeyDown(event) {
-        console.log('event.key:', event.key)
         if (event.keyCode === 38 || event.keyCode === 40){
-            event.preventDefault();
-        } else {
-
-        }
+            this.onBlur(event);  
+        } 
     }
 
     onChange(event) {
@@ -64,14 +60,8 @@ class TableInput extends Component{
         if(unlocked || !disabled){
             if(!isSelected) {
                 this.setState({isSelected: true}, () => {
-                    // if (this.state.fieldType === 'date') {
-                    //     this.setState({
-                    //         fieldValue: new Date(fieldValue)
-                    //     })
-                    // }
                     setTimeout(() => {
                     this.refs.input.select();
-                    // console.log('fieldValue:',this.state.fieldValue);
                     }, 1);
                 });
             } else {
