@@ -8,9 +8,20 @@ function resolve(path, obj) {
 }
 
 
-function arraySorted(array, field) {
+function arraySorted(array, field, fromTbls) {
     if (array) {
-        const newArray = array
+        let newArray = [];
+        if (!_.isEmpty(fromTbls)) {
+            newArray = array.reduce(function (accumulator, currentValue) {
+                if (fromTbls.indexOf(currentValue.fromTbl) != -1){
+                    accumulator.push(currentValue)
+                }
+                return accumulator
+            },[]);
+        } else {
+            newArray = array;
+        }
+
         newArray.sort(function(a,b){
             if (resolve(field, a) < resolve(field, b)) {
                 return -1;
@@ -105,7 +116,7 @@ class NewRowSelect extends Component{
                     // }}
                 >
                     <option>Select...</option>
-                    {options && arraySorted(options, optionText).map(option => {
+                    {options && arraySorted(options, optionText, fromTbls).map(option => {
                         return (
                             <option
                                 key={option._id}

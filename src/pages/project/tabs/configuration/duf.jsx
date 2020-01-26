@@ -422,7 +422,7 @@ class Duf extends React.Component {
                                             value={fieldName.fieldId}
                                             options={fields.items}
                                             optionText="custom"
-                                            fromTbls={['po']}
+                                            fromTbls={['po', 'sub']}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
                                         />
@@ -449,7 +449,7 @@ class Duf extends React.Component {
                                             fieldValue={s.fieldId}
                                             options={fields.items}
                                             optionText="custom"
-                                            fromTbls={['po']}                               
+                                            fromTbls={['po', 'sub']}                               
                                         />
                                     </tr>
                                 )}

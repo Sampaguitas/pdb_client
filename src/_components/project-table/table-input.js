@@ -3,6 +3,7 @@ import config from 'config';
 import { authHeader } from '../../_helpers';
 import propTypes from 'prop-types';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 class TableInput extends Component{
     constructor(props) {
@@ -14,16 +15,20 @@ class TableInput extends Component{
             fieldValue: '',
             fieldType: '',
             color: '#0070C0',
-            editing: false,
+            isEditing: false,
+            isSelected: false,
             // disabled: false
         }
         this.onChange = this.onChange.bind(this);
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.formatText = this.formatText.bind(this);
+        this.onClick = this.onClick.bind(this);
 
     }
+    
     componentDidMount(){
+        const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         this.setState({
             collection: this.props.collection,
             objectId: this.props.objectId,
@@ -32,14 +37,20 @@ class TableInput extends Component{
             // disabled: this.props.disabled ? this.props.disabled : false,
             fieldType: this.props.fieldType,
         });
+        // this.refs.input.addEventListener('keydown', (e) => {
+
+        // })
+        
     }
 
     onChange(event) {
         const target = event.target;
+        // console.log('keyCode:', event.target.keyCode);
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
             ...this.state,
+            isEditing: true,
             [name]: value //decodeURI(
         });
     }
@@ -47,9 +58,31 @@ class TableInput extends Component{
     onFocus() {
         const { disabled, unlocked } = this.props;
         if(unlocked || !disabled){
-            this.setState({ editing: true }, () => {
+            this.setState({ isEditing: true }, () => {
                 this.refs.input.focus();
+                // this.refs.input.select();
+                // this.refs.input.setSelectionRange(0, this.refs.input.value.length);
             });
+        }
+    }
+
+    onClick() {
+        const { disabled, unlocked } = this.props;
+        const { isEditing, isSelected } = this.state;
+        if(unlocked || !disabled){
+            if(!isSelected) {
+                this.setState({isSelected: true}, () => {
+                    setTimeout(() => {
+                    this.refs.input.select();
+                    }, 1);
+                });
+            } else {
+                this.setState({isEditing: true }, () => {
+                    setTimeout(() => {
+                    this.refs.input.focus();
+                    }, 1);
+                });
+            }
         }
     }
 
@@ -67,7 +100,8 @@ class TableInput extends Component{
             .then( () => {
                 this.setState({
                     ...this.state,
-                    editing: false,
+                    isEditing: false,
+                    isSelected: false,
                     color: 'green',
                 }, () => {
                     setTimeout(() => {
@@ -81,7 +115,8 @@ class TableInput extends Component{
             .catch( () => {
                 this.setState({
                     ...this.state,
-                    editing: false,
+                    isEditing: false,
+                    isSelected: false,
                     color: 'red',
                     fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
                 }, () => {
@@ -119,22 +154,35 @@ class TableInput extends Component{
 
         const {
             color,
-            editing,
+            isEditing,
+            isSelected,
             fieldValue,
             fieldType
         } = this.state;
 
-        return editing ? (
+        const tdClasses = classNames(
+            'table-cell',
+            {
+                isEditing: isEditing,
+                isSelected: isSelected
+            }
+        )
+
+        return isSelected ? (
             <td
+                onClick={() => this.onClick()}
                 style={{
                     width: `${width ? width : 'auto'}`,
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
-                    padding: '0px'
+                    // padding: isSelected ? unlocked ? '0px' : disabled ? '5px': '0px' : '5px',
+                    padding: isSelected ? '0px' : '5px',
+                    cursor: unlocked ? 'pointer' : disabled ? 'auto' : 'pointer'
                 }}
+                className={tdClasses}
             >
                 <input
                     ref='input'
-                    className="form-control"
+                    className="form-control table-input"
                     type={fieldType}
                     name='fieldValue'
                     value={fieldValue}
@@ -155,16 +203,18 @@ class TableInput extends Component{
         ):
         (
             <td 
-                onClick={() => this.onFocus()}
+                onClick={() => this.onClick()}
+                // onSelect={() => this.onSelect()}
                 style={{
                     color: disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color, //disabled ? !unlocked ? color != '#0070C0' ? color : '#A8052C' : 'inherit' : color
                     width: `${width ? width : 'auto'}`,
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
                     cursor: unlocked ? 'pointer' : disabled ? 'auto' : 'pointer'
                 }}
+                className={tdClasses}
                 align={align ? align : 'left'}
             >
-                {this.formatText(fieldValue, fieldType)}
+                <span>{this.formatText(fieldValue, fieldType)}</span>
             </td> //onDoubleClick
         );
     }

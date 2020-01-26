@@ -95,6 +95,7 @@ class Screens extends React.Component {
             fieldId: '',
             custom: '',
             selectedScreen:'5cd2b643fd333616dc360b66',
+            // FromTbls: [],
             selectedRows: [],
             selectAllRows: false,
             loaded: false,
@@ -118,6 +119,8 @@ class Screens extends React.Component {
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeScreen = this.handleChangeScreen.bind(this);
         this.filterName = this.filterName.bind(this);
+        this.generateScreensOptions = this.generateScreensOptions.bind(this);
+        this.generateFromTbls = this.generateFromTbls.bind(this);
     }
 
     cerateNewRow(event) {
@@ -311,7 +314,7 @@ class Screens extends React.Component {
     handleChangeScreen(event) {
         const target = event.target;
         const name = target.name;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
+        const value = event.target.value;
         this.setState({
             ...this.state,
             [name]: value,
@@ -350,11 +353,31 @@ class Screens extends React.Component {
         }
     }
 
+    generateScreensOptions(screens) {
+        let tempArray=[]
+        if (screens) {
+            arraySorted(screens, "name").map((screen) =>  {        
+                tempArray.push (
+                    <option 
+                        key={screen._id}
+                        value={screen._id}>{screen.name}
+                    </option>
+                );
+            });
+        }
+        return tempArray;
+    }
+
+    generateFromTbls(screens, selectedScreen) {
+        const found = screens.find(element => element._id === selectedScreen);
+        return !_.isUndefined(found) ? found.fromTbls : [];
+    }
+
     render() {
         const {
             fieldnames,
             fields,
-            screens,
+            // screens,
             selection, 
             tab,
         } = this.props;
@@ -381,10 +404,26 @@ class Screens extends React.Component {
             { _id: 'right', name: 'Right' },
         ]
 
-        // const screenArray = [
-
-        // ]
-        //     id: '5cd2b642fd333616dc360b63'
+        const screens = [
+            {_id: '5cd2b642fd333616dc360b63', name: 'Expediting', fromTbls: ['po', 'sub']},
+            {_id: '5cd2b646fd333616dc360b70', name: 'Expediting Splitwindow', fromTbls: ['po', 'sub']},
+            {_id: '5cd2b642fd333616dc360b64', name: 'Inspection', fromTbls: ['po', 'sub', 'certificate']},
+            {_id: '5cd2b647fd333616dc360b71', name: 'Inspection Splitwindow', fromTbls: ['po', 'sub', 'certificate']},
+            {_id: '5cd2b643fd333616dc360b66', name: 'Assign Transport', fromTbls: ['po', 'sub', 'article', 'packitem']},
+            {_id: '5cd2b647fd333616dc360b72', name: 'Assign Transport SplitWindow', fromTbls: ['po', 'sub', 'article', 'packitem']}, // weight from table 'article' what if we dont have itemcode?
+            {_id: '5cd2b643fd333616dc360b67', name: 'Print Transportdocuments', fromTbls: ['collipack']},
+            {_id: '5cd2b642fd333616dc360b65', name: 'Certificates', fromTbls: ['po', 'sub', 'certificate']},
+            {_id: '5cd2b643fd333616dc360b68', name: 'Data Upload File', fromTbls: ['packitem', 'collipack']}, //what is this screen Dave?
+            // {_id: '5cd2b644fd333616dc360b69', name: 'Suppliers', fromTbls: ['supplier']}, //do we need to edit?
+            // {_id: '5cd2b644fd333616dc360b6a', name: 'Delete Items', fromTbls: []}, //what is this screen Dave?
+            // {_id: '5cd2b644fd333616dc360b6b', name: 'Projects', fromTbls: []}, //main screen no need to customise
+            // {_id: '5cd2b645fd333616dc360b6c', name: 'Screens', fromTbls: []}, //screen from config no need to customise
+            // {_id: '5cd2b646fd333616dc360b6d', name: 'DUF Fields', fromTbls: []}, //see DUF screen in config
+            // {_id: '5cd2b646fd333616dc360b6e', name: 'Fields', fromTbls: []}, //screen from config no need to customise
+            // {_id: '5cd2b646fd333616dc360b6f', name: 'Documents', fromTbls: []}, //screen from config no need to customise
+            // {_id: '5cd2b647fd333616dc360b73', name: 'Performance Report', fromTbls: ['po']}, //this does not change 
+        ]
+            
 
         return (
             
@@ -395,16 +434,7 @@ class Screens extends React.Component {
                             <span className="input-group-text">Select Screen</span>
                         </div>
                         <select className="form-control mr-2" name="selectedScreen" value={selectedScreen} onChange={this.handleChangeScreen}>
-                            {
-                                screens.items && arraySorted(screens.items, "name").map((screen) =>  {        
-                                    return (
-                                        <option 
-                                            key={screen._id}
-                                            value={screen._id}>{screen.name}
-                                        </option>
-                                    );
-                                })
-                            }
+                            {this.generateScreensOptions(screens)}
                         </select>
                         <div className="pull-right"> {/* col-12 text-right */}
                             <button 
@@ -491,6 +521,7 @@ class Screens extends React.Component {
                                             value={fieldName.fieldId}
                                             options={fields.items}
                                             optionText="custom"
+                                            fromTbls={this.generateFromTbls(screens, selectedScreen)}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
                                         />
@@ -539,6 +570,7 @@ class Screens extends React.Component {
                                             fieldValue={s.fieldId}
                                             options={fields.items}
                                             optionText="custom"
+                                            fromTbls={this.generateFromTbls(screens, selectedScreen)}
                                         />
                                         <TableInput 
                                             collection="fieldname"

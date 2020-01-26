@@ -361,3 +361,23 @@ margin-left: 50px;
  width: 60px;
 }
 
+
+.table-input, .table-input:focus{
+  outline: none !important;
+  outline: 0 !important;
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border-style: none !important;
+  background-color: 'inherit';
+}
+
+/* .table-cell {
+  background-color: 'inherit';
+} */
+
+.table-cell.isSelected {
+  outline: 1px solid #80bdff !important;
+  border-color:#80bdff !important;
+  box-shadow:0 0 0 .2rem rgba(0,123,255,.25) !important;
+  background-color: 'inherit';
+}

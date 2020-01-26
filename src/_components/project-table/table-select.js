@@ -15,7 +15,7 @@ function arraySorted(array, field, fromTbls) {
         let newArray = [];
         if (!_.isEmpty(fromTbls)) {
             newArray = array.reduce(function (accumulator, currentValue) {
-                if (['po'].indexOf(currentValue.fromTbl) != -1){
+                if (fromTbls.indexOf(currentValue.fromTbl) != -1){
                     accumulator.push(currentValue)
                 }
                 return accumulator

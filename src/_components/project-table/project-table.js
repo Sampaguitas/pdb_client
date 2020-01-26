@@ -21,6 +21,7 @@ import TabForSelect from './tab-for-select';
 import TabForShow from './tab-for-show';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
+import { AST_SwitchBranch } from 'terser';
 
 function baseTen(number) {
     return number.toString().length > 2 ? number : '0' + number;
@@ -151,15 +152,100 @@ class ProjectTable extends Component {
         this.MatchingRow = this.MatchingRow.bind(this);
         this.toggleModalSettings = this.toggleModalSettings.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
+        this.keyHandler = this.keyHandler.bind(this);
     }
 
     componentDidMount() {
+        const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
+        const nodes = ["INPUT", "SELECT", "SPAN"];
+        const table = document.getElementById('myProjectTable');
+        table.addEventListener('keydown', (e) => { 
+            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n }))
+            {
+                // console.log('e.keyCode:', e.keyCode);
+                // e.preventDefault();
+                return this.keyHandler(e);
+                // e.preventDefault();
+                // return this.keyHandler(e);
+            }
+        });
         // this.setState({
         //     header: this.props.screenHeaders.reduce((acc,header)=>{
         //         acc[header._id] = "";
         //         return acc;
         //     },{})
         // });
+    }
+
+    keyHandler(e) {
+        // console.log('e.keyCode:', e.keyCode);
+        let target = e.target;
+        let colIndex = target.parentElement.cellIndex;
+        // var nCols = target.parentElement.parentElement.childNodes.length;        
+        
+        let rowIndex = target.parentElement.parentElement.rowIndex;
+        var nRows = target.parentElement.parentElement.parentElement.childNodes.length;
+        // console.log('target.className:', target.parentElement.className);
+        
+    
+        switch(e.keyCode) {
+            case 9:// tab
+                if(target.parentElement.nextSibling) {
+                    // console.log('this is not the last col')
+                    target.parentElement.nextSibling.click();
+                } else {
+                    // console.log('this is the last col')
+                }
+                break;
+            case 13: //enter
+                if(rowIndex < nRows) {
+                    // console.log('this is not last row');
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                } else {
+                    // console.log('this is the last row');
+                }
+                break;
+            case 37: //left
+                if(colIndex > 1 && !target.parentElement.classList.contains('isEditing')) {
+                    console.log('isEditing:', target.parentElement.classList.contains('isEditing'));
+                    console.log('isSelected:', target.parentElement.classList.contains('isSelected'));
+                    console.log('table-cell:', target.parentElement.classList.contains('table-cell'));
+                    // console.log('this is not the first col');
+                    target.parentElement.previousSibling.click();
+                } else {
+                    // console.log('this is the first col');
+                }
+                break;
+            case 38: //up
+                if(rowIndex > 1) {
+                    // console.log('this is not the first row');
+                    target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();
+                } else {
+                    // console.log('this is the first row');
+                }
+                break;
+            case 39: //right
+                if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
+                    console.log('isEditing:', target.parentElement.classList.contains('isEditing'));
+                    console.log('isSelected:', target.parentElement.classList.contains('isSelected'));
+                    console.log('table-cell:', target.parentElement.classList.contains('table-cell'));
+                    // console.log('this is not the last col');
+                    target.parentElement.nextSibling.click();
+                } else {
+                    // console.log('this is the last col');
+                }
+                break;
+            case 40: //down
+                if(rowIndex < nRows) {
+                    // console.log('this is not last row');
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                    console.log(target.parentElement.parentElement.nextSibling.childNodes[colIndex]);
+                } else {
+                    // console.log('this is the last row');
+                }
+                break;
+        }
+        // console.log('target.closest("td"):', target.closest('td'));
     }
 
     resetHeaders(event) {
@@ -397,10 +483,14 @@ class ProjectTable extends Component {
             tabs // 4. update state
         })
         // handleSelectionReload(event); //reload selection state
-
     }
+
+    
     
     render() {
+
+        
+
         const { handleSelectionReload, toggleUnlock, screenHeaders, screenBodys, unlocked } = this.props;
         const { header,selectAllRows, showModalSettings, tabs  } = this.state;
         return (
