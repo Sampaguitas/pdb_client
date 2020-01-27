@@ -115,11 +115,16 @@ class Certificates extends React.Component {
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[clPo]')}>clPo</span>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[clPoItem]')}>clPoItem</span>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[clPoRev]')}>clPoRev</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[vlPo]')}>vlPo</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[vlPoItem]')}>vlPoItem</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[vlPoX]')}>vlPoX</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[vlPoItemX]')}>vlPoItemX</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[clCode]')}>clCode</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[vlPo]')}>vlSo</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[vlPoItem]')}>vlSoItem</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[qty]')}>qty</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[udfPo91]')}>udfPo91</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[udfPoX1]')}>udfPoX1</span>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[nfi]')}>nfi</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[splitQty]')}>splitQty</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[udfSb91]')}>udfSb91</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[udfSbX1]')}>udfSbX1</span>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[cif]')}>cif</span>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[heatNr]')}>heatNr</span>
                             <div className="text-right">
