@@ -27,6 +27,7 @@ import Fields from './tabs/configuration/fields';
 import Screens from './tabs/configuration/screens';
 import Documents from './tabs/configuration/documents';
 import Duf from './tabs/configuration/duf';
+import Certificates from './tabs/configuration/certificates';
 // import { EventEmitter } from 'events';
 
 const tabs = [
@@ -35,7 +36,8 @@ const tabs = [
     {index: 2, id: 'fields', label: 'Fields', component: Fields, active: false, isLoaded: false},
     {index: 3, id: 'screens', label: 'Screens', component: Screens, active: false, isLoaded: false},
     {index: 4, id: 'documents', label: 'Documents', component: Documents, active: false, isLoaded: false},
-    {index: 5, id: 'duf', label: 'DUF', component: Duf, active: false, isLoaded: false}
+    {index: 5, id: 'duf', label: 'DUF', component: Duf, active: false, isLoaded: false},
+    {index: 6, id: 'certificates', label: 'Certificates', component: Certificates, active: false, isLoaded: false}
 ]
 
 const _ = require('lodash');

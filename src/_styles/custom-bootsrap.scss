@@ -40,11 +40,11 @@ $state-warning-text: darken($warning, 30);
 $state-danger-text: darken($danger, 10);
 
 // Override badges padding (doubled because otherwise too crammed)
-$badge-padding-x: 0.8em;
-$badge-padding-y: 0.4em;
+// $badge-padding-x: 0.8em;
+// $badge-padding-y: 0.4em;
 
 // Don't make badges normal instead of bold
-$badge-font-weight: normal;
+// $badge-font-weight: normal;
 
 // Override fonts
 $font-family-sans-serif: 'Raleway', sans-serif;

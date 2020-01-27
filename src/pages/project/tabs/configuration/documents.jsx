@@ -821,13 +821,13 @@ class Documents extends React.Component {
                         </select>
                         <div className="input-group-append">
                             <button className="btn btn-dark btn-lg" onClick={this.showModal} title="Create">
-                                <span><FontAwesomeIcon icon="plus" className="fa-lg"/></span>
+                                <span><FontAwesomeIcon icon="plus" className="fa-lg"/> </span>
                             </button>
                             <button className="btn btn-leeuwen-blue btn-lg" onClick={(event) => this.handleOnclick(event, selectedTemplate)} title="Update">
-                                <span><FontAwesomeIcon icon="edit" className="fa-lg"/></span>
+                                <span><FontAwesomeIcon icon="edit" className="fa-lg"/> </span>
                             </button>
                             <button className="btn btn-leeuwen btn-lg" onClick={ (event) => this.handleDeleteDocDef(event, selectedTemplate)} title="Delete">
-                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg"/></span>
+                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg"/> </span>
                             </button>  
                         </div>
                     </div>
