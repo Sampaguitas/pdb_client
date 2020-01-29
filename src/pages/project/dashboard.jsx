@@ -237,6 +237,7 @@ function mapStateToProps(state) {
         suppliers,
         users
     } = state;
+
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
     const { loadingDocfields } = docfields;
@@ -245,6 +246,7 @@ function mapStateToProps(state) {
     const { loadingPos } = pos;
     const { loadingSelection } = selection;
     const { loadingSuppliers } = suppliers;
+    
     return {
         accesses,
         alert,

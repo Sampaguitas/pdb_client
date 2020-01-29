@@ -22,6 +22,7 @@ import TabForShow from './tab-for-show';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import { AST_SwitchBranch } from 'terser';
+import { isThisISOWeek } from 'date-fns/esm';
 
 function baseTen(number) {
     return number.toString().length > 2 ? number : '0' + number;
@@ -119,6 +120,7 @@ class ProjectTable extends Component {
             selectedRows: [],
             selectAllRows: false,
             showModalSettings: false,
+            showModalUpload: false,
             tabs: [
                 {
                     index: 0, 
@@ -136,12 +138,20 @@ class ProjectTable extends Component {
                     active: false, 
                     isLoaded: false
                 }
-            ]
+            ],
+            fileName: '',
+            inputKey: Date.now(),
+            uploading: false,
+            downloading: false,
+            responce:{},
+            alert: {
+                type:'',
+                message:''
+            }
         };
-        
+        this.handleClearAlert = this.handleClearAlert.bind(this);
         this.resetHeaders = this.resetHeaders.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
-        this.uploadTable = this.uploadTable.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
@@ -151,8 +161,14 @@ class ProjectTable extends Component {
         this.matchingHeader = this.matchingHeader.bind(this);
         this.MatchingRow = this.MatchingRow.bind(this);
         this.toggleModalSettings = this.toggleModalSettings.bind(this);
+        this.toggleModalUpload = this.toggleModalUpload.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
+        this.onKeyPress = this.onKeyPress.bind(this);
+        this.fileInput = React.createRef();
+        this.handleUploadFile = this.handleUploadFile.bind(this);
+        this.handleFileChange = this.handleFileChange.bind(this);
+        this.generateRejectionRows = this.generateRejectionRows.bind(this);
     }
 
     componentDidMount() {
@@ -175,6 +191,16 @@ class ProjectTable extends Component {
         //         return acc;
         //     },{})
         // });
+    }
+
+    handleClearAlert(event){
+        event.preventDefault;
+        this.setState({ 
+            alert: {
+                type:'',
+                message:'' 
+            } 
+        });
     }
 
     keyHandler(e) {
@@ -231,24 +257,7 @@ class ProjectTable extends Component {
         });
     }
 
-    downloadTable(event){
-        event.preventDefault();
-        const { projectId, screenId, screen } = this.props;
-        var currentDate = new Date();
-        var date = currentDate.getDate();
-        var month = currentDate.getMonth();
-        var year = currentDate.getFullYear();
-        const requestOptions = {
-            method: 'GET',
-            headers: { ...authHeader(), 'Content-Type': 'application/json'},
-        };
-        return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}`, requestOptions)
-        .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
-    }
-
-    uploadTable(event) {
-        event.preventDefault();
-    }
+    
 
     handleChangeHeader(event) {
         event.preventDefault();
@@ -441,6 +450,22 @@ class ProjectTable extends Component {
         });
     }
 
+    toggleModalUpload() {
+        const { showModalUpload } = this.state;
+        this.setState({
+            showModalUpload: !showModalUpload,
+            fileName: '',
+            inputKey: Date.now(),
+            uploading: false,
+            downloading: false,
+            responce:{},
+            alert: {
+                type:'',
+                message:''
+            }
+        });
+    }
+
 
     handleModalTabClick(event, tab){
         event.preventDefault();
@@ -455,12 +480,135 @@ class ProjectTable extends Component {
         // handleSelectionReload(event); //reload selection state
     }
 
-    
-    
+    onKeyPress(event) {
+        if (event.which === 13 /* prevent form submit on key Enter */) {
+          event.preventDefault();
+        }
+    }
+
+    downloadTable(event){
+        event.preventDefault();
+        const { projectId, screenId, screen } = this.props;
+        var currentDate = new Date();
+        var date = currentDate.getDate();
+        var month = currentDate.getMonth();
+        var year = currentDate.getFullYear();
+        const requestOptions = {
+            method: 'GET',
+            headers: { ...authHeader(), 'Content-Type': 'application/json'},
+        };
+        return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}`, requestOptions)
+        .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+    }
+
+    handleUploadFile(event){
+        event.preventDefault();
+        const { fileName } = this.state
+        const { projectId, screenId } = this.props;
+        if(this.fileInput.current.files[0] && projectId && screenId && fileName) {
+            this.setState({uploading: true});
+            var data = new FormData()
+            data.append('file', this.fileInput.current.files[0]);
+            data.append('projectId', projectId);
+            data.append('screenId', screenId);
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
+                body: data
+            }
+            return fetch(`${config.apiUrl}/extract/upload`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (!responce.ok) {
+                    // console.log('responce not ok');
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    const error = (data && data.message) || responce.statusText;
+                    this.setState({
+                        uploading: false,
+                        responce: {
+                            rejections: data.rejections,
+                            nProcessed: data.nProcessed,
+                            nRejected: data.nRejected,
+                            nEdited: data.nEdited
+                        },
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    });
+                } else {
+                    // console.log('responce ok')
+                    this.setState({
+                        uploading: false,
+                        responce: {
+                            rejections: data.rejections,
+                            nProcessed: data.nProcessed,
+                            nRejected: data.nRejected,
+                            nEdited: data.nEdited
+                        },
+                    });
+                }
+            }));            
+        }        
+    }
+
+    handleFileChange(event){
+        if(event.target.files.length > 0) {
+            this.setState({
+                ...this.state,
+                fileName: event.target.files[0].name
+            });
+        }
+    }
+
+    generateRejectionRows(responce){
+        let temp =[]
+        if (!_.isEmpty(responce.rejections)) {
+            responce.rejections.map(function(r, index) {
+                temp.push(
+                <tr key={index}>
+                    <td>{r.row}</td>
+                    <td>{r.reason}</td>
+                </tr>   
+                );
+            });
+            return (temp);
+        } else {
+            return (
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            );
+        }
+    }
+
     render() {
 
-        const { handleSelectionReload, toggleUnlock, screenHeaders, screenBodys, unlocked } = this.props;
-        const { header,selectAllRows, showModalSettings, tabs  } = this.state;
+        const { 
+            handleSelectionReload, 
+            toggleUnlock, 
+            screenHeaders, 
+            screenBodys, 
+            unlocked 
+        } = this.props;
+        
+        const { 
+            header,
+            selectAllRows, 
+            showModalSettings, 
+            showModalUpload, 
+            tabs,
+            fileName,
+            responce,
+            downloading,
+            uploading,
+            alert
+        } = this.state;
+
         return (
             <div className="full-height">
                 <div className="btn-group-vertical pull-right" style={{marginLeft: '5px'}}>
@@ -479,7 +627,7 @@ class ProjectTable extends Component {
                     <button className="btn btn-outline-leeuwen-blue" onClick={event => this.downloadTable(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="download" className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
                     </button>
                 </div>
@@ -536,6 +684,86 @@ class ProjectTable extends Component {
                         </div>
                     </div>
                 </Modal>
+                <Modal
+                    show={showModalUpload}
+                    hideModal={this.toggleModalUpload}
+                    title="Upload File"
+                    size="modal-xl"
+                >
+                    <div className="col-12">
+                            {alert.message && 
+                                <div className={`alert ${alert.type}`}>{alert.message}
+                                    <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                        <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                                    </button>
+                                </div>
+                            }
+                        <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                            <form
+                                className="col-12"
+                                encType="multipart/form-data"
+                                onSubmit={this.handleUploadFile}
+                                onKeyPress={this.onKeyPress}
+                                style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
+                            >   {/* Modal Body */}
+
+                                <div className="input-group">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" style={{width: '95px'}}>Select File</span>
+                                        <input
+                                            type="file"
+                                            name="fileInput"
+                                            id="fileInput"
+                                            ref={this.fileInput}
+                                            className="custom-file-input"
+                                            style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
+                                            onChange={this.handleFileChange}
+                                            key={this.state.inputKey}
+                                        />
+                                    </div>
+                                    <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
+                                    <div className="input-group-append">
+                                        <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
+                                            <span><FontAwesomeIcon icon={uploading ? 'spinner' : 'upload'} className={uploading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Upload</span>
+                                        </button> 
+                                    </div>       
+                                </div>
+                            </form>
+                        </div>
+                        {!_.isEmpty(responce) &&
+                            <div className="ml-1 mr-1">
+                                <div className="form-group table-resonsive">
+                                    <strong>Total Processed:</strong> {responce.nProcessed}<br />
+                                    <strong>Total Records Edited:</strong> {responce.nEdited}<br />
+                                    <strong>Total Records Rejected:</strong> {responce.nRejected}<br />
+                                    <hr />
+                                </div>
+                                {!_.isEmpty(responce.rejections) &&
+                                    <div className="rejections">
+                                        <h3>Rejections</h3>
+                                        {/* <div className="">
+                                            <div className="table-responcive custom-table-container"> */}
+                                                <table className="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style={{width: '10%'}}>Row</th>
+                                                            <th style={{width: '90%'}}>Reason</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {this.generateRejectionRows(responce)}
+                                                    </tbody>
+                                                </table>
+                                            {/* </div>
+                                        </div> */}
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </Modal>
+                
+
             </div>
         );
     }

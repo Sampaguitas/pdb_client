@@ -105,6 +105,10 @@ class Overview extends React.Component {
             selectedTemplate: '0',
             selectedField: '',
             updateValue:'',
+            alert: {
+                type:'',
+                message:''
+            }
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -407,9 +411,11 @@ class Overview extends React.Component {
             showModalSettings
         }= this.state;
 
-        const { accesses, alert, docdefs, fieldnames, fields, pos, selection } = this.props;
-        
+        const { accesses, docdefs, fieldnames, fields, pos, selection } = this.props;
+        const alert = this.state.alert ? this.state.alert : this.props.alert;
+
         {fieldnames.items, pos.items && loaded == false && this.testBodys()}
+
         return (
             <Layout alert={alert} accesses={accesses}>
                 {alert.message && 
@@ -485,7 +491,6 @@ class Overview extends React.Component {
                                 unlocked={unlocked}
                                 screen={screen}
                                 fieldnames={fieldnames}
-                                // fields={fields}
                             />
                         }
                     </div>
