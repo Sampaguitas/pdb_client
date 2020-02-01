@@ -67,7 +67,7 @@ class Warehouse extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="cubes" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="cubes"
                                 />
                                 <h3>Goods receipt</h3>
@@ -83,7 +83,7 @@ class Warehouse extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="forklift" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="forklift"
                                 />
                                 <h3>Stock management</h3>
@@ -99,7 +99,7 @@ class Warehouse extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="phone-square" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="phone-square"
                                 />
                                 <h3>Call-off order</h3>
@@ -115,7 +115,7 @@ class Warehouse extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="clipboard-list" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="clipboard-list"
                                 />
                                 <h3>Picking lists</h3>
@@ -131,7 +131,7 @@ class Warehouse extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="ship" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="ship"
                                 />
                                 <h3>Outgoing shipments</h3>
@@ -147,7 +147,7 @@ class Warehouse extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="inventory" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="inventory"
                                 />
                                 <h3>Warehouse locations</h3>

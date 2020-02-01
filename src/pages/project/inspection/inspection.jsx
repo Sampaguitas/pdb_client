@@ -67,7 +67,7 @@ class Inspection extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="clipboard-check" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="clipboard-check"
                                 />
                                 <h3>Release data</h3>
@@ -83,7 +83,7 @@ class Inspection extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="file-certificate" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="file-certificate"
                                 />
                                 <h3>Certificates</h3>

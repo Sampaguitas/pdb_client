@@ -67,7 +67,7 @@ class Shipping extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="passport" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="passport"
                                 />
                                 <h3>Transport docs</h3>
@@ -83,7 +83,7 @@ class Shipping extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="box-open" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="box-open"
                                 />
                                 <h3>Packing details</h3>

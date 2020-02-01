@@ -126,7 +126,7 @@ class Dashboard extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="upload" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="upload"
                                 />
                                 <h3>Data Upload File (DUF)</h3>
@@ -142,7 +142,7 @@ class Dashboard extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="stopwatch" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="stopwatch"
                                 />
                                 <h3>Expediting</h3>
@@ -158,7 +158,7 @@ class Dashboard extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="search" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="search"
                                 />
                                 <h3>Inspection</h3>
@@ -174,7 +174,7 @@ class Dashboard extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="ship" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="ship"
                                 />
                                 <h3>Shipping</h3>
@@ -190,7 +190,7 @@ class Dashboard extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="warehouse" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="warehouse"
                                 />
                                 <h3>Warehouse</h3>
@@ -206,7 +206,7 @@ class Dashboard extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="cog" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="cog"
                                 />
                                 <h3>Configuration</h3>

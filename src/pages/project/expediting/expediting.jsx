@@ -67,7 +67,7 @@ class Expediting extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="table" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="table"
                                 />
                                 <h3>Total PO Overview</h3>
@@ -83,7 +83,7 @@ class Expediting extends React.Component {
                             <div className="text-center">
                                 <FontAwesomeIcon 
                                     icon="chart-line" 
-                                    className="fa-5x" 
+                                    className="fa-5x mb-3" 
                                     name="chart-line"
                                 />
                                 <h3>Performance Report</h3>
