@@ -80,12 +80,34 @@ function findObj(array, search) {
 }
 
 function returnScreenHeaders(fieldnames, screenId) {
-    if (fieldnames.items) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         return fieldnames.items.filter(function(element) {
             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
         });
     } else {
         return [];
+    }
+}
+
+function getScreenTbls (fieldnames) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        return fieldnames.items.reduce(function (accumulator, currentValue) {
+            if(!accumulator.includes(currentValue.fields.fromTbl)) {
+                accumulator.push(currentValue.fields.fromTbl)
+            }
+            return accumulator;
+        },[]);
+    } else {
+        return [];
+    }
+    
+}
+
+function getInputType(dbFieldType) {
+    switch(dbFieldType) {
+        case 'Number': return 'number';
+        case 'Date': return 'date';
+        default: return 'text'
     }
 }
 
@@ -97,7 +119,7 @@ class ReleaseData extends React.Component {
             screenId: '5cd2b642fd333616dc360b64',
             unlocked: false,
             screen: 'inspection',
-            screenBodys: [],
+            // screenBodys: [],
             loaded: false, 
             selectedTemplate: '0',
             selectedField: '',
@@ -203,266 +225,150 @@ class ReleaseData extends React.Component {
         });
     }
 
-    testBodys(){
-        const { pos, fieldnames } = this.props;
-        const { screenId } = this.state;
-        let screenHeaders = arraySorted(returnScreenHeaders(fieldnames, screenId), 'forShow')
-        if (pos.items) {
-            let arrayBody =[];
-            arraySorted(pos.items, 'clPo', 'clPoRev', 'clPoItem').map(po => {
+    testBodys(fieldnames, pos){
+        const { screenId, unlocked } = this.state;
+        let arrayBody = [];
+        let arrayRow = [];
+        let objectRow = {};
+        let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
+        let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
+        let screenHeaders = arraySorted(returnScreenHeaders(fieldnames, screenId), 'forShow');
+        let i = 1;
+        if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
+            pos.items.map(po => {
                 if (po.subs) {
                     po.subs.map(sub => {
-                        let arrayRow = [];
-                        screenHeaders.map(screenHeader => {
-                            if (screenHeader.fields.fromTbl == 'po') {
-                                switch (screenHeader.fields.type) {
-                                    case "String":
+                        if (!_.isEmpty(sub.packitems) && hasPackitems) {
+                            sub.packitems.map(packitem => {
+                                arrayRow = [];
+                                screenHeaders.map(screenHeader => {
+                                    switch(screenHeader.fields.fromTbl) {
+                                        case 'po':
+                                            arrayRow.push({
+                                                collection: 'po',
+                                                objectId: po._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: po[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                            break;
+                                        case 'sub':
+                                            arrayRow.push({
+                                                collection: 'sub',
+                                                objectId: sub._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: sub[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                            break;
+                                        case 'packitem':
+                                            arrayRow.push({
+                                                collection: 'packitem',
+                                                objectId: packitem._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: packitem[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                            break;
+                                        default: arrayRow.push({}); 
+                                    }
+                                });
+                                objectRow  = { _id: i, fields: arrayRow }
+                                arrayBody.push(objectRow);
+                                i++;
+                            })
+                        } else if (!_.isEmpty(sub.certificates) && hasCertificates){
+                            sub.certificates.map(certificate => {
+                                arrayRow = [];
+                                screenHeaders.map(screenHeader => {
+                                    switch(screenHeader.fields.fromTbl) {
+                                        case 'po':
+                                            arrayRow.push({
+                                                collection: 'po',
+                                                objectId: po._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: po[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                            break;
+                                        case 'sub':
+                                            arrayRow.push({
+                                                collection: 'sub',
+                                                objectId: sub._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: sub[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                            break;
+                                        case 'certificate':
+                                            arrayRow.push({
+                                                collection: 'certificate',
+                                                objectId: certificate._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: certificate[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                            break;
+                                        default: arrayRow.push({}); 
+                                    }
+                                });
+                                objectRow  = { _id: i, fields: arrayRow }
+                                arrayBody.push(objectRow);
+                                i++;
+                            });
+                        } else {
+                            arrayRow = [];
+                            screenHeaders.map(screenHeader => {
+                                switch(screenHeader.fields.fromTbl) {
+                                    case 'po':
                                         arrayRow.push({
-                                            collection: screenHeader.fields.fromTbl,
+                                            collection: 'po',
                                             objectId: po._id,
                                             fieldName: screenHeader.fields.name,
                                             fieldValue: po[screenHeader.fields.name],
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
-                                            fieldType: "text",
+                                            fieldType: getInputType(screenHeader.fields.type),
                                         });
                                         break;
-                                    case "Number":
+                                    case 'sub':
                                         arrayRow.push({
-                                            collection: screenHeader.fields.fromTbl,
-                                            objectId: po._id,
+                                            collection: 'sub',
+                                            objectId: sub._id,
                                             fieldName: screenHeader.fields.name,
-                                            fieldValue: po[screenHeader.fields.name],
+                                            fieldValue: sub[screenHeader.fields.name],
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
-                                            fieldType: "number",
+                                            fieldType: getInputType(screenHeader.fields.type),
                                         });
                                         break;
-                                    case "Date":                                       
-                                        arrayRow.push({
-                                            collection: screenHeader.fields.fromTbl,
-                                            objectId: po._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: po[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: "date",
-                                        });
-                                        break;
-                                    default:
-                                        arrayRow.push({
-                                            collection: screenHeader.fields.fromTbl,
-                                            objectId: po._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: po[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: "text",
-                                        });
+                                    default: arrayRow.push({}); 
                                 }
-                            } else if (screenHeader.fields.fromTbl == 'sub'){
-                                switch (screenHeader.fields.type) {
-                                    case "String":
-                                        arrayRow.push({
-                                            collection: screenHeader.fields.fromTbl,
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: "text",
-                                        });
-                                        break;
-                                    case "Number":
-                                        arrayRow.push({
-                                            collection: screenHeader.fields.fromTbl,
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: "number",
-                                        });
-                                        break;
-                                    case "Date":                                       
-                                        arrayRow.push({
-                                            collection: screenHeader.fields.fromTbl,
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: "date",
-                                        });
-                                        break;
-                                    default:
-                                        arrayRow.push({
-                                            collection: screenHeader.fields.fromTbl,
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: "text",
-                                        });
-                                }
-                            // } else if (screenHeader.fields.fromTbl == 'certificate'){
-                            //     switch (screenHeader.fields.type) {
-                            //         case "String":
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: certificate._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: certificate[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "text",
-                            //             });
-                            //             break;
-                            //         case "Number":
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: certificate._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: certificate[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "number",
-                            //             });
-                            //             break;
-                            //         case "Date":                                       
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: certificate._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: certificate[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "date",
-                            //             });
-                            //             break;
-                            //         default:
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: certificate._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: certificate[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "text",
-                            //             });
-                            //     }
-                            // } else if (screenHeader.fields.fromTbl == 'packitem'){
-                            //     switch (screenHeader.fields.type) {
-                            //         case "String":
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: packitem._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: packitem[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "text",
-                            //             });
-                            //             break;
-                            //         case "Number":
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: packitem._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: packitem[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "number",
-                            //             });
-                            //             break;
-                            //         case "Date":                                       
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: packitem._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: packitem[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "date",
-                            //             });
-                            //             break;
-                            //         default:
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: packitem._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: packitem[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "text",
-                            //             });
-                            //     }
-                            // } else if (screenHeader.fields.fromTbl == 'collipack'){
-                            //     switch (screenHeader.fields.type) {
-                            //         case "String":
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: collipack._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: collipack[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "text",
-                            //             });
-                            //             break;
-                            //         case "Number":
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: collipack._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: collipack[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "number",
-                            //             });
-                            //             break;
-                            //         case "Date":                                       
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: collipack._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: collipack[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "date",
-                            //             });
-                            //             break;
-                            //         default:
-                            //             arrayRow.push({
-                            //                 collection: screenHeader.fields.fromTbl,
-                            //                 objectId: collipack._id,
-                            //                 fieldName: screenHeader.fields.name,
-                            //                 fieldValue: collipack[screenHeader.fields.name],
-                            //                 disabled: screenHeader.edit,
-                            //                 align: screenHeader.align,
-                            //                 fieldType: "text",
-                            //             });
-                            //     }
-                            } else {
-                                arrayRow.push({});
-                            }
-                        }); //packitem //collipack
-                        let objectRow  = { _id: sub._id, fields: arrayRow }
-                        arrayBody.push(objectRow);
-                    });
+                            });
+                            objectRow  = { _id: i, fields: arrayRow }
+                            arrayBody.push(objectRow);
+                            i++;
+                        }
+                    })
                 }
             });
-            this.setState({
-                screenBodys: arrayBody,
-                loaded: true
-            });
+            return arrayBody;
         } else {
-            this.setState({
-                screenBodys: [],
-                loaded: true
-            });
+            return [];
         }
+        
     }
 
 
@@ -534,7 +440,7 @@ class ReleaseData extends React.Component {
             projectId, 
             screen, 
             screenId, 
-            screenBodys, 
+            // screenBodys, 
             unlocked, 
             loaded, 
             selectedTemplate, 
@@ -544,7 +450,7 @@ class ReleaseData extends React.Component {
 
         const { accesses, alert, docdefs, fieldnames, fields, pos, selection } = this.props;
         
-        {pos.items && fieldnames.items && loaded == false && this.testBodys()}
+        // {pos.items && fieldnames.items && loaded == false && this.testBodys()}
         return (
             <Layout alert={alert} accesses={accesses}>
                 {alert.message && 
@@ -611,7 +517,8 @@ class ReleaseData extends React.Component {
                         {selection && selection.project && 
                             <ProjectTable
                                 screenHeaders={arraySorted(returnScreenHeaders(fieldnames, screenId), "forShow")}
-                                screenBodys={screenBodys}
+                                // screenBodys={screenBodys}
+                                screenBodys={this.testBodys(fieldnames, pos)}
                                 projectId={projectId}
                                 screenId={screenId}
                                 handleSelectionReload={this.handleSelectionReload}
