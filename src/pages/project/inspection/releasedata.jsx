@@ -265,7 +265,6 @@ class ReleaseData extends React.Component {
             screenId: '5cd2b642fd333616dc360b64',
             unlocked: false,
             screen: 'inspection',
-            loaded: false, 
             selectedTemplate: '0',
             selectedField: '',
             updateValue:'',                        
@@ -438,7 +437,6 @@ class ReleaseData extends React.Component {
             screen, 
             screenId, 
             unlocked, 
-            // loaded, 
             selectedTemplate, 
             selectedField, 
             updateValue 

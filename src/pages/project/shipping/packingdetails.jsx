@@ -223,8 +223,7 @@ function generateScreenBody(screenId, fieldnames, pos){
         return arrayBody;
     } else {
         return [];
-    }
-    
+    } 
 }
 
 class PackingDetails extends React.Component {
@@ -235,7 +234,6 @@ class PackingDetails extends React.Component {
             screenId: '5cd2b643fd333616dc360b67',
             unlocked: false,
             screen: 'certificates',
-            loaded: false, 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
@@ -327,7 +325,6 @@ class PackingDetails extends React.Component {
             screen, 
             screenId, 
             unlocked, 
-            loaded 
         }= this.state;
 
         const { accesses, alert, fieldnames, fields, pos, selection } = this.props;

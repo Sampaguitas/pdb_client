@@ -14,13 +14,6 @@ class TableSelectionRow extends Component {
 
     onChange(event) {
         const { callback, id } = this.props;
-        // const target = event.target;
-        // const name = target.name;
-        // const value = target.type === 'checkbox' ? target.checked : target.value;
-        //         this.setState({
-        //     ...this.state,
-        //     [name]: value
-        // }, () => callback(id))
         this.setState({
             fieldValue: event.target.checked
         }, () => callback(id))

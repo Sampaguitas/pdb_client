@@ -236,8 +236,7 @@ class Certificates extends React.Component {
             projectId:'',
             screenId: '5cd2b642fd333616dc360b65',
             unlocked: false,
-            screen: 'certificates',
-            loaded: false,  
+            screen: 'certificates',  
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
@@ -330,7 +329,6 @@ class Certificates extends React.Component {
             screen, 
             screenId, 
             unlocked, 
-            loaded 
         }= this.state;
         
         const { accesses, alert, fieldnames, fields, pos, selection } = this.props;

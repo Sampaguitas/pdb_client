@@ -236,8 +236,7 @@ class TransportDocuments extends React.Component {
             projectId:'',
             screenId: '5cd2b643fd333616dc360b66',
             unlocked: false,
-            screen: 'inspection',
-            loaded: false,             
+            screen: 'inspection',          
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
@@ -325,7 +324,6 @@ class TransportDocuments extends React.Component {
             screen, 
             screenId, 
             unlocked, 
-            loaded 
         }= this.state;
 
         const { accesses, alert, fieldnames, fields, pos, selection } = this.props;

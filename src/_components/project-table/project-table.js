@@ -102,16 +102,6 @@ function doesMatch(search, array, type) {
     }
 }
 
-// function returnScreenHeaders(fieldnames.items, screenId) {
-//     if (fieldnames.items) {
-//         return fieldnames.items.filter(function(element) {
-//             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-//         });
-//     } else {
-//         return [];
-//     }
-// }
-
 class ProjectTable extends Component {
     constructor(props) {
         super(props);
@@ -158,8 +148,9 @@ class ProjectTable extends Component {
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.filterName = this.filterName.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
-        this.matchingHeader = this.matchingHeader.bind(this);
-        this.MatchingRow = this.MatchingRow.bind(this);
+        this.generateHeader = this.generateHeader.bind(this);
+        this.generateBody = this.generateBody.bind(this);
+        // this.matchingRow = this.matchingRow.bind(this);
         this.toggleModalSettings = this.toggleModalSettings.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
@@ -257,37 +248,18 @@ class ProjectTable extends Component {
         });
     }
 
-    
-
     handleChangeHeader(event) {
-        event.preventDefault();
+        // event.preventDefault();
         const target = event.target;
         const name = target.name;
         const { header } = this.state;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
-            // ...this.state,
+            ...this.state,
             header:{
                 ...header,
                 [name]: value
-            } 
-        }, () => {
-            // for (const prop in header) {
-            //     //console.log(`header.${prop} = ${header[prop]}`);
-            //     var found =  this.props.screenHeaders.find(function (element) {
-            //         return _.isEqual(element.fieldId, prop)
-            //     })
-            //     console.log('header[prop]:', header[prop])
-            //     console.log('found.fields.name:', found.fields.name);
-            //     console.log('type:', found.fields.type);
-            //     let matchingElement = this.props.screenBodys.filter(function (element) {
-            //         return _.isEqual(element.fileds.fieldName, found.fields.name)
-            //     });
-            //     console.log(matchingElement);
-            // }
-            // console.log('screenHeaders:', this.props.screenHeaders);
-            // console.log('screenBodys:', this.props.screenBodys)
-            // console.log('header:', this.state.header);
+            }
         });
     }
 
@@ -329,33 +301,6 @@ class ProjectTable extends Component {
         }
     }
 
-    filterName(array){
-        const {header} = this.state;
-        const { screenHeaders } = this.props
-        if (array) {
-            return array;
-        //   return array.filter(function (element) {
-        //     for (const prop in header) {
-        //         var found =  screenHeaders.find(function (e) {
-        //             return _.isEqual(e.fieldId, prop)
-        //         });
-        //         return (doesMatch(header[prop], element.fieldValue, found.fields.type))
-        //     }
-            // return (doesMatch(selectedTemplate, element.docdefId, 'Id')
-            // && doesMatch(worksheet, element.worksheet, 'Select')
-            // && doesMatch(location, element.location, 'Select')
-            // && doesMatch(row, element.row, 'Number')
-            // && doesMatch(col, element.col, 'Number')
-            // && element.fields && doesMatch(custom, element.fields.custom, 'String')
-            // );
-        //   });
-        } else {
-            return [];
-        }
-    }
-
-    
-
     updateSelectedRows(id) {
         const { selectedRows } = this.state;
         console.log(selectedRows);
@@ -372,76 +317,102 @@ class ProjectTable extends Component {
         }       
     }
 
-    matchingHeader(screenHeader, header){
-        switch (screenHeader.fields.type) {
-            case "String":
-                return ( 
-                    <HeaderInput
-                        type="text"
-                        title={screenHeader.fields.custom}
-                        name={screenHeader.fieldId}
-                        value={header[screenHeader.fieldId]}
-                        onChange={this.handleChangeHeader}
-                        key={screenHeader._id}
-                    />
-                );
-            case "Number":
-                return ( 
-                    <HeaderInput
-                        type="number"
-                        title={screenHeader.fields.custom}
-                        name={screenHeader.fieldId}
-                        value={header[screenHeader.fieldId]}
-                        onChange={this.handleChangeHeader}
-                        key={screenHeader._id}
-                    />
-                );
-            default: 
-                return ( 
-                    <HeaderInput
-                        type="text"
-                        title={screenHeader.fields.custom}
-                        name={screenHeader.fieldId}
-                        value={header[screenHeader.fieldId]}
-                        onChange={this.handleChangeHeader}
-                        key={screenHeader._id}
-                    />
-                );                                                                                                  
-        }        
+    filterName(array){
+        const {header} = this.state;
+        const { screenHeaders } = this.props
+        if (array) {
+            return array.filter(function (element) {
+                let conditionMet = true;
+                for (const prop in header) {
+                    var fieldName =  screenHeaders.find(function (el) {
+                        return _.isEqual(el._id, prop)
+                    });
+                    let matchingCol = element.fields.find(function (col) {
+                        return _.isEqual(col.fieldName, fieldName.fields.name);
+                    });
+                    if (!doesMatch(header[prop], matchingCol.fieldValue, fieldName.fields.type)) {
+                        conditionMet = false;
+                    }
+                }
+                return conditionMet;
+            });
+        } else {
+            return [];
+        }
     }
 
-    MatchingRow(screenBody) {
+    
+
+    generateHeader(screenHeaders) {
+        const {header, selectAllRows} = this.state;
+        const tempInputArray = []
+        
+        screenHeaders.map(screenHeader => {
+            tempInputArray.push(
+                <HeaderInput
+                    type= {screenHeader.fields.type === 'Number' ? 'number' : 'text' }
+                    title={screenHeader.fields.custom}
+                    // name={screenHeader.fieldId}
+                    name={screenHeader._id}
+                    // value={header[screenHeader.fieldId]}
+                    value={header[screenHeader._id]}
+                    onChange={this.handleChangeHeader}
+                    key={screenHeader._id}
+                />
+            );
+        });
+
+        return (
+            <tr>
+                <TableSelectionAllRow
+                    checked={selectAllRows}
+                    onChange={this.toggleSelectAllRow}
+                />
+                {tempInputArray}
+            </tr>
+        );
+
+    }
+
+    generateBody(screenBodys) {
         const { unlocked } = this.props;
         const { selectAllRows } = this.state;
-        return (
-            <tr key={screenBody._id}>
-                <TableSelectionRow
-                    id={screenBody._id}
-                    selectAllRows={selectAllRows}
-                    callback={this.updateSelectedRows}
-                />
-                {screenBody.fields.map(function (field, index) {
-                    if (field.objectId) {
-                        return (
-                            <TableInput
-                                collection={field.collection}
-                                objectId={field.objectId}
-                                fieldName={field.fieldName}
-                                fieldValue={field.fieldValue}
-                                disabled={field.disabled}
-                                unlocked={unlocked}
-                                align={field.align}
-                                fieldType={field.fieldType}
-                                textNoWrap={true}
-                                key={index}
-                            />
-                        );                        
-                    } else {
-                        return <td key={index}></td>
-                    }
-                })}
-            </tr>
-        )
+        let tempRows = [];
+
+        this.filterName(screenBodys).map(screenBody => {
+            let tempCol = [];
+            screenBody.fields.map(function (field, index) {
+                if (field.objectId) {
+                    tempCol.push(
+                        <TableInput
+                            collection={field.collection}
+                            objectId={field.objectId}
+                            fieldName={field.fieldName}
+                            fieldValue={field.fieldValue}
+                            disabled={field.disabled}
+                            unlocked={unlocked}
+                            align={field.align}
+                            fieldType={field.fieldType}
+                            textNoWrap={true}
+                            key={index}
+                        />
+                    );                        
+                } else {
+                    tempCol.push(<td key={index}></td>) 
+                }
+            });
+            tempRows.push(
+                <tr key={screenBody._id}>
+                    <TableSelectionRow
+                        id={screenBody._id}
+                        selectAllRows={selectAllRows}
+                        callback={this.updateSelectedRows}
+                    />
+                    {tempCol}
+                </tr>
+            );
+        });
+        return tempRows;
     }
 
     toggleModalSettings() {
@@ -466,7 +437,6 @@ class ProjectTable extends Component {
             }
         });
     }
-
 
     handleModalTabClick(event, tab){
         event.preventDefault();
@@ -521,7 +491,6 @@ class ProjectTable extends Component {
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
                 if (!responce.ok) {
-                    // console.log('responce not ok');
                     if (responce.status === 401) {
                         localStorage.removeItem('user');
                         location.reload(true);
@@ -632,26 +601,20 @@ class ProjectTable extends Component {
                         <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
                     </button>
                 </div>
+
                 <div className="row ml-1 full-height" style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd'}}>
                     <div className="table-responsive custom-table-container custom-table-container__fixed-row" > 
                         <table className="table table-bordered table-sm text-nowrap table-striped" id="myProjectTable">
                             <thead>                                   
-                                {screenHeaders && (
-                                    <tr>
-                                        <TableSelectionAllRow
-                                            checked={selectAllRows}
-                                            onChange={this.toggleSelectAllRow}
-                                        />
-                                        {screenHeaders.map(screenHeader => this.matchingHeader(screenHeader, header))}
-                                    </tr>
-                                )}
+                                {screenHeaders && this.generateHeader(screenHeaders)}
                             </thead>                                
                             <tbody className="full-height">
-                                {screenBodys && this.filterName(screenBodys).map(screenBody => this.MatchingRow(screenBody))}
+                                {screenBodys && this.generateBody(screenBodys)}
                             </tbody>
                         </table>
                     </div>
                 </div>
+
                 <Modal
                     show={showModalSettings}
                     hideModal={this.toggleModalSettings}
@@ -685,6 +648,7 @@ class ProjectTable extends Component {
                         </div>
                     </div>
                 </Modal>
+
                 <Modal
                     show={showModalUpload}
                     hideModal={this.toggleModalUpload}
@@ -764,7 +728,6 @@ class ProjectTable extends Component {
                     </div>
                 </Modal>
                 
-
             </div>
         );
     }
