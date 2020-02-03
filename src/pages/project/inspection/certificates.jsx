@@ -51,16 +51,6 @@ function arraySorted(array, fieldOne, fieldTwo, fieldThree) {
     }
 }
 
-function returnScreenHeaders(fieldnames, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        return fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-        });
-    } else {
-        return [];
-    }
-}
-
 function getScreenTbls (fieldnames) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         return fieldnames.items.reduce(function (accumulator, currentValue) {
@@ -83,6 +73,161 @@ function getInputType(dbFieldType) {
     }
 }
 
+function generateScreenHeader(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        return fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        });
+    } else {
+        return [];
+    }
+}
+
+function generateScreenBody(screenId, fieldnames, pos){
+    let arrayBody = [];
+    let arrayRow = [];
+    let objectRow = {};
+    let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
+    let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
+    let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
+    let i = 1;
+    if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
+        pos.items.map(po => {
+            if (po.subs) {
+                po.subs.map(sub => {
+                    if (!_.isEmpty(sub.packitems) && hasPackitems) {
+                        sub.packitems.map(packitem => {
+                            arrayRow = [];
+                            screenHeaders.map(screenHeader => {
+                                switch(screenHeader.fields.fromTbl) {
+                                    case 'po':
+                                        arrayRow.push({
+                                            collection: 'po',
+                                            objectId: po._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                        break;
+                                    case 'sub':
+                                        arrayRow.push({
+                                            collection: 'sub',
+                                            objectId: sub._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: sub[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                        break;
+                                    case 'packitem':
+                                        arrayRow.push({
+                                            collection: 'packitem',
+                                            objectId: packitem._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: packitem[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                        break;
+                                    default: arrayRow.push({}); 
+                                }
+                            });
+                            objectRow  = { _id: i, fields: arrayRow }
+                            arrayBody.push(objectRow);
+                            i++;
+                        })
+                    } else if (!_.isEmpty(sub.certificates) && hasCertificates){
+                        sub.certificates.map(certificate => {
+                            arrayRow = [];
+                            screenHeaders.map(screenHeader => {
+                                switch(screenHeader.fields.fromTbl) {
+                                    case 'po':
+                                        arrayRow.push({
+                                            collection: 'po',
+                                            objectId: po._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                        break;
+                                    case 'sub':
+                                        arrayRow.push({
+                                            collection: 'sub',
+                                            objectId: sub._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: sub[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                        break;
+                                    case 'certificate':
+                                        arrayRow.push({
+                                            collection: 'certificate',
+                                            objectId: certificate._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: certificate[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                        break;
+                                    default: arrayRow.push({}); 
+                                }
+                            });
+                            objectRow  = { _id: i, fields: arrayRow }
+                            arrayBody.push(objectRow);
+                            i++;
+                        });
+                    } else {
+                        arrayRow = [];
+                        screenHeaders.map(screenHeader => {
+                            switch(screenHeader.fields.fromTbl) {
+                                case 'po':
+                                    arrayRow.push({
+                                        collection: 'po',
+                                        objectId: po._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: po[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                    break;
+                                case 'sub':
+                                    arrayRow.push({
+                                        collection: 'sub',
+                                        objectId: sub._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: sub[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                    break;
+                                default: arrayRow.push({}); 
+                            }
+                        });
+                        objectRow  = { _id: i, fields: arrayRow }
+                        arrayBody.push(objectRow);
+                        i++;
+                    }
+                })
+            }
+        });
+        return arrayBody;
+    } else {
+        return [];
+    }
+    
+}
+
 
 class Certificates extends React.Component {
     constructor(props) {
@@ -92,13 +237,11 @@ class Certificates extends React.Component {
             screenId: '5cd2b642fd333616dc360b65',
             unlocked: false,
             screen: 'certificates',
-            // screenBodys: [],
             loaded: false,  
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
-        this.testBodys = this.testBodys.bind(this);
     }
 
     componentDidMount() {
@@ -153,7 +296,6 @@ class Certificates extends React.Component {
 
         var qs = queryString.parse(location.search);
         if (qs.id) {
-            //State items with projectId
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
@@ -182,165 +324,17 @@ class Certificates extends React.Component {
         });
     }
 
-    testBodys(fieldnames, pos){
-        const { screenId, unlocked } = this.state;
-        let arrayBody = [];
-        let arrayRow = [];
-        let objectRow = {};
-        let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
-        let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
-        let screenHeaders = arraySorted(returnScreenHeaders(fieldnames, screenId), 'forShow');
-        let i = 1;
-        if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
-            pos.items.map(po => {
-                if (po.subs) {
-                    po.subs.map(sub => {
-                        if (!_.isEmpty(sub.packitems) && hasPackitems) {
-                            sub.packitems.map(packitem => {
-                                arrayRow = [];
-                                screenHeaders.map(screenHeader => {
-                                    switch(screenHeader.fields.fromTbl) {
-                                        case 'po':
-                                            arrayRow.push({
-                                                collection: 'po',
-                                                objectId: po._id,
-                                                fieldName: screenHeader.fields.name,
-                                                fieldValue: po[screenHeader.fields.name],
-                                                disabled: screenHeader.edit,
-                                                align: screenHeader.align,
-                                                fieldType: getInputType(screenHeader.fields.type),
-                                            });
-                                            break;
-                                        case 'sub':
-                                            arrayRow.push({
-                                                collection: 'sub',
-                                                objectId: sub._id,
-                                                fieldName: screenHeader.fields.name,
-                                                fieldValue: sub[screenHeader.fields.name],
-                                                disabled: screenHeader.edit,
-                                                align: screenHeader.align,
-                                                fieldType: getInputType(screenHeader.fields.type),
-                                            });
-                                            break;
-                                        case 'packitem':
-                                            arrayRow.push({
-                                                collection: 'packitem',
-                                                objectId: packitem._id,
-                                                fieldName: screenHeader.fields.name,
-                                                fieldValue: packitem[screenHeader.fields.name],
-                                                disabled: screenHeader.edit,
-                                                align: screenHeader.align,
-                                                fieldType: getInputType(screenHeader.fields.type),
-                                            });
-                                            break;
-                                        default: arrayRow.push({}); 
-                                    }
-                                });
-                                objectRow  = { _id: i, fields: arrayRow }
-                                arrayBody.push(objectRow);
-                                i++;
-                            })
-                        } else if (!_.isEmpty(sub.certificates) && hasCertificates){
-                            sub.certificates.map(certificate => {
-                                arrayRow = [];
-                                screenHeaders.map(screenHeader => {
-                                    switch(screenHeader.fields.fromTbl) {
-                                        case 'po':
-                                            arrayRow.push({
-                                                collection: 'po',
-                                                objectId: po._id,
-                                                fieldName: screenHeader.fields.name,
-                                                fieldValue: po[screenHeader.fields.name],
-                                                disabled: screenHeader.edit,
-                                                align: screenHeader.align,
-                                                fieldType: getInputType(screenHeader.fields.type),
-                                            });
-                                            break;
-                                        case 'sub':
-                                            arrayRow.push({
-                                                collection: 'sub',
-                                                objectId: sub._id,
-                                                fieldName: screenHeader.fields.name,
-                                                fieldValue: sub[screenHeader.fields.name],
-                                                disabled: screenHeader.edit,
-                                                align: screenHeader.align,
-                                                fieldType: getInputType(screenHeader.fields.type),
-                                            });
-                                            break;
-                                        case 'certificate':
-                                            arrayRow.push({
-                                                collection: 'certificate',
-                                                objectId: certificate._id,
-                                                fieldName: screenHeader.fields.name,
-                                                fieldValue: certificate[screenHeader.fields.name],
-                                                disabled: screenHeader.edit,
-                                                align: screenHeader.align,
-                                                fieldType: getInputType(screenHeader.fields.type),
-                                            });
-                                            break;
-                                        default: arrayRow.push({}); 
-                                    }
-                                });
-                                objectRow  = { _id: i, fields: arrayRow }
-                                arrayBody.push(objectRow);
-                                i++;
-                            });
-                        } else {
-                            arrayRow = [];
-                            screenHeaders.map(screenHeader => {
-                                switch(screenHeader.fields.fromTbl) {
-                                    case 'po':
-                                        arrayRow.push({
-                                            collection: 'po',
-                                            objectId: po._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: po[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                        break;
-                                    case 'sub':
-                                        arrayRow.push({
-                                            collection: 'sub',
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                        break;
-                                    default: arrayRow.push({}); 
-                                }
-                            });
-                            objectRow  = { _id: i, fields: arrayRow }
-                            arrayBody.push(objectRow);
-                            i++;
-                        }
-                    })
-                }
-            });
-            return arrayBody;
-        } else {
-            return [];
-        }
-        
-    }
-
     render() {
         const { 
             projectId, 
             screen, 
             screenId, 
-            // screenBodys, 
             unlocked, 
             loaded 
         }= this.state;
         
         const { accesses, alert, fieldnames, fields, pos, selection } = this.props;
 
-        // {pos.items && fieldnames.items && loaded == false && this.testBodys()}
         return (
             <Layout alert={alert} accesses={accesses}>
                 {alert.message && 
@@ -355,16 +349,14 @@ class Certificates extends React.Component {
                 <div id="certificates" className="full-height">
                     {selection && selection.project && 
                         <ProjectTable
-                            screenHeaders={arraySorted(returnScreenHeaders(fieldnames, screenId), "forShow")}
-                            // screenBodys={screenBodys}
-                            screenBodys={this.testBodys(fieldnames, pos)}
+                            screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
+                            screenBodys={generateScreenBody(screenId, fieldnames, pos)}
                             projectId={projectId}
                             screenId={screenId}
                             handleSelectionReload={this.handleSelectionReload}
                             toggleUnlock={this.toggleUnlock}
                             unlocked={unlocked}
                             screen={screen}
-                            // screenBodys={screenBodys}
                             fieldnames={fieldnames}
                             fields={fields}
                         />

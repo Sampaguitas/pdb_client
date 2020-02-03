@@ -310,23 +310,23 @@ class ProjectTable extends Component {
     }
 
     toggleSelectAllRow() {
-        // const { selectAllRows } = this.state;
-        // const { docfields } = this.props;
-        // if (docfields.items) {
-        //     if (selectAllRows) {
-        //         this.setState({
-        //             ...this.state,
-        //             selectedRows: [],
-        //             selectAllRows: false
-        //         });
-        //     } else {
-        //         this.setState({
-        //             ...this.state,
-        //             selectedRows: this.filterName(docfields.items).map(s => s._id),
-        //             selectAllRows: true
-        //         });
-        //     }         
-        // }
+        const { selectAllRows } = this.state;
+        const { screenBodys } = this.props;
+        if (!_.isEmpty(screenBodys)) {
+            if (selectAllRows) {
+                this.setState({
+                    ...this.state,
+                    selectedRows: [],
+                    selectAllRows: false
+                });
+            } else {
+                this.setState({
+                    ...this.state,
+                    selectedRows: this.filterName(screenBodys).map(s => s._id),
+                    selectAllRows: true
+                });
+            }         
+        }
     }
 
     filterName(array){
@@ -358,6 +358,7 @@ class ProjectTable extends Component {
 
     updateSelectedRows(id) {
         const { selectedRows } = this.state;
+        console.log(selectedRows);
         if (selectedRows.includes(id)) {
             this.setState({
                 ...this.state,
