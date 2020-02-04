@@ -106,30 +106,23 @@ function doesMatch(search, array, type, isEqual) {
             case 'Id':
                 return _.isEqual(search, array);
             case 'String':
-                // search = search.replace(/([()[{*+.$^\\|?])/g, "");
-                // return !!array.match(new RegExp(search, "i"));
                 if(isEqual) {
                     return _.isEqual(array.toUpperCase(), search.toUpperCase());
                 } else {
                     return array.toUpperCase().includes(search.toUpperCase());
                 }
             case 'Date':
-                // search = search.replace(/([()[{*+.$^\\|?])/g, "");
-                // return !!array.match(new RegExp(search, "i"));
                 if (isEqual) {
                     return _.isEqual(TypeToString(array, 'date', getDateFormat(myLocale)), search);
                 } else {
                     return TypeToString(array, 'date', getDateFormat(myLocale)).includes(search);
                 }
             case 'Number':
-                // search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
-                // return !!String(array).match(new RegExp(search, "i"));
                 if (isEqual) {
                     return _.isEqual( Intl.NumberFormat().format(array).toString(), Intl.NumberFormat().format(search).toString());
                 } else {
                     return Intl.NumberFormat().format(array).toString().includes(Intl.NumberFormat().format(search).toString());
                 }
-                //return array == Number(search);
             case 'Boolean':
                 if(search == 'any') {
                     return true; //any or equal
