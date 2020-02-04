@@ -240,11 +240,9 @@ class ProjectTable extends Component {
         let tmpObj = this.state.header;
         Object.keys(tmpObj).forEach(function(index) {
             tmpObj[index] = ''
-        }, () => {
-            this.setState({
-                ...this.state,
-                header: tmpObj
-            });
+        });
+        this.setState({
+            header: tmpObj
         });
     }
 
@@ -568,7 +566,7 @@ class ProjectTable extends Component {
         
         const { 
             header,
-            selectAllRows, 
+            selectAllRows,
             showModalSettings, 
             showModalUpload, 
             tabs,
@@ -670,7 +668,7 @@ class ProjectTable extends Component {
                                 onSubmit={this.handleUploadFile}
                                 onKeyPress={this.onKeyPress}
                                 style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
-                            >   {/* Modal Body */}
+                            >
 
                                 <div className="input-group">
                                     <div className="input-group-prepend">
