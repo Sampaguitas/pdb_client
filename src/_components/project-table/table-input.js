@@ -8,7 +8,6 @@ import moment from 'moment';
 
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-//const locale = //ja-JP, fr-FR, en-US, en-GB, nl
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
 const myLocale = Intl.DateTimeFormat(locale, options);
 
@@ -53,8 +52,6 @@ function TypeToString (fieldValue, fieldType, myDateFormat) {
     } else {
         return '';
     }
-    
-    //return String(Intl.DateTimeFormat(locale, options).format(new Date(fieldValue)));
 }
 
 function StringToType (fieldValue, fieldType, myDateFormat) {
