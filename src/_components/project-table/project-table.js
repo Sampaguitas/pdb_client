@@ -640,7 +640,7 @@ class ProjectTable extends Component {
                         <span><FontAwesomeIcon icon="filter" className="far fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" onClick={event => this.toggleEqual(event)} style={{width: '40px', height: '40px'}}>
-                        <span><FontAwesomeIcon icon={isEqual ? 'equals' : 'not-equal'} className="far fa-2x"/></span>
+                        <span><FontAwesomeIcon icon={isEqual ? 'equals' : 'brackets-curly'} className="far fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" onClick={event => handleSelectionReload(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="sync-alt" className="far fa-2x"/></span>
