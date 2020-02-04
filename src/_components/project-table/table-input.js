@@ -8,7 +8,7 @@ import moment from 'moment';
 
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-// const locale = 'en-US'
+//const locale = //ja-JP, fr-FR, en-US, en-GB, nl
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
 const myLocale = Intl.DateTimeFormat(locale, options);
 
@@ -137,7 +137,6 @@ class TableInput extends Component{
 
     onKeyDown(event) {
         const { isEditing } = this.state;
-        console.log('toto');
         if (event.keyCode === 38 || event.keyCode === 40 || event.keyCode === 9 || event.keyCode === 13){ //up //down //tab //enter
             this.onBlur(event);  
         } else if (!isEditing && (event.keyCode === 37 || event.keyCode === 39)) { //left //right
