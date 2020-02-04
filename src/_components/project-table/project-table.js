@@ -23,6 +23,44 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import { AST_SwitchBranch } from 'terser';
 import { isThisISOWeek } from 'date-fns/esm';
+import moment from 'moment';
+
+const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
+const myLocale = Intl.DateTimeFormat(locale, options);
+
+function getDateFormat(myLocale) {
+    let tempDateFormat = ''
+    myLocale.formatToParts().map(function (element) {
+        switch(element.type) {
+            case 'month': 
+                tempDateFormat = tempDateFormat + 'MM';
+                break;
+            case 'literal': 
+                tempDateFormat = tempDateFormat + element.value;
+                break;
+            case 'day': 
+                tempDateFormat = tempDateFormat + 'DD';
+                break;
+            case 'year': 
+                tempDateFormat = tempDateFormat + 'YYYY';
+                break;
+        }
+    });
+    return tempDateFormat;
+}
+
+function TypeToString (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
 
 function baseTen(number) {
     return number.toString().length > 2 ? number : '0' + number;
@@ -58,7 +96,7 @@ function arraySorted(array, field) {
     }
 }
 
-function doesMatch(search, array, type) {
+function doesMatch(search, array, type, isEqual) {
     if (!search) {
         return true;
     } else if (!array && search != 'any' && search != 'false') {
@@ -68,20 +106,31 @@ function doesMatch(search, array, type) {
             case 'Id':
                 return _.isEqual(search, array);
             case 'String':
-                search = search.replace(/([()[{*+.$^\\|?])/g, "");
-                return !!array.match(new RegExp(search, "i"));
+                // search = search.replace(/([()[{*+.$^\\|?])/g, "");
+                // return !!array.match(new RegExp(search, "i"));
+                if(isEqual) {
+                    return _.isEqual(array.toUpperCase(), search.toUpperCase());
+                } else {
+                    return array.toUpperCase().includes(search.toUpperCase());
+                }
+            case 'Date':
+                // search = search.replace(/([()[{*+.$^\\|?])/g, "");
+                // return !!array.match(new RegExp(search, "i"));
+                if (isEqual) {
+                    return _.isEqual(TypeToString(array, 'date', getDateFormat(myLocale)), search);
+                } else {
+                    return TypeToString(array, 'date', getDateFormat(myLocale)).includes(search);
+                }
             case 'Number':
-                search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
-                return !!String(array).match(new RegExp(search, "i"));
+                // search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
+                // return !!String(array).match(new RegExp(search, "i"));
+                if (isEqual) {
+                    return _.isEqual( Intl.NumberFormat().format(array).toString(), Intl.NumberFormat().format(search).toString());
+                } else {
+                    return Intl.NumberFormat().format(array).toString().includes(Intl.NumberFormat().format(search).toString());
+                }
                 //return array == Number(search);
             case 'Boolean':
-                // if (Number(search) == 1) {
-                //     return true; //any
-                // } else if (Number(search) == 2) {
-                //     return !!array == 1; //true
-                // } else if (Number(search) == 3) {
-                //     return !!array == 0; //false
-                // }
                 if(search == 'any') {
                     return true; //any or equal
                 } else if (search == 'true' && !!array) {
@@ -110,6 +159,7 @@ class ProjectTable extends Component {
             selectedRows: [],
             selectAllRows: false,
             showModalSettings: false,
+            isEqual: false,
             showModalUpload: false,
             tabs: [
                 {
@@ -146,6 +196,7 @@ class ProjectTable extends Component {
         this.onBlurRow = this.onBlurRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
+        this.toggleEqual = this.toggleEqual.bind(this);
         this.filterName = this.filterName.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.generateHeader = this.generateHeader.bind(this);
@@ -299,6 +350,14 @@ class ProjectTable extends Component {
         }
     }
 
+    toggleEqual(event) {
+        event.preventDefault();
+        const { isEqual } = this.state;
+        this.setState({
+            isEqual: !isEqual
+        });
+    }
+
     updateSelectedRows(id) {
         const { selectedRows } = this.state;
         console.log(selectedRows);
@@ -316,7 +375,7 @@ class ProjectTable extends Component {
     }
 
     filterName(array){
-        const {header} = this.state;
+        const {header, isEqual} = this.state;
         const { screenHeaders } = this.props
         if (array) {
             return array.filter(function (element) {
@@ -328,7 +387,7 @@ class ProjectTable extends Component {
                     let matchingCol = element.fields.find(function (col) {
                         return _.isEqual(col.fieldName, fieldName.fields.name);
                     });
-                    if (!doesMatch(header[prop], matchingCol.fieldValue, fieldName.fields.type)) {
+                    if (!doesMatch(header[prop], matchingCol.fieldValue, fieldName.fields.type, isEqual)) {
                         conditionMet = false;
                     }
                 }
@@ -568,7 +627,8 @@ class ProjectTable extends Component {
             header,
             selectAllRows,
             showModalSettings, 
-            showModalUpload, 
+            showModalUpload,
+            isEqual, 
             tabs,
             fileName,
             responce,
@@ -585,6 +645,9 @@ class ProjectTable extends Component {
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" onClick={event => this.resetHeaders(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="filter" className="far fa-2x"/></span>
+                    </button>
+                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.toggleEqual(event)} style={{width: '40px', height: '40px'}}>
+                        <span><FontAwesomeIcon icon={isEqual ? 'equals' : 'not-equal'} className="far fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" onClick={event => handleSelectionReload(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="sync-alt" className="far fa-2x"/></span>
