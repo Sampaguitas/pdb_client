@@ -312,9 +312,9 @@ class PackingDetails extends React.Component {
     }
 
     refreshStore() {
-        const { dispatch, loadingPos } = this.props;
+        const { dispatch } = this.props;
         const { projectId } = this.state;
-        if (projectId && !loadingPos) {
+        if (projectId) {
             dispatch(poActions.getAll(projectId));
         }
     }

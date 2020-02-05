@@ -617,7 +617,8 @@ class ProjectTable extends Component {
             toggleUnlock, 
             screenHeaders, 
             screenBodys, 
-            unlocked 
+            unlocked,
+            refreshStore
         } = this.props;
         
         const { 
@@ -640,7 +641,7 @@ class ProjectTable extends Component {
                     <button className="btn btn-outline-leeuwen-blue" title="Configs" onClick={event => this.toggleModalSettings(event)} style={{width: '40px', height: '40px'}}> 
                         <span><FontAwesomeIcon icon="cog" className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" title="Refresh" onClick={event => handleSelectionReload(event)} style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" title="Refresh" onClick={refreshStore} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="sync-alt" className="far fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title="Clear Filters" onClick={event => this.resetHeaders(event)} style={{width: '40px', height: '40px'}}>

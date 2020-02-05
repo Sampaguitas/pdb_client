@@ -195,25 +195,25 @@ class Configuration extends React.Component {
     }
 
     refreshDocfields() {
-        const { dispatch, loadingDocfields } = this.props;
+        const { dispatch } = this.props;
         const { projectId } = this.state;
-        if (projectId && !loadingDocfields) {
+        if (projectId) {
             dispatch(docfieldActions.getAll(projectId));
         }
     }
 
     refreshFieldnames() {
-        const { dispatch, loadingFieldnames } = this.props;
+        const { dispatch } = this.props;
         const { projectId } = this.state;
-        if (projectId && !loadingFieldnames) {
+        if (projectId) {
             dispatch(fieldnameActions.getAll(projectId));
         }
     }
 
     refreshFields() {
-        const { dispatch, loadingFields } = this.props;
+        const { dispatch } = this.props;
         const { projectId } = this.state;
-        if (projectId && !loadingFields) {
+        if (projectId) {
             dispatch(fieldActions.getAll(projectId));
         }
     }

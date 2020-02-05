@@ -121,7 +121,6 @@ class TableInput extends Component{
     }
 
     componentWillReceiveProps(nextProps) {
-        // const { unlocked, disabled } = this.props;
         if(!_.isEqual(nextProps.fieldValue, this.props.fieldValue)) {
             this.setState({
                 collection: nextProps.collection,
@@ -190,7 +189,6 @@ class TableInput extends Component{
         
         if ((unlocked || !disabled) && collection && objectId && fieldName) {
             if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
-                console.log('not valid format');
                 this.setState({
                     ...this.state,
                     isEditing: false,
@@ -206,7 +204,6 @@ class TableInput extends Component{
                     }, 1000);
                 });
             } else if (_.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)))){
-                console.log('field value = this.props.fieldValue');
                 this.setState({
                     ...this.state,
                     isEditing: false,
@@ -214,7 +211,6 @@ class TableInput extends Component{
                     color: '#0070C0',
                 });
             } else {
-                console.log('API Call');
                 const requestOptions = {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -249,7 +245,6 @@ class TableInput extends Component{
                     
                 })
                 .catch( () => {
-                    console.log('Catch');
                     this.setState({
                         ...this.state,
                         isEditing: false,
