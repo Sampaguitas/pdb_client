@@ -155,7 +155,7 @@ class TableInput extends Component{
     onClick() {
         const { disabled, unlocked } = this.props;
         const { isSelected, fieldValue, fieldType } = this.state;
-        if(unlocked || !disabled){
+        // if(unlocked || !disabled){
             if(!isSelected) {
                 this.setState({isSelected: true}, () => {
                     setTimeout(() => {
@@ -169,7 +169,7 @@ class TableInput extends Component{
                     }, 1);
                 });
             }
-        }
+        // }
     }
 
     onBlur(event){
@@ -221,7 +221,7 @@ class TableInput extends Component{
                         isEditing: false,
                         isSelected: false,
                         color: 'red',
-                        fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, myDateFormat) : '',
+                        fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
                     }, () => {
                         setTimeout(() => {
                             this.setState({
@@ -237,6 +237,15 @@ class TableInput extends Component{
                 ...this.state,
                 isEditing: false,
                 isSelected: false,
+                color: 'red',
+                fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
+            }, () => {
+                setTimeout(() => {
+                    this.setState({
+                        ...this.state,
+                        color: '#0070C0',
+                    });
+                }, 1000);
             });
         }
     }
@@ -280,45 +289,37 @@ class TableInput extends Component{
             }
         )
 
-        return isSelected ? (
+        return (
             <td
                 onClick={() => this.onClick()}
                 style={{
+                    color: isSelected ? 'inherit' : disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color,
                     width: `${width ? width : 'auto'}`,
-                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
-                    padding: '0px',
-                    cursor: unlocked ? 'pointer' : disabled ? 'auto' : 'pointer'
-                }}
-                className={tdClasses}
-            >
-                <input
-                    ref='input'
-                    className="form-control table-input"
-                    type={fieldType === 'number' ? 'number' : 'text'}
-                    name='fieldValue'
-                    value={fieldValue}
-                    onChange={this.onChange}
-                    onBlur={this.onBlur}
-                    disabled={unlocked ? false : disabled}
-                    onKeyDown={event => this.onKeyDown(event)}
-                    placeholder={fieldType === 'date' ? getDateFormat(myLocale) : ''}
-                />
-            </td>
-        ):
-        (
-            <td 
-                onClick={() => this.onClick()}
-                style={{
-                    color: disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color, //disabled ? !unlocked ? color != '#0070C0' ? color : '#A8052C' : 'inherit' : color
-                    width: `${width ? width : 'auto'}`,
-                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
-                    cursor: unlocked ? 'pointer' : disabled ? 'auto' : 'pointer'
+                    whiteSpace: `${textNoWrap ? 'nowrap' : 'normal'}`,
+                    padding: isSelected ? '0px': '5px',
+                    cursor: isSelected ? 'auto' : 'pointer'
                 }}
                 className={tdClasses}
                 align={align ? align : 'left'}
             >
-                <span>{this.formatText(fieldValue, fieldType)}</span>
-            </td> //onDoubleClick
+                {isSelected ?
+                    <input
+                        ref='input'
+                        className="form-control table-input"
+                        type={fieldType === 'number' ? 'number' : 'text'}
+                        name='fieldValue'
+                        value={fieldValue}
+                        onChange={this.onChange}
+                        onBlur={this.onBlur}
+                        // disabled={unlocked ? false : disabled}
+                        onKeyDown={event => this.onKeyDown(event)}
+                        placeholder={fieldType === 'date' ? getDateFormat(myLocale) : ''}
+                    />
+                :
+                    <span>{this.formatText(fieldValue, fieldType)}</span>
+                }
+
+            </td>
         );
     }
 }

@@ -212,7 +212,9 @@ class ProjectTable extends Component {
         const table = document.getElementById('myProjectTable');
         table.addEventListener('keydown', (e) => { 
             if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n }))
+            // if(arrowKeys.some((k) => { return e.keyCode === k })) 
             {
+                console.log(document.activeElement);
                 // console.log('e.keyCode:', e.keyCode);
                 // e.preventDefault();
                 return this.keyHandler(e);
