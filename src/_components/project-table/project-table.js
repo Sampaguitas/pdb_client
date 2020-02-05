@@ -633,25 +633,25 @@ class ProjectTable extends Component {
         return (
             <div className="full-height">
                 <div className="btn-group-vertical pull-right" style={{marginLeft: '5px'}}>
-                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.toggleModalSettings(event)} style={{width: '40px', height: '40px'}}> 
+                    <button className="btn btn-outline-leeuwen-blue" title="Configs" onClick={event => this.toggleModalSettings(event)} style={{width: '40px', height: '40px'}}> 
                         <span><FontAwesomeIcon icon="cog" className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.resetHeaders(event)} style={{width: '40px', height: '40px'}}>
-                        <span><FontAwesomeIcon icon="filter" className="far fa-2x"/></span>
-                    </button>
-                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.toggleEqual(event)} style={{width: '40px', height: '40px'}}>
-                        <span><FontAwesomeIcon icon={isEqual ? 'equals' : 'brackets-curly'} className="far fa-2x"/></span>
-                    </button>
-                    <button className="btn btn-outline-leeuwen-blue" onClick={event => handleSelectionReload(event)} style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" title="Refresh" onClick={event => handleSelectionReload(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="sync-alt" className="far fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" onClick={event => toggleUnlock(event)} style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" title="Clear Filters" onClick={event => this.resetHeaders(event)} style={{width: '40px', height: '40px'}}>
+                        <span><FontAwesomeIcon icon="filter" className="far fa-2x"/></span>
+                    </button>
+                    <button className="btn btn-outline-leeuwen-blue" title={isEqual ? 'Equal (Filters)' : 'Contain (Filters)'} onClick={event => this.toggleEqual(event)} style={{width: '40px', height: '40px'}}>
+                        <span><FontAwesomeIcon icon={isEqual ? 'equals' : 'brackets-curly'} className="far fa-2x"/></span>
+                    </button>
+                    <button className="btn btn-outline-leeuwen-blue" title="Unlock Cells" onClick={event => toggleUnlock(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon={unlocked ? "unlock" : "lock"} className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.downloadTable(event)} style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" title="Download" onClick={event => this.downloadTable(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="download" className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" onClick={event => this.toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" title="Upload" onClick={event => this.toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
                     </button>
                 </div>
