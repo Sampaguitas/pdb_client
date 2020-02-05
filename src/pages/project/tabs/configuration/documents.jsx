@@ -750,6 +750,7 @@ class Documents extends React.Component {
             fields,
             tab,
             selection,
+            refreshDocfields,
         } = this.props
         
         const {
@@ -1019,6 +1020,7 @@ class Documents extends React.Component {
                                                     fieldValue={s.worksheet}
                                                     options={ArrSheet}
                                                     optionText="worksheet"
+                                                    refreshStore={refreshDocfields}
                                                 />
                                             }
                                             <TableSelect 
@@ -1028,6 +1030,7 @@ class Documents extends React.Component {
                                                 fieldValue={s.location}
                                                 options={ArrLocation}
                                                 optionText="location"
+                                                refreshStore={refreshDocfields}
                                             />
                                             <TableInput 
                                                 collection="docfield"
@@ -1035,6 +1038,7 @@ class Documents extends React.Component {
                                                 fieldName="row"
                                                 fieldValue={s.row}
                                                 fieldType="number"
+                                                refreshStore={refreshDocfields}
                                             />
                                             <TableInput 
                                                 collection="docfield"
@@ -1042,6 +1046,7 @@ class Documents extends React.Component {
                                                 fieldName="col"
                                                 fieldValue={s.col}
                                                 fieldType="number"
+                                                refreshStore={refreshDocfields}
                                             />
                                             <TableSelect 
                                                 collection="docfield"
@@ -1050,6 +1055,7 @@ class Documents extends React.Component {
                                                 fieldValue={s.fieldId}
                                                 options={fields.items}
                                                 optionText="custom"
+                                                refreshStore={refreshDocfields}
                                             />
                                             <TableInput 
                                                 collection="docfield"
@@ -1057,6 +1063,7 @@ class Documents extends React.Component {
                                                 fieldName="param"
                                                 fieldValue={s.param}
                                                 fieldType="text"
+                                                refreshStore={refreshDocfields}
                                             />
                                         </tr>
                                     )}

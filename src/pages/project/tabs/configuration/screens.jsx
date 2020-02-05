@@ -380,6 +380,7 @@ class Screens extends React.Component {
             // screens,
             selection, 
             tab,
+            refreshFieldnames
         } = this.props;
         
         const {
@@ -571,6 +572,7 @@ class Screens extends React.Component {
                                             options={fields.items}
                                             optionText="custom"
                                             fromTbls={this.generateFromTbls(screens, selectedScreen)}
+                                            refreshStore={refreshFieldnames}
                                         />
                                         <TableInput 
                                             collection="fieldname"
@@ -578,6 +580,7 @@ class Screens extends React.Component {
                                             fieldName="forShow"
                                             fieldValue={s.forShow}
                                             fieldType="number"
+                                            refreshStore={refreshFieldnames}
                                         />
                                         <TableInput 
                                             collection="fieldname"
@@ -585,6 +588,7 @@ class Screens extends React.Component {
                                             fieldName="forSelect"
                                             fieldValue={s.forSelect}
                                             fieldType="number"
+                                            refreshStore={refreshFieldnames}
                                         />
                                         <TableSelect 
                                             collection="fieldname"
@@ -593,6 +597,7 @@ class Screens extends React.Component {
                                             fieldValue={s.align}
                                             options={arrAlign}
                                             optionText="name"
+                                            refreshStore={refreshFieldnames}
                                         />
                                         <TableCheckBox 
                                             collection="fieldname"
@@ -600,6 +605,7 @@ class Screens extends React.Component {
                                             fieldName="edit"
                                             fieldValue={s.edit}
                                             fieldType="checkbox"
+                                            refreshStore={refreshFieldnames}
                                         />
                                     </tr>
                                 )}

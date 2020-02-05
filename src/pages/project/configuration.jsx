@@ -56,6 +56,10 @@ class Configuration extends React.Component {
         this.handleDeleteProject=this.handleDeleteProject.bind(this);
         this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
         this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
+        
+        this.refreshDocfields = this.refreshDocfields.bind(this);
+        this.refreshFieldnames = this.refreshFieldnames.bind(this);
+        this.refreshFields = this.refreshFields.bind(this);
 
     }
 
@@ -190,6 +194,30 @@ class Configuration extends React.Component {
         }    
     }
 
+    refreshDocfields() {
+        const { dispatch, loadingDocfields } = this.props;
+        const { projectId } = this.state;
+        if (projectId && !loadingDocfields) {
+            dispatch(docfieldActions.getAll(projectId));
+        }
+    }
+
+    refreshFieldnames() {
+        const { dispatch, loadingFieldnames } = this.props;
+        const { projectId } = this.state;
+        if (projectId && !loadingFieldnames) {
+            dispatch(fieldnameActions.getAll(projectId));
+        }
+    }
+
+    refreshFields() {
+        const { dispatch, loadingFields } = this.props;
+        const { projectId } = this.state;
+        if (projectId && !loadingFields) {
+            dispatch(fieldActions.getAll(projectId));
+        }
+    }
+
     handleSubmitProject(event, project) {
         event.preventDefault();
         const { dispatch } = this.props;
@@ -272,6 +300,10 @@ class Configuration extends React.Component {
                         handleDeleteProject={this.handleDeleteProject}
                         handleSubmitSupplier={this.handleSubmitSupplier}
                         handleDeleteSupplier={this.handleDeleteSupplier}
+                        //refreshStore
+                        refreshDocfields={this.refreshDocfields}
+                        refreshFieldnames={this.refreshFieldnames}
+                        refreshFields={this.refreshFields}
                         //Props
                         accesses={accesses}
                         currencies={currencies}

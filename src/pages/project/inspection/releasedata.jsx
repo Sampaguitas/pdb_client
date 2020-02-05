@@ -276,6 +276,7 @@ class ReleaseData extends React.Component {
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
+        this.refreshStore = this.refreshStore.bind(this);
     }
 
     componentDidMount() {
@@ -357,6 +358,14 @@ class ReleaseData extends React.Component {
             }
         }
    
+    }
+
+    refreshStore() {
+        const { dispatch, loadingPos } = this.props;
+        const { projectId } = this.state;
+        if (projectId && !loadingPos) {
+            dispatch(poActions.getAll(projectId));
+        }
     }
 
     toggleUnlock(event) {
@@ -519,6 +528,7 @@ class ReleaseData extends React.Component {
                                 screen={screen}
                                 fieldnames={fieldnames}
                                 fields={fields}
+                                refreshStore={this.refreshStore}
                             />
                         }
                     </div>

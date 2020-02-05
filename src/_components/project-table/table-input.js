@@ -77,6 +77,16 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
     
 }
 
+// function defaultColor(unlocked, disabled) {
+//     if (!disabled) {
+//         return '#0070C0';
+//     } else if (unlocked && disabled) {
+//         return '#A8052C';
+//     } else { //locked and disabled
+//         return '#212529';
+//     }
+// }
+
 
 class TableInput extends Component{
     constructor(props) {
@@ -111,13 +121,14 @@ class TableInput extends Component{
     }
 
     componentWillReceiveProps(nextProps) {
+        // const { unlocked, disabled } = this.props;
         if(!_.isEqual(nextProps.fieldValue, this.props.fieldValue)) {
             this.setState({
                 collection: nextProps.collection,
                 objectId: nextProps.objectId,
                 fieldName: nextProps.fieldName,
                 fieldValue: TypeToString (nextProps.fieldValue, nextProps.fieldType, getDateFormat(myLocale)),
-                fieldType: this.props.fieldType,
+                fieldType: nextProps.fieldType,
                 isEditing: false,
                 isSelected: false,
                 color: 'green',
@@ -174,16 +185,17 @@ class TableInput extends Component{
 
     onBlur(event){
         event.preventDefault();
-        const { disabled, unlocked } = this.props;
+        const { disabled, unlocked, refreshStore } = this.props;
         const { collection, objectId, fieldName, fieldValue, fieldType } = this.state;
-
+        
         if ((unlocked || !disabled) && collection && objectId && fieldName) {
             if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+                console.log('not valid format');
                 this.setState({
                     ...this.state,
                     isEditing: false,
                     isSelected: false,
-                    color: 'red',
+                    color: _.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
                     fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
                 }, () => {
                     setTimeout(() => {
@@ -193,7 +205,16 @@ class TableInput extends Component{
                         });
                     }, 1000);
                 });
+            } else if (_.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)))){
+                console.log('field value = this.props.fieldValue');
+                this.setState({
+                    ...this.state,
+                    isEditing: false,
+                    isSelected: false,
+                    color: '#0070C0',
+                });
             } else {
+                console.log('API Call');
                 const requestOptions = {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -201,21 +222,34 @@ class TableInput extends Component{
                 };
                 return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
                 .then( () => {
+                    //console.log('Then');
+                    // this.setState({
+                    //     ...this.state,
+                    //     isEditing: false,
+                    //     isSelected: false,
+                    //     color: 'green',
+                    // }, () => {
+                        
+                    //     setTimeout(() => {
+                    //         this.setState({
+                    //             ...this.state,
+                    //             color: '#0070C0',
+                    //         });
+                    //     }, 1000);
+                    // }, () => {
+                    //     refreshStore();
+                    // });
                     this.setState({
                         ...this.state,
                         isEditing: false,
                         isSelected: false,
-                        color: 'green',
                     }, () => {
-                        setTimeout(() => {
-                            this.setState({
-                                ...this.state,
-                                color: '#0070C0',
-                            });
-                        }, 1000);
+                        refreshStore();
                     });
+                    
                 })
                 .catch( () => {
+                    console.log('Catch');
                     this.setState({
                         ...this.state,
                         isEditing: false,
@@ -237,7 +271,7 @@ class TableInput extends Component{
                 ...this.state,
                 isEditing: false,
                 isSelected: false,
-                color: 'red',
+                color: _.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
                 fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
             }, () => {
                 setTimeout(() => {
@@ -294,6 +328,7 @@ class TableInput extends Component{
                 onClick={() => this.onClick()}
                 style={{
                     color: isSelected ? 'inherit' : disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color,
+                    //color: (isSelected ? 'inherit' : (color!='#0070C0' ? color : defaultColor(unlocked, disabled))), 
                     width: `${width ? width : 'auto'}`,
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'normal'}`,
                     padding: isSelected ? '0px': '5px',
@@ -312,7 +347,7 @@ class TableInput extends Component{
                         onChange={this.onChange}
                         onBlur={this.onBlur}
                         // disabled={unlocked ? false : disabled}
-                        onKeyDown={event => this.onKeyDown(event)}
+                        // onKeyDown={event => this.onKeyDown(event)}
                         placeholder={fieldType === 'date' ? getDateFormat(myLocale) : ''}
                     />
                 :

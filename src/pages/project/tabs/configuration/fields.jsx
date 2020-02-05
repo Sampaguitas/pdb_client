@@ -116,6 +116,7 @@ class Fields extends React.Component {
             fields,
             selection, 
             tab,
+            refreshFields,
         } = this.props;
 
         const {
@@ -178,6 +179,7 @@ class Fields extends React.Component {
                                             fieldName="custom"
                                             fieldValue={f.custom}
                                             fieldType="text"
+                                            refreshStore={refreshFields}
                                             // width="25%"
                                         />
                                     </tr>

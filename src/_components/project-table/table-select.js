@@ -46,7 +46,7 @@ class TableSelect extends Component{
             fieldName: '',
             fieldValue: '',
             color: '#0070C0',
-            editing: false,
+            isEditing: false,
             options:[],
             optionText: '',
             fromTbls: ''
@@ -70,6 +70,34 @@ class TableSelect extends Component{
         });
     }
 
+    componentWillReceiveProps(nextProps) {
+        // const { unlocked, disabled } = this.props;
+        if(!_.isEqual(nextProps.fieldValue, this.props.fieldValue)) {
+            this.setState({
+                collection: nextProps.collection,
+                objectId: nextProps.objectId,
+                fieldName: nextProps.fieldName,
+                fieldValue: nextProps.fieldValue ? nextProps.fieldValue: '',
+                options: nextProps.options,
+                optionText: nextProps.optionText,
+                fromTbls: nextProps.fromTbls,
+                isEditing: false,
+                // fieldType: nextProps.fieldType,
+                // isSelected: false,
+                color: 'green',
+            }, () => {
+                setTimeout(() => {
+                    this.setState({
+                        ...this.state,
+                        color: '#0070C0',
+                    });
+                }, 1000);
+            });
+        }
+    }
+
+
+
     onChange(event) {
         const target = event.target;
         const name = target.name;
@@ -83,7 +111,7 @@ class TableSelect extends Component{
     onFocus() {
         const { disabled, unlocked } = this.props;
         if(unlocked || !disabled){
-            this.setState({ editing: true }, () => {
+            this.setState({ isEditing: true }, () => {
                 this.refs.input.focus();
             });
         }
@@ -91,9 +119,9 @@ class TableSelect extends Component{
 
     onBlur(event){
         event.preventDefault();
-        const {disabled, unlocked} = this.props;
+        const {disabled, unlocked, refreshStore} = this.props;
         // if(!disabled){
-        //     this.setState({editing:false});
+        //     this.setState({isEditing:false});
             const { collection, objectId, fieldName, fieldValue } = this.state      
             if ((unlocked || !disabled) && collection && objectId && fieldName && objectId) {
                 const requestOptions = {
@@ -103,23 +131,31 @@ class TableSelect extends Component{
                 };
                 return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
                 .then( () => {
+                    // this.setState({
+                    //     ...this.state,
+                    //     isEditing: false,
+                    //     color: 'green',                    
+                    // }, () => {
+                    //     setTimeout(() => {
+                    //         this.setState({
+                    //             ...this.state,
+                    //             color: '#0070C0',
+                    //         });
+                    //     }, 1000);                    
+                    // });
                     this.setState({
                         ...this.state,
-                        editing: false,
-                        color: 'green',                    
+                        isEditing: false,
+                        // isSelected: false,
                     }, () => {
-                        setTimeout(() => {
-                            this.setState({
-                                ...this.state,
-                                color: '#0070C0',
-                            });
-                        }, 1000);                    
+                        refreshStore();
                     });
+
                 })
                 .catch( () => {
                     this.setState({
                         ...this.state,
-                        editing: false,
+                        isEditing: false,
                         color: 'red',
                         fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
                     }, () => {
@@ -163,14 +199,14 @@ class TableSelect extends Component{
 
         const {
             color,
-            editing,
+            isEditing,
             fieldValue,
             options,
             optionText,
             fromTbls
         } = this.state;
 
-        return editing ? (
+        return isEditing ? (
             <td
                 style={{
                     width: `${width ? width : 'auto'}`,

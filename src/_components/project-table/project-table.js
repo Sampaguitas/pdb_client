@@ -214,7 +214,7 @@ class ProjectTable extends Component {
             if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n }))
             // if(arrowKeys.some((k) => { return e.keyCode === k })) 
             {
-                console.log(document.activeElement);
+                // console.log(document.activeElement);
                 // console.log('e.keyCode:', e.keyCode);
                 // e.preventDefault();
                 return this.keyHandler(e);
@@ -427,7 +427,7 @@ class ProjectTable extends Component {
     }
 
     generateBody(screenBodys) {
-        const { unlocked } = this.props;
+        const { unlocked, refreshStore } = this.props;
         const { selectAllRows } = this.state;
         let tempRows = [];
 
@@ -447,6 +447,7 @@ class ProjectTable extends Component {
                             fieldType={field.fieldType}
                             textNoWrap={true}
                             key={index}
+                            refreshStore={refreshStore}
                         />
                     );                        
                 } else {
@@ -572,6 +573,7 @@ class ProjectTable extends Component {
                             nEdited: data.nEdited
                         },
                     });
+                    
                 }
             }));            
         }        

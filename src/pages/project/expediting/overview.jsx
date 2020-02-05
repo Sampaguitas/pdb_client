@@ -15,7 +15,6 @@ import {
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
-import ProjectTableNew from '../../../_components/project-table/project-table-new';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeaderInput from '../../../_components/project-table/header-input';
 import _ from 'lodash';
@@ -285,6 +284,7 @@ class Overview extends React.Component {
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
+        this.refreshStore = this.refreshStore.bind(this);
     }
 
 
@@ -365,6 +365,14 @@ class Overview extends React.Component {
                 dispatch(projectActions.getById(qs.id));
             }
         }   
+    }
+
+    refreshStore() {
+        const { dispatch, loadingPos } = this.props;
+        const { projectId } = this.state;
+        if (projectId && !loadingPos) {
+            dispatch(poActions.getAll(projectId));
+        }
     }
 
     toggleUnlock(event) {
@@ -528,6 +536,7 @@ class Overview extends React.Component {
                                 unlocked={unlocked}
                                 screen={screen}
                                 fieldnames={fieldnames}
+                                refreshStore={this.refreshStore}
                             />
                         }
                     </div>

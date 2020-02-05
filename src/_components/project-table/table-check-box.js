@@ -34,8 +34,31 @@ class TableCheckBox extends Component {
         });
     }
 
+    componentWillReceiveProps(nextProps) {
+        // const { unlocked, disabled } = this.props;
+        if(!_.isEqual(nextProps.fieldValue, this.props.fieldValue)) {
+            this.setState({
+                collection: nextProps.collection,
+                objectId: nextProps.objectId,
+                fieldName: nextProps.fieldName,
+                fieldValue: nextProps.fieldValue ? nextProps.fieldValue : false,
+                // isEditing: false,
+                // isSelected: false,
+                color: 'green',
+            }, () => {
+                setTimeout(() => {
+                    this.setState({
+                        ...this.state,
+                        color: '#0070C0',
+                    });
+                }, 1000);
+            });
+        }
+    }
+
     onChange(event) {
-        const { collection, objectId, fieldName, fieldValue } = this.state
+        const { collection, objectId, fieldName, fieldValue } = this.state;
+        const { refreshStore } = this.props;
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -50,18 +73,19 @@ class TableCheckBox extends Component {
                     body: `{"${fieldName}":${fieldValue}}`
                 };
                 return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
-                .then( (responce) => {
-                    this.setState({
-                        ...this.state,
-                        color: 'green',
-                    }, () => {
-                        setTimeout(() => {
-                            this.setState({
-                                ...this.state,
-                                color: '#0070C0',
-                            });
-                        }, 1000);                         
-                    });
+                .then( () => {
+                    // this.setState({
+                    //     ...this.state,
+                    //     color: 'green',
+                    // }, () => {
+                    //     setTimeout(() => {
+                    //         this.setState({
+                    //             ...this.state,
+                    //             color: '#0070C0',
+                    //         });
+                    //     }, 1000);                         
+                    // });
+                    refreshStore();
                 })
                 .catch( () => {
                     this.setState({

@@ -337,6 +337,7 @@ class Duf extends React.Component {
             fields,
             selection, 
             tab,
+            refreshFieldnames,
         } = this.props;
         
         const {
@@ -441,6 +442,7 @@ class Duf extends React.Component {
                                             fieldName="forShow"
                                             fieldValue={s.forShow}
                                             fieldType="number"
+                                            refreshStore={refreshFieldnames}
                                         />
                                         <TableSelect 
                                             collection="fieldname"
@@ -449,7 +451,8 @@ class Duf extends React.Component {
                                             fieldValue={s.fieldId}
                                             options={fields.items}
                                             optionText="custom"
-                                            fromTbls={['po', 'sub']}                               
+                                            fromTbls={['po', 'sub']}
+                                            refreshStore={refreshFieldnames}                              
                                         />
                                     </tr>
                                 )}

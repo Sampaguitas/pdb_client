@@ -40,6 +40,10 @@ class Tabs extends Component {
             handleDeleteProject,
             handleSubmitSupplier,
             handleDeleteSupplier,
+            //refreshStore
+            refreshDocfields,
+            refreshFieldnames,
+            refreshFields,
             //Props
             accesses,
             currencies,
@@ -89,6 +93,10 @@ class Tabs extends Component {
                                 handleDeleteProject={handleDeleteProject}
                                 handleSubmitSupplier={handleSubmitSupplier}
                                 handleDeleteSupplier={handleDeleteSupplier}
+                                //refreshStore
+                                refreshDocfields={refreshDocfields}
+                                refreshFieldnames={refreshFieldnames}
+                                refreshFields={refreshFields}
                                 //Props
                                 accesses={accesses}
                                 currencies={currencies}

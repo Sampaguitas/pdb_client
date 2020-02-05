@@ -241,6 +241,7 @@ class Certificates extends React.Component {
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
+        this.refreshStore = this.refreshStore.bind(this);
     }
 
     componentDidMount() {
@@ -314,6 +315,14 @@ class Certificates extends React.Component {
         }
     }
 
+    refreshStore() {
+        const { dispatch, loadingPos } = this.props;
+        const { projectId } = this.state;
+        if (projectId && !loadingPos) {
+            dispatch(poActions.getAll(projectId));
+        }
+    }
+
     toggleUnlock(event) {
         event.preventDefault()
         const { unlocked } = this.state;
@@ -357,6 +366,7 @@ class Certificates extends React.Component {
                             screen={screen}
                             fieldnames={fieldnames}
                             fields={fields}
+                            refreshStore={this.refreshStore}
                         />
                     }
                 </div> 
