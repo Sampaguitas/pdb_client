@@ -2,6 +2,27 @@ var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
+var myDateFormat = () => {
+    let tempDateFormat = ''
+    myLocale.formatToParts().map(function (element) {
+        switch(element.type) {
+            case 'month': 
+                tempDateFormat = tempDateFormat + 'MM';
+                break;
+            case 'literal': 
+                tempDateFormat = tempDateFormat + element.value;
+                break;
+            case 'day': 
+                tempDateFormat = tempDateFormat + 'DD';
+                break;
+            case 'year': 
+                tempDateFormat = tempDateFormat + 'YYYY';
+                break;
+        }
+    });
+    return tempDateFormat;
+}
+
 module.exports = {
     mode: 'development',  
     entry: path.resolve(__dirname, './src/index.jsx'),
@@ -64,7 +85,7 @@ module.exports = {
     externals: {
         // global app config object
         config: JSON.stringify({
-            apiUrl: process.env.NODE_ENV === 'dev' ? 'http://localhost:5000' : 'https://pdb-server.herokuapp.com'
+            apiUrl: process.env.NODE_ENV === 'dev' ? 'http://localhost:5000' : 'https://pdb-server.herokuapp.com',
         })
     }
 }

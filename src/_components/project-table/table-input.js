@@ -245,6 +245,7 @@ class TableInput extends Component{
                     
                 })
                 .catch( () => {
+                    console.log('Catch');
                     this.setState({
                         ...this.state,
                         isEditing: false,
