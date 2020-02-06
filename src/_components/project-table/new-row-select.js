@@ -82,6 +82,7 @@ class NewRowSelect extends Component{
             onChange,
             options,
             optionText,
+            fromTbls,
             textNoWrap,
             value,
             width

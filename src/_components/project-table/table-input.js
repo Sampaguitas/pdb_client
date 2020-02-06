@@ -343,7 +343,7 @@ class TableInput extends Component{
                         onChange={this.onChange}
                         onBlur={this.onBlur}
                         // disabled={unlocked ? false : disabled}
-                        // onKeyDown={event => this.onKeyDown(event)}
+                        onKeyDown={event => this.onKeyDown(event)}
                         placeholder={fieldType === 'date' ? getDateFormat(myLocale) : ''}
                     />
                 :

@@ -197,6 +197,7 @@ class ProjectTable extends Component {
         // this.matchingRow = this.matchingRow.bind(this);
         this.toggleModalSettings = this.toggleModalSettings.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
+        this.deleteValues = this.deleteValues.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
@@ -491,6 +492,17 @@ class ProjectTable extends Component {
         });
     }
 
+    deleteValues() {
+        event.preventDefault();
+        const { selectedRows } = this.state;
+        if (_.isEmpty(selectedRows)){
+            console.log('Select rows to be deleted');
+        } else {
+            console.log('some rows have been selected');
+        }
+
+    }
+
     handleModalTabClick(event, tab){
         event.preventDefault();
         // const { handleSelectionReload } = this.props
@@ -658,6 +670,9 @@ class ProjectTable extends Component {
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title="Upload" onClick={event => this.toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
+                    </button>
+                    <button className="btn btn-outline-leeuwen-blue" title="Erase Value(s)" onClick={event => this.deleteValues(event)} style={{width: '40px', height: '40px'}}>
+                        <span><FontAwesomeIcon icon="trash-alt" className="fas fa-2x"/></span>
                     </button>
                 </div>
 

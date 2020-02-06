@@ -546,6 +546,7 @@ class Screens extends React.Component {
                                             value={fieldName.align}
                                             options={arrAlign}
                                             optionText="name"
+                                            fromTbls={this.generateFromTbls(screens, selectedScreen)}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
                                         />
@@ -597,6 +598,7 @@ class Screens extends React.Component {
                                             fieldValue={s.align}
                                             options={arrAlign}
                                             optionText="name"
+                                            fromTbls={[]}
                                             refreshStore={refreshFieldnames}
                                         />
                                         <TableCheckBox 

@@ -200,6 +200,26 @@ class Documents extends React.Component {
         this.onKeyPress = this.onKeyPress.bind(this);
     }
 
+    componentDidMount() {
+        const { docdefs } = this.props;
+        const { selectedTemplate } = this.state;
+        if (docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
+            this.setState({
+                selectedTemplate: arraySorted(docConf(docdefs.items), "name")[0]._id
+            });
+        }
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const { docdefs } = nextProps;
+        const { selectedTemplate } = this.state;
+        if(!_.isEqual(docdefs, this.props.docdefs) && docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
+            this.setState({
+                selectedTemplate: arraySorted(docConf(docdefs.items), "name")[0]._id
+            });
+        }
+    }
+
     cerateNewRow(event) {
         event.preventDefault()
         const { handleSelectionReload } = this.props;
@@ -962,6 +982,7 @@ class Documents extends React.Component {
                                                     value={docField.worksheet}
                                                     options={ArrSheet}
                                                     optionText="worksheet"
+                                                    fromTbls={[]}
                                                     onChange={event => this.handleChangeNewRow(event)}
                                                     color={newRowColor}
                                                 />
@@ -971,6 +992,7 @@ class Documents extends React.Component {
                                                 value={docField.location}
                                                 options={ArrLocation}
                                                 optionText="location"
+                                                fromTbls={[]}
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
                                             />                                        
@@ -993,6 +1015,7 @@ class Documents extends React.Component {
                                                 value={docField.fieldId}
                                                 options={fields.items}
                                                 optionText="custom"
+                                                fromTbls={[]}
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
                                             />                                        
@@ -1020,6 +1043,7 @@ class Documents extends React.Component {
                                                     fieldValue={s.worksheet}
                                                     options={ArrSheet}
                                                     optionText="worksheet"
+                                                    fromTbls={[]}
                                                     refreshStore={refreshDocfields}
                                                 />
                                             }
@@ -1030,6 +1054,7 @@ class Documents extends React.Component {
                                                 fieldValue={s.location}
                                                 options={ArrLocation}
                                                 optionText="location"
+                                                fromTbls={[]}
                                                 refreshStore={refreshDocfields}
                                             />
                                             <TableInput 
@@ -1055,6 +1080,7 @@ class Documents extends React.Component {
                                                 fieldValue={s.fieldId}
                                                 options={fields.items}
                                                 optionText="custom"
+                                                fromTbls={[]}
                                                 refreshStore={refreshDocfields}
                                             />
                                             <TableInput 
