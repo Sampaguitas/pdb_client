@@ -188,7 +188,7 @@ class TableInput extends Component{
         const { collection, objectId, fieldName, fieldValue, fieldType } = this.state;
         
         if ((unlocked || !disabled) && collection && objectId && fieldName) {
-            if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+            if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale)) || collection === 'virtual') {
                 this.setState({
                     ...this.state,
                     isEditing: false,
@@ -218,23 +218,6 @@ class TableInput extends Component{
                 };
                 return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
                 .then( () => {
-                    //console.log('Then');
-                    // this.setState({
-                    //     ...this.state,
-                    //     isEditing: false,
-                    //     isSelected: false,
-                    //     color: 'green',
-                    // }, () => {
-                        
-                    //     setTimeout(() => {
-                    //         this.setState({
-                    //             ...this.state,
-                    //             color: '#0070C0',
-                    //         });
-                    //     }, 1000);
-                    // }, () => {
-                    //     refreshStore();
-                    // });
                     this.setState({
                         ...this.state,
                         isEditing: false,
@@ -245,7 +228,6 @@ class TableInput extends Component{
                     
                 })
                 .catch( () => {
-                    console.log('Catch');
                     this.setState({
                         ...this.state,
                         isEditing: false,

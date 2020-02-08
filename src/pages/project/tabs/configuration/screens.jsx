@@ -406,7 +406,7 @@ class Screens extends React.Component {
         ]
 
         const screens = [
-            {_id: '5cd2b642fd333616dc360b63', name: 'Expediting', fromTbls: ['po', 'sub']},
+            {_id: '5cd2b642fd333616dc360b63', name: 'Expediting', fromTbls: ['po', 'sub', 'packitem']},
             {_id: '5cd2b646fd333616dc360b70', name: 'Expediting Splitwindow', fromTbls: ['po', 'sub']},
             {_id: '5cd2b642fd333616dc360b64', name: 'Inspection', fromTbls: ['po', 'sub', 'certificate']},
             {_id: '5cd2b647fd333616dc360b71', name: 'Inspection Splitwindow', fromTbls: ['po', 'sub', 'certificate']},
