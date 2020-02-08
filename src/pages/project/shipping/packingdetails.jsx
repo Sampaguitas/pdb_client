@@ -4,10 +4,11 @@ import queryString from 'query-string';
 import { 
     accessActions, 
     alertActions,
+    collipackActions,
     fieldnameActions,
     fieldActions,
     poActions,
-    projectActions 
+    projectActions,
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table'
@@ -245,10 +246,11 @@ class PackingDetails extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
+            loadingCollipacks,
             loadingFieldnames,
             loadingFields,
             loadingPos,
-            loadingSelection, 
+            loadingSelection,
             location 
         } = this.props;
 
@@ -257,6 +259,9 @@ class PackingDetails extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingCollipacks) {
+                dispatch(collipackActions.getAll(qs.id));
             }
             if (!loadingFieldnames) {
                 dispatch(fieldnameActions.getAll(qs.id));
@@ -270,6 +275,7 @@ class PackingDetails extends React.Component {
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
             }
+            
         }
     }
 
@@ -295,6 +301,9 @@ class PackingDetails extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingCollipacks) {
+                dispatch(collipackActions.getById(qs.id));
             }
             if (!loadingFieldnames) {
                 dispatch(fieldnameActions.getAll(qs.id));
@@ -372,18 +381,21 @@ class PackingDetails extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, pos, selection } = state;
+    const { accesses, alert, collipacks, fieldnames, fields, pos, selection } = state;
     const { loadingAccesses } = accesses;
+    const { loadingCollipacks } = collipacks;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingPos } = pos;
     const { loadingSelection } = selection;
     return {
         accesses,
+        collipacks,
         alert,
         fieldnames,
         fields,
         loadingAccesses,
+        loadingCollipacks,
         loadingFieldnames,
         loadingFields,
         loadingPos,

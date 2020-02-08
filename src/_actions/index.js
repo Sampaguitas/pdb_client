@@ -1,6 +1,7 @@
 export * from './alert.actions';
 export * from './access.actions';
 export * from './collitype.actions';
+export * from './collipack.actions';
 export * from './currency.actions';
 export * from './docdef.actions';
 export * from './docfield.actions';

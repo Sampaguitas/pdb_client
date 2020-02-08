@@ -1,6 +1,7 @@
 export * from './alert.constants';
 export * from './access.constants';
 export * from './collitype.constants';
+export * from './collipack.constants';
 export * from './currency.constants';
 export * from './docdef.constants';
 export * from './docfield.constants';

@@ -138,55 +138,55 @@ function generateScreenBody(screenId, fieldnames, pos){
                                     default: arrayRow.push({}); 
                                 }
                             });
-                            objectRow  = { _id: i, fields: arrayRow }
-                            arrayBody.push(objectRow);
-                            i++;
-                        })
-                    } else if (!_.isEmpty(sub.certificates) && hasCertificates){
-                        sub.certificates.map(certificate => {
-                            arrayRow = [];
-                            screenHeaders.map(screenHeader => {
-                                switch(screenHeader.fields.fromTbl) {
-                                    case 'po':
-                                        arrayRow.push({
-                                            collection: 'po',
-                                            objectId: po._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: po[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                        break;
-                                    case 'sub':
-                                        arrayRow.push({
-                                            collection: 'sub',
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                        break;
-                                    case 'certificate':
-                                        arrayRow.push({
-                                            collection: 'certificate',
-                                            objectId: certificate._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: certificate[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                        break;
-                                    default: arrayRow.push({}); 
-                                }
-                            });
-                            objectRow  = { _id: i, fields: arrayRow }
+                            objectRow  = { _id: i, tablesId:[po._id, sub._id, '', packitem._id, ''].join(';'), fields: arrayRow }
                             arrayBody.push(objectRow);
                             i++;
                         });
+                    // } else if (!_.isEmpty(sub.certificates) && hasCertificates){
+                    //     sub.certificates.map(certificate => {
+                    //         arrayRow = [];
+                    //         screenHeaders.map(screenHeader => {
+                    //             switch(screenHeader.fields.fromTbl) {
+                    //                 case 'po':
+                    //                     arrayRow.push({
+                    //                         collection: 'po',
+                    //                         objectId: po._id,
+                    //                         fieldName: screenHeader.fields.name,
+                    //                         fieldValue: po[screenHeader.fields.name],
+                    //                         disabled: screenHeader.edit,
+                    //                         align: screenHeader.align,
+                    //                         fieldType: getInputType(screenHeader.fields.type),
+                    //                     });
+                    //                     break;
+                    //                 case 'sub':
+                    //                     arrayRow.push({
+                    //                         collection: 'sub',
+                    //                         objectId: sub._id,
+                    //                         fieldName: screenHeader.fields.name,
+                    //                         fieldValue: sub[screenHeader.fields.name],
+                    //                         disabled: screenHeader.edit,
+                    //                         align: screenHeader.align,
+                    //                         fieldType: getInputType(screenHeader.fields.type),
+                    //                     });
+                    //                     break;
+                    //                 case 'certificate':
+                    //                     arrayRow.push({
+                    //                         collection: 'certificate',
+                    //                         objectId: certificate._id,
+                    //                         fieldName: screenHeader.fields.name,
+                    //                         fieldValue: certificate[screenHeader.fields.name],
+                    //                         disabled: screenHeader.edit,
+                    //                         align: screenHeader.align,
+                    //                         fieldType: getInputType(screenHeader.fields.type),
+                    //                     });
+                    //                     break;
+                    //                 default: arrayRow.push({}); 
+                    //             }
+                    //         });
+                    //         objectRow  = { _id: i, fields: arrayRow }
+                    //         arrayBody.push(objectRow);
+                    //         i++;
+                    //     });
                     } else {
                         arrayRow = [];
                         screenHeaders.map(screenHeader => {
@@ -216,7 +216,7 @@ function generateScreenBody(screenId, fieldnames, pos){
                                 default: arrayRow.push({}); 
                             }
                         });
-                        objectRow  = { _id: i, fields: arrayRow }
+                        objectRow  = { _id: i, tablesId:[po._id, sub._id, '', '', ''].join(';'), fields: arrayRow }
                         arrayBody.push(objectRow);
                         i++;
                     }

@@ -4,7 +4,7 @@ export function collitypes(state = {}, action) {
     switch (action.type) {
         case collitypeConstants.CREATE_REQUEST:
             return {
-                loading: true,
+                loadingCollipacks: true,
                 items: action.collitypes
             };
         case collitypeConstants.CREATE_SUCCESS:
@@ -17,7 +17,7 @@ export function collitypes(state = {}, action) {
             };
         case collitypeConstants.GET_REQUEST:
             return {
-                loading: true
+                loadingCollipacks: true
             };
         case collitypeConstants.GET_SUCCESS:
             return {
@@ -29,7 +29,7 @@ export function collitypes(state = {}, action) {
             };
         case collitypeConstants.GETALL_REQUEST:
             return {
-                loading: true,
+                loadingCollipacks: true,
                 items: state.items //keep existing state during request
             };
         case collitypeConstants.GETALL_SUCCESS:

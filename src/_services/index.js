@@ -1,5 +1,6 @@
 export * from './access.service';
 export * from './collitype.service';
+export * from './collipack.service';
 export * from './currency.service';
 export * from './docdef.service';
 export * from './docfield.service';
