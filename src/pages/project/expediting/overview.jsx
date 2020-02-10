@@ -780,8 +780,7 @@ class Overview extends React.Component {
                         });
                     });
                 }
-            }
-            
+            }  
         }
     }
 
