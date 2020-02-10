@@ -72,7 +72,7 @@ function arrayRemove(arr, value) {
         return ele != value;
     });
  
- }
+}
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -141,6 +141,26 @@ function doesMatch(search, array, type, isEqual) {
                 }
             default: return true;
         }
+    }
+}
+
+function getTableIds(selectedRows, screenBodys) {
+    if (screenBodys) {
+        
+        let filtered = screenBodys.filter(function (s) {
+            return selectedRows.includes(s._id);
+        });
+        
+        return filtered.reduce(function (acc, cur) {
+            
+            if(!acc.includes(cur.tablesId)) {
+                acc.push(cur.tablesId);
+            }
+            return acc;
+        }, []);
+
+    } else {
+        return [];
     }
 }
 
@@ -230,6 +250,16 @@ class ProjectTable extends Component {
         //     },{})
         // });
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { selectedRows } = this.state;
+        const { screenBodys, updateSelectedIds } = this.props;
+        if (selectedRows !== prevState.selectedRows) {
+            updateSelectedIds(getTableIds(selectedRows, screenBodys));
+        }
+    }
+
+    
 
     handleClearAlert(event){
         event.preventDefault;
@@ -334,7 +364,7 @@ class ProjectTable extends Component {
                 this.setState({
                     ...this.state,
                     selectedRows: [],
-                    selectAllRows: false
+                    selectAllRows: false,
                 });
             } else {
                 this.setState({
@@ -356,7 +386,6 @@ class ProjectTable extends Component {
 
     updateSelectedRows(id) {
         const { selectedRows } = this.state;
-        console.log(selectedRows);
         if (selectedRows.includes(id)) {
             this.setState({
                 ...this.state,
@@ -393,8 +422,6 @@ class ProjectTable extends Component {
             return [];
         }
     }
-
-    
 
     generateHeader(screenHeaders) {
         const {header, selectAllRows} = this.state;
@@ -494,8 +521,8 @@ class ProjectTable extends Component {
 
     deleteValues() {
         event.preventDefault();
-        const { selectedRows } = this.state;
-        if (_.isEmpty(selectedRows)){
+        const { selectedIds } = this.props;
+        if (_.isEmpty(selectedIds)){
             console.log('Select rows to be deleted');
         } else {
             console.log('some rows have been selected');

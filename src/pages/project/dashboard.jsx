@@ -113,7 +113,7 @@ class Dashboard extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Dashboard : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Dashboard > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="dashboard">
                     <div className="row justify-content-center">

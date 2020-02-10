@@ -54,7 +54,7 @@ class Shipping extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Shipping : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Shipping > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="shipping">
                     <div className="row justify-content-center">
@@ -70,7 +70,7 @@ class Shipping extends React.Component {
                                     className="fa-5x mb-3" 
                                     name="passport"
                                 />
-                                <h3>Transport docs</h3>
+                                <h3>Prepare transport docs</h3>
                             </div>
                         </div>
                     </NavLink>
@@ -86,7 +86,7 @@ class Shipping extends React.Component {
                                     className="fa-5x mb-3" 
                                     name="box-open"
                                 />
-                                <h3>Packing details</h3>
+                                <h3>Complete packing details</h3>
                             </div>
                         </div>
                     </NavLink>

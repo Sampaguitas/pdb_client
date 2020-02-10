@@ -87,7 +87,6 @@ function generateScreenBody(screenId, fieldnames, pos){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
-    let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
     let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
     let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
     let i = 1;
@@ -95,60 +94,7 @@ function generateScreenBody(screenId, fieldnames, pos){
         pos.items.map(po => {
             if (po.subs) {
                 po.subs.map(sub => {
-                    if (!_.isEmpty(sub.packitems) && hasPackitems) {
-                        // sub.packitems.map(packitem => {
-                        //     arrayRow = [];
-                        //     screenHeaders.map(screenHeader => {
-                        //         switch(screenHeader.fields.fromTbl) {
-                        //             case 'po':
-                        //                 arrayRow.push({
-                        //                     collection: 'po',
-                        //                     objectId: po._id,
-                        //                     fieldName: screenHeader.fields.name,
-                        //                     fieldValue: po[screenHeader.fields.name],
-                        //                     disabled: screenHeader.edit,
-                        //                     align: screenHeader.align,
-                        //                     fieldType: getInputType(screenHeader.fields.type),
-                        //                 });
-                        //                 break;
-                        //             case 'sub':
-                        //                 arrayRow.push({
-                        //                     collection: 'sub',
-                        //                     objectId: sub._id,
-                        //                     fieldName: screenHeader.fields.name,
-                        //                     fieldValue: sub[screenHeader.fields.name],
-                        //                     disabled: screenHeader.edit,
-                        //                     align: screenHeader.align,
-                        //                     fieldType: getInputType(screenHeader.fields.type),
-                        //                 });
-                        //                 break;
-                        //             case 'packitem':
-                        //                 arrayRow.push({
-                        //                     collection: 'packitem',
-                        //                     objectId: packitem._id,
-                        //                     fieldName: screenHeader.fields.name,
-                        //                     fieldValue: packitem[screenHeader.fields.name],
-                        //                     disabled: screenHeader.edit,
-                        //                     align: screenHeader.align,
-                        //                     fieldType: getInputType(screenHeader.fields.type),
-                        //                 });
-                        //                 break;
-                        //             default: arrayRow.push({
-                        //                 collection: 'virtual',
-                        //                 objectId: '0',
-                        //                 fieldName: screenHeader.fields.name,
-                        //                 fieldValue: '',
-                        //                 disabled: screenHeader.edit,
-                        //                 align: screenHeader.align,
-                        //                 fieldType: getInputType(screenHeader.fields.type),
-                        //             }); 
-                        //         }
-                        //     });
-                        //     objectRow  = { _id: i, tablesId:[po._id, sub._id, '', '', ''].join(';'), fields: arrayRow }
-                        //     arrayBody.push(objectRow);
-                        //     i++;
-                        // })
-                    } else if (!_.isEmpty(sub.certificates) && hasCertificates){
+                    if (!_.isEmpty(sub.certificates) && hasCertificates){
                         sub.certificates.map(certificate => {
                             arrayRow = [];
                             screenHeaders.map(screenHeader => {
@@ -197,7 +143,17 @@ function generateScreenBody(screenId, fieldnames, pos){
                                     });
                                 }
                             });
-                            objectRow  = { _id: i, tablesId:[po._id, sub._id, certificate._id, '', ''].join(';'), fields: arrayRow }
+                            objectRow  = {
+                                _id: i, 
+                                tablesId: { 
+                                    poId: po._id,
+                                    subId: sub._id,
+                                    certificateId: certificate._id,
+                                    packItemId: '',
+                                    colliPackId: '' 
+                                },
+                                fields: arrayRow
+                            };
                             arrayBody.push(objectRow);
                             i++;
                         });
@@ -238,7 +194,17 @@ function generateScreenBody(screenId, fieldnames, pos){
                                 }); 
                             }
                         });
-                        objectRow  = { _id: i, tablesId:[po._id, sub._id, '', '', ''].join(';'), fields: arrayRow }
+                        objectRow  = {
+                            _id: i, 
+                            tablesId: { 
+                                poId: po._id,
+                                subId: sub._id,
+                                certificateId: '',
+                                packItemId: '',
+                                colliPackId: '' 
+                            },
+                            fields: arrayRow
+                        };
                         arrayBody.push(objectRow);
                         i++;
                     }
@@ -260,12 +226,14 @@ class Certificates extends React.Component {
             projectId:'',
             screenId: '5cd2b642fd333616dc360b65',
             unlocked: false,
-            screen: 'certificates',  
+            screen: 'certificates',
+            selectedIds: [], 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
+        this.updateSelectedIds = this.updateSelectedIds.bind(this);
     }
 
     componentDidMount() {
@@ -356,11 +324,19 @@ class Certificates extends React.Component {
         });
     }
 
+    updateSelectedIds(selectedIds) {
+        this.setState({
+            ...this.state,
+            selectedIds: selectedIds
+        });
+    }
+
     render() {
         const { 
             projectId, 
             screen, 
-            screenId, 
+            screenId,
+            selectedIds,
             unlocked, 
         }= this.state;
         
@@ -375,7 +351,7 @@ class Certificates extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Inspection - Certificates : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Inspection | Certificates > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="certificates" className="full-height">
                     {selection && selection.project && 
@@ -384,6 +360,8 @@ class Certificates extends React.Component {
                             screenBodys={generateScreenBody(screenId, fieldnames, pos)}
                             projectId={projectId}
                             screenId={screenId}
+                            selectedIds={selectedIds}
+                            updateSelectedIds = {this.updateSelectedIds}
                             handleSelectionReload={this.handleSelectionReload}
                             toggleUnlock={this.toggleUnlock}
                             unlocked={unlocked}

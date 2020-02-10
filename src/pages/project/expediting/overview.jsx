@@ -242,12 +242,11 @@ function generateScreenHeader(fieldnames, screenId) {
 }
 
 function generateScreenBody(screenId, fieldnames, pos){
-    // const { screenId, unlocked } = this.state;
+
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
     let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
-    let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
     let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
     
     let i = 1;
@@ -278,7 +277,7 @@ function generateScreenBody(screenId, fieldnames, pos){
                                                 collection: 'virtual',
                                                 objectId: sub._id,
                                                 fieldName: 'shippedQty',
-                                                fieldValue: virtual.shippedQty.toFixed(0),
+                                                fieldValue: virtual.shippedQty,
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
@@ -308,7 +307,6 @@ function generateScreenBody(screenId, fieldnames, pos){
                                                 fieldType: getInputType(screenHeader.fields.type),
                                             });
                                         } else {
-                                            console.log('virtual:',virtual);
                                             arrayRow.push({
                                                 collection: 'virtual',
                                                 objectId: virtual._id,
@@ -331,63 +329,20 @@ function generateScreenBody(screenId, fieldnames, pos){
                                     }); 
                                 }
                             });
-                            objectRow  = { _id: i, tablesId:[po._id, sub._id, '', '', ''].join(';'), fields: arrayRow }
+                            objectRow  = {
+                                _id: i,
+                                tablesId: {
+                                    poId: po._id,
+                                    subId: sub._id,
+                                    certificateId: '',
+                                    packItemId: '',
+                                    colliPackId: ''
+                                },
+                                fields: arrayRow
+                            };
                             arrayBody.push(objectRow);
                             i++;
                         });
-                    // } else if (!_.isEmpty(sub.certificates) && hasCertificates){
-                    //     sub.certificates.map(certificate => {
-                    //         arrayRow = [];
-                    //         screenHeaders.map(screenHeader => {
-                    //             switch(screenHeader.fields.fromTbl) {
-                    //                 case 'po':
-                    //                     arrayRow.push({
-                    //                         collection: 'po',
-                    //                         objectId: po._id,
-                    //                         fieldName: screenHeader.fields.name,
-                    //                         fieldValue: po[screenHeader.fields.name],
-                    //                         disabled: screenHeader.edit,
-                    //                         align: screenHeader.align,
-                    //                         fieldType: getInputType(screenHeader.fields.type),
-                    //                     });
-                    //                     break;
-                    //                 case 'sub':
-                    //                     arrayRow.push({
-                    //                         collection: 'sub',
-                    //                         objectId: sub._id,
-                    //                         fieldName: screenHeader.fields.name,
-                    //                         fieldValue: sub[screenHeader.fields.name],
-                    //                         disabled: screenHeader.edit,
-                    //                         align: screenHeader.align,
-                    //                         fieldType: getInputType(screenHeader.fields.type),
-                    //                     });
-                    //                     break;
-                    //                 case 'certificate':
-                    //                     arrayRow.push({
-                    //                         collection: 'certificate',
-                    //                         objectId: certificate._id,
-                    //                         fieldName: screenHeader.fields.name,
-                    //                         fieldValue: certificate[screenHeader.fields.name],
-                    //                         disabled: screenHeader.edit,
-                    //                         align: screenHeader.align,
-                    //                         fieldType: getInputType(screenHeader.fields.type),
-                    //                     });
-                    //                     break;
-                    //                 default: arrayRow.push({
-                    //                     collection: 'virtual',
-                    //                         objectId: '0',
-                    //                         fieldName: screenHeader.fields.name,
-                    //                         fieldValue: '',
-                    //                         disabled: screenHeader.edit,
-                    //                         align: screenHeader.align,
-                    //                         fieldType: getInputType(screenHeader.fields.type),
-                    //                 });
-                    //             }
-                    //         });
-                    //         objectRow  = { _id: i, tablesId:[po._id, sub._id, certificate._id, '', ''].join(';'), fields: arrayRow }
-                    //         arrayBody.push(objectRow);
-                    //         i++;
-                    //     });
                     } else {
                         arrayRow = [];
                         screenHeaders.map(screenHeader => {
@@ -425,7 +380,17 @@ function generateScreenBody(screenId, fieldnames, pos){
                                 }); 
                             }
                         });
-                        objectRow  = { _id: i, tablesId:[po._id, sub._id, '', '', ''].join(';'), fields: arrayRow }
+                        objectRow  = {
+                            _id: i,
+                            tablesId: {
+                                poId: po._id,
+                                subId: sub._id,
+                                certificateId: '',
+                                packItemId: '',
+                                colliPackId: ''
+                            },
+                            fields: arrayRow
+                        };
                         arrayBody.push(objectRow);
                         i++;
                     }
@@ -447,6 +412,7 @@ class Overview extends React.Component {
             screenId: '5cd2b642fd333616dc360b63',
             unlocked: false,
             screen: 'expediting',
+            selectedIds: [],
             selectedTemplate: '0',
             selectedField: '',
             updateValue:'',
@@ -457,14 +423,15 @@ class Overview extends React.Component {
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
-        this.handleSelectionReload=this.handleSelectionReload.bind(this);
+        this.handleSelectionReload = this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         // this.testBodys = this.testBodys.bind(this);
-        this.handleChange=this.handleChange.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
+        this.updateSelectedIds = this.updateSelectedIds.bind(this);
     }
 
 
@@ -508,6 +475,12 @@ class Overview extends React.Component {
     handleClearAlert(event){
         event.preventDefault;
         const { dispatch } = this.props;
+        this.setState({ 
+            alert: {
+                type:'',
+                message:'' 
+            } 
+        });
         dispatch(alertActions.clear());
     }
 
@@ -619,8 +592,61 @@ class Overview extends React.Component {
         }
     }
 
+    updateSelectedIds(selectedIds) {
+        this.setState({
+            ...this.state,
+            selectedIds: selectedIds
+        });
+    }
+
     handleUpdateValue(event) {
         event.preventDefault();
+        const { dispatch, fieldnames } = this.props;
+        const { selectedField, selectedIds, projectId, unlocked} = this.state;
+        if (!selectedField) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected the field to be updated'
+                }
+            });
+        } else if (_.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be updated'
+                }
+            });
+        } else if (_.isEmpty(fieldnames)){
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'an error occured'
+                }
+            });
+            dispatch(fieldActions.getAll(projectId));
+        } else {
+            let found = fieldnames.items.find( function (f) {
+                return f.fields._id === selectedField;
+            });
+            if (found.edit && !unlocked) {
+                this.setState({
+                    ...this.state,
+                    alert: {
+                        type:'alert-danger',
+                        message:'The field selected is locked for editing, please click on the unlock button'
+                    }
+                });
+            } else {
+                // let fieldValue
+                console.log('selectedField:', found);
+                console.log('selectedIds:', selectedIds);
+            }
+            
+        }
     }
 
     handleSplitLine(event) {
@@ -631,7 +657,8 @@ class Overview extends React.Component {
         const { 
             projectId, 
             screen, 
-            screenId, 
+            screenId,
+            selectedIds, 
             unlocked, 
             selectedTemplate, 
             selectedField, 
@@ -650,7 +677,7 @@ class Overview extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Overview : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Expediting | Total Client PO Overview > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="overview" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
@@ -710,6 +737,8 @@ class Overview extends React.Component {
                                 screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
                                 screenBodys={generateScreenBody(screenId, fieldnames, pos)}
                                 screenId={screenId}
+                                selectedIds={selectedIds}
+                                updateSelectedIds = {this.updateSelectedIds}
                                 projectId={projectId}
                                 handleSelectionReload={this.handleSelectionReload}
                                 toggleUnlock={this.toggleUnlock}

@@ -54,7 +54,7 @@ class Inspection extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Inspection : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Inspection > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="inspection">
                     <div className="row justify-content-center">
@@ -70,7 +70,7 @@ class Inspection extends React.Component {
                                     className="fa-5x mb-3" 
                                     name="clipboard-check"
                                 />
-                                <h3>Release data</h3>
+                                <h3>Inspection & Release data</h3>
                             </div>
                         </div>
                     </NavLink>

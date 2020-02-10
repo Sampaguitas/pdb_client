@@ -17,6 +17,45 @@ import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
+const myLocale = Intl.DateTimeFormat(locale, options);
+
+function getDateFormat(myLocale) {
+    let tempDateFormat = ''
+    myLocale.formatToParts().map(function (element) {
+        switch(element.type) {
+            case 'month': 
+                tempDateFormat = tempDateFormat + 'MM';
+                break;
+            case 'literal': 
+                tempDateFormat = tempDateFormat + element.value;
+                break;
+            case 'day': 
+                tempDateFormat = tempDateFormat + 'DD';
+                break;
+            case 'year': 
+                tempDateFormat = tempDateFormat + 'YYYY';
+                break;
+        }
+    });
+    return tempDateFormat;
+}
+
+function TypeToString (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'Date': return String(moment(fieldValue).format(myDateFormat));
+            case 'Number': return String(new Intl.NumberFormat().format(fieldValue)); 
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
+
+
 function arrayRemove(arr, value) {
 
     return arr.filter(function(ele){
@@ -93,6 +132,38 @@ function getScreenTbls (fieldnames) {
     
 }
 
+function getCertificateFields (screenHeaders) {
+    if (screenHeaders) {
+        let tempArray = [];
+        screenHeaders.reduce(function (accumulator, currentValue) {
+            if (currentValue.fields.fromTbl === 'certificate' && !accumulator.includes(currentValue.fields._id)) {
+                tempArray.push(currentValue.fields);
+                accumulator.push(currentValue.fields._id);
+            }
+            return accumulator;
+        },[]);
+        return tempArray;
+    } else {
+        return [];
+    }
+}
+
+function virtuals(certificates, certificateFields) {
+    let tempVirtuals = [];
+    let tempObject = {_id: '0'}
+    certificates.map(function (certificate){
+        certificateFields.map(function (certificateField) {
+            if (!tempObject.hasOwnProperty(certificateField.name)) {
+                tempObject[certificateField.name] = [TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale))]
+            } else if(!tempObject[certificateField.name].includes(TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale)))) {
+                tempObject[certificateField.name].push(TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale)));
+            }
+        });
+    });
+    tempVirtuals.push(tempObject);
+    return tempVirtuals;
+}
+
 function getInputType(dbFieldType) {
     switch(dbFieldType) {
         case 'Number': return 'number';
@@ -124,62 +195,8 @@ function generateScreenBody(screenId, fieldnames, pos){
         pos.items.map(po => {
             if (po.subs) {
                 po.subs.map(sub => {
-                    // if (!_.isEmpty(sub.packitems) && hasPackitems) {
-                    //     sub.packitems.map(packitem => {
-                    //         arrayRow = [];
-                    //         screenHeaders.map(screenHeader => {
-                    //             switch(screenHeader.fields.fromTbl) {
-                    //                 case 'po':
-                    //                     arrayRow.push({
-                    //                         collection: 'po',
-                    //                         objectId: po._id,
-                    //                         fieldName: screenHeader.fields.name,
-                    //                         fieldValue: po[screenHeader.fields.name],
-                    //                         disabled: screenHeader.edit,
-                    //                         align: screenHeader.align,
-                    //                         fieldType: getInputType(screenHeader.fields.type),
-                    //                     });
-                    //                     break;
-                    //                 case 'sub':
-                    //                     arrayRow.push({
-                    //                         collection: 'sub',
-                    //                         objectId: sub._id,
-                    //                         fieldName: screenHeader.fields.name,
-                    //                         fieldValue: sub[screenHeader.fields.name],
-                    //                         disabled: screenHeader.edit,
-                    //                         align: screenHeader.align,
-                    //                         fieldType: getInputType(screenHeader.fields.type),
-                    //                     });
-                    //                     break;
-                    //                 case 'packitem':
-                    //                     arrayRow.push({
-                    //                         collection: 'packitem',
-                    //                         objectId: packitem._id,
-                    //                         fieldName: screenHeader.fields.name,
-                    //                         fieldValue: packitem[screenHeader.fields.name],
-                    //                         disabled: screenHeader.edit,
-                    //                         align: screenHeader.align,
-                    //                         fieldType: getInputType(screenHeader.fields.type),
-                    //                     });
-                    //                     break;
-                    //                 default: arrayRow.push({
-                    //                     collection: 'virtual',
-                    //                         objectId: '0',
-                    //                         fieldName: screenHeader.fields.name,
-                    //                         fieldValue: '',
-                    //                         disabled: screenHeader.edit,
-                    //                         align: screenHeader.align,
-                    //                         fieldType: getInputType(screenHeader.fields.type),
-                    //                 }); 
-                    //             }
-                    //         });
-                    //         objectRow  = { _id: i, tablesId:[po._id, sub._id, '', '', ''].join(';'), fields: arrayRow }
-                    //         arrayBody.push(objectRow);
-                    //         i++;
-                    //     })
-                    // } else if (!_.isEmpty(sub.certificates) && hasCertificates){
                     if (!_.isEmpty(sub.certificates) && hasCertificates){
-                        sub.certificates.map(certificate => {
+                        virtuals(sub.certificates, getCertificateFields(screenHeaders)).map(virtual => {
                             arrayRow = [];
                             screenHeaders.map(screenHeader => {
                                 switch(screenHeader.fields.fromTbl) {
@@ -207,10 +224,10 @@ function generateScreenBody(screenId, fieldnames, pos){
                                         break;
                                     case 'certificate':
                                         arrayRow.push({
-                                            collection: 'certificate',
-                                            objectId: certificate._id,
+                                            collection: 'virtual',
+                                            objectId: virtual._id,
                                             fieldName: screenHeader.fields.name,
-                                            fieldValue: certificate[screenHeader.fields.name],
+                                            fieldValue: virtual[screenHeader.fields.name].join(' | '),
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
@@ -227,7 +244,17 @@ function generateScreenBody(screenId, fieldnames, pos){
                                     });
                                 }
                             });
-                            objectRow  = { _id: i, tablesId:[po._id, sub._id, '', '', ''].join(';'), fields: arrayRow }
+                            objectRow  = {
+                                _id: i, 
+                                tablesId: { 
+                                    poId: po._id,
+                                    subId: sub._id,
+                                    certificateId: '',
+                                    packItemId: '',
+                                    colliPackId: '' 
+                                },
+                                fields: arrayRow
+                            };
                             arrayBody.push(objectRow);
                             i++;
                         });
@@ -268,7 +295,17 @@ function generateScreenBody(screenId, fieldnames, pos){
                                 }); 
                             }
                         });
-                        objectRow  = { _id: i, tablesId:[po._id, sub._id, '', '', ''].join(';'), fields: arrayRow }
+                        objectRow  = {
+                            _id: i, 
+                            tablesId: { 
+                                poId: po._id,
+                                subId: sub._id,
+                                certificateId: '',
+                                packItemId: '',
+                                colliPackId: '' 
+                            },
+                            fields: arrayRow
+                        };
                         arrayBody.push(objectRow);
                         i++;
                     }
@@ -290,6 +327,7 @@ class ReleaseData extends React.Component {
             screenId: '5cd2b642fd333616dc360b64',
             unlocked: false,
             screen: 'inspection',
+            selectedIds: [],
             selectedTemplate: '0',
             selectedField: '',
             updateValue:'',                        
@@ -302,6 +340,7 @@ class ReleaseData extends React.Component {
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
+        this.updateSelectedIds = this.updateSelectedIds.bind(this);
     }
 
     componentDidMount() {
@@ -457,6 +496,13 @@ class ReleaseData extends React.Component {
         }
     }
 
+    updateSelectedIds(selectedIds) {
+        this.setState({
+            ...this.state,
+            selectedIds: selectedIds
+        });
+    }
+
     handleUpdateValue(event) {
         event.preventDefault();
     }
@@ -469,7 +515,8 @@ class ReleaseData extends React.Component {
         const { 
             projectId, 
             screen, 
-            screenId, 
+            screenId,
+            selectedIds, 
             unlocked, 
             selectedTemplate, 
             selectedField, 
@@ -487,7 +534,7 @@ class ReleaseData extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Inspection - Release data : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Inspection | Inspection & Release data > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="inspection" className="full-height">
                 <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
@@ -547,6 +594,8 @@ class ReleaseData extends React.Component {
                                 screenBodys={generateScreenBody(screenId, fieldnames, pos)}
                                 projectId={projectId}
                                 screenId={screenId}
+                                selectedIds={selectedIds}
+                                updateSelectedIds = {this.updateSelectedIds}
                                 handleSelectionReload={this.handleSelectionReload}
                                 toggleUnlock={this.toggleUnlock}
                                 unlocked={unlocked}

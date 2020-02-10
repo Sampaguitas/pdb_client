@@ -52,7 +52,7 @@ class StockManagement extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Warehouse - Stock management : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Warehouse | Stock management > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
             </Layout>
         );

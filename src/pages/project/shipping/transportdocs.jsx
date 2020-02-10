@@ -135,58 +135,32 @@ function generateScreenBody(screenId, fieldnames, pos){
                                             fieldType: getInputType(screenHeader.fields.type),
                                         });
                                         break;
-                                    default: arrayRow.push({}); 
+                                    default: arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: '0',
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: '',
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
                                 }
                             });
-                            objectRow  = { _id: i, tablesId:[po._id, sub._id, '', packitem._id, ''].join(';'), fields: arrayRow }
+                            
+                            objectRow  = {
+                                _id: i, 
+                                tablesId: { 
+                                    poId: po._id,
+                                    subId: sub._id,
+                                    certificateId: '',
+                                    packItemId: packitem._id,
+                                    colliPackId: '' 
+                                },
+                                fields: arrayRow
+                            };
                             arrayBody.push(objectRow);
                             i++;
                         });
-                    // } else if (!_.isEmpty(sub.certificates) && hasCertificates){
-                    //     sub.certificates.map(certificate => {
-                    //         arrayRow = [];
-                    //         screenHeaders.map(screenHeader => {
-                    //             switch(screenHeader.fields.fromTbl) {
-                    //                 case 'po':
-                    //                     arrayRow.push({
-                    //                         collection: 'po',
-                    //                         objectId: po._id,
-                    //                         fieldName: screenHeader.fields.name,
-                    //                         fieldValue: po[screenHeader.fields.name],
-                    //                         disabled: screenHeader.edit,
-                    //                         align: screenHeader.align,
-                    //                         fieldType: getInputType(screenHeader.fields.type),
-                    //                     });
-                    //                     break;
-                    //                 case 'sub':
-                    //                     arrayRow.push({
-                    //                         collection: 'sub',
-                    //                         objectId: sub._id,
-                    //                         fieldName: screenHeader.fields.name,
-                    //                         fieldValue: sub[screenHeader.fields.name],
-                    //                         disabled: screenHeader.edit,
-                    //                         align: screenHeader.align,
-                    //                         fieldType: getInputType(screenHeader.fields.type),
-                    //                     });
-                    //                     break;
-                    //                 case 'certificate':
-                    //                     arrayRow.push({
-                    //                         collection: 'certificate',
-                    //                         objectId: certificate._id,
-                    //                         fieldName: screenHeader.fields.name,
-                    //                         fieldValue: certificate[screenHeader.fields.name],
-                    //                         disabled: screenHeader.edit,
-                    //                         align: screenHeader.align,
-                    //                         fieldType: getInputType(screenHeader.fields.type),
-                    //                     });
-                    //                     break;
-                    //                 default: arrayRow.push({}); 
-                    //             }
-                    //         });
-                    //         objectRow  = { _id: i, fields: arrayRow }
-                    //         arrayBody.push(objectRow);
-                    //         i++;
-                    //     });
                     } else {
                         arrayRow = [];
                         screenHeaders.map(screenHeader => {
@@ -213,10 +187,28 @@ function generateScreenBody(screenId, fieldnames, pos){
                                         fieldType: getInputType(screenHeader.fields.type),
                                     });
                                     break;
-                                default: arrayRow.push({}); 
+                                default: arrayRow.push({
+                                    collection: 'virtual',
+                                    objectId: '0',
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: '',
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                }); 
                             }
                         });
-                        objectRow  = { _id: i, tablesId:[po._id, sub._id, '', '', ''].join(';'), fields: arrayRow }
+                        objectRow  = {
+                            _id: i, 
+                            tablesId: { 
+                                poId: po._id,
+                                subId: sub._id,
+                                certificateId: '',
+                                packItemId: '',
+                                colliPackId: '' 
+                            },
+                            fields: arrayRow
+                        };
                         arrayBody.push(objectRow);
                         i++;
                     }
@@ -236,12 +228,14 @@ class TransportDocuments extends React.Component {
             projectId:'',
             screenId: '5cd2b643fd333616dc360b66',
             unlocked: false,
-            screen: 'inspection',          
+            screen: 'inspection',
+            selectedIds: [],          
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
+        this.updateSelectedIds = this.updateSelectedIds.bind(this);
     }
 
     componentDidMount() {
@@ -327,11 +321,19 @@ class TransportDocuments extends React.Component {
         });
     }
 
+    updateSelectedIds(selectedIds) {
+        this.setState({
+            ...this.state,
+            selectedIds: selectedIds
+        });
+    }
+
     render() {
         const { 
             projectId, 
             screen, 
-            screenId, 
+            screenId,
+            selectedIds, 
             unlocked, 
         }= this.state;
 
@@ -346,7 +348,7 @@ class TransportDocuments extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Shipping - Transport docs : {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <h2>Shipping | Prepare transport docs > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="transportdocs" className="full-height">
                     {selection && selection.project && 
@@ -355,6 +357,8 @@ class TransportDocuments extends React.Component {
                             screenBodys={generateScreenBody(screenId, fieldnames, pos)}
                             projectId={projectId}
                             screenId={screenId}
+                            selectedIds={selectedIds}
+                            updateSelectedIds = {this.updateSelectedIds}
                             handleSelectionReload={this.handleSelectionReload}
                             toggleUnlock={this.toggleUnlock}
                             unlocked={unlocked}
