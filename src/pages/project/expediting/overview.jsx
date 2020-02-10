@@ -17,6 +17,7 @@ import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeaderInput from '../../../_components/project-table/header-input';
+import moment from 'moment';
 import _ from 'lodash';
 
 
@@ -54,6 +55,80 @@ function TypeToString (fieldValue, fieldType, myDateFormat) {
         }
     } else {
         return '';
+    }
+}
+
+function DateToString (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
+function StringToDate (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return moment(fieldValue, myDateFormat).toDate();
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
+function isValidFormat (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return moment(fieldValue, myDateFormat, true).isValid();
+            default: return true;
+        }
+    } else {
+        return true;
+    }
+    
+}
+
+function getObjectIds(collection, selectedIds) {
+    if (!_.isEmpty(selectedIds)) {
+        switch(collection) {
+            case 'po': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.poId)) {
+                    acc.push(curr.poId);
+                }
+                return acc;
+            }, []);
+            case 'sub': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.subId)) {
+                    acc.push(curr.subId);
+                }
+                return acc;
+            }, []);
+            case 'certificate': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.certificateId)) {
+                    acc.push(curr.certificateId);
+                }
+                return acc;
+            }, []);
+            case 'packitem': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.packItemId)) {
+                    acc.push(curr.packItemId);
+                }
+                return acc;
+            }, []);
+            case 'collipack': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.colliPackId)) {
+                    acc.push(curr.colliPackId);
+                }
+                return acc;
+            }, []);
+            default: return [];
+        }
+    } else {
+        return [];
     }
 }
 
@@ -415,6 +490,7 @@ class Overview extends React.Component {
             selectedIds: [],
             selectedTemplate: '0',
             selectedField: '',
+            selectedType: 'text',
             updateValue:'',
             alert: {
                 type:'',
@@ -470,6 +546,23 @@ class Overview extends React.Component {
                 dispatch(projectActions.getById(qs.id));
             }
         } 
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { selectedField } = this.state;
+        const { fields } = this.props;
+        if (selectedField != prevState.selectedField && selectedField != '0') {
+            let found = fields.items.find(function (f) {
+                return f._id === selectedField;
+            });
+            if (found) {
+                this.setState({
+                    ...this.state,
+                    updateValue: '',
+                    selectedType: getInputType(found.type),
+                });
+            }
+        }
     }
 
     handleClearAlert(event){
@@ -602,13 +695,13 @@ class Overview extends React.Component {
     handleUpdateValue(event) {
         event.preventDefault();
         const { dispatch, fieldnames } = this.props;
-        const { selectedField, selectedIds, projectId, unlocked} = this.state;
+        const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue} = this.state;
         if (!selectedField) {
             this.setState({
                 ...this.state,
                 alert: {
                     type:'alert-danger',
-                    message:'You have not selected the field to be updated'
+                    message:'You have not selected the field to be updated.'
                 }
             });
         } else if (_.isEmpty(selectedIds)) {
@@ -616,7 +709,7 @@ class Overview extends React.Component {
                 ...this.state,
                 alert: {
                     type:'alert-danger',
-                    message:'You have not selected rows to be updated'
+                    message:'You have not selected rows to be updated.'
                 }
             });
         } else if (_.isEmpty(fieldnames)){
@@ -624,7 +717,7 @@ class Overview extends React.Component {
                 ...this.state,
                 alert: {
                     type:'alert-danger',
-                    message:'an error occured'
+                    message:'An error occured'
                 }
             });
             dispatch(fieldActions.getAll(projectId));
@@ -637,13 +730,56 @@ class Overview extends React.Component {
                     ...this.state,
                     alert: {
                         type:'alert-danger',
-                        message:'The field selected is locked for editing, please click on the unlock button'
+                        message:'The field selected is locked for editing, please click on the unlock button.'
                     }
                 });
             } else {
-                // let fieldValue
-                console.log('selectedField:', found);
-                console.log('selectedIds:', selectedIds);
+                let collection = found.fields.fromTbl;
+                let objectIds = getObjectIds(collection, selectedIds);
+                let fieldName = found.fields.name;
+                let fieldValue = updateValue;
+                let fieldType = selectedType;
+                if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+                    this.setState({
+                        ...this.state,
+                        alert: {
+                            type:'alert-danger',
+                            message:'Wrong Date Format.'
+                        }
+                    });
+                } else {
+                    const requestOptions = {
+                        method: 'PUT',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            collection: collection,
+                            fieldName: fieldName,
+                            fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                            objectIds: objectIds
+                        })
+                    };
+                    //?objectIds=${JSON.stringify(objectIds)}
+                    return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+                    .then( () => {
+                        this.setState({
+                            ...this.state,
+                            alert: {
+                                type:'alert-success',
+                                message:'Field sucessfully updated.'
+                            }
+                        });
+                        this.refreshStore();
+                    })
+                    .catch( () => {
+                        this.setState({
+                            ...this.state,
+                            alert: {
+                                type:'alert-danger',
+                                message:'this Field cannot be updated.'
+                            }
+                        });
+                    });
+                }
             }
             
         }
@@ -661,7 +797,8 @@ class Overview extends React.Component {
             selectedIds, 
             unlocked, 
             selectedTemplate, 
-            selectedField, 
+            selectedField,
+            selectedType, 
             updateValue,
         }= this.state;
 
@@ -693,7 +830,14 @@ class Overview extends React.Component {
                                         <option key="0" value="0">Select field...</option>
                                         {this.selectedFieldOptions(fieldnames, fields, screenId)}
                                     </select>
-                                <input className="form-control" name="updateValue" value={updateValue} onChange={this.handleChange}/>
+                                <input
+                                    className="form-control"
+                                    type={selectedType === 'number' ? 'number' : 'text'}
+                                    name="updateValue"
+                                    value={updateValue}
+                                    onChange={this.handleChange}
+                                    placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                                    />
                                 <div className="input-group-append mr-2">
                                     <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>  {/* onClick={(event) => this.handleOnclick(event, selectedTemplate)} */}
                                         <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
