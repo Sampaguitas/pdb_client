@@ -426,12 +426,12 @@ class Project extends React.Component {
                                             type="submit"
                                             className="btn btn-leeuwen-blue btn-full btn-lg mb-3"
                                         >
-                                            {projectCreating && (
-                                                <FontAwesomeIcon
-                                                    icon="spinner"
-                                                    className="fa-pulse fa-1x fa-fw"
-                                                />
-                                            )}    
+                                            {projectCreating ?
+                                                <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2" />
+                                            :
+                                            
+                                                <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
+                                            }    
                                             Create Project
                                         </button>
                                     </div>

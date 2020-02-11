@@ -4,6 +4,7 @@ import queryString from 'query-string';
 import { 
     accessActions, 
     alertActions,
+    docdefActions,
     collipackActions,
     fieldnameActions,
     fieldActions,
@@ -11,7 +12,8 @@ import {
     projectActions,
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
-import ProjectTable from '../../../_components/project-table/project-table'
+import ProjectTable from '../../../_components/project-table/project-table';
+import Modal from '../../../_components/modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
@@ -165,6 +167,30 @@ function arraySorted(array, fieldOne, fieldTwo, fieldThree) {
     }
 }
 
+function docConf(array) {
+    const tpeOf = [
+        //'5d1927121424114e3884ac7e', //ESR01 Expediting status report
+        '5d1927131424114e3884ac80', //PL01 Packing List
+        '5d1927141424114e3884ac84', //SM01 Shipping Mark
+        '5d1927131424114e3884ac81', //PN01 Packing Note
+        '5d1927141424114e3884ac83' //SI01 Shipping Invoice
+        // '5d1927131424114e3884ac7f' //NFI1 Notification for Inspection
+    ];
+    return array.filter(function (element) {
+        return tpeOf.includes(element.doctypeId);
+    });
+}
+
+function findObj(array, search) {
+    if (!_.isEmpty(array) && search) {
+        return array.find((function(element) {
+            return _.isEqual(element._id, search);
+        }));
+    } else {
+        return {};
+    }
+}
+
 function getScreenTbls (fieldnames) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         return fieldnames.items.reduce(function (accumulator, currentValue) {
@@ -261,31 +287,41 @@ class PackingDetails extends React.Component {
             unlocked: false,
             screen: 'certificates',
             selectedIds: [],
-            // selectedTemplate: '0',
+            selectedTemplate: '0',
             selectedField: '',
             selectedType: 'text',
             updateValue:'',
             alert: {
                 type:'',
                 message:''
-            }
+            },
+            //-----modals-----
+            showEditValues: false,
+            showSplitLines: false,
+            showGenerate: false,
+            showDelete: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
-        // this.handleChange = this.handleChange.bind(this);
-        // this.handleGenerateFile = this.handleGenerateFile.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         // this.handleSplitLine = this.handleSplitLine.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
+        //Toggle Modals
+        this.toggleEditValues = this.toggleEditValues.bind(this);
+        this.toggleGenerate = this.toggleGenerate.bind(this);
+        this.toggleDelete = this.toggleDelete.bind(this);
     }
 
     componentDidMount() {
         const { 
             dispatch,
             loadingAccesses,
+            loadingDocdefs,
             loadingCollipacks,
             loadingFieldnames,
             loadingFields,
@@ -299,6 +335,9 @@ class PackingDetails extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingDocdefs) {
+                dispatch(docdefActions.getAll(qs.id));
             }
             if (!loadingCollipacks) {
                 dispatch(collipackActions.getAll(qs.id));
@@ -352,6 +391,7 @@ class PackingDetails extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
+            loadingDocdefs,
             loadingFieldnames,
             loadingFields,
             loadingPos,
@@ -364,6 +404,9 @@ class PackingDetails extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingDocdefs) {
+                dispatch(docdefActions.getAll(qs.id));
             }
             if (!loadingCollipacks) {
                 dispatch(collipackActions.getById(qs.id));
@@ -409,6 +452,23 @@ class PackingDetails extends React.Component {
         });
     }
 
+    handleGenerateFile(event) {
+        event.preventDefault();
+        const { docdefs } = this.props;
+        const { selectedTemplate } = this.state;
+        if (selectedTemplate != "0") {
+            let obj = findObj(docdefs.items, selectedTemplate);
+             if (obj) {
+                const requestOptions = {
+                    method: 'GET',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                };
+                return fetch(`${config.apiUrl}/template/generate?docDef=${selectedTemplate}`, requestOptions)
+                    .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
+             }
+        }
+    }
+
     selectedFieldOptions(fieldnames, fields, screenId) {
         if (fieldnames.items && fields.items) {
             let screenHeaders = generateScreenHeader(fieldnames, screenId);
@@ -452,6 +512,7 @@ class PackingDetails extends React.Component {
         if (!selectedField) {
             this.setState({
                 ...this.state,
+                showEditValues: false,
                 alert: {
                     type:'alert-danger',
                     message:'You have not selected the field to be updated.'
@@ -460,6 +521,7 @@ class PackingDetails extends React.Component {
         } else if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
+                showEditValues: false,
                 alert: {
                     type:'alert-danger',
                     message:'You have not selected rows to be updated.'
@@ -468,6 +530,7 @@ class PackingDetails extends React.Component {
         } else if (_.isEmpty(fieldnames)){
             this.setState({
                 ...this.state,
+                showEditValues: false,
                 alert: {
                     type:'alert-danger',
                     message:'An error occured'
@@ -483,6 +546,7 @@ class PackingDetails extends React.Component {
             if (found.edit && !unlocked) {
                 this.setState({
                     ...this.state,
+                    showEditValues: false,
                     alert: {
                         type:'alert-danger',
                         message:'The field selected is locked for editing, please click on the unlock button.'
@@ -497,6 +561,7 @@ class PackingDetails extends React.Component {
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
                         ...this.state,
+                        showEditValues: false,
                         alert: {
                             type:'alert-danger',
                             message:'Wrong Date Format.'
@@ -513,21 +578,22 @@ class PackingDetails extends React.Component {
                             objectIds: objectIds
                         })
                     };
-                    //?objectIds=${JSON.stringify(objectIds)}
                     return fetch(`${config.apiUrl}/extract/update`, requestOptions)
                     .then( () => {
+                        this.refreshStore();
                         this.setState({
                             ...this.state,
+                            showEditValues: false,
                             alert: {
                                 type:'alert-success',
                                 message:'Field sucessfully updated.'
                             }
                         });
-                        this.refreshStore();
                     })
                     .catch( () => {
                         this.setState({
                             ...this.state,
+                            showEditValues: false,
                             alert: {
                                 type:'alert-danger',
                                 message:'this Field cannot be updated.'
@@ -546,6 +612,7 @@ class PackingDetails extends React.Component {
         if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
+                showDelete: false,
                 alert: {
                     type:'alert-danger',
                     message:'You have not selected rows to be deleted.'
@@ -554,6 +621,7 @@ class PackingDetails extends React.Component {
         } else if (!unlocked) {
             this.setState({
                 ...this.state,
+                showDelete: false,
                 alert: {
                     type:'alert-danger',
                     message:'Unlock the table in order to delete the rows'
@@ -564,6 +632,94 @@ class PackingDetails extends React.Component {
         }
     }
 
+    toggleEditValues(event) {
+        event.preventDefault();
+        const { showEditValues, selectedIds } = this.state;
+        if (!showEditValues && _.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be updated.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedTemplate: '0',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showEditValues: !showEditValues,
+                // showSplitLine: false,
+                showGenerate: false,
+                showDelete: false
+            });
+        }
+    }
+
+    toggleGenerate(event) {
+        event.preventDefault();
+        const { showGenerate } = this.state;
+        this.setState({
+            ...this.state,
+            selectedTemplate: '0',
+            selectedField: '',
+            selectedType: 'text',
+            updateValue:'',
+            alert: {
+                type:'',
+                message:''
+            },
+            showEditValues: false,
+            // showSplitLine: false,
+            showGenerate: !showGenerate,
+            showDelete: false
+        });
+    }
+
+    toggleDelete(event) {
+        event.preventDefault();
+        const { showDelete, unlocked, selectedIds } = this.state;
+        if (!showDelete && _.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be deleted.'
+                }
+            });
+        } else if (!showDelete && !unlocked) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Unlock the table in order to delete the rows'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedTemplate: '0',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showEditValues: false,
+                // showSplitLine: false,
+                showGenerate: false,
+                showDelete: !showDelete
+            });
+        }
+    }
+
     render() {
         const { 
             projectId, 
@@ -571,13 +727,18 @@ class PackingDetails extends React.Component {
             screenId,
             selectedIds,
             unlocked,
-            // selectedTemplate,
+            selectedTemplate,
             selectedField,
             selectedType,
             updateValue,
+            //show modals
+            showEditValues,
+            // showSplitLines,
+            showGenerate,
+            showDelete,
         }= this.state;
 
-        const { accesses, fieldnames, fields, collipacks, selection } = this.props;
+        const { accesses, docdefs, fieldnames, fields, collipacks, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
             <Layout alert={alert} accesses={accesses}>
@@ -591,31 +752,13 @@ class PackingDetails extends React.Component {
                 <h2>Shipping | Complete packing details > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="packingdetails" className="full-height">
-                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
-                        <div
-                            className="col"
-                            style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
-                        >
-                            <div className="input-group">
-                                    <select className="form-control" name="selectedField" value={selectedField} placeholder="Select field..." onChange={this.handleChange}>
-                                        <option key="0" value="0">Select field...</option>
-                                        {this.selectedFieldOptions(fieldnames, fields, screenId)}
-                                    </select>
-                                <input
-                                    className="form-control"
-                                    type={selectedType === 'number' ? 'number' : 'text'}
-                                    name="updateValue"
-                                    value={updateValue}
-                                    onChange={this.handleChange}
-                                    placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
-                                    />
-                                <div className="input-group-append mr-2">
-                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>
-                                        <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleEditValues(event)}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
+                        </button>
+                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleGenerate(event)}>
+                            <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Shipping Docs</span>
+                        </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {selection && selection.project && 
@@ -633,19 +776,114 @@ class PackingDetails extends React.Component {
                                 fieldnames={fieldnames}
                                 fields={fields}
                                 refreshStore={this.refreshStore}
-                                handleDeleteRows = {this.handleDeleteRows}
+                                toggleDelete = {this.toggleDelete}
                             />
                         }
                     </div>
                 </div>
+
+                <Modal
+                    show={showEditValues}
+                    hideModal={this.toggleEditValues}
+                    title="Edit Values"
+                >
+                    <div className="col-12">
+                        <div className="form-group">
+                            <label htmlFor="selectedField">Select Field</label>
+                            <select
+                                className="form-control"
+                                name="selectedField"
+                                value={selectedField}
+                                placeholder="Select field..."
+                                onChange={this.handleChange}
+                            >
+                                <option key="0" value="0">Select field...</option>
+                                {this.selectedFieldOptions(fieldnames, fields, screenId)}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="updateValue">Value</label>
+                            <input
+                                className="form-control"
+                                type={selectedType === 'number' ? 'number' : 'text'}
+                                name="updateValue"
+                                value={updateValue}
+                                onChange={this.handleChange}
+                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                            />
+                        </div>
+                        <div className="text-right">
+                            <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>
+                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
+                            </button>
+                        </div>                   
+                    </div>
+                </Modal>
+
+                <Modal
+                    show={showGenerate}
+                    hideModal={this.toggleGenerate}
+                    title="Generate Document"
+                    // size="modal-xl"
+                >
+                    <div className="col-12">
+                            <div className="form-group">
+                                <label htmlFor="selectedTemplate">Select Document</label>
+                                <select
+                                    className="form-control"
+                                    name="selectedTemplate"
+                                    value={selectedTemplate}
+                                    placeholder="Select document..."
+                                    onChange={this.handleChange}
+                                >
+                                    <option key="0" value="0">Select document...</option>
+                                    {
+                                        docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
+                                            return (
+                                                <option 
+                                                    key={p._id}
+                                                    value={p._id}>{p.name}
+                                                </option>
+                                            );
+                                        })
+                                    }
+                                </select>
+                            </div>
+                            <div className="text-right">
+                                <button className="btn btn-success btn-lg" onClick={event => this.handleGenerateFile(event)}>
+                                    <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
+                                </button>
+                            </div>                   
+                    </div>
+                </Modal>
+
+                <Modal
+                    show={showDelete}
+                    hideModal={this.toggleDelete}
+                    title="Delete Value(s)"
+                >
+                    <div className="col-12">
+                        <p className="font-weight-bold">Selected Lines will be permanently deleted!</p>
+                        <div className="text-right">
+                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleDelete(event)}>
+                                <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Cancel</span>
+                            </button>
+                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteRows(event)}>
+                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Proceed</span>
+                            </button>
+                        </div>                   
+                    </div>
+                </Modal>
+
             </Layout>
         );
     }
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, collipacks, fieldnames, fields, pos, selection } = state;
+    const { accesses, alert, docdefs, collipacks, fieldnames, fields, pos, selection } = state;
     const { loadingAccesses } = accesses;
+    const { loadingDocdefs } = docdefs;
     const { loadingCollipacks } = collipacks;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
@@ -655,9 +893,11 @@ function mapStateToProps(state) {
         accesses,
         collipacks,
         alert,
+        docdefs,
         fieldnames,
         fields,
         loadingAccesses,
+        loadingDocdefs,
         loadingCollipacks,
         loadingFieldnames,
         loadingFields,

@@ -414,16 +414,15 @@ class General extends React.Component {
                                         <div>
                                             <button
                                                 type="submit"
-                                                className="btn btn-leeuwen btn-lg"
+                                                className="btn btn-leeuwen btn-lg mr-2"
                                                 onClick={(event) => { handleDeleteProject(event, project.id)}} 
-                                                style={{ marginRight: 10 }}
+                                                // style={{ marginRight: 10 }}
                                             >
-                                                {projectDeleting && (
-                                                    <FontAwesomeIcon 
-                                                        icon="spinner"
-                                                        className="fa-pulse fa-1x fa-fw" 
-                                                    /> 
-                                                )}
+                                                {projectDeleting ?
+                                                    <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
+                                                    : 
+                                                    <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
+                                                }
                                                 Delete
                                             </button>
                                             <button
@@ -431,12 +430,11 @@ class General extends React.Component {
                                                 className="btn btn-leeuwen-blue btn-lg"
                                                 onClick={(event) => { handleSubmitProject(event, project)} }
                                             >
-                                                {projectUpdating && (
-                                                    <FontAwesomeIcon
-                                                        icon="spinner"
-                                                        className="fa-pulse fa-1x fa-fw"
-                                                    />
-                                                )}
+                                                {projectUpdating ?
+                                                    <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
+                                                :
+                                                    <FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>
+                                                }
                                                 Update
                                             </button>
                                         </div>

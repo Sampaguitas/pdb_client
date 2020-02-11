@@ -137,28 +137,29 @@ class Certificates extends React.Component {
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[heatNr]')}>heatNr</span>
                             <div className="text-right">
                                 <button
-                                    className="btn btn-leeuwen btn-lg"
-                                    onClick={(event) => this.handleDeleteDpattern(event)} 
-                                    style={{ marginRight: 10 }}
-                                >
-                                    {dpatternDeleting ?
-                                        <span><FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw"/> </span> 
-                                    :
-                                        <span><FontAwesomeIcon icon="trash-alt" className="fa-lg"/> </span> 
-                                    }
-                                    Delete
-                                </button>
-                                <button
-                                    className="btn btn-leeuwen-blue btn-lg"
-                                    onClick={(event) => this.handleUpdateDpattern(event)}
-                                >
+                                        className="btn btn-leeuwen-blue btn-lg mr-2"
+                                        onClick={(event) => this.handleUpdateDpattern(event)}
+                                        // style={{ marginRight: 10 }}
+                                    >
                                     {dpatternUpdating ?
-                                        <span><FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw"/> </span>
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
                                     :
-                                        <span><FontAwesomeIcon icon="edit" className="fa-lg"/> </span>
+                                        <FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>
                                     }
                                     Update
                                 </button>
+                                <button
+                                    className="btn btn-leeuwen btn-lg"
+                                    onClick={(event) => this.handleDeleteDpattern(event)}
+                                >
+                                    {dpatternDeleting ?
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
+                                    :
+                                        <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/> 
+                                    }
+                                    Delete
+                                </button>
+                                
                             </div>   
                         </div>
                     </div>

@@ -10,8 +10,10 @@ import {
     projectActions 
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
-import ProjectTable from '../../../_components/project-table/project-table'
+import ProjectTable from '../../../_components/project-table/project-table';
+import Modal from '../../../_components/modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
@@ -348,17 +350,22 @@ class Certificates extends React.Component {
             alert: {
                 type:'',
                 message:''
-            }
+            },
+            //-----modals-----
+            showEditValues: false,
+            showDelete: false,
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
-        // this.handleSplitLine = this.handleSplitLine.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
+        //Toggle Modals
+        this.toggleEditValues = this.toggleEditValues.bind(this);
+        this.toggleDelete = this.toggleDelete.bind(this);
     }
 
     componentDidMount() {
@@ -524,6 +531,7 @@ class Certificates extends React.Component {
         if (!selectedField) {
             this.setState({
                 ...this.state,
+                showEditValues: false,
                 alert: {
                     type:'alert-danger',
                     message:'You have not selected the field to be updated.'
@@ -532,6 +540,7 @@ class Certificates extends React.Component {
         } else if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
+                showEditValues: false,
                 alert: {
                     type:'alert-danger',
                     message:'You have not selected rows to be updated.'
@@ -540,6 +549,7 @@ class Certificates extends React.Component {
         } else if (_.isEmpty(fieldnames)){
             this.setState({
                 ...this.state,
+                showEditValues: false,
                 alert: {
                     type:'alert-danger',
                     message:'An error occured'
@@ -555,6 +565,7 @@ class Certificates extends React.Component {
             if (found.edit && !unlocked) {
                 this.setState({
                     ...this.state,
+                    showEditValues: false,
                     alert: {
                         type:'alert-danger',
                         message:'The field selected is locked for editing, please click on the unlock button.'
@@ -569,6 +580,7 @@ class Certificates extends React.Component {
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
                         ...this.state,
+                        showEditValues: false,
                         alert: {
                             type:'alert-danger',
                             message:'Wrong Date Format.'
@@ -590,6 +602,7 @@ class Certificates extends React.Component {
                     .then( () => {
                         this.setState({
                             ...this.state,
+                            showEditValues: false,
                             alert: {
                                 type:'alert-success',
                                 message:'Field sucessfully updated.'
@@ -600,6 +613,7 @@ class Certificates extends React.Component {
                     .catch( () => {
                         this.setState({
                             ...this.state,
+                            showEditValues: false,
                             alert: {
                                 type:'alert-danger',
                                 message:'this Field cannot be updated.'
@@ -618,6 +632,7 @@ class Certificates extends React.Component {
         if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
+                showDelete: false,
                 alert: {
                     type:'alert-danger',
                     message:'You have not selected rows to be deleted.'
@@ -626,6 +641,7 @@ class Certificates extends React.Component {
         } else if (!unlocked) {
             this.setState({
                 ...this.state,
+                showDelete: false,
                 alert: {
                     type:'alert-danger',
                     message:'Unlock the table in order to delete the rows'
@@ -636,6 +652,70 @@ class Certificates extends React.Component {
         }
     }
 
+    toggleEditValues(event) {
+        event.preventDefault();
+        const { showEditValues, selectedIds } = this.state;
+        if (!showEditValues && _.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be updated.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedTemplate: '0',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showEditValues: !showEditValues,
+                showDelete: false
+            });
+        }
+    }
+
+    toggleDelete(event) {
+        event.preventDefault();
+        const { showDelete, unlocked, selectedIds } = this.state;
+        if (!showDelete && _.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be deleted.'
+                }
+            });
+        } else if (!showDelete && !unlocked) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Unlock the table in order to delete the rows'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedTemplate: '0',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showEditValues: false,
+                showDelete: !showDelete
+            });
+        }
+    }
+
     render() {
         const { 
             projectId, 
@@ -643,10 +723,11 @@ class Certificates extends React.Component {
             screenId,
             selectedIds,
             unlocked,
-            // selectedTemplate
             selectedField,
             selectedType, 
-            updateValue, 
+            updateValue,
+            showEditValues,
+            showDelete,
         }= this.state;
         
         const { accesses, fieldnames, fields, pos, selection } = this.props;
@@ -664,30 +745,9 @@ class Certificates extends React.Component {
                 <hr />
                 <div id="certificates" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
-                        <div
-                            className="col"
-                            style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
-                        >
-                            <div className="input-group">
-                                    <select className="form-control" name="selectedField" value={selectedField} placeholder="Select field..." onChange={this.handleChange}>
-                                        <option key="0" value="0">Select field...</option>
-                                        {this.selectedFieldOptions(fieldnames, fields, screenId)}
-                                    </select>
-                                <input
-                                    className="form-control"
-                                    type={selectedType === 'number' ? 'number' : 'text'}
-                                    name="updateValue"
-                                    value={updateValue}
-                                    onChange={this.handleChange}
-                                    placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
-                                    />
-                                <div className="input-group-append mr-2">
-                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>
-                                        <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleEditValues(event)}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
+                        </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {selection && selection.project && 
@@ -705,11 +765,68 @@ class Certificates extends React.Component {
                                 fieldnames={fieldnames}
                                 fields={fields}
                                 refreshStore={this.refreshStore}
-                                handleDeleteRows = {this.handleDeleteRows}
+                                toggleDelete = {this.toggleDelete}
                             />
                         }
                     </div>
-                </div> 
+                </div>
+
+                <Modal
+                    show={showEditValues}
+                    hideModal={this.toggleEditValues}
+                    title="Edit Values"
+                >
+                    <div className="col-12">
+                        <div className="form-group">
+                            <label htmlFor="selectedField">Select Field</label>
+                            <select
+                                className="form-control"
+                                name="selectedField"
+                                value={selectedField}
+                                placeholder="Select field..."
+                                onChange={this.handleChange}
+                            >
+                                <option key="0" value="0">Select field...</option>
+                                {this.selectedFieldOptions(fieldnames, fields, screenId)}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="updateValue">Value</label>
+                            <input
+                                className="form-control"
+                                type={selectedType === 'number' ? 'number' : 'text'}
+                                name="updateValue"
+                                value={updateValue}
+                                onChange={this.handleChange}
+                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                            />
+                        </div>
+                        <div className="text-right">
+                            <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>
+                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
+                            </button>
+                        </div>                   
+                    </div>
+                </Modal>
+
+                <Modal
+                    show={showDelete}
+                    hideModal={this.toggleDelete}
+                    title="Delete Value(s)"
+                >
+                    <div className="col-12">
+                        <p className="font-weight-bold">Selected Lines will be permanently deleted!</p>
+                        <div className="text-right">
+                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleDelete(event)}>
+                                <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Cancel</span>
+                            </button>
+                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteRows(event)}>
+                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Proceed</span>
+                            </button>
+                        </div>                   
+                    </div>
+                </Modal>
+
             </Layout>
         );
     }

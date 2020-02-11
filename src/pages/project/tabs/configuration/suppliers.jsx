@@ -628,12 +628,10 @@ class Suppliers extends React.Component {
                                                             // onClick={(event) => this.handleDelete(event, supplier.id)}
                                                             onClick={(event) => handleDeleteSupplier(event, supplier.id, this.hideModal(event))}
                                                         >
-                                                            {deleting && (
-                                                                <FontAwesomeIcon
-                                                                    icon="spinner"
-                                                                    className="fa-pulse fa-1x fa-fw" 
-                                                                />
-                                                            )}
+                                                            {deleting ?
+                                                                <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
+                                                            :
+                                                                <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>}
                                                             Delete
                                                         </button>
                                                     </div>
@@ -644,12 +642,11 @@ class Suppliers extends React.Component {
                                                             // onClick={(event) => this.handleSubmit(event, supplier)}
                                                             onClick={(event) => handleSubmitSupplier(event, supplier, this.hideModal(event))}
                                                         >
-                                                            {loading && (
-                                                                <FontAwesomeIcon
-                                                                    icon="spinner"
-                                                                    className="fa-pulse fa-1x fa-fw" 
-                                                                />
-                                                            )}
+                                                            {loading ?
+                                                                <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2" />
+                                                            :
+                                                                <FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>
+                                                            }
                                                             Update
                                                         </button>
                                                     </div>
@@ -661,12 +658,11 @@ class Suppliers extends React.Component {
                                                     // onClick={(event) => this.handleSubmit(event, supplier)}
                                                     onClick={(event) => handleSubmitSupplier(event, supplier, this.hideModal(event))}
                                                 >
-                                                    {loading && (
-                                                        <FontAwesomeIcon
-                                                            icon="spinner"
-                                                            className="fa-pulse fa-1x fa-fw" 
-                                                        />
-                                                    )}
+                                                    {loading ?
+                                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2" />
+                                                    :
+                                                        <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
+                                                    }
                                                     Create
                                                 </button>
                                             }

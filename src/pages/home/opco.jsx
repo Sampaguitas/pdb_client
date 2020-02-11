@@ -447,12 +447,11 @@ class Opco extends React.Component {
                                                     className="btn btn-leeuwen btn-lg"
                                                     onClick={(event) => {this.handleDeletOpco(event, opco.id)}}
                                                 >
-                                                    {opcoDeleting && (
-                                                        <FontAwesomeIcon
-                                                            icon="spinner"
-                                                            className="fa-pulse fa-1x fa-fw" 
-                                                        />
-                                                    )}
+                                                    {opcoDeleting ?
+                                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2" />
+                                                    :
+                                                        <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
+                                                    }
                                                     Delete
                                                 </button>
                                             </div>
@@ -461,12 +460,11 @@ class Opco extends React.Component {
                                                     type="submit"
                                                     className="btn btn-leeuwen-blue btn-lg"
                                                 >
-                                                    {opcoUpdating && (
-                                                        <FontAwesomeIcon
-                                                            icon="spinner"
-                                                            className="fa-pulse fa-1x fa-fw" 
-                                                        />
-                                                    )}
+                                                    {opcoUpdating ?
+                                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
+                                                    :
+                                                        <FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>
+                                                    }
                                                     Update
                                                 </button>
                                             </div>
@@ -476,12 +474,11 @@ class Opco extends React.Component {
                                             type="submit"
                                             className="btn btn-leeuwen-blue btn-lg btn-full"
                                         >
-                                            {opcoCreating && (
-                                                <FontAwesomeIcon
-                                                    icon="spinner"
-                                                    className="fa-pulse fa-1x fa-fw" 
-                                                />
-                                            )}
+                                            {opcoCreating ?
+                                                <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
+                                            :
+                                                <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
+                                            }
                                             Create
                                         </button>
                                     }

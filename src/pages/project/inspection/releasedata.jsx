@@ -14,7 +14,8 @@ import {
     projectActions 
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
-import ProjectTable from '../../../_components/project-table/project-table'
+import ProjectTable from '../../../_components/project-table/project-table';
+import Modal from '../../../_components/modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
@@ -396,8 +397,14 @@ class ReleaseData extends React.Component {
             alert: {
                 type:'',
                 message:''
-            }                      
+            },
+            //-----modals-----
+            showEditValues: false,
+            showSplitLines: false,
+            showGenerate: false,
+            showDelete: false,                      
         };
+
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -405,9 +412,15 @@ class ReleaseData extends React.Component {
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
+        
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
+        //Toggle Modals
+        this.toggleSplitLine = this.toggleSplitLine.bind(this);
+        this.toggleEditValues = this.toggleEditValues.bind(this);
+        this.toggleGenerate = this.toggleGenerate.bind(this);
+        this.toggleDelete = this.toggleDelete.bind(this);
     }
 
     componentDidMount() {
@@ -600,6 +613,7 @@ class ReleaseData extends React.Component {
         if (!selectedField) {
             this.setState({
                 ...this.state,
+                showEditValues: false,
                 alert: {
                     type:'alert-danger',
                     message:'You have not selected the field to be updated.'
@@ -608,6 +622,7 @@ class ReleaseData extends React.Component {
         } else if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
+                showEditValues: false,
                 alert: {
                     type:'alert-danger',
                     message:'You have not selected rows to be updated.'
@@ -616,6 +631,7 @@ class ReleaseData extends React.Component {
         } else if (_.isEmpty(fieldnames)){
             this.setState({
                 ...this.state,
+                showEditValues: false,
                 alert: {
                     type:'alert-danger',
                     message:'An error occured'
@@ -631,6 +647,7 @@ class ReleaseData extends React.Component {
             if (found.edit && !unlocked) {
                 this.setState({
                     ...this.state,
+                    showEditValues: false,
                     alert: {
                         type:'alert-danger',
                         message:'The field selected is locked for editing, please click on the unlock button.'
@@ -645,6 +662,7 @@ class ReleaseData extends React.Component {
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
                         ...this.state,
+                        showEditValues: false,
                         alert: {
                             type:'alert-danger',
                             message:'Wrong Date Format.'
@@ -661,21 +679,22 @@ class ReleaseData extends React.Component {
                             objectIds: objectIds
                         })
                     };
-                    //?objectIds=${JSON.stringify(objectIds)}
                     return fetch(`${config.apiUrl}/extract/update`, requestOptions)
                     .then( () => {
+                        this.refreshStore();
                         this.setState({
                             ...this.state,
+                            showEditValues: false,
                             alert: {
                                 type:'alert-success',
                                 message:'Field sucessfully updated.'
                             }
                         });
-                        this.refreshStore();
                     })
                     .catch( () => {
                         this.setState({
                             ...this.state,
+                            showEditValues: false,
                             alert: {
                                 type:'alert-danger',
                                 message:'this Field cannot be updated.'
@@ -694,6 +713,7 @@ class ReleaseData extends React.Component {
         if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
+                showDelete: false,
                 alert: {
                     type:'alert-danger',
                     message:'You have not selected rows to be deleted.'
@@ -702,6 +722,7 @@ class ReleaseData extends React.Component {
         } else if (!unlocked) {
             this.setState({
                 ...this.state,
+                showDelete: false,
                 alert: {
                     type:'alert-danger',
                     message:'Unlock the table in order to delete the rows'
@@ -716,6 +737,115 @@ class ReleaseData extends React.Component {
         event.preventDefault();
     }
 
+    toggleSplitLine(event) {
+        event.preventDefault();
+        event.preventDefault();
+        const { showSplitLine } = this.state;
+        this.setState({
+            ...this.state,
+            selectedTemplate: '0',
+            selectedField: '',
+            selectedType: 'text',
+            updateValue:'',
+            alert: {
+                type:'',
+                message:''
+            },
+            showEditValues: false,
+            showSplitLine: !showSplitLine,
+            showGenerate: false,
+            showDelete: false
+        });
+    }
+
+    toggleEditValues(event) {
+        event.preventDefault();
+        const { showEditValues, selectedIds } = this.state;
+        if (!showEditValues && _.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be updated.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedTemplate: '0',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showEditValues: !showEditValues,
+                showSplitLine: false,
+                showGenerate: false,
+                showDelete: false
+            });
+        }
+    }
+
+    toggleGenerate(event) {
+        event.preventDefault();
+        const { showGenerate } = this.state;
+        this.setState({
+            ...this.state,
+            selectedTemplate: '0',
+            selectedField: '',
+            selectedType: 'text',
+            updateValue:'',
+            alert: {
+                type:'',
+                message:''
+            },
+            showEditValues: false,
+            showSplitLine: false,
+            showGenerate: !showGenerate,
+            showDelete: false
+        });
+    }
+
+    toggleDelete(event) {
+        event.preventDefault();
+        const { showDelete, unlocked, selectedIds } = this.state;
+        if (!showDelete && _.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be deleted.'
+                }
+            });
+        } else if (!showDelete && !unlocked) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Unlock the table in order to delete the rows'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedTemplate: '0',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showEditValues: false,
+                showSplitLine: false,
+                showGenerate: false,
+                showDelete: !showDelete
+            });
+        }
+    }
+
     render() {
         const { 
             projectId, 
@@ -726,7 +856,12 @@ class ReleaseData extends React.Component {
             selectedTemplate, 
             selectedField,
             selectedType,
-            updateValue 
+            updateValue,
+            //show modals
+            showEditValues,
+            showSplitLines,
+            showGenerate,
+            showDelete,
         }= this.state;
 
         const { accesses, docdefs, fieldnames, fields, pos, selection } = this.props;
@@ -744,62 +879,16 @@ class ReleaseData extends React.Component {
                 <h2>Inspection | Inspection & Release data > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="inspection" className="full-height">
-                <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
-                        <button className="btn btn-leeuwen btn-lg mr-2" style={{height: '34px'}} onClick={event => this.handleSplitLine(event)}>
+                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
+                        <button className="btn btn-warning btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleSplitLine(event)}>
                             <span><FontAwesomeIcon icon="page-break" className="fa-lg mr-2"/>Split line</span>
                         </button>
-                        <div
-                            className="col"
-                            style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
-                        >
-                            <div className="input-group">
-                                    <select className="form-control" name="selectedField" value={selectedField} placeholder="Select field..." onChange={this.handleChange}>
-                                        <option key="0" value="0">Select field...</option>
-                                        {this.selectedFieldOptions(fieldnames, fields, screenId)}
-                                    </select>
-                                    <input
-                                        className="form-control"
-                                        type={selectedType === 'number' ? 'number' : 'text'}
-                                        name="updateValue"
-                                        value={updateValue}
-                                        onChange={this.handleChange}
-                                        placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
-                                    />
-                                    <div className="input-group-append mr-2">
-                                        <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>  {/* onClick={(event) => this.handleOnclick(event, selectedTemplate)} */}
-                                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
-                                        </button>
-                                    </div>
-                            </div>
-                        </div>
-                        <div
-                            className="col"
-                            style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
-                        >
-                            <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text" style={{width: '95px'}}>Select Document</span>
-                                </div>
-                                <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select document..." onChange={this.handleChange}>
-                                    <option key="0" value="0">Select document...</option>
-                                {
-                                    docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
-                                        return (
-                                            <option 
-                                                key={p._id}
-                                                value={p._id}>{p.name}
-                                            </option>
-                                        );
-                                    })
-                                }
-                                </select>
-                                <div className="input-group-append">
-                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleGenerateFile(event)}>
-                                        <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleEditValues(event)}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
+                        </button>
+                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleGenerate(event)}>
+                            <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate NFI</span>
+                        </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {selection && selection.project && 
@@ -817,12 +906,105 @@ class ReleaseData extends React.Component {
                                 fieldnames={fieldnames}
                                 fields={fields}
                                 refreshStore={this.refreshStore}
-                                handleDeleteRows = {this.handleDeleteRows}
+                                toggleDelete = {this.toggleDelete}
                             />
                         }
+                    </div>   
+                </div>
+
+                <Modal
+                    show={showEditValues}
+                    hideModal={this.toggleEditValues}
+                    title="Edit Values"
+                >
+                    <div className="col-12">
+                        <div className="form-group">
+                            <label htmlFor="selectedField">Select Field</label>
+                            <select
+                                className="form-control"
+                                name="selectedField"
+                                value={selectedField}
+                                placeholder="Select field..."
+                                onChange={this.handleChange}
+                            >
+                                <option key="0" value="0">Select field...</option>
+                                {this.selectedFieldOptions(fieldnames, fields, screenId)}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="updateValue">Value</label>
+                            <input
+                                className="form-control"
+                                type={selectedType === 'number' ? 'number' : 'text'}
+                                name="updateValue"
+                                value={updateValue}
+                                onChange={this.handleChange}
+                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                            />
+                        </div>
+                        <div className="text-right">
+                            <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>
+                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
+                            </button>
+                        </div>                   
                     </div>
-                        
-                </div>                
+                </Modal>
+
+                <Modal
+                    show={showGenerate}
+                    hideModal={this.toggleGenerate}
+                    title="Generate Document"
+                    // size="modal-xl"
+                >
+                    <div className="col-12">
+                            <div className="form-group">
+                                <label htmlFor="selectedTemplate">Select Document</label>
+                                <select
+                                    className="form-control"
+                                    name="selectedTemplate"
+                                    value={selectedTemplate}
+                                    placeholder="Select document..."
+                                    onChange={this.handleChange}
+                                >
+                                    <option key="0" value="0">Select document...</option>
+                                    {
+                                        docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
+                                            return (
+                                                <option 
+                                                    key={p._id}
+                                                    value={p._id}>{p.name}
+                                                </option>
+                                            );
+                                        })
+                                    }
+                                </select>
+                            </div>
+                            <div className="text-right">
+                                <button className="btn btn-success btn-lg" onClick={event => this.handleGenerateFile(event)}>
+                                    <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
+                                </button>
+                            </div>                   
+                    </div>
+                </Modal>
+
+                <Modal
+                    show={showDelete}
+                    hideModal={this.toggleDelete}
+                    title="Delete Value(s)"
+                >
+                    <div className="col-12">
+                        <p className="font-weight-bold">Selected Lines will be permanently deleted!</p>
+                        <div className="text-right">
+                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleDelete(event)}>
+                                <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Cancel</span>
+                            </button>
+                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteRows(event)}>
+                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Proceed</span>
+                            </button>
+                        </div>                   
+                    </div>
+                </Modal>
+
             </Layout>
         );
     }

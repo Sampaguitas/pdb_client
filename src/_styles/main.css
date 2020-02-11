@@ -24,6 +24,19 @@ html, body, #app, #app>div {
 .btn-round {
   border-radius: 50%;
 }
+
+.btn-warning {
+  color: #fff !important;
+  background-color: #f0ad4e !important;
+  border-color: #f0ad4e !important;
+}
+
+.btn-warning:hover {
+  color: #fff !important;
+  background-color: #eea236 !important;
+  border-color: #eea236 !important;
+}
+
 .btn-outline-leeuwen {
     color:#A8052C; /*#c00a2b */
     background-color: transparent;
