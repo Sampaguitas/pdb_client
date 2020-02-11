@@ -54,15 +54,76 @@ function TypeToString (fieldValue, fieldType, myDateFormat) {
     }
 }
 
+function StringToDate (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return moment(fieldValue, myDateFormat).toDate();
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
 
+function isValidFormat (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return moment(fieldValue, myDateFormat, true).isValid();
+            default: return true;
+        }
+    } else {
+        return true;
+    }
+    
+}
 
-function arrayRemove(arr, value) {
+function getObjectIds(collection, selectedIds) {
+    if (!_.isEmpty(selectedIds)) {
+        switch(collection) {
+            case 'po': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.poId)) {
+                    acc.push(curr.poId);
+                }
+                return acc;
+            }, []);
+            case 'sub': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.subId)) {
+                    acc.push(curr.subId);
+                }
+                return acc;
+            }, []);
+            case 'certificate': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.certificateId)) {
+                    acc.push(curr.certificateId);
+                }
+                return acc;
+            }, []);
+            case 'packitem': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.packItemId)) {
+                    acc.push(curr.packItemId);
+                }
+                return acc;
+            }, []);
+            case 'collipack': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.colliPackId)) {
+                    acc.push(curr.colliPackId);
+                }
+                return acc;
+            }, []);
+            default: return [];
+        }
+    } else {
+        return [];
+    }
+}
 
-    return arr.filter(function(ele){
-        return ele != value;
-    });
+// function arrayRemove(arr, value) {
+
+//     return arr.filter(function(ele){
+//         return ele != value;
+//     });
  
- }
+// }
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -330,7 +391,12 @@ class ReleaseData extends React.Component {
             selectedIds: [],
             selectedTemplate: '0',
             selectedField: '',
-            updateValue:'',                        
+            selectedType: 'text',
+            updateValue:'',
+            alert: {
+                type:'',
+                message:''
+            }                      
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
@@ -341,6 +407,7 @@ class ReleaseData extends React.Component {
         this.handleSplitLine = this.handleSplitLine.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
+        this.handleDeleteRows = this.handleDeleteRows.bind(this);
     }
 
     componentDidMount() {
@@ -380,9 +447,32 @@ class ReleaseData extends React.Component {
         } 
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        const { selectedField } = this.state;
+        const { fields } = this.props;
+        if (selectedField != prevState.selectedField && selectedField != '0') {
+            let found = fields.items.find(function (f) {
+                return f._id === selectedField;
+            });
+            if (found) {
+                this.setState({
+                    ...this.state,
+                    updateValue: '',
+                    selectedType: getInputType(found.type),
+                });
+            }
+        }
+    }
+
     handleClearAlert(event){
         event.preventDefault;
         const { dispatch } = this.props;
+        this.setState({ 
+            alert: {
+                type:'',
+                message:'' 
+            } 
+        });
         dispatch(alertActions.clear());
     }
 
@@ -505,6 +595,121 @@ class ReleaseData extends React.Component {
 
     handleUpdateValue(event) {
         event.preventDefault();
+        const { dispatch, fieldnames } = this.props;
+        const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue} = this.state;
+        if (!selectedField) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected the field to be updated.'
+                }
+            });
+        } else if (_.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be updated.'
+                }
+            });
+        } else if (_.isEmpty(fieldnames)){
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'An error occured'
+                }
+            });
+            if (projectId) {
+                dispatch(fieldActions.getAll(projectId));
+            }
+        } else {
+            let found = fieldnames.items.find( function (f) {
+                return f.fields._id === selectedField;
+            });
+            if (found.edit && !unlocked) {
+                this.setState({
+                    ...this.state,
+                    alert: {
+                        type:'alert-danger',
+                        message:'The field selected is locked for editing, please click on the unlock button.'
+                    }
+                });
+            } else {
+                let collection = found.fields.fromTbl;
+                let objectIds = getObjectIds(collection, selectedIds);
+                let fieldName = found.fields.name;
+                let fieldValue = updateValue;
+                let fieldType = selectedType;
+                if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+                    this.setState({
+                        ...this.state,
+                        alert: {
+                            type:'alert-danger',
+                            message:'Wrong Date Format.'
+                        }
+                    });
+                } else {
+                    const requestOptions = {
+                        method: 'PUT',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            collection: collection,
+                            fieldName: fieldName,
+                            fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                            objectIds: objectIds
+                        })
+                    };
+                    //?objectIds=${JSON.stringify(objectIds)}
+                    return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+                    .then( () => {
+                        this.setState({
+                            ...this.state,
+                            alert: {
+                                type:'alert-success',
+                                message:'Field sucessfully updated.'
+                            }
+                        });
+                        this.refreshStore();
+                    })
+                    .catch( () => {
+                        this.setState({
+                            ...this.state,
+                            alert: {
+                                type:'alert-danger',
+                                message:'this Field cannot be updated.'
+                            }
+                        });
+                    });
+                }
+            }  
+        }
+    }
+
+    handleDeleteRows(event) {
+        event.preventDefault;
+        const { dispatch } = this.props;
+        const { selectedIds, projectId, unlocked } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be deleted.'
+                }
+            });
+        } else if (!unlocked) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Unlock the table in order to delete the rows'
+                }
+            });
+        } else {
+            console.log(toto);
+        }
     }
 
     handleSplitLine(event) {
@@ -519,11 +724,13 @@ class ReleaseData extends React.Component {
             selectedIds, 
             unlocked, 
             selectedTemplate, 
-            selectedField, 
+            selectedField,
+            selectedType,
             updateValue 
         }= this.state;
 
-        const { accesses, alert, docdefs, fieldnames, fields, pos, selection } = this.props;
+        const { accesses, docdefs, fieldnames, fields, pos, selection } = this.props;
+        const alert = this.state.alert ? this.state.alert : this.props.alert;
         
         return (
             <Layout alert={alert} accesses={accesses}>
@@ -550,12 +757,19 @@ class ReleaseData extends React.Component {
                                         <option key="0" value="0">Select field...</option>
                                         {this.selectedFieldOptions(fieldnames, fields, screenId)}
                                     </select>
-                                <input className="form-control" name="updateValue" value={updateValue} onChange={this.handleChange}/>
-                                <div className="input-group-append mr-2">
-                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>  {/* onClick={(event) => this.handleOnclick(event, selectedTemplate)} */}
-                                        <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
-                                    </button>
-                                </div>
+                                    <input
+                                        className="form-control"
+                                        type={selectedType === 'number' ? 'number' : 'text'}
+                                        name="updateValue"
+                                        value={updateValue}
+                                        onChange={this.handleChange}
+                                        placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                                    />
+                                    <div className="input-group-append mr-2">
+                                        <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>  {/* onClick={(event) => this.handleOnclick(event, selectedTemplate)} */}
+                                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
+                                        </button>
+                                    </div>
                             </div>
                         </div>
                         <div
@@ -603,6 +817,7 @@ class ReleaseData extends React.Component {
                                 fieldnames={fieldnames}
                                 fields={fields}
                                 refreshStore={this.refreshStore}
+                                handleDeleteRows = {this.handleDeleteRows}
                             />
                         }
                     </div>

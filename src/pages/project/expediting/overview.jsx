@@ -132,13 +132,13 @@ function getObjectIds(collection, selectedIds) {
     }
 }
 
-function arrayRemove(arr, value) {
+// function arrayRemove(arr, value) {
 
-    return arr.filter(function(ele){
-        return ele != value;
-    });
+//     return arr.filter(function(ele){
+//         return ele != value;
+//     });
  
-}
+// }
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -235,7 +235,7 @@ function hasPackingList(packItemFields) {
     }
     return tempResult;
 }
-// fields.items name: "shippedQty" name: "plNr"
+
 function virtuals(packitems, uom, packItemFields) {
     let tempVirtuals = [];
     let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(uom.toUpperCase()) ? 'mtrs' : 'pcs';
@@ -317,7 +317,6 @@ function generateScreenHeader(fieldnames, screenId) {
 }
 
 function generateScreenBody(screenId, fieldnames, pos){
-
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
@@ -501,13 +500,13 @@ class Overview extends React.Component {
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload = this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
-        // this.testBodys = this.testBodys.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
+        this.handleDeleteRows = this.handleDeleteRows.bind(this);
     }
 
 
@@ -720,7 +719,9 @@ class Overview extends React.Component {
                     message:'An error occured'
                 }
             });
-            dispatch(fieldActions.getAll(projectId));
+            if (projectId) {
+                dispatch(fieldActions.getAll(projectId));
+            }
         } else {
             let found = fieldnames.items.find( function (f) {
                 return f.fields._id === selectedField;
@@ -784,6 +785,31 @@ class Overview extends React.Component {
         }
     }
 
+    handleDeleteRows(event) {
+        event.preventDefault;
+        const { dispatch } = this.props;
+        const { selectedIds, projectId, unlocked } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be deleted.'
+                }
+            });
+        } else if (!unlocked) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Unlock the table in order to delete the rows'
+                }
+            });
+        } else {
+            console.log(toto);
+        }
+    }
+
     handleSplitLine(event) {
         event.preventDefault();
     }
@@ -829,19 +855,19 @@ class Overview extends React.Component {
                                         <option key="0" value="0">Select field...</option>
                                         {this.selectedFieldOptions(fieldnames, fields, screenId)}
                                     </select>
-                                <input
-                                    className="form-control"
-                                    type={selectedType === 'number' ? 'number' : 'text'}
-                                    name="updateValue"
-                                    value={updateValue}
-                                    onChange={this.handleChange}
-                                    placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                                    <input
+                                        className="form-control"
+                                        type={selectedType === 'number' ? 'number' : 'text'}
+                                        name="updateValue"
+                                        value={updateValue}
+                                        onChange={this.handleChange}
+                                        placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
                                     />
-                                <div className="input-group-append mr-2">
-                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>  {/* onClick={(event) => this.handleOnclick(event, selectedTemplate)} */}
-                                        <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
-                                    </button>
-                                </div>
+                                    <div className="input-group-append mr-2">
+                                        <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>  {/* onClick={(event) => this.handleOnclick(event, selectedTemplate)} */}
+                                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
+                                        </button>
+                                    </div>
                             </div>
                         </div>
                         <div
@@ -873,22 +899,23 @@ class Overview extends React.Component {
                             </div>
                         </div>
                     </div>
-
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {fieldnames.items && 
                             <ProjectTable
                                 screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
                                 screenBodys={generateScreenBody(screenId, fieldnames, pos)}
+                                projectId={projectId}
                                 screenId={screenId}
                                 selectedIds={selectedIds}
                                 updateSelectedIds = {this.updateSelectedIds}
-                                projectId={projectId}
                                 handleSelectionReload={this.handleSelectionReload}
                                 toggleUnlock={this.toggleUnlock}
                                 unlocked={unlocked}
                                 screen={screen}
                                 fieldnames={fieldnames}
+                                fields={fields}
                                 refreshStore={this.refreshStore}
+                                handleDeleteRows = {this.handleDeleteRows}
                             />
                         }
                     </div>

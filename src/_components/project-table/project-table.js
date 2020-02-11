@@ -217,7 +217,6 @@ class ProjectTable extends Component {
         // this.matchingRow = this.matchingRow.bind(this);
         this.toggleModalSettings = this.toggleModalSettings.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
-        this.deleteValues = this.deleteValues.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
@@ -232,23 +231,10 @@ class ProjectTable extends Component {
         const nodes = ["INPUT", "SELECT", "SPAN"];
         const table = document.getElementById('myProjectTable');
         table.addEventListener('keydown', (e) => { 
-            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n }))
-            // if(arrowKeys.some((k) => { return e.keyCode === k })) 
-            {
-                // console.log(document.activeElement);
-                // console.log('e.keyCode:', e.keyCode);
-                // e.preventDefault();
+            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
                 return this.keyHandler(e);
-                // e.preventDefault();
-                // return this.keyHandler(e);
             }
         });
-        // this.setState({
-        //     header: this.props.screenHeaders.reduce((acc,header)=>{
-        //         acc[header._id] = "";
-        //         return acc;
-        //     },{})
-        // });
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -258,8 +244,6 @@ class ProjectTable extends Component {
             updateSelectedIds(getTableIds(selectedRows, screenBodys));
         }
     }
-
-    
 
     handleClearAlert(event){
         event.preventDefault;
@@ -519,17 +503,6 @@ class ProjectTable extends Component {
         });
     }
 
-    deleteValues() {
-        event.preventDefault();
-        const { selectedIds } = this.props;
-        if (_.isEmpty(selectedIds)){
-            console.log('Select rows to be deleted');
-        } else {
-            console.log('some rows have been selected');
-        }
-
-    }
-
     handleModalTabClick(event, tab){
         event.preventDefault();
         // const { handleSelectionReload } = this.props
@@ -652,7 +625,8 @@ class ProjectTable extends Component {
     render() {
 
         const { 
-            handleSelectionReload, 
+            handleSelectionReload,
+            handleDeleteRows,
             toggleUnlock, 
             screenHeaders, 
             screenBodys, 
@@ -698,7 +672,7 @@ class ProjectTable extends Component {
                     <button className="btn btn-outline-leeuwen-blue" title="Upload" onClick={event => this.toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" title="Erase Value(s)" onClick={event => this.deleteValues(event)} style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" title="Erase Value(s)" onClick={handleDeleteRows} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="trash-alt" className="fas fa-2x"/></span>
                     </button>
                 </div>
@@ -807,21 +781,17 @@ class ProjectTable extends Component {
                                 {!_.isEmpty(responce.rejections) &&
                                     <div className="rejections">
                                         <h3>Rejections</h3>
-                                        {/* <div className="">
-                                            <div className="table-responcive custom-table-container"> */}
-                                                <table className="table table-sm">
-                                                    <thead>
-                                                        <tr>
-                                                            <th style={{width: '10%'}}>Row</th>
-                                                            <th style={{width: '90%'}}>Reason</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        {this.generateRejectionRows(responce)}
-                                                    </tbody>
-                                                </table>
-                                            {/* </div>
-                                        </div> */}
+                                            <table className="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th style={{width: '10%'}}>Row</th>
+                                                        <th style={{width: '90%'}}>Reason</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {this.generateRejectionRows(responce)}
+                                                </tbody>
+                                            </table>
                                     </div>
                                 }
                             </div>

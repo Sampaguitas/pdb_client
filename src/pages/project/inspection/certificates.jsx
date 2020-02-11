@@ -13,13 +13,126 @@ import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-function arrayRemove(arr, value) {
+const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
+const myLocale = Intl.DateTimeFormat(locale, options);
 
-    return arr.filter(function(ele){
-        return ele != value;
+function getDateFormat(myLocale) {
+    let tempDateFormat = ''
+    myLocale.formatToParts().map(function (element) {
+        switch(element.type) {
+            case 'month': 
+                tempDateFormat = tempDateFormat + 'MM';
+                break;
+            case 'literal': 
+                tempDateFormat = tempDateFormat + element.value;
+                break;
+            case 'day': 
+                tempDateFormat = tempDateFormat + 'DD';
+                break;
+            case 'year': 
+                tempDateFormat = tempDateFormat + 'YYYY';
+                break;
+        }
     });
+    return tempDateFormat;
+}
+
+
+function TypeToString (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'Date': return String(moment(fieldValue).format(myDateFormat));
+            case 'Number': return String(new Intl.NumberFormat().format(fieldValue)); 
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
+
+function DateToString (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
+function StringToDate (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return moment(fieldValue, myDateFormat).toDate();
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
+function isValidFormat (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return moment(fieldValue, myDateFormat, true).isValid();
+            default: return true;
+        }
+    } else {
+        return true;
+    }
+    
+}
+
+function getObjectIds(collection, selectedIds) {
+    if (!_.isEmpty(selectedIds)) {
+        switch(collection) {
+            case 'po': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.poId)) {
+                    acc.push(curr.poId);
+                }
+                return acc;
+            }, []);
+            case 'sub': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.subId)) {
+                    acc.push(curr.subId);
+                }
+                return acc;
+            }, []);
+            case 'certificate': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.certificateId)) {
+                    acc.push(curr.certificateId);
+                }
+                return acc;
+            }, []);
+            case 'packitem': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.packItemId)) {
+                    acc.push(curr.packItemId);
+                }
+                return acc;
+            }, []);
+            case 'collipack': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.colliPackId)) {
+                    acc.push(curr.colliPackId);
+                }
+                return acc;
+            }, []);
+            default: return [];
+        }
+    } else {
+        return [];
+    }
+}
+
+// function arrayRemove(arr, value) {
+
+//     return arr.filter(function(ele){
+//         return ele != value;
+//     });
  
- }
+//  }
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -227,13 +340,25 @@ class Certificates extends React.Component {
             screenId: '5cd2b642fd333616dc360b65',
             unlocked: false,
             screen: 'certificates',
-            selectedIds: [], 
+            selectedIds: [],
+            // selectedTemplate: '0',
+            selectedField: '',
+            selectedType: 'text',
+            updateValue:'',
+            alert: {
+                type:'',
+                message:''
+            }
+
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
+        this.handleUpdateValue = this.handleUpdateValue.bind(this);
+        // this.handleSplitLine = this.handleSplitLine.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
+        this.handleDeleteRows = this.handleDeleteRows.bind(this);
     }
 
     componentDidMount() {
@@ -269,9 +394,32 @@ class Certificates extends React.Component {
         } 
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        const { selectedField } = this.state;
+        const { fields } = this.props;
+        if (selectedField != prevState.selectedField && selectedField != '0') {
+            let found = fields.items.find(function (f) {
+                return f._id === selectedField;
+            });
+            if (found) {
+                this.setState({
+                    ...this.state,
+                    updateValue: '',
+                    selectedType: getInputType(found.type),
+                });
+            }
+        }
+    }
+
     handleClearAlert(event){
         event.preventDefault;
         const { dispatch } = this.props;
+        this.setState({ 
+            alert: {
+                type:'',
+                message:'' 
+            } 
+        });
         dispatch(alertActions.clear());
     }
 
@@ -324,11 +472,168 @@ class Certificates extends React.Component {
         });
     }
 
+    handleChange(event) {
+        event.preventDefault();
+        const name =  event.target.name;
+        const value =  event.target.value;
+        this.setState({
+            [name]: value
+        });
+    }
+
+    selectedFieldOptions(fieldnames, fields, screenId) {
+        if (fieldnames.items && fields.items) {
+            let screenHeaders = generateScreenHeader(fieldnames, screenId);
+            let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
+                if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
+                    accumulator.push(currentValue.fieldId);
+                }
+                return accumulator;
+            }, []);
+            let fieldsFromHeader = fields.items.reduce(function (accumulator, currentValue) {
+                if (fieldIds.indexOf(currentValue._id) !== -1) {
+                    accumulator.push({ 
+                        value: currentValue._id,
+                        name: currentValue.custom
+                    });
+                }
+                return accumulator;
+            }, []);
+            return arraySorted(fieldsFromHeader, 'name').map(field => {
+                return (
+                    <option 
+                        key={field.value}
+                        value={field.value}>{field.name}
+                    </option>                
+                );
+            });
+        }
+    }
+
     updateSelectedIds(selectedIds) {
         this.setState({
             ...this.state,
             selectedIds: selectedIds
         });
+    }
+
+    handleUpdateValue(event) {
+        event.preventDefault();
+        const { dispatch, fieldnames } = this.props;
+        const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue} = this.state;
+        if (!selectedField) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected the field to be updated.'
+                }
+            });
+        } else if (_.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be updated.'
+                }
+            });
+        } else if (_.isEmpty(fieldnames)){
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'An error occured'
+                }
+            });
+            if (projectId) {
+                dispatch(fieldActions.getAll(projectId));
+            }
+        } else {
+            let found = fieldnames.items.find( function (f) {
+                return f.fields._id === selectedField;
+            });
+            if (found.edit && !unlocked) {
+                this.setState({
+                    ...this.state,
+                    alert: {
+                        type:'alert-danger',
+                        message:'The field selected is locked for editing, please click on the unlock button.'
+                    }
+                });
+            } else {
+                let collection = found.fields.fromTbl;
+                let objectIds = getObjectIds(collection, selectedIds);
+                let fieldName = found.fields.name;
+                let fieldValue = updateValue;
+                let fieldType = selectedType;
+                if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+                    this.setState({
+                        ...this.state,
+                        alert: {
+                            type:'alert-danger',
+                            message:'Wrong Date Format.'
+                        }
+                    });
+                } else {
+                    const requestOptions = {
+                        method: 'PUT',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            collection: collection,
+                            fieldName: fieldName,
+                            fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                            objectIds: objectIds
+                        })
+                    };
+                    //?objectIds=${JSON.stringify(objectIds)}
+                    return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+                    .then( () => {
+                        this.setState({
+                            ...this.state,
+                            alert: {
+                                type:'alert-success',
+                                message:'Field sucessfully updated.'
+                            }
+                        });
+                        this.refreshStore();
+                    })
+                    .catch( () => {
+                        this.setState({
+                            ...this.state,
+                            alert: {
+                                type:'alert-danger',
+                                message:'this Field cannot be updated.'
+                            }
+                        });
+                    });
+                }
+            }  
+        }
+    }
+
+    handleDeleteRows(event) {
+        event.preventDefault;
+        const { dispatch } = this.props;
+        const { selectedIds, projectId, unlocked } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'You have not selected rows to be deleted.'
+                }
+            });
+        } else if (!unlocked) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Unlock the table in order to delete the rows'
+                }
+            });
+        } else {
+            console.log(toto);
+        }
     }
 
     render() {
@@ -337,11 +642,15 @@ class Certificates extends React.Component {
             screen, 
             screenId,
             selectedIds,
-            unlocked, 
+            unlocked,
+            // selectedTemplate
+            selectedField,
+            selectedType, 
+            updateValue, 
         }= this.state;
         
-        const { accesses, alert, fieldnames, fields, pos, selection } = this.props;
-
+        const { accesses, fieldnames, fields, pos, selection } = this.props;
+        const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
             <Layout alert={alert} accesses={accesses}>
                 {alert.message && 
@@ -354,23 +663,52 @@ class Certificates extends React.Component {
                 <h2>Inspection | Certificates > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="certificates" className="full-height">
-                    {selection && selection.project && 
-                        <ProjectTable
-                            screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
-                            screenBodys={generateScreenBody(screenId, fieldnames, pos)}
-                            projectId={projectId}
-                            screenId={screenId}
-                            selectedIds={selectedIds}
-                            updateSelectedIds = {this.updateSelectedIds}
-                            handleSelectionReload={this.handleSelectionReload}
-                            toggleUnlock={this.toggleUnlock}
-                            unlocked={unlocked}
-                            screen={screen}
-                            fieldnames={fieldnames}
-                            fields={fields}
-                            refreshStore={this.refreshStore}
-                        />
-                    }
+                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
+                        <div
+                            className="col"
+                            style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
+                        >
+                            <div className="input-group">
+                                    <select className="form-control" name="selectedField" value={selectedField} placeholder="Select field..." onChange={this.handleChange}>
+                                        <option key="0" value="0">Select field...</option>
+                                        {this.selectedFieldOptions(fieldnames, fields, screenId)}
+                                    </select>
+                                <input
+                                    className="form-control"
+                                    type={selectedType === 'number' ? 'number' : 'text'}
+                                    name="updateValue"
+                                    value={updateValue}
+                                    onChange={this.handleChange}
+                                    placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                                    />
+                                <div className="input-group-append mr-2">
+                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>
+                                        <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                        {selection && selection.project && 
+                            <ProjectTable
+                                screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
+                                screenBodys={generateScreenBody(screenId, fieldnames, pos)}
+                                projectId={projectId}
+                                screenId={screenId}
+                                selectedIds={selectedIds}
+                                updateSelectedIds = {this.updateSelectedIds}
+                                handleSelectionReload={this.handleSelectionReload}
+                                toggleUnlock={this.toggleUnlock}
+                                unlocked={unlocked}
+                                screen={screen}
+                                fieldnames={fieldnames}
+                                fields={fields}
+                                refreshStore={this.refreshStore}
+                                handleDeleteRows = {this.handleDeleteRows}
+                            />
+                        }
+                    </div>
                 </div> 
             </Layout>
         );
