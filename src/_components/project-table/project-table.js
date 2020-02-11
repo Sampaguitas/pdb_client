@@ -672,7 +672,7 @@ class ProjectTable extends Component {
                     <button className="btn btn-outline-leeuwen-blue" title="Upload" onClick={event => this.toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" title="Erase Value(s)" onClick={toggleDelete} style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" title="Delete Line(s)" onClick={toggleDelete} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="trash-alt" className="fas fa-2x"/></span>
                     </button>
                 </div>

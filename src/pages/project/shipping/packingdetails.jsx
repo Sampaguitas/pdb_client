@@ -505,7 +505,7 @@ class PackingDetails extends React.Component {
         });
     }
 
-    handleUpdateValue(event) {
+    handleUpdateValue(event, isErase) {
         event.preventDefault();
         const { dispatch, fieldnames } = this.props;
         const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue} = this.state;
@@ -556,7 +556,7 @@ class PackingDetails extends React.Component {
                 let collection = found.fields.fromTbl;
                 let objectIds = getObjectIds(collection, selectedIds);
                 let fieldName = found.fields.name;
-                let fieldValue = updateValue;
+                let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
@@ -813,8 +813,11 @@ class PackingDetails extends React.Component {
                             />
                         </div>
                         <div className="text-right">
-                            <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleUpdateValue(event)}>
+                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.handleUpdateValue(event, false)}>
                                 <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
+                            </button>
+                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleUpdateValue(event, true)}>
+                                <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
                             </button>
                         </div>                   
                     </div>
