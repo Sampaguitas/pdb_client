@@ -498,7 +498,7 @@ class Overview extends React.Component {
             },
             //-----modals-----
             showEditValues: false,
-            showSplitLines: false,
+            showSplitLine: false,
             showGenerate: false,
             showDelete: false,
 
@@ -722,7 +722,7 @@ class Overview extends React.Component {
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
-                    message:'You have not selected rows to be updated.'
+                    message:'Select line(s) to be updated.'
                 }
             });
         } else if (_.isEmpty(fieldnames)){
@@ -747,7 +747,7 @@ class Overview extends React.Component {
                     showEditValues: false,
                     alert: {
                         type:'alert-danger',
-                        message:'The field selected is locked for editing, please click on the unlock button.'
+                        message:'Selected  field is disabled, please unlock table and try again.'
                     }
                 });
             } else {
@@ -794,7 +794,7 @@ class Overview extends React.Component {
                             showEditValues: false,
                             alert: {
                                 type:'alert-danger',
-                                message:'this Field cannot be updated.'
+                                message:'Field cannot be updated.'
                             }
                         });
                     });
@@ -813,7 +813,7 @@ class Overview extends React.Component {
                 showDelete: false,
                 alert: {
                     type:'alert-danger',
-                    message:'You have not selected rows to be deleted.'
+                    message:'Select line(s) to be deleted.'
                 }
             });
         } else if (!unlocked) {
@@ -822,7 +822,7 @@ class Overview extends React.Component {
                 showDelete: false,
                 alert: {
                     type:'alert-danger',
-                    message:'Unlock the table in order to delete the rows'
+                    message:'Unlock table in order to delete line(s).'
                 }
             });
         } else {
@@ -832,23 +832,32 @@ class Overview extends React.Component {
 
     toggleSplitLine(event) {
         event.preventDefault();
-        event.preventDefault();
-        const { showSplitLine } = this.state;
-        this.setState({
-            ...this.state,
-            selectedTemplate: '0',
-            selectedField: '',
-            selectedType: 'text',
-            updateValue:'',
-            alert: {
-                type:'',
-                message:''
-            },
-            showEditValues: false,
-            showSplitLine: !showSplitLine,
-            showGenerate: false,
-            showDelete: false
-        });
+        const { showSplitLine, selectedIds } = this.state;
+        if (!showSplitLine && (_.isEmpty(selectedIds) || selectedIds.length > 1)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select one Line.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedTemplate: '0',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showEditValues: false,
+                showSplitLine: !showSplitLine,
+                showGenerate: false,
+                showDelete: false
+            });
+        }
     }
 
     toggleEditValues(event) {
@@ -859,7 +868,7 @@ class Overview extends React.Component {
                 ...this.state,
                 alert: {
                     type:'alert-danger',
-                    message:'You have not selected rows to be updated.'
+                    message:'Select line(s) to be updated.'
                 }
             });
         } else {
@@ -909,7 +918,7 @@ class Overview extends React.Component {
                 ...this.state,
                 alert: {
                     type:'alert-danger',
-                    message:'You have not selected rows to be deleted.'
+                    message:'Select line(s) to be deleted.'
                 }
             });
         } else if (!showDelete && !unlocked) {
@@ -917,7 +926,7 @@ class Overview extends React.Component {
                 ...this.state,
                 alert: {
                     type:'alert-danger',
-                    message:'Unlock the table in order to delete the rows'
+                    message:'Unlock table in order to delete line(s).'
                 }
             });
         } else {
@@ -952,7 +961,7 @@ class Overview extends React.Component {
             updateValue,
             //show modals
             showEditValues,
-            showSplitLines,
+            showSplitLine,
             showGenerate,
             showDelete,
         }= this.state;
@@ -972,7 +981,7 @@ class Overview extends React.Component {
                 <h2>Expediting | Total Client PO Overview > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
                 <hr />
                 <div id="overview" className="full-height">
-                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
+                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
                         <button className="btn btn-warning btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleSplitLine(event)}>
                             <span><FontAwesomeIcon icon="page-break" className="fa-lg mr-2"/>Split line</span>
                         </button>
@@ -1008,7 +1017,7 @@ class Overview extends React.Component {
                 <Modal
                     show={showEditValues}
                     hideModal={this.toggleEditValues}
-                    title="Edit Values"
+                    title="Edit Value(s)"
                 >
                     <div className="col-12">
                         <div className="form-group">
@@ -1050,7 +1059,6 @@ class Overview extends React.Component {
                     show={showGenerate}
                     hideModal={this.toggleGenerate}
                     title="Generate Document"
-                    // size="modal-xl"
                 >
                     <div className="col-12">
                             <div className="form-group">
@@ -1096,6 +1104,27 @@ class Overview extends React.Component {
                             </button>
                             <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteRows(event)}>
                                 <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Proceed</span>
+                            </button>
+                        </div>                   
+                    </div>
+                </Modal>
+
+                <Modal
+                    show={showSplitLine}
+                    hideModal={this.toggleSplitLine}
+                    title="Split Line"
+                    size="modal-xl"
+                >
+                    <div className="col-12">
+                        <div className="text-left">
+                            <button className="btn btn-leeuwen-blue btn-lg mr-2">
+                                <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                            </button>
+                            <button className="btn btn-warning btn-lg mr-2">
+                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Line</span>
+                            </button>
+                            <button className="btn btn-leeuwen btn-lg">
+                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Line</span>
                             </button>
                         </div>                   
                     </div>

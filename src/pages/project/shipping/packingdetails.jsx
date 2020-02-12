@@ -297,7 +297,7 @@ class PackingDetails extends React.Component {
             },
             //-----modals-----
             showEditValues: false,
-            showSplitLines: false,
+            showSplitLine: false,
             showGenerate: false,
             showDelete: false,
         };
@@ -524,7 +524,7 @@ class PackingDetails extends React.Component {
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
-                    message:'You have not selected rows to be updated.'
+                    message:'Select line(s) to be updated.'
                 }
             });
         } else if (_.isEmpty(fieldnames)){
@@ -549,7 +549,7 @@ class PackingDetails extends React.Component {
                     showEditValues: false,
                     alert: {
                         type:'alert-danger',
-                        message:'The field selected is locked for editing, please click on the unlock button.'
+                        message:'Selected  field is disabled, please unlock table and try again.'
                     }
                 });
             } else {
@@ -596,7 +596,7 @@ class PackingDetails extends React.Component {
                             showEditValues: false,
                             alert: {
                                 type:'alert-danger',
-                                message:'this Field cannot be updated.'
+                                message:'Field cannot be updated.'
                             }
                         });
                     });
@@ -615,7 +615,7 @@ class PackingDetails extends React.Component {
                 showDelete: false,
                 alert: {
                     type:'alert-danger',
-                    message:'You have not selected rows to be deleted.'
+                    message:'Select line(s) to be deleted.'
                 }
             });
         } else if (!unlocked) {
@@ -624,7 +624,7 @@ class PackingDetails extends React.Component {
                 showDelete: false,
                 alert: {
                     type:'alert-danger',
-                    message:'Unlock the table in order to delete the rows'
+                    message:'Unlock table in order to delete line(s).'
                 }
             });
         } else {
@@ -640,7 +640,7 @@ class PackingDetails extends React.Component {
                 ...this.state,
                 alert: {
                     type:'alert-danger',
-                    message:'You have not selected rows to be updated.'
+                    message:'Select line(s) to be updated.'
                 }
             });
         } else {
@@ -690,7 +690,7 @@ class PackingDetails extends React.Component {
                 ...this.state,
                 alert: {
                     type:'alert-danger',
-                    message:'You have not selected rows to be deleted.'
+                    message:'Select line(s) to be deleted.'
                 }
             });
         } else if (!showDelete && !unlocked) {
@@ -698,7 +698,7 @@ class PackingDetails extends React.Component {
                 ...this.state,
                 alert: {
                     type:'alert-danger',
-                    message:'Unlock the table in order to delete the rows'
+                    message:'Unlock table in order to delete line(s).'
                 }
             });
         } else {
@@ -733,7 +733,7 @@ class PackingDetails extends React.Component {
             updateValue,
             //show modals
             showEditValues,
-            // showSplitLines,
+            // showSplitLine,
             showGenerate,
             showDelete,
         }= this.state;
