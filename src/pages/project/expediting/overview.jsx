@@ -16,7 +16,7 @@ import {
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import HeaderInput from '../../../_components/project-table/header-input';
+import SplitLine from '../../../_components/split-line/split-line';
 import Modal from '../../../_components/modal';
 import moment from 'moment';
 import _ from 'lodash';
@@ -133,13 +133,13 @@ function getObjectIds(collection, selectedIds) {
     }
 }
 
-// function arrayRemove(arr, value) {
+function arrayRemove(arr, value) {
 
-//     return arr.filter(function(ele){
-//         return ele != value;
-//     });
+    return arr.filter(function(ele){
+        return ele != value;
+    });
  
-// }
+}
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -498,10 +498,9 @@ class Overview extends React.Component {
             },
             //-----modals-----
             showEditValues: false,
-            showSplitLine: false,
+            showSplitLine: true,
             showGenerate: false,
             showDelete: false,
-
         };
 
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -948,6 +947,10 @@ class Overview extends React.Component {
         }
     }
 
+    // generateSelection(screenBody) {
+
+    // }
+
     render() {
         const { 
             projectId, 
@@ -964,7 +967,7 @@ class Overview extends React.Component {
             showSplitLine,
             showGenerate,
             showDelete,
-        }= this.state;
+        } = this.state;
 
         const { accesses, docdefs, fieldnames, fields, pos, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
@@ -1115,19 +1118,11 @@ class Overview extends React.Component {
                     title="Split Line"
                     size="modal-xl"
                 >
-                    <div className="col-12">
-                        <div className="text-left">
-                            <button className="btn btn-leeuwen-blue btn-lg mr-2">
-                                <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
-                            </button>
-                            <button className="btn btn-warning btn-lg mr-2">
-                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Line</span>
-                            </button>
-                            <button className="btn btn-leeuwen btn-lg">
-                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Line</span>
-                            </button>
-                        </div>                   
-                    </div>
+                    <SplitLine 
+                        fieldnames={fieldnames}
+                        screenId={screenId}
+                        // selection={this.getSelection()}
+                    />
                 </Modal>
 
             </Layout>
