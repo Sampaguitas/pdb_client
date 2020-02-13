@@ -498,7 +498,7 @@ class Overview extends React.Component {
             },
             //-----modals-----
             showEditValues: false,
-            showSplitLine: true,
+            showSplitLine: false,
             showGenerate: false,
             showDelete: false,
         };
