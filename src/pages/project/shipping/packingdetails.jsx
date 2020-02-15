@@ -628,7 +628,7 @@ class PackingDetails extends React.Component {
                 }
             });
         } else {
-            console.log(toto);
+            console.log('toto');
         }
     }
 

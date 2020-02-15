@@ -386,7 +386,8 @@ class ReleaseData extends React.Component {
         super(props);
         this.state = {
             projectId:'',
-            screenId: '5cd2b642fd333616dc360b64',
+            screenId: '5cd2b642fd333616dc360b64', //Inspection
+            splitScreenId: '5cd2b647fd333616dc360b71', //Inspection Splitwindow
             unlocked: false,
             screen: 'inspection',
             selectedIds: [],

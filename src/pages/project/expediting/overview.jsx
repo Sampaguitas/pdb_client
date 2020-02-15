@@ -47,7 +47,28 @@ function getDateFormat(myLocale) {
     return tempDateFormat;
 }
 
-function TypeToString (fieldValue, fieldType, myDateFormat) {
+
+// selectedIds = {(_.isEmpty(selectedIds) || selectedIds.length > 1) ? '' : selectedIds[0]}
+// selectedPo = {(_.isEmpty(selectedIds) || selectedIds.length > 1 || !isEmpty(pos.items)) ? '' : pos.items.filter(po => po._id === selectedIds[0].poId)}
+
+function passSelectedIds(selectedIds) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1) {
+        return {};
+    } else {
+        return selectedIds[0];
+    }
+}
+
+function passSelectedPo(selectedIds, pos) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(pos.items)){
+        return {};
+    } else {
+        return pos.items.find(po => po._id === selectedIds[0].poId);
+    }
+}
+
+
+function TypeToString(fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'Date': return String(moment(fieldValue).format(myDateFormat));
@@ -59,7 +80,7 @@ function TypeToString (fieldValue, fieldType, myDateFormat) {
     }
 }
 
-function DateToString (fieldValue, fieldType, myDateFormat) {
+function DateToString(fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'date': return String(moment(fieldValue).format(myDateFormat)); 
@@ -282,7 +303,6 @@ function virtuals(packitems, uom, packItemFields) {
                     tempObject['shippedQty'] += packitem[tempUom];
                 }
                 packItemFields.map(function (packItemField) {
-                    // console.log(`packItemField.name: ${packItemField.name}, packItemField.type: ${packItemField.type}, packitem[packItemField.name]: ${packitem[packItemField.name]}`)
                     if (!tempObject.hasOwnProperty(packItemField.name)) {
                         tempObject[packItemField.name] = [TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale))]
                     } else if(!tempObject[packItemField.name].includes(TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
@@ -306,23 +326,40 @@ function getInputType(dbFieldType) {
     }
 }
 
-function generateScreenHeader(fieldnames, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+// function generateScreenHeader(fieldnames, screenId) {
+//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         
-        return fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+//         return fieldnames.items.filter(function(element) {
+//             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+//         });
+//     } else {
+//         return [];
+//     }
+// }
+
+function getHeaders(fieldnames, screenId, forWhat) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
         });
+        if (!tempArray) {
+            return [];
+        } else {
+            return tempArray.sort(function(a,b) {
+                return a[forWhat] - b[forWhat];
+            });
+        }
     } else {
         return [];
     }
 }
 
-function generateScreenBody(screenId, fieldnames, pos){
+function getBodys(fieldnames, pos, headersForShow){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
     let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
-    let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
+    let screenHeaders = headersForShow;
     
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
@@ -331,7 +368,6 @@ function generateScreenBody(screenId, fieldnames, pos){
                 po.subs.map(sub => {
                     if (!_.isEmpty(sub.packitems) && hasPackitems) {
                         virtuals(sub.packitems, po.uom, getPackItemFields(screenHeaders)).map(virtual => {
-                            // console.log('subId:', sub._id, 'virtual:', virtual);
                             arrayRow = [];
                             screenHeaders.map(screenHeader => {
                                 switch(screenHeader.fields.fromTbl) {
@@ -479,12 +515,180 @@ function generateScreenBody(screenId, fieldnames, pos){
     
 }
 
+// function generateScreenBody(screenId, fieldnames, pos){
+//     let arrayBody = [];
+//     let arrayRow = [];
+//     let objectRow = {};
+//     let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
+//     let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
+    
+//     let i = 1;
+//     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
+//         pos.items.map(po => {
+//             if (po.subs) {
+//                 po.subs.map(sub => {
+//                     if (!_.isEmpty(sub.packitems) && hasPackitems) {
+//                         virtuals(sub.packitems, po.uom, getPackItemFields(screenHeaders)).map(virtual => {
+//                             // console.log('subId:', sub._id, 'virtual:', virtual);
+//                             arrayRow = [];
+//                             screenHeaders.map(screenHeader => {
+//                                 switch(screenHeader.fields.fromTbl) {
+//                                     case 'po':
+//                                         arrayRow.push({
+//                                             collection: 'po',
+//                                             objectId: po._id,
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: po[screenHeader.fields.name],
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                         });
+//                                         break;
+//                                     case 'sub':
+//                                         if (screenHeader.fields.name === 'shippedQty') {
+//                                             arrayRow.push({
+//                                                 collection: 'virtual',
+//                                                 objectId: sub._id,
+//                                                 fieldName: 'shippedQty',
+//                                                 fieldValue: virtual.shippedQty,
+//                                                 disabled: screenHeader.edit,
+//                                                 align: screenHeader.align,
+//                                                 fieldType: getInputType(screenHeader.fields.type),
+//                                             });
+//                                         } else {
+//                                             arrayRow.push({
+//                                                 collection: 'sub',
+//                                                 objectId: sub._id,
+//                                                 fieldName: screenHeader.fields.name,
+//                                                 fieldValue: sub[screenHeader.fields.name],
+//                                                 disabled: screenHeader.edit,
+//                                                 align: screenHeader.align,
+//                                                 fieldType: getInputType(screenHeader.fields.type),
+//                                             });
+//                                         }
+//                                         break;
+//                                     case 'packitem':
+                                        
+//                                         if (screenHeader.fields.name === 'plNr') {
+//                                             arrayRow.push({
+//                                                 collection: 'virtual',
+//                                                 objectId: virtual._id,
+//                                                 fieldName: 'plNr',
+//                                                 fieldValue: virtual.plNr,
+//                                                 disabled: screenHeader.edit,
+//                                                 align: screenHeader.align,
+//                                                 fieldType: getInputType(screenHeader.fields.type),
+//                                             });
+//                                         } else {
+//                                             arrayRow.push({
+//                                                 collection: 'virtual',
+//                                                 objectId: virtual._id,
+//                                                 fieldName: screenHeader.fields.name,
+//                                                 fieldValue: virtual[screenHeader.fields.name].join(' | '),
+//                                                 disabled: screenHeader.edit,
+//                                                 align: screenHeader.align,
+//                                                 fieldType: 'text',
+//                                             });
+//                                         }
+//                                         break;
+//                                     default: arrayRow.push({
+//                                         collection: 'virtual',
+//                                             objectId: '0',
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: '',
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                     }); 
+//                                 }
+//                             });
+//                             objectRow  = {
+//                                 _id: i,
+//                                 tablesId: {
+//                                     poId: po._id,
+//                                     subId: sub._id,
+//                                     certificateId: '',
+//                                     packItemId: '',
+//                                     colliPackId: ''
+//                                 },
+//                                 fields: arrayRow
+//                             };
+//                             arrayBody.push(objectRow);
+//                             i++;
+//                         });
+//                     } else {
+//                         arrayRow = [];
+//                         screenHeaders.map(screenHeader => {
+//                             switch(screenHeader.fields.fromTbl) {
+//                                 case 'po':
+//                                     arrayRow.push({
+//                                         collection: 'po',
+//                                         objectId: po._id,
+//                                         fieldName: screenHeader.fields.name,
+//                                         fieldValue: po[screenHeader.fields.name],
+//                                         disabled: screenHeader.edit,
+//                                         align: screenHeader.align,
+//                                         fieldType: getInputType(screenHeader.fields.type),
+//                                     });
+//                                     break;
+//                                 case 'sub':
+//                                     arrayRow.push({
+//                                         collection: 'sub',
+//                                         objectId: sub._id,
+//                                         fieldName: screenHeader.fields.name,
+//                                         fieldValue: sub[screenHeader.fields.name],
+//                                         disabled: screenHeader.edit,
+//                                         align: screenHeader.align,
+//                                         fieldType: getInputType(screenHeader.fields.type),
+//                                     });
+//                                     break;
+//                                 default: arrayRow.push({
+//                                     collection: 'virtual',
+//                                         objectId: '0',
+//                                         fieldName: screenHeader.fields.name,
+//                                         fieldValue: '',
+//                                         disabled: screenHeader.edit,
+//                                         align: screenHeader.align,
+//                                         fieldType: getInputType(screenHeader.fields.type),
+//                                 }); 
+//                             }
+//                         });
+//                         objectRow  = {
+//                             _id: i,
+//                             tablesId: {
+//                                 poId: po._id,
+//                                 subId: sub._id,
+//                                 certificateId: '',
+//                                 packItemId: '',
+//                                 colliPackId: ''
+//                             },
+//                             fields: arrayRow
+//                         };
+//                         arrayBody.push(objectRow);
+//                         i++;
+//                     }
+//                 })
+//             }
+//         });
+//         return arrayBody;
+//     } else {
+//         return [];
+//     }
+    
+// }
+
 class Overview extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            headersForShow: [],
+            bodysForShow: [],
+            splitHeadersForShow: [],
+            splitHeadersForSelect:[],
+            splitBodysForSelect: [],
             projectId:'',
-            screenId: '5cd2b642fd333616dc360b63',
+            screenId: '5cd2b642fd333616dc360b63', //Expediting
+            splitScreenId: '5cd2b646fd333616dc360b70', //Expediting Splitwindow
             unlocked: false,
             screen: 'expediting',
             selectedIds: [],
@@ -531,8 +735,13 @@ class Overview extends React.Component {
             loadingFields,
             loadingPos,
             loadingSelection,
-            location 
+            location,
+            //---------
+            fieldnames,
+            pos 
         } = this.props;
+
+        const { screenId, splitScreenId, headersForShow, splitHeadersForSelect } = this.state;
 
         var qs = queryString.parse(location.search);
         if (qs.id) {
@@ -555,12 +764,21 @@ class Overview extends React.Component {
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
             }
-        } 
+        }
+
+        this.setState({
+            headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+            bodysForShow: getBodys(fieldnames, pos, headersForShow),
+            splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
+            splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+            splitBodysForSelect: getBodys(fieldnames, pos, splitHeadersForSelect),
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { selectedField } = this.state;
-        const { fields } = this.props;
+        const { headersForShow, splitHeadersForSelect, screenId, splitScreenId, selectedField } = this.state;
+        const { fields, fieldnames, pos } = this.props;
+        
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
                 return f._id === selectedField;
@@ -573,6 +791,22 @@ class Overview extends React.Component {
                 });
             }
         }
+
+        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames){
+            this.setState({
+                headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+                splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
+                splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+            }); 
+        }
+
+        if (fieldnames != prevProps.fieldnames || pos != prevProps.pos || headersForShow != prevState.headersForShow || splitHeadersForSelect != prevState.splitHeadersForSelect) {
+            this.setState({
+                bodysForShow: getBodys(fieldnames, pos, headersForShow),
+                splitBodysForSelect: getBodys(fieldnames, pos, splitHeadersForSelect),
+            });
+        }
+        
     }
 
     handleClearAlert(event){
@@ -666,9 +900,12 @@ class Overview extends React.Component {
         }
     }
 
-    selectedFieldOptions(fieldnames, fields, screenId) {
+    selectedFieldOptions(fieldnames, fields) {
+        
+        const { headersForShow } = this.state;
+
         if (fieldnames.items && fields.items) {
-            let screenHeaders = generateScreenHeader(fieldnames, screenId);
+            let screenHeaders = headersForShow;
             let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
                 if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
                     accumulator.push(currentValue.fieldId);
@@ -694,6 +931,35 @@ class Overview extends React.Component {
             });
         }
     }
+
+    // selectedFieldOptions(fieldnames, fields, screenId) {
+    //     if (fieldnames.items && fields.items) {
+    //         let screenHeaders = generateScreenHeader(fieldnames, screenId);
+    //         let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
+    //             if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
+    //                 accumulator.push(currentValue.fieldId);
+    //             }
+    //             return accumulator;
+    //         }, []);
+    //         let fieldsFromHeader = fields.items.reduce(function (accumulator, currentValue) {
+    //             if (fieldIds.indexOf(currentValue._id) !== -1) {
+    //                 accumulator.push({ 
+    //                     value: currentValue._id,
+    //                     name: currentValue.custom
+    //                 });
+    //             }
+    //             return accumulator;
+    //         }, []);
+    //         return arraySorted(fieldsFromHeader, 'name').map(field => {
+    //             return (
+    //                 <option 
+    //                     key={field.value}
+    //                     value={field.value}>{field.name}
+    //                 </option>                
+    //             );
+    //         });
+    //     }
+    // }
 
     updateSelectedIds(selectedIds) {
         this.setState({
@@ -825,7 +1091,7 @@ class Overview extends React.Component {
                 }
             });
         } else {
-            console.log(toto);
+            console.log('toto');
         }
     }
 
@@ -967,6 +1233,13 @@ class Overview extends React.Component {
             showSplitLine,
             showGenerate,
             showDelete,
+            //--------
+            headersForShow,
+            bodysForShow,
+            splitHeadersForShow,
+            splitHeadersForSelect,
+            splitBodysForSelect
+
         } = this.state;
 
         const { accesses, docdefs, fieldnames, fields, pos, selection } = this.props;
@@ -998,8 +1271,8 @@ class Overview extends React.Component {
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {fieldnames.items && 
                             <ProjectTable
-                                screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
-                                screenBodys={generateScreenBody(screenId, fieldnames, pos)}
+                                screenHeaders={headersForShow}
+                                screenBodys={bodysForShow}
                                 projectId={projectId}
                                 screenId={screenId}
                                 selectedIds={selectedIds}
@@ -1033,7 +1306,7 @@ class Overview extends React.Component {
                                 onChange={this.handleChange}
                             >
                                 <option key="0" value="0">Select field...</option>
-                                {this.selectedFieldOptions(fieldnames, fields, screenId)}
+                                {this.selectedFieldOptions(fieldnames, fields)}
                             </select>
                         </div>
                         <div className="form-group">
@@ -1119,8 +1392,11 @@ class Overview extends React.Component {
                     size="modal-xl"
                 >
                     <SplitLine 
-                        fieldnames={fieldnames}
-                        screenId={screenId}
+                        headersForShow={splitHeadersForShow}
+                        headersForSelect={splitHeadersForSelect}
+                        // bodysForSelect={splitBodysForSelect}
+                        selectedIds = {passSelectedIds(selectedIds)}
+                        selectedPo = {passSelectedPo(selectedIds, pos)}
                         // selection={this.getSelection()}
                     />
                 </Modal>
