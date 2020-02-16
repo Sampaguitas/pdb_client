@@ -51,6 +51,17 @@ function TypeToString (fieldValue, fieldType, myDateFormat) {
     }
 }
 
+function DateToString (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return String(moment(fieldValue).format(myDateFormat));
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
 function getScreenTbls (headersForSelect) {
     if (!_.isUndefined(headersForSelect) && !_.isEmpty(headersForSelect)) {
         return headersForSelect.reduce(function (acc, curr) {
@@ -251,6 +262,24 @@ function getBodys(selectedPo, headersForSelect){
     
 }
 
+function getFirstVirtual(selectedPo, screenBody, headersForShow) {
+    if (!_.isEmpty(selectedPo) && !_.isEmpty(screenBody) && !_.isEmpty(headersForShow)){
+        let selectedSub = selectedPo.subs.find(sub => sub._id === screenBody.tablesId.subId);
+        return headersForShow.reduce(function (acc, curr){
+            if (curr.fields.fromTbl === 'po') {
+                acc[curr.fields.name] = DateToString(selectedPo[curr.fields.name], getInputType(curr.fields.type), getDateFormat(myLocale));
+            } else if (curr.fields.fromTbl === 'sub'){
+                acc[curr.fields.name] = DateToString(selectedSub[curr.fields.name], getInputType(curr.fields.type), getDateFormat(myLocale));
+            } else {
+                acc[curr.fields.name] = '';
+            }
+            return acc;
+        },{});
+    } else {
+        return {}; 
+    }
+}
+
 
 function generateHeaderForSelect(screenHeaders) {
     let tempArray = [];
@@ -268,7 +297,7 @@ function generateHeaderForSelect(screenHeaders) {
     }
 }
 
-function generateBodyForSelect(screenBodys, selectedLine, handleClickLine) {
+function generateBodyForSelect(screenBodys, selectedLine, selectedIds, handleClickLine) {
     let tempRows = [];
     if (!_.isEmpty(screenBodys)) {
         screenBodys.map(function (screenBody) {
@@ -288,7 +317,7 @@ function generateBodyForSelect(screenBodys, selectedLine, handleClickLine) {
             tempRows.push(
                 <tr
                     key={screenBody._id}
-                    style={selectedLine === screenBody._id ? {backgroundColor: '#A7A9AC', color: 'white', cursor: 'pointer'} : {cursor: 'pointer'}} 
+                    style={selectedLine === screenBody._id ? {backgroundColor: '#A7A9AC', color: 'white', cursor: 'pointer'} : screenBody.tablesId.subId === selectedIds.subId ? {backgroundColor: '#C9DDE1', cursor: 'pointer'} : {cursor: 'pointer'}} 
                     onClick={event => handleClickLine(event, screenBody)}>
                     {tempCol}
                 </tr>
@@ -358,6 +387,21 @@ function generateBodyForShow(virtuals, headersForShow, IsAll, toggleRow, handleC
     }
 }
 
+function getSelectedSubIndex(selectedIds, bodysForSelect) {
+    if (!_.isEmpty(selectedIds) && !_.isEmpty(bodysForSelect)){
+        let found = bodysForSelect.find(function (b) {
+            return b.tablesId.subId === selectedIds.subId;
+        });
+        if (!_.isUndefined(found)) {
+            return found._id
+        } else {
+            return '';
+        }
+    } else {
+        return '';
+    }
+}
+
 
 
 class SplitLine extends Component {
@@ -369,13 +413,17 @@ class SplitLine extends Component {
             virtuals: [],
             forShowSelectedRows:[],
             forShowIsAll: false,
+            alert: {
+                type: '',
+                message: ''
+            }
         }
-
+        this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleClickLine = this.handleClickLine.bind(this);
 
 
         this.handleChangeVirtuals = this.handleChangeVirtuals.bind(this);
-        this.keyHandler = this.keyHandler.bind(this);
+        this.keyHandlerForShow = this.keyHandlerForShow.bind(this);
         this.toggleForShowAllRows = this.toggleForShowAllRows.bind(this);
         this.toggleForShowRow = this.toggleForShowRow.bind(this);
 
@@ -387,12 +435,13 @@ class SplitLine extends Component {
         const { selectedPo, headersForSelect } = this.props;
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
-        const table = document.getElementById('myVirtuals');
-        table.addEventListener('keydown', (e) => { 
+        const tableForShow = document.getElementById('forShow');
+        tableForShow.addEventListener('keydown', (e) => { 
             if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
-                return this.keyHandler(e);
+                return this.keyHandlerForShow(e);
             }
         });
+        
 
         this.setState({
             bodysForSelect: getBodys(selectedPo, headersForSelect),
@@ -404,7 +453,8 @@ class SplitLine extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { selectedPo, headersForSelect } = this.props;
+        const { headersForSelect, headersForShow, selectedIds, selectedPo } = this.props;
+        const { selectedLine, bodysForSelect } = this.state;
         if (prevProps.selectedPo != selectedPo || prevProps.headersForSelect != headersForSelect) {
             this.setState({
                 bodysForSelect: getBodys(selectedPo, headersForSelect),
@@ -412,11 +462,62 @@ class SplitLine extends Component {
                 virtuals: [],
                 forShowSelectedRows:[],
                 forShowIsAll: false,
+                alert: {
+                    type: '',
+                    message: ''
+                }
             });
+        }
+
+        if (_.isEmpty(prevState.bodysForSelect) && prevState.bodysForSelect != bodysForSelect) {
+            this.setState({
+                selectedLine: getSelectedSubIndex(selectedIds, bodysForSelect),
+            });
+        }
+
+        if (prevState.selectedLine != selectedLine) {
+            if (selectedLine === '') {
+                this.setState({
+                    virtuals: [],
+                    forShowSelectedRows:[],
+                    forShowIsAll: false,
+                    alert: {
+                        type: '',
+                        message: ''
+                    }
+                });
+            } else {
+                let screenBody = bodysForSelect.find(function (s) {
+                    return s._id === selectedLine;
+                });
+
+                if (!_.isUndefined(screenBody)) {
+                    let tempObject = getFirstVirtual(selectedPo, screenBody, headersForShow);
+                    this.setState({
+                        virtuals: _.isEmpty(tempObject) ? [] : [tempObject],
+                        forShowSelectedRows:[],
+                        forShowIsAll: false,
+                        alert: {
+                            type: screenBody.isPacked ? 'alert-warning' : '',
+                            message: screenBody.isPacked ? 'Line contains packed item(s)' : ''
+                        }
+                    });
+                } else {
+                    this.setState({
+                        virtuals: [],
+                        forShowSelectedRows:[],
+                        forShowIsAll: false,
+                        alert: {
+                            type: '',
+                            message: ''
+                        }
+                    }); 
+                }
+            }
         }
     }
 
-    keyHandler(e) {
+    keyHandlerForShow(e) {
 
         let target = e.target;
         let colIndex = target.parentElement.cellIndex;               
@@ -457,33 +558,27 @@ class SplitLine extends Component {
         }
     }
 
+    handleClearAlert(event){
+        event.preventDefault;
+        this.setState({ 
+            alert: {
+                type:'',
+                message:'' 
+            } 
+        });
+    }
+
     handleClickLine(event, screenBody) {
         event.preventDefault();
-        // const { pos } = this.props;
         const { selectedLine } = this.state;
         
         if (selectedLine === screenBody._id) {
             this.setState({
                 selectedLine: '',
-                virtuals: [],
-                forShowSelectedRows:[],
-                forShowIsAll: false,
             });
         } else {
-            // //get the _id of the sub clicked:
-            // console.log('screenBody:', screenBody);
-            // console.log('poId:', screenBody.tablesId.poId);
-            // console.log('subId:', screenBody.tablesId.subId);
-            // let tempPo = pos.items.find(po => po._id === screenBody.tablesId.poId);
-            // let sub = tempPo.subs.find(sub => sub._id === screenBody.tablesId.subId);
-            // console.log('sub:', sub);
-
-            
             this.setState({
                 selectedLine: screenBody._id,
-                virtuals: [],
-                forShowSelectedRows:[],
-                forShowIsAll: false,
             });
         }
     }
@@ -495,7 +590,11 @@ class SplitLine extends Component {
         let tempArray = virtuals;
         tempArray[index][name] = value;
         this.setState({
-            virtuals: tempArray
+            virtuals: tempArray,
+            alert: {
+                type: '',
+                message: ''
+            }
         });
     }
 
@@ -508,12 +607,20 @@ class SplitLine extends Component {
                     ...this.state,
                     forShowSelectedRows: [],
                     forShowIsAll: false,
+                    alert: {
+                        type: '',
+                        message: ''
+                    }
                 });
             } else {
                 this.setState({
                     ...this.state,
                     forShowSelectedRows: virtuals.map( (s, index) => index),
-                    forShowIsAll: true
+                    forShowIsAll: true,
+                    alert: {
+                        type: '',
+                        message: ''
+                    }
                 });
             }         
         }
@@ -524,36 +631,54 @@ class SplitLine extends Component {
         if (forShowSelectedRows.includes(id)) {
             this.setState({
                 ...this.state,
-                forShowSelectedRows: forShowSelectedRows.filter( ele => ele != id)
+                forShowSelectedRows: forShowSelectedRows.filter( ele => ele != id),
+                alert: {
+                    type: '',
+                    message: ''
+                }
             });
         } else {
             this.setState({
                 ...this.state,
-                forShowSelectedRows: [...forShowSelectedRows, id]
+                forShowSelectedRows: [...forShowSelectedRows, id],
+                alert: {
+                    type: '',
+                    message: ''
+                }
             });
         }
     }
 
     handleSave() {
         const { selectedPo, selectedIds, headersForSelect } = this.props;
-        const { bodysForSelect } = this.state;
-        console.log('selectedPo:', selectedPo);
-        console.log('selectedIds:', selectedIds);
-        console.log('headersForSelect:', headersForSelect);
+        const { selectedLine, bodysForSelect } = this.state;
+        console.log('selectedLine:', selectedLine);
         console.log('bodysForSelect:', bodysForSelect);
+        console.log('bodysForSelect.length:', bodysForSelect.length);
     }
 
     handleNewSubLine(event) {
         event.preventDefault();
-        const { virtuals } = this.state;
+        const { virtuals, selectedLine } = this.state;
         const { headersForShow } = this.props;
-        if (headersForShow) {
+        if (selectedLine === '') {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select a line to split.'
+                }
+            });
+        } else if (headersForShow) {
             let tempArray = headersForShow.reduce(function (acc, curr){
                 acc.push({ [curr.fields.name]: ''});
                 return acc;
             }, []);
             this.setState({
-                virtuals: [...virtuals, tempArray]
+                virtuals: [...virtuals, tempArray],
+                alert: {
+                    type: '',
+                    message: ''
+                }
             });
         }
     }
@@ -561,28 +686,47 @@ class SplitLine extends Component {
     handleDeleteSubLine(event) {
         event.preventDefault();
         const { virtuals, forShowSelectedRows  } = this.state;
-        let tempArray = virtuals;
+        if (_.isEmpty(forShowSelectedRows)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select sub line(s) to be deleted.'
+                }
+            });
+        } else {
+            let tempArray = virtuals;
+            for (var i = forShowSelectedRows.length -1; i >= 0; i--) {
+                tempArray.splice(forShowSelectedRows[i], 1);
+            }
 
-        for (var i = forShowSelectedRows.length -1; i >= 0; i--) {
-            tempArray.splice(forShowSelectedRows[i], 1);
+            this.setState({
+                ...this.state,
+                virtuals: tempArray,
+                forShowSelectedRows: [],
+                forShowIsAll: false,
+                alert: {
+                    type: '',
+                    message: ''
+                }
+            });
         }
-
-        this.setState({
-            ...this.state,
-            virtuals: tempArray,
-            forShowSelectedRows: [],
-            forShowIsAll: false,
-        });
     }
 
     render() {
 
-        const { headersForShow, headersForSelect } = this.props;
-        const { bodysForSelect, virtuals, forShowIsAll, selectedLine } =this.state;
+        const { headersForShow, headersForSelect, selectedIds } = this.props;
+        const { alert, bodysForSelect, virtuals, forShowIsAll, selectedLine } =this.state;
 
         return (
             <div id='splitLine'>
                 <div className="ml-2 mr-2">
+                    {alert.message && 
+                        <div className={`alert ${alert.type}`}>{alert.message}
+                            <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                            </button>
+                        </div>
+                    }
                     <div className="row">
                         <div className="col">
                             <h3>Select a line to split:</h3>
@@ -593,12 +737,12 @@ class SplitLine extends Component {
                     </div> 
                     <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: '200px'}}>
                         <div className="table-responsive custom-table-container">
-                            <table className="table table-bordered table-sm table-hover text-nowrap">
+                            <table className="table table-bordered table-sm table-hover text-nowrap" id="forSelect">
                                 <thead>
                                     {generateHeaderForSelect(headersForSelect)}
                                 </thead>
                                 <tbody>
-                                    {generateBodyForSelect(bodysForSelect, selectedLine, this.handleClickLine)}
+                                    {generateBodyForSelect(bodysForSelect, selectedLine, selectedIds, this.handleClickLine)}
                                 </tbody>
                             </table>
                         </div>
@@ -618,7 +762,7 @@ class SplitLine extends Component {
                     </div>
                     <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: '200px'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row">
-                            <table className="table table-bordered table-sm text-nowrap table-striped" id="myVirtuals">
+                            <table className="table table-bordered table-sm text-nowrap table-striped" id="forShow">
                                 <thead>
                                     {generateHeaderForShow(headersForShow, forShowIsAll, this.toggleForShowAllRows)}
                                 </thead>
