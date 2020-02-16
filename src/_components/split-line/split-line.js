@@ -39,6 +39,18 @@ function getDateFormat(myLocale) {
     return tempDateFormat;
 }
 
+function isValidFormat (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return moment(fieldValue, myDateFormat, true).isValid();
+            default: return true;
+        }
+    } else {
+        return true;
+    }
+    
+}
+
 function TypeToString (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
@@ -55,6 +67,17 @@ function DateToString (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'date': return String(moment(fieldValue).format(myDateFormat));
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
+function StringToDate (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return moment(fieldValue, myDateFormat).toDate();
             default: return fieldValue;
         }
     } else {
@@ -402,7 +425,87 @@ function getSelectedSubIndex(selectedIds, bodysForSelect) {
     }
 }
 
+function getSelecetedSubId(bodysForSelect, selectedLine) {
+    let found = bodysForSelect.find(function (b) {
+        return b._id === selectedLine;
+    });
+    if (!_.isUndefined(found)) {
+        return found.tablesId.subId;
+    } else {
+        return '';
+    }
+}
 
+function getPoQty(selectedPo) {
+    return Number(selectedPo.qty) || 0;
+}
+
+function getSubsQty(selectedPo) {
+    if (selectedPo.hasOwnProperty('subs') && !_.isEmpty(selectedPo.subs)) {
+        return selectedPo.subs.reduce(function(acc, curr) {
+            return acc += Number(curr.splitQty) || 0;
+        }, 0);
+    } else {
+        return 0;
+    }
+    
+}
+
+function getSelectionQty(selectedPo, subId) {
+    let selectedSub = selectedPo.subs.find(sub => sub._id === subId);
+    if (!_.isUndefined(selectedSub)) {
+        return Number(selectedSub.splitQty) || 0;
+    } else {
+        return 0;
+    }
+}
+
+function getVirturalsQty(virtuals) {
+    return virtuals.reduce(function(acc, curr) {
+        return acc += Number(curr.splitQty) || 0
+    }, 0);
+}
+
+function getRemainingQty(selectedPo, bodysForSelect, selectedLine, virtuals) {
+    let subId = getSelecetedSubId(bodysForSelect, selectedLine);
+    let poQty = getPoQty(selectedPo);
+    let subsQty = getSubsQty(selectedPo);
+    let selectionQty = getSelectionQty(selectedPo, subId);
+    let virturalsQty = getVirturalsQty(virtuals);
+    return poQty - ( subsQty - selectionQty + virturalsQty);
+}
+
+function isValidArray(virtuals, headersForShow) {
+    return virtuals.reduce(function (acc, curr) {
+        if (acc) {
+            return headersForShow.every(h => {
+                return isValidFormat(curr[h.fields.name], getInputType(h.fields.type), getDateFormat(myLocale))
+            });
+        } else {
+            return acc;
+        }
+    }, true);
+}
+
+function formatArray(virtuals, headersForShow) {
+    return virtuals.reduce(function (acc, curr) {
+        
+        let tempObject = {};
+        
+        headersForShow.map(function (h) {
+            if (h.fields.fromTbl === 'sub'){
+                tempObject[h.fields.name] = StringToDate (curr[h.fields.name], getInputType(h.fields.type), getDateFormat(myLocale));
+            }
+        });
+
+        if (!_.isEmpty(tempObject)) {
+            acc.push(tempObject);
+        }
+        
+        return acc;
+
+    },[]);
+}
 
 class SplitLine extends Component {
     constructor(props) {
@@ -559,13 +662,14 @@ class SplitLine extends Component {
     }
 
     handleClearAlert(event){
+        const { handleClearAlert } = this.props;
         event.preventDefault;
         this.setState({ 
             alert: {
                 type:'',
                 message:'' 
-            } 
-        });
+            }
+        }, handleClearAlert(event));
     }
 
     handleClickLine(event, screenBody) {
@@ -649,12 +753,36 @@ class SplitLine extends Component {
         }
     }
 
-    handleSave() {
-        const { selectedPo, selectedIds, headersForSelect } = this.props;
-        const { selectedLine, bodysForSelect } = this.state;
-        console.log('selectedLine:', selectedLine);
-        console.log('bodysForSelect:', bodysForSelect);
-        console.log('bodysForSelect.length:', bodysForSelect.length);
+    handleSave(event) {
+        const { selectedPo, headersForShow, handleSplitLine } = this.props;
+        const { selectedLine, bodysForSelect, virtuals } = this.state;
+        // let remainingQty = getRemainingQty(selectedPo, bodysForSelect, selectedLine, virtuals);
+        
+        if (_.isEmpty(virtuals)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'No lines to be saved.'
+                }
+            });
+        } else if (!virtuals.every(curr => Number(curr.splitQty) > 0)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Split Quantities should be greater than 0.'
+                }
+            });
+        } else if (!isValidArray(virtuals, headersForShow)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Some dates are not properly formated.'
+                }
+            });
+        } else {
+            console.log(formatArray(virtuals, headersForShow));
+            handleSplitLine(event, getSelecetedSubId(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));
+        }
     }
 
     handleNewSubLine(event) {
@@ -714,25 +842,29 @@ class SplitLine extends Component {
 
     render() {
 
-        const { headersForShow, headersForSelect, selectedIds } = this.props;
-        const { alert, bodysForSelect, virtuals, forShowIsAll, selectedLine } =this.state;
+        const { headersForShow, headersForSelect, selectedIds, selectedPo } = this.props;
+        const { bodysForSelect, virtuals, forShowIsAll, selectedLine } =this.state;
+
+        let remainingQty = getRemainingQty(selectedPo, bodysForSelect, selectedLine, virtuals);
+        const alert = this.state.alert.message ? this.state.alert : this.props.alert;
 
         return (
             <div id='splitLine'>
                 <div className="ml-2 mr-2">
-                    {alert.message && 
-                        <div className={`alert ${alert.type}`}>{alert.message}
-                            <button className="close" onClick={(event) => this.handleClearAlert(event)}>
-                                <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
-                            </button>
-                        </div>
-                    }
                     <div className="row">
                         <div className="col">
                             <h3>Select a line to split:</h3>
                         </div>
                         <div className="col text-right mr-1">
-                            <strong>Remaining Qty:</strong> 0
+                            <strong>
+                                Remaining Qty:
+                                <span
+                                    style={remainingQty === 0 ? {color: 'green'} : {color: '#A8052C'}}
+                                    className="ml-1"
+                                >
+                                    {remainingQty}
+                                </span>
+                            </strong>
                         </div>
                     </div> 
                     <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: '200px'}}>
@@ -747,7 +879,14 @@ class SplitLine extends Component {
                             </table>
                         </div>
                     </div>
-                    <div className="row mt-4 mb-2">
+                    {alert.message && 
+                        <div className={`alert ${alert.type} mt-3`}>{alert.message}
+                            <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                            </button>
+                        </div>
+                    }
+                    <div className={`row ${alert.message ? "mt-1" : "mt-5"} mb-2`}>
                         <div className="col"> 
                             <h3>Sub line(s) information:</h3>
                         </div>
@@ -773,7 +912,7 @@ class SplitLine extends Component {
                         </div>
                     </div>
                     <div className="text-right mt-2">
-                        <button className="btn btn-leeuwen-blue btn-lg" onClick={this.handleSave}>
+                        <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleSave(event)}>
                             <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save Changes</span>
                         </button>
                     </div>

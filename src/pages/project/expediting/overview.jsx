@@ -712,6 +712,7 @@ class Overview extends React.Component {
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
+        this.handleSplitLine = this.handleSplitLine.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         
         this.refreshStore = this.refreshStore.bind(this);
@@ -899,6 +900,40 @@ class Overview extends React.Component {
              }
         }
     }
+
+    handleSplitLine(event, subId, virtuals) {
+        event.preventDefault();
+        const requestOptions = {
+            method: 'PUT',
+            headers: { ...authHeader(), 'Content-Type': 'application/json'},
+            body: JSON.stringify({virtuals: virtuals})
+        }
+        return fetch(`${config.apiUrl}/split/sub?subId=${subId}`, requestOptions)
+        .then(responce => responce.text().then(text => {
+            const data = text && JSON.parse(text);
+            if (!responce.ok) {
+                if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
+                }
+                this.setState({
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshStore);
+            } else {
+                this.setState({
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshStore);
+            }
+        }));
+    }
+
+    
 
     selectedFieldOptions(fieldnames, fields) {
         
@@ -1247,7 +1282,7 @@ class Overview extends React.Component {
 
         return (
             <Layout alert={alert} accesses={accesses}>
-                {alert.message && 
+                {alert.message && !showSplitLine &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1392,12 +1427,17 @@ class Overview extends React.Component {
                     size="modal-xl"
                 >
                     <SplitLine 
-                        headersForShow={splitHeadersForShow}
                         headersForSelect={splitHeadersForSelect}
+                        headersForShow={splitHeadersForShow}
+                        
                         // bodysForSelect={splitBodysForSelect}
                         selectedIds = {passSelectedIds(selectedIds)}
                         selectedPo = {passSelectedPo(selectedIds, pos)}
                         // selection={this.getSelection()}
+                        alert = {alert}
+                        handleClearAlert={this.handleClearAlert}
+                        handleSplitLine={this.handleSplitLine}
+
                     />
                 </Modal>
 
