@@ -795,7 +795,7 @@ class SplitLine extends Component {
             this.setState({
                 alert: {
                     type: 'alert-danger',
-                    message: 'First delete packed items in the shipping module and try again'
+                    message: 'Line contains packed items! First delete packed items in the shipping module and try again'
                 }
             });
         } else {
