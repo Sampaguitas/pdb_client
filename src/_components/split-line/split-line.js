@@ -766,6 +766,7 @@ class SplitLine extends Component {
         const { selectedLine, bodysForSelect, virtuals } = this.state;
         // let remainingQty = getRemainingQty(selectedPo, bodysForSelect, selectedLine, virtuals);
         let screenBody = selectedScreenBody(bodysForSelect, selectedLine);
+        
 
 
         
@@ -790,7 +791,7 @@ class SplitLine extends Component {
                     message: 'Some dates are not properly formated.'
                 }
             });
-        } else if (!_.isUndefined(screenBody) && screenBody.hasPackitems) {
+        } else if (!_.isUndefined(screenBody) && screenBody.isPacked) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
