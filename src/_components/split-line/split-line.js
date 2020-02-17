@@ -611,7 +611,7 @@ class SplitLine extends Component {
                         forShowIsAll: false,
                         alert: {
                             type: screenBody.isPacked ? 'alert-warning' : '',
-                            message: screenBody.isPacked ? 'Line contains packed item(s) and cannot be splet! First delete packed items in the shipping module to proceed' : ''
+                            message: screenBody.isPacked ? 'Line contains packed item(s) and cannot be splet! First delete packed items in the shipping module to proceed.' : ''
                         }
                     });
                 } else {
@@ -638,39 +638,52 @@ class SplitLine extends Component {
         
         switch(e.keyCode) {
             case 9:// tab
-                if(target.parentElement.nextSibling) {
-                    target.parentElement.nextSibling.click();
+                if(rowIndex === nRows) {
                     this.handleNextLine(target);
+                }
+                if(target.parentElement.nextSibling) {
+                    target.parentElement.nextSibling.click(); 
                 }
                 break;
             case 13: //enter
+                if(rowIndex === nRows) {
+                    this.handleNextLine(target);
+                }
                 if(rowIndex < nRows) {
                     target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
-                    this.handleNextLine(target);
                 }
                 break;
             case 37: //left
+                if (rowIndex === nRows && !target.parentElement.classList.contains('isEditing')) {
+                    this.handleNextLine(target);
+                }
                 if(colIndex > 1 && !target.parentElement.classList.contains('isEditing')) {
                     target.parentElement.previousSibling.click();
-                    this.handleNextLine(target);
                 } 
                 break;
             case 38: //up
-                if(rowIndex > 1) {
-                    target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();
+                if(rowIndex === nRows) {
                     this.handleNextLine(target);
+                }
+                if(rowIndex > 1) {
+                    target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();    
                 }
                 break;
             case 39: //right
+                if (rowIndex === nRows && !target.parentElement.classList.contains('isEditing')) {
+                    this.handleNextLine(target);
+                }
                 if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
                     target.parentElement.nextSibling.click();
-                    this.handleNextLine(target);
                 }
                 break;
             case 40: //down
+                if(rowIndex === nRows) {
+                    this.handleNextLine(target);
+                }
                 if(rowIndex < nRows) {
                     target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
-                    this.handleNextLine(target);
+                    
                 }
                 break;
         }
@@ -800,7 +813,7 @@ class SplitLine extends Component {
             this.setState({
                 alert: {
                     type: 'alert-danger',
-                    message: 'Line contains packed item(s) and cannot be splet! First delete packed items in the shipping module and try again'
+                    message: 'Line contains packed item(s) and cannot be splet! First delete packed items in the shipping module and try again.'
                 }
             });
         } else if (remainingQty != 0) {
