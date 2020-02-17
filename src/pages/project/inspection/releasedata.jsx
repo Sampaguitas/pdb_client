@@ -627,6 +627,8 @@ class ReleaseData extends React.Component {
             fieldnames,
             pos 
         } = this.props;
+
+        const { screenId, splitScreenId, headersForShow, splitHeadersForSelect } = this.state;
         
         var qs = queryString.parse(location.search);
         if (qs.id) {
@@ -1015,10 +1017,6 @@ class ReleaseData extends React.Component {
         }
     }
 
-    handleSplitLine(event) {
-        event.preventDefault();
-    }
-
     toggleSplitLine(event) {
         event.preventDefault();
         const { showSplitLine, selectedIds } = this.state;
@@ -1165,7 +1163,7 @@ class ReleaseData extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         
         return (
-            <Layout alert={alert} accesses={accesses}>
+            <Layout alert={showSplitLine ? {type:'', message:''} : alert} accesses={accesses}>
                 {alert.message && !showSplitLine &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
