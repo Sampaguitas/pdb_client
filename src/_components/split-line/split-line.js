@@ -538,6 +538,7 @@ class SplitLine extends Component {
 
         this.handleSave = this.handleSave.bind(this);
         this.handleNewSubLine = this.handleNewSubLine.bind(this);
+        this.handleNextLine = this.handleNextLine.bind(this);
     }
 
     componentDidMount() {
@@ -639,31 +640,37 @@ class SplitLine extends Component {
             case 9:// tab
                 if(target.parentElement.nextSibling) {
                     target.parentElement.nextSibling.click();
+                    this.handleNextLine(target);
                 }
                 break;
             case 13: //enter
                 if(rowIndex < nRows) {
                     target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                    this.handleNextLine(target);
                 }
                 break;
             case 37: //left
                 if(colIndex > 1 && !target.parentElement.classList.contains('isEditing')) {
                     target.parentElement.previousSibling.click();
+                    this.handleNextLine(target);
                 } 
                 break;
             case 38: //up
                 if(rowIndex > 1) {
                     target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();
+                    this.handleNextLine(target);
                 }
                 break;
             case 39: //right
                 if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
                     target.parentElement.nextSibling.click();
+                    this.handleNextLine(target);
                 }
                 break;
             case 40: //down
                 if(rowIndex < nRows) {
                     target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                    this.handleNextLine(target);
                 }
                 break;
         }
@@ -768,8 +775,6 @@ class SplitLine extends Component {
         let screenBody = selectedScreenBody(bodysForSelect, selectedLine);
         
 
-
-        
         if (_.isEmpty(virtuals)) {
             this.setState({
                 alert: {
@@ -816,11 +821,36 @@ class SplitLine extends Component {
             });
         } else if (headersForShow) {
             let tempArray = headersForShow.reduce(function (acc, curr){
-                acc.push({ [curr.fields.name]: ''});
+                acc[curr.fields.name] = '';
                 return acc;
-            }, []);
+            }, {});
             this.setState({
                 virtuals: [...virtuals, tempArray],
+                alert: {
+                    type: '',
+                    message: ''
+                }
+            });
+        }
+    }
+
+    handleNextLine(target) {
+
+        const { selectedPo, headersForShow } = this.props;
+        const { selectedLine, bodysForSelect, virtuals } = this.state;
+        let remainingQty = getRemainingQty(selectedPo, bodysForSelect, selectedLine, virtuals);
+
+        if (target.name === 'splitQty' && target.value != '' && remainingQty > 0 && !_.isEmpty(headersForShow)) {
+            let tempObject = headersForShow.reduce(function (acc, curr){
+                if (curr.fields.name === 'splitQty') {
+                    acc.splitQty = remainingQty;
+                } else {
+                    acc[curr.fields.name] = '';
+                }
+                return acc;
+            }, {});
+            this.setState({
+                virtuals: [...virtuals, tempObject],
                 alert: {
                     type: '',
                     message: ''
