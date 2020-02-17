@@ -771,7 +771,7 @@ class SplitLine extends Component {
     handleSave(event) {
         const { selectedPo, headersForShow, handleSplitLine } = this.props;
         const { selectedLine, bodysForSelect, virtuals } = this.state;
-        // let remainingQty = getRemainingQty(selectedPo, bodysForSelect, selectedLine, virtuals);
+        let remainingQty = getRemainingQty(selectedPo, bodysForSelect, selectedLine, virtuals);
         let screenBody = selectedScreenBody(bodysForSelect, selectedLine);
         
 
@@ -803,6 +803,10 @@ class SplitLine extends Component {
                     message: 'Line contains packed item(s) and cannot be splet! First delete packed items in the shipping module and try again'
                 }
             });
+        } else if (remainingQty != 0) {
+            if (confirm(`${remainingQty} ${selectedPo.uom} remaining, would you like to proceed?`)){
+                handleSplitLine(event, getSelecetedSubId(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));
+            }   
         } else {
             handleSplitLine(event, getSelecetedSubId(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));
         }
