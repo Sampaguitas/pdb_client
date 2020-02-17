@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
@@ -15,9 +16,9 @@ import {
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import SplitLine from '../../../_components/split-line/split-line';
 import Modal from '../../../_components/modal';
+import SplitLine from '../../../_components/split-line/split-line';
+
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -313,8 +314,6 @@ function virtuals(packitems, uom, packItemFields) {
         });
         tempVirtuals.push(tempObject);
     }
-    
-
     return tempVirtuals;
 }
 
@@ -406,7 +405,6 @@ function getBodys(fieldnames, pos, headersForShow){
                                         }
                                         break;
                                     case 'packitem':
-                                        
                                         if (screenHeader.fields.name === 'plNr') {
                                             arrayRow.push({
                                                 collection: 'virtual',
@@ -685,7 +683,6 @@ class Overview extends React.Component {
             bodysForShow: [],
             splitHeadersForShow: [],
             splitHeadersForSelect:[],
-            splitBodysForSelect: [],
             projectId:'',
             screenId: '5cd2b642fd333616dc360b63', //Expediting
             splitScreenId: '5cd2b646fd333616dc360b70', //Expediting Splitwindow
@@ -772,7 +769,6 @@ class Overview extends React.Component {
             bodysForShow: getBodys(fieldnames, pos, headersForShow),
             splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
             splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
-            splitBodysForSelect: getBodys(fieldnames, pos, splitHeadersForSelect),
         });
     }
 
@@ -804,7 +800,6 @@ class Overview extends React.Component {
         if (fieldnames != prevProps.fieldnames || pos != prevProps.pos || headersForShow != prevState.headersForShow || splitHeadersForSelect != prevState.splitHeadersForSelect) {
             this.setState({
                 bodysForShow: getBodys(fieldnames, pos, headersForShow),
-                splitBodysForSelect: getBodys(fieldnames, pos, splitHeadersForSelect),
             });
         }
         
@@ -1248,10 +1243,6 @@ class Overview extends React.Component {
         }
     }
 
-    // generateSelection(screenBody) {
-
-    // }
-
     render() {
         const { 
             projectId, 
@@ -1273,7 +1264,6 @@ class Overview extends React.Component {
             bodysForShow,
             splitHeadersForShow,
             splitHeadersForSelect,
-            splitBodysForSelect
 
         } = this.state;
 
@@ -1430,10 +1420,9 @@ class Overview extends React.Component {
                         headersForSelect={splitHeadersForSelect}
                         headersForShow={splitHeadersForShow}
                         
-                        // bodysForSelect={splitBodysForSelect}
                         selectedIds = {passSelectedIds(selectedIds)}
                         selectedPo = {passSelectedPo(selectedIds, pos)}
-                        // selection={this.getSelection()}
+
                         alert = {alert}
                         handleClearAlert={this.handleClearAlert}
                         handleSplitLine={this.handleSplitLine}
@@ -1462,8 +1451,8 @@ function mapStateToProps(state) {
         fields,
         loadingAccesses,
         loadingDocdefs,
-        loadingFields,
         loadingFieldnames,
+        loadingFields,
         loadingPos,
         loadingSelection,
         pos,

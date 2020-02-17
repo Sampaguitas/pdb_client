@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
@@ -16,7 +17,10 @@ import {
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import Modal from '../../../_components/modal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import SplitLine from '../../../_components/split-line/split-line';
+
+import moment from 'moment';
+import _ from 'lodash';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
@@ -43,11 +47,38 @@ function getDateFormat(myLocale) {
     return tempDateFormat;
 }
 
+function passSelectedIds(selectedIds) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1) {
+        return {};
+    } else {
+        return selectedIds[0];
+    }
+}
+
+function passSelectedPo(selectedIds, pos) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(pos.items)){
+        return {};
+    } else {
+        return pos.items.find(po => po._id === selectedIds[0].poId);
+    }
+}
+
 function TypeToString (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'Date': return String(moment(fieldValue).format(myDateFormat));
             case 'Number': return String(new Intl.NumberFormat().format(fieldValue)); 
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
+function DateToString(fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
             default: return fieldValue;
         }
     } else {
@@ -118,13 +149,13 @@ function getObjectIds(collection, selectedIds) {
     }
 }
 
-// function arrayRemove(arr, value) {
+function arrayRemove(arr, value) {
 
-//     return arr.filter(function(ele){
-//         return ele != value;
-//     });
+    return arr.filter(function(ele){
+        return ele != value;
+    });
  
-// }
+}
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -234,24 +265,41 @@ function getInputType(dbFieldType) {
     }
 }
 
-function generateScreenHeader(fieldnames, screenId) {
+// function generateScreenHeader(fieldnames, screenId) {
+//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+//         return fieldnames.items.filter(function(element) {
+//             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+//         });
+//     } else {
+//         return [];
+//     }
+// }
+
+function getHeaders(fieldnames, screenId, forWhat) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        return fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
         });
+        if (!tempArray) {
+            return [];
+        } else {
+            return tempArray.sort(function(a,b) {
+                return a[forWhat] - b[forWhat];
+            });
+        }
     } else {
         return [];
     }
 }
 
-function generateScreenBody(screenId, fieldnames, pos){
-    // const { screenId, unlocked } = this.state;
+function getBodys(fieldnames, pos, headersForShow){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
-    let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
+    // let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
     let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
-    let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
+    let screenHeaders = headersForShow;
+    
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
@@ -381,10 +429,151 @@ function generateScreenBody(screenId, fieldnames, pos){
     
 }
 
+
+// function generateScreenBody(screenId, fieldnames, pos){
+//     let arrayBody = [];
+//     let arrayRow = [];
+//     let objectRow = {};
+//     let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
+//     let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
+//     let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
+//     let i = 1;
+//     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
+//         pos.items.map(po => {
+//             if (po.subs) {
+//                 po.subs.map(sub => {
+//                     if (!_.isEmpty(sub.certificates) && hasCertificates){
+//                         virtuals(sub.certificates, getCertificateFields(screenHeaders)).map(virtual => {
+//                             arrayRow = [];
+//                             screenHeaders.map(screenHeader => {
+//                                 switch(screenHeader.fields.fromTbl) {
+//                                     case 'po':
+//                                         arrayRow.push({
+//                                             collection: 'po',
+//                                             objectId: po._id,
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: po[screenHeader.fields.name],
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                         });
+//                                         break;
+//                                     case 'sub':
+//                                         arrayRow.push({
+//                                             collection: 'sub',
+//                                             objectId: sub._id,
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: sub[screenHeader.fields.name],
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                         });
+//                                         break;
+//                                     case 'certificate':
+//                                         arrayRow.push({
+//                                             collection: 'virtual',
+//                                             objectId: virtual._id,
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: virtual[screenHeader.fields.name].join(' | '),
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                         });
+//                                         break;
+//                                     default: arrayRow.push({
+//                                             collection: 'virtual',
+//                                             objectId: '0',
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: '',
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                     });
+//                                 }
+//                             });
+//                             objectRow  = {
+//                                 _id: i, 
+//                                 tablesId: { 
+//                                     poId: po._id,
+//                                     subId: sub._id,
+//                                     certificateId: '',
+//                                     packItemId: '',
+//                                     colliPackId: '' 
+//                                 },
+//                                 fields: arrayRow
+//                             };
+//                             arrayBody.push(objectRow);
+//                             i++;
+//                         });
+//                     } else {
+//                         arrayRow = [];
+//                         screenHeaders.map(screenHeader => {
+//                             switch(screenHeader.fields.fromTbl) {
+//                                 case 'po':
+//                                     arrayRow.push({
+//                                         collection: 'po',
+//                                         objectId: po._id,
+//                                         fieldName: screenHeader.fields.name,
+//                                         fieldValue: po[screenHeader.fields.name],
+//                                         disabled: screenHeader.edit,
+//                                         align: screenHeader.align,
+//                                         fieldType: getInputType(screenHeader.fields.type),
+//                                     });
+//                                     break;
+//                                 case 'sub':
+//                                     arrayRow.push({
+//                                         collection: 'sub',
+//                                         objectId: sub._id,
+//                                         fieldName: screenHeader.fields.name,
+//                                         fieldValue: sub[screenHeader.fields.name],
+//                                         disabled: screenHeader.edit,
+//                                         align: screenHeader.align,
+//                                         fieldType: getInputType(screenHeader.fields.type),
+//                                     });
+//                                     break;
+//                                 default: arrayRow.push({
+//                                     collection: 'virtual',
+//                                     objectId: '0',
+//                                     fieldName: screenHeader.fields.name,
+//                                     fieldValue: '',
+//                                     disabled: screenHeader.edit,
+//                                     align: screenHeader.align,
+//                                     fieldType: getInputType(screenHeader.fields.type),
+//                                 }); 
+//                             }
+//                         });
+//                         objectRow  = {
+//                             _id: i, 
+//                             tablesId: { 
+//                                 poId: po._id,
+//                                 subId: sub._id,
+//                                 certificateId: '',
+//                                 packItemId: '',
+//                                 colliPackId: '' 
+//                             },
+//                             fields: arrayRow
+//                         };
+//                         arrayBody.push(objectRow);
+//                         i++;
+//                     }
+//                 })
+//             }
+//         });
+//         return arrayBody;
+//     } else {
+//         return [];
+//     }
+    
+// }
+
 class ReleaseData extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            headersForShow: [],
+            bodysForShow: [],
+            splitHeadersForShow: [],
+            splitHeadersForSelect:[],
             projectId:'',
             screenId: '5cd2b642fd333616dc360b64', //Inspection
             splitScreenId: '5cd2b647fd333616dc360b71', //Inspection Splitwindow
@@ -411,8 +600,8 @@ class ReleaseData extends React.Component {
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange=this.handleChange.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
-        this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
+        this.handleUpdateValue = this.handleUpdateValue.bind(this);
         
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
@@ -433,7 +622,10 @@ class ReleaseData extends React.Component {
             loadingFields,
             loadingPos,
             loadingSelection, 
-            location 
+            location,
+            //---------
+            fieldnames,
+            pos 
         } = this.props;
         
         var qs = queryString.parse(location.search);
@@ -458,12 +650,21 @@ class ReleaseData extends React.Component {
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
             }
-        } 
+        }
+
+        this.setState({
+            headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+            bodysForShow: getBodys(fieldnames, pos, headersForShow),
+            splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
+            splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+        });
+
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { selectedField } = this.state;
-        const { fields } = this.props;
+        const { headersForShow, splitHeadersForSelect, screenId, splitScreenId, selectedField } = this.state;
+        const { fields, fieldnames, pos } = this.props;
+
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
                 return f._id === selectedField;
@@ -476,6 +677,22 @@ class ReleaseData extends React.Component {
                 });
             }
         }
+
+        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames){
+            this.setState({
+                headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+                splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
+                splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+            }); 
+        }
+
+        if (fieldnames != prevProps.fieldnames || pos != prevProps.pos || headersForShow != prevState.headersForShow || splitHeadersForSelect != prevState.splitHeadersForSelect) {
+            this.setState({
+                bodysForShow: getBodys(fieldnames, pos, headersForShow),
+            });
+        }
+
+
     }
 
     handleClearAlert(event){
@@ -571,9 +788,44 @@ class ReleaseData extends React.Component {
         }
     }
 
-    selectedFieldOptions(fieldnames, fields, screenId) {
+    handleSplitLine(event, subId, virtuals) {
+        event.preventDefault();
+        const requestOptions = {
+            method: 'PUT',
+            headers: { ...authHeader(), 'Content-Type': 'application/json'},
+            body: JSON.stringify({virtuals: virtuals})
+        }
+        return fetch(`${config.apiUrl}/split/sub?subId=${subId}`, requestOptions)
+        .then(responce => responce.text().then(text => {
+            const data = text && JSON.parse(text);
+            if (!responce.ok) {
+                if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
+                }
+                this.setState({
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshStore);
+            } else {
+                this.setState({
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshStore);
+            }
+        }));
+    }
+
+    selectedFieldOptions(fieldnames, fields) {
+
+        const { headersForShow } = this.state;
+
         if (fieldnames.items && fields.items) {
-            let screenHeaders = generateScreenHeader(fieldnames, screenId);
+            let screenHeaders = headersForShow;
             let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
                 if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
                     accumulator.push(currentValue.fieldId);
@@ -599,6 +851,35 @@ class ReleaseData extends React.Component {
             });
         }
     }
+
+    // selectedFieldOptions(fieldnames, fields, screenId) {
+    //     if (fieldnames.items && fields.items) {
+    //         let screenHeaders = generateScreenHeader(fieldnames, screenId);
+    //         let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
+    //             if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
+    //                 accumulator.push(currentValue.fieldId);
+    //             }
+    //             return accumulator;
+    //         }, []);
+    //         let fieldsFromHeader = fields.items.reduce(function (accumulator, currentValue) {
+    //             if (fieldIds.indexOf(currentValue._id) !== -1) {
+    //                 accumulator.push({ 
+    //                     value: currentValue._id,
+    //                     name: currentValue.custom
+    //                 });
+    //             }
+    //             return accumulator;
+    //         }, []);
+    //         return arraySorted(fieldsFromHeader, 'name').map(field => {
+    //             return (
+    //                 <option 
+    //                     key={field.value}
+    //                     value={field.value}>{field.name}
+    //                 </option>                
+    //             );
+    //         });
+    //     }
+    // }
 
     updateSelectedIds(selectedIds) {
         this.setState({
@@ -740,23 +1021,32 @@ class ReleaseData extends React.Component {
 
     toggleSplitLine(event) {
         event.preventDefault();
-        event.preventDefault();
-        const { showSplitLine } = this.state;
-        this.setState({
-            ...this.state,
-            selectedTemplate: '0',
-            selectedField: '',
-            selectedType: 'text',
-            updateValue:'',
-            alert: {
-                type:'',
-                message:''
-            },
-            showEditValues: false,
-            showSplitLine: !showSplitLine,
-            showGenerate: false,
-            showDelete: false
-        });
+        const { showSplitLine, selectedIds } = this.state;
+        if (!showSplitLine && (_.isEmpty(selectedIds) || selectedIds.length > 1)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select one Line.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedTemplate: '0',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showEditValues: false,
+                showSplitLine: !showSplitLine,
+                showGenerate: false,
+                showDelete: false
+            });
+        }
     }
 
     toggleEditValues(event) {
@@ -863,6 +1153,12 @@ class ReleaseData extends React.Component {
             showSplitLine,
             showGenerate,
             showDelete,
+            //--------
+            headersForShow,
+            bodysForShow,
+            splitHeadersForShow,
+            splitHeadersForSelect,
+
         }= this.state;
 
         const { accesses, docdefs, fieldnames, fields, pos, selection } = this.props;
@@ -870,7 +1166,7 @@ class ReleaseData extends React.Component {
         
         return (
             <Layout alert={alert} accesses={accesses}>
-                {alert.message && 
+                {alert.message && !showSplitLine &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -894,8 +1190,10 @@ class ReleaseData extends React.Component {
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {selection && selection.project && 
                             <ProjectTable
-                                screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
-                                screenBodys={generateScreenBody(screenId, fieldnames, pos)}
+                                // screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
+                                screenHeaders={headersForShow}
+                                // screenBodys={generateScreenBody(screenId, fieldnames, pos)}
+                                screenBodys={bodysForShow}
                                 projectId={projectId}
                                 screenId={screenId}
                                 selectedIds={selectedIds}
@@ -1007,6 +1305,26 @@ class ReleaseData extends React.Component {
                             </button>
                         </div>                   
                     </div>
+                </Modal>
+
+                <Modal
+                    show={showSplitLine}
+                    hideModal={this.toggleSplitLine}
+                    title="Split Line"
+                    size="modal-xl"
+                >
+                    <SplitLine 
+                        headersForSelect={splitHeadersForSelect}
+                        headersForShow={splitHeadersForShow}
+                        
+                        selectedIds = {passSelectedIds(selectedIds)}
+                        selectedPo = {passSelectedPo(selectedIds, pos)}
+
+                        alert = {alert}
+                        handleClearAlert={this.handleClearAlert}
+                        handleSplitLine={this.handleSplitLine}
+
+                    />
                 </Modal>
 
             </Layout>
