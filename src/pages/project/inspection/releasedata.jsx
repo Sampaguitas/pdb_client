@@ -589,8 +589,9 @@ class ReleaseData extends React.Component {
                 message:''
             },
             //-----modals-----
-            showEditValues: false,
             showSplitLine: false,
+            showEditValues: false,
+            showAssign: false,
             showGenerate: false,
             showDelete: false,                      
         };
@@ -609,6 +610,7 @@ class ReleaseData extends React.Component {
         //Toggle Modals
         this.toggleSplitLine = this.toggleSplitLine.bind(this);
         this.toggleEditValues = this.toggleEditValues.bind(this);
+        this.toggleAssign = this.toggleAssign.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
     }
@@ -1039,8 +1041,9 @@ class ReleaseData extends React.Component {
                     type:'',
                     message:''
                 },
-                showEditValues: false,
                 showSplitLine: !showSplitLine,
+                showEditValues: false,
+                showAssign: false,
                 showGenerate: false,
                 showDelete: false
             });
@@ -1069,12 +1072,46 @@ class ReleaseData extends React.Component {
                     type:'',
                     message:''
                 },
-                showEditValues: !showEditValues,
                 showSplitLine: false,
+                showEditValues: !showEditValues,
+                showAssign: false,
                 showGenerate: false,
                 showDelete: false
             });
         }
+    }
+
+    toggleAssign(event) {
+        event.preventDefault();
+        const { showAssign, selectedIds } = this.state;
+        if (!showAssign && _.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to assign NFI.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedTemplate: '0',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showSplitLine: false,
+                showEditValues: false,
+                showAssign: !showAssign,
+                showGenerate: false,
+                showDelete: false
+            });
+        }
+
+
     }
 
     toggleGenerate(event) {
@@ -1090,8 +1127,9 @@ class ReleaseData extends React.Component {
                 type:'',
                 message:''
             },
-            showEditValues: false,
             showSplitLine: false,
+            showEditValues: false,
+            showAssign: false,
             showGenerate: !showGenerate,
             showDelete: false
         });
@@ -1127,8 +1165,9 @@ class ReleaseData extends React.Component {
                     type:'',
                     message:''
                 },
-                showEditValues: false,
                 showSplitLine: false,
+                showEditValues: false,
+                showAssign: false,
                 showGenerate: false,
                 showDelete: !showDelete
             });
@@ -1147,8 +1186,9 @@ class ReleaseData extends React.Component {
             selectedType,
             updateValue,
             //show modals
-            showEditValues,
             showSplitLine,
+            showEditValues,
+            showAssign,
             showGenerate,
             showDelete,
             //--------
@@ -1181,6 +1221,9 @@ class ReleaseData extends React.Component {
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleEditValues(event)}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
                         </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleAssign(event)}>
+                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign NFI</span>
+                        </button>
                         <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleGenerate(event)}>
                             <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate NFI</span>
                         </button>
@@ -1208,6 +1251,26 @@ class ReleaseData extends React.Component {
                         }
                     </div>   
                 </div>
+
+                <Modal
+                    show={showSplitLine}
+                    hideModal={this.toggleSplitLine}
+                    title="Split Line"
+                    size="modal-xl"
+                >
+                    <SplitLine 
+                        headersForSelect={splitHeadersForSelect}
+                        headersForShow={splitHeadersForShow}
+                        
+                        selectedIds = {passSelectedIds(selectedIds)}
+                        selectedPo = {passSelectedPo(selectedIds, pos)}
+
+                        alert = {alert}
+                        handleClearAlert={this.handleClearAlert}
+                        handleSplitLine={this.handleSplitLine}
+
+                    />
+                </Modal>
 
                 <Modal
                     show={showEditValues}
@@ -1248,6 +1311,47 @@ class ReleaseData extends React.Component {
                             </button>
                         </div>                   
                     </div>
+                </Modal>
+
+                <Modal
+                    show={showAssign}
+                    hideModal={this.toggleAssign}
+                    title="Assign NFI"
+                >
+                    {/* <div className="col-12">
+                        <div className="form-group">
+                            <label htmlFor="selectedField">Select Field</label>
+                            <select
+                                className="form-control"
+                                name="selectedField"
+                                value={selectedField}
+                                placeholder="Select field..."
+                                onChange={this.handleChange}
+                            >
+                                <option key="0" value="0">Select field...</option>
+                                {this.selectedFieldOptions(fieldnames, fields, screenId)}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="updateValue">Value</label>
+                            <input
+                                className="form-control"
+                                type={selectedType === 'number' ? 'number' : 'text'}
+                                name="updateValue"
+                                value={updateValue}
+                                onChange={this.handleChange}
+                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                            />
+                        </div>
+                        <div className="text-right">
+                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.handleUpdateValue(event, false)}>
+                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
+                            </button>
+                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleUpdateValue(event, true)}>
+                                <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
+                            </button>
+                        </div>                   
+                    </div> */}
                 </Modal>
 
                 <Modal
@@ -1305,25 +1409,7 @@ class ReleaseData extends React.Component {
                     </div>
                 </Modal>
 
-                <Modal
-                    show={showSplitLine}
-                    hideModal={this.toggleSplitLine}
-                    title="Split Line"
-                    size="modal-xl"
-                >
-                    <SplitLine 
-                        headersForSelect={splitHeadersForSelect}
-                        headersForShow={splitHeadersForShow}
-                        
-                        selectedIds = {passSelectedIds(selectedIds)}
-                        selectedPo = {passSelectedPo(selectedIds, pos)}
-
-                        alert = {alert}
-                        handleClearAlert={this.handleClearAlert}
-                        handleSplitLine={this.handleSplitLine}
-
-                    />
-                </Modal>
+                
 
             </Layout>
         );

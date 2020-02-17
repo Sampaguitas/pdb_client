@@ -1271,7 +1271,7 @@ class Overview extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout alert={alert} accesses={accesses}>
+            <Layout alert={showSplitLine ? {type:'', message:''} : alert} accesses={accesses}>
                 {alert.message && !showSplitLine &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

@@ -507,6 +507,12 @@ function formatArray(virtuals, headersForShow) {
     },[]);
 }
 
+function selectedScreenBody(bodysForSelect, selectedLine) {
+    return bodysForSelect.find(function (s) {
+        return s._id === selectedLine;
+    });
+}
+
 class SplitLine extends Component {
     constructor(props) {
         super(props);
@@ -590,9 +596,11 @@ class SplitLine extends Component {
                     }
                 });
             } else {
-                let screenBody = bodysForSelect.find(function (s) {
-                    return s._id === selectedLine;
-                });
+                // let screenBody = bodysForSelect.find(function (s) {
+                //     return s._id === selectedLine;
+                // });
+
+                let screenBody = selectedScreenBody(bodysForSelect, selectedLine);
 
                 if (!_.isUndefined(screenBody)) {
                     let tempObject = getFirstVirtual(selectedPo, screenBody, headersForShow);
@@ -757,6 +765,9 @@ class SplitLine extends Component {
         const { selectedPo, headersForShow, handleSplitLine } = this.props;
         const { selectedLine, bodysForSelect, virtuals } = this.state;
         // let remainingQty = getRemainingQty(selectedPo, bodysForSelect, selectedLine, virtuals);
+        let screenBody = selectedScreenBody(bodysForSelect, selectedLine);
+
+
         
         if (_.isEmpty(virtuals)) {
             this.setState({
@@ -779,8 +790,14 @@ class SplitLine extends Component {
                     message: 'Some dates are not properly formated.'
                 }
             });
+        } else if (!_.isUndefined(screenBody) && screenBody.hasPackitems) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'First delete packed items in the shipping module and try again'
+                }
+            });
         } else {
-            console.log(formatArray(virtuals, headersForShow));
             handleSplitLine(event, getSelecetedSubId(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));
         }
     }
