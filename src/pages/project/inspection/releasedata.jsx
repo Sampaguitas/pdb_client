@@ -431,155 +431,8 @@ function getBodys(fieldnames, pos, headersForShow){
     
 }
 
-
-// function generateScreenBody(screenId, fieldnames, pos){
-//     let arrayBody = [];
-//     let arrayRow = [];
-//     let objectRow = {};
-//     let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
-//     let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
-//     let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
-//     let i = 1;
-//     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
-//         pos.items.map(po => {
-//             if (po.subs) {
-//                 po.subs.map(sub => {
-//                     if (!_.isEmpty(sub.certificates) && hasCertificates){
-//                         virtuals(sub.certificates, getCertificateFields(screenHeaders)).map(virtual => {
-//                             arrayRow = [];
-//                             screenHeaders.map(screenHeader => {
-//                                 switch(screenHeader.fields.fromTbl) {
-//                                     case 'po':
-//                                         arrayRow.push({
-//                                             collection: 'po',
-//                                             objectId: po._id,
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: po[screenHeader.fields.name],
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                         });
-//                                         break;
-//                                     case 'sub':
-//                                         arrayRow.push({
-//                                             collection: 'sub',
-//                                             objectId: sub._id,
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: sub[screenHeader.fields.name],
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                         });
-//                                         break;
-//                                     case 'certificate':
-//                                         arrayRow.push({
-//                                             collection: 'virtual',
-//                                             objectId: virtual._id,
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: virtual[screenHeader.fields.name].join(' | '),
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                         });
-//                                         break;
-//                                     default: arrayRow.push({
-//                                             collection: 'virtual',
-//                                             objectId: '0',
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: '',
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                     });
-//                                 }
-//                             });
-//                             objectRow  = {
-//                                 _id: i, 
-//                                 tablesId: { 
-//                                     poId: po._id,
-//                                     subId: sub._id,
-//                                     certificateId: '',
-//                                     packItemId: '',
-//                                     colliPackId: '' 
-//                                 },
-//                                 fields: arrayRow
-//                             };
-//                             arrayBody.push(objectRow);
-//                             i++;
-//                         });
-//                     } else {
-//                         arrayRow = [];
-//                         screenHeaders.map(screenHeader => {
-//                             switch(screenHeader.fields.fromTbl) {
-//                                 case 'po':
-//                                     arrayRow.push({
-//                                         collection: 'po',
-//                                         objectId: po._id,
-//                                         fieldName: screenHeader.fields.name,
-//                                         fieldValue: po[screenHeader.fields.name],
-//                                         disabled: screenHeader.edit,
-//                                         align: screenHeader.align,
-//                                         fieldType: getInputType(screenHeader.fields.type),
-//                                     });
-//                                     break;
-//                                 case 'sub':
-//                                     arrayRow.push({
-//                                         collection: 'sub',
-//                                         objectId: sub._id,
-//                                         fieldName: screenHeader.fields.name,
-//                                         fieldValue: sub[screenHeader.fields.name],
-//                                         disabled: screenHeader.edit,
-//                                         align: screenHeader.align,
-//                                         fieldType: getInputType(screenHeader.fields.type),
-//                                     });
-//                                     break;
-//                                 default: arrayRow.push({
-//                                     collection: 'virtual',
-//                                     objectId: '0',
-//                                     fieldName: screenHeader.fields.name,
-//                                     fieldValue: '',
-//                                     disabled: screenHeader.edit,
-//                                     align: screenHeader.align,
-//                                     fieldType: getInputType(screenHeader.fields.type),
-//                                 }); 
-//                             }
-//                         });
-//                         objectRow  = {
-//                             _id: i, 
-//                             tablesId: { 
-//                                 poId: po._id,
-//                                 subId: sub._id,
-//                                 certificateId: '',
-//                                 packItemId: '',
-//                                 colliPackId: '' 
-//                             },
-//                             fields: arrayRow
-//                         };
-//                         arrayBody.push(objectRow);
-//                         i++;
-//                     }
-//                 })
-//             }
-//         });
-//         return arrayBody;
-//     } else {
-//         return [];
-//     }
-    
-// }
-
-
-function selectedIdsArry (selectedIds, whichId) {
-    return selectedIds.reduce(function(acc, curr){
-        if(curr[whichId] != '' && !acc.includes(curr[whichId])){
-            acc.push(curr[whichId]);
-        }
-        return acc;
-    }, []);
-}
-
 function selectionHasNfi (selectedIds, pos) {
-    let selectedSubIds = selectedIdsArry(selectedIds, 'subId');
+    let selectedSubIds = getObjectIds('sub', selectedIds)
     if (!_.isEmpty(selectedSubIds) && pos.hasOwnProperty('items')) {
         return pos.items.reduce(function (accPo, currPo) {
             let currPoHasNFI = currPo.subs.reduce(function (accSub, currSub){
@@ -960,8 +813,7 @@ class ReleaseData extends React.Component {
     handleUpdateNFI(event) {
         event.preventDefault();
         const { dispatch, fieldnames, pos } = this.props;
-        const { projectId, selectedIds, inputNfi, unlocked, bodysForShow } = this.state;
-        console.log('selectionHasNfi:', selectionHasNfi (selectedIds, pos));
+        const { projectId, selectedIds, inputNfi, unlocked } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
@@ -1119,55 +971,6 @@ class ReleaseData extends React.Component {
             } else {
                 let collection = found.fields.fromTbl;
                 this.updateRequest(collection, found.fields.name, isErase ? '' : updateValue, selectedType, getObjectIds(collection, selectedIds));
-                
-                // let collection = found.fields.fromTbl;
-                // let objectIds = getObjectIds(collection, selectedIds);
-                // let fieldName = found.fields.name;
-                // let fieldValue = isErase ? '' : updateValue;
-                // let fieldType = selectedType;
-                // if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
-                //     this.setState({
-                //         ...this.state,
-                //         showEditValues: false,
-                //         alert: {
-                //             type:'alert-danger',
-                //             message:'Wrong Date Format.'
-                //         }
-                //     });
-                // } else {
-                //     const requestOptions = {
-                //         method: 'PUT',
-                //         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                //         body: JSON.stringify({
-                //             collection: collection,
-                //             fieldName: fieldName,
-                //             fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
-                //             objectIds: objectIds
-                //         })
-                //     };
-                //     return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                //     .then( () => {
-                //         this.refreshStore();
-                //         this.setState({
-                //             ...this.state,
-                //             showEditValues: false,
-                //             alert: {
-                //                 type:'alert-success',
-                //                 message:'Field sucessfully updated.'
-                //             }
-                //         });
-                //     })
-                //     .catch( () => {
-                //         this.setState({
-                //             ...this.state,
-                //             showEditValues: false,
-                //             alert: {
-                //                 type:'alert-danger',
-                //                 message:'Field could not be updated.'
-                //             }
-                //         });
-                //     });
-                // }
             }  
         }
     }
