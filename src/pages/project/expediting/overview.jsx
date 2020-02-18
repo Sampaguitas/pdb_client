@@ -17,7 +17,7 @@ import {
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import Modal from '../../../_components/modal';
-import SplitLine from '../../../_components/split-line/split-line';
+import SplitLine from '../../../_components/split-line/split-sub';
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -112,7 +112,6 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
     } else {
         return true;
     }
-    
 }
 
 function getObjectIds(collection, selectedIds) {
@@ -155,13 +154,12 @@ function getObjectIds(collection, selectedIds) {
     }
 }
 
-function arrayRemove(arr, value) {
+// function arrayRemove(arr, value) {
 
-    return arr.filter(function(ele){
-        return ele != value;
-    });
- 
-}
+//     return arr.filter(function(ele){
+//         return ele != value;
+//     });
+// }
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -801,8 +799,7 @@ class Overview extends React.Component {
             this.setState({
                 bodysForShow: getBodys(fieldnames, pos, headersForShow),
             });
-        }
-        
+        }   
     }
 
     handleClearAlert(event){
@@ -1026,7 +1023,7 @@ class Overview extends React.Component {
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
-                    message:'An error occured'
+                    message:'An error occured.'
                 }
             });
             if (projectId) {
@@ -1057,7 +1054,7 @@ class Overview extends React.Component {
                         showEditValues: false,
                         alert: {
                             type:'alert-danger',
-                            message:'Wrong Date Format.'
+                            message:'Wrong date format.'
                         }
                     });
                 } else {
@@ -1316,6 +1313,26 @@ class Overview extends React.Component {
                 </div>
 
                 <Modal
+                    show={showSplitLine}
+                    hideModal={this.toggleSplitLine}
+                    title="Split Line"
+                    size="modal-xl"
+                >
+                    <SplitLine 
+                        headersForSelect={splitHeadersForSelect}
+                        headersForShow={splitHeadersForShow}
+                        
+                        selectedIds = {passSelectedIds(selectedIds)}
+                        selectedPo = {passSelectedPo(selectedIds, pos)}
+
+                        alert = {alert}
+                        handleClearAlert={this.handleClearAlert}
+                        handleSplitLine={this.handleSplitLine}
+
+                    />
+                </Modal>
+
+                <Modal
                     show={showEditValues}
                     hideModal={this.toggleEditValues}
                     title="Edit Value(s)"
@@ -1408,26 +1425,6 @@ class Overview extends React.Component {
                             </button>
                         </div>                   
                     </div>
-                </Modal>
-
-                <Modal
-                    show={showSplitLine}
-                    hideModal={this.toggleSplitLine}
-                    title="Split Line"
-                    size="modal-xl"
-                >
-                    <SplitLine 
-                        headersForSelect={splitHeadersForSelect}
-                        headersForShow={splitHeadersForShow}
-                        
-                        selectedIds = {passSelectedIds(selectedIds)}
-                        selectedPo = {passSelectedPo(selectedIds, pos)}
-
-                        alert = {alert}
-                        handleClearAlert={this.handleClearAlert}
-                        handleSplitLine={this.handleSplitLine}
-
-                    />
                 </Modal>
 
             </Layout>

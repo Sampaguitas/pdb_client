@@ -149,8 +149,9 @@ function getBodys(selectedPo, headersForSelect){
 
     if (!_.isEmpty(selectedPo) && selectedPo.subs) {
         selectedPo.subs.map(sub => {
-                if (!_.isEmpty(sub.packitems) && hasPackitems) {
-                    virtuals(sub.packitems, selectedPo.uom, getPackItemFields(screenHeaders)).map(virtual => {
+                if (!_.isEmpty(sub.packitems)) { //&& hasPackitems
+                    sub.packitems.map(packitem => {
+                    // virtuals(sub.packitems, selectedPo.uom, getPackItemFields(screenHeaders)).map(virtual => {
                         arrayRow = [];
                         screenHeaders.map(screenHeader => {
                             switch(screenHeader.fields.fromTbl) {
@@ -166,37 +167,37 @@ function getBodys(selectedPo, headersForSelect){
                                     });
                                     break;
                                 case 'sub':
-                                    if (screenHeader.fields.name === 'shippedQty') {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: sub._id,
-                                            fieldName: 'shippedQty',
-                                            fieldValue: virtual.shippedQty,
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'sub',
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    }
+                                // if (screenHeader.fields.name === 'shippedQty') {
+                                //     arrayRow.push({
+                                //         collection: 'virtual',
+                                //         objectId: sub._id,
+                                //         fieldName: 'shippedQty',
+                                //         fieldValue: virtual.shippedQty,
+                                //         disabled: screenHeader.edit,
+                                //         align: screenHeader.align,
+                                //         fieldType: getInputType(screenHeader.fields.type),
+                                //     });
+                                // } else {
+                                    arrayRow.push({
+                                        collection: 'sub',
+                                        objectId: sub._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: sub[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                // }
                                     break;
                                 case 'packitem':
                                         arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: virtual._id,
+                                            collection: 'packitem',
+                                            objectId: packitem._id,
                                             fieldName: screenHeader.fields.name,
-                                            fieldValue: virtual[screenHeader.fields.name].join(' | '),
+                                            fieldValue: packitem[screenHeader.fields.name],
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
-                                            fieldType: 'text',
+                                            fieldType: getInputType(screenHeader.fields.type),
                                         });
                                     break;
                                 default: arrayRow.push({
@@ -216,7 +217,7 @@ function getBodys(selectedPo, headersForSelect){
                                 poId: selectedPo._id,
                                 subId: sub._id,
                                 certificateId: '',
-                                packItemId: '',
+                                packItemId: packitem._id,
                                 colliPackId: ''
                             },
                             isPacked: true,
@@ -288,18 +289,27 @@ function getBodys(selectedPo, headersForSelect){
 function getFirstVirtual(selectedPo, screenBody, headersForShow) {
     if (!_.isEmpty(selectedPo) && !_.isEmpty(screenBody) && !_.isEmpty(headersForShow)){
         let selectedSub = selectedPo.subs.find(sub => sub._id === screenBody.tablesId.subId);
+        let selectedPackitem = selectedSub.packitems.find(packitem => packitem._id === screenBody.tablesId.packItemId);
+
+        console.log('selectedSub:', selectedSub);
+        console.log('packItemId:', screenBody.tablesId.packItemId)
+        console.log('selectedPackitem:', selectedPackitem);
+        
+        
         return headersForShow.reduce(function (acc, curr){
             if (curr.fields.fromTbl === 'po') {
                 acc[curr.fields.name] = DateToString(selectedPo[curr.fields.name], getInputType(curr.fields.type), getDateFormat(myLocale));
             } else if (curr.fields.fromTbl === 'sub'){
                 acc[curr.fields.name] = DateToString(selectedSub[curr.fields.name], getInputType(curr.fields.type), getDateFormat(myLocale));
+            } else if (curr.fields.fromTbl === 'packitem' && !_.isUndefined(selectedPackitem)){
+                acc[curr.fields.name] = DateToString(selectedPackitem[curr.fields.name], getInputType(curr.fields.type), getDateFormat(myLocale));
             } else {
                 acc[curr.fields.name] = '';
             }
             return acc;
         },{});
     } else {
-        return {}; 
+        return {};
     }
 }
 
@@ -700,9 +710,11 @@ class SplitLine extends Component {
     }
 
     handleClickLine(event, screenBody) {
+        
         event.preventDefault();
         const { selectedLine } = this.state;
-        
+        const { headersForSelect } = this.props;
+        console.log('headersForSelect:', headersForSelect);
         if (selectedLine === screenBody._id) {
             this.setState({
                 selectedLine: '',

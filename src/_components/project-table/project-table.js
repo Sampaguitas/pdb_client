@@ -97,6 +97,8 @@ function arraySorted(array, field) {
 }
 
 function doesMatch(search, array, type, isEqual) {
+    
+
     if (!search) {
         return true;
     } else if (!array && search != 'any' && search != 'false') {
@@ -109,6 +111,9 @@ function doesMatch(search, array, type, isEqual) {
                 if(isEqual) {
                     return _.isEqual(array.toUpperCase(), search.toUpperCase());
                 } else {
+                    // console.log('array.toUpperCase():', array.toUpperCase());
+                    // console.log('search.toUpperCase():', search.toUpperCase());
+
                     return array.toUpperCase().includes(search.toUpperCase());
                 }
             case 'Date':

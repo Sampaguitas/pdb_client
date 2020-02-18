@@ -1,9 +1,10 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Layout from '../../../_components/layout';
 import queryString from 'query-string';
-import { authHeader } from '../../../_helpers';
 import config from 'config';
+// import { saveAs } from 'file-saver';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
     alertActions,
@@ -12,9 +13,13 @@ import {
     poActions,
     projectActions 
 } from '../../../_actions';
+import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import Modal from '../../../_components/modal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import SplitLine from '../../../_components/split-line/split-packitem';
+
+import moment from 'moment';
+import _ from 'lodash';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
@@ -41,7 +46,23 @@ function getDateFormat(myLocale) {
     return tempDateFormat;
 }
 
-function TypeToString (fieldValue, fieldType, myDateFormat) {
+function passSelectedIds(selectedIds) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1) {
+        return {};
+    } else {
+        return selectedIds[0];
+    }
+}
+
+function passSelectedPo(selectedIds, pos) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(pos.items)){
+        return {};
+    } else {
+        return pos.items.find(po => po._id === selectedIds[0].poId);
+    }
+}
+
+function TypeToString(fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'Date': return String(moment(fieldValue).format(myDateFormat));
@@ -53,7 +74,7 @@ function TypeToString (fieldValue, fieldType, myDateFormat) {
     }
 }
 
-function DateToString (fieldValue, fieldType, myDateFormat) {
+function DateToString(fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'date': return String(moment(fieldValue).format(myDateFormat)); 
@@ -84,7 +105,6 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
     } else {
         return true;
     }
-    
 }
 
 function getObjectIds(collection, selectedIds) {
@@ -187,23 +207,40 @@ function getInputType(dbFieldType) {
     }
 }
 
-function generateScreenHeader(fieldnames, screenId) {
+// function generateScreenHeader(fieldnames, screenId) {
+//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+//         return fieldnames.items.filter(function(element) {
+//             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+//         });
+//     } else {
+//         return [];
+//     }
+// }
+
+function getHeaders(fieldnames, screenId, forWhat) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        return fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
         });
+        if (!tempArray) {
+            return [];
+        } else {
+            return tempArray.sort(function(a,b) {
+                return a[forWhat] - b[forWhat];
+            });
+        }
     } else {
         return [];
     }
 }
 
-function generateScreenBody(screenId, fieldnames, pos){
+function getBodys(fieldnames, pos, headersForShow){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
     let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
     // let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
-    let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
+    let screenHeaders = headersForShow;
 
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
@@ -334,12 +371,154 @@ function generateScreenBody(screenId, fieldnames, pos){
     } 
 }
 
+// function generateScreenBody(screenId, fieldnames, pos){
+//     let arrayBody = [];
+//     let arrayRow = [];
+//     let objectRow = {};
+//     let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
+//     // let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
+//     let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
+
+//     let i = 1;
+//     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
+//         pos.items.map(po => {
+//             if (po.subs) {
+//                 po.subs.map(sub => {
+//                     if (!_.isEmpty(sub.packitems) && hasPackitems) {
+//                         sub.packitems.map(packitem => {
+//                             arrayRow = [];
+//                             screenHeaders.map(screenHeader => {
+//                                 switch(screenHeader.fields.fromTbl) {
+//                                     case 'po':
+//                                         arrayRow.push({
+//                                             collection: 'po',
+//                                             objectId: po._id,
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: po[screenHeader.fields.name],
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                         });
+//                                         break;
+//                                     case 'sub':
+//                                         arrayRow.push({
+//                                             collection: 'sub',
+//                                             objectId: sub._id,
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: sub[screenHeader.fields.name],
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                         });
+//                                         break;
+//                                     case 'packitem':
+//                                         arrayRow.push({
+//                                             collection: 'packitem',
+//                                             objectId: packitem._id,
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: packitem[screenHeader.fields.name],
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                         });
+//                                         break;
+//                                     default: arrayRow.push({
+//                                         collection: 'virtual',
+//                                         objectId: '0',
+//                                         fieldName: screenHeader.fields.name,
+//                                         fieldValue: '',
+//                                         disabled: screenHeader.edit,
+//                                         align: screenHeader.align,
+//                                         fieldType: getInputType(screenHeader.fields.type),
+//                                     });
+//                                 }
+//                             });
+                            
+//                             objectRow  = {
+//                                 _id: i, 
+//                                 tablesId: { 
+//                                     poId: po._id,
+//                                     subId: sub._id,
+//                                     certificateId: '',
+//                                     packItemId: packitem._id,
+//                                     colliPackId: '' 
+//                                 },
+//                                 fields: arrayRow
+//                             };
+//                             arrayBody.push(objectRow);
+//                             i++;
+//                         });
+//                     } else {
+//                         arrayRow = [];
+//                         screenHeaders.map(screenHeader => {
+//                             switch(screenHeader.fields.fromTbl) {
+//                                 case 'po':
+//                                     arrayRow.push({
+//                                         collection: 'po',
+//                                         objectId: po._id,
+//                                         fieldName: screenHeader.fields.name,
+//                                         fieldValue: po[screenHeader.fields.name],
+//                                         disabled: screenHeader.edit,
+//                                         align: screenHeader.align,
+//                                         fieldType: getInputType(screenHeader.fields.type),
+//                                     });
+//                                     break;
+//                                 case 'sub':
+//                                     arrayRow.push({
+//                                         collection: 'sub',
+//                                         objectId: sub._id,
+//                                         fieldName: screenHeader.fields.name,
+//                                         fieldValue: sub[screenHeader.fields.name],
+//                                         disabled: screenHeader.edit,
+//                                         align: screenHeader.align,
+//                                         fieldType: getInputType(screenHeader.fields.type),
+//                                     });
+//                                     break;
+//                                 default: arrayRow.push({
+//                                     collection: 'virtual',
+//                                     objectId: '0',
+//                                     fieldName: screenHeader.fields.name,
+//                                     fieldValue: '',
+//                                     disabled: screenHeader.edit,
+//                                     align: screenHeader.align,
+//                                     fieldType: getInputType(screenHeader.fields.type),
+//                                 }); 
+//                             }
+//                         });
+//                         objectRow  = {
+//                             _id: i, 
+//                             tablesId: { 
+//                                 poId: po._id,
+//                                 subId: sub._id,
+//                                 certificateId: '',
+//                                 packItemId: '',
+//                                 colliPackId: '' 
+//                             },
+//                             fields: arrayRow
+//                         };
+//                         arrayBody.push(objectRow);
+//                         i++;
+//                     }
+//                 })
+//             }
+//         });
+//         return arrayBody;
+//     } else {
+//         return [];
+//     } 
+// }
+
 class TransportDocuments extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            headersForShow: [],
+            bodysForShow: [],
+            splitHeadersForShow: [],
+            splitHeadersForSelect:[],
             projectId:'',
             screenId: '5cd2b643fd333616dc360b66',
+            splitScreenId: '5cd2b647fd333616dc360b72', //Assign Transport SplitWindow
             unlocked: false,
             screen: 'inspection',
             selectedIds: [],
@@ -354,14 +533,17 @@ class TransportDocuments extends React.Component {
             //-----modals-----
             showEditValues: false,
             showSplitLine: false,
+            // showGenerate: false,
             showDelete: false,          
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        // this.handleGenerateFile = this.handleGenerateFile.bind(this);
+        this.handleSplitLine = this.handleSplitLine.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
-        // this.handleSplitLine = this.handleSplitLine.bind(this);
+
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
@@ -377,9 +559,15 @@ class TransportDocuments extends React.Component {
             loadingAccesses,
             loadingFieldnames,
             loadingFields,
+            loadingPos,
             loadingSelection,
-            location 
+            location,
+            //---------
+            fieldnames,
+            pos 
         } = this.props;
+
+        const { screenId, splitScreenId, headersForShow, splitHeadersForSelect } = this.state;
 
         var qs = queryString.parse(location.search);
         if (qs.id) {
@@ -393,15 +581,26 @@ class TransportDocuments extends React.Component {
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
             }
+            if (!loadingPos) {
+                dispatch(poActions.getAll(qs.id));
+            }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
             }
         }
+
+        this.setState({
+            headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+            bodysForShow: getBodys(fieldnames, pos, headersForShow),
+            splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
+            splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { selectedField } = this.state;
-        const { fields } = this.props;
+        const { headersForShow, splitHeadersForSelect, screenId, splitScreenId, selectedField } = this.state;
+        const { fields, fieldnames, pos } = this.props;
+
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
                 return f._id === selectedField;
@@ -413,6 +612,20 @@ class TransportDocuments extends React.Component {
                     selectedType: getInputType(found.type),
                 });
             }
+        }
+
+        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames){
+            this.setState({
+                headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+                splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
+                splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+            }); 
+        }
+
+        if (fieldnames != prevProps.fieldnames || pos != prevProps.pos || headersForShow != prevState.headersForShow || splitHeadersForSelect != prevState.splitHeadersForSelect) {
+            this.setState({
+                bodysForShow: getBodys(fieldnames, pos, headersForShow),
+            });
         }
     }
 
@@ -486,9 +699,44 @@ class TransportDocuments extends React.Component {
         });
     }
 
-    selectedFieldOptions(fieldnames, fields, screenId) {
+    handleSplitLine(event, subId, virtuals) {
+        event.preventDefault();
+        const requestOptions = {
+            method: 'PUT',
+            headers: { ...authHeader(), 'Content-Type': 'application/json'},
+            body: JSON.stringify({virtuals: virtuals})
+        }
+        return fetch(`${config.apiUrl}/split/sub?subId=${subId}`, requestOptions)
+        .then(responce => responce.text().then(text => {
+            const data = text && JSON.parse(text);
+            if (!responce.ok) {
+                if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
+                }
+                this.setState({
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshStore);
+            } else {
+                this.setState({
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshStore);
+            }
+        }));
+    }
+
+    selectedFieldOptions(fieldnames, fields) {
+
+        const { headersForShow } = this.state;
+
         if (fieldnames.items && fields.items) {
-            let screenHeaders = generateScreenHeader(fieldnames, screenId);
+            let screenHeaders = headersForShow;
             let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
                 if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
                     accumulator.push(currentValue.fieldId);
@@ -515,6 +763,37 @@ class TransportDocuments extends React.Component {
         }
     }
 
+    
+
+    // selectedFieldOptions(fieldnames, fields, screenId) {
+    //     if (fieldnames.items && fields.items) {
+    //         let screenHeaders = generateScreenHeader(fieldnames, screenId);
+    //         let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
+    //             if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
+    //                 accumulator.push(currentValue.fieldId);
+    //             }
+    //             return accumulator;
+    //         }, []);
+    //         let fieldsFromHeader = fields.items.reduce(function (accumulator, currentValue) {
+    //             if (fieldIds.indexOf(currentValue._id) !== -1) {
+    //                 accumulator.push({ 
+    //                     value: currentValue._id,
+    //                     name: currentValue.custom
+    //                 });
+    //             }
+    //             return accumulator;
+    //         }, []);
+    //         return arraySorted(fieldsFromHeader, 'name').map(field => {
+    //             return (
+    //                 <option 
+    //                     key={field.value}
+    //                     value={field.value}>{field.name}
+    //                 </option>                
+    //             );
+    //         });
+    //     }
+    // }
+
     updateSelectedIds(selectedIds) {
         this.setState({
             ...this.state,
@@ -529,6 +808,7 @@ class TransportDocuments extends React.Component {
         if (!selectedField) {
             this.setState({
                 ...this.state,
+                updateValue: '',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -538,6 +818,7 @@ class TransportDocuments extends React.Component {
         } else if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
+                updateValue: '',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -547,10 +828,11 @@ class TransportDocuments extends React.Component {
         } else if (_.isEmpty(fieldnames)){
             this.setState({
                 ...this.state,
+                updateValue: '',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
-                    message:'An error occured'
+                    message:'An error occured.'
                 }
             });
             if (projectId) {
@@ -563,6 +845,7 @@ class TransportDocuments extends React.Component {
             if (!found.edit && !unlocked) {
                 this.setState({
                     ...this.state,
+                    updateValue: '',
                     showEditValues: false,
                     alert: {
                         type:'alert-danger',
@@ -578,10 +861,11 @@ class TransportDocuments extends React.Component {
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
                         ...this.state,
+                        updateValue: '',
                         showEditValues: false,
                         alert: {
                             type:'alert-danger',
-                            message:'Wrong Date Format.'
+                            message:'Wrong date format.'
                         }
                     });
                 } else {
@@ -600,6 +884,7 @@ class TransportDocuments extends React.Component {
                         this.refreshStore();
                         this.setState({
                             ...this.state,
+                            updateValue: '',
                             showEditValues: false,
                             alert: {
                                 type:'alert-success',
@@ -610,6 +895,7 @@ class TransportDocuments extends React.Component {
                     .catch( () => {
                         this.setState({
                             ...this.state,
+                            updateValue: '',
                             showEditValues: false,
                             alert: {
                                 type:'alert-danger',
@@ -651,22 +937,31 @@ class TransportDocuments extends React.Component {
 
     toggleSplitLine(event) {
         event.preventDefault();
-        event.preventDefault();
-        const { showSplitLine } = this.state;
-        this.setState({
-            ...this.state,
-            selectedTemplate: '0',
-            selectedField: '',
-            selectedType: 'text',
-            updateValue:'',
-            alert: {
-                type:'',
-                message:''
-            },
-            showEditValues: false,
-            showSplitLine: !showSplitLine,
-            showDelete: false
-        });
+        const { showSplitLine, selectedIds } = this.state;
+        if (!showSplitLine && (_.isEmpty(selectedIds) || selectedIds.length > 1)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select one Line.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedTemplate: '0',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showSplitLine: !showSplitLine,
+                showEditValues: false,
+                showDelete: false
+            });
+        }
     }
 
     toggleEditValues(event) {
@@ -691,8 +986,8 @@ class TransportDocuments extends React.Component {
                     type:'',
                     message:''
                 },
-                showEditValues: !showEditValues,
                 showSplitLine: false,
+                showEditValues: !showEditValues,
                 showDelete: false
             });
         }
@@ -720,7 +1015,7 @@ class TransportDocuments extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '0',
+                // selectedTemplate: '0',
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -728,8 +1023,8 @@ class TransportDocuments extends React.Component {
                     type:'',
                     message:''
                 },
-                showEditValues: false,
                 showSplitLine: false,
+                showEditValues: false,
                 showDelete: !showDelete
             });
         }
@@ -747,17 +1042,23 @@ class TransportDocuments extends React.Component {
             selectedType, 
             updateValue,
             //show modals
-            showEditValues,
             showSplitLine,
-            showDelete, 
+            showEditValues,
+            showDelete,
+            //--------
+            headersForShow,
+            bodysForShow,
+            splitHeadersForShow,
+            splitHeadersForSelect,
+
         }= this.state;
 
         const { accesses, fieldnames, fields, pos, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         
         return (
-            <Layout alert={alert} accesses={accesses}>
-                {alert.message && 
+            <Layout alert={showSplitLine ? {type:'', message:''} : alert} accesses={accesses}>
+                {alert.message && !showSplitLine &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -778,8 +1079,10 @@ class TransportDocuments extends React.Component {
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {selection && selection.project && 
                             <ProjectTable
-                                screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
-                                screenBodys={generateScreenBody(screenId, fieldnames, pos)}
+                                // screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
+                                screenHeaders={headersForShow}
+                                // screenBodys={generateScreenBody(screenId, fieldnames, pos)}
+                                screenBodys={bodysForShow}
                                 projectId={projectId}
                                 screenId={screenId}
                                 selectedIds={selectedIds}
@@ -796,6 +1099,26 @@ class TransportDocuments extends React.Component {
                         }
                     </div>
                 </div>
+
+                <Modal
+                    show={showSplitLine}
+                    hideModal={this.toggleSplitLine}
+                    title="Split Line"
+                    size="modal-xl"
+                >
+                    <SplitLine 
+                        headersForSelect={splitHeadersForSelect}
+                        headersForShow={splitHeadersForShow}
+                        
+                        selectedIds = {passSelectedIds(selectedIds)}
+                        selectedPo = {passSelectedPo(selectedIds, pos)}
+
+                        alert = {alert}
+                        handleClearAlert={this.handleClearAlert}
+                        handleSplitLine={this.handleSplitLine}
+
+                    />
+                </Modal>
 
                 <Modal
                     show={showEditValues}

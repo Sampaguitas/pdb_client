@@ -17,11 +17,11 @@ import {
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import Modal from '../../../_components/modal';
-import SplitLine from '../../../_components/split-line/split-line';
+import SplitLine from '../../../_components/split-line/split-sub';
 
 import moment from 'moment';
 import _ from 'lodash';
-import { accessConstants } from '../../../_constants';
+// import { accessConstants } from '../../../_constants';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
@@ -266,16 +266,6 @@ function getInputType(dbFieldType) {
         default: return 'text'
     }
 }
-
-// function generateScreenHeader(fieldnames, screenId) {
-//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-//         return fieldnames.items.filter(function(element) {
-//             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-//         });
-//     } else {
-//         return [];
-//     }
-// }
 
 function getHeaders(fieldnames, screenId, forWhat) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
@@ -970,7 +960,24 @@ class ReleaseData extends React.Component {
                 });
             } else {
                 let collection = found.fields.fromTbl;
-                this.updateRequest(collection, found.fields.name, isErase ? '' : updateValue, selectedType, getObjectIds(collection, selectedIds));
+                let objectIds = getObjectIds(collection, selectedIds);
+                let fieldName = found.fields.name;
+                let fieldValue = isErase ? '' : updateValue;
+                let fieldType = selectedType;
+
+                if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+                    this.setState({
+                        ...this.state,
+                        updateValue: '',
+                        showEditValues: false,
+                        alert: {
+                            type:'alert-danger',
+                            message:'Wrong date format.'
+                        }
+                    });
+                } else {
+                    this.updateRequest(collection, fieldName, fieldValue, fieldType, objectIds);
+                }
             }  
         }
     }
@@ -1325,7 +1332,7 @@ class ReleaseData extends React.Component {
                                             title="Get Latest NFI"
                                             onClick={event => this.getNfi(event, 0)}
                                         >
-                                        <span><FontAwesomeIcon icon="arrow-to-top" className="fa-lg"/> </span>
+                                        <span><FontAwesomeIcon icon="arrow-to-bottom" className="fa-lg"/> </span>
                                     </button>
                                     <button
                                         className="btn btn-success btn-lg"
@@ -1339,7 +1346,7 @@ class ReleaseData extends React.Component {
                         </div>
                         <div className="text-right">
                             <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleUpdateNFI(event, false)}>
-                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Assign</span>
+                                <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign</span>
                             </button>
                         </div>                   
                     </div>
