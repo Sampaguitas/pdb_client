@@ -21,6 +21,7 @@ import SplitLine from '../../../_components/split-line/split-line';
 
 import moment from 'moment';
 import _ from 'lodash';
+import { accessConstants } from '../../../_constants';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
@@ -62,6 +63,7 @@ function passSelectedPo(selectedIds, pos) {
         return pos.items.find(po => po._id === selectedIds[0].poId);
     }
 }
+
 
 function TypeToString (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
@@ -566,6 +568,38 @@ function getBodys(fieldnames, pos, headersForShow){
     
 // }
 
+
+function selectedIdsArry (selectedIds, whichId) {
+    return selectedIds.reduce(function(acc, curr){
+        if(curr[whichId] != '' && !acc.includes(curr[whichId])){
+            acc.push(curr[whichId]);
+        }
+        return acc;
+    }, []);
+}
+
+function selectionHasNfi (selectedIds, pos) {
+    let selectedSubIds = selectedIdsArry(selectedIds, 'subId');
+    if (!_.isEmpty(selectedSubIds) && pos.hasOwnProperty('items')) {
+        return pos.items.reduce(function (accPo, currPo) {
+            let currPoHasNFI = currPo.subs.reduce(function (accSub, currSub){
+                if(selectedSubIds.includes(currSub._id) && currSub.hasOwnProperty('nfi') && !_.isNull(currSub.nfi)) {
+                    accSub = true;
+                }
+                return accSub;
+            }, false);
+    
+            if (currPoHasNFI === true) {
+                accPo = true;
+            }
+            return accPo;
+        }, false);
+
+    } else {
+        return false;
+    }
+}
+
 class ReleaseData extends React.Component {
     constructor(props) {
         super(props);
@@ -584,6 +618,7 @@ class ReleaseData extends React.Component {
             selectedField: '',
             selectedType: 'text',
             updateValue:'',
+            inputNfi: '',
             alert: {
                 type:'',
                 message:''
@@ -591,7 +626,7 @@ class ReleaseData extends React.Component {
             //-----modals-----
             showSplitLine: false,
             showEditValues: false,
-            showAssign: false,
+            showAssignNfi: false,
             showGenerate: false,
             showDelete: false,                      
         };
@@ -603,6 +638,9 @@ class ReleaseData extends React.Component {
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
+        this.getNfi = this.getNfi.bind(this);
+        this.handleUpdateNFI = this.handleUpdateNFI.bind(this);
+        this.updateRequest = this.updateRequest.bind(this);
         
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
@@ -610,7 +648,7 @@ class ReleaseData extends React.Component {
         //Toggle Modals
         this.toggleSplitLine = this.toggleSplitLine.bind(this);
         this.toggleEditValues = this.toggleEditValues.bind(this);
-        this.toggleAssign = this.toggleAssign.bind(this);
+        this.toggleAssignNfi = this.toggleAssignNfi.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
     }
@@ -892,6 +930,141 @@ class ReleaseData extends React.Component {
         });
     }
 
+    getNfi(event, topUp) {
+        const { pos } = this.props;
+        event.preventDefault();
+        if (pos.hasOwnProperty('items') && !_.isUndefined(pos.items)){
+            
+            let tempNfi = pos.items.reduce(function (accPo , currPo) {
+                
+                let currPoNfi = currPo.subs.reduce(function (accSub, currSub) {
+                    if (currSub.hasOwnProperty('nfi') && currSub.nfi > accSub) {
+                        accSub = currSub.nfi;
+                    }
+                    return accSub;
+                }, 0);
+
+                if (currPoNfi > accPo) {
+                    accPo = currPoNfi;
+                }
+                return accPo;
+            }, 0);
+            if (tempNfi === 0) {
+                this.setState({inputNfi: 1});
+            } else {
+                this.setState({inputNfi: tempNfi + topUp});
+            }
+        }
+    }
+
+    handleUpdateNFI(event) {
+        event.preventDefault();
+        const { dispatch, fieldnames, pos } = this.props;
+        const { projectId, selectedIds, inputNfi, unlocked, bodysForShow } = this.state;
+        console.log('selectionHasNfi:', selectionHasNfi (selectedIds, pos));
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                inputNfi: '',
+                showAssignNfi: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to be updated.'
+                }
+            });
+        } else if (inputNfi === '') {
+            this.setState({
+                ...this.state,
+                inputNfi: '',
+                showAssignNfi: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'NFI number is missing.'
+                }
+            });
+        } else if (_.isEmpty(fieldnames)) {
+            this.setState({
+                ...this.state,
+                inputNfi: '',
+                showAssignNfi: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'An error has occured, line(s) where not updated.'
+                }
+            });
+            if (projectId) {
+                dispatch(fieldActions.getAll(projectId));
+            }
+        } else {
+            let found = fieldnames.items.find( function (f) {
+                return f.fields.name === 'nfi';
+            });
+
+            if (!found.edit && !unlocked){
+                this.setState({
+                    ...this.state,
+                    inputNfi: '',
+                    showAssignNfi: false,
+                    alert: {
+                        type:'alert-danger',
+                        message:'Selected  field is disabled, please unlock the table and try again.'
+                    }
+                });
+            } else if (!selectionHasNfi (selectedIds, pos) || confirm('Already existing NFI numbers found. Do you want to proceed?')) {
+                this.updateRequest('sub', 'nfi', inputNfi, 'text', getObjectIds('sub', selectedIds));
+            } else {
+                this.setState({
+                    ...this.state,
+                    inputNfi: '',
+                    showAssignNfi: false,
+                    alert: {
+                        type:'',
+                        message:''
+                    }
+                });
+            }
+        }
+    }
+
+    updateRequest(collection, fieldName, fieldValue, fieldType, objectIds) {
+        const requestOptions = {
+            method: 'PUT',
+            headers: { ...authHeader(), 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                collection: collection,
+                fieldName: fieldName,
+                fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                objectIds: objectIds
+            })
+        };
+        return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+        .then( () => {
+            this.refreshStore();
+            this.setState({
+                ...this.state,
+                inputNfi: '',
+                showAssignNfi: false,
+                showEditValues: false,
+                alert: {
+                    type:'alert-success',
+                    message:'Field sucessfully updated.'
+                }
+            });
+        })
+        .catch( () => {
+            this.setState({
+                ...this.state,
+                inputNfi: '',
+                showAssignNfi: false,
+                showEditValues: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'Field could not be updated.'
+                }
+            });
+        });
+    }
+
     handleUpdateValue(event, isErase) {
         event.preventDefault();
         const { dispatch, fieldnames } = this.props;
@@ -899,6 +1072,7 @@ class ReleaseData extends React.Component {
         if (!selectedField) {
             this.setState({
                 ...this.state,
+                updateValue: '',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -908,6 +1082,7 @@ class ReleaseData extends React.Component {
         } else if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
+                updateValue: '',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -917,10 +1092,11 @@ class ReleaseData extends React.Component {
         } else if (_.isEmpty(fieldnames)){
             this.setState({
                 ...this.state,
+                updateValue: '',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
-                    message:'An error occured'
+                    message:'An error has occured, line(s) where not updated.'
                 }
             });
             if (projectId) {
@@ -930,64 +1106,68 @@ class ReleaseData extends React.Component {
             let found = fieldnames.items.find( function (f) {
                 return f.fields._id === selectedField;
             });
-            if (found.edit && !unlocked) {
+            if (!found.edit && !unlocked) {
                 this.setState({
                     ...this.state,
+                    updateValue: '',
                     showEditValues: false,
                     alert: {
                         type:'alert-danger',
-                        message:'Selected  field is disabled, please unlock table and try again.'
+                        message:'Selected  field is disabled, please unlock the table and try again.'
                     }
                 });
             } else {
                 let collection = found.fields.fromTbl;
-                let objectIds = getObjectIds(collection, selectedIds);
-                let fieldName = found.fields.name;
-                let fieldValue = isErase ? '' : updateValue;
-                let fieldType = selectedType;
-                if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
-                    this.setState({
-                        ...this.state,
-                        showEditValues: false,
-                        alert: {
-                            type:'alert-danger',
-                            message:'Wrong Date Format.'
-                        }
-                    });
-                } else {
-                    const requestOptions = {
-                        method: 'PUT',
-                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            collection: collection,
-                            fieldName: fieldName,
-                            fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
-                            objectIds: objectIds
-                        })
-                    };
-                    return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                    .then( () => {
-                        this.refreshStore();
-                        this.setState({
-                            ...this.state,
-                            showEditValues: false,
-                            alert: {
-                                type:'alert-success',
-                                message:'Field sucessfully updated.'
-                            }
-                        });
-                    })
-                    .catch( () => {
-                        this.setState({
-                            ...this.state,
-                            showEditValues: false,
-                            alert: {
-                                type:'alert-danger',
-                                message:'Field cannot be updated.'
-                            }
-                        });
-                    });
-                }
+                this.updateRequest(collection, found.fields.name, isErase ? '' : updateValue, selectedType, getObjectIds(collection, selectedIds));
+                
+                // let collection = found.fields.fromTbl;
+                // let objectIds = getObjectIds(collection, selectedIds);
+                // let fieldName = found.fields.name;
+                // let fieldValue = isErase ? '' : updateValue;
+                // let fieldType = selectedType;
+                // if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+                //     this.setState({
+                //         ...this.state,
+                //         showEditValues: false,
+                //         alert: {
+                //             type:'alert-danger',
+                //             message:'Wrong Date Format.'
+                //         }
+                //     });
+                // } else {
+                //     const requestOptions = {
+                //         method: 'PUT',
+                //         headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                //         body: JSON.stringify({
+                //             collection: collection,
+                //             fieldName: fieldName,
+                //             fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                //             objectIds: objectIds
+                //         })
+                //     };
+                //     return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+                //     .then( () => {
+                //         this.refreshStore();
+                //         this.setState({
+                //             ...this.state,
+                //             showEditValues: false,
+                //             alert: {
+                //                 type:'alert-success',
+                //                 message:'Field sucessfully updated.'
+                //             }
+                //         });
+                //     })
+                //     .catch( () => {
+                //         this.setState({
+                //             ...this.state,
+                //             showEditValues: false,
+                //             alert: {
+                //                 type:'alert-danger',
+                //                 message:'Field could not be updated.'
+                //             }
+                //         });
+                //     });
+                // }
             }  
         }
     }
@@ -1037,13 +1217,14 @@ class ReleaseData extends React.Component {
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
+                inputNfi: '',
                 alert: {
                     type:'',
                     message:''
                 },
                 showSplitLine: !showSplitLine,
                 showEditValues: false,
-                showAssign: false,
+                showAssignNfi: false,
                 showGenerate: false,
                 showDelete: false
             });
@@ -1068,23 +1249,24 @@ class ReleaseData extends React.Component {
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
+                inputNfi: '',
                 alert: {
                     type:'',
                     message:''
                 },
                 showSplitLine: false,
                 showEditValues: !showEditValues,
-                showAssign: false,
+                showAssignNfi: false,
                 showGenerate: false,
                 showDelete: false
             });
         }
     }
 
-    toggleAssign(event) {
+    toggleAssignNfi(event) {
         event.preventDefault();
-        const { showAssign, selectedIds } = this.state;
-        if (!showAssign && _.isEmpty(selectedIds)) {
+        const { showAssignNfi, selectedIds } = this.state;
+        if (!showAssignNfi && _.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
                 alert: {
@@ -1099,13 +1281,14 @@ class ReleaseData extends React.Component {
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
+                inputNfi: '',
                 alert: {
                     type:'',
                     message:''
                 },
                 showSplitLine: false,
                 showEditValues: false,
-                showAssign: !showAssign,
+                showAssignNfi: !showAssignNfi,
                 showGenerate: false,
                 showDelete: false
             });
@@ -1123,13 +1306,14 @@ class ReleaseData extends React.Component {
             selectedField: '',
             selectedType: 'text',
             updateValue:'',
+            inputNfi: '',
             alert: {
                 type:'',
                 message:''
             },
             showSplitLine: false,
             showEditValues: false,
-            showAssign: false,
+            showAssignNfi: false,
             showGenerate: !showGenerate,
             showDelete: false
         });
@@ -1161,13 +1345,14 @@ class ReleaseData extends React.Component {
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
+                inputNfi: '',
                 alert: {
                     type:'',
                     message:''
                 },
                 showSplitLine: false,
                 showEditValues: false,
-                showAssign: false,
+                showAssignNfi: false,
                 showGenerate: false,
                 showDelete: !showDelete
             });
@@ -1185,10 +1370,11 @@ class ReleaseData extends React.Component {
             selectedField,
             selectedType,
             updateValue,
+            inputNfi,
             //show modals
             showSplitLine,
             showEditValues,
-            showAssign,
+            showAssignNfi,
             showGenerate,
             showDelete,
             //--------
@@ -1221,7 +1407,7 @@ class ReleaseData extends React.Component {
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleEditValues(event)}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleAssign(event)}>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleAssignNfi(event)}>
                             <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign NFI</span>
                         </button>
                         <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleGenerate(event)}>
@@ -1314,44 +1500,46 @@ class ReleaseData extends React.Component {
                 </Modal>
 
                 <Modal
-                    show={showAssign}
-                    hideModal={this.toggleAssign}
+                    show={showAssignNfi}
+                    hideModal={this.toggleAssignNfi}
                     title="Assign NFI"
                 >
-                    {/* <div className="col-12">
+                    <div className="col-12">
                         <div className="form-group">
-                            <label htmlFor="selectedField">Select Field</label>
-                            <select
-                                className="form-control"
-                                name="selectedField"
-                                value={selectedField}
-                                placeholder="Select field..."
-                                onChange={this.handleChange}
-                            >
-                                <option key="0" value="0">Select field...</option>
-                                {this.selectedFieldOptions(fieldnames, fields, screenId)}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="updateValue">Value</label>
-                            <input
-                                className="form-control"
-                                type={selectedType === 'number' ? 'number' : 'text'}
-                                name="updateValue"
-                                value={updateValue}
-                                onChange={this.handleChange}
-                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
-                            />
+                            <label htmlFor="updateValue">NFI Number</label>
+                            <div className="input-group">
+                                <input
+                                    className="form-control"
+                                    type="number"
+                                    name="inputNfi"
+                                    value={inputNfi}
+                                    onChange={this.handleChange}
+                                    placeholder=""
+                                />
+                                <div className="input-group-append">
+                                    <button
+                                            className="btn btn-leeuwen-blue btn-lg"
+                                            title="Get Latest NFI"
+                                            onClick={event => this.getNfi(event, 0)}
+                                        >
+                                        <span><FontAwesomeIcon icon="arrow-to-top" className="fa-lg"/> </span>
+                                    </button>
+                                    <button
+                                        className="btn btn-success btn-lg"
+                                        title="Get New NFI"
+                                        onClick={event => this.getNfi(event, 1)}
+                                    >
+                                        <span><FontAwesomeIcon icon="sync-alt" className="fa-lg"/> </span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                         <div className="text-right">
-                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.handleUpdateValue(event, false)}>
-                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
-                            </button>
-                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleUpdateValue(event, true)}>
-                                <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
+                            <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleUpdateNFI(event, false)}>
+                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Assign</span>
                             </button>
                         </div>                   
-                    </div> */}
+                    </div>
                 </Modal>
 
                 <Modal

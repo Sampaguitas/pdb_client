@@ -683,7 +683,6 @@ class SplitLine extends Component {
                 }
                 if(rowIndex < nRows) {
                     target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
-                    
                 }
                 break;
         }
