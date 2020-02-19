@@ -290,11 +290,6 @@ function getFirstVirtual(selectedPo, screenBody, headersForShow) {
     if (!_.isEmpty(selectedPo) && !_.isEmpty(screenBody) && !_.isEmpty(headersForShow)){
         let selectedSub = selectedPo.subs.find(sub => sub._id === screenBody.tablesId.subId);
         let selectedPackitem = selectedSub.packitems.find(packitem => packitem._id === screenBody.tablesId.packItemId);
-
-        console.log('selectedSub:', selectedSub);
-        console.log('packItemId:', screenBody.tablesId.packItemId)
-        console.log('selectedPackitem:', selectedPackitem);
-        
         
         return headersForShow.reduce(function (acc, curr){
             if (curr.fields.fromTbl === 'po') {
