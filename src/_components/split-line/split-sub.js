@@ -328,7 +328,9 @@ function generateBodyForSelect(screenBodys, selectedLine, selectedIds, handleCli
             screenBody.fields.map(function (field, index) {
                 if (field.objectId) {
                     tempCol.push(
-                        <td key={index}>
+                        <td
+                            key={index}
+                            align={field.align ? field.align : 'left'}>
                             {TypeToString(field.fieldValue, field.fieldType, getDateFormat(myLocale))}
                         </td>
                     );
@@ -390,6 +392,7 @@ function generateBodyForShow(virtuals, headersForShow, IsAll, toggleRow, handleC
                         fieldName={headerForShow.fields.name}
                         fieldValue={virtuals[indexBody][headerForShow.fields.name]}
                         fieldType={getInputType(headerForShow.fields.type)}
+                        align={headerForShow.fields.align}
                         callback={handleChangeVirtuals}
                     />
                 );
