@@ -203,10 +203,61 @@ class Documents extends React.Component {
     componentDidMount() {
         const { docdefs } = this.props;
         const { selectedTemplate } = this.state;
+        
+        const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
+        const nodes = ["INPUT", "SELECT", "SPAN"];
+        const table = document.getElementById('documentsTable');
+        table.addEventListener('keydown', (e) => { 
+            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
+                return this.keyHandler(e);
+            }
+        });
+
         if (docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
             this.setState({
                 selectedTemplate: arraySorted(docConf(docdefs.items), "name")[0]._id
             });
+        }
+    }
+
+    keyHandler(e) {
+
+        let target = e.target;
+        let colIndex = target.parentElement.cellIndex;               
+        let rowIndex = target.parentElement.parentElement.rowIndex;
+        var nRows = target.parentElement.parentElement.parentElement.childNodes.length;
+        
+        switch(e.keyCode) {
+            case 9:// tab
+                if(target.parentElement.nextSibling) {
+                    target.parentElement.nextSibling.click();
+                }
+                break;
+            case 13: //enter
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
+            case 37: //left
+                if(colIndex > 0 && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.previousSibling.click();
+                } 
+                break;
+            case 38: //up
+                if(rowIndex > 1) {
+                    target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();
+                }
+                break;
+            case 39: //right
+                if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.nextSibling.click();
+                }
+                break;
+            case 40: //down
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
         }
     }
 
@@ -909,7 +960,7 @@ class Documents extends React.Component {
                 <div className="" style={{height: 'calc(100% - 88px)'}}>
                     <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row">
-                            <table className="table table-hover table-bordered table-sm" >
+                            <table className="table table-bordered table-sm text-nowrap table-striped" id="documentsTable">
                                 <thead>
                                     <tr>
                                         <TableSelectionAllRow
@@ -978,8 +1029,8 @@ class Documents extends React.Component {
                                             />
                                             {multi &&
                                                 <NewRowSelect 
-                                                    name="worksheet"
-                                                    value={docField.worksheet}
+                                                    fieldName="worksheet"
+                                                    fieldValue={docField.worksheet}
                                                     options={ArrSheet}
                                                     optionText="worksheet"
                                                     fromTbls={[]}
@@ -988,8 +1039,8 @@ class Documents extends React.Component {
                                                 />
                                             }
                                             <NewRowSelect 
-                                                name="location"
-                                                value={docField.location}
+                                                fieldName="location"
+                                                fieldValue={docField.location}
                                                 options={ArrLocation}
                                                 optionText="location"
                                                 fromTbls={[]}
@@ -997,22 +1048,22 @@ class Documents extends React.Component {
                                                 color={newRowColor}
                                             />                                        
                                             <NewRowInput
-                                                type="number"
-                                                name="row"
-                                                value={docField.row}
+                                                fieldType="number"
+                                                fieldName="row"
+                                                fieldValue={docField.row}
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
                                             />                                        
                                             <NewRowInput
-                                                type="number"
-                                                name="col"
-                                                value={docField.col}
+                                                fieldType="number"
+                                                fieldName="col"
+                                                fieldValue={docField.col}
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
                                             />                                         
                                             <NewRowSelect 
-                                                name="fieldId"
-                                                value={docField.fieldId}
+                                                fieldName="fieldId"
+                                                fieldValue={docField.fieldId}
                                                 options={fields.items}
                                                 optionText="custom"
                                                 fromTbls={[]}
@@ -1020,9 +1071,9 @@ class Documents extends React.Component {
                                                 color={newRowColor}
                                             />                                        
                                             <NewRowInput
-                                                type="text"
-                                                name="param"
-                                                value={docField.param}
+                                                fieldType="text"
+                                                fieldName="param"
+                                                fieldValue={docField.param}
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
                                             />                                         

@@ -3,6 +3,7 @@ import config from 'config';
 import { authHeader } from '../../_helpers';
 import propTypes from 'prop-types';
 import _ from 'lodash';
+import classNames from 'classnames';
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -46,16 +47,17 @@ class TableSelect extends Component{
             fieldName: '',
             fieldValue: '',
             color: '#0070C0',
-            isEditing: false,
+            isSelected: false,
             options:[],
             optionText: '',
             fromTbls: ''
-            // disabled: false
         }
         this.onChange = this.onChange.bind(this);
         this.onFocus = this.onFocus.bind(this);
         this.onBlur = this.onBlur.bind(this);
         this.selectedName = this.selectedName.bind(this);
+        this.onClick = this.onClick.bind(this);
+        this.onKeyDown = this.onKeyDown.bind(this);
     }
     componentDidMount(){
         this.setState({
@@ -63,7 +65,6 @@ class TableSelect extends Component{
             objectId: this.props.objectId,
             fieldName: this.props.fieldName,
             fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
-            // disabled: this.props.disabled ? this.props.disabled : false,
             options: this.props.options,
             optionText: this.props.optionText,
             fromTbls: this.props.fromTbls
@@ -71,7 +72,6 @@ class TableSelect extends Component{
     }
 
     componentWillReceiveProps(nextProps) {
-        // const { unlocked, disabled } = this.props;
         if(!_.isEqual(nextProps.fieldValue, this.props.fieldValue)) {
             this.setState({
                 collection: nextProps.collection,
@@ -81,9 +81,7 @@ class TableSelect extends Component{
                 options: nextProps.options,
                 optionText: nextProps.optionText,
                 fromTbls: nextProps.fromTbls,
-                isEditing: false,
-                // fieldType: nextProps.fieldType,
-                // isSelected: false,
+                isSelected: false,
                 color: 'green',
             }, () => {
                 setTimeout(() => {
@@ -96,7 +94,11 @@ class TableSelect extends Component{
         }
     }
 
-
+    onKeyDown(event) {
+        if (event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40 || event.keyCode === 9 || event.keyCode === 13){ //left //up //wright //down //tab //enter
+            this.onBlur(event);  
+        }
+    }
 
     onChange(event) {
         const target = event.target;
@@ -108,11 +110,22 @@ class TableSelect extends Component{
         });
     }
 
+    onClick() {
+        const { disabled, unlocked } = this.props;
+        if(unlocked || !disabled){
+            this.setState({isSelected: true }, () => {
+                setTimeout(() => {
+                this.refs.select.focus();
+                }, 1);
+            });
+        }
+    }
+
     onFocus() {
         const { disabled, unlocked } = this.props;
         if(unlocked || !disabled){
-            this.setState({ isEditing: true }, () => {
-                this.refs.input.focus();
+            this.setState({ isSelected: true }, () => {
+                this.refs.select.focus();
             });
         }
     }
@@ -120,10 +133,16 @@ class TableSelect extends Component{
     onBlur(event){
         event.preventDefault();
         const {disabled, unlocked, refreshStore} = this.props;
-        // if(!disabled){
-        //     this.setState({isEditing:false});
-            const { collection, objectId, fieldName, fieldValue } = this.state      
-            if ((unlocked || !disabled) && collection && objectId && fieldName && objectId) {
+        const { collection, objectId, fieldName, fieldValue } = this.state;
+
+        if ((unlocked || !disabled) && collection && objectId && fieldName && objectId) {
+            if (_.isEqual(fieldValue, this.props.fieldValue)) {
+                this.setState({
+                    ...this.state,
+                    isSelected: false,
+                    color: '#0070C0',
+                });
+            } else {
                 const requestOptions = {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -131,31 +150,17 @@ class TableSelect extends Component{
                 };
                 return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
                 .then( () => {
-                    // this.setState({
-                    //     ...this.state,
-                    //     isEditing: false,
-                    //     color: 'green',                    
-                    // }, () => {
-                    //     setTimeout(() => {
-                    //         this.setState({
-                    //             ...this.state,
-                    //             color: '#0070C0',
-                    //         });
-                    //     }, 1000);                    
-                    // });
                     this.setState({
                         ...this.state,
-                        isEditing: false,
-                        // isSelected: false,
+                        isSelected: false,
                     }, () => {
                         refreshStore();
                     });
-
                 })
                 .catch( () => {
                     this.setState({
                         ...this.state,
-                        isEditing: false,
+                        isSelected: false,
                         color: 'red',
                         fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
                     }, () => {
@@ -168,8 +173,7 @@ class TableSelect extends Component{
                     });                
                 });
             }
-        // }
-
+        }
     }
 
     selectedName(arr, search) {
@@ -199,63 +203,57 @@ class TableSelect extends Component{
 
         const {
             color,
-            isEditing,
+            isSelected,
             fieldValue,
             options,
             optionText,
             fromTbls
         } = this.state;
 
-        return isEditing ? (
+        const tdClasses = classNames(
+            'table-cell',
+            {
+                isSelected: isSelected,
+            }
+        );
+
+        return ( 
             <td
+                onClick={() => this.onClick()}/////
                 style={{
+                    color: isSelected ? 'inherit' : disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color, ////
                     width: `${width ? width : 'auto'}`,
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
-                    padding: '0px'
+                    padding: isSelected ? '0px': '5px',/////
+                    cursor: isSelected ? 'auto' : 'pointer'/////
                 }}
-            >
-                <select
-                    ref='input'
-                    className="form-control"
-                    name='fieldValue'
-                    value={fieldValue}
-                    onChange={this.onChange}
-                    onBlur={this.onBlur}
-                    disabled={unlocked ? false : disabled}
-                    // style={{
-                    //     margin: 0,
-                    //     borderRadius:0,
-                    //     borderColor: 'white',
-                    //     backgroundColor: 'inherit',
-                    //     color: 'inherit',
-                    //     WebkitBoxShadow: 'none',
-                    //     boxShadow: 'none',  
-                    // }}
-                >
-                        {options && arraySorted(options, optionText, fromTbls).map(option => {
-                            return (
-                                <option
-                                    key={option._id}
-                                    value={option._id}>{option[optionText]}
-                                </option>
-                            );
-                        })}                    
-                </select>
-            </td>
-        ):
-        (
-            <td
-                onClick={() => this.onFocus()}
-                style={{
-                    color: disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color,
-                    width: `${width ? width : 'auto'}`,
-                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
-                    cursor: unlocked ? 'pointer' : disabled ? 'auto' : 'pointer'
-                }}
+                className={tdClasses}
                 align={align ? align : 'left'}
             >
-                {this.selectedName(options, fieldValue)}
-            </td> //onDoubleClick
+                {isSelected ?
+                    <select
+                        ref='select'
+                        className="form-control"
+                        name='fieldValue'
+                        value={fieldValue}
+                        onChange={this.onChange}
+                        onBlur={this.onBlur}
+                        disabled={unlocked ? false : disabled}
+                        onKeyDown={event => this.onKeyDown(event)}
+                    >
+                            {options && arraySorted(options, optionText, fromTbls).map(option => {
+                                return (
+                                    <option
+                                        key={option._id}
+                                        value={option._id}>{option[optionText]}
+                                    </option>
+                                );
+                            })}                    
+                    </select>
+                :
+                    <span>{this.selectedName(options, fieldValue)}</span>
+                }
+            </td>
         );
     }
 }

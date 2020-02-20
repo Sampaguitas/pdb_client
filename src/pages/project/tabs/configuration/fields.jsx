@@ -32,7 +32,6 @@ function arraySorted(array, fieldOne, fieldTwo) {
 }
 
 function doesMatch(search, array, type, isEqual) {
-    
     if (!search) {
         return true;
     } else if (!array && search != 'any' && search != 'false') {

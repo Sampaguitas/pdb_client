@@ -165,21 +165,19 @@ class TableInput extends Component{
     onClick() {
         const { disabled, unlocked } = this.props;
         const { isSelected, fieldValue, fieldType } = this.state;
-        // if(unlocked || !disabled){
-            if(!isSelected) {
-                this.setState({isSelected: true}, () => {
-                    setTimeout(() => {
-                    this.refs.input.select();
-                    }, 1);
-                });
-            } else {
-                this.setState({isEditing: true }, () => {
-                    setTimeout(() => {
-                    this.refs.input.focus();
-                    }, 1);
-                });
-            }
-        // }
+        if(!isSelected) {
+            this.setState({isSelected: true}, () => {
+                setTimeout(() => {
+                this.refs.input.select();
+                }, 1);
+            });
+        } else {
+            this.setState({isEditing: true }, () => {
+                setTimeout(() => {
+                this.refs.input.focus();
+                }, 1);
+            });
+        }
     }
 
     onBlur(event){
