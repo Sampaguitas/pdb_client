@@ -5,6 +5,8 @@ import propTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './table-check-box.css'
 
+import classNames from 'classnames';
+
 function logout() {
     // remove user from local storage to log user out
     localStorage.removeItem('user');
@@ -19,9 +21,11 @@ class TableCheckBox extends Component {
             fieldName: '',
             fieldValue: false,
             color: '#0070C0',
+            isSelected: false,
             // disabled: false,
         }
         this.onChange = this.onChange.bind(this);
+        this.onClick = this.onClick.bind(this);
     }
     
     componentDidMount(){
@@ -35,15 +39,13 @@ class TableCheckBox extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        // const { unlocked, disabled } = this.props;
         if(!_.isEqual(nextProps.fieldValue, this.props.fieldValue)) {
             this.setState({
                 collection: nextProps.collection,
                 objectId: nextProps.objectId,
                 fieldName: nextProps.fieldName,
                 fieldValue: nextProps.fieldValue ? nextProps.fieldValue : false,
-                // isEditing: false,
-                // isSelected: false,
+                isSelected: false,
                 color: 'green',
             }, () => {
                 setTimeout(() => {
@@ -54,6 +56,18 @@ class TableCheckBox extends Component {
                 }, 1000);
             });
         }
+    }
+
+    onClick() {
+        const { isSelected } = this.state;
+        this.setState({
+            // isSelected: true
+            isSelected: false 
+        }, () => {
+            setTimeout(() => {
+                this.refs.input.focus();
+            }, 1);
+        });
     }
 
     onChange(event) {
@@ -74,17 +88,6 @@ class TableCheckBox extends Component {
                 };
                 return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
                 .then( () => {
-                    // this.setState({
-                    //     ...this.state,
-                    //     color: 'green',
-                    // }, () => {
-                    //     setTimeout(() => {
-                    //         this.setState({
-                    //             ...this.state,
-                    //             color: '#0070C0',
-                    //         });
-                    //     }, 1000);                         
-                    // });
                     refreshStore();
                 })
                 .catch( () => {
@@ -115,24 +118,32 @@ class TableCheckBox extends Component {
         const {
             color,
             fieldValue,
+            isSelected,
         } = this.state;
+
+        const tdClasses = classNames(
+            'table-cell',
+            {
+                isSelected: isSelected,
+            }
+        );
         
         return (
             <td 
-            style={{
-                width: `${width ? width : 'auto'}`,
-                // whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
-                // padding: '0px'
-            }}            
+                onClick={() => this.onClick()}
+                style={{width: `${width ? width : 'auto'}`}}
+                className={tdClasses}
             >
                     <label className="fancy-table-checkbox">
                         <input
+                            
                             ref="input"
-                            type='checkbox'
-                            name='fieldValue'
+                            type="checkbox"
+                            name="fieldValue"
                             checked={fieldValue}
                             onChange={this.onChange}
                             disabled={unlocked ? false : disabled}
+                             
                         />
                         <FontAwesomeIcon
                             icon="check-square"
@@ -142,8 +153,10 @@ class TableCheckBox extends Component {
                                 padding: 'auto',
                                 textAlign: 'center',
                                 width: '100%',
+                                // height: '100%',
                                 margin: '0px',
-                                verticalAlign: 'middle'
+                                verticalAlign: 'middle',
+                                cursor: unlocked ? 'pointer' : disabled ? 'auto' : 'pointer'
                             }}
                         />
                         <FontAwesomeIcon
@@ -154,6 +167,7 @@ class TableCheckBox extends Component {
                                 padding: 'auto',
                                 textAlign: 'center',
                                 width: '100%',
+                                // height: '100%',
                                 margin: '0px',
                                 verticalAlign: 'middle',
                                 cursor: unlocked ? 'pointer' : disabled ? 'auto' : 'pointer'

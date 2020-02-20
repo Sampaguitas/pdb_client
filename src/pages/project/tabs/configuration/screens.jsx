@@ -123,6 +123,59 @@ class Screens extends React.Component {
         this.generateFromTbls = this.generateFromTbls.bind(this);
     }
 
+    componentDidMount() {
+        
+        const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
+        const nodes = ["INPUT", "SELECT", "SPAN"];
+        const table = document.getElementById('screensTable');
+        table.addEventListener('keydown', (e) => { 
+            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
+                return this.keyHandler(e);
+            }
+        });
+    }
+
+    keyHandler(e) {
+
+        let target = e.target;
+        let colIndex = target.parentElement.cellIndex;               
+        let rowIndex = target.parentElement.parentElement.rowIndex;
+        var nRows = target.parentElement.parentElement.parentElement.childNodes.length;
+        
+        switch(e.keyCode) {
+            case 9:// tab
+                if(target.parentElement.nextSibling) {
+                    target.parentElement.nextSibling.click();
+                }
+                break;
+            case 13: //enter
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
+            case 37: //left
+                if(colIndex > 0 && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.previousSibling.click();
+                } 
+                break;
+            case 38: //up
+                if(rowIndex > 1) {
+                    target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();
+                }
+                break;
+            case 39: //right
+                if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.nextSibling.click();
+                }
+                break;
+            case 40: //down
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
+        }
+    }
+
     cerateNewRow(event) {
         event.preventDefault();
         const { handleSelectionReload } = this.props;
@@ -458,7 +511,7 @@ class Screens extends React.Component {
             <div className="" style={{height: 'calc(100% - 44px)'}}>
                 <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                     <div className="table-responsive custom-table-container custom-table-container__fixed-row">
-                        <table className="table table-hover table-bordered table-sm" >
+                        <table className="table table-bordered table-sm text-nowrap table-striped" id="screensTable">
                             <thead>
                                 <tr>
                                     <TableSelectionAllRow
@@ -518,8 +571,8 @@ class Screens extends React.Component {
                                             onClick={ event => this.cerateNewRow(event)}
                                         />
                                         <NewRowSelect 
-                                            name="fieldId"
-                                            value={fieldName.fieldId}
+                                            fieldName="fieldId"
+                                            fieldValue={fieldName.fieldId}
                                             options={fields.items}
                                             optionText="custom"
                                             fromTbls={this.generateFromTbls(screens, selectedScreen)}
@@ -527,23 +580,23 @@ class Screens extends React.Component {
                                             color={newRowColor}
                                         />
                                         <NewRowInput
-                                            type="number"
-                                            name="forShow"
-                                            value={fieldName.forShow}
+                                            fieldType="number"
+                                            fieldName="forShow"
+                                            fieldValue={fieldName.forShow}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
 
                                         />
                                         <NewRowInput
-                                            type="number"
-                                            name="forSelect"
-                                            value={fieldName.forSelect}
+                                            fieldType="number"
+                                            fieldName="forSelect"
+                                            fieldValue={fieldName.forSelect}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
                                         />                                      
                                         <NewRowSelect 
-                                            name="align"
-                                            value={fieldName.align}
+                                            fieldName="align"
+                                            fieldValue={fieldName.align}
                                             options={arrAlign}
                                             optionText="name"
                                             fromTbls={this.generateFromTbls(screens, selectedScreen)}

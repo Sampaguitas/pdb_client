@@ -68,7 +68,7 @@ class NewRowSelect extends Component{
 
     onFocus() {
         this.setState({ isSelected: true }, () => {
-            this.refs.input.focus();
+            this.refs.select.focus();
         });
     }
 
