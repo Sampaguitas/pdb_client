@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-// import config from 'config';
+import config from 'config';
 import { 
     accessActions, 
     alertActions, 
@@ -17,7 +17,7 @@ import {
     screenActions, 
     userActions  
 } from '../../_actions';
-// import { authHeader } from '../../_helpers';
+import { authHeader } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -48,7 +48,11 @@ class Configuration extends React.Component {
         this.state = {
             submittedProject: false,
             submittedSupplier: false,
-            projectId: ''
+            projectId: '',
+            alert: {
+                type:'',
+                message:''
+            }
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
@@ -57,6 +61,7 @@ class Configuration extends React.Component {
         this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
         this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
         
+        this.refreshProject = this.refreshProject.bind(this);
         this.refreshDocfields = this.refreshDocfields.bind(this);
         this.refreshFieldnames = this.refreshFieldnames.bind(this);
         this.refreshFields = this.refreshFields.bind(this);
@@ -128,6 +133,12 @@ class Configuration extends React.Component {
     handleClearAlert(event){
         event.preventDefault;
         const { dispatch } = this.props;
+        this.setState({ 
+            alert: {
+                type:'',
+                message:'' 
+            } 
+        });
         dispatch(alertActions.clear());
     }
 
@@ -194,6 +205,14 @@ class Configuration extends React.Component {
         }    
     }
 
+    refreshProject() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+        if (projectId) {
+            dispatch(projectActions.getById(projectId));
+        }
+    }
+
     refreshDocfields() {
         const { dispatch } = this.props;
         const { projectId } = this.state;
@@ -220,11 +239,44 @@ class Configuration extends React.Component {
 
     handleSubmitProject(event, project) {
         event.preventDefault();
-        const { dispatch } = this.props;
-        this.setState({ submittedProject: true });
+        // const { dispatch } = this.props;
+        
+        // console.log('project:', project);
         if (project._id, project.name && project.erpId && project.opcoId) {
-            dispatch(projectActions.update(project));
-            this.setState({submittedProject: false})
+            this.setState({ submittedProject: true });
+            // this.setState({submittedProject: false})
+            const requestOptions = {
+                method: 'PUT',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: JSON.stringify(project)
+            };
+        
+            return fetch(`${config.apiUrl}/project/update?id=${project.id}`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (!responce.ok) {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        submittedProject: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshProject);
+                } else {
+                    // console.log('responce ok')
+                    this.setState({
+                        submittedProject: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshProject);
+                }
+            }));
         }
     }
 
@@ -258,7 +310,7 @@ class Configuration extends React.Component {
     render() {
         const {
                 accesses, 
-                alert,
+                // alert,
                 currencies,
                 docdefs,
                 docfields,
@@ -279,6 +331,8 @@ class Configuration extends React.Component {
                 submittedProject,
                 submittedSupplier
             } = this.state
+
+            const alert = this.state.alert.message ? this.state.alert : this.props.alert;    
 
         return (
             <Layout alert={alert} accesses={accesses}>

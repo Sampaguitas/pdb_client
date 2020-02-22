@@ -86,7 +86,7 @@ class Settings extends React.Component {
       region: "",
       isAdmin: 0,
       isSuperAdmin: 0,
-      users: [],
+      // users: [],
       loaded: false,
       submitted: false,
       show: false
@@ -175,10 +175,11 @@ class Settings extends React.Component {
     });
   }
 
-  filterName(users){
+  filterName(array){
     const { userName, name, opco, region, isAdmin, isSuperAdmin } = this.state
-    if (users.items) {
-      return arraySorted(users.items, 'name').filter(function (user) {
+    if (array) {
+      // return arraySorted(users.items, 'name').filter(function (user) {
+        return array.filter(function (user) {
         return (doesMatch(userName, user.userName, 'String') 
         && doesMatch(name, user.name, 'String') 
         && doesMatch(opco, user.opco.name, 'String')
@@ -282,7 +283,7 @@ class Settings extends React.Component {
 
   render() {
     const { user, userName, name, opco, region, isAdmin, isSuperAdmin, submitted } = this.state;
-    const { registering, userUpdating, userDeleting, alert, opcos } = this.props;
+    const { users, registering, userUpdating, userDeleting, alert, opcos } = this.props;
 
     return (
       <Layout alert={alert}>
@@ -362,7 +363,7 @@ class Settings extends React.Component {
                       </tr>
                     </thead>
                     <tbody className="full-height">
-                      {this.props.users.items && this.filterName(this.props.users).map((u) =>
+                      {users.items && this.filterName(users.items).map((u) =>
                         <tr key={u._id}>
                           <td onClick={(event) => this.handleOnclick(event, u._id)}>{u.userName}</td>
                           <td onClick={(event) => this.handleOnclick(event, u._id)}>{u.name}</td>

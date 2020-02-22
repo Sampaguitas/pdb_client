@@ -87,7 +87,6 @@ class General extends React.Component {
             isShipping: '',
             isWarehouse: '',
             isConfiguration: '',
-            loaded: false,
         };
         
         this.handleIsRole = this.handleIsRole.bind(this);
@@ -95,9 +94,105 @@ class General extends React.Component {
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
         this.accessibleArray = this.accessibleArray.bind(this);
-        this.stateReload = this.stateReload.bind(this);
         this.handleIsRole = this.handleIsRole.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
+    }
+
+    componentDidMount() {
+        const { users, selection, accesses } = this.props;
+        var userArray = [];
+        if (users.items && selection.project && accesses.items) {
+            for(var i=0;i<users.items.length;i++){
+                var result = _.find(accesses, { 'userId' : users.items[i]._id });
+                if (result) {
+                    let NewUserArrayElement = {
+                        'userId': users.items[i]._id, //result.user._id,
+                        'userName': users.items[i].userName, //result.user.userName,
+                        'name': users.items[i].name, // result.user.name,
+                        'isExpediting': result.isExpediting,
+                        'isInspection': result.isInspection,
+                        'isShipping': result.isShipping,
+                        'isWarehouse': result.isWarehouse,
+                        'isConfiguration': result.isConfiguration
+                    };
+                    userArray.push(NewUserArrayElement)
+                } else {
+                    let NewUserArrayElement = {
+                        'userId': users.items[i]._id,
+                        'userName': users.items[i].userName,
+                        'name': users.items[i].name,
+                        'isExpediting': false,
+                        'isInspection': false,
+                        'isShipping': false,
+                        'isWarehouse': false,
+                        'isConfiguration': false
+                    };
+                    userArray.push(NewUserArrayElement)                
+                }
+            };
+            userArray = arraySorted(userArray, 'name')
+            this.setState({
+                project:{
+                    // ...project,
+                    id: selection.project._id,
+                    name: selection.project.name,
+                    erpId: selection.project.erpId,
+                    currencyId: selection.project.currencyId,
+                    opcoId: selection.project.opcoId,
+                    projectUsers: userArray,
+                }
+            });
+        };
+    }
+    
+    componentDidUpdate(prevProp, prevState) {
+        const { users, selection, accesses } = this.props;
+        if (prevProp.users != users || prevProp.selection != selection || prevProp.accesses != accesses) {
+            var userArray = [];
+            if (users.items && selection.project && accesses.items) {
+                for(var i=0;i<users.items.length;i++){
+                    var result = _.find(accesses, { 'userId' : users.items[i]._id });
+                    if (result) {
+                        let NewUserArrayElement = {
+                            'userId': users.items[i]._id, //result.user._id,
+                            'userName': users.items[i].userName, //result.user.userName,
+                            'name': users.items[i].name, // result.user.name,
+                            'isExpediting': result.isExpediting,
+                            'isInspection': result.isInspection,
+                            'isShipping': result.isShipping,
+                            'isWarehouse': result.isWarehouse,
+                            'isConfiguration': result.isConfiguration
+                        };
+                        userArray.push(NewUserArrayElement)
+                    } else {
+                        let NewUserArrayElement = {
+                            'userId': users.items[i]._id,
+                            'userName': users.items[i].userName,
+                            'name': users.items[i].name,
+                            'isExpediting': false,
+                            'isInspection': false,
+                            'isShipping': false,
+                            'isWarehouse': false,
+                            'isConfiguration': false
+                        };
+                        userArray.push(NewUserArrayElement)                
+                    }
+                };
+                userArray = arraySorted(userArray, 'name')
+                this.setState({
+                    project:{
+                        // ...project,
+                        id: selection.project._id,
+                        name: selection.project.name,
+                        erpId: selection.project.erpId,
+                        currencyId: selection.project.currencyId,
+                        opcoId: selection.project.opcoId,
+                        projectUsers: userArray,
+                    },
+                });
+            };
+
+        }
     }
 
     handleIsRole(event, role) {
@@ -154,57 +249,6 @@ class General extends React.Component {
                 }
             });
         }
-    } 
-
-    stateReload(event){
-        const { users, selection, accesses } = this.props;
-        // const { accesses } = this.props.selection.project;
-        const { project } = this.state;
-        var userArray = []
-        // var i
-        if (users.items) {
-            for(var i=0;i<users.items.length;i++){
-                var result = _.find(accesses, { 'userId' : users.items[i]._id });
-                if (result) {
-                    let NewUserArrayElement = {
-                        'userId': users.items[i]._id, //result.user._id,
-                        'userName': users.items[i].userName, //result.user.userName,
-                        'name': users.items[i].name, // result.user.name,
-                        'isExpediting': result.isExpediting,
-                        'isInspection': result.isInspection,
-                        'isShipping': result.isShipping,
-                        'isWarehouse': result.isWarehouse,
-                        'isConfiguration': result.isConfiguration
-                    };
-                    userArray.push(NewUserArrayElement)
-                } else {
-                    let NewUserArrayElement = {
-                        'userId': users.items[i]._id,
-                        'userName': users.items[i].userName,
-                        'name': users.items[i].name,
-                        'isExpediting': false,
-                        'isInspection': false,
-                        'isShipping': false,
-                        'isWarehouse': false,
-                        'isConfiguration': false
-                    };
-                    userArray.push(NewUserArrayElement)                
-                }
-            };
-            userArray = arraySorted(userArray, 'name')
-            this.setState({
-                project:{
-                    // ...project,
-                    id: selection.project._id,
-                    name: selection.project.name,
-                    erpId: selection.project.erpId,
-                    currencyId: selection.project.currencyId,
-                    opcoId: selection.project.opcoId,
-                    projectUsers: userArray,
-                },
-                loaded: true,
-            });
-        };
     }
 
     handleIsRole(event, role) {
@@ -249,11 +293,9 @@ class General extends React.Component {
             isShipping,
             isWarehouse,
             isConfiguration,
-            loaded,
         } = this.state;  
 
         const { projectUsers } = this.state.project;
-        {users.items && !loaded && selection.project && this.stateReload()}
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
                 <div className="col-md-8 mb-md-0 col-sm-12 mb-sm-3 full-height">

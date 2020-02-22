@@ -106,10 +106,11 @@ class Home extends React.Component {
         });
     }
 
-    filterName(projects){
+    filterName(array){
         const { number, name, opco, erp } = this.state
-        if (projects.items) {
-            return projectSorted(projects).filter(function (project) {
+        if (array) {
+            // return projectSorted(projects).filter(function (project) {
+                return array.filter(function (project) {
                 return (doesMatch(number, project.number, 'Number') 
                 && doesMatch(name, project.name, 'String') 
                 && doesMatch(opco, project.opco.name, 'String') 
@@ -197,7 +198,7 @@ class Home extends React.Component {
                                         </tr>
                                     </thead>
                                     <tbody className="full-height">
-                                        {projects.items && this.withoutProjectMaster(projects).map((project) =>
+                                        {projects.items && this.withoutProjectMaster(projects.items).map((project) =>
                                             <tr key={project._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, project)}>
                                                 <td>{project.number}</td>
                                                 <td>{project.name}</td>

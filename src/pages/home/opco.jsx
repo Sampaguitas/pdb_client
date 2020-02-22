@@ -171,10 +171,11 @@ class Opco extends React.Component {
         });
     }
 
-    filterName(opcos){
+    filterName(array){
         const { code, name, city, country, region } = this.state
-        if (opcos.items) {
-          return arraySorted(opcos.items, 'name').filter(function (opco) {
+        if (array) {
+        //   return arraySorted(opcos.items, 'name').filter(function (opco) {
+            return array.filter(function (opco) {
             return (doesMatch(code, opco.code, 'String') 
             && doesMatch(name, opco.name, 'String') 
             && doesMatch(city, opco.city, 'String')
@@ -328,7 +329,7 @@ class Opco extends React.Component {
                                         </tr>
                                     </thead>
                                     <tbody className="full-height">
-                                        {opcos.items && this.filterName(opcos).map((o) =>
+                                        {opcos.items && this.filterName(opcos.items).map((o) =>
                                             <tr key={o._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, o._id)}>
                                                 <td>{o.code}</td>
                                                 <td>{o.name}</td>

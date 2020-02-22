@@ -86,14 +86,12 @@ class Project extends React.Component {
             isShipping: '',
             isWarehouse: '',
             isConfiguration: '',
-            loaded: false,
             submitted: false
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleChangeProject = this.handleChangeProject.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
-        this.stateReload = this.stateReload.bind(this);
         this.handleIsRole = this.handleIsRole.bind(this)
         this.handleSubmit = this.handleSubmit.bind(this);
         this.accessibleArray = this.accessibleArray.bind(this);
@@ -101,7 +99,8 @@ class Project extends React.Component {
         this.onKeyPress = this.onKeyPress.bind(this);
     }
     componentDidMount() {
-        const { dispatch } = this.props;
+        const { dispatch, users } = this.props;
+        const { project } = this.state;
         //Clear Selection
         dispatch(accessActions.clear());
         dispatch(collitypeActions.clear());
@@ -118,6 +117,58 @@ class Project extends React.Component {
         dispatch(opcoActions.getAll());
         dispatch(projectActions.getAll());
         dispatch(userActions.getAll());
+
+        var userArray = []
+        if (users.items) {
+            users.items.map(function (user) {
+                let NewUserArrayElement = {
+                    'userId': user._id,
+                    'userName': user.userName,
+                    'name': user.name,
+                    'isExpediting': false,
+                    'isInspection': false,
+                    'isShipping': false,
+                    'isWarehouse': false,
+                    'isConfiguration': false
+                };
+                userArray.push(NewUserArrayElement);
+            });
+            userArray = arraySorted(userArray, 'name')
+            this.setState({
+                project:{
+                    ...project,
+                    projectUsers: userArray,
+                }
+            });
+        }
+    }
+
+    componentDidUpdate(prevProp, prevState) {
+        const { users } = this.props;
+        const { project } = this.state;
+        var userArray = []
+        if (prevProp.users != users && users.items) {
+            users.items.map(function (user) {
+                let NewUserArrayElement = {
+                    'userId': user._id,
+                    'userName': user.userName,
+                    'name': user.name,
+                    'isExpediting': false,
+                    'isInspection': false,
+                    'isShipping': false,
+                    'isWarehouse': false,
+                    'isConfiguration': false
+                };
+                userArray.push(NewUserArrayElement);
+            });
+            userArray = arraySorted(userArray, 'name')
+            this.setState({
+                project:{
+                    ...project,
+                    projectUsers: userArray,
+                }
+            });
+        }
     }
     
     handleClearAlert(event){
@@ -172,36 +223,6 @@ class Project extends React.Component {
         }
     }
 
-    stateReload(event){
-        const { users } = this.props;
-        const { project } = this.state;
-        var userArray = []
-        var i
-        if (users.items) {
-            for(i=0;i<users.items.length;i++){
-                let NewUserArrayElement = {
-                    'userId': users.items[i]._id,
-                    'userName': users.items[i].userName,
-                    'name': users.items[i].name,
-                    'isExpediting': false,
-                    'isInspection': false,
-                    'isShipping': false,
-                    'isWarehouse': false,
-                    'isConfiguration': false
-                };
-                userArray.push(NewUserArrayElement)
-            };
-            userArray = arraySorted(userArray, 'name')
-            this.setState({
-                project:{
-                    ...project,
-                    projectUsers: userArray,
-                },
-                loaded: true,
-            });
-        };
-    }
-
     handleIsRole(event, role) {
         const { name } = event.target;
         const { projectUsers } = this.state.project;
@@ -240,9 +261,8 @@ class Project extends React.Component {
 
     render() {
         const { alert, currencies, erps, projectCreating, opcos, projects, users } = this.props;
-        const { project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, loaded, submitted } = this.state;
+        const { project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, submitted } = this.state; //loaded
         const { projectUsers } = this.state.project;
-        {users.items && loaded === false && this.stateReload()}
         return (
             <Layout alert={alert}>
                {alert.message && 

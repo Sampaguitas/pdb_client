@@ -392,7 +392,8 @@ class Screens extends React.Component {
         } = this.state;
 
         if (array) {
-          return arraySorted(array, 'fields.custom').filter(function (element) {
+        //   return arraySorted(array, 'fields.custom').filter(function (element) {
+            return array.filter(function (element) {
             return (doesMatch(selectedScreen, element.screenId, 'Id')
             && element.fields && doesMatch(custom, element.fields.custom, 'String')
             && doesMatch(forShow, element.forShow, 'Number')

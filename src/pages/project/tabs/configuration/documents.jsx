@@ -793,7 +793,8 @@ class Documents extends React.Component {
         } = this.state;
 
         if (array) {
-          return arraySorted(array, 'worksheet', 'location', 'row', 'col').filter(function (element) {
+        //   return arraySorted(array, 'worksheet', 'location', 'row', 'col').filter(function (element) {
+            return array.filter(function (element) {
             return (doesMatch(selectedTemplate, element.docdefId, 'Id')
             && doesMatch(worksheet, element.worksheet, 'Select')
             && doesMatch(location, element.location, 'Select')

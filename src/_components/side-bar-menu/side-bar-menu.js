@@ -58,33 +58,46 @@ const project_menu = [
     { id: 6, title: 'Configuration', href: '/configuration', icon: 'cog', roles: ['isAdmin', 'isSuperAdmin', 'isConfiguration'] }
 ]
 
-function test(access, user, role) { 
-    const result = access.find(toto => {
-        if (_.isEqual(toto.userId,user.id)){
-            switch (role) {
-                case 'isExpediting': return toto.isExpediting === true;
-                case 'isInspection': return toto.isInspection === true;
-                case 'isShipping': return toto.isShipping === true;
-                case 'isWarehouse': return toto.isWarehouse === true;
-                case 'isConfiguration': return toto.isConfiguration === true;
-                default: return false;
-            }
-        }
-    });
-    return result
-}
+// function test(accesses, user, role) { 
+//     const result = accesses.find(access => {
+//         if (_.isEqual(access.userId, user.id)){
+//             switch (role) {
+//                 case 'isExpediting': return access.isExpediting === true;
+//                 case 'isInspection': return access.isInspection === true;
+//                 case 'isShipping': return access.isShipping === true;
+//                 case 'isWarehouse': return access.isWarehouse === true;
+//                 case 'isConfiguration': return access.isConfiguration === true;
+//                 default: return false;
+//             }
+//         }
+//     });
+//     return result
+// }
 
 function isRole(accesses, user, role) {
-    if (_.isEmpty(accesses)) {
-        return false;
+    if (!_.isEmpty(accesses) && accesses.hasOwnProperty('items') && user && role) {
+        return accesses.items.reduce(function (acc, curr){
+            if (!acc && _.isEqual(curr.userId, user._id)) {
+                acc = curr[role];
+            }
+            return acc;
+        }, false);
     } else {
-        if (!_.isEmpty(test(accesses, user, role))) {
-            return true;
-        } else {
-            return false;
-        }
+        return false
     }
 }
+
+// function isRole(accesses, user, role) {
+//     if (_.isEmpty(accesses)) {
+//         return false;
+//     } else {
+//         if (!_.isEmpty(test(accesses, user, role))) {
+//             return true;
+//         } else {
+//             return false;
+//         }
+//     }
+// }
 
 class SideBarMenu extends Component {
     constructor(props) {
@@ -157,25 +170,25 @@ class SideBarMenu extends Component {
         var listMenu = []
         const { accesses } = this.props
         let user = JSON.parse(localStorage.getItem('user'));
-        menu.forEach(function(item) {
-            if (!item.roles){
-                listMenu.push(item);
-            } else if (item.roles.indexOf('isAdmin') > -1 && user.isAdmin) {
-                listMenu.push(item);
-            } else if (item.roles.indexOf('isSuperAdmin') > -1 && user.isSuperAdmin) {
-                listMenu.push(item);
-            } else if (item.roles.indexOf('isExpediting') > -1 && isRole(accesses, user, 'isExpediting')) {
-                listMenu.push(item);
-            } else if (item.roles.indexOf('isInspection') > -1 && isRole(accesses, user, 'isInspection')) {
-                listMenu.push(item);
-            } else if (item.roles.indexOf('isShipping') > -1 && isRole(accesses, user, 'isShipping')) {
-                listMenu.push(item);
-            } else if (item.roles.indexOf('isWarehouse') > -1 && isRole(accesses, user, 'isWarehouse')) {
-                listMenu.push(item);
-            } else if (item.roles.indexOf('isConfiguration') > -1 && isRole(accesses, user, 'isConfiguration')) {
-                listMenu.push(item);
-            }
-        });
+            menu.forEach(function(item) {
+                if (!item.roles){
+                    listMenu.push(item);
+                } else if (item.roles.indexOf('isAdmin') > -1 && user.isAdmin) {
+                    listMenu.push(item);
+                } else if (item.roles.indexOf('isSuperAdmin') > -1 && user.isSuperAdmin) {
+                    listMenu.push(item);
+                } else if (item.roles.indexOf('isExpediting') > -1 && isRole(accesses, user, 'isExpediting')) {
+                    listMenu.push(item);
+                } else if (item.roles.indexOf('isInspection') > -1 && isRole(accesses, user, 'isInspection')) {
+                    listMenu.push(item);
+                } else if (item.roles.indexOf('isShipping') > -1 && isRole(accesses, user, 'isShipping')) {
+                    listMenu.push(item);
+                } else if (item.roles.indexOf('isWarehouse') > -1 && isRole(accesses, user, 'isWarehouse')) {
+                    listMenu.push(item);
+                } else if (item.roles.indexOf('isConfiguration') > -1 && isRole(accesses, user, 'isConfiguration')) {
+                    listMenu.push(item);
+                }
+            });
         return listMenu;
     }
 

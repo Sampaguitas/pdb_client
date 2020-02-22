@@ -21,6 +21,81 @@ import {
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+function isRole(accesses, user, role) {
+    if (!_.isEmpty(accesses) && accesses.hasOwnProperty('items') && user && role) {
+        return accesses.items.reduce(function (acc, curr){
+            if (!acc && _.isEqual(curr.userId, user._id)) {
+                acc = curr[role];
+            }
+            return acc;
+        }, false);
+    } else {
+        return false
+    }
+}
+
+function menuList(menu, accesses){
+    var listMenu = []
+    // const { accesses } = this.props
+    let user = JSON.parse(localStorage.getItem('user'));
+        menu.forEach(function(item) {
+            if (!item.roles){
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isAdmin') > -1 && user.isAdmin) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isSuperAdmin') > -1 && user.isSuperAdmin) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isExpediting') > -1 && isRole(accesses, user, 'isExpediting')) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isInspection') > -1 && isRole(accesses, user, 'isInspection')) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isShipping') > -1 && isRole(accesses, user, 'isShipping')) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isWarehouse') > -1 && isRole(accesses, user, 'isWarehouse')) {
+                listMenu.push(item);
+            } else if (item.roles.indexOf('isConfiguration') > -1 && isRole(accesses, user, 'isConfiguration')) {
+                listMenu.push(item);
+            }
+        });
+    return listMenu;
+}
+
+function generateMenu(menuList, projectId) {
+    if (_.isEmpty(menuList)) {
+        return (
+            <div>
+                <h3 className="mt-3">You currently don't have access to any of the project modules.</h3>
+                <p>Contact one of your administrators to be granted access...</p>
+            </div>
+        )
+    } else {
+        let tempScreen = []
+        menuList.map(function (menu) {
+            tempScreen.push(
+                <NavLink
+                    to={{ 
+                    pathname: menu.href,
+                    search: '?id=' + projectId
+                    }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                >
+                    <div className="card-body">
+                        <div className="text-center">
+                            <FontAwesomeIcon 
+                                icon={menu.icon} 
+                                className="fa-5x mb-3" 
+                                name={menu.icon}
+                            />
+                            <h3>{menu.title}</h3>
+                        </div>
+                    </div>
+                </NavLink>
+            );
+        });
+        return tempScreen;
+    }
+}
+
+
 class Dashboard extends React.Component {
     constructor(props) {
         super(props);
@@ -28,6 +103,7 @@ class Dashboard extends React.Component {
             projectId:''
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
+        // this.menuList = this.menuList.bind(this);
     }
 
     componentDidMount() {
@@ -101,9 +177,24 @@ class Dashboard extends React.Component {
         dispatch(alertActions.clear());
     }
 
+    
+
+
+
     render() {
+
+        const menu = [
+            { id: 1, title: 'Data Upload File (DUF)', href: '/duf', icon: 'upload', roles: ['isAdmin', 'isSuperAdmin'] },
+            { id: 2, title: 'Expediting', href: '/expediting', icon: 'stopwatch', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting']},
+            { id: 3, title: 'Inspection', href: '/inspection', icon: 'search', roles: ['isAdmin', 'isSuperAdmin', 'isInspection']},
+            { id: 4, title: 'Shipping', href: '/shipping', icon: 'ship', roles: ['isAdmin', 'isSuperAdmin', 'isShipping']},
+            { id: 5, title: 'Warehouse', href: '/warehouse', icon: 'warehouse', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse']},
+            { id: 6, title: 'Configuration', href: '/configuration', icon: 'cog', roles: ['isAdmin', 'isSuperAdmin', 'isConfiguration']},
+        ];
+
         const { projectId } = this.state
         const { accesses, alert, selection } = this.props;
+
         return (
             <Layout alert={alert} accesses={accesses}>
                 {alert.message && 
@@ -117,7 +208,8 @@ class Dashboard extends React.Component {
                 <hr />
                 <div id="dashboard">
                     <div className="row justify-content-center">
-                    <NavLink to={{ 
+                        {generateMenu(menuList(menu, accesses), projectId)}
+                    {/* <NavLink to={{ 
                             pathname: "/duf",
                             search: '?id=' + projectId
                         }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
@@ -212,7 +304,7 @@ class Dashboard extends React.Component {
                                 <h3>Configuration</h3>
                             </div>
                         </div>
-                    </NavLink>
+                    </NavLink> */}
                     </div>
                 </div>
             </Layout>

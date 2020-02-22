@@ -309,7 +309,7 @@ class Suppliers extends React.Component {
         });
     }
 
-    filterName(suppliers){
+    filterName(array){
         
         const { 
             name,
@@ -324,8 +324,9 @@ class Suppliers extends React.Component {
             country,
         } = this.state;
 
-        if (suppliers.items) {
-          return arraySorted(suppliers.items, 'name').filter(function (supplier) {
+        if (array) {
+        //   return arraySorted(suppliers.items, 'name').filter(function (supplier) {
+            return array.filter(function (supplier) {
             return (doesMatch(name, supplier.name, 'String') 
             && doesMatch(registeredName, supplier.registeredName, 'String') 
             && doesMatch(contact, supplier.contact, 'String')
@@ -496,7 +497,7 @@ class Suppliers extends React.Component {
                                     </tr>
                                 </thead>
                                 <tbody className="full-height">
-                                    {suppliers.items && this.filterName(suppliers).map((s) =>
+                                    {suppliers.items && this.filterName(suppliers.items).map((s) =>
                                         <tr key={s._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, s._id)}>
                                             <td>{s.name}</td>
                                             <td>{s.registeredName}</td>
