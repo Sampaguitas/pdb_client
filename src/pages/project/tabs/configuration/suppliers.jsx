@@ -84,8 +84,8 @@ class Suppliers extends React.Component {
             loading: false,
             deleting: false
         }
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
+        // this.handleSubmit = this.handleSubmit.bind(this);
+        // this.handleDelete = this.handleDelete.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.handleChangeSupplier = this.handleChangeSupplier.bind(this);
@@ -95,91 +95,91 @@ class Suppliers extends React.Component {
         this.onKeyPress = this.onKeyPress.bind(this);
     };    
 
-    handleSubmit(event) {
-        event.preventDefault();
-        const { supplier } = this.state;
-        const { handleSelectionReload } = this.props
-        this.setState({ submitted: true }, () => {
-            if (supplier.id && supplier.name && supplier.projectId) {
-                this.setState({loading: true}, () => {
-                    const requestOptions = {
-                        method: 'PUT',
-                        headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
-                        body: JSON.stringify(supplier)
-                    }
-                    return fetch(`${config.apiUrl}/supplier/update?id=${supplier.id}`, requestOptions)
-                    .then( () => {
-                        this.setState({submitted: false, loading: false},
-                            ()=> {
-                                this.hideModal(event),
-                                handleSelectionReload();
-                            });
-                    })
-                    .catch( err => {
-                        this.setState({submitted: false, loading: false},
-                            ()=> {
-                                this.hideModal(event),
-                                handleSelectionReload();
-                            });
-                    });
-                });
-            } else if (supplier.name && supplier.projectId){
-                this.setState({loading: true}, () => {
-                    const requestOptions = {
-                        method: 'POST',
-                        headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
-                        body: JSON.stringify(supplier)
-                    }
-                    return fetch(`${config.apiUrl}/supplier/create`, requestOptions)
-                    .then( () => {
-                        this.setState({submitted: false, loading: false},
-                            ()=> {
-                                this.hideModal(event),
-                                handleSelectionReload();
-                            })
-                    })
-                    .catch( err => {
-                        this.setState({submitted: false, loading: false},
-                            ()=> {
-                                this.hideModal(event),
-                                handleSelectionReload();
-                            });
-                    });
-                });
-            } else {
-                console.log('supplier name or Id is missing')
-            }
-        });
-    }
+    // handleSubmit(event, supplier, callback) {
+    //     event.preventDefault();
+    //     const { supplier } = this.state;
+    //     const { handleSelectionReload } = this.props
+    //     this.setState({ submitted: true }, () => {
+    //         if (supplier.id && supplier.name && supplier.projectId) {
+    //             this.setState({loading: true}, () => {
+    //                 const requestOptions = {
+    //                     method: 'PUT',
+    //                     headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
+    //                     body: JSON.stringify(supplier)
+    //                 }
+    //                 return fetch(`${config.apiUrl}/supplier/update?id=${supplier.id}`, requestOptions)
+    //                 .then( () => {
+    //                     this.setState({submitted: false, loading: false},
+    //                         ()=> {
+    //                             this.hideModal(event),
+    //                             handleSelectionReload();
+    //                         });
+    //                 })
+    //                 .catch( err => {
+    //                     this.setState({submitted: false, loading: false},
+    //                         ()=> {
+    //                             this.hideModal(event),
+    //                             handleSelectionReload();
+    //                         });
+    //                 });
+    //             });
+    //         } else if (supplier.name && supplier.projectId){
+    //             this.setState({loading: true}, () => {
+    //                 const requestOptions = {
+    //                     method: 'POST',
+    //                     headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
+    //                     body: JSON.stringify(supplier)
+    //                 }
+    //                 return fetch(`${config.apiUrl}/supplier/create`, requestOptions)
+    //                 .then( () => {
+    //                     this.setState({submitted: false, loading: false},
+    //                         ()=> {
+    //                             this.hideModal(event),
+    //                             handleSelectionReload();
+    //                         })
+    //                 })
+    //                 .catch( err => {
+    //                     this.setState({submitted: false, loading: false},
+    //                         ()=> {
+    //                             this.hideModal(event),
+    //                             handleSelectionReload();
+    //                         });
+    //                 });
+    //             });
+    //         } else {
+    //             console.log('supplier name or Id is missing')
+    //         }
+    //     });
+    // }
 
-    handleDelete(event, id) {
-        event.preventDefault();
-        const { handleSelectionReload } = this.props;
-        if (id) {
-            this.setState({ submitted: true, deleting: true }, () => {
-                const requestOptions = {
-                    method: 'DELETE',
-                    headers: authHeader()
-                };
-                return fetch(`${config.apiUrl}/supplier/delete?id=${id}`, requestOptions)
-                .then( () => {
-                    this.setState({submitted: false, deleting: false},
-                        ()=> {
-                            this.hideModal(event),
-                            handleSelectionReload();
-                        });
-                })
-                .catch( err => {
-                    this.setState({submitted: false, deleting: false},
-                        ()=> {
-                            this.hideModal(event),
-                            handleSelectionReload();
-                        });
-                });
-            });          
-        }
+    // handleDelete(event, id) {
+    //     event.preventDefault();
+    //     const { handleSelectionReload } = this.props;
+    //     if (id) {
+    //         this.setState({ submitted: true, deleting: true }, () => {
+    //             const requestOptions = {
+    //                 method: 'DELETE',
+    //                 headers: authHeader()
+    //             };
+    //             return fetch(`${config.apiUrl}/supplier/delete?id=${id}`, requestOptions)
+    //             .then( () => {
+    //                 this.setState({submitted: false, deleting: false},
+    //                     ()=> {
+    //                         this.hideModal(event),
+    //                         handleSelectionReload();
+    //                     });
+    //             })
+    //             .catch( err => {
+    //                 this.setState({submitted: false, deleting: false},
+    //                     ()=> {
+    //                         this.hideModal(event),
+    //                         handleSelectionReload();
+    //                     });
+    //             });
+    //         });          
+    //     }
 
-    }
+    // }
 
     showModal() {
         const { projectId } = this.props
@@ -236,6 +236,7 @@ class Suppliers extends React.Component {
       }
     
       hideModal() {
+        const { refreshSuppliers } = this.props;
         this.setState({
             supplier: {
                 name: "",
@@ -283,7 +284,7 @@ class Suppliers extends React.Component {
           },
           show: false,
           submitted: false,
-        });
+        }, refreshSuppliers);
       }
 
     handleChangeSupplier(event) {
@@ -410,7 +411,10 @@ class Suppliers extends React.Component {
             handleDeleteSupplier,
             //Props
             selection,
-            suppliers                  
+            suppliers,
+            //State
+            supplierUpdating,
+            supplierDeleting,                
         } = this.props
 
         const { 
@@ -624,12 +628,12 @@ class Suppliers extends React.Component {
                                                 <div className="row">
                                                     <div className="col-6">
                                                         <button
-                                                            type="submit"
                                                             className="btn btn-leeuwen btn-lg"
                                                             // onClick={(event) => this.handleDelete(event, supplier.id)}
-                                                            onClick={(event) => handleDeleteSupplier(event, supplier.id, this.hideModal(event))}
+                                                            // onClick={(event) => handleDeleteSupplier(event, supplier.id, this.hideModal(event))}
+                                                            onClick={event => handleDeleteSupplier(event, id, this.hideModal(event))}
                                                         >
-                                                            {deleting ?
+                                                            {supplierDeleting ?
                                                                 <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
                                                             :
                                                                 <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>}
@@ -641,9 +645,9 @@ class Suppliers extends React.Component {
                                                             type="submit"
                                                             className="btn btn-leeuwen-blue btn-lg" //handleSubmitSupplier
                                                             // onClick={(event) => this.handleSubmit(event, supplier)}
-                                                            onClick={(event) => handleSubmitSupplier(event, supplier, this.hideModal(event))}
+                                                            onClick={event => handleSubmitSupplier(event, supplier, this.hideModal(event))}
                                                         >
-                                                            {loading ?
+                                                            {supplierUpdating ?
                                                                 <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2" />
                                                             :
                                                                 <FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>
@@ -657,9 +661,10 @@ class Suppliers extends React.Component {
                                                     type="submit"
                                                     className="btn btn-leeuwen-blue btn-lg btn-full"
                                                     // onClick={(event) => this.handleSubmit(event, supplier)}
-                                                    onClick={(event) => handleSubmitSupplier(event, supplier, this.hideModal(event))}
+                                                    // onClick={(event) => handleSubmitSupplier(event, supplier, this.hideModal(event))}
+                                                    onClick={event => handleSubmitSupplier(event, supplier, this.hideModal(event))}
                                                 >
-                                                    {loading ?
+                                                    {supplierUpdating ?
                                                         <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2" />
                                                     :
                                                         <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>

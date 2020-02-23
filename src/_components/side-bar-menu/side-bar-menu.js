@@ -58,22 +58,6 @@ const project_menu = [
     { id: 6, title: 'Configuration', href: '/configuration', icon: 'cog', roles: ['isAdmin', 'isSuperAdmin', 'isConfiguration'] }
 ]
 
-// function test(accesses, user, role) { 
-//     const result = accesses.find(access => {
-//         if (_.isEqual(access.userId, user.id)){
-//             switch (role) {
-//                 case 'isExpediting': return access.isExpediting === true;
-//                 case 'isInspection': return access.isInspection === true;
-//                 case 'isShipping': return access.isShipping === true;
-//                 case 'isWarehouse': return access.isWarehouse === true;
-//                 case 'isConfiguration': return access.isConfiguration === true;
-//                 default: return false;
-//             }
-//         }
-//     });
-//     return result
-// }
-
 function isRole(accesses, user, role) {
     if (!_.isEmpty(accesses) && accesses.hasOwnProperty('items') && user && role) {
         return accesses.items.reduce(function (acc, curr){
@@ -86,18 +70,6 @@ function isRole(accesses, user, role) {
         return false
     }
 }
-
-// function isRole(accesses, user, role) {
-//     if (_.isEmpty(accesses)) {
-//         return false;
-//     } else {
-//         if (!_.isEmpty(test(accesses, user, role))) {
-//             return true;
-//         } else {
-//             return false;
-//         }
-//     }
-// }
 
 class SideBarMenu extends Component {
     constructor(props) {

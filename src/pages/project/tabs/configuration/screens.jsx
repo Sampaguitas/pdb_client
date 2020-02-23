@@ -504,7 +504,7 @@ class Screens extends React.Component {
                                 onClick={ (event) => this.handleDelete(event, selectedRows)}
                                 style={{height: '34px'}}
                             >
-                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Fields</span>
+                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Field(s)</span>
                             </button>                                     
                         </div>
                     </div>

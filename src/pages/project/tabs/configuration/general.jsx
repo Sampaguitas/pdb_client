@@ -7,6 +7,7 @@ import Input from '../../../../_components/input';
 import Select from '../../../../_components/select';
 import TableCheckBoxRole from '../../../../_components/project-table/table-check-box-role';
 
+
 const _ = require('lodash');
 
 function resolve(path, obj) {
@@ -102,35 +103,35 @@ class General extends React.Component {
         const { users, selection, accesses } = this.props;
         var userArray = [];
         if (users.items && selection.project && accesses.items) {
-            for(var i=0;i<users.items.length;i++){
-                var result = _.find(accesses, { 'userId' : users.items[i]._id });
-                if (result) {
+            users.items.map(function (user) {
+                var found = accesses.items.find(element => element.userId === user._id);
+                if (found) {
                     let NewUserArrayElement = {
-                        'userId': users.items[i]._id, //result.user._id,
-                        'userName': users.items[i].userName, //result.user.userName,
-                        'name': users.items[i].name, // result.user.name,
-                        'isExpediting': result.isExpediting,
-                        'isInspection': result.isInspection,
-                        'isShipping': result.isShipping,
-                        'isWarehouse': result.isWarehouse,
-                        'isConfiguration': result.isConfiguration
+                        'userId': user._id, //result.user._id,
+                        'userName': user.userName, //result.user.userName,
+                        'name': user.name, // result.user.name,
+                        'isExpediting': found.isExpediting,
+                        'isInspection': found.isInspection,
+                        'isShipping': found.isShipping,
+                        'isWarehouse': found.isWarehouse,
+                        'isConfiguration': found.isConfiguration
                     };
                     userArray.push(NewUserArrayElement)
                 } else {
                     let NewUserArrayElement = {
-                        'userId': users.items[i]._id,
-                        'userName': users.items[i].userName,
-                        'name': users.items[i].name,
+                        'userId': user._id,
+                        'userName': user.userName,
+                        'name': user.name,
                         'isExpediting': false,
                         'isInspection': false,
                         'isShipping': false,
                         'isWarehouse': false,
                         'isConfiguration': false
                     };
-                    userArray.push(NewUserArrayElement)                
+                    userArray.push(NewUserArrayElement)
                 }
-            };
-            userArray = arraySorted(userArray, 'name')
+            });
+            // userArray = arraySorted(userArray, 'name');
             this.setState({
                 project:{
                     // ...project,
@@ -150,35 +151,35 @@ class General extends React.Component {
         if (prevProp.users != users || prevProp.selection != selection || prevProp.accesses != accesses) {
             var userArray = [];
             if (users.items && selection.project && accesses.items) {
-                for(var i=0;i<users.items.length;i++){
-                    var result = _.find(accesses, { 'userId' : users.items[i]._id });
-                    if (result) {
+                users.items.map(function (user) {
+                    var found = accesses.items.find(element => element.userId === user._id);
+                    if (found) {
                         let NewUserArrayElement = {
-                            'userId': users.items[i]._id, //result.user._id,
-                            'userName': users.items[i].userName, //result.user.userName,
-                            'name': users.items[i].name, // result.user.name,
-                            'isExpediting': result.isExpediting,
-                            'isInspection': result.isInspection,
-                            'isShipping': result.isShipping,
-                            'isWarehouse': result.isWarehouse,
-                            'isConfiguration': result.isConfiguration
+                            'userId': user._id, //result.user._id,
+                            'userName': user.userName, //result.user.userName,
+                            'name': user.name, // result.user.name,
+                            'isExpediting': found.isExpediting,
+                            'isInspection': found.isInspection,
+                            'isShipping': found.isShipping,
+                            'isWarehouse': found.isWarehouse,
+                            'isConfiguration': found.isConfiguration
                         };
                         userArray.push(NewUserArrayElement)
                     } else {
                         let NewUserArrayElement = {
-                            'userId': users.items[i]._id,
-                            'userName': users.items[i].userName,
-                            'name': users.items[i].name,
+                            'userId': user._id,
+                            'userName': user.userName,
+                            'name': user.name,
                             'isExpediting': false,
                             'isInspection': false,
                             'isShipping': false,
                             'isWarehouse': false,
                             'isConfiguration': false
                         };
-                        userArray.push(NewUserArrayElement)                
+                        userArray.push(NewUserArrayElement)
                     }
-                };
-                userArray = arraySorted(userArray, 'name')
+                });
+                // userArray = arraySorted(userArray, 'name');
                 this.setState({
                     project:{
                         // ...project,
@@ -188,7 +189,7 @@ class General extends React.Component {
                         currencyId: selection.project.currencyId,
                         opcoId: selection.project.opcoId,
                         projectUsers: userArray,
-                    },
+                    }
                 });
             };
 
@@ -253,10 +254,17 @@ class General extends React.Component {
 
     handleIsRole(event, role) {
         const { name } = event.target;
-        const { projectUsers } = this.state.project;
-        let clickedUser = projectUsers.find(x=>x.userId == name);
-        clickedUser[role] = !clickedUser[role];
-        this.setState(this.state);
+        const { project } = this.state;
+        const { projectUsers } = project;
+        let tempArray = projectUsers;
+        let found = tempArray.find(element => element.userId === name);
+        found[role] = !found[role];
+        this.setState({
+            project: {
+                ...project,
+                projectUsers: tempArray
+            }
+        });
     }
 
     onKeyPress(event) {

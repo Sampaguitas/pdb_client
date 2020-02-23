@@ -44,6 +44,7 @@ class Tabs extends Component {
             refreshDocfields,
             refreshFieldnames,
             refreshFields,
+            refreshSuppliers,
             //Props
             accesses,
             currencies,
@@ -53,8 +54,6 @@ class Tabs extends Component {
             fieldnames,
             fields,
             opcos,
-            projectDeleting,
-            projectUpdating,
             screens,
             selection,
             suppliers,
@@ -62,6 +61,12 @@ class Tabs extends Component {
             //State
             projectId,
             submittedProject,
+            projectUpdating,
+            projectDeleting,
+
+            submittedSupplier,
+            supplierUpdating,
+            supplierDeleting
         } = this.props
 
         return (
@@ -97,6 +102,7 @@ class Tabs extends Component {
                                 refreshDocfields={refreshDocfields}
                                 refreshFieldnames={refreshFieldnames}
                                 refreshFields={refreshFields}
+                                refreshSuppliers={refreshSuppliers}
                                 //Props
                                 accesses={accesses}
                                 currencies={currencies}
@@ -106,8 +112,6 @@ class Tabs extends Component {
                                 fieldnames={fieldnames}
                                 fields={fields}
                                 opcos={opcos}
-                                projectDeleting={projectDeleting}
-                                projectUpdating={projectUpdating}
                                 screens={screens}
                                 selection={selection}
                                 suppliers={suppliers}
@@ -115,6 +119,12 @@ class Tabs extends Component {
                                 //State
                                 projectId={projectId}
                                 submittedProject={submittedProject}
+                                projectUpdating={projectUpdating}
+                                projectDeleting={projectDeleting}
+
+                                submittedSupplier={submittedSupplier}
+                                supplierUpdating={supplierUpdating}
+                                supplierDeleting={supplierDeleting}
                             />
                         </div>
                     )}

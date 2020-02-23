@@ -17,7 +17,7 @@ import {
     screenActions, 
     userActions  
 } from '../../_actions';
-import { authHeader } from '../../_helpers';
+import { authHeader, history } from '../../_helpers';
 import Layout from '../../_components/layout';
 import Tabs from '../../_components/tabs/tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -47,7 +47,12 @@ class Configuration extends React.Component {
         super(props);
         this.state = {
             submittedProject: false,
+            projectUpdating: false,
+            projectDeleting: false,
+            
             submittedSupplier: false,
+            supplierUpdating: false,
+            supplierDeleting: false,
             projectId: '',
             alert: {
                 type:'',
@@ -65,7 +70,7 @@ class Configuration extends React.Component {
         this.refreshDocfields = this.refreshDocfields.bind(this);
         this.refreshFieldnames = this.refreshFieldnames.bind(this);
         this.refreshFields = this.refreshFields.bind(this);
-
+        this.refreshSuppliers = this.refreshSuppliers.bind(this);
     }
 
     componentDidMount(){
@@ -210,6 +215,7 @@ class Configuration extends React.Component {
         const { projectId } = this.state;
         if (projectId) {
             dispatch(projectActions.getById(projectId));
+            dispatch(accessActions.getAll(projectId));
         }
     }
 
@@ -237,14 +243,20 @@ class Configuration extends React.Component {
         }
     }
 
+    refreshSuppliers() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+        if (projectId) {
+            dispatch(supplierActions.getAll(projectId));
+        }
+    }
+
     handleSubmitProject(event, project) {
         event.preventDefault();
         // const { dispatch } = this.props;
-        
-        // console.log('project:', project);
+        this.setState({submittedProject: true});
         if (project._id, project.name && project.erpId && project.opcoId) {
-            this.setState({ submittedProject: true });
-            // this.setState({submittedProject: false})
+            this.setState({ submittedProject: false, projectUpdating: true });
             const requestOptions = {
                 method: 'PUT',
                 headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -260,7 +272,7 @@ class Configuration extends React.Component {
                         location.reload(true);
                     }
                     this.setState({
-                        submittedProject: false,
+                        projectUpdating: false,
                         alert: {
                             type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                             message: data.message
@@ -269,7 +281,7 @@ class Configuration extends React.Component {
                 } else {
                     // console.log('responce ok')
                     this.setState({
-                        submittedProject: false,
+                        projectUpdating: false,
                         alert: {
                             type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                             message: data.message
@@ -282,29 +294,186 @@ class Configuration extends React.Component {
 
     handleDeleteProject(event, id) {
         event.preventDefault();
-        const { dispatch } = this.props
-        dispatch(projectActions.delete(id));
+        if (id) {
+            this.setState({projectDeleting: true})
+            const requestOptions = {
+                method: 'DELETE',
+                headers: authHeader()
+            };
+            return fetch(`${config.apiUrl}/project/delete?id=${id}`, requestOptions)
+            .then(function (responce) {
+                responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        // } else if (responce.status === 200) {
+                        //     dispatch(alertActions.success('Project successfully deleted'));
+                        //     history.push('/');
+                        } else {
+                            this.setState({
+                                projectDeleting: false,
+                                alert: {
+                                    type: 'alert-danger',
+                                    message: data.message
+                                }  
+                            }, this.refreshProject);
+                        }
+                    } else if (responce.status === 200){
+                        dispatch(alertActions.success('Project successfully deleted'));
+                        history.push('/');
+                    } else {
+                        this.setState({
+                            projectDeleting: false,
+                            alert: {
+                                type: 'alert-danger',
+                                message: 'Project could not be deleted'
+                            }
+                        }, this.refreshProject);
+                    }
+                });
+            });
+        }
     }
 
-    handleSubmitSupplier(event, supplier, callback ) {
+    handleSubmitSupplier(event, supplier, callback) {
         event.preventDefault();
-        const { dispatch } = this.props;
-        this.setState({ submittedSupplier: true }, () => {
-            if(supplier.id && supplier.name && supplier.projectId) {
-                dispatch(supplierActions.update(supplier));
-                this.setState({submittedSupplier: false }, () => callback )
-            } else if (supplier.name && supplier.projectId) {
-                dispatch(supplierActions.create(supplier))
-                this.setState({submittedSupplier: false }, () => callback );
+        // const { dispatch } = this.props;
+        this.setState({ submittedSupplier: true });
+        if(supplier.id && supplier.name && supplier.projectId) {
+            this.setState({ submittedSupplier: false, supplierUpdating: true });
+            const requestOptions = {
+                method: 'PUT',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
+                body: JSON.stringify(supplier)
             }
-        });
+            return fetch(`${config.apiUrl}/supplier/update?id=${supplier.id}`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (!responce.ok) {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        supplierUpdating: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, callback);
+                } else {
+                    // console.log('responce ok')
+                    this.setState({
+                        supplierUpdating: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, callback);
+                }
+            }));
+        } else if (supplier.name && supplier.projectId) {
+            this.setState({ submittedSupplier: false, supplierUpdating: true });
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
+                body: JSON.stringify(supplier)
+            }
+
+            return fetch(`${config.apiUrl}/supplier/create`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (!responce.ok) {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        supplierUpdating: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, callback);
+                } else {
+                    // console.log('responce ok')
+                    this.setState({
+                        supplierUpdating: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, callback);
+                }
+            }));
+        }
     }
+
+    
 
     handleDeleteSupplier(event, id, callback) {
+        // event.preventDefault();
+        // const { dispatch } = this.props;
+        // dispatch(supplierActions.delete(id));
+        // callback;
         event.preventDefault();
-        const { dispatch } = this.props;
-        dispatch(supplierActions.delete(id));
-        callback;
+        if (id) {
+            this.setState({ supplierDeleting: true }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: authHeader()
+                };
+                return fetch(`${config.apiUrl}/supplier/delete?id=${id}`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        }
+                        this.setState({
+                            supplierDeleting: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, callback);
+                    } else {
+                        // console.log('responce ok')
+                        this.setState({
+                            supplierDeleting: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, callback);
+                    }
+                }));
+                // .then( () => {
+                //     this.setState({submitted: false, deleting: false},
+                //         ()=> {
+                //             this.hideModal(event),
+                //             handleSelectionReload();
+                //         });
+                // })
+                // .catch( err => {
+                //     this.setState({submitted: false, deleting: false},
+                //         ()=> {
+                //             this.hideModal(event),
+                //             handleSelectionReload();
+                //         });
+                // });
+            });          
+        } else {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Supplier id is missing.'
+                }
+            }, callback);
+        }
     }
 
     render() {
@@ -318,8 +487,6 @@ class Configuration extends React.Component {
                 fieldnames,
                 fields,
                 opcos,
-                projectUpdating,
-                projectDeleting,
                 screens,
                 selection,
                 suppliers,
@@ -329,7 +496,13 @@ class Configuration extends React.Component {
             const {
                 projectId,
                 submittedProject,
-                submittedSupplier
+                projectUpdating,
+                projectDeleting,
+                
+                submittedSupplier,
+                supplierUpdating,
+                supplierDeleting,
+                
             } = this.state
 
             const alert = this.state.alert.message ? this.state.alert : this.props.alert;    
@@ -358,6 +531,8 @@ class Configuration extends React.Component {
                         refreshDocfields={this.refreshDocfields}
                         refreshFieldnames={this.refreshFieldnames}
                         refreshFields={this.refreshFields}
+                        refreshSuppliers={this.refreshSuppliers}
+
                         //Props
                         accesses={accesses}
                         currencies={currencies}
@@ -367,16 +542,20 @@ class Configuration extends React.Component {
                         fieldnames={fieldnames}
                         fields={fields}
                         opcos={opcos}
-                        projectDeleting={projectDeleting}
-                        projectUpdating={projectUpdating}
                         screens={screens}
                         selection={selection}
                         suppliers={suppliers}
                         users={users}
                         //State
                         projectId={projectId}
-                        submittedProject={submittedProject} 
+                        submittedProject={submittedProject}
+                        projectUpdating={projectUpdating}
+                        projectDeleting={projectDeleting}
+
                         submittedSupplier={submittedSupplier}
+                        supplierUpdating={supplierUpdating}
+                        supplierDeleting={supplierDeleting}
+                        
                     />
                 </div>
             </Layout>
@@ -401,7 +580,7 @@ function mapStateToProps(state) {
         users 
     } = state;
 
-    const { projectDeleting, projectUpdating } = state.projects;
+    // const {  } = state.projects; //projectDeleting, projectUpdating
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
     const { loadingDocfields } = docfields;
@@ -426,8 +605,8 @@ function mapStateToProps(state) {
         loadingSelection,
         loadingSuppliers,
         opcos,
-        projectDeleting,
-        projectUpdating,
+        // projectDeleting,
+        // projectUpdating,
         screens,
         selection,
         suppliers,
