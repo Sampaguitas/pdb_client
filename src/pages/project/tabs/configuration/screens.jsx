@@ -445,7 +445,8 @@ class Screens extends React.Component {
             selectAllRows,
             fieldName,
             newRow,
-            newRowColor
+            newRowColor,
+            deleting
         } = this.state;
 
         const arrAlign = [
@@ -499,7 +500,14 @@ class Screens extends React.Component {
                                 onClick={ (event) => this.handleDelete(event, selectedRows)}
                                 style={{height: '34px'}}
                             >
-                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Field(s)</span>
+                                <span>
+                                    { deleting ? 
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/> 
+                                    :
+                                        <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
+                                    }
+                                    Delete Field(s)
+                                </span>
                             </button>                                     
                         </div>
                     </div>
