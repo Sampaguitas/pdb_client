@@ -357,7 +357,7 @@ class Certificates extends React.Component {
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
-        this.handleSelectionReload=this.handleSelectionReload.bind(this);
+        // this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
@@ -430,37 +430,37 @@ class Certificates extends React.Component {
         dispatch(alertActions.clear());
     }
 
-    handleSelectionReload(event){
-        const { 
-            dispatch,
-            loadingAccesses,
-            loadingFieldnames,
-            loadingFields,
-            loadingPos,
-            loadingSelection,
-            location 
-        } = this.props;
+    // handleSelectionReload(event){
+    //     const { 
+    //         dispatch,
+    //         loadingAccesses,
+    //         loadingFieldnames,
+    //         loadingFields,
+    //         loadingPos,
+    //         loadingSelection,
+    //         location 
+    //     } = this.props;
 
-        var qs = queryString.parse(location.search);
-        if (qs.id) {
-            this.setState({projectId: qs.id});
-            if (!loadingAccesses) {
-                dispatch(accessActions.getAll(qs.id));
-            }
-            if (!loadingFieldnames) {
-                dispatch(fieldnameActions.getAll(qs.id));
-            }
-            if (!loadingFields) {
-                dispatch(fieldActions.getAll(qs.id));
-            }
-            if (!loadingPos) {
-                dispatch(poActions.getAll(qs.id));
-            }
-            if (!loadingSelection) {
-                dispatch(projectActions.getById(qs.id));
-            }
-        }
-    }
+    //     var qs = queryString.parse(location.search);
+    //     if (qs.id) {
+    //         this.setState({projectId: qs.id});
+    //         if (!loadingAccesses) {
+    //             dispatch(accessActions.getAll(qs.id));
+    //         }
+    //         if (!loadingFieldnames) {
+    //             dispatch(fieldnameActions.getAll(qs.id));
+    //         }
+    //         if (!loadingFields) {
+    //             dispatch(fieldActions.getAll(qs.id));
+    //         }
+    //         if (!loadingPos) {
+    //             dispatch(poActions.getAll(qs.id));
+    //         }
+    //         if (!loadingSelection) {
+    //             dispatch(projectActions.getById(qs.id));
+    //         }
+    //     }
+    // }
 
     refreshStore() {
         const { dispatch } = this.props;
@@ -758,7 +758,7 @@ class Certificates extends React.Component {
                                 screenId={screenId}
                                 selectedIds={selectedIds}
                                 updateSelectedIds = {this.updateSelectedIds}
-                                handleSelectionReload={this.handleSelectionReload}
+                                // handleSelectionReload={this.handleSelectionReload}
                                 toggleUnlock={this.toggleUnlock}
                                 unlocked={unlocked}
                                 screen={screen}

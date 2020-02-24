@@ -94,26 +94,6 @@ function doesMatch(search, array, type, isEqual) {
     }
 }
 
-// function getTableIds(selectedRows, screenBodys) {
-//     if (screenBodys) {
-        
-//         let filtered = screenBodys.filter(function (s) {
-//             return selectedRows.includes(s._id);
-//         });
-        
-//         return filtered.reduce(function (acc, cur) {
-            
-//             if(!acc.includes(cur.tablesId)) {
-//                 acc.push(cur.tablesId);
-//             }
-//             return acc;
-//         }, []);
-
-//     } else {
-//         return [];
-//     }
-// }
-
 function getInputType(dbFieldType) {
     switch(dbFieldType) {
         case 'Number': return 'number';
@@ -216,18 +196,24 @@ class Suppliers extends React.Component {
         }
         // this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
+        
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
+        this.handleChangeRow = this.handleChangeRow.bind(this);
+
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
+        
         this.generateHeader = this.generateHeader.bind(this);
         this.generateNewRow = this.generateNewRow.bind(this);
+        this.generateBody = this.generateBody.bind(this);
+
         this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
-        this.handleChangeNewRow = this.handleChangeNewRow.bind(this);
+        
         this.toggleNewRow = this.toggleNewRow.bind(this);
-        this.generateBody = this.generateBody.bind(this);
+        
         this.filterName = this.filterName.bind(this);
     };
     
@@ -268,18 +254,7 @@ class Suppliers extends React.Component {
                 bodysForShow: getBodys(suppliers, headersForShow),
             });
         }
-
-        // if (selectedRows !== prevState.selectedRows || bodysForShow != prevState.bodysForShow) {
-        //     this.updateSelectedIds(getTableIds(selectedRows, bodysForShow));
-        // }
     }
-
-    // updateSelectedIds(selectedIds) {
-    //     this.setState({
-    //         ...this.state,
-    //         selectedIds: selectedIds
-    //     });
-    // }
 
     keyHandler(e) {
 
@@ -335,6 +310,21 @@ class Suppliers extends React.Component {
                 [name]: value
             }
         });
+    }
+
+    handleChangeRow(event){
+        // event.preventDefault();
+        const target = event.target;
+        const name = target.name;
+        const { supplier } = this.state;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        this.setState({
+            ...this.state,
+            supplier:{
+                ...supplier,
+                [name]: value
+            }
+        }); 
     }
 
     updateSelectedRows(id) {
@@ -452,20 +442,19 @@ class Suppliers extends React.Component {
         }
     }
 
-    generateNewRow(supplier, newRow) {
-        const { headersForShow, newRowColor } = this.state;
-        if (!_.isEmpty(headersForShow) && newRow) {
-            let screenHeaders = headersForShow;
+    generateNewRow(screenHeaders) {
+        const { supplier, newRow, newRowColor } = this.state;
+        if (!_.isEmpty(screenHeaders) && newRow) {
             const tempInputArray = [];
-            screenHeaders.map(function (screenHeader, index) {
+            screenHeaders.map(screenHeader => {
                 tempInputArray.push(
                     <NewRowInput
-                        key={index}
                         fieldType={getInputType(screenHeader.fields.type)}
                         fieldName={screenHeader.fields.name}
-                        fieldValue={supplier[screenHeader.fields.name]}
-                        onChange={event => this.handleChangeNewRow(event)}
+                        fieldValue={supplier[screenHeader.fields.name] || ''}
+                        onChange={this.handleChangeRow}
                         color={newRowColor}
+                        key={screenHeader._id}
                     />
                 );
             });
@@ -581,23 +570,7 @@ class Suppliers extends React.Component {
         }
     }
 
-    handleChangeNewRow(event){
-        const { projectId } = this.props;
-        const { supplier} = this.state;
-        const target = event.target;
-        const name = target.name;
-        const value = target.type === 'checkbox' ? target.checked : target.value;
-        if (projectId) {
-            this.setState({
-                ...this.state,
-                supplier: {
-                    ...supplier,
-                    [name]: value,
-                    projectId: projectId
-                }
-            });
-        } 
-    }
+
 
     toggleNewRow(event) {
         event.preventDefault()
@@ -728,7 +701,7 @@ class Suppliers extends React.Component {
                                     {this.generateHeader(headersForShow)}
                                 </thead>
                                 <tbody className="full-height">
-                                    {this.generateNewRow(supplier, newRow)}
+                                    {this.generateNewRow(headersForShow)}
                                     {this.generateBody(bodysForShow)}
                                 </tbody>
                             </table>

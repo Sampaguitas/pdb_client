@@ -628,7 +628,7 @@ class ProjectTable extends Component {
     render() {
 
         const { 
-            handleSelectionReload,
+            // handleSelectionReload,
             toggleDelete,
             toggleUnlock, 
             screenHeaders, 
