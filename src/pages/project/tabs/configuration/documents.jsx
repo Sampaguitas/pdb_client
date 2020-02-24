@@ -189,7 +189,6 @@ class Documents extends React.Component {
         this.handleSubmitDocDef = this.handleSubmitDocDef.bind(this);
         this.handleChangeTemplate = this.handleChangeTemplate.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
-        // this.handleChangeField = this.handleChangeFields.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleDownloadFile = this.handleDownloadFile.bind(this);
         this.handlePreviewFile = this.handlePreviewFile.bind(this);
@@ -266,29 +265,43 @@ class Documents extends React.Component {
         }
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     const { docdefs } = nextProps;
-    //     const { selectedTemplate } = this.state;
-    //     if(!_.isEqual(docdefs, this.props.docdefs) && docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
-    //         this.setState({
-    //             selectedTemplate: arraySorted(docConf(docdefs.items), "name")[0]._id
-    //         });
-    //     }
-    // }
-
     componentDidUpdate(prevProps, prevState) {
         const { fields, docdefs, refreshFieldnames, refreshDocfields } = this.props;
         const { selectedTemplate } = this.state;
 
         if(docdefs != prevProps.docdefs && docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
-            this.setState({
-                selectedTemplate: arraySorted(docConf(docdefs.items), "name")[0]._id
-            });
+            this.setState({selectedTemplate: arraySorted(docConf(docdefs.items), "name")[0]._id});
         }
 
-        if (fields != prevProps.fields) {
-            refreshFieldnames;
-            refreshDocfields;
+        if (selectedTemplate != prevState.selectedTemplate) {
+            this.setState({
+                selectedRows: [],
+                selectAllRows: false,
+                inputKey: Date.now(),
+                fileName:''
+            }, () => {
+                if (docdefs.items) {
+                    let obj = findObj(docdefs.items, selectedTemplate);
+                    if (obj) {
+                        this.setState({
+                            ...this.state,
+                            fileName: obj.field
+                        }, () => {
+                            if (!!obj.row2){
+                                this.setState({
+                                    ...this.state,
+                                    multi: true
+                                });
+                            } else {
+                                this.setState({
+                                    ...this.state,
+                                    multi: false
+                                })
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 
@@ -745,40 +758,9 @@ class Documents extends React.Component {
         });
     }
 
-
     handleChangeTemplate(event) {
-        const { docdefs } = this.props;
         const value =  event.target.value;
-        this.setState({
-            ...this.state,
-            selectedTemplate: value,
-            selectedRows: [],
-            selectAllRows: false,
-            inputKey: Date.now(),
-            fileName:''
-        }, () => {
-            if (docdefs.items) {
-                let obj = findObj(docdefs.items, value);
-                if (obj) {
-                    this.setState({
-                        ...this.state,
-                        fileName: obj.field
-                    }, () => {
-                        if (!!obj.row2){
-                            this.setState({
-                                ...this.state,
-                                multi: true
-                            });
-                        } else {
-                            this.setState({
-                                ...this.state,
-                                multi: false
-                            })
-                        }
-                    });
-                }
-            }
-        });
+        this.setState({selectedTemplate: value});
     }
     
     toggleSelectAllRow() {

@@ -127,7 +127,7 @@ class Screens extends React.Component {
 
         const { refreshFields, refreshFieldnames } =this.props;
         //refreshStore
-        refreshFields
+        refreshFields;
         refreshFieldnames;
 
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
@@ -138,14 +138,6 @@ class Screens extends React.Component {
                 return this.keyHandler(e);
             }
         });
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        const { fields, refreshFieldnames } = this.props;
-
-        if (fields != prevProps.fields) {
-            refreshFieldnames;
-        }
     }
 
     keyHandler(e) {
@@ -216,10 +208,7 @@ class Screens extends React.Component {
                             newRow:false,
                             fieldName:{},
                             newRowFocus: false
-                        }, () => {
-                            refreshFields,
-                            refreshFieldnames;
-                        });
+                        }, refreshFieldnames);
                     }, 1000);                                
                 });
             })
@@ -236,10 +225,7 @@ class Screens extends React.Component {
                             newRow:false,
                             fieldName:{},
                             newRowFocus: false                                    
-                        }, () => {
-                            refreshFields,
-                            refreshFieldnames;
-                        });
+                        }, refreshFieldnames);
                     }, 1000);                                                      
                 });
             });
@@ -316,19 +302,13 @@ class Screens extends React.Component {
                     this.setState({
                         ...this.state,
                         deleting: false
-                    },
-                    () => {
-                        refreshFieldnames;
-                    });
+                    }, refreshFieldnames);
                 })
                 .catch( err => {
                     this.setState({
                         ...this.state,
                         deleting: false
-                    },
-                    ()=> {
-                        refreshFieldnames;
-                    });
+                    }, refreshFieldnames);
                 });
             });
         }
@@ -615,7 +595,7 @@ class Screens extends React.Component {
                                             fieldValue={fieldName.align}
                                             options={arrAlign}
                                             optionText="name"
-                                            fromTbls={this.generateFromTbls(screens, selectedScreen)}
+                                            fromTbls={[]}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
                                         />

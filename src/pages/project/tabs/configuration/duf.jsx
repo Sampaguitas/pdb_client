@@ -196,9 +196,7 @@ class Duf extends React.Component {
                             newRow:false,
                             fieldName:{},
                             newRowFocus: false
-                        }, () => {
-                            refreshFieldnames;
-                        });
+                        }, refreshFieldnames);
                     }, 1000);                                
                 });
             })
@@ -215,9 +213,7 @@ class Duf extends React.Component {
                             newRow:false,
                             fieldName:{},
                             newRowFocus: false                                    
-                        }, () => {
-                            refreshFieldnames;
-                        });
+                        }, refreshFieldnames);
                     }, 1000);                                                       
                 });
             });
@@ -294,19 +290,13 @@ class Duf extends React.Component {
                     this.setState({
                         ...this.state,
                         deleting: false
-                    },
-                    () => {
-                        refreshFieldnames;
-                    });
+                    }, refreshFieldnames);
                 })
                 .catch( err => {
                     this.setState({
                         ...this.state,
                         deleting: false
-                    },
-                    ()=> {
-                        refreshFieldnames;
-                    });
+                    }, refreshFieldnames);
                 });
             });
         }

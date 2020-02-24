@@ -49,10 +49,6 @@ class Configuration extends React.Component {
             submittedProject: false,
             projectUpdating: false,
             projectDeleting: false,
-            
-            // submittedSupplier: false,
-            // supplierUpdating: false,
-            // supplierDeleting: false,
             projectId: '',
             alert: {
                 type:'',
@@ -62,9 +58,6 @@ class Configuration extends React.Component {
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSubmitProject=this.handleSubmitProject.bind(this);
         this.handleDeleteProject=this.handleDeleteProject.bind(this);
-        // this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
-        // this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
-        
         this.refreshProject = this.refreshProject.bind(this);
         this.refreshDocfields = this.refreshDocfields.bind(this);
         this.refreshFieldnames = this.refreshFieldnames.bind(this);
@@ -134,6 +127,16 @@ class Configuration extends React.Component {
         }
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        const { fields } = this.props;
+        
+        if (fields != prevProps.fields){
+            this.refreshFieldnames;
+            this.refreshDocfields;
+        }
+
+    }
+
     handleClearAlert(event){
         event.preventDefault;
         const { dispatch } = this.props;
@@ -197,7 +200,6 @@ class Configuration extends React.Component {
 
     handleSubmitProject(event, project) {
         event.preventDefault();
-        // const { dispatch } = this.props;
         this.setState({submittedProject: true});
         if (project._id, project.name && project.erpId && project.opcoId) {
             this.setState({ submittedProject: false, projectUpdating: true });
@@ -223,7 +225,6 @@ class Configuration extends React.Component {
                         }
                     }, this.refreshProject);
                 } else {
-                    // console.log('responce ok')
                     this.setState({
                         projectUpdating: false,
                         alert: {
@@ -252,9 +253,6 @@ class Configuration extends React.Component {
                         if (responce.status === 401) {
                             localStorage.removeItem('user');
                             location.reload(true);
-                        // } else if (responce.status === 200) {
-                        //     dispatch(alertActions.success('Project successfully deleted'));
-                        //     history.push('/');
                         } else {
                             this.setState({
                                 projectDeleting: false,
@@ -280,127 +278,6 @@ class Configuration extends React.Component {
             });
         }
     }
-
-    // handleSubmitSupplier(event, supplier, callback) {
-    //     event.preventDefault();
-    //     // const { dispatch } = this.props;
-    //     this.setState({ submittedSupplier: true });
-    //     if(supplier.id && supplier.name && supplier.projectId) {
-    //         this.setState({ submittedSupplier: false, supplierUpdating: true });
-    //         const requestOptions = {
-    //             method: 'PUT',
-    //             headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
-    //             body: JSON.stringify(supplier)
-    //         }
-    //         return fetch(`${config.apiUrl}/supplier/update?id=${supplier.id}`, requestOptions)
-    //         .then(responce => responce.text().then(text => {
-    //             const data = text && JSON.parse(text);
-    //             if (!responce.ok) {
-    //                 if (responce.status === 401) {
-    //                     localStorage.removeItem('user');
-    //                     location.reload(true);
-    //                 }
-    //                 this.setState({
-    //                     supplierUpdating: false,
-    //                     alert: {
-    //                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                         message: data.message
-    //                     }
-    //                 }, callback);
-    //             } else {
-    //                 // console.log('responce ok')
-    //                 this.setState({
-    //                     supplierUpdating: false,
-    //                     alert: {
-    //                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                         message: data.message
-    //                     }
-    //                 }, callback);
-    //             }
-    //         }));
-    //     } else if (supplier.name && supplier.projectId) {
-    //         this.setState({ submittedSupplier: false, supplierUpdating: true });
-    //         const requestOptions = {
-    //             method: 'POST',
-    //             headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
-    //             body: JSON.stringify(supplier)
-    //         }
-
-    //         return fetch(`${config.apiUrl}/supplier/create`, requestOptions)
-    //         .then(responce => responce.text().then(text => {
-    //             const data = text && JSON.parse(text);
-    //             if (!responce.ok) {
-    //                 if (responce.status === 401) {
-    //                     localStorage.removeItem('user');
-    //                     location.reload(true);
-    //                 }
-    //                 this.setState({
-    //                     supplierUpdating: false,
-    //                     alert: {
-    //                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                         message: data.message
-    //                     }
-    //                 }, callback);
-    //             } else {
-    //                 // console.log('responce ok')
-    //                 this.setState({
-    //                     supplierUpdating: false,
-    //                     alert: {
-    //                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                         message: data.message
-    //                     }
-    //                 }, callback);
-    //             }
-    //         }));
-    //     }
-    // }
-
-    
-
-    // handleDeleteSupplier(event, id, callback) {
-    //     event.preventDefault();
-    //     if (id) {
-    //         this.setState({ supplierDeleting: true }, () => {
-    //             const requestOptions = {
-    //                 method: 'DELETE',
-    //                 headers: authHeader()
-    //             };
-    //             return fetch(`${config.apiUrl}/supplier/delete?id=${id}`, requestOptions)
-    //             .then(responce => responce.text().then(text => {
-    //                 const data = text && JSON.parse(text);
-    //                 if (!responce.ok) {
-    //                     if (responce.status === 401) {
-    //                         localStorage.removeItem('user');
-    //                         location.reload(true);
-    //                     }
-    //                     this.setState({
-    //                         supplierDeleting: false,
-    //                         alert: {
-    //                             type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                             message: data.message
-    //                         }
-    //                     }, callback);
-    //                 } else {
-    //                     // console.log('responce ok')
-    //                     this.setState({
-    //                         supplierDeleting: false,
-    //                         alert: {
-    //                             type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                             message: data.message
-    //                         }
-    //                     }, callback);
-    //                 }
-    //             }));
-    //         });          
-    //     } else {
-    //         this.setState({
-    //             alert: {
-    //                 type: 'alert-danger',
-    //                 message: 'Supplier id is missing.'
-    //             }
-    //         }, callback);
-    //     }
-    // }
 
     render() {
         const {
@@ -499,7 +376,6 @@ function mapStateToProps(state) {
         users 
     } = state;
 
-    // const {  } = state.projects; //projectDeleting, projectUpdating
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
     const { loadingDocfields } = docfields;
@@ -524,8 +400,6 @@ function mapStateToProps(state) {
         loadingSelection,
         loadingSuppliers,
         opcos,
-        // projectDeleting,
-        // projectUpdating,
         screens,
         selection,
         suppliers,

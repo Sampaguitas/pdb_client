@@ -38,26 +38,6 @@ class TableCheckBox extends Component {
         });
     }
 
-    // componentWillReceiveProps(nextProps) {
-    //     if(!_.isEqual(nextProps.fieldValue, this.props.fieldValue)) {
-    //         this.setState({
-    //             collection: nextProps.collection,
-    //             objectId: nextProps.objectId,
-    //             fieldName: nextProps.fieldName,
-    //             fieldValue: nextProps.fieldValue ? nextProps.fieldValue : false,
-    //             isSelected: false,
-    //             color: 'green',
-    //         }, () => {
-    //             setTimeout(() => {
-    //                 this.setState({
-    //                     ...this.state,
-    //                     color: '#0070C0',
-    //                 });
-    //             }, 1000);
-    //         });
-    //     }
-    // }
-
     componentDidUpdate(prevProps, prevState) {
         const {
             collection,

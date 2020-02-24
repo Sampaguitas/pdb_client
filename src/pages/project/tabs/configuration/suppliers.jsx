@@ -240,9 +240,9 @@ class Suppliers extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { selectedRows, headersForShow, bodysForShow, screenId } = this.state;
-        const { fieldnames, suppliers} = this.props;
-        
+        const { headersForShow, screenId } = this.state;
+        const { fieldnames, suppliers } = this.props;
+
         if ( fieldnames != prevProps.fieldnames){
             this.setState({
                 headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
@@ -381,7 +381,7 @@ class Suppliers extends React.Component {
                     this.setState({deleting: false}, refreshSuppliers);
                 })
                 .catch( err => {
-                    this.setState({deleting: false},refreshSuppliers);
+                    this.setState({deleting: false}, refreshSuppliers);
                 });
             });
         }
@@ -503,9 +503,7 @@ class Suppliers extends React.Component {
                                 newRow:false,
                                 supplier:{},
                                 newRowFocus: false
-                            }, () => {
-                                refreshSuppliers;
-                            });
+                            }, refreshSuppliers);
                         }, 1000);                                
                     });
                 })
@@ -522,9 +520,7 @@ class Suppliers extends React.Component {
                                 newRow:false,
                                 supplier:{},
                                 newRowFocus: false                                    
-                            }, () => {
-                                refreshSuppliers;
-                            });
+                            }, refreshSuppliers);
                         }, 1000);                                                       
                     });
                 });
@@ -542,9 +538,7 @@ class Suppliers extends React.Component {
                         newRow:false,
                         supplier:{},
                         newRowFocus: false                                    
-                    }, () => {
-                        refreshSuppliers;
-                    });
+                    }, refreshSuppliers);
                 }, 1000);                                                       
             });
         }          
