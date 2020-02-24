@@ -100,7 +100,7 @@ class General extends React.Component {
     }
 
     componentDidMount() {
-        const { users, selection, refreshProject } = this.props;
+        const { users, selection, accesses, refreshProject } = this.props;
         //refreshStore
         refreshProject;
 

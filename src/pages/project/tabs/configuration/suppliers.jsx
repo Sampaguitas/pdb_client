@@ -92,25 +92,25 @@ function doesMatch(search, array, type, isEqual) {
     }
 }
 
-function getTableIds(selectedRows, screenBodys) {
-    if (screenBodys) {
+// function getTableIds(selectedRows, screenBodys) {
+//     if (screenBodys) {
         
-        let filtered = screenBodys.filter(function (s) {
-            return selectedRows.includes(s._id);
-        });
+//         let filtered = screenBodys.filter(function (s) {
+//             return selectedRows.includes(s._id);
+//         });
         
-        return filtered.reduce(function (acc, cur) {
+//         return filtered.reduce(function (acc, cur) {
             
-            if(!acc.includes(cur.tablesId)) {
-                acc.push(cur.tablesId);
-            }
-            return acc;
-        }, []);
+//             if(!acc.includes(cur.tablesId)) {
+//                 acc.push(cur.tablesId);
+//             }
+//             return acc;
+//         }, []);
 
-    } else {
-        return [];
-    }
-}
+//     } else {
+//         return [];
+//     }
+// }
 
 function getInputType(dbFieldType) {
     switch(dbFieldType) {
@@ -173,10 +173,10 @@ function getBodys(suppliers, headersForShow){
                 }
             });
             objectRow  = {
-                _id: i,
-                tablesId: {
-                    supplierId: supplier._id,
-                },
+                _id: supplier._id,
+                // tablesId: {
+                //     supplierId: ,
+                // },
                 fields: arrayRow
             };
             arrayBody.push(objectRow);
@@ -198,27 +198,30 @@ class Suppliers extends React.Component {
             screenId: '5cd2b644fd333616dc360b69',
             unlocked: false,
             screen: 'supplier',
-            selectedIds: [],
+            // selectedIds: [],
             //project-table
             header: {},
             selectedRows: [],
             selectAllRows: false,
             isEqual: false,
+            deleting: false,
         }
-        this.updateSelectedIds = this.updateSelectedIds.bind(this);
+        // this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
-        this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
+        this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
         this.filterName = this.filterName.bind(this);
     };
     
     componentDidMount() {
-        const { fieldnames, suppliers, refreshSuppliers } = this.props;
+        const { fieldnames, suppliers, refreshFieldnames, refreshSuppliers } = this.props;
         const { screenId, headersForShow } = this.state;
         //refreshStore
+        refreshFieldnames;
         refreshSuppliers;
 
         this.setState({
@@ -252,17 +255,17 @@ class Suppliers extends React.Component {
             });
         }
 
-        if (selectedRows !== prevState.selectedRows || bodysForShow != prevState.bodysForShow) {
-            this.updateSelectedIds(getTableIds(selectedRows, bodysForShow));
-        }
+        // if (selectedRows !== prevState.selectedRows || bodysForShow != prevState.bodysForShow) {
+        //     this.updateSelectedIds(getTableIds(selectedRows, bodysForShow));
+        // }
     }
 
-    updateSelectedIds(selectedIds) {
-        this.setState({
-            ...this.state,
-            selectedIds: selectedIds
-        });
-    }
+    // updateSelectedIds(selectedIds) {
+    //     this.setState({
+    //         ...this.state,
+    //         selectedIds: selectedIds
+    //     });
+    // }
 
     keyHandler(e) {
 
@@ -320,6 +323,21 @@ class Suppliers extends React.Component {
         });
     }
 
+    updateSelectedRows(id) {
+        const { selectedRows } = this.state;
+        if (selectedRows.includes(id)) {
+            this.setState({
+                ...this.state,
+                selectedRows: arrayRemove(selectedRows, id)
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedRows: [...selectedRows, id]
+            });
+        }       
+    }
+
     toggleSelectAllRow() {
         const { selectAllRows, bodysForShow } = this.state;
         // const { screenBodys } = this.props;
@@ -340,20 +358,30 @@ class Suppliers extends React.Component {
         }
     }
 
-    updateSelectedRows(id) {
-        const { selectedRows } = this.state;
-        if (selectedRows.includes(id)) {
+    handleDelete(event, id) {
+        event.preventDefault();
+        const { refreshSuppliers } = this.props;
+        if(id) {
             this.setState({
                 ...this.state,
-                selectedRows: arrayRemove(selectedRows, id)
+                deleting: true 
+            }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader()},
+                };
+                return fetch(`${config.apiUrl}/supplier/delete?id=${JSON.stringify(id)}`, requestOptions)
+                .then( () => {
+                    this.setState({deleting: false}, refreshSuppliers);
+                })
+                .catch( err => {
+                    this.setState({deleting: false},refreshSuppliers);
+                });
             });
-        } else {
-            this.setState({
-                ...this.state,
-                selectedRows: [...selectedRows, id]
-            });
-        }       
+        }
     }
+
+    
 
     filterName(array){
         const {header, isEqual, headersForShow} = this.state;
@@ -479,7 +507,8 @@ class Suppliers extends React.Component {
             // show,
             // submitted,
             // loading,
-            // deleting, 
+            selectedRows,
+            deleting, 
             headersForShow,
             bodysForShow  
         } = this.state;
@@ -504,10 +533,17 @@ class Suppliers extends React.Component {
                         </button>
                         <button
                             className="btn btn-leeuwen btn-lg"
-                            // onClick={ (event) => this.handleDelete(event, selectedRows)}
+                            onClick={ (event) => this.handleDelete(event, selectedRows)}
                             style={{height: '34px'}}
                         >
-                            <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Supplier(s)</span>
+                            <span>
+                                { deleting ? 
+                                    <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/> 
+                                :
+                                    <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
+                                }
+                                Delete Supplier(s)
+                            </span>
                         </button>
                     </div>
                 </div>
