@@ -1184,11 +1184,11 @@ class Documents extends React.Component {
                                         />
                                         {docDef.doctypeId == '5d1927131424114e3884ac80' &&
                                             <CheckBox
-                                            title="Master and Detail sheet"
-                                            name="detail"
-                                            checked={docDef.detail}
-                                            onChange={this.handleChangeDocDef}
-                                            disabled={false}
+                                                title="Master and Detail sheet"
+                                                name="detail"
+                                                checked={docDef.detail}
+                                                onChange={this.handleChangeDocDef}
+                                                disabled={false}
                                             />
                                         }
                                         <Input

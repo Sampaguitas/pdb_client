@@ -12,13 +12,14 @@ import {
     fieldnameActions, 
     fieldActions,
     poActions, 
-    projectActions 
+    projectActions,
+    supplierActions
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import Modal from '../../../_components/modal';
 import SplitLine from '../../../_components/split-line/split-sub';
-
+import CheckLocation from '../../../_components/check-location';
 import moment from 'moment';
 import _ from 'lodash';
 // import { accessConstants } from '../../../_constants';
@@ -443,6 +444,66 @@ function selectionHasNfi (selectedIds, pos) {
     }
 }
 
+function getNfiList(pos) {
+    if (pos.hasOwnProperty('items') && !_.isUndefined(pos.items)){
+        let tempNfi = pos.items.reduce(function (accPo, currPo) {
+            let currPoNfi = currPo.subs.reduce(function (accSub, currSub) {
+                if (currSub.nfi) {
+                    accSub.push(currSub.nfi);
+                }
+                return accSub;
+            }, []);
+            return accPo.concat(currPoNfi);
+        }, [])
+        let uniqueNfi = [...new Set(tempNfi)];
+        return uniqueNfi.sort(function (a, b) {
+            return a-b
+        }).map(function(nfi) {
+            return (
+                <option
+                    key={nfi}
+                    value={nfi}
+                >
+                    {nfi}
+                </option>
+            );
+        });
+    }
+}
+
+function getLocationList(suppliers) {
+    if (suppliers.hasOwnProperty('items') && !_.isUndefined(suppliers.items)){
+        let tempSuppliers = [];
+        suppliers.items.reduce(function (acc, curr) {
+            if(curr.name && !acc.includes(curr.name)) {
+                tempSuppliers.push({ _id: curr._id, name: curr.name});
+                acc.push(curr.name)
+            }
+            return acc;
+        }, [])
+        return tempSuppliers.sort(function (a, b) {
+            var nameA = a.name.toUpperCase();
+            var nameB = b.name.toUpperCase()
+            if (nameA < nameB) {
+                return -1;
+              }
+              if (nameA > nameB) {
+                return 1;
+              }
+              return 0;
+        }).map(function(sup, index) {
+            return (
+                <option
+                    key={index}
+                    value={sup._id}
+                >
+                    {sup.name}
+                </option>
+            );
+        });
+    }
+}
+
 class ReleaseData extends React.Component {
     constructor(props) {
         super(props);
@@ -462,6 +523,8 @@ class ReleaseData extends React.Component {
             selectedType: 'text',
             updateValue:'',
             inputNfi: '',
+            showLocation: false,
+            selectedLocation:'0',
             alert: {
                 type:'',
                 message:''
@@ -477,6 +540,7 @@ class ReleaseData extends React.Component {
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange=this.handleChange.bind(this);
+        this.handleCheckLocation=this.handleCheckLocation.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
@@ -503,7 +567,8 @@ class ReleaseData extends React.Component {
             loadingFieldnames,
             loadingFields,
             loadingPos,
-            loadingSelection, 
+            loadingSelection,
+            loadingSuppliers, 
             location,
             //---------
             fieldnames,
@@ -533,6 +598,9 @@ class ReleaseData extends React.Component {
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
+            }
+            if (!loadingSuppliers) {
+                dispatch(supplierActions.getAll(qs.id));
             }
         }
 
@@ -575,8 +643,6 @@ class ReleaseData extends React.Component {
                 bodysForShow: getBodys(fieldnames, pos, headersForShow),
             });
         }
-
-
     }
 
     handleClearAlert(event){
@@ -610,11 +676,16 @@ class ReleaseData extends React.Component {
 
     handleChange(event) {
         event.preventDefault();
-        const name =  event.target.name;
-        const value =  event.target.value;
+        const target = event.target;
+        const name  =  target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
             [name]: value
         });
+    }
+
+    handleCheckLocation(isChecked) {
+        this.setState({showLocation: isChecked});
     }
 
     handleGenerateFile(event) {
@@ -697,35 +768,6 @@ class ReleaseData extends React.Component {
             });
         }
     }
-
-    // selectedFieldOptions(fieldnames, fields, screenId) {
-    //     if (fieldnames.items && fields.items) {
-    //         let screenHeaders = generateScreenHeader(fieldnames, screenId);
-    //         let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
-    //             if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
-    //                 accumulator.push(currentValue.fieldId);
-    //             }
-    //             return accumulator;
-    //         }, []);
-    //         let fieldsFromHeader = fields.items.reduce(function (accumulator, currentValue) {
-    //             if (fieldIds.indexOf(currentValue._id) !== -1) {
-    //                 accumulator.push({ 
-    //                     value: currentValue._id,
-    //                     name: currentValue.custom
-    //                 });
-    //             }
-    //             return accumulator;
-    //         }, []);
-    //         return arraySorted(fieldsFromHeader, 'name').map(field => {
-    //             return (
-    //                 <option 
-    //                     key={field.value}
-    //                     value={field.value}>{field.name}
-    //                 </option>                
-    //             );
-    //         });
-    //     }
-    // }
 
     updateSelectedIds(selectedIds) {
         this.setState({
@@ -828,6 +870,8 @@ class ReleaseData extends React.Component {
             }
         }
     }
+
+    
 
     updateRequest(collection, fieldName, fieldValue, fieldType, objectIds) {
         const requestOptions = {
@@ -1078,7 +1122,9 @@ class ReleaseData extends React.Component {
             selectedField: '',
             selectedType: 'text',
             updateValue:'',
-            inputNfi: '',
+            inputNfi: showGenerate ? '0' : '',
+            showLocation: false,
+            selectedLocation: '0',
             alert: {
                 type:'',
                 message:''
@@ -1143,6 +1189,8 @@ class ReleaseData extends React.Component {
             selectedType,
             updateValue,
             inputNfi,
+            showLocation,
+            selectedLocation,
             //show modals
             showSplitLine,
             showEditValues,
@@ -1154,10 +1202,11 @@ class ReleaseData extends React.Component {
             bodysForShow,
             splitHeadersForShow,
             splitHeadersForSelect,
+            
 
         }= this.state;
 
-        const { accesses, docdefs, fieldnames, fields, pos, selection } = this.props;
+        const { accesses, docdefs, fieldnames, fields, pos, selection, suppliers } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         
         return (
@@ -1277,7 +1326,7 @@ class ReleaseData extends React.Component {
                 >
                     <div className="col-12">
                         <div className="form-group">
-                            <label htmlFor="updateValue">NFI Number</label>
+                            <label htmlFor="inputNfi">NFI Number</label>
                             <div className="input-group">
                                 <input
                                     className="form-control"
@@ -1342,6 +1391,38 @@ class ReleaseData extends React.Component {
                                     }
                                 </select>
                             </div>
+                            <div className="form-group">
+                                <label htmlFor="inputNfi">Select NFI</label>
+                                <select
+                                    className="form-control"
+                                    name="inputNfi"
+                                    value={inputNfi}
+                                    placeholder="Select NFI..."
+                                    onChange={this.handleChange}
+                                >
+                                    <option key="0" value="0">Select NFI...</option>
+                                    {getNfiList(pos)}
+                                </select>
+                            </div>
+                            <CheckLocation 
+                                title="Show Inspection Location"
+                                callback={this.handleCheckLocation}
+                            />
+                            {showLocation &&
+                                <div className="form-group">
+                                    <label htmlFor="selectedLocation">Select Location</label>
+                                    <select
+                                        className="form-control"
+                                        name="selectedLocation"
+                                        value={selectedLocation}
+                                        placeholder="Select Location..."
+                                        onChange={this.handleChange}
+                                    >
+                                        <option key="0" value="0">Select Location...</option>
+                                        {getLocationList(suppliers)}
+                                    </select>
+                                </div>
+                            }
                             <div className="text-right">
                                 <button className="btn btn-success btn-lg" onClick={event => this.handleGenerateFile(event)}>
                                     <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
@@ -1376,13 +1457,14 @@ class ReleaseData extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, docdefs, fieldnames, fields, pos, selection } = state;
+    const { accesses, alert, docdefs, fieldnames, fields, pos, selection, suppliers } = state;
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingPos } = pos;
     const { loadingSelection } = selection;
+    const { loadingSuppliers } = suppliers;
     return {
         accesses,
         alert,
@@ -1395,8 +1477,10 @@ function mapStateToProps(state) {
         loadingFields,
         loadingPos,
         loadingSelection,
+        loadingSuppliers,
         pos,
-        selection
+        selection,
+        suppliers
     };
 }
 
