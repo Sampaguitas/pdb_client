@@ -60,7 +60,6 @@ class Configuration extends React.Component {
             }
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
-        // this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.handleSubmitProject=this.handleSubmitProject.bind(this);
         this.handleDeleteProject=this.handleDeleteProject.bind(this);
         // this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
@@ -146,69 +145,6 @@ class Configuration extends React.Component {
         });
         dispatch(alertActions.clear());
     }
-
-    // handleSelectionReload(event){
-    //     // event.preventDefault();
-    //     const { 
-    //         currencies,
-    //         erps,
-    //         dispatch,
-    //         loadingAccesses,
-    //         loadingDocdefs,
-    //         loadingDocfields,
-    //         loadingFieldnames,
-    //         loadingFields,
-    //         loadingSelection,
-    //         loadingSuppliers,
-    //         location,
-    //         opcos,
-    //         screens,
-    //         users
-    //     } = this.props;
-
-    //     var qs = queryString.parse(location.search);
-    //     if (qs.id) {
-    //         //State items with projectId
-    //         this.setState({projectId: qs.id});
-    //         if (!loadingAccesses) {
-    //             dispatch(accessActions.getAll(qs.id));
-    //         }
-    //         if (!loadingDocdefs) {
-    //             dispatch(docdefActions.getAll(qs.id));
-    //         }
-    //         if (!loadingDocfields) {
-    //             dispatch(docfieldActions.getAll(qs.id));
-    //         }
-    //         if (!loadingFieldnames) {
-    //             dispatch(fieldnameActions.getAll(qs.id));
-    //         }
-    //         if (!loadingFields) {
-    //             dispatch(fieldActions.getAll(qs.id));
-    //         }
-    //         if (!loadingSelection) {
-    //             dispatch(projectActions.getById(qs.id));
-    //         }
-    //         if (!loadingSuppliers) {
-    //             dispatch(supplierActions.getAll(qs.id));
-    //         }
-    //     }
-    //     //State items without projectId
-    //     if (!currencies.items) {
-    //         dispatch(currencyActions.getAll());
-    //     }
-    //     if (!erps.items) {
-    //         dispatch(erpActions.getAll());
-    //     }
-    //     if (!opcos.items) {
-    //         dispatch(opcoActions.getAll());
-    //     }
-    //     if (!screens.items) {
-    //         dispatch(screenActions.getAll());
-    //     }
-    //     if (!users.items) {
-    //         dispatch(userActions.getAll());
-    //     }    
-    // }
 
     refreshProject() {
         const { dispatch } = this.props;
@@ -508,7 +444,6 @@ class Configuration extends React.Component {
                     <Tabs
                         tabs={tabs}
                         //Functions
-                        // handleSelectionReload={this.handleSelectionReload}
                         handleSubmitProject={this.handleSubmitProject}
                         handleDeleteProject={this.handleDeleteProject}
                         

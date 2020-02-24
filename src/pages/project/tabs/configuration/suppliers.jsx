@@ -317,12 +317,14 @@ class Suppliers extends React.Component {
         const target = event.target;
         const name = target.name;
         const { supplier } = this.state;
+        const { projectId } = this.props;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
             ...this.state,
             supplier:{
                 ...supplier,
-                [name]: value
+                projectId: projectId,
+                [name]: value,
             }
         }); 
     }

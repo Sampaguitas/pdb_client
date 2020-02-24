@@ -302,7 +302,6 @@ class PackingDetails extends React.Component {
             showDelete: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
-        this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
@@ -385,45 +384,6 @@ class PackingDetails extends React.Component {
             } 
         });
         dispatch(alertActions.clear());
-    }
-
-    handleSelectionReload(event){
-        const { 
-            dispatch,
-            loadingAccesses,
-            loadingDocdefs,
-            loadingFieldnames,
-            loadingFields,
-            loadingPos,
-            loadingSelection, 
-            location 
-        } = this.props;
-
-        var qs = queryString.parse(location.search);
-        if (qs.id) {
-            this.setState({projectId: qs.id});
-            if (!loadingAccesses) {
-                dispatch(accessActions.getAll(qs.id));
-            }
-            if (!loadingDocdefs) {
-                dispatch(docdefActions.getAll(qs.id));
-            }
-            if (!loadingCollipacks) {
-                dispatch(collipackActions.getById(qs.id));
-            }
-            if (!loadingFieldnames) {
-                dispatch(fieldnameActions.getAll(qs.id));
-            }
-            if (!loadingFields) {
-                dispatch(fieldActions.getAll(qs.id));
-            }
-            if (!loadingPos) {
-                dispatch(poActions.getAll(qs.id));
-            }
-            if (!loadingSelection) {
-                dispatch(projectActions.getById(qs.id));
-            }
-        }  
     }
 
     refreshStore() {
@@ -769,7 +729,6 @@ class PackingDetails extends React.Component {
                                 screenId={screenId}
                                 selectedIds={selectedIds}
                                 updateSelectedIds = {this.updateSelectedIds}
-                                handleSelectionReload={this.handleSelectionReload}
                                 toggleUnlock={this.toggleUnlock}
                                 unlocked={unlocked}
                                 screen={screen}

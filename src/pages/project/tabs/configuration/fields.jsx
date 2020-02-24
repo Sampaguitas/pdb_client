@@ -112,6 +112,14 @@ class Fields extends React.Component {
         });
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        const { fields, refreshFieldnames } = this.props;
+
+        if (fields != prevProps.fields) {
+            refreshFieldnames;
+        }
+    }
+
     keyHandler(e) {
 
         let target = e.target;

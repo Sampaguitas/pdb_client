@@ -138,9 +138,14 @@ class Screens extends React.Component {
                 return this.keyHandler(e);
             }
         });
+    }
 
-        
+    componentDidUpdate(prevProps, prevState) {
+        const { fields, refreshFieldnames } = this.props;
 
+        if (fields != prevProps.fields) {
+            refreshFieldnames;
+        }
     }
 
     keyHandler(e) {
@@ -186,7 +191,7 @@ class Screens extends React.Component {
 
     cerateNewRow(event) {
         event.preventDefault();
-        const { refreshFieldnames } = this.props;
+        const { refreshFields, refreshFieldnames } = this.props;
         const { fieldName } = this.state;
         this.setState({
             ...this.state,
@@ -212,6 +217,7 @@ class Screens extends React.Component {
                             fieldName:{},
                             newRowFocus: false
                         }, () => {
+                            refreshFields,
                             refreshFieldnames;
                         });
                     }, 1000);                                
@@ -231,6 +237,7 @@ class Screens extends React.Component {
                             fieldName:{},
                             newRowFocus: false                                    
                         }, () => {
+                            refreshFields,
                             refreshFieldnames;
                         });
                     }, 1000);                                                      
@@ -477,7 +484,7 @@ class Screens extends React.Component {
             {_id: '5cd2b643fd333616dc360b67', name: 'Print Transportdocuments', fromTbls: ['collipack']},
             {_id: '5cd2b642fd333616dc360b65', name: 'Certificates', fromTbls: ['po', 'sub', 'certificate']},
             {_id: '5cd2b643fd333616dc360b68', name: 'Data Upload File', fromTbls: ['packitem', 'collipack']}, //what is this screen Dave?
-            // {_id: '5cd2b644fd333616dc360b69', name: 'Suppliers', fromTbls: ['supplier']}, //do we need to edit?
+            {_id: '5cd2b644fd333616dc360b69', name: 'Suppliers', fromTbls: ['supplier']}, //do we need to edit?
             // {_id: '5cd2b644fd333616dc360b6a', name: 'Delete Items', fromTbls: []}, //what is this screen Dave?
             // {_id: '5cd2b644fd333616dc360b6b', name: 'Projects', fromTbls: []}, //main screen no need to customise
             // {_id: '5cd2b645fd333616dc360b6c', name: 'Screens', fromTbls: []}, //screen from config no need to customise

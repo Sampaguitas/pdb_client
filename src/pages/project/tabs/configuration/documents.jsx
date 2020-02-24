@@ -266,13 +266,29 @@ class Documents extends React.Component {
         }
     }
 
-    componentWillReceiveProps(nextProps) {
-        const { docdefs } = nextProps;
+    // componentWillReceiveProps(nextProps) {
+    //     const { docdefs } = nextProps;
+    //     const { selectedTemplate } = this.state;
+    //     if(!_.isEqual(docdefs, this.props.docdefs) && docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
+    //         this.setState({
+    //             selectedTemplate: arraySorted(docConf(docdefs.items), "name")[0]._id
+    //         });
+    //     }
+    // }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { fields, docdefs, refreshFieldnames, refreshDocfields } = this.props;
         const { selectedTemplate } = this.state;
-        if(!_.isEqual(docdefs, this.props.docdefs) && docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
+
+        if(docdefs != prevProps.docdefs && docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
             this.setState({
                 selectedTemplate: arraySorted(docConf(docdefs.items), "name")[0]._id
             });
+        }
+
+        if (fields != prevProps.fields) {
+            refreshFieldnames;
+            refreshDocfields;
         }
     }
 

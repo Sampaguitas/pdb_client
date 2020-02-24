@@ -71,16 +71,49 @@ class TableSelect extends Component{
         });
     }
 
-    componentWillReceiveProps(nextProps) {
-        if(!_.isEqual(nextProps.fieldValue, this.props.fieldValue)) {
+    // componentWillReceiveProps(nextProps) {
+    //     if(!_.isEqual(nextProps.fieldValue, this.props.fieldValue)) {
+    //         this.setState({
+    //             collection: nextProps.collection,
+    //             objectId: nextProps.objectId,
+    //             fieldName: nextProps.fieldName,
+    //             fieldValue: nextProps.fieldValue ? nextProps.fieldValue: '',
+    //             options: nextProps.options,
+    //             optionText: nextProps.optionText,
+    //             fromTbls: nextProps.fromTbls,
+    //             isSelected: false,
+    //             color: 'green',
+    //         }, () => {
+    //             setTimeout(() => {
+    //                 this.setState({
+    //                     ...this.state,
+    //                     color: '#0070C0',
+    //                 });
+    //             }, 1000);
+    //         });
+    //     }
+    // }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { 
+            collection, 
+            objectId, 
+            fieldName, 
+            fieldValue, 
+            options, 
+            optionText, 
+            fromTbls 
+        } = this.props;
+
+        if (fieldValue != prevProps.fieldValue) {
             this.setState({
-                collection: nextProps.collection,
-                objectId: nextProps.objectId,
-                fieldName: nextProps.fieldName,
-                fieldValue: nextProps.fieldValue ? nextProps.fieldValue: '',
-                options: nextProps.options,
-                optionText: nextProps.optionText,
-                fromTbls: nextProps.fromTbls,
+                collection: collection,
+                objectId: objectId,
+                fieldName: fieldName,
+                fieldValue: fieldValue ? fieldValue: '',
+                options: options,
+                optionText: optionText,
+                fromTbls: fromTbls,
                 isSelected: false,
                 color: 'green',
             }, () => {

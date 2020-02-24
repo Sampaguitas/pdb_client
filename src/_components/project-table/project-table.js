@@ -508,7 +508,6 @@ class ProjectTable extends Component {
 
     handleModalTabClick(event, tab){
         event.preventDefault();
-        // const { handleSelectionReload } = this.props
         const { tabs } = this.state; // 1. Get tabs from state
         tabs.forEach((t) => {t.active = false}); //2. Reset all tabs
         tab.isLoaded = true; // 3. set current tab as active
@@ -516,7 +515,6 @@ class ProjectTable extends Component {
         this.setState({
             tabs // 4. update state
         })
-        // handleSelectionReload(event); //reload selection state
     }
 
     onKeyPress(event) {
@@ -628,7 +626,6 @@ class ProjectTable extends Component {
     render() {
 
         const { 
-            // handleSelectionReload,
             toggleDelete,
             toggleUnlock, 
             screenHeaders, 

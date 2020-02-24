@@ -120,14 +120,44 @@ class TableInput extends Component{
         });  
     }
 
-    componentWillReceiveProps(nextProps) {
-        if(!_.isEqual(nextProps.fieldValue, this.props.fieldValue)) {
+    // componentWillReceiveProps(nextProps) {
+    //     if(!_.isEqual(nextProps.fieldValue, this.props.fieldValue)) {
+    //         this.setState({
+    //             collection: nextProps.collection,
+    //             objectId: nextProps.objectId,
+    //             fieldName: nextProps.fieldName,
+    //             fieldValue: TypeToString (nextProps.fieldValue, nextProps.fieldType, getDateFormat(myLocale)),
+    //             fieldType: nextProps.fieldType,
+    //             isEditing: false,
+    //             isSelected: false,
+    //             color: 'green',
+    //         }, () => {
+    //             setTimeout(() => {
+    //                 this.setState({
+    //                     ...this.state,
+    //                     color: '#0070C0',
+    //                 });
+    //             }, 1000);
+    //         });
+    //     }
+    // }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { 
+            collection,
+            objectId,
+            fieldName,
+            fieldValue,
+            fieldType,
+        } = this.props;
+
+        if(fieldValue != prevProps.fieldValue) {
             this.setState({
-                collection: nextProps.collection,
-                objectId: nextProps.objectId,
-                fieldName: nextProps.fieldName,
-                fieldValue: TypeToString (nextProps.fieldValue, nextProps.fieldType, getDateFormat(myLocale)),
-                fieldType: nextProps.fieldType,
+                collection: collection,
+                objectId: objectId,
+                fieldName: fieldName,
+                fieldValue: TypeToString (fieldValue, fieldType, getDateFormat(myLocale)),
+                fieldType: fieldType,
                 isEditing: false,
                 isSelected: false,
                 color: 'green',

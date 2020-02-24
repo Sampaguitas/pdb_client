@@ -537,7 +537,6 @@ class TransportDocuments extends React.Component {
             showDelete: false,          
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
-        // this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange = this.handleChange.bind(this);
         // this.handleGenerateFile = this.handleGenerateFile.bind(this);
@@ -640,38 +639,6 @@ class TransportDocuments extends React.Component {
         });
         dispatch(alertActions.clear());
     }
-
-    // handleSelectionReload(event){
-    //     const { 
-    //         dispatch,
-    //         loadingAccesses,
-    //         loadingFieldnames,
-    //         loadingFields,
-    //         loadingPos,
-    //         loadingSelection,
-    //         location 
-    //     } = this.props;
-
-    //     var qs = queryString.parse(location.search);
-    //     if (qs.id) {
-    //         this.setState({projectId: qs.id});
-    //         if (!loadingAccesses) {
-    //             dispatch(accessActions.getAll(qs.id));
-    //         }
-    //         if (!loadingFieldnames) {
-    //             dispatch(fieldnameActions.getAll(qs.id));
-    //         }
-    //         if (!loadingFields) {
-    //             dispatch(fieldActions.getAll(qs.id));
-    //         }
-    //         if (!loadingPos) {
-    //             dispatch(poActions.getAll(qs.id));
-    //         }
-    //         if (!loadingSelection) {
-    //             dispatch(projectActions.getById(qs.id));
-    //         }
-    //     }  
-    // }
 
     refreshStore() {
         const { dispatch } = this.props;
@@ -1079,15 +1046,12 @@ class TransportDocuments extends React.Component {
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {selection && selection.project && 
                             <ProjectTable
-                                // screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
                                 screenHeaders={headersForShow}
-                                // screenBodys={generateScreenBody(screenId, fieldnames, pos)}
                                 screenBodys={bodysForShow}
                                 projectId={projectId}
                                 screenId={screenId}
                                 selectedIds={selectedIds}
                                 updateSelectedIds = {this.updateSelectedIds}
-                                // handleSelectionReload={this.handleSelectionReload}
                                 toggleUnlock={this.toggleUnlock}
                                 unlocked={unlocked}
                                 screen={screen}

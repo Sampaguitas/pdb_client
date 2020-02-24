@@ -19,7 +19,6 @@ class Tabs extends Component {
     }
     handleClick(event, tab){
         event.preventDefault();
-        // const { handleSelectionReload } = this.props
         const { tabs } = this.state; // 1. Get tabs from state
         tabs.forEach((t) => {t.active = false}); //2. Reset all tabs
         tab.isLoaded = true; // 3. set current tab as active
@@ -27,15 +26,12 @@ class Tabs extends Component {
         this.setState({
             tabs // 4. update state
         })
-        // handleSelectionReload(event); //reload selection state
-
     }
     render() {
         const { tabs  } = this.state
         
         const {
             //Functions
-            // handleSelectionReload,
             handleSubmitProject,
             handleDeleteProject,
             handleSubmitSupplier,
@@ -95,7 +91,6 @@ class Tabs extends Component {
                             <tab.component
                                 tab={tab}
                                 //Functions
-                                // handleSelectionReload={handleSelectionReload}
                                 handleSubmitProject={handleSubmitProject}
                                 handleDeleteProject={handleDeleteProject}
                                 handleSubmitSupplier={handleSubmitSupplier}
