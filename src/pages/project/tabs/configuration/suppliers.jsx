@@ -4,11 +4,13 @@ import { authHeader } from '../../../../_helpers';
 import Modal from "../../../../_components/modal";
 import HeaderInput from '../../../../_components/project-table/header-input';
 // import Input from '../../../../_components/input';
+import NewRowCreate from '../../../../_components/project-table/new-row-create';
+import NewRowInput from '../../../../_components/project-table/new-row-input';
+import NewRowSelect from '../../../../_components/project-table/new-row-select';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -205,6 +207,12 @@ class Suppliers extends React.Component {
             selectAllRows: false,
             isEqual: false,
             deleting: false,
+            //create new row
+            newRow: false,
+            supplier: {},
+            newRowFocus:false,
+            creatingNewRow: false,
+            newRowColor: 'inherit',
         }
         // this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
@@ -213,6 +221,12 @@ class Suppliers extends React.Component {
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.generateHeader = this.generateHeader.bind(this);
+        this.generateNewRow = this.generateNewRow.bind(this);
+        this.cerateNewRow = this.cerateNewRow.bind(this);
+        this.onFocusRow = this.onFocusRow.bind(this);
+        this.onBlurRow = this.onBlurRow.bind(this);
+        this.handleChangeNewRow = this.handleChangeNewRow.bind(this);
+        this.toggleNewRow = this.toggleNewRow.bind(this);
         this.generateBody = this.generateBody.bind(this);
         this.filterName = this.filterName.bind(this);
     };
@@ -410,11 +424,11 @@ class Suppliers extends React.Component {
     generateHeader(screenHeaders) {
         const {header, selectAllRows} = this.state;
         if (!_.isEmpty(screenHeaders)) {
-            const tempInputArray = []
+            const tempInputArray = [];
             screenHeaders.map(screenHeader => {
                 tempInputArray.push(
                     <HeaderInput
-                        type= {screenHeader.fields.type === 'Number' ? 'number' : 'text' }
+                        type={screenHeader.fields.type === 'Number' ? 'number' : 'text' }
                         title={screenHeader.fields.custom}
                         // name={screenHeader.fieldId}
                         name={screenHeader._id}
@@ -436,6 +450,159 @@ class Suppliers extends React.Component {
                 </tr>
             );
         }
+    }
+
+    generateNewRow(supplier, newRow) {
+        const { headersForShow, newRowColor } = this.state;
+        if (!_.isEmpty(headersForShow) && newRow) {
+            let screenHeaders = headersForShow;
+            const tempInputArray = [];
+            screenHeaders.map(function (screenHeader, index) {
+                tempInputArray.push(
+                    <NewRowInput
+                        key={index}
+                        fieldType={getInputType(screenHeader.fields.type)}
+                        fieldName={screenHeader.fields.name}
+                        fieldValue={supplier[screenHeader.fields.name]}
+                        onChange={event => this.handleChangeNewRow(event)}
+                        color={newRowColor}
+                    />
+                );
+            });
+            return (
+                <tr
+                    onBlur={this.onBlurRow}
+                    onFocus={this.onFocusRow}
+                    data-type="newrow"
+                >
+                    <NewRowCreate
+                        onClick={ event => this.cerateNewRow(event)}
+                    />
+                    {tempInputArray}
+                </tr>
+            );
+        }
+    }
+
+    cerateNewRow(event) {
+        event.preventDefault();
+        const { refreshSuppliers } = this.props;
+        const { supplier } = this.state;
+        if(supplier.hasOwnProperty('projectId')) {
+            this.setState({
+                ...this.state,
+                creatingNewRow: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(supplier)
+                };
+                return fetch(`${config.apiUrl}/supplier/create`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false,
+                        newRowColor: 'green'
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                supplier:{},
+                                newRowFocus: false
+                            }, () => {
+                                refreshSuppliers;
+                            });
+                        }, 1000);                                
+                    });
+                })
+                .catch( () => {
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false,
+                        newRowColor: 'red'
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                supplier:{},
+                                newRowFocus: false                                    
+                            }, () => {
+                                refreshSuppliers;
+                            });
+                        }, 1000);                                                       
+                    });
+                });
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                creatingNewRow: false,
+                newRowColor: 'red'
+            }, () => {
+                setTimeout(() => {
+                    this.setState({
+                        ...this.state,
+                        newRowColor: 'inherit',
+                        newRow:false,
+                        supplier:{},
+                        newRowFocus: false                                    
+                    }, () => {
+                        refreshSuppliers;
+                    });
+                }, 1000);                                                       
+            });
+        }          
+    }
+
+    onFocusRow(event) {
+        event.preventDefault();
+        console.log('onFocus');
+        console.log('data-type:', event.currentTarget.dataset['type']);
+        const { newRowFocus } = this.state;
+        if (event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+            this.cerateNewRow(event);
+        }
+    }
+
+    onBlurRow(event){
+        event.preventDefault()
+        console.log('onBlurRow');
+        console.log('data-type:', event.currentTarget.dataset['type']);
+        if (event.currentTarget.dataset['type'] == 'newrow'){
+            this.setState({
+                ...this.state,
+                newRowFocus: true
+            });
+        }
+    }
+
+    handleChangeNewRow(event){
+        const { projectId } = this.props;
+        const { supplier} = this.state;
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        if (projectId) {
+            this.setState({
+                ...this.state,
+                supplier: {
+                    ...supplier,
+                    [name]: value,
+                    projectId: projectId
+                }
+            });
+        } 
+    }
+
+    toggleNewRow(event) {
+        event.preventDefault()
+        const { newRow } = this.state;
+        this.setState({newRow: !newRow});
     }
 
     generateBody(screenBodys) {
@@ -467,7 +634,11 @@ class Suppliers extends React.Component {
                     }
                 });
                 tempRows.push(
-                    <tr key={screenBody._id}>
+                    <tr
+                        key={screenBody._id}
+                        onBlur={this.onBlurRow}
+                        onFocus={this.onFocusRow}
+                    >
                         <TableSelectionRow
                             id={screenBody._id}
                             selectAllRows={selectAllRows}
@@ -510,7 +681,9 @@ class Suppliers extends React.Component {
             selectedRows,
             deleting, 
             headersForShow,
-            bodysForShow  
+            supplier,
+            bodysForShow,
+            newRow,
         } = this.state;
 
         return (
@@ -526,7 +699,7 @@ class Suppliers extends React.Component {
                         </button> */}
                         <button
                             className="btn btn-leeuwen-blue btn-lg mr-2"
-                            // onClick={event => this.toggleNewRow(event)}
+                            onClick={event => this.toggleNewRow(event)}
                             style={{height: '34px'}}
                         >
                             <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Supplier</span>
@@ -555,6 +728,7 @@ class Suppliers extends React.Component {
                                     {this.generateHeader(headersForShow)}
                                 </thead>
                                 <tbody className="full-height">
+                                    {this.generateNewRow(supplier, newRow)}
                                     {this.generateBody(bodysForShow)}
                                 </tbody>
                             </table>
