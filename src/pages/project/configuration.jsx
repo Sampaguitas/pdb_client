@@ -50,9 +50,9 @@ class Configuration extends React.Component {
             projectUpdating: false,
             projectDeleting: false,
             
-            submittedSupplier: false,
-            supplierUpdating: false,
-            supplierDeleting: false,
+            // submittedSupplier: false,
+            // supplierUpdating: false,
+            // supplierDeleting: false,
             projectId: '',
             alert: {
                 type:'',
@@ -63,8 +63,8 @@ class Configuration extends React.Component {
         this.handleSelectionReload=this.handleSelectionReload.bind(this);
         this.handleSubmitProject=this.handleSubmitProject.bind(this);
         this.handleDeleteProject=this.handleDeleteProject.bind(this);
-        this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
-        this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
+        // this.handleSubmitSupplier=this.handleSubmitSupplier.bind(this);
+        // this.handleDeleteSupplier=this.handleDeleteSupplier.bind(this);
         
         this.refreshProject = this.refreshProject.bind(this);
         this.refreshDocfields = this.refreshDocfields.bind(this);
@@ -214,8 +214,16 @@ class Configuration extends React.Component {
         const { dispatch } = this.props;
         const { projectId } = this.state;
         if (projectId) {
-            dispatch(projectActions.getById(projectId));
-            dispatch(accessActions.getAll(projectId));
+            dispatch(projectActions.getById(projectId)); //loadingSelection
+            dispatch(accessActions.getAll(projectId)); //loadingAccesses
+        }
+    }
+
+    refreshDocdefs() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+        if (projectId) {
+            dispatch(docdefActions.getAll(projectId)); //loadingDocdefs
         }
     }
 
@@ -223,7 +231,7 @@ class Configuration extends React.Component {
         const { dispatch } = this.props;
         const { projectId } = this.state;
         if (projectId) {
-            dispatch(docfieldActions.getAll(projectId));
+            dispatch(docfieldActions.getAll(projectId)); //loadingDocfields
         }
     }
 
@@ -231,7 +239,7 @@ class Configuration extends React.Component {
         const { dispatch } = this.props;
         const { projectId } = this.state;
         if (projectId) {
-            dispatch(fieldnameActions.getAll(projectId));
+            dispatch(fieldnameActions.getAll(projectId)); //loadingFieldnames
         }
     }
 
@@ -239,7 +247,7 @@ class Configuration extends React.Component {
         const { dispatch } = this.props;
         const { projectId } = this.state;
         if (projectId) {
-            dispatch(fieldActions.getAll(projectId));
+            dispatch(fieldActions.getAll(projectId)); //loadingFields
         }
     }
 
@@ -247,7 +255,7 @@ class Configuration extends React.Component {
         const { dispatch } = this.props;
         const { projectId } = this.state;
         if (projectId) {
-            dispatch(supplierActions.getAll(projectId));
+            dispatch(supplierActions.getAll(projectId)); //loadingSuppliers
         }
     }
 
@@ -337,144 +345,126 @@ class Configuration extends React.Component {
         }
     }
 
-    handleSubmitSupplier(event, supplier, callback) {
-        event.preventDefault();
-        // const { dispatch } = this.props;
-        this.setState({ submittedSupplier: true });
-        if(supplier.id && supplier.name && supplier.projectId) {
-            this.setState({ submittedSupplier: false, supplierUpdating: true });
-            const requestOptions = {
-                method: 'PUT',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
-                body: JSON.stringify(supplier)
-            }
-            return fetch(`${config.apiUrl}/supplier/update?id=${supplier.id}`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (!responce.ok) {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    }
-                    this.setState({
-                        supplierUpdating: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, callback);
-                } else {
-                    // console.log('responce ok')
-                    this.setState({
-                        supplierUpdating: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, callback);
-                }
-            }));
-        } else if (supplier.name && supplier.projectId) {
-            this.setState({ submittedSupplier: false, supplierUpdating: true });
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
-                body: JSON.stringify(supplier)
-            }
+    // handleSubmitSupplier(event, supplier, callback) {
+    //     event.preventDefault();
+    //     // const { dispatch } = this.props;
+    //     this.setState({ submittedSupplier: true });
+    //     if(supplier.id && supplier.name && supplier.projectId) {
+    //         this.setState({ submittedSupplier: false, supplierUpdating: true });
+    //         const requestOptions = {
+    //             method: 'PUT',
+    //             headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
+    //             body: JSON.stringify(supplier)
+    //         }
+    //         return fetch(`${config.apiUrl}/supplier/update?id=${supplier.id}`, requestOptions)
+    //         .then(responce => responce.text().then(text => {
+    //             const data = text && JSON.parse(text);
+    //             if (!responce.ok) {
+    //                 if (responce.status === 401) {
+    //                     localStorage.removeItem('user');
+    //                     location.reload(true);
+    //                 }
+    //                 this.setState({
+    //                     supplierUpdating: false,
+    //                     alert: {
+    //                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                         message: data.message
+    //                     }
+    //                 }, callback);
+    //             } else {
+    //                 // console.log('responce ok')
+    //                 this.setState({
+    //                     supplierUpdating: false,
+    //                     alert: {
+    //                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                         message: data.message
+    //                     }
+    //                 }, callback);
+    //             }
+    //         }));
+    //     } else if (supplier.name && supplier.projectId) {
+    //         this.setState({ submittedSupplier: false, supplierUpdating: true });
+    //         const requestOptions = {
+    //             method: 'POST',
+    //             headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
+    //             body: JSON.stringify(supplier)
+    //         }
 
-            return fetch(`${config.apiUrl}/supplier/create`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (!responce.ok) {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    }
-                    this.setState({
-                        supplierUpdating: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, callback);
-                } else {
-                    // console.log('responce ok')
-                    this.setState({
-                        supplierUpdating: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, callback);
-                }
-            }));
-        }
-    }
+    //         return fetch(`${config.apiUrl}/supplier/create`, requestOptions)
+    //         .then(responce => responce.text().then(text => {
+    //             const data = text && JSON.parse(text);
+    //             if (!responce.ok) {
+    //                 if (responce.status === 401) {
+    //                     localStorage.removeItem('user');
+    //                     location.reload(true);
+    //                 }
+    //                 this.setState({
+    //                     supplierUpdating: false,
+    //                     alert: {
+    //                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                         message: data.message
+    //                     }
+    //                 }, callback);
+    //             } else {
+    //                 // console.log('responce ok')
+    //                 this.setState({
+    //                     supplierUpdating: false,
+    //                     alert: {
+    //                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                         message: data.message
+    //                     }
+    //                 }, callback);
+    //             }
+    //         }));
+    //     }
+    // }
 
     
 
-    handleDeleteSupplier(event, id, callback) {
-        // event.preventDefault();
-        // const { dispatch } = this.props;
-        // dispatch(supplierActions.delete(id));
-        // callback;
-        event.preventDefault();
-        if (id) {
-            this.setState({ supplierDeleting: true }, () => {
-                const requestOptions = {
-                    method: 'DELETE',
-                    headers: authHeader()
-                };
-                return fetch(`${config.apiUrl}/supplier/delete?id=${id}`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (!responce.ok) {
-                        if (responce.status === 401) {
-                            localStorage.removeItem('user');
-                            location.reload(true);
-                        }
-                        this.setState({
-                            supplierDeleting: false,
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, callback);
-                    } else {
-                        // console.log('responce ok')
-                        this.setState({
-                            supplierDeleting: false,
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, callback);
-                    }
-                }));
-                // .then( () => {
-                //     this.setState({submitted: false, deleting: false},
-                //         ()=> {
-                //             this.hideModal(event),
-                //             handleSelectionReload();
-                //         });
-                // })
-                // .catch( err => {
-                //     this.setState({submitted: false, deleting: false},
-                //         ()=> {
-                //             this.hideModal(event),
-                //             handleSelectionReload();
-                //         });
-                // });
-            });          
-        } else {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Supplier id is missing.'
-                }
-            }, callback);
-        }
-    }
+    // handleDeleteSupplier(event, id, callback) {
+    //     event.preventDefault();
+    //     if (id) {
+    //         this.setState({ supplierDeleting: true }, () => {
+    //             const requestOptions = {
+    //                 method: 'DELETE',
+    //                 headers: authHeader()
+    //             };
+    //             return fetch(`${config.apiUrl}/supplier/delete?id=${id}`, requestOptions)
+    //             .then(responce => responce.text().then(text => {
+    //                 const data = text && JSON.parse(text);
+    //                 if (!responce.ok) {
+    //                     if (responce.status === 401) {
+    //                         localStorage.removeItem('user');
+    //                         location.reload(true);
+    //                     }
+    //                     this.setState({
+    //                         supplierDeleting: false,
+    //                         alert: {
+    //                             type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                             message: data.message
+    //                         }
+    //                     }, callback);
+    //                 } else {
+    //                     // console.log('responce ok')
+    //                     this.setState({
+    //                         supplierDeleting: false,
+    //                         alert: {
+    //                             type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                             message: data.message
+    //                         }
+    //                     }, callback);
+    //                 }
+    //             }));
+    //         });          
+    //     } else {
+    //         this.setState({
+    //             alert: {
+    //                 type: 'alert-danger',
+    //                 message: 'Supplier id is missing.'
+    //             }
+    //         }, callback);
+    //     }
+    // }
 
     render() {
         const {
@@ -499,10 +489,6 @@ class Configuration extends React.Component {
                 projectUpdating,
                 projectDeleting,
                 
-                submittedSupplier,
-                supplierUpdating,
-                supplierDeleting,
-                
             } = this.state
 
             const alert = this.state.alert.message ? this.state.alert : this.props.alert;    
@@ -525,9 +511,10 @@ class Configuration extends React.Component {
                         handleSelectionReload={this.handleSelectionReload}
                         handleSubmitProject={this.handleSubmitProject}
                         handleDeleteProject={this.handleDeleteProject}
-                        handleSubmitSupplier={this.handleSubmitSupplier}
-                        handleDeleteSupplier={this.handleDeleteSupplier}
+                        
                         //refreshStore
+                        refreshProject={this.refreshProject}
+                        refreshDocdefs={this.refreshDocdefs}
                         refreshDocfields={this.refreshDocfields}
                         refreshFieldnames={this.refreshFieldnames}
                         refreshFields={this.refreshFields}
@@ -546,15 +533,12 @@ class Configuration extends React.Component {
                         selection={selection}
                         suppliers={suppliers}
                         users={users}
+
                         //State
                         projectId={projectId}
                         submittedProject={submittedProject}
                         projectUpdating={projectUpdating}
                         projectDeleting={projectDeleting}
-
-                        submittedSupplier={submittedSupplier}
-                        supplierUpdating={supplierUpdating}
-                        supplierDeleting={supplierDeleting}
                         
                     />
                 </div>

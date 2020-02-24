@@ -100,7 +100,10 @@ class General extends React.Component {
     }
 
     componentDidMount() {
-        const { users, selection, accesses } = this.props;
+        const { users, selection, refreshProject } = this.props;
+        //refreshStore
+        refreshProject;
+
         var userArray = [];
         if (users.items && selection.project && accesses.items) {
             users.items.map(function (user) {

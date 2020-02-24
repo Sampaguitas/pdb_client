@@ -439,7 +439,6 @@ class ProjectTable extends Component {
                 {tempInputArray}
             </tr>
         );
-
     }
 
     generateBody(screenBodys) {

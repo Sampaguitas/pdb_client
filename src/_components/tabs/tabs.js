@@ -41,6 +41,8 @@ class Tabs extends Component {
             handleSubmitSupplier,
             handleDeleteSupplier,
             //refreshStore
+            refreshProject,
+            refreshDocdefs,
             refreshDocfields,
             refreshFieldnames,
             refreshFields,
@@ -99,6 +101,8 @@ class Tabs extends Component {
                                 handleSubmitSupplier={handleSubmitSupplier}
                                 handleDeleteSupplier={handleDeleteSupplier}
                                 //refreshStore
+                                refreshProject={refreshProject}
+                                refreshDocdefs={refreshDocdefs}
                                 refreshDocfields={refreshDocfields}
                                 refreshFieldnames={refreshFieldnames}
                                 refreshFields={refreshFields}

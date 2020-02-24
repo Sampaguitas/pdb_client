@@ -98,6 +98,10 @@ class Fields extends React.Component {
     }
 
     componentDidMount() {
+        const { refreshFields } = this.props;
+        //refreshStore
+        refreshFields;
+        
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
         const table = document.getElementById('fieldsTable');

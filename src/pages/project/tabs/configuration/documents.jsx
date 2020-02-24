@@ -201,9 +201,14 @@ class Documents extends React.Component {
     }
 
     componentDidMount() {
-        const { docdefs } = this.props;
+        const { docdefs, refreshFields, refreshDocfields, refreshDocdefs,  } = this.props;
         const { selectedTemplate } = this.state;
         
+        //refreshStore
+        refreshFields;
+        refreshDocfields;
+        refreshDocdefs;
+
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
         const table = document.getElementById('documentsTable');
@@ -273,7 +278,7 @@ class Documents extends React.Component {
 
     cerateNewRow(event) {
         event.preventDefault()
-        const { handleSelectionReload } = this.props;
+        const { refreshDocfields } = this.props;
         const { docField } = this.state;
         if (docField.location && docField.row && docField.col && docField.fieldId) {
             this.setState({
@@ -300,7 +305,7 @@ class Documents extends React.Component {
                                 docField:{},
                                 newRowFocus: false
                             }, () => {
-                                handleSelectionReload();
+                                refreshDocfields;
                             });
                         }, 1000);
                     });
@@ -319,7 +324,7 @@ class Documents extends React.Component {
                                 docField:{},
                                 newRowFocus: false
                             }, () => {
-                                handleSelectionReload();
+                                refreshDocfields;
                             });
                         }, 1000);
                     });
@@ -468,7 +473,7 @@ class Documents extends React.Component {
 
     handleDeleteDocFields(event, id) {
         event.preventDefault();
-        const { handleSelectionReload } = this.props;
+        const { refreshDocfields } = this.props;
         if(id) {
             this.setState({
                 ...this.state,
@@ -485,7 +490,7 @@ class Documents extends React.Component {
                         deletingFields: false
                     },
                     () => {
-                        handleSelectionReload();
+                        refreshDocfields;
                     });
                 })
                 .catch( err => {
@@ -494,7 +499,7 @@ class Documents extends React.Component {
                         deletingFields: false
                     },
                     ()=> {
-                        handleSelectionReload();
+                        refreshDocfields;
                     });
                 });
             });
@@ -503,7 +508,7 @@ class Documents extends React.Component {
 
     handleDeleteDocDef(event, id) {
         event.preventDefault();
-        const { handleSelectionReload } = this.props;
+        const { refreshDocdefs } = this.props;
         if (id != '0') {
             this.setState({
                 ...this.state,
@@ -523,7 +528,7 @@ class Documents extends React.Component {
                         inputKey: Date.now()
                     },
                     () => {
-                        handleSelectionReload();
+                        refreshDocdefs;
                     });
                 })
                 .catch( err => {
@@ -535,7 +540,7 @@ class Documents extends React.Component {
                         inputKey: Date.now()
                     },
                     ()=> {
-                        handleSelectionReload();
+                        refreshDocdefs;
                     });
                 });
             });
@@ -546,7 +551,7 @@ class Documents extends React.Component {
     handleSubmitDocDef(event) {
         event.preventDefault();
         const { docDef } = this.state;
-        const { handleSelectionReload } = this.props;
+        const { refreshDocdefs } = this.props;
         this.setState({
             ...this.state,
             submitted: true
@@ -570,7 +575,7 @@ class Documents extends React.Component {
                         },
                             ()=> {
                                 this.hideModal(event),
-                                handleSelectionReload();
+                                refreshDocdefs;
                             });
                     })
                     .catch( err => {
@@ -581,7 +586,7 @@ class Documents extends React.Component {
                         },
                             ()=> {
                                 this.hideModal(event),
-                                handleSelectionReload();
+                                refreshDocdefs;
                             });
                     });
                 });
@@ -604,7 +609,7 @@ class Documents extends React.Component {
                         },
                             ()=> {
                                 this.hideModal(event),
-                                handleSelectionReload();
+                                refreshDocdefs;
                             })
                     })
                     .catch( err => {
@@ -615,7 +620,7 @@ class Documents extends React.Component {
                         },
                             ()=> {
                                 this.hideModal(event),
-                                handleSelectionReload();
+                                refreshDocdefs;
                             });
                     });
                 });
@@ -641,7 +646,7 @@ class Documents extends React.Component {
     handleUploadFile(event){
         event.preventDefault();
         const { selectedTemplate, fileName } = this.state;
-        const { selection, handleSelectionReload } = this.props
+        const { selection, refreshDocdefs } = this.props
         if(this.fileInput.current.files[0] && selectedTemplate != '0' && selection.project && fileName) {
             var data = new FormData()
             data.append('file', this.fileInput.current.files[0])
@@ -653,7 +658,7 @@ class Documents extends React.Component {
                 body: data
             }
             return fetch(`${config.apiUrl}/template/upload`, requestOptions)
-            .then(handleSelectionReload);            
+            .then(refreshDocdefs);            
         }        
     }
 
@@ -1080,7 +1085,7 @@ class Documents extends React.Component {
                                             />                                         
                                         </tr>                                
                                     }
-                                    {docfields.items && this.filterName(docfields.items).map((s) =>
+                                    {docfields.items && fields.items && this.filterName(docfields.items).map((s) =>
                                         <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>                                  
                                             <TableSelectionRow
                                                 id={s._id}

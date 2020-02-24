@@ -124,7 +124,12 @@ class Screens extends React.Component {
     }
 
     componentDidMount() {
-        
+
+        const { refreshFields, refreshFieldnames } =this.props;
+        //refreshStore
+        refreshFields
+        refreshFieldnames;
+
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
         const table = document.getElementById('screensTable');
@@ -133,6 +138,9 @@ class Screens extends React.Component {
                 return this.keyHandler(e);
             }
         });
+
+        
+
     }
 
     keyHandler(e) {
@@ -178,7 +186,7 @@ class Screens extends React.Component {
 
     cerateNewRow(event) {
         event.preventDefault();
-        const { handleSelectionReload } = this.props;
+        const { refreshFieldnames } = this.props;
         const { fieldName } = this.state;
         this.setState({
             ...this.state,
@@ -204,7 +212,7 @@ class Screens extends React.Component {
                             fieldName:{},
                             newRowFocus: false
                         }, () => {
-                            handleSelectionReload();
+                            refreshFieldnames;
                         });
                     }, 1000);                                
                 });
@@ -223,7 +231,7 @@ class Screens extends React.Component {
                             fieldName:{},
                             newRowFocus: false                                    
                         }, () => {
-                            handleSelectionReload();
+                            refreshFieldnames;
                         });
                     }, 1000);                                                      
                 });
@@ -286,7 +294,7 @@ class Screens extends React.Component {
 
     handleDelete(event, id) {
         event.preventDefault();
-        const { handleSelectionReload } = this.props;
+        const { refreshFieldnames } = this.props;
         if(id) {
             this.setState({
                 ...this.state,
@@ -303,7 +311,7 @@ class Screens extends React.Component {
                         deleting: false
                     },
                     () => {
-                        handleSelectionReload();
+                        refreshFieldnames;
                     });
                 })
                 .catch( err => {
@@ -312,7 +320,7 @@ class Screens extends React.Component {
                         deleting: false
                     },
                     ()=> {
-                        handleSelectionReload();
+                        refreshFieldnames;
                     });
                 });
             });
@@ -612,7 +620,7 @@ class Screens extends React.Component {
                                         />
                                     </tr>                               
                                 }
-                                {fieldnames.items && this.filterName(fieldnames.items).map((s) =>
+                                {fieldnames.items && fields.items && this.filterName(fieldnames.items).map((s) =>
                                     <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
                                         <TableSelectionRow
                                             id={s._id}
