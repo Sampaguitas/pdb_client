@@ -199,9 +199,11 @@ function docConf(array) {
         // '5d1927141424114e3884ac83' //SI01 Shipping Invoice
         '5d1927131424114e3884ac7f' //NFI1 Notification for Inspection
     ];
-    return array.filter(function (element) {
-        return tpeOf.includes(element.doctypeId);
-    });
+    if (array) {
+        return array.filter(function (element) {
+            return tpeOf.includes(element.doctypeId);
+        });
+    }
 }
 
 function findObj(array, search) {
@@ -456,18 +458,11 @@ function getNfiList(pos) {
             return accPo.concat(currPoNfi);
         }, [])
         let uniqueNfi = [...new Set(tempNfi)];
-        return uniqueNfi.sort(function (a, b) {
-            return a-b
-        }).map(function(nfi) {
-            return (
-                <option
-                    key={nfi}
-                    value={nfi}
-                >
-                    {nfi}
-                </option>
-            );
-        });
+        uniqueNfi.sort((a, b) => b - a);
+        return uniqueNfi.reduce(function(acc, curr) {
+            acc.push({_id: curr, name: curr})
+            return acc;
+        }, []);
     }
 }
 
@@ -491,16 +486,14 @@ function getLocationList(suppliers) {
                 return 1;
               }
               return 0;
-        }).map(function(sup, index) {
-            return (
-                <option
-                    key={index}
-                    value={sup._id}
-                >
-                    {sup.name}
-                </option>
-            );
         });
+
+    }
+}
+
+function generateOptions(list) {
+    if (list) {
+        return list.map((element, index) => <option key={index} value={element._id}>{element.name}</option>);
     }
 }
 
@@ -523,8 +516,11 @@ class ReleaseData extends React.Component {
             selectedType: 'text',
             updateValue:'',
             inputNfi: '',
-            showLocation: false,
+            showLocation: true,
             selectedLocation:'',
+            nfiList:[],
+            locationList:[],
+            docList: [],
             alert: {
                 type:'',
                 message:''
@@ -572,7 +568,9 @@ class ReleaseData extends React.Component {
             location,
             //---------
             fieldnames,
-            pos 
+            pos,
+            suppliers,
+            docdefs
         } = this.props;
 
         const { screenId, splitScreenId, headersForShow, splitHeadersForSelect } = this.state;
@@ -609,13 +607,16 @@ class ReleaseData extends React.Component {
             bodysForShow: getBodys(fieldnames, pos, headersForShow),
             splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
             splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+            nfiList: getNfiList(pos),
+            locationList: getLocationList(suppliers),
+            docList: arraySorted(docConf(docdefs.items), "name")
         });
 
     }
 
     componentDidUpdate(prevProps, prevState) {
         const { headersForShow, splitHeadersForSelect, screenId, splitScreenId, selectedField } = this.state;
-        const { fields, fieldnames, pos } = this.props;
+        const { fields, fieldnames, pos, suppliers, docdefs } = this.props;
 
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
@@ -639,9 +640,19 @@ class ReleaseData extends React.Component {
         }
 
         if (fieldnames != prevProps.fieldnames || pos != prevProps.pos || headersForShow != prevState.headersForShow || splitHeadersForSelect != prevState.splitHeadersForSelect) {
-            this.setState({
-                bodysForShow: getBodys(fieldnames, pos, headersForShow),
-            });
+            this.setState({bodysForShow: getBodys(fieldnames, pos, headersForShow)});
+        }
+
+        if (pos != prevProps.pos) {
+            this.setState({nfiList: getNfiList(pos)});
+        }
+
+        if (suppliers != prevProps.suppliers) {
+            this.setState({locationList: getLocationList(suppliers)});
+        }
+
+        if (docdefs != prevProps.docdefs) {
+            this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
         }
     }
 
@@ -1122,16 +1133,16 @@ class ReleaseData extends React.Component {
 
     toggleGenerate(event) {
         event.preventDefault();
-        const { showGenerate } = this.state;
+        const { showGenerate, docList, nfiList, locationList } = this.state;
         this.setState({
             ...this.state,
-            selectedTemplate: '',
+            selectedTemplate: (!showGenerate  && docList) ? docList[0]._id : '',
             selectedField: '',
             selectedType: 'text',
             updateValue:'',
-            inputNfi: '',
-            showLocation: false,
-            selectedLocation: '',
+            inputNfi: (!showGenerate  && nfiList) ? nfiList[0]._id : '',
+            showLocation: true,
+            selectedLocation: (!showGenerate  && locationList) ? locationList[0]._id : '',
             alert: {
                 type:'',
                 message:''
@@ -1198,6 +1209,9 @@ class ReleaseData extends React.Component {
             inputNfi,
             showLocation,
             selectedLocation,
+            nfiList,
+            locationList,
+            docList,
             //show modals
             showSplitLine,
             showEditValues,
@@ -1209,6 +1223,7 @@ class ReleaseData extends React.Component {
             bodysForShow,
             splitHeadersForShow,
             splitHeadersForSelect,
+
             
 
         }= this.state;
@@ -1392,16 +1407,7 @@ class ReleaseData extends React.Component {
                                     required
                                 >
                                     <option key="0" value="">Select document...</option>
-                                    {
-                                        docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
-                                            return (
-                                                <option 
-                                                    key={p._id}
-                                                    value={p._id}>{p.name}
-                                                </option>
-                                            );
-                                        })
-                                    }
+                                    {generateOptions(docList)}
                                 </select>
                             </div>
                             <div className="form-group">
@@ -1415,7 +1421,7 @@ class ReleaseData extends React.Component {
                                     required
                                 >
                                     <option key="0" value="">Select NFI...</option>
-                                    {getNfiList(pos)}
+                                    {generateOptions(nfiList)}
                                 </select>
                             </div>
                             <CheckLocation 
@@ -1434,7 +1440,7 @@ class ReleaseData extends React.Component {
                                         required
                                     >
                                         <option key="0" value="">Select Location...</option>
-                                        {getLocationList(suppliers)}
+                                        {generateOptions(locationList)}
                                     </select>
                                 </div>
                             }

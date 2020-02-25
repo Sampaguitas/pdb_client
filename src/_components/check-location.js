@@ -7,7 +7,7 @@ class CheckLocation extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            fieldValue: false,
+            fieldValue: true,
         }
         this.onChange = this.onChange.bind(this);
     }
