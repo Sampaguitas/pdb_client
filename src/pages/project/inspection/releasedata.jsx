@@ -518,13 +518,13 @@ class ReleaseData extends React.Component {
             unlocked: false,
             screen: 'inspection',
             selectedIds: [],
-            selectedTemplate: '0',
+            selectedTemplate: '',
             selectedField: '',
             selectedType: 'text',
             updateValue:'',
             inputNfi: '',
             showLocation: false,
-            selectedLocation:'0',
+            selectedLocation:'',
             alert: {
                 type:'',
                 message:''
@@ -691,18 +691,25 @@ class ReleaseData extends React.Component {
     handleGenerateFile(event) {
         event.preventDefault();
         const { docdefs } = this.props;
-        const { selectedTemplate } = this.state;
-        if (selectedTemplate != "0") {
+        const { selectedTemplate, inputNfi, selectedLocation } = this.state;
+        if (selectedTemplate && inputNfi) {
             let obj = findObj(docdefs.items, selectedTemplate);
-             if (obj) {
-                const requestOptions = {
-                    method: 'GET',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                };
-                return fetch(`${config.apiUrl}/template/generate?docDef=${selectedTemplate}`, requestOptions)
-                    .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
-             }
-        }
+            if (obj) {
+               const requestOptions = {
+                   method: 'GET',
+                   headers: { ...authHeader(), 'Content-Type': 'application/json'},
+               };
+               return fetch(`${config.apiUrl}/template/generate?docDef=${selectedTemplate}`, requestOptions)
+                   .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
+            }
+        } else {
+            this.setState({
+                alert: {
+                    type:'alert-danger',
+                    message:'Select a document and NFI number.'
+                }
+            })
+        }  
     }
 
     handleSplitLine(event, subId, virtuals) {
@@ -845,7 +852,7 @@ class ReleaseData extends React.Component {
                 return f.fields.name === 'nfi';
             });
 
-            if (!found.edit && !unlocked){
+            if (found.edit && !unlocked){
                 this.setState({
                     ...this.state,
                     inputNfi: '',
@@ -1029,7 +1036,7 @@ class ReleaseData extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '0',
+                selectedTemplate: '',
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -1061,7 +1068,7 @@ class ReleaseData extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '0',
+                selectedTemplate: '',
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -1093,7 +1100,7 @@ class ReleaseData extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '0',
+                selectedTemplate: '',
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -1118,13 +1125,13 @@ class ReleaseData extends React.Component {
         const { showGenerate } = this.state;
         this.setState({
             ...this.state,
-            selectedTemplate: '0',
+            selectedTemplate: '',
             selectedField: '',
             selectedType: 'text',
             updateValue:'',
-            inputNfi: showGenerate ? '0' : '',
+            inputNfi: '',
             showLocation: false,
-            selectedLocation: '0',
+            selectedLocation: '',
             alert: {
                 type:'',
                 message:''
@@ -1159,7 +1166,7 @@ class ReleaseData extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '0',
+                selectedTemplate: '',
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -1325,40 +1332,44 @@ class ReleaseData extends React.Component {
                     title="Assign NFI"
                 >
                     <div className="col-12">
-                        <div className="form-group">
-                            <label htmlFor="inputNfi">NFI Number</label>
-                            <div className="input-group">
-                                <input
-                                    className="form-control"
-                                    type="number"
-                                    name="inputNfi"
-                                    value={inputNfi}
-                                    onChange={this.handleChange}
-                                    placeholder=""
-                                />
-                                <div className="input-group-append">
-                                    <button
-                                            className="btn btn-leeuwen-blue btn-lg"
-                                            title="Get Latest NFI"
-                                            onClick={event => this.getNfi(event, 0)}
+                        <form onSubmit={event => this.handleUpdateNFI(event, false)}>
+                            <div className="form-group">
+                                <label htmlFor="inputNfi">NFI Number</label>
+                                <div className="input-group">
+                                    <input
+                                        className="form-control"
+                                        type="number"
+                                        name="inputNfi"
+                                        value={inputNfi}
+                                        onChange={this.handleChange}
+                                        placeholder=""
+                                        required
+                                    />
+                                    <div className="input-group-append">
+                                        <button
+                                                className="btn btn-leeuwen-blue btn-lg"
+                                                title="Get Latest NFI"
+                                                onClick={event => this.getNfi(event, 0)}
+                                            >
+                                            <span><FontAwesomeIcon icon="arrow-to-bottom" className="fa-lg"/> </span>
+                                        </button>
+                                        <button
+                                            className="btn btn-success btn-lg"
+                                            title="Get New NFI"
+                                            onClick={event => this.getNfi(event, 1)}
                                         >
-                                        <span><FontAwesomeIcon icon="arrow-to-bottom" className="fa-lg"/> </span>
-                                    </button>
-                                    <button
-                                        className="btn btn-success btn-lg"
-                                        title="Get New NFI"
-                                        onClick={event => this.getNfi(event, 1)}
-                                    >
-                                        <span><FontAwesomeIcon icon="sync-alt" className="fa-lg"/> </span>
-                                    </button>
+                                            <span><FontAwesomeIcon icon="sync-alt" className="fa-lg"/> </span>
+                                        </button>
+                                    </div>
                                 </div>
+                            
                             </div>
-                        </div>
-                        <div className="text-right">
-                            <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleUpdateNFI(event, false)}>
-                                <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign</span>
-                            </button>
-                        </div>                   
+                            <div className="text-right">
+                                <button className="btn btn-leeuwen-blue btn-lg">
+                                    <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign</span>
+                                </button>
+                            </div>
+                        </form>                 
                     </div>
                 </Modal>
 
@@ -1369,6 +1380,7 @@ class ReleaseData extends React.Component {
                     // size="modal-xl"
                 >
                     <div className="col-12">
+                        <form onSubmit={event => this.handleGenerateFile(event)}>
                             <div className="form-group">
                                 <label htmlFor="selectedTemplate">Select Document</label>
                                 <select
@@ -1377,8 +1389,9 @@ class ReleaseData extends React.Component {
                                     value={selectedTemplate}
                                     placeholder="Select document..."
                                     onChange={this.handleChange}
+                                    required
                                 >
-                                    <option key="0" value="0">Select document...</option>
+                                    <option key="0" value="">Select document...</option>
                                     {
                                         docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
                                             return (
@@ -1399,8 +1412,9 @@ class ReleaseData extends React.Component {
                                     value={inputNfi}
                                     placeholder="Select NFI..."
                                     onChange={this.handleChange}
+                                    required
                                 >
-                                    <option key="0" value="0">Select NFI...</option>
+                                    <option key="0" value="">Select NFI...</option>
                                     {getNfiList(pos)}
                                 </select>
                             </div>
@@ -1417,17 +1431,19 @@ class ReleaseData extends React.Component {
                                         value={selectedLocation}
                                         placeholder="Select Location..."
                                         onChange={this.handleChange}
+                                        required
                                     >
-                                        <option key="0" value="0">Select Location...</option>
+                                        <option key="0" value="">Select Location...</option>
                                         {getLocationList(suppliers)}
                                     </select>
                                 </div>
                             }
                             <div className="text-right">
-                                <button className="btn btn-success btn-lg" onClick={event => this.handleGenerateFile(event)}>
+                                <button type="submit" className="btn btn-success btn-lg">
                                     <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
                                 </button>
-                            </div>                   
+                            </div>
+                        </form>                   
                     </div>
                 </Modal>
 
