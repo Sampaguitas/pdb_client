@@ -536,7 +536,7 @@ class ReleaseData extends React.Component {
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange=this.handleChange.bind(this);
-        this.handleCheckLocation=this.handleCheckLocation.bind(this);
+        this.toggleLocation=this.toggleLocation.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
@@ -693,10 +693,6 @@ class ReleaseData extends React.Component {
         this.setState({
             [name]: value
         });
-    }
-
-    handleCheckLocation(isChecked) {
-        this.setState({showLocation: isChecked});
     }
 
     handleGenerateFile(event) {
@@ -909,6 +905,9 @@ class ReleaseData extends React.Component {
                 ...this.state,
                 inputNfi: '',
                 showAssignNfi: false,
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
                 showEditValues: false,
                 alert: {
                     type:'alert-success',
@@ -921,6 +920,9 @@ class ReleaseData extends React.Component {
                 ...this.state,
                 inputNfi: '',
                 showAssignNfi: false,
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -937,7 +939,9 @@ class ReleaseData extends React.Component {
         if (!selectedField) {
             this.setState({
                 ...this.state,
-                updateValue: '',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -947,7 +951,9 @@ class ReleaseData extends React.Component {
         } else if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
-                updateValue: '',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -957,7 +963,9 @@ class ReleaseData extends React.Component {
         } else if (_.isEmpty(fieldnames)){
             this.setState({
                 ...this.state,
-                updateValue: '',
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -975,7 +983,9 @@ class ReleaseData extends React.Component {
             if (found.edit && !unlocked) {
                 this.setState({
                     ...this.state,
-                    updateValue: '',
+                    selectedField: '',
+                    selectedType: 'text',
+                    updateValue:'',
                     showEditValues: false,
                     alert: {
                         type:'alert-danger',
@@ -992,7 +1002,9 @@ class ReleaseData extends React.Component {
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
                         ...this.state,
-                        updateValue: '',
+                        selectedField: '',
+                        selectedType: 'text',
+                        updateValue:'',
                         showEditValues: false,
                         alert: {
                             type:'alert-danger',
@@ -1047,20 +1059,11 @@ class ReleaseData extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '',
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
-                inputNfi: '',
                 alert: {
                     type:'',
                     message:''
                 },
                 showSplitLine: !showSplitLine,
-                showEditValues: false,
-                showAssignNfi: false,
-                showGenerate: false,
-                showDelete: false
             });
         }
     }
@@ -1079,20 +1082,14 @@ class ReleaseData extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '',
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
-                inputNfi: '',
                 alert: {
                     type:'',
                     message:''
                 },
-                showSplitLine: false,
                 showEditValues: !showEditValues,
-                showAssignNfi: false,
-                showGenerate: false,
-                showDelete: false
             });
         }
     }
@@ -1111,24 +1108,14 @@ class ReleaseData extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '',
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
                 inputNfi: '',
                 alert: {
                     type:'',
                     message:''
                 },
-                showSplitLine: false,
-                showEditValues: false,
                 showAssignNfi: !showAssignNfi,
-                showGenerate: false,
-                showDelete: false
             });
         }
-
-
     }
 
     toggleGenerate(event) {
@@ -1137,9 +1124,6 @@ class ReleaseData extends React.Component {
         this.setState({
             ...this.state,
             selectedTemplate: (!showGenerate  && docList) ? docList[0]._id : '',
-            selectedField: '',
-            selectedType: 'text',
-            updateValue:'',
             inputNfi: (!showGenerate  && nfiList) ? nfiList[0]._id : '',
             showLocation: true,
             selectedLocation: (!showGenerate  && locationList) ? locationList[0]._id : '',
@@ -1147,12 +1131,12 @@ class ReleaseData extends React.Component {
                 type:'',
                 message:''
             },
-            showSplitLine: false,
-            showEditValues: false,
-            showAssignNfi: false,
             showGenerate: !showGenerate,
-            showDelete: false
         });
+    }
+
+    toggleLocation(isChecked) {
+        this.setState({showLocation: isChecked});
     }
 
     toggleDelete(event) {
@@ -1177,19 +1161,10 @@ class ReleaseData extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '',
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
-                inputNfi: '',
                 alert: {
                     type:'',
                     message:''
                 },
-                showSplitLine: false,
-                showEditValues: false,
-                showAssignNfi: false,
-                showGenerate: false,
                 showDelete: !showDelete
             });
         }
@@ -1426,7 +1401,7 @@ class ReleaseData extends React.Component {
                             </div>
                             <CheckLocation 
                                 title="Show Inspection Location"
-                                callback={this.handleCheckLocation}
+                                callback={this.toggleLocation}
                             />
                             {showLocation &&
                                 <div className="form-group">
