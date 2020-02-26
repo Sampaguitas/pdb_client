@@ -427,12 +427,12 @@ function getBodys(fieldnames, pos, headersForShow){
                                         break;
                                     default: arrayRow.push({
                                         collection: 'virtual',
-                                            objectId: '0',
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: '',
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
+                                        objectId: '0',
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: '',
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
                                     }); 
                                 }
                             });
@@ -510,168 +510,6 @@ function getBodys(fieldnames, pos, headersForShow){
     }
     
 }
-
-// function generateScreenBody(screenId, fieldnames, pos){
-//     let arrayBody = [];
-//     let arrayRow = [];
-//     let objectRow = {};
-//     let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
-//     let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
-    
-//     let i = 1;
-//     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
-//         pos.items.map(po => {
-//             if (po.subs) {
-//                 po.subs.map(sub => {
-//                     if (!_.isEmpty(sub.packitems) && hasPackitems) {
-//                         virtuals(sub.packitems, po.uom, getPackItemFields(screenHeaders)).map(virtual => {
-//                             // console.log('subId:', sub._id, 'virtual:', virtual);
-//                             arrayRow = [];
-//                             screenHeaders.map(screenHeader => {
-//                                 switch(screenHeader.fields.fromTbl) {
-//                                     case 'po':
-//                                         arrayRow.push({
-//                                             collection: 'po',
-//                                             objectId: po._id,
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: po[screenHeader.fields.name],
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                         });
-//                                         break;
-//                                     case 'sub':
-//                                         if (screenHeader.fields.name === 'shippedQty') {
-//                                             arrayRow.push({
-//                                                 collection: 'virtual',
-//                                                 objectId: sub._id,
-//                                                 fieldName: 'shippedQty',
-//                                                 fieldValue: virtual.shippedQty,
-//                                                 disabled: screenHeader.edit,
-//                                                 align: screenHeader.align,
-//                                                 fieldType: getInputType(screenHeader.fields.type),
-//                                             });
-//                                         } else {
-//                                             arrayRow.push({
-//                                                 collection: 'sub',
-//                                                 objectId: sub._id,
-//                                                 fieldName: screenHeader.fields.name,
-//                                                 fieldValue: sub[screenHeader.fields.name],
-//                                                 disabled: screenHeader.edit,
-//                                                 align: screenHeader.align,
-//                                                 fieldType: getInputType(screenHeader.fields.type),
-//                                             });
-//                                         }
-//                                         break;
-//                                     case 'packitem':
-                                        
-//                                         if (screenHeader.fields.name === 'plNr') {
-//                                             arrayRow.push({
-//                                                 collection: 'virtual',
-//                                                 objectId: virtual._id,
-//                                                 fieldName: 'plNr',
-//                                                 fieldValue: virtual.plNr,
-//                                                 disabled: screenHeader.edit,
-//                                                 align: screenHeader.align,
-//                                                 fieldType: getInputType(screenHeader.fields.type),
-//                                             });
-//                                         } else {
-//                                             arrayRow.push({
-//                                                 collection: 'virtual',
-//                                                 objectId: virtual._id,
-//                                                 fieldName: screenHeader.fields.name,
-//                                                 fieldValue: virtual[screenHeader.fields.name].join(' | '),
-//                                                 disabled: screenHeader.edit,
-//                                                 align: screenHeader.align,
-//                                                 fieldType: 'text',
-//                                             });
-//                                         }
-//                                         break;
-//                                     default: arrayRow.push({
-//                                         collection: 'virtual',
-//                                             objectId: '0',
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: '',
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                     }); 
-//                                 }
-//                             });
-//                             objectRow  = {
-//                                 _id: i,
-//                                 tablesId: {
-//                                     poId: po._id,
-//                                     subId: sub._id,
-//                                     certificateId: '',
-//                                     packItemId: '',
-//                                     colliPackId: ''
-//                                 },
-//                                 fields: arrayRow
-//                             };
-//                             arrayBody.push(objectRow);
-//                             i++;
-//                         });
-//                     } else {
-//                         arrayRow = [];
-//                         screenHeaders.map(screenHeader => {
-//                             switch(screenHeader.fields.fromTbl) {
-//                                 case 'po':
-//                                     arrayRow.push({
-//                                         collection: 'po',
-//                                         objectId: po._id,
-//                                         fieldName: screenHeader.fields.name,
-//                                         fieldValue: po[screenHeader.fields.name],
-//                                         disabled: screenHeader.edit,
-//                                         align: screenHeader.align,
-//                                         fieldType: getInputType(screenHeader.fields.type),
-//                                     });
-//                                     break;
-//                                 case 'sub':
-//                                     arrayRow.push({
-//                                         collection: 'sub',
-//                                         objectId: sub._id,
-//                                         fieldName: screenHeader.fields.name,
-//                                         fieldValue: sub[screenHeader.fields.name],
-//                                         disabled: screenHeader.edit,
-//                                         align: screenHeader.align,
-//                                         fieldType: getInputType(screenHeader.fields.type),
-//                                     });
-//                                     break;
-//                                 default: arrayRow.push({
-//                                     collection: 'virtual',
-//                                         objectId: '0',
-//                                         fieldName: screenHeader.fields.name,
-//                                         fieldValue: '',
-//                                         disabled: screenHeader.edit,
-//                                         align: screenHeader.align,
-//                                         fieldType: getInputType(screenHeader.fields.type),
-//                                 }); 
-//                             }
-//                         });
-//                         objectRow  = {
-//                             _id: i,
-//                             tablesId: {
-//                                 poId: po._id,
-//                                 subId: sub._id,
-//                                 certificateId: '',
-//                                 packItemId: '',
-//                                 colliPackId: ''
-//                             },
-//                             fields: arrayRow
-//                         };
-//                         arrayBody.push(objectRow);
-//                         i++;
-//                     }
-//                 })
-//             }
-//         });
-//         return arrayBody;
-//     } else {
-//         return [];
-//     }
-    
-// }
 
 class Overview extends React.Component {
     constructor(props) {
@@ -845,14 +683,14 @@ class Overview extends React.Component {
         const { selectedTemplate } = this.state;
         if (selectedTemplate != "0") {
             let obj = findObj(docdefs.items, selectedTemplate);
-             if (obj) {
+            if (obj) {
                 const requestOptions = {
                     method: 'GET',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 };
-                return fetch(`${config.apiUrl}/template/generate?docDef=${selectedTemplate}`, requestOptions)
-                    .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
-             }
+            return fetch(`${config.apiUrl}/template/generateEsr?id=${selectedTemplate}&locale=${locale}`, requestOptions)
+                .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
+            }
         }
     }
 

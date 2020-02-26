@@ -517,19 +517,13 @@ class Documents extends React.Component {
                     this.setState({
                         ...this.state,
                         deletingFields: false
-                    },
-                    () => {
-                        refreshDocfields;
-                    });
+                    }, refreshDocfields);
                 })
                 .catch( err => {
                     this.setState({
                         ...this.state,
                         deletingFields: false
-                    },
-                    ()=> {
-                        refreshDocfields;
-                    });
+                    }, refreshDocfields);
                 });
             });
         }
@@ -555,10 +549,7 @@ class Documents extends React.Component {
                         selectedTemplate: '0',
                         fileName: '',
                         inputKey: Date.now()
-                    },
-                    () => {
-                        refreshDocdefs;
-                    });
+                    }, refreshDocdefs);
                 })
                 .catch( err => {
                     this.setState({
@@ -567,10 +558,7 @@ class Documents extends React.Component {
                         selectedTemplate: '0',
                         fileName: '',
                         inputKey: Date.now()
-                    },
-                    ()=> {
-                        refreshDocdefs;
-                    });
+                    }, refreshDocdefs);
                 });
             });
         }
