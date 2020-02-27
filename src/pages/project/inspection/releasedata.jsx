@@ -820,11 +820,12 @@ class ReleaseData extends React.Component {
     handleUpdateNFI(event) {
         event.preventDefault();
         const { dispatch, fieldnames, pos } = this.props;
-        const { projectId, selectedIds, inputNfi, unlocked } = this.state;
+        const { projectId, selectedIds, inputNfi, rfiDateAct, unlocked } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
                 inputNfi: '',
+                rfiDateAct: '',
                 showAssignNfi: false,
                 alert: {
                     type:'alert-danger',
@@ -835,6 +836,7 @@ class ReleaseData extends React.Component {
             this.setState({
                 ...this.state,
                 inputNfi: '',
+                rfiDateAct: '',
                 showAssignNfi: false,
                 alert: {
                     type:'alert-danger',
@@ -845,6 +847,7 @@ class ReleaseData extends React.Component {
             this.setState({
                 ...this.state,
                 inputNfi: '',
+                rfiDateAct: '',
                 showAssignNfi: false,
                 alert: {
                     type:'alert-danger',
@@ -863,6 +866,7 @@ class ReleaseData extends React.Component {
                 this.setState({
                     ...this.state,
                     inputNfi: '',
+                    rfiDateAct: '',
                     showAssignNfi: false,
                     alert: {
                         type:'alert-danger',
@@ -870,11 +874,45 @@ class ReleaseData extends React.Component {
                     }
                 });
             } else if (!selectionHasNfi (selectedIds, pos) || confirm('Already existing NFI numbers found. Do you want to proceed?')) {
-                this.updateRequest('sub', 'nfi', inputNfi, 'text', getObjectIds('sub', selectedIds));
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        inputNfi: inputNfi,
+                        rfiDateAct: encodeURI(StringToDate (rfiDateAct, 'date', getDateFormat(myLocale))),
+                        objectIds: getObjectIds('sub', selectedIds)
+                    })
+                };
+                return fetch(`${config.apiUrl}/extract/updateNfi`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        ...this.state,
+                        inputNfi: '',
+                        rfiDateAct: '',
+                        showAssignNfi: false,
+                        alert: {
+                            type:'alert-success',
+                            message:'Field sucessfully updated.'
+                        }
+                    }, this.refreshStore);
+                })
+                .catch( () => {
+                    this.setState({
+                        ...this.state,
+                        inputNfi: '',
+                        rfiDateAct: '',
+                        showAssignNfi: false,
+                        alert: {
+                            type:'alert-danger',
+                            message:'Field could not be updated.'
+                        }
+                    });
+                });
             } else {
                 this.setState({
                     ...this.state,
                     inputNfi: '',
+                    rfiDateAct: '',
                     showAssignNfi: false,
                     alert: {
                         type:'',
@@ -900,11 +938,8 @@ class ReleaseData extends React.Component {
         };
         return fetch(`${config.apiUrl}/extract/update`, requestOptions)
         .then( () => {
-            this.refreshStore();
             this.setState({
                 ...this.state,
-                inputNfi: '',
-                showAssignNfi: false,
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -913,13 +948,11 @@ class ReleaseData extends React.Component {
                     type:'alert-success',
                     message:'Field sucessfully updated.'
                 }
-            });
+            }, this.refreshStore);
         })
         .catch( () => {
             this.setState({
                 ...this.state,
-                inputNfi: '',
-                showAssignNfi: false,
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -1109,6 +1142,7 @@ class ReleaseData extends React.Component {
             this.setState({
                 ...this.state,
                 inputNfi: '',
+                rfiDateAct:'',
                 alert: {
                     type:'',
                     message:''
@@ -1182,6 +1216,7 @@ class ReleaseData extends React.Component {
             selectedType,
             updateValue,
             inputNfi,
+            rfiDateAct,
             showLocation,
             selectedLocation,
             nfiList,
@@ -1198,12 +1233,9 @@ class ReleaseData extends React.Component {
             bodysForShow,
             splitHeadersForShow,
             splitHeadersForSelect,
-
-            
-
         }= this.state;
 
-        const { accesses, docdefs, fieldnames, fields, pos, selection, suppliers } = this.props;
+        const { accesses, fieldnames, fields, pos, selection, suppliers } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         
         return (
@@ -1352,10 +1384,20 @@ class ReleaseData extends React.Component {
                                         </button>
                                     </div>
                                 </div>
-                            
+                                <div className="form-group mt-2">
+                                <label htmlFor="updateValue">Act RFI Date</label>
+                                    <input
+                                        className="form-control"
+                                        type='text'
+                                        name="rfiDateAct"
+                                        value={rfiDateAct}
+                                        onChange={this.handleChange}
+                                        placeholder={getDateFormat(myLocale)}
+                                    />
+                                </div>
                             </div>
                             <div className="text-right">
-                                <button className="btn btn-leeuwen-blue btn-lg">
+                                <button type="submit" className="btn btn-leeuwen-blue btn-lg">
                                     <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign</span>
                                 </button>
                             </div>
