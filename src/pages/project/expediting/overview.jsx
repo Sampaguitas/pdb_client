@@ -200,9 +200,11 @@ function docConf(array) {
         // '5d1927141424114e3884ac83' //SI01 Shipping Invoice
         // '5d1927131424114e3884ac7f' //NFI1 Notification for Inspection
     ];
-    return array.filter(function (element) {
-        return tpeOf.includes(element.doctypeId);
-    });
+    if (array) {
+        return array.filter(function (element) {
+            return tpeOf.includes(element.doctypeId);
+        });
+    }
 }
 
 function findObj(array, search) {
@@ -511,6 +513,13 @@ function getBodys(fieldnames, pos, headersForShow){
     
 }
 
+
+function generateOptions(list) {
+    if (list) {
+        return list.map((element, index) => <option key={index} value={element._id}>{element.name}</option>);
+    }
+}
+
 class Overview extends React.Component {
     constructor(props) {
         super(props);
@@ -525,10 +534,11 @@ class Overview extends React.Component {
             unlocked: false,
             screen: 'expediting',
             selectedIds: [],
-            selectedTemplate: '0',
+            selectedTemplate: '',
             selectedField: '',
             selectedType: 'text',
             updateValue:'',
+            docList: [],
             alert: {
                 type:'',
                 message:''
@@ -546,6 +556,7 @@ class Overview extends React.Component {
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
+        this.updateRequest = this.updateRequest.bind(this);
         
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
@@ -571,7 +582,8 @@ class Overview extends React.Component {
             location,
             //---------
             fieldnames,
-            pos 
+            pos,
+            docdefs
         } = this.props;
 
         const { screenId, splitScreenId, headersForShow, splitHeadersForSelect } = this.state;
@@ -604,12 +616,13 @@ class Overview extends React.Component {
             bodysForShow: getBodys(fieldnames, pos, headersForShow),
             splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
             splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+            docList: arraySorted(docConf(docdefs.items), "name")
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
         const { headersForShow, splitHeadersForSelect, screenId, splitScreenId, selectedField } = this.state;
-        const { fields, fieldnames, pos } = this.props;
+        const { fields, fieldnames, pos, docdefs } = this.props;
         
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
@@ -636,7 +649,12 @@ class Overview extends React.Component {
             this.setState({
                 bodysForShow: getBodys(fieldnames, pos, headersForShow),
             });
-        }   
+        }
+        
+        if (docdefs != prevProps.docdefs) {
+            this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
+        }
+
     }
 
     handleClearAlert(event){
@@ -681,7 +699,7 @@ class Overview extends React.Component {
         event.preventDefault();
         const { docdefs } = this.props;
         const { selectedTemplate } = this.state;
-        if (selectedTemplate != "0") {
+        if (selectedTemplate != '') {
             let obj = findObj(docdefs.items, selectedTemplate);
             if (obj) {
                 const requestOptions = {
@@ -796,6 +814,51 @@ class Overview extends React.Component {
         });
     }
 
+    updateRequest(collection, fieldName, fieldValue, fieldType, objectIds) {
+        const requestOptions = {
+            method: 'PUT',
+            headers: { ...authHeader(), 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                collection: collection,
+                fieldName: fieldName,
+                fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                objectIds: objectIds
+            })
+        };
+        return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+        .then( () => {
+            this.refreshStore();
+            this.setState({
+                ...this.state,
+                inputNfi: '',
+                showAssignNfi: false,
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                showEditValues: false,
+                alert: {
+                    type:'alert-success',
+                    message:'Field sucessfully updated.'
+                }
+            });
+        })
+        .catch( () => {
+            this.setState({
+                ...this.state,
+                inputNfi: '',
+                showAssignNfi: false,
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
+                showEditValues: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'Field could not be updated.'
+                }
+            });
+        });
+    }
+
     handleUpdateValue(event, isErase) {
         event.preventDefault();
         const { dispatch, fieldnames } = this.props;
@@ -803,6 +866,9 @@ class Overview extends React.Component {
         if (!selectedField) {
             this.setState({
                 ...this.state,
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -812,6 +878,9 @@ class Overview extends React.Component {
         } else if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -821,6 +890,9 @@ class Overview extends React.Component {
         } else if (_.isEmpty(fieldnames)){
             this.setState({
                 ...this.state,
+                selectedField: '',
+                selectedType: 'text',
+                updateValue:'',
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -838,6 +910,9 @@ class Overview extends React.Component {
             if (found.edit && !unlocked) {
                 this.setState({
                     ...this.state,
+                    selectedField: '',
+                    selectedType: 'text',
+                    updateValue:'',
                     showEditValues: false,
                     alert: {
                         type:'alert-danger',
@@ -853,6 +928,9 @@ class Overview extends React.Component {
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
                         ...this.state,
+                        selectedField: '',
+                        selectedType: 'text',
+                        updateValue:'',
                         showEditValues: false,
                         alert: {
                             type:'alert-danger',
@@ -860,38 +938,7 @@ class Overview extends React.Component {
                         }
                     });
                 } else {
-                    const requestOptions = {
-                        method: 'PUT',
-                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            collection: collection,
-                            fieldName: fieldName,
-                            fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
-                            objectIds: objectIds
-                        })
-                    };
-                    return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                    .then( () => {
-                        this.refreshStore();
-                        this.setState({
-                            ...this.state,
-                            showEditValues: false,
-                            alert: {
-                                type:'alert-success',
-                                message:'Field sucessfully updated.'
-                            }
-                        });
-                    })
-                    .catch( () => {
-                        this.setState({
-                            ...this.state,
-                            showEditValues: false,
-                            alert: {
-                                type:'alert-danger',
-                                message:'Field cannot be updated.'
-                            }
-                        });
-                    });
+                    this.updateRequest(collection, fieldName, fieldValue, fieldType, objectIds);
                 }
             }  
         }
@@ -938,18 +985,11 @@ class Overview extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '0',
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
                 alert: {
                     type:'',
                     message:''
                 },
-                showEditValues: false,
                 showSplitLine: !showSplitLine,
-                showGenerate: false,
-                showDelete: false
             });
         }
     }
@@ -968,7 +1008,6 @@ class Overview extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '0',
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -977,30 +1016,21 @@ class Overview extends React.Component {
                     message:''
                 },
                 showEditValues: !showEditValues,
-                showSplitLine: false,
-                showGenerate: false,
-                showDelete: false
             });
         }
     }
 
     toggleGenerate(event) {
         event.preventDefault();
-        const { showGenerate } = this.state;
+        const { showGenerate, docList } = this.state;
         this.setState({
             ...this.state,
-            selectedTemplate: '0',
-            selectedField: '',
-            selectedType: 'text',
-            updateValue:'',
+            selectedTemplate: (!showGenerate  && docList) ? docList[0]._id : '',
             alert: {
                 type:'',
                 message:''
             },
-            showEditValues: false,
-            showSplitLine: false,
             showGenerate: !showGenerate,
-            showDelete: false
         });
     }
 
@@ -1026,17 +1056,10 @@ class Overview extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '0',
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
                 alert: {
                     type:'',
                     message:''
                 },
-                showEditValues: false,
-                showSplitLine: false,
-                showGenerate: false,
                 showDelete: !showDelete
             });
         }
@@ -1053,6 +1076,7 @@ class Overview extends React.Component {
             selectedField,
             selectedType, 
             updateValue,
+            docList,
             //show modals
             showEditValues,
             showSplitLine,
@@ -1063,10 +1087,9 @@ class Overview extends React.Component {
             bodysForShow,
             splitHeadersForShow,
             splitHeadersForSelect,
-
         } = this.state;
 
-        const { accesses, docdefs, fieldnames, fields, pos, selection } = this.props;
+        const { accesses, fieldnames, fields, pos, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
@@ -1180,6 +1203,7 @@ class Overview extends React.Component {
                     title="Generate Document"
                 >
                     <div className="col-12">
+                        <form onSubmit={event => this.handleGenerateFile(event)}>
                             <div className="form-group">
                                 <label htmlFor="selectedTemplate">Select Document</label>
                                 <select
@@ -1188,25 +1212,18 @@ class Overview extends React.Component {
                                     value={selectedTemplate}
                                     placeholder="Select document..."
                                     onChange={this.handleChange}
+                                    required
                                 >
-                                    <option key="0" value="0">Select document...</option>
-                                    {
-                                        docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
-                                            return (
-                                                <option 
-                                                    key={p._id}
-                                                    value={p._id}>{p.name}
-                                                </option>
-                                            );
-                                        })
-                                    }
+                                    <option key="0" value="">Select document...</option>
+                                    {generateOptions(docList)}
                                 </select>
                             </div>
                             <div className="text-right">
-                                <button className="btn btn-success btn-lg" onClick={event => this.handleGenerateFile(event)}>
+                                <button type="submit" className="btn btn-success btn-lg">
                                     <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
                                 </button>
-                            </div>                   
+                            </div>
+                        </form>                  
                     </div>
                 </Modal>
 
