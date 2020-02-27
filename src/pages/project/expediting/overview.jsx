@@ -780,35 +780,6 @@ class Overview extends React.Component {
         }
     }
 
-    // selectedFieldOptions(fieldnames, fields, screenId) {
-    //     if (fieldnames.items && fields.items) {
-    //         let screenHeaders = generateScreenHeader(fieldnames, screenId);
-    //         let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
-    //             if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
-    //                 accumulator.push(currentValue.fieldId);
-    //             }
-    //             return accumulator;
-    //         }, []);
-    //         let fieldsFromHeader = fields.items.reduce(function (accumulator, currentValue) {
-    //             if (fieldIds.indexOf(currentValue._id) !== -1) {
-    //                 accumulator.push({ 
-    //                     value: currentValue._id,
-    //                     name: currentValue.custom
-    //                 });
-    //             }
-    //             return accumulator;
-    //         }, []);
-    //         return arraySorted(fieldsFromHeader, 'name').map(field => {
-    //             return (
-    //                 <option 
-    //                     key={field.value}
-    //                     value={field.value}>{field.name}
-    //                 </option>                
-    //             );
-    //         });
-    //     }
-    // }
-
     updateSelectedIds(selectedIds) {
         this.setState({
             ...this.state,
@@ -1024,16 +995,26 @@ class Overview extends React.Component {
 
     toggleGenerate(event) {
         event.preventDefault();
-        const { showGenerate, docList } = this.state;
-        this.setState({
-            ...this.state,
-            selectedTemplate: (!showGenerate  && docList) ? docList[0]._id : '',
-            alert: {
-                type:'',
-                message:''
-            },
-            showGenerate: !showGenerate,
-        });
+        const { showGenerate, docList, selectedIds } = this.state;
+        if (!showGenerate && _.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to be displayed in the ESR.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                selectedTemplate: (!showGenerate  && docList) ? docList[0]._id : '',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showGenerate: !showGenerate,
+            });
+        }
     }
 
     toggleDelete(event) {
