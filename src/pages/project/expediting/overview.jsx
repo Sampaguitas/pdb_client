@@ -698,13 +698,15 @@ class Overview extends React.Component {
     handleGenerateFile(event) {
         event.preventDefault();
         const { docdefs } = this.props;
-        const { selectedTemplate } = this.state;
+        const { selectedTemplate, selectedIds } = this.state;
+        // console.log('selectedIds:', selectedIds);
         if (selectedTemplate != '') {
             let obj = findObj(docdefs.items, selectedTemplate);
             if (obj) {
                 const requestOptions = {
-                    method: 'GET',
+                    method: 'POST',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedIds})
                 };
             return fetch(`${config.apiUrl}/template/generateEsr?id=${selectedTemplate}&locale=${locale}`, requestOptions)
                 .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
