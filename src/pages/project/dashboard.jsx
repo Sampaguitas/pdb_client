@@ -22,10 +22,10 @@ import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function isRole(accesses, user, role) {
-    if (!_.isEmpty(accesses) && accesses.hasOwnProperty('items') && user && role) {
+    if (!_.isUndefined(accesses) && accesses.hasOwnProperty('items') && user && role) {
         return accesses.items.reduce(function (acc, curr){
-            if (!acc && _.isEqual(curr.userId, user._id)) {
-                acc = curr[role];
+            if (!acc && curr.userId === user.id && curr[role] === true) {
+                acc = true;
             }
             return acc;
         }, false);
@@ -41,27 +41,27 @@ function menuList(menu, accesses){
         menu.forEach(function(item) {
             if (!item.roles){
                 listMenu.push(item);
-            } else if (item.roles.indexOf('isAdmin') > -1 && user.isAdmin) {
+            } else if (item.roles.includes('isAdmin') && user.isAdmin) {
                 listMenu.push(item);
-            } else if (item.roles.indexOf('isSuperAdmin') > -1 && user.isSuperAdmin) {
+            } else if (item.roles.includes('isSuperAdmin') && user.isSuperAdmin) {
                 listMenu.push(item);
-            } else if (item.roles.indexOf('isExpediting') > -1 && isRole(accesses, user, 'isExpediting')) {
+            } else if (item.roles.includes('isExpediting') && isRole(accesses, user, 'isExpediting')) {
                 listMenu.push(item);
-            } else if (item.roles.indexOf('isInspection') > -1 && isRole(accesses, user, 'isInspection')) {
+            } else if (item.roles.includes('isInspection') && isRole(accesses, user, 'isInspection')) {
                 listMenu.push(item);
-            } else if (item.roles.indexOf('isShipping') > -1 && isRole(accesses, user, 'isShipping')) {
+            } else if (item.roles.includes('isShipping') && isRole(accesses, user, 'isShipping')) {
                 listMenu.push(item);
-            } else if (item.roles.indexOf('isWarehouse') > -1 && isRole(accesses, user, 'isWarehouse')) {
+            } else if (item.roles.includes('isWarehouse') && isRole(accesses, user, 'isWarehouse')) {
                 listMenu.push(item);
-            } else if (item.roles.indexOf('isConfiguration') > -1 && isRole(accesses, user, 'isConfiguration')) {
+            } else if (item.roles.includes('isConfiguration') && isRole(accesses, user, 'isConfiguration')) {
                 listMenu.push(item);
             }
         });
     return listMenu;
 }
 
-function generateMenu(menuList, projectId) {
-    if (_.isEmpty(menuList)) {
+function generateMenu(menuList, projectId, accesses) {
+    if (_.isEmpty(menuList) && accesses.items) {
         return (
             <div>
                 <h3 className="mt-3">You currently don't have access to any of the project modules.</h3>
@@ -177,9 +177,6 @@ class Dashboard extends React.Component {
         dispatch(alertActions.clear());
     }
 
-    
-
-
 
     render() {
 
@@ -208,103 +205,7 @@ class Dashboard extends React.Component {
                 <hr />
                 <div id="dashboard">
                     <div className="row justify-content-center">
-                        {generateMenu(menuList(menu, accesses), projectId)}
-                    {/* <NavLink to={{ 
-                            pathname: "/duf",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="upload" 
-                                    className="fa-5x mb-3" 
-                                    name="upload"
-                                />
-                                <h3>Data Upload File (DUF)</h3>
-                            </div>
-                        </div>
-                    </NavLink>
-                    <NavLink to={{ 
-                            pathname: "/expediting",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="stopwatch" 
-                                    className="fa-5x mb-3" 
-                                    name="stopwatch"
-                                />
-                                <h3>Expediting</h3>
-                            </div>
-                        </div>
-                    </NavLink>
-                    <NavLink to={{ 
-                            pathname: "/inspection",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="search" 
-                                    className="fa-5x mb-3" 
-                                    name="search"
-                                />
-                                <h3>Inspection</h3>
-                            </div>
-                        </div>
-                    </NavLink>
-                    <NavLink to={{ 
-                            pathname: "/shipping",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="ship" 
-                                    className="fa-5x mb-3" 
-                                    name="ship"
-                                />
-                                <h3>Shipping</h3>
-                            </div>
-                        </div>
-                    </NavLink>
-                    <NavLink to={{ 
-                            pathname: "/warehouse",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="warehouse" 
-                                    className="fa-5x mb-3" 
-                                    name="warehouse"
-                                />
-                                <h3>Warehouse</h3>
-                            </div>
-                        </div>
-                    </NavLink>
-                    <NavLink to={{ 
-                            pathname: "/configuration",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="cog" 
-                                    className="fa-5x mb-3" 
-                                    name="cog"
-                                />
-                                <h3>Configuration</h3>
-                            </div>
-                        </div>
-                    </NavLink> */}
+                        {generateMenu(menuList(menu, accesses), projectId, accesses)}
                     </div>
                 </div>
             </Layout>

@@ -129,12 +129,10 @@ class Configuration extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { fields } = this.props;
-        
         if (fields != prevProps.fields){
             this.refreshFieldnames;
             this.refreshDocfields;
         }
-
     }
 
     handleClearAlert(event){

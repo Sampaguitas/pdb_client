@@ -59,10 +59,10 @@ const project_menu = [
 ]
 
 function isRole(accesses, user, role) {
-    if (!_.isEmpty(accesses) && accesses.hasOwnProperty('items') && user && role) {
+    if (!_.isUndefined(accesses) && accesses.hasOwnProperty('items') && user && role) {
         return accesses.items.reduce(function (acc, curr){
-            if (!acc && _.isEqual(curr.userId, user._id)) {
-                acc = curr[role];
+            if (!acc && curr.userId === user.id && curr[role] === true) {
+                acc = true;
             }
             return acc;
         }, false);
@@ -145,19 +145,19 @@ class SideBarMenu extends Component {
             menu.forEach(function(item) {
                 if (!item.roles){
                     listMenu.push(item);
-                } else if (item.roles.indexOf('isAdmin') > -1 && user.isAdmin) {
+                } else if (item.roles.includes('isAdmin') && user.isAdmin) {
                     listMenu.push(item);
-                } else if (item.roles.indexOf('isSuperAdmin') > -1 && user.isSuperAdmin) {
+                } else if (item.roles.includes('isSuperAdmin') && user.isSuperAdmin) {
                     listMenu.push(item);
-                } else if (item.roles.indexOf('isExpediting') > -1 && isRole(accesses, user, 'isExpediting')) {
+                } else if (item.roles.includes('isExpediting') && isRole(accesses, user, 'isExpediting')) {
                     listMenu.push(item);
-                } else if (item.roles.indexOf('isInspection') > -1 && isRole(accesses, user, 'isInspection')) {
+                } else if (item.roles.includes('isInspection') && isRole(accesses, user, 'isInspection')) {
                     listMenu.push(item);
-                } else if (item.roles.indexOf('isShipping') > -1 && isRole(accesses, user, 'isShipping')) {
+                } else if (item.roles.includes('isShipping') && isRole(accesses, user, 'isShipping')) {
                     listMenu.push(item);
-                } else if (item.roles.indexOf('isWarehouse') > -1 && isRole(accesses, user, 'isWarehouse')) {
+                } else if (item.roles.includes('isWarehouse') && isRole(accesses, user, 'isWarehouse')) {
                     listMenu.push(item);
-                } else if (item.roles.indexOf('isConfiguration') > -1 && isRole(accesses, user, 'isConfiguration')) {
+                } else if (item.roles.includes('isConfiguration') && isRole(accesses, user, 'isConfiguration')) {
                     listMenu.push(item);
                 }
             });

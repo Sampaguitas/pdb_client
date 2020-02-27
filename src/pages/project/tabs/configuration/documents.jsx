@@ -333,9 +333,7 @@ class Documents extends React.Component {
                                 newRow:false,
                                 docField:{},
                                 newRowFocus: false
-                            }, () => {
-                                refreshDocfields;
-                            });
+                            }, refreshDocfields);
                         }, 1000);
                     });
                 })
@@ -352,9 +350,7 @@ class Documents extends React.Component {
                                 newRow:false,
                                 docField:{},
                                 newRowFocus: false
-                            }, () => {
-                                refreshDocfields;
-                            });
+                            }, refreshDocfields);
                         }, 1000);
                     });
                 });
@@ -514,16 +510,10 @@ class Documents extends React.Component {
                 };
                 return fetch(`${config.apiUrl}/docField/delete?id=${JSON.stringify(id)}`, requestOptions)
                 .then( () => {
-                    this.setState({
-                        ...this.state,
-                        deletingFields: false
-                    }, refreshDocfields);
+                    this.setState({deletingFields: false}, refreshDocfields);
                 })
                 .catch( err => {
-                    this.setState({
-                        ...this.state,
-                        deletingFields: false
-                    }, refreshDocfields);
+                    this.setState({deletingFields: false}, refreshDocfields);
                 });
             });
         }
