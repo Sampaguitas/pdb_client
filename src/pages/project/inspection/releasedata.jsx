@@ -698,7 +698,7 @@ class ReleaseData extends React.Component {
     handleGenerateFile(event) {
         event.preventDefault();
         const { docdefs } = this.props;
-        const { selectedTemplate, inputNfi, selectedLocation } = this.state;
+        const { selectedTemplate, inputNfi, showLocation, selectedLocation } = this.state;
         if (selectedTemplate && inputNfi) {
             let obj = findObj(docdefs.items, selectedTemplate);
             if (obj) {
@@ -706,7 +706,7 @@ class ReleaseData extends React.Component {
                    method: 'GET',
                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
                };
-               return fetch(`${config.apiUrl}/template/generate?docDef=${selectedTemplate}`, requestOptions)
+               return fetch(`${config.apiUrl}/template/generateNfi?id=${selectedTemplate}&locale=${locale}&inputNfi=${inputNfi}&selectedLocation=${showLocation ? selectedLocation : ''}`, requestOptions)
                    .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
             }
         } else {
