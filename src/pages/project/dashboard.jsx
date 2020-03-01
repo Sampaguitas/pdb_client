@@ -70,9 +70,10 @@ function generateMenu(menuList, projectId, accesses) {
         )
     } else {
         let tempScreen = []
-        menuList.map(function (menu) {
+        menuList.map(function (menu, index) {
             tempScreen.push(
                 <NavLink
+                    key={index}
                     to={{ 
                     pathname: menu.href,
                     search: '?id=' + projectId

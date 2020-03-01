@@ -283,9 +283,9 @@ class PackingDetails extends React.Component {
         super(props);
         this.state = {
             projectId:'',
-            screenId: '5cd2b643fd333616dc360b67',
+            screenId: '5cd2b643fd333616dc360b67', //packing details
             unlocked: false,
-            screen: 'certificates',
+            screen: 'packingdetails',
             selectedIds: [],
             selectedTemplate: '0',
             selectedField: '',
@@ -303,6 +303,7 @@ class PackingDetails extends React.Component {
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
+        this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
@@ -401,6 +402,31 @@ class PackingDetails extends React.Component {
             unlocked: !unlocked
         }, () => {
         });
+    }
+
+    downloadTable(event){
+        event.preventDefault();
+        const { projectId, screenId, screen, selectedIds } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be downloaded.'
+                }
+            });
+        } else if (projectId && screenId && screen) {
+            var currentDate = new Date();
+            var date = currentDate.getDate();
+            var month = currentDate.getMonth();
+            var year = currentDate.getFullYear();
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                body: JSON.stringify({selectedIds: selectedIds})
+            };
+            return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}`, requestOptions)
+            .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+        }
     }
 
     handleChange(event) {
@@ -730,6 +756,7 @@ class PackingDetails extends React.Component {
                                 selectedIds={selectedIds}
                                 updateSelectedIds = {this.updateSelectedIds}
                                 toggleUnlock={this.toggleUnlock}
+                                downloadTable={this.downloadTable}
                                 unlocked={unlocked}
                                 screen={screen}
                                 fieldnames={fieldnames}

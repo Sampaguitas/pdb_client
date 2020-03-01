@@ -154,12 +154,9 @@ function getObjectIds(collection, selectedIds) {
     }
 }
 
-// function arrayRemove(arr, value) {
-
-//     return arr.filter(function(ele){
-//         return ele != value;
-//     });
-// }
+function baseTen(number) {
+    return number.toString().length > 2 ? number : '0' + number;
+}
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -552,6 +549,7 @@ class Overview extends React.Component {
 
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
+        this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
@@ -686,6 +684,31 @@ class Overview extends React.Component {
         });
     }
 
+    downloadTable(event){
+        event.preventDefault();
+        const { projectId, screenId, screen, selectedIds } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be downloaded.'
+                }
+            });
+        } else if (projectId && screenId && screen) {
+            var currentDate = new Date();
+            var date = currentDate.getDate();
+            var month = currentDate.getMonth();
+            var year = currentDate.getFullYear();
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                body: JSON.stringify({selectedIds: selectedIds})
+            };
+            return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}`, requestOptions)
+            .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+        }
+    }
+
     handleChange(event) {
         event.preventDefault();
         const name =  event.target.name;
@@ -700,7 +723,7 @@ class Overview extends React.Component {
         const { docdefs } = this.props;
         const { selectedTemplate, selectedIds } = this.state;
         // console.log('selectedIds:', selectedIds);
-        if (selectedTemplate != '') {
+        if (docdefs && selectedTemplate) {
             let obj = findObj(docdefs.items, selectedTemplate);
             if (obj) {
                 const requestOptions = {
@@ -1108,6 +1131,7 @@ class Overview extends React.Component {
                                 selectedIds={selectedIds}
                                 updateSelectedIds = {this.updateSelectedIds}
                                 toggleUnlock={this.toggleUnlock}
+                                downloadTable={this.downloadTable}
                                 unlocked={unlocked}
                                 screen={screen}
                                 fieldnames={fieldnames}

@@ -208,7 +208,7 @@ class ProjectTable extends Component {
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.resetHeaders = this.resetHeaders.bind(this);
-        this.downloadTable = this.downloadTable.bind(this);
+        // this.downloadTable = this.downloadTable.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
@@ -523,20 +523,22 @@ class ProjectTable extends Component {
         }
     }
 
-    downloadTable(event){
-        event.preventDefault();
-        const { projectId, screenId, screen } = this.props;
-        var currentDate = new Date();
-        var date = currentDate.getDate();
-        var month = currentDate.getMonth();
-        var year = currentDate.getFullYear();
-        const requestOptions = {
-            method: 'GET',
-            headers: { ...authHeader(), 'Content-Type': 'application/json'},
-        };
-        return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}`, requestOptions)
-        .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
-    }
+    // downloadTable(event){
+    //     event.preventDefault();
+    //     const { selectedRows } = this.state;
+    //     const { projectId, screenId, screen, screenBodys } = this.props;
+    //     var currentDate = new Date();
+    //     var date = currentDate.getDate();
+    //     var month = currentDate.getMonth();
+    //     var year = currentDate.getFullYear();
+    //     const requestOptions = {
+    //         method: 'POST',
+    //         headers: { ...authHeader(), 'Content-Type': 'application/json'},
+    //         bodys: JSON.stringify({selectedIds: getTableIds(selectedRows, screenBodys)})
+    //     };
+    //     return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}`, requestOptions)
+    //     .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+    // }
 
     handleUploadFile(event){
         event.preventDefault();
@@ -627,11 +629,13 @@ class ProjectTable extends Component {
 
         const { 
             toggleDelete,
-            toggleUnlock, 
+            toggleUnlock,
+            downloadTable,
             screenHeaders, 
             screenBodys, 
             unlocked,
-            refreshStore
+            refreshStore,
+            
         } = this.props;
         
         const { 
@@ -666,7 +670,7 @@ class ProjectTable extends Component {
                     <button className="btn btn-outline-leeuwen-blue" title="Unlock Cells" onClick={event => toggleUnlock(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon={unlocked ? "unlock" : "lock"} className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" title="Download" onClick={event => this.downloadTable(event)} style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" title="Download" onClick={event => downloadTable(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="download" className="fas fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title="Upload" onClick={event => this.toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>

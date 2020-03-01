@@ -339,7 +339,7 @@ class Certificates extends React.Component {
         super(props);
         this.state = {
             projectId:'',
-            screenId: '5cd2b642fd333616dc360b65',
+            screenId: '5cd2b642fd333616dc360b65', //Certificates
             unlocked: false,
             screen: 'certificates',
             selectedIds: [],
@@ -358,6 +358,7 @@ class Certificates extends React.Component {
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
+        this.downloadTable = this.downloadTable.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
@@ -444,6 +445,31 @@ class Certificates extends React.Component {
             unlocked: !unlocked
         }, () => {
         });
+    }
+
+    downloadTable(event){
+        event.preventDefault();
+        const { projectId, screenId, screen, selectedIds } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be downloaded.'
+                }
+            });
+        } else if (projectId && screenId && screen) {
+            var currentDate = new Date();
+            var date = currentDate.getDate();
+            var month = currentDate.getMonth();
+            var year = currentDate.getFullYear();
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                body: JSON.stringify({selectedIds: selectedIds})
+            };
+            return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}`, requestOptions)
+            .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+        }
     }
 
     handleChange(event) {
@@ -726,6 +752,7 @@ class Certificates extends React.Component {
                                 selectedIds={selectedIds}
                                 updateSelectedIds = {this.updateSelectedIds}
                                 toggleUnlock={this.toggleUnlock}
+                                downloadTable={this.downloadTable}
                                 unlocked={unlocked}
                                 screen={screen}
                                 fieldnames={fieldnames}
