@@ -523,27 +523,10 @@ class ProjectTable extends Component {
         }
     }
 
-    // downloadTable(event){
-    //     event.preventDefault();
-    //     const { selectedRows } = this.state;
-    //     const { projectId, screenId, screen, screenBodys } = this.props;
-    //     var currentDate = new Date();
-    //     var date = currentDate.getDate();
-    //     var month = currentDate.getMonth();
-    //     var year = currentDate.getFullYear();
-    //     const requestOptions = {
-    //         method: 'POST',
-    //         headers: { ...authHeader(), 'Content-Type': 'application/json'},
-    //         bodys: JSON.stringify({selectedIds: getTableIds(selectedRows, screenBodys)})
-    //     };
-    //     return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}`, requestOptions)
-    //     .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
-    // }
-
     handleUploadFile(event){
         event.preventDefault();
         const { fileName } = this.state
-        const { projectId, screenId } = this.props;
+        const { projectId, screenId, refreshStore } = this.props;
         if(this.fileInput.current.files[0] && projectId && screenId && fileName) {
             this.setState({uploading: true});
             var data = new FormData()
@@ -563,7 +546,7 @@ class ProjectTable extends Component {
                         localStorage.removeItem('user');
                         location.reload(true);
                     }
-                    const error = (data && data.message) || responce.statusText;
+                    // const error = (data && data.message) || responce.statusText;
                     this.setState({
                         uploading: false,
                         responce: {
@@ -576,9 +559,8 @@ class ProjectTable extends Component {
                             type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                             message: data.message
                         }
-                    });
+                    }, refreshStore);
                 } else {
-                    // console.log('responce ok')
                     this.setState({
                         uploading: false,
                         responce: {
@@ -587,8 +569,7 @@ class ProjectTable extends Component {
                             nRejected: data.nRejected,
                             nEdited: data.nEdited
                         },
-                    });
-                    
+                    }, refreshStore);
                 }
             }));            
         }        

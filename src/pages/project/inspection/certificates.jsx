@@ -128,6 +128,10 @@ function getObjectIds(collection, selectedIds) {
     }
 }
 
+function baseTen(number) {
+    return number.toString().length > 2 ? number : '0' + number;
+}
+
 // function arrayRemove(arr, value) {
 
 //     return arr.filter(function(ele){
@@ -449,7 +453,7 @@ class Certificates extends React.Component {
 
     downloadTable(event){
         event.preventDefault();
-        const { projectId, screenId, screen, selectedIds } = this.state;
+        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
                 alert: {
@@ -467,7 +471,7 @@ class Certificates extends React.Component {
                 headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 body: JSON.stringify({selectedIds: selectedIds})
             };
-            return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}`, requestOptions)
+            return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
             .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
         }
     }

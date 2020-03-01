@@ -228,9 +228,7 @@ class TableInput extends Component{
                         ...this.state,
                         isEditing: false,
                         isSelected: false,
-                    }, () => {
-                        refreshStore();
-                    });
+                    }, refreshStore);
                     
                 })
                 .catch( () => {
