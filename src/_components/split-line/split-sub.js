@@ -475,7 +475,7 @@ function getRemainingQty(selectedPo, bodysForSelect, selectedLine, virtuals) {
     let subsQty = getSubsQty(selectedPo);
     let selectionQty = getSelectionQty(selectedPo, subId);
     let virturalsQty = getVirturalsQty(virtuals);
-    return poQty - ( subsQty - selectionQty + virturalsQty);
+    return poQty - (subsQty - selectionQty + virturalsQty);
 }
 
 function isValidArray(virtuals, headersForShow) {

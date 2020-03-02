@@ -492,8 +492,19 @@ function getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, 
     let packitemsQty = getPackitemsQty(selectedPo, selectedIds, tempUom);
     let selectionQty = getSelectionQty(selectedPo, selectionIds, tempUom);
     let virturalsQty = getVirturalsQty(virtuals, tempUom);
-    // return (relQty - (packitemsQty - selectionQty + virturalsQty)).toFixed(3);
-    return relQty - (packitemsQty - selectionQty + virturalsQty);
+    // console.log('--------------------------------');
+    // console.log('relQty:', relQty);
+    // console.log('packitemsQty:', packitemsQty);
+    // console.log('selectionQty:', selectionQty);
+    // console.log('virturalsQty:', virturalsQty);
+    // console.log('total:', relQty - (packitemsQty - selectionQty + virturalsQty));
+    if (!packitemsQty) {
+        // console.log('no PackitemsQty');
+        return relQty - virturalsQty;
+    } else {
+        // console.log('has PackitemsQty');
+        return relQty - (packitemsQty - selectionQty + virturalsQty);
+    }
 }
 
 function isValidArray(virtuals, headersForShow) {
@@ -514,7 +525,7 @@ function formatArray(virtuals, headersForShow) {
         let tempObject = {};
         
         headersForShow.map(function (h) {
-            if (h.fields.fromTbl === 'sub'){
+            if (h.fields.fromTbl === 'packitem'){
                 tempObject[h.fields.name] = StringToDate (curr[h.fields.name], getInputType(h.fields.type), getDateFormat(myLocale));
             }
         });
@@ -829,13 +840,13 @@ class SplitLine extends Component {
                     message: 'Some dates are not properly formated.'
                 }
             });
-        } else if (!_.isUndefined(screenBody) && screenBody.isPacked) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Line contains packed item(s) and cannot be splet! First delete packed items in the shipping module and try again.'
-                }
-            });
+        // } else if (!_.isUndefined(screenBody) && screenBody.isPacked) {
+        //     this.setState({
+        //         alert: {
+        //             type: 'alert-danger',
+        //             message: 'Line contains packed item(s) and cannot be splet! First delete packed items in the shipping module and try again.'
+        //         }
+        //     });
         } else if (remainingQty != 0) {
             if (confirm(`${remainingQty} ${selectedPo.uom} remaining, would you like to proceed?`)){
                 handleSplitLine(event, getSelecetionIds(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));

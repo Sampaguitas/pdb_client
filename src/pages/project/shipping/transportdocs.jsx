@@ -696,14 +696,14 @@ class TransportDocuments extends React.Component {
         });
     }
 
-    handleSplitLine(event, subId, virtuals) {
+    handleSplitLine(event, selectionIds, virtuals) {
         event.preventDefault();
         const requestOptions = {
             method: 'PUT',
             headers: { ...authHeader(), 'Content-Type': 'application/json'},
             body: JSON.stringify({virtuals: virtuals})
         }
-        return fetch(`${config.apiUrl}/split/sub?subId=${subId}`, requestOptions)
+        return fetch(`${config.apiUrl}/split/packitem?subId=${selectionIds.subId}&packitemId=${selectionIds.packitemId}`, requestOptions)
         .then(responce => responce.text().then(text => {
             const data = text && JSON.parse(text);
             if (!responce.ok) {
@@ -759,37 +759,6 @@ class TransportDocuments extends React.Component {
             });
         }
     }
-
-    
-
-    // selectedFieldOptions(fieldnames, fields, screenId) {
-    //     if (fieldnames.items && fields.items) {
-    //         let screenHeaders = generateScreenHeader(fieldnames, screenId);
-    //         let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
-    //             if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
-    //                 accumulator.push(currentValue.fieldId);
-    //             }
-    //             return accumulator;
-    //         }, []);
-    //         let fieldsFromHeader = fields.items.reduce(function (accumulator, currentValue) {
-    //             if (fieldIds.indexOf(currentValue._id) !== -1) {
-    //                 accumulator.push({ 
-    //                     value: currentValue._id,
-    //                     name: currentValue.custom
-    //                 });
-    //             }
-    //             return accumulator;
-    //         }, []);
-    //         return arraySorted(fieldsFromHeader, 'name').map(field => {
-    //             return (
-    //                 <option 
-    //                     key={field.value}
-    //                     value={field.value}>{field.name}
-    //                 </option>                
-    //             );
-    //         });
-    //     }
-    // }
 
     updateSelectedIds(selectedIds) {
         this.setState({
