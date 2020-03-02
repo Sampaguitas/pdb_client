@@ -492,12 +492,6 @@ function getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, 
     let packitemsQty = getPackitemsQty(selectedPo, selectedIds, tempUom);
     let selectionQty = getSelectionQty(selectedPo, selectionIds, tempUom);
     let virturalsQty = getVirturalsQty(virtuals, tempUom);
-    // console.log('--------------------------------');
-    // console.log('relQty:', relQty);
-    // console.log('packitemsQty:', packitemsQty);
-    // console.log('selectionQty:', selectionQty);
-    // console.log('virturalsQty:', virturalsQty);
-    // console.log('total:', relQty - (packitemsQty - selectionQty + virturalsQty));
     if (!packitemsQty) {
         // console.log('no PackitemsQty');
         return relQty - virturalsQty;
@@ -618,6 +612,7 @@ class SplitLine extends Component {
         }
 
         if (prevState.selectedLine != selectedLine) {
+            console.log('selectionIds:', getSelecetionIds(bodysForSelect, selectedLine));
             if (selectedLine === '') {
                 this.setState({
                     virtuals: [],
@@ -840,13 +835,6 @@ class SplitLine extends Component {
                     message: 'Some dates are not properly formated.'
                 }
             });
-        // } else if (!_.isUndefined(screenBody) && screenBody.isPacked) {
-        //     this.setState({
-        //         alert: {
-        //             type: 'alert-danger',
-        //             message: 'Line contains packed item(s) and cannot be splet! First delete packed items in the shipping module and try again.'
-        //         }
-        //     });
         } else if (remainingQty != 0) {
             if (confirm(`${remainingQty} ${selectedPo.uom} remaining, would you like to proceed?`)){
                 handleSplitLine(event, getSelecetionIds(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));
