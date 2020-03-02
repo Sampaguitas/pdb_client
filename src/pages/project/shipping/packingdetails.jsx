@@ -743,10 +743,16 @@ class PackingDetails extends React.Component {
                 <hr />
                 <div id="packingdetails" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleEditValues(event)}>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Edit Values" onClick={event => this.toggleEditValues(event)}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
                         </button>
-                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleGenerate(event)}>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Assign Colli Type"> {/* onClick={event => this.toggleAssignNfi(event)} */}
+                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Colli Type</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Calculate Net Weight"> {/* onClick={event => this.toggleAssignNfi(event)} */}
+                            <span><FontAwesomeIcon icon="balance-scale-left" className="fa-lg mr-2"/>Net Weight</span>
+                        </button>
+                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Generate Shipping Docs" onClick={event => this.toggleGenerate(event)}>
                             <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Shipping Docs</span>
                         </button>
                     </div>

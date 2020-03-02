@@ -530,12 +530,16 @@ class TransportDocuments extends React.Component {
             selectedField: '',
             selectedType: 'text',
             updateValue:'',
+            inputPl: '',
+            inputColli: '',
             alert: {
                 type:'',
                 message:''
             },
             //-----modals-----
             showEditValues: false,
+            showAssignPl: false,
+            showAssignColli: false,
             showSplitLine: false,
             // showGenerate: false,
             showDelete: false,          
@@ -550,10 +554,15 @@ class TransportDocuments extends React.Component {
 
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
+        this.getPl = this.getPl.bind(this);
+        this.handleUpdatePL = this.handleUpdatePL.bind(this);
+        this.handleUpdateColli = this.handleUpdateColli.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         //Toggle Modals
         this.toggleSplitLine = this.toggleSplitLine.bind(this);
         this.toggleEditValues = this.toggleEditValues.bind(this);
+        this.toggleAssignPl = this.toggleAssignPl.bind(this);
+        this.toggleAssignColli = this.toggleAssignColli.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
     }
 
@@ -703,7 +712,7 @@ class TransportDocuments extends React.Component {
             headers: { ...authHeader(), 'Content-Type': 'application/json'},
             body: JSON.stringify({virtuals: virtuals})
         }
-        return fetch(`${config.apiUrl}/split/packitem?subId=${selectionIds.subId}&packitemId=${selectionIds.packitemId}`, requestOptions)
+        return fetch(`${config.apiUrl}/split/packitem?subId=${selectionIds.subId}&packItemId=${selectionIds.packItemId}`, requestOptions)
         .then(responce => responce.text().then(text => {
             const data = text && JSON.parse(text);
             if (!responce.ok) {
@@ -765,6 +774,50 @@ class TransportDocuments extends React.Component {
             ...this.state,
             selectedIds: selectedIds
         });
+    }
+
+    getPl(event, topUp) {
+        const { pos } = this.props;
+        event.preventDefault();
+        if (pos.hasOwnProperty('items') && !_.isUndefined(pos.items)){
+            
+            let tempPl = pos.items.reduce(function (accPo , currPo) {
+                
+                let currPoPl = currPo.subs.reduce(function (accSub, currSub) {
+
+                    let currSubPl = currSub.packitems.reduce(function (accPackitem, currPackitem) {
+                        if (currPackitem.hasOwnProperty('plNr') && currPackitem.plNr > accPackitem) {
+                            accPackitem =  currPackitem.plNr
+                        }
+                        return accPackitem;
+                    }, 0);
+
+                    if (currSubPl > accSub) {
+                        accSub =  currSubPl;
+                    }
+                    return accSub;
+                }, 0);
+
+                if (currPoPl > accPo) {
+                    accPo = currPoPl;
+                }
+                return accPo;
+            }, 0);
+
+            if (tempPl === 0) {
+                this.setState({inputPl: 1});
+            } else {
+                this.setState({inputPl: tempPl + topUp});
+            }
+        }
+    }
+
+    handleUpdatePL(event) {
+        event.preventDefault();
+    }
+
+    handleUpdateColli(event) {
+        event.preventDefault();
     }
 
     handleUpdateValue(event, isErase) {
@@ -924,8 +977,6 @@ class TransportDocuments extends React.Component {
                     message:''
                 },
                 showSplitLine: !showSplitLine,
-                showEditValues: false,
-                showDelete: false
             });
         }
     }
@@ -952,9 +1003,55 @@ class TransportDocuments extends React.Component {
                     type:'',
                     message:''
                 },
-                showSplitLine: false,
                 showEditValues: !showEditValues,
-                showDelete: false
+            });
+        }
+    }
+
+    toggleAssignPl(event) {
+        event.preventDefault();
+        const { showAssignPl, selectedIds } = this.state;
+        if (!showAssignPl && _.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to be updated.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                inputPl: '',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showAssignPl: !showAssignPl,
+            });
+        }
+    }
+
+    toggleAssignColli(event) {
+        event.preventDefault();
+        const { showAssignColli, selectedIds } = this.state;
+        if (!showAssignColli && _.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to be updated.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                inputColli: '',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showAssignColli: !showAssignColli,
             });
         }
     }
@@ -981,16 +1078,10 @@ class TransportDocuments extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                // selectedTemplate: '0',
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
                 alert: {
                     type:'',
                     message:''
                 },
-                showSplitLine: false,
-                showEditValues: false,
                 showDelete: !showDelete
             });
         }
@@ -1007,9 +1098,13 @@ class TransportDocuments extends React.Component {
             selectedField,
             selectedType, 
             updateValue,
+            inputPl,
+            inputColli,
             //show modals
             showSplitLine,
             showEditValues,
+            showAssignPl,
+            showAssignColli,
             showDelete,
             //--------
             headersForShow,
@@ -1035,11 +1130,17 @@ class TransportDocuments extends React.Component {
                 <hr />
                 <div id="transportdocs" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-warning btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleSplitLine(event)}>
+                        <button className="btn btn-warning btn-lg mr-2" style={{height: '34px'}} title="Split line" onClick={event => this.toggleSplitLine(event)}>
                             <span><FontAwesomeIcon icon="page-break" className="fa-lg mr-2"/>Split line</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleEditValues(event)}>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Edit Values" onClick={event => this.toggleEditValues(event)}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Assign PL Number" onClick={event => this.toggleAssignPl(event)}> 
+                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign PL</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Assign Colli Number" onClick={event => this.toggleAssignColli(event)}>
+                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign Colli</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
@@ -1122,6 +1223,82 @@ class TransportDocuments extends React.Component {
                                 <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
                             </button>
                         </div>                   
+                    </div>
+                </Modal>
+
+                <Modal
+                    show={showAssignPl}
+                    hideModal={this.toggleAssignPl}
+                    title="Assign PL"
+                >
+                    <div className="col-12">
+                        <form onSubmit={event => this.handleUpdatePL(event, false)}>
+                            <div className="form-group">
+                                <label htmlFor="inputPl">PL Number</label>
+                                <div className="input-group">
+                                    <input
+                                        className="form-control"
+                                        type="number"
+                                        name="inputPl"
+                                        value={inputPl}
+                                        onChange={this.handleChange}
+                                        placeholder=""
+                                        required
+                                    />
+                                    <div className="input-group-append">
+                                        <button
+                                            className="btn btn-leeuwen-blue btn-lg"
+                                            title="Get Latest PL"
+                                            onClick={event => this.getPl(event, 0)}
+                                        >
+                                            <span><FontAwesomeIcon icon="arrow-to-bottom" className="fa-lg"/> </span>
+                                        </button>
+                                        <button
+                                            className="btn btn-success btn-lg"
+                                            title="Get New PL"
+                                            onClick={event => this.getPl(event, 1)}
+                                        >
+                                            <span><FontAwesomeIcon icon="sync-alt" className="fa-lg"/> </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <button type="submit" className="btn btn-leeuwen-blue btn-lg">
+                                    <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign</span>
+                                </button>
+                            </div>
+                        </form>                 
+                    </div>
+                </Modal>
+
+                <Modal
+                    show={showAssignColli}
+                    hideModal={this.toggleAssignColli}
+                    title="Assign PL"
+                >
+                    <div className="col-12">
+                        <form onSubmit={event => this.handleUpdateColli(event, false)}>
+                            <div className="form-group">
+                                <label htmlFor="inputColli">Colli Number</label>
+                                <div className="input-group">
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        name="inputColli"
+                                        value={inputColli}
+                                        onChange={this.handleChange}
+                                        placeholder=""
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="text-right">
+                                <button type="submit" className="btn btn-leeuwen-blue btn-lg">
+                                    <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign</span>
+                                </button>
+                            </div>
+                        </form>                 
                     </div>
                 </Modal>
 
