@@ -808,7 +808,7 @@ class TransportDocuments extends React.Component {
             let found = fieldnames.items.find( function (f) {
                 return f.fields._id === selectedField;
             });
-            if (!found.edit && !unlocked) {
+            if (found.edit && !unlocked) {
                 this.setState({
                     ...this.state,
                     updateValue: '',
