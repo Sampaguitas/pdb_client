@@ -598,27 +598,6 @@ class PackingDetails extends React.Component {
                             }
                         }, this.refreshStore);
                     }));
-                    // .then( () => {
-                    //     this.refreshStore();
-                    //     this.setState({
-                    //         ...this.state,
-                    //         showEditValues: false,
-                    //         alert: {
-                    //             type:'alert-success',
-                    //             message:'Field sucessfully updated.'
-                    //         }
-                    //     });
-                    // })
-                    // .catch( () => {
-                    //     this.setState({
-                    //         ...this.state,
-                    //         showEditValues: false,
-                    //         alert: {
-                    //             type:'alert-danger',
-                    //             message:'Field cannot be updated.'
-                    //         }
-                    //     });
-                    // });
                 }
             }  
         }

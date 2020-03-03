@@ -957,30 +957,6 @@ class ReleaseData extends React.Component {
                         }
                     }, this.refreshStore);
                 }));
-                // .then( () => {
-                //     this.setState({
-                //         ...this.state,
-                //         inputNfi: '',
-                //         rfiDateAct: '',
-                //         showAssignNfi: false,
-                //         alert: {
-                //             type:'alert-success',
-                //             message:'Field sucessfully updated.'
-                //         }
-                //     }, this.refreshStore);
-                // })
-                // .catch( () => {
-                //     this.setState({
-                //         ...this.state,
-                //         inputNfi: '',
-                //         rfiDateAct: '',
-                //         showAssignNfi: false,
-                //         alert: {
-                //             type:'alert-danger',
-                //             message:'Field could not be updated.'
-                //         }
-                //     });
-                // });
             } else {
                 this.setState({
                     ...this.state,
@@ -1050,32 +1026,6 @@ class ReleaseData extends React.Component {
                 }
             }, this.refreshStore);
         }));
-        // .then( () => {
-        //     this.setState({
-        //         ...this.state,
-        //         selectedField: '',
-        //         selectedType: 'text',
-        //         updateValue:'',
-        //         showEditValues: false,
-        //         alert: {
-        //             type:'alert-success',
-        //             message:'Field sucessfully updated.'
-        //         }
-        //     }, this.refreshStore);
-        // })
-        // .catch( () => {
-        //     this.setState({
-        //         ...this.state,
-        //         selectedField: '',
-        //         selectedType: 'text',
-        //         updateValue:'',
-        //         showEditValues: false,
-        //         alert: {
-        //             type:'alert-danger',
-        //             message:'Field could not be updated.'
-        //         }
-        //     });
-        // });
     }
 
     handleUpdateValue(event, isErase) {

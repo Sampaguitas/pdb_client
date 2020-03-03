@@ -808,26 +808,6 @@ class TransportDocuments extends React.Component {
                         }
                     }, this.refreshStore);
                 }));
-                // .then( () => {
-                //     this.setState({
-                //         inputPl: '',
-                //         showAssignPl: false,
-                //         alert: {
-                //             type:'alert-success',
-                //             message:'Field sucessfully updated.'
-                //         }
-                //     }, this.refreshStore);
-                // })
-                // .catch( () => {
-                //     this.setState({
-                //         inputPl: '',
-                //         showAssignPl: false,
-                //         alert: {
-                //             type:'alert-danger',
-                //             message:'Field could not be updated.'
-                //         }
-                //     }, this.refreshStore);
-                // });
             } else {
                 this.setState({
                     inputPl: '',
@@ -938,26 +918,6 @@ class TransportDocuments extends React.Component {
                         }
                     }, this.refreshStore);
                 }));
-                // .then( () => {
-                //     this.setState({
-                //         inputColli: '',
-                //         showAssignColli: false,
-                //         alert: {
-                //             type:'alert-success',
-                //             message:'Field sucessfully updated.'
-                //         }
-                //     }, this.refreshStore);
-                // })
-                // .catch( () => {
-                //     this.setState({
-                //         inputColli: '',
-                //         showAssignColli: false,
-                //         alert: {
-                //             type:'alert-danger',
-                //             message:'Field could not be updated.'
-                //         }
-                //     }, this.refreshStore);
-                // });
             } else {
                 this.setState({
                     inputColli: '',
@@ -1080,26 +1040,6 @@ class TransportDocuments extends React.Component {
                             }
                         }, this.refreshStore);
                     }));
-                    // .then( () => {
-                    //     this.setState({
-                    //         updateValue: '',
-                    //         showEditValues: false,
-                    //         alert: {
-                    //             type:'alert-success',
-                    //             message:'Field sucessfully updated.'
-                    //         }
-                    //     }, this.refreshStore);
-                    // })
-                    // .catch( () => {
-                    //     this.setState({
-                    //         updateValue: '',
-                    //         showEditValues: false,
-                    //         alert: {
-                    //             type:'alert-danger',
-                    //             message:'Field cannot be updated.'
-                    //         }
-                    //     }, this.refreshStore);
-                    // });
                 }
             }  
         }

@@ -864,37 +864,6 @@ class Overview extends React.Component {
                 }
             }, this.refreshStore);
         }));
-        // .then( () => {
-        //     this.refreshStore();
-        //     this.setState({
-        //         ...this.state,
-        //         inputNfi: '',
-        //         showAssignNfi: false,
-        //         selectedField: '',
-        //         selectedType: 'text',
-        //         updateValue:'',
-        //         showEditValues: false,
-        //         alert: {
-        //             type:'alert-success',
-        //             message:'Field sucessfully updated.'
-        //         }
-        //     });
-        // })
-        // .catch( () => {
-        //     this.setState({
-        //         ...this.state,
-        //         inputNfi: '',
-        //         showAssignNfi: false,
-        //         selectedField: '',
-        //         selectedType: 'text',
-        //         updateValue:'',
-        //         showEditValues: false,
-        //         alert: {
-        //             type:'alert-danger',
-        //             message:'Field could not be updated.'
-        //         }
-        //     });
-        // });
     }
 
     handleUpdateValue(event, isErase) {

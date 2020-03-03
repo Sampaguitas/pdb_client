@@ -627,27 +627,6 @@ class Certificates extends React.Component {
                             }
                         }, this.refreshStore);
                     }));
-                    // .then( () => {
-                    //     this.setState({
-                    //         ...this.state,
-                    //         showEditValues: false,
-                    //         alert: {
-                    //             type:'alert-success',
-                    //             message:'Field sucessfully updated.'
-                    //         }
-                    //     });
-                    //     this.refreshStore();
-                    // })
-                    // .catch( () => {
-                    //     this.setState({
-                    //         ...this.state,
-                    //         showEditValues: false,
-                    //         alert: {
-                    //             type:'alert-danger',
-                    //             message:'Field cannot be updated.'
-                    //         }
-                    //     });
-                    // });
                 }
             }  
         }
