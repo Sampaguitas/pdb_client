@@ -111,7 +111,6 @@ class TableInput extends Component{
         } = this.props;
 
         this.setState({
-            ...this.state,
             collection: collection,
             objectId: objectId,
             parentId: parentId, //<--------parentId
@@ -133,7 +132,6 @@ class TableInput extends Component{
 
         if(fieldValue != prevProps.fieldValue) {
             this.setState({
-                ...this.state,
                 collection: collection,
                 objectId: objectId,
                 parentId: parentId, //<--------parentId
@@ -143,7 +141,11 @@ class TableInput extends Component{
                 isEditing: false,
                 isSelected: false,
                 color: 'green',
-            }, () => setTimeout( () => this.setState({...this.state, color: '#0070C0'}), 1000));
+            }, () => {
+                setTimeout( () => {
+                    this.setState({...this.state, color: '#0070C0'}), 1000
+                });
+            });
         }
     }
 
@@ -181,8 +183,8 @@ class TableInput extends Component{
         event.preventDefault();
         const { disabled, unlocked, refreshStore } = this.props;
         const { collection, objectId, parentId, fieldName, fieldValue, fieldType } = this.state;
-        console.log((!!objectId || !!parentId));
-        if ((unlocked || !disabled) && collection && (objectId || parentId) && fieldName) {
+
+        if ((!!unlocked || !disabled) && !!collection && (!!objectId || !!parentId) && !!fieldName) {
 
             if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale)) || collection === 'virtual') {
                 //goes red for one second and inherit
