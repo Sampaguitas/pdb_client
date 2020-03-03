@@ -131,6 +131,7 @@ class TableInput extends Component{
         } = this.props;
 
         if(fieldValue != prevProps.fieldValue) {
+
             this.setState({
                 collection: collection,
                 objectId: objectId,
@@ -143,8 +144,11 @@ class TableInput extends Component{
                 color: 'green',
             }, () => {
                 setTimeout( () => {
-                    this.setState({...this.state, color: '#0070C0'}), 1000
-                });
+                    this.setState({
+                        ...this.state,
+                        color: '#0070C0'
+                    })
+                }, 1000);
             });
         }
     }
