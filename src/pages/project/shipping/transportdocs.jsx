@@ -282,6 +282,7 @@ function getBodys(fieldnames, pos, headersForShow){
                                         arrayRow.push({
                                             collection: 'packitem',
                                             objectId: packitem._id,
+                                            parentId: sub._id,
                                             fieldName: screenHeader.fields.name,
                                             fieldValue: packitem[screenHeader.fields.name],
                                             disabled: screenHeader.edit,
@@ -336,6 +337,18 @@ function getBodys(fieldnames, pos, headersForShow){
                                         objectId: sub._id,
                                         fieldName: screenHeader.fields.name,
                                         fieldValue: sub[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                    break;
+                                case 'packitem':
+                                    arrayRow.push({
+                                        collection: 'packitem',
+                                        objectId: '',
+                                        parentId: sub._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: '',
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),

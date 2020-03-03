@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import config from 'config';
 import { authHeader } from '../../_helpers';
-import propTypes from 'prop-types';
+// import propTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
 import moment from 'moment';
@@ -77,23 +77,13 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
     
 }
 
-// function defaultColor(unlocked, disabled) {
-//     if (!disabled) {
-//         return '#0070C0';
-//     } else if (unlocked && disabled) {
-//         return '#A8052C';
-//     } else { //locked and disabled
-//         return '#212529';
-//     }
-// }
-
-
 class TableInput extends Component{
     constructor(props) {
         super(props);
         this.state = {
             collection: '',
             objectId: '',
+            parentId: '', //<--------parentId
             fieldName: '',
             fieldValue: '',
             fieldType: '',
@@ -111,12 +101,23 @@ class TableInput extends Component{
     }
     
     componentDidMount(){
+        const { 
+            collection,
+            objectId,
+            parentId,
+            fieldName,
+            fieldValue,
+            fieldType,
+        } = this.props;
+
         this.setState({
-            collection: this.props.collection,
-            objectId: this.props.objectId,
-            fieldName: this.props.fieldName,
-            fieldValue: TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)),
-            fieldType: this.props.fieldType,
+            ...this.state,
+            collection: collection,
+            objectId: objectId,
+            parentId: parentId, //<--------parentId
+            fieldName: fieldName,
+            fieldValue: TypeToString (fieldValue, fieldType, getDateFormat(myLocale)),
+            fieldType: fieldType,
         });  
     }
 
@@ -124,6 +125,7 @@ class TableInput extends Component{
         const { 
             collection,
             objectId,
+            parentId,
             fieldName,
             fieldValue,
             fieldType,
@@ -131,22 +133,17 @@ class TableInput extends Component{
 
         if(fieldValue != prevProps.fieldValue) {
             this.setState({
+                ...this.state,
                 collection: collection,
                 objectId: objectId,
+                parentId: parentId, //<--------parentId
                 fieldName: fieldName,
                 fieldValue: TypeToString (fieldValue, fieldType, getDateFormat(myLocale)),
                 fieldType: fieldType,
                 isEditing: false,
                 isSelected: false,
                 color: 'green',
-            }, () => {
-                setTimeout(() => {
-                    this.setState({
-                        ...this.state,
-                        color: '#0070C0',
-                    });
-                }, 1000);
-            });
+            }, () => setTimeout( () => this.setState({...this.state, color: '#0070C0'}), 1000));
         }
     }
 
@@ -174,108 +171,71 @@ class TableInput extends Component{
         const { disabled, unlocked } = this.props;
         const { isSelected, fieldValue, fieldType } = this.state;
         if(!isSelected) {
-            this.setState({isSelected: true}, () => {
-                setTimeout(() => {
-                this.refs.input.select();
-                }, 1);
-            });
+            this.setState({...this.state, isSelected: true}, () => setTimeout( () => this.refs.input.select(), 1));
         } else {
-            this.setState({isEditing: true }, () => {
-                setTimeout(() => {
-                this.refs.input.focus();
-                }, 1);
-            });
+            this.setState({...this.state, isEditing: true }, () => setTimeout( () => this.refs.input.focus(), 1));
         }
     }
 
     onBlur(event){
         event.preventDefault();
         const { disabled, unlocked, refreshStore } = this.props;
-        const { collection, objectId, fieldName, fieldValue, fieldType } = this.state;
-        
-        if ((unlocked || !disabled) && collection && objectId && fieldName) {
+        const { collection, objectId, parentId, fieldName, fieldValue, fieldType } = this.state;
+        console.log((!!objectId || !!parentId));
+        if ((unlocked || !disabled) && collection && (objectId || parentId) && fieldName) {
+
             if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale)) || collection === 'virtual') {
+                //goes red for one second and inherit
                 this.setState({
-                    ...this.state,
+                    ...this.state, 
                     isEditing: false,
                     isSelected: false,
                     color: _.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
                     fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
-                }, () => {
-                    setTimeout(() => {
-                        this.setState({
-                            ...this.state,
-                            color: '#0070C0',
-                        });
-                    }, 1000);
-                });
+                }, () => setTimeout( () => this.setState({ ...this.state, color: '#0070C0', }), 1000));
+
             } else if (_.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)))){
-                this.setState({
-                    ...this.state,
-                    isEditing: false,
-                    isSelected: false,
-                    color: '#0070C0',
-                });
+                //inherit
+                this.setState({ ...this.state, isEditing: false, isSelected: false, color: '#0070C0' });
+
             } else {
+
                 const requestOptions = {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
                     body: `{"${fieldName}":"${encodeURI(StringToType (fieldValue, fieldType, getDateFormat(myLocale)))}"}` //encodeURI
                 };
-                return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
-                .then( () => {
-                    this.setState({
-                        ...this.state,
-                        isEditing: false,
-                        isSelected: false,
-                    }, refreshStore);
-                    
-                })
-                .catch( () => {
-                    this.setState({
-                        ...this.state,
+
+                return fetch(`${config.apiUrl}/${collection}/update?id=${encodeURI(objectId)}&parentId=${encodeURI(parentId)}`, requestOptions)
+                .then( () => this.setState({ ...this.state, isEditing: false, isSelected: false }, refreshStore))
+                //goes red for one second and inherit
+                .catch( () => this.setState({
+                        ...this.state, 
                         isEditing: false,
                         isSelected: false,
                         color: 'red',
                         fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
-                    }, () => {
-                        setTimeout(() => {
-                            this.setState({
-                                ...this.state,
-                                color: '#0070C0',
-                            });
-                        }, 1000);
-                    });                
-                });
-            }  
+                    }, () => setTimeout( () => this.setState({ ...this.state, color: '#0070C0' }), 1000))
+                );
+            }
+
         } else {
+            //goes red for one second and inherit
             this.setState({
-                ...this.state,
+                ...this.state, 
                 isEditing: false,
                 isSelected: false,
                 color: _.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
                 fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
-            }, () => {
-                setTimeout(() => {
-                    this.setState({
-                        ...this.state,
-                        color: '#0070C0',
-                    });
-                }, 1000);
-            });
+            }, () => setTimeout( () => this.setState({...this.state, color: '#0070C0'}), 1000));
+        
         }
     }
-
-    //Intl.NumberFormat().resolvedOptions().locale => "en-US"
 
     formatText(fieldValue, fieldType){
         switch(fieldType){
             case "number":
                 return fieldValue === '' ? '' : new Intl.NumberFormat().format(fieldValue);
-            //     break;
-            // case "date":
-            //     return fieldValue ? new Intl.DateTimeFormat().format(new Date(fieldValue)) : '';
-            //     break;
             default: return fieldValue; //decodeURI
         }
     }
@@ -310,7 +270,6 @@ class TableInput extends Component{
                 onClick={() => this.onClick()}
                 style={{
                     color: isSelected ? 'inherit' : disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color,
-                    //color: (isSelected ? 'inherit' : (color!='#0070C0' ? color : defaultColor(unlocked, disabled))), 
                     width: `${width ? width : 'auto'}`,
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'normal'}`,
                     padding: isSelected ? '0px': '5px',
@@ -328,7 +287,6 @@ class TableInput extends Component{
                         value={fieldValue}
                         onChange={this.onChange}
                         onBlur={this.onBlur}
-                        // disabled={unlocked ? false : disabled}
                         onKeyDown={event => this.onKeyDown(event)}
                         placeholder={fieldType === 'date' ? getDateFormat(myLocale) : ''}
                     />
@@ -341,14 +299,14 @@ class TableInput extends Component{
     }
 }
 
-TableInput.propTypes = {
-    fieldType: propTypes.oneOf(['text', 'number', 'email', 'tel','password', 'date']).isRequired,
-    fieldName: propTypes.string.isRequired,
-    fieldValue:propTypes.oneOfType([
-        propTypes.string,
-        propTypes.number,
-        propTypes.instanceOf(Date),
-    ])
-};
+// TableInput.propTypes = {
+//     fieldType: propTypes.oneOf(['text', 'number', 'email', 'tel','password', 'date']).isRequired,
+//     fieldName: propTypes.string.isRequired,
+//     fieldValue:propTypes.oneOfType([
+//         propTypes.string,
+//         propTypes.number,
+//         propTypes.instanceOf(Date),
+//     ])
+// };
 
 export default TableInput;

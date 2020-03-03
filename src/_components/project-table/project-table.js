@@ -258,7 +258,8 @@ class ProjectTable extends Component {
 
     handleClearAlert(event){
         event.preventDefault;
-        this.setState({ 
+        this.setState({
+            ...this.state,
             alert: {
                 type:'',
                 message:'' 
@@ -314,6 +315,7 @@ class ProjectTable extends Component {
             tmpObj[index] = ''
         });
         this.setState({
+            ...this.state,
             header: tmpObj
         });
     }
@@ -375,6 +377,7 @@ class ProjectTable extends Component {
         event.preventDefault();
         const { isEqual } = this.state;
         this.setState({
+            ...this.state,
             isEqual: !isEqual
         });
     }
@@ -456,11 +459,12 @@ class ProjectTable extends Component {
         this.filterName(screenBodys).map(screenBody => {
             let tempCol = [];
             screenBody.fields.map(function (field, index) {
-                if (field.objectId) {
+                if (field.objectId || field.parentId) {
                     tempCol.push(
                         <TableInput
                             collection={field.collection}
                             objectId={field.objectId}
+                            parentId={field.parentId} //<--------parentId
                             fieldName={field.fieldName}
                             fieldValue={field.fieldValue}
                             disabled={field.disabled}
@@ -493,6 +497,7 @@ class ProjectTable extends Component {
     toggleModalSettings() {
         const { showModalSettings } = this.state;
         this.setState({
+            ...this.state,
             showModalSettings: !showModalSettings
         });
     }
@@ -500,6 +505,7 @@ class ProjectTable extends Component {
     toggleModalUpload() {
         const { showModalUpload } = this.state;
         this.setState({
+            ...this.state,
             showModalUpload: !showModalUpload,
             fileName: '',
             inputKey: Date.now(),
@@ -520,6 +526,7 @@ class ProjectTable extends Component {
         tab.isLoaded = true; // 3. set current tab as active
         tab.active = true;
         this.setState({
+            ...this.state,
             tabs // 4. update state
         })
     }
@@ -535,7 +542,7 @@ class ProjectTable extends Component {
         const { fileName } = this.state
         const { projectId, screenId, refreshStore } = this.props;
         if(this.fileInput.current.files[0] && projectId && screenId && fileName) {
-            this.setState({uploading: true});
+            this.setState({...this.state, uploading: true});
             var data = new FormData()
             data.append('file', this.fileInput.current.files[0]);
             data.append('projectId', projectId);
@@ -555,6 +562,7 @@ class ProjectTable extends Component {
                     }
                     // const error = (data && data.message) || responce.statusText;
                     this.setState({
+                        ...this.state,
                         uploading: false,
                         responce: {
                             rejections: data.rejections,
@@ -569,6 +577,7 @@ class ProjectTable extends Component {
                     }, refreshStore);
                 } else {
                     this.setState({
+                        ...this.state,
                         uploading: false,
                         responce: {
                             rejections: data.rejections,
