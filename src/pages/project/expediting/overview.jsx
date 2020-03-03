@@ -114,45 +114,45 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
     }
 }
 
-function getObjectIds(collection, selectedIds) {
-    if (!_.isEmpty(selectedIds)) {
-        switch(collection) {
-            case 'po': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.poId)) {
-                    acc.push(curr.poId);
-                }
-                return acc;
-            }, []);
-            case 'sub': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.subId)) {
-                    acc.push(curr.subId);
-                }
-                return acc;
-            }, []);
-            case 'certificate': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.certificateId)) {
-                    acc.push(curr.certificateId);
-                }
-                return acc;
-            }, []);
-            case 'packitem': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.packItemId)) {
-                    acc.push(curr.packItemId);
-                }
-                return acc;
-            }, []);
-            case 'collipack': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.colliPackId)) {
-                    acc.push(curr.colliPackId);
-                }
-                return acc;
-            }, []);
-            default: return [];
-        }
-    } else {
-        return [];
-    }
-}
+// function getObjectIds(collection, selectedIds) {
+//     if (!_.isEmpty(selectedIds)) {
+//         switch(collection) {
+//             case 'po': return selectedIds.reduce(function(acc, curr) {
+//                 if(!acc.includes(curr.poId)) {
+//                     acc.push(curr.poId);
+//                 }
+//                 return acc;
+//             }, []);
+//             case 'sub': return selectedIds.reduce(function(acc, curr) {
+//                 if(!acc.includes(curr.subId)) {
+//                     acc.push(curr.subId);
+//                 }
+//                 return acc;
+//             }, []);
+//             case 'certificate': return selectedIds.reduce(function(acc, curr) {
+//                 if(!acc.includes(curr.certificateId)) {
+//                     acc.push(curr.certificateId);
+//                 }
+//                 return acc;
+//             }, []);
+//             case 'packitem': return selectedIds.reduce(function(acc, curr) {
+//                 if(!acc.includes(curr.packItemId)) {
+//                     acc.push(curr.packItemId);
+//                 }
+//                 return acc;
+//             }, []);
+//             case 'collipack': return selectedIds.reduce(function(acc, curr) {
+//                 if(!acc.includes(curr.colliPackId)) {
+//                     acc.push(curr.colliPackId);
+//                 }
+//                 return acc;
+//             }, []);
+//             default: return [];
+//         }
+//     } else {
+//         return [];
+//     }
+// }
 
 function baseTen(number) {
     return number.toString().length > 2 ? number : '0' + number;
@@ -810,7 +810,7 @@ class Overview extends React.Component {
         });
     }
 
-    updateRequest(collection, fieldName, fieldValue, fieldType, objectIds) {
+    updateRequest(collection, fieldName, fieldValue, fieldType, selectedIds) {
         const requestOptions = {
             method: 'PUT',
             headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -818,7 +818,7 @@ class Overview extends React.Component {
                 collection: collection,
                 fieldName: fieldName,
                 fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
-                objectIds: objectIds
+                selectedIds: selectedIds
             })
         };
         return fetch(`${config.apiUrl}/extract/update`, requestOptions)
@@ -917,7 +917,6 @@ class Overview extends React.Component {
                 });
             } else {
                 let collection = found.fields.fromTbl;
-                let objectIds = getObjectIds(collection, selectedIds);
                 let fieldName = found.fields.name;
                 let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
@@ -934,7 +933,7 @@ class Overview extends React.Component {
                         }
                     });
                 } else {
-                    this.updateRequest(collection, fieldName, fieldValue, fieldType, objectIds);
+                    this.updateRequest(collection, fieldName, fieldValue, fieldType, selectedIds);
                 }
             }  
         }

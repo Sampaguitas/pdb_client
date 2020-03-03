@@ -493,10 +493,8 @@ function getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, 
     let selectionQty = getSelectionQty(selectedPo, selectionIds, tempUom);
     let virturalsQty = getVirturalsQty(virtuals, tempUom);
     if (!packitemsQty) {
-        // console.log('no PackitemsQty');
         return relQty - virturalsQty;
     } else {
-        // console.log('has PackitemsQty');
         return relQty - (packitemsQty - selectionQty + virturalsQty);
     }
 }
@@ -612,7 +610,6 @@ class SplitLine extends Component {
         }
 
         if (prevState.selectedLine != selectedLine) {
-            console.log('selectionIds:', getSelecetionIds(bodysForSelect, selectedLine));
             if (selectedLine === '') {
                 this.setState({
                     virtuals: [],

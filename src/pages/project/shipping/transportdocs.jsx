@@ -375,142 +375,40 @@ function getBodys(fieldnames, pos, headersForShow){
     } 
 }
 
-// function generateScreenBody(screenId, fieldnames, pos){
-//     let arrayBody = [];
-//     let arrayRow = [];
-//     let objectRow = {};
-//     let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
-//     // let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
-//     let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
+function selectionHasData (selectedIds, pos, field) {
+    let selectedPackItemIds = getObjectIds('packitem', selectedIds)
+    if (!_.isEmpty(selectedPackItemIds) && pos.hasOwnProperty('items')) {
+        return pos.items.reduce(function (accPo, currPo) {
 
-//     let i = 1;
-//     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
-//         pos.items.map(po => {
-//             if (po.subs) {
-//                 po.subs.map(sub => {
-//                     if (!_.isEmpty(sub.packitems) && hasPackitems) {
-//                         sub.packitems.map(packitem => {
-//                             arrayRow = [];
-//                             screenHeaders.map(screenHeader => {
-//                                 switch(screenHeader.fields.fromTbl) {
-//                                     case 'po':
-//                                         arrayRow.push({
-//                                             collection: 'po',
-//                                             objectId: po._id,
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: po[screenHeader.fields.name],
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                         });
-//                                         break;
-//                                     case 'sub':
-//                                         arrayRow.push({
-//                                             collection: 'sub',
-//                                             objectId: sub._id,
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: sub[screenHeader.fields.name],
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                         });
-//                                         break;
-//                                     case 'packitem':
-//                                         arrayRow.push({
-//                                             collection: 'packitem',
-//                                             objectId: packitem._id,
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: packitem[screenHeader.fields.name],
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                         });
-//                                         break;
-//                                     default: arrayRow.push({
-//                                         collection: 'virtual',
-//                                         objectId: '0',
-//                                         fieldName: screenHeader.fields.name,
-//                                         fieldValue: '',
-//                                         disabled: screenHeader.edit,
-//                                         align: screenHeader.align,
-//                                         fieldType: getInputType(screenHeader.fields.type),
-//                                     });
-//                                 }
-//                             });
-                            
-//                             objectRow  = {
-//                                 _id: i, 
-//                                 tablesId: { 
-//                                     poId: po._id,
-//                                     subId: sub._id,
-//                                     certificateId: '',
-//                                     packItemId: packitem._id,
-//                                     colliPackId: '' 
-//                                 },
-//                                 fields: arrayRow
-//                             };
-//                             arrayBody.push(objectRow);
-//                             i++;
-//                         });
-//                     } else {
-//                         arrayRow = [];
-//                         screenHeaders.map(screenHeader => {
-//                             switch(screenHeader.fields.fromTbl) {
-//                                 case 'po':
-//                                     arrayRow.push({
-//                                         collection: 'po',
-//                                         objectId: po._id,
-//                                         fieldName: screenHeader.fields.name,
-//                                         fieldValue: po[screenHeader.fields.name],
-//                                         disabled: screenHeader.edit,
-//                                         align: screenHeader.align,
-//                                         fieldType: getInputType(screenHeader.fields.type),
-//                                     });
-//                                     break;
-//                                 case 'sub':
-//                                     arrayRow.push({
-//                                         collection: 'sub',
-//                                         objectId: sub._id,
-//                                         fieldName: screenHeader.fields.name,
-//                                         fieldValue: sub[screenHeader.fields.name],
-//                                         disabled: screenHeader.edit,
-//                                         align: screenHeader.align,
-//                                         fieldType: getInputType(screenHeader.fields.type),
-//                                     });
-//                                     break;
-//                                 default: arrayRow.push({
-//                                     collection: 'virtual',
-//                                     objectId: '0',
-//                                     fieldName: screenHeader.fields.name,
-//                                     fieldValue: '',
-//                                     disabled: screenHeader.edit,
-//                                     align: screenHeader.align,
-//                                     fieldType: getInputType(screenHeader.fields.type),
-//                                 }); 
-//                             }
-//                         });
-//                         objectRow  = {
-//                             _id: i, 
-//                             tablesId: { 
-//                                 poId: po._id,
-//                                 subId: sub._id,
-//                                 certificateId: '',
-//                                 packItemId: '',
-//                                 colliPackId: '' 
-//                             },
-//                             fields: arrayRow
-//                         };
-//                         arrayBody.push(objectRow);
-//                         i++;
-//                     }
-//                 })
-//             }
-//         });
-//         return arrayBody;
-//     } else {
-//         return [];
-//     } 
-// }
+            let currPoHasData = currPo.subs.reduce(function (accSub, currSub){
+
+                let currSubHasData = currSub.packitems.reduce(function (accPackitem, currPackitem) {
+
+                if(selectedPackItemIds.includes(currPackitem._id) && currPackitem.hasOwnProperty(field) && !_.isNull(currPackitem[field])) {
+                    accPackitem = true
+                }
+                return accPackitem;
+                }, false);
+
+                if (currSubHasData === true) {
+                    accSub = true;
+                }
+
+                return accSub;
+            }, false);
+    
+            if (currPoHasData === true) {
+                accPo = true;
+            }
+
+            return accPo;
+        }, false);
+
+    } else {
+        return false;
+    }
+}
+
 
 class TransportDocuments extends React.Component {
     constructor(props) {
@@ -814,10 +712,189 @@ class TransportDocuments extends React.Component {
 
     handleUpdatePL(event) {
         event.preventDefault();
+        const { dispatch, fieldnames, pos } = this.props;
+        const { projectId, selectedIds, inputPl, unlocked } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                inputPl: '',
+                showAssignPl: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to be updated.'
+                }
+            });
+        } else if (inputPl === '') {
+            this.setState({
+                inputPl: '',
+                showAssignPl: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'PL number is missing.'
+                }
+            });
+        } else if (_.isEmpty(fieldnames)) {
+            this.setState({
+                inputPl: '',
+                showAssignPl: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'An error has occured, line(s) where not updated.'
+                }
+            });
+            if (projectId) {
+                dispatch(fieldActions.getAll(projectId));
+            }
+        } else {
+            let found = fieldnames.items.find( function (f) {
+                return f.fields.name === 'plNr';
+            });
+
+            if (found.edit && !unlocked){
+                this.setState({
+                    inputPl: '',
+                    showAssignPl: false,
+                    alert: {
+                        type:'alert-danger',
+                        message:'Selected  field is disabled, please unlock the table and try again.'
+                    }
+                });
+            } else if (!selectionHasData(selectedIds, pos, 'plNr') || confirm('Existing PL number(s) found! Do you want to replace them?')) {
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        collection: found.fields.fromTbl,
+                        fieldName: found.fields.name,
+                        fieldValue: encodeURI(inputPl),
+                        selectedIds: selectedIds
+                    })
+                };
+                return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        inputPl: '',
+                        showAssignPl: false,
+                        alert: {
+                            type:'alert-success',
+                            message:'Field sucessfully updated.'
+                        }
+                    }, this.refreshStore);
+                })
+                .catch( () => {
+                    this.setState({
+                        inputPl: '',
+                        showAssignPl: false,
+                        alert: {
+                            type:'alert-danger',
+                            message:'Field could not be updated.'
+                        }
+                    }, this.refreshStore);
+                });
+            } else {
+                this.setState({
+                    inputPl: '',
+                    showAssignPl: false,
+                    alert: {
+                        type:'',
+                        message:''
+                    }
+                });
+            }
+        }
+
     }
 
     handleUpdateColli(event) {
         event.preventDefault();
+        const { dispatch, fieldnames, pos } = this.props;
+        const { projectId, selectedIds, inputColli, unlocked } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                inputColli: '',
+                showAssignColli: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to be updated.'
+                }
+            });
+        } else if (inputColli === '') {
+            this.setState({
+                inputColli: '',
+                showAssignColli: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'Colli is missing.'
+                }
+            });
+        } else if (_.isEmpty(fieldnames)) {
+            this.setState({
+                inputColli: '',
+                showAssignColli: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'An error has occured, line(s) where not updated.'
+                }
+            });
+            if (projectId) {
+                dispatch(fieldActions.getAll(projectId));
+            }
+        } else {
+            let found = fieldnames.items.find( function (f) {
+                return f.fields.name === 'colliNr';
+            });
+
+            if (found.edit && !unlocked){
+                this.setState({
+                    inputColli: '',
+                    showAssignColli: false,
+                    alert: {
+                        type:'alert-danger',
+                        message:'Selected  field is disabled, please unlock the table and try again.'
+                    }
+                });
+            } else if (!selectionHasData(selectedIds, pos, 'colliNr') || confirm('Existing Colli(s) found! Do you want to replace them?')) {
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        collection: found.fields.fromTbl,
+                        fieldName: found.fields.name,
+                        fieldValue: encodeURI(inputColli),
+                        selectedIds: selectedIds
+                    })
+                };
+                return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        inputColli: '',
+                        showAssignColli: false,
+                        alert: {
+                            type:'alert-success',
+                            message:'Field sucessfully updated.'
+                        }
+                    }, this.refreshStore);
+                })
+                .catch( () => {
+                    this.setState({
+                        inputColli: '',
+                        showAssignColli: false,
+                        alert: {
+                            type:'alert-danger',
+                            message:'Field could not be updated.'
+                        }
+                    }, this.refreshStore);
+                });
+            } else {
+                this.setState({
+                    inputColli: '',
+                    showAssignColli: false,
+                    alert: {
+                        type:'',
+                        message:''
+                    }
+                });
+            }
+        };
     }
 
     handleUpdateValue(event, isErase) {
@@ -826,7 +903,6 @@ class TransportDocuments extends React.Component {
         const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue} = this.state;
         if (!selectedField) {
             this.setState({
-                ...this.state,
                 updateValue: '',
                 showEditValues: false,
                 alert: {
@@ -836,7 +912,6 @@ class TransportDocuments extends React.Component {
             });
         } else if (_.isEmpty(selectedIds)) {
             this.setState({
-                ...this.state,
                 updateValue: '',
                 showEditValues: false,
                 alert: {
@@ -846,7 +921,6 @@ class TransportDocuments extends React.Component {
             });
         } else if (_.isEmpty(fieldnames)){
             this.setState({
-                ...this.state,
                 updateValue: '',
                 showEditValues: false,
                 alert: {
@@ -863,7 +937,6 @@ class TransportDocuments extends React.Component {
             });
             if (found.edit && !unlocked) {
                 this.setState({
-                    ...this.state,
                     updateValue: '',
                     showEditValues: false,
                     alert: {
@@ -873,13 +946,11 @@ class TransportDocuments extends React.Component {
                 });
             } else {
                 let collection = found.fields.fromTbl;
-                let objectIds = getObjectIds(collection, selectedIds);
                 let fieldName = found.fields.name;
                 let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
-                        ...this.state,
                         updateValue: '',
                         showEditValues: false,
                         alert: {
@@ -895,32 +966,29 @@ class TransportDocuments extends React.Component {
                             collection: collection,
                             fieldName: fieldName,
                             fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
-                            objectIds: objectIds
+                            selectedIds: selectedIds
                         })
                     };
                     return fetch(`${config.apiUrl}/extract/update`, requestOptions)
                     .then( () => {
-                        this.refreshStore();
                         this.setState({
-                            ...this.state,
                             updateValue: '',
                             showEditValues: false,
                             alert: {
                                 type:'alert-success',
                                 message:'Field sucessfully updated.'
                             }
-                        });
+                        }, this.refreshStore);
                     })
                     .catch( () => {
                         this.setState({
-                            ...this.state,
                             updateValue: '',
                             showEditValues: false,
                             alert: {
                                 type:'alert-danger',
                                 message:'Field cannot be updated.'
                             }
-                        });
+                        }, this.refreshStore);
                     });
                 }
             }  

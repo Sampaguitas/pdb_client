@@ -908,12 +908,14 @@ class ReleaseData extends React.Component {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        inputNfi: inputNfi,
+                        collection: 'sub',
+                        fieldName: 'nfi',
+                        fieldValue: encodeURI(inputNfi),
                         rfiDateAct: encodeURI(StringToDate (rfiDateAct, 'date', getDateFormat(myLocale))),
-                        objectIds: getObjectIds('sub', selectedIds)
+                        selectedIds: selectedIds
                     })
                 };
-                return fetch(`${config.apiUrl}/extract/updateNfi`, requestOptions)
+                return fetch(`${config.apiUrl}/extract/update`, requestOptions)
                 .then( () => {
                     this.setState({
                         ...this.state,
@@ -955,7 +957,7 @@ class ReleaseData extends React.Component {
 
     
 
-    updateRequest(collection, fieldName, fieldValue, fieldType, objectIds) {
+    updateRequest(collection, fieldName, fieldValue, fieldType, selectedIds) {
         const requestOptions = {
             method: 'PUT',
             headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -963,7 +965,7 @@ class ReleaseData extends React.Component {
                 collection: collection,
                 fieldName: fieldName,
                 fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
-                objectIds: objectIds
+                selectedIds: selectedIds
             })
         };
         return fetch(`${config.apiUrl}/extract/update`, requestOptions)
@@ -1057,7 +1059,6 @@ class ReleaseData extends React.Component {
                 });
             } else {
                 let collection = found.fields.fromTbl;
-                let objectIds = getObjectIds(collection, selectedIds);
                 let fieldName = found.fields.name;
                 let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
@@ -1075,7 +1076,7 @@ class ReleaseData extends React.Component {
                         }
                     });
                 } else {
-                    this.updateRequest(collection, fieldName, fieldValue, fieldType, objectIds);
+                    this.updateRequest(collection, fieldName, fieldValue, fieldType, selectedIds);
                 }
             }  
         }
