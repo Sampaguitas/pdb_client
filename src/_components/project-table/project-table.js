@@ -247,6 +247,13 @@ class ProjectTable extends Component {
         if (selectedRows !== prevState.selectedRows) {
             updateSelectedIds(getTableIds(selectedRows, screenBodys));
         }
+
+        // if (screenBodys !== prevProps.screenBodys) {
+        //     this.setState({
+        //         selectAllRows: false
+        //     });
+        // }
+        
     }
 
     handleClearAlert(event){

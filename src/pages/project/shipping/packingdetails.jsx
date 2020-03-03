@@ -645,9 +645,6 @@ class PackingDetails extends React.Component {
                     message:''
                 },
                 showEditValues: !showEditValues,
-                // showSplitLine: false,
-                showGenerate: false,
-                showDelete: false
             });
         }
     }
@@ -665,10 +662,7 @@ class PackingDetails extends React.Component {
                 type:'',
                 message:''
             },
-            showEditValues: false,
-            // showSplitLine: false,
             showGenerate: !showGenerate,
-            showDelete: false
         });
     }
 
@@ -702,9 +696,6 @@ class PackingDetails extends React.Component {
                     type:'',
                     message:''
                 },
-                showEditValues: false,
-                // showSplitLine: false,
-                showGenerate: false,
                 showDelete: !showDelete
             });
         }

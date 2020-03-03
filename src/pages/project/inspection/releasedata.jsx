@@ -765,6 +765,7 @@ class ReleaseData extends React.Component {
                     location.reload(true);
                 }
                 this.setState({
+                    // showSplitLine: false,
                     alert: {
                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                         message: data.message
@@ -772,6 +773,7 @@ class ReleaseData extends React.Component {
                 }, this.refreshStore);
             } else {
                 this.setState({
+                    // showSplitLine: false,
                     alert: {
                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                         message: data.message
