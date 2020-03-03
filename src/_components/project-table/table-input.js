@@ -94,6 +94,7 @@ class TableInput extends Component{
         }
         this.onChange = this.onChange.bind(this);
         this.onBlur = this.onBlur.bind(this);
+        this.callBack = this.callBack.bind(this);
         this.formatText = this.formatText.bind(this);
         this.onClick = this.onClick.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
@@ -183,8 +184,16 @@ class TableInput extends Component{
         }
     }
 
-    onBlur(event){
+    onBlur(event) {
         event.preventDefault();
+        
+        this.setState({
+            isEditing: false,
+            isSelected: false,
+        }, this.callBack)
+    }
+
+    callBack(){
         const { disabled, unlocked, refreshStore } = this.props;
         const { collection, objectId, parentId, fieldName, fieldValue, fieldType } = this.state;
 
@@ -292,7 +301,7 @@ class TableInput extends Component{
                         name='fieldValue'
                         value={fieldValue}
                         onChange={this.onChange}
-                        onBlur={this.onBlur}
+                        onBlur={event => this.onBlur(event)}
                         onKeyDown={event => this.onKeyDown(event)}
                         placeholder={fieldType === 'date' ? getDateFormat(myLocale) : ''}
                     />
