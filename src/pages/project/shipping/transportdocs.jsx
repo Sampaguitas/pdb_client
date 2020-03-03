@@ -772,26 +772,62 @@ class TransportDocuments extends React.Component {
                     })
                 };
                 return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                .then( () => {
-                    this.setState({
-                        inputPl: '',
-                        showAssignPl: false,
-                        alert: {
-                            type:'alert-success',
-                            message:'Field sucessfully updated.'
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
                         }
-                    }, this.refreshStore);
+                        this.setState({
+                            inputPl: '',
+                            showAssignPl: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    } else {
+                        this.setState({
+                            inputPl: '',
+                            showAssignPl: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    }
                 })
                 .catch( () => {
                     this.setState({
                         inputPl: '',
                         showAssignPl: false,
                         alert: {
-                            type:'alert-danger',
-                            message:'Field could not be updated.'
+                            type: 'alert-danger',
+                            message: 'Field could not be updated.'
                         }
                     }, this.refreshStore);
-                });
+                }));
+                // .then( () => {
+                //     this.setState({
+                //         inputPl: '',
+                //         showAssignPl: false,
+                //         alert: {
+                //             type:'alert-success',
+                //             message:'Field sucessfully updated.'
+                //         }
+                //     }, this.refreshStore);
+                // })
+                // .catch( () => {
+                //     this.setState({
+                //         inputPl: '',
+                //         showAssignPl: false,
+                //         alert: {
+                //             type:'alert-danger',
+                //             message:'Field could not be updated.'
+                //         }
+                //     }, this.refreshStore);
+                // });
             } else {
                 this.setState({
                     inputPl: '',
@@ -866,26 +902,62 @@ class TransportDocuments extends React.Component {
                     })
                 };
                 return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                .then( () => {
-                    this.setState({
-                        inputColli: '',
-                        showAssignColli: false,
-                        alert: {
-                            type:'alert-success',
-                            message:'Field sucessfully updated.'
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
                         }
-                    }, this.refreshStore);
+                        this.setState({
+                            inputColli: '',
+                            showAssignColli: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    } else {
+                        this.setState({
+                            inputColli: '',
+                            showAssignColli: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    }
                 })
                 .catch( () => {
                     this.setState({
                         inputColli: '',
                         showAssignColli: false,
                         alert: {
-                            type:'alert-danger',
-                            message:'Field could not be updated.'
+                            type: 'alert-danger',
+                            message: 'Field could not be updated.'
                         }
                     }, this.refreshStore);
-                });
+                }));
+                // .then( () => {
+                //     this.setState({
+                //         inputColli: '',
+                //         showAssignColli: false,
+                //         alert: {
+                //             type:'alert-success',
+                //             message:'Field sucessfully updated.'
+                //         }
+                //     }, this.refreshStore);
+                // })
+                // .catch( () => {
+                //     this.setState({
+                //         inputColli: '',
+                //         showAssignColli: false,
+                //         alert: {
+                //             type:'alert-danger',
+                //             message:'Field could not be updated.'
+                //         }
+                //     }, this.refreshStore);
+                // });
             } else {
                 this.setState({
                     inputColli: '',
@@ -972,26 +1044,62 @@ class TransportDocuments extends React.Component {
                         })
                     };
                     return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                    .then( () => {
-                        this.setState({
-                            updateValue: '',
-                            showEditValues: false,
-                            alert: {
-                                type:'alert-success',
-                                message:'Field sucessfully updated.'
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
+                        if (!responce.ok) {
+                            if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
                             }
-                        }, this.refreshStore);
+                            this.setState({
+                                updateValue: '',
+                                showEditValues: false,
+                                alert: {
+                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                    message: data.message
+                                }
+                            }, this.refreshStore);
+                        } else {
+                            this.setState({
+                                updateValue: '',
+                                showEditValues: false,
+                                alert: {
+                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                    message: data.message
+                                }
+                            }, this.refreshStore);
+                        }
                     })
                     .catch( () => {
                         this.setState({
                             updateValue: '',
                             showEditValues: false,
                             alert: {
-                                type:'alert-danger',
-                                message:'Field cannot be updated.'
+                                type: 'alert-danger',
+                                message: 'Field could not be updated.'
                             }
                         }, this.refreshStore);
-                    });
+                    }));
+                    // .then( () => {
+                    //     this.setState({
+                    //         updateValue: '',
+                    //         showEditValues: false,
+                    //         alert: {
+                    //             type:'alert-success',
+                    //             message:'Field sucessfully updated.'
+                    //         }
+                    //     }, this.refreshStore);
+                    // })
+                    // .catch( () => {
+                    //     this.setState({
+                    //         updateValue: '',
+                    //         showEditValues: false,
+                    //         alert: {
+                    //             type:'alert-danger',
+                    //             message:'Field cannot be updated.'
+                    //         }
+                    //     }, this.refreshStore);
+                    // });
                 }
             }  
         }

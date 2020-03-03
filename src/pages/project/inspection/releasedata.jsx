@@ -918,30 +918,69 @@ class ReleaseData extends React.Component {
                     })
                 };
                 return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                .then( () => {
-                    this.setState({
-                        ...this.state,
-                        inputNfi: '',
-                        rfiDateAct: '',
-                        showAssignNfi: false,
-                        alert: {
-                            type:'alert-success',
-                            message:'Field sucessfully updated.'
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
                         }
-                    }, this.refreshStore);
+                        this.setState({
+                            inputNfi: '',
+                            rfiDateAct: '',
+                            showAssignNfi: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    } else {
+                        this.setState({
+                            inputNfi: '',
+                            rfiDateAct: '',
+                            showAssignNfi: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    }
                 })
                 .catch( () => {
                     this.setState({
-                        ...this.state,
                         inputNfi: '',
                         rfiDateAct: '',
                         showAssignNfi: false,
                         alert: {
-                            type:'alert-danger',
-                            message:'Field could not be updated.'
+                            type: 'alert-danger',
+                            message: 'Field could not be updated.'
                         }
-                    });
-                });
+                    }, this.refreshStore);
+                }));
+                // .then( () => {
+                //     this.setState({
+                //         ...this.state,
+                //         inputNfi: '',
+                //         rfiDateAct: '',
+                //         showAssignNfi: false,
+                //         alert: {
+                //             type:'alert-success',
+                //             message:'Field sucessfully updated.'
+                //         }
+                //     }, this.refreshStore);
+                // })
+                // .catch( () => {
+                //     this.setState({
+                //         ...this.state,
+                //         inputNfi: '',
+                //         rfiDateAct: '',
+                //         showAssignNfi: false,
+                //         alert: {
+                //             type:'alert-danger',
+                //             message:'Field could not be updated.'
+                //         }
+                //     });
+                // });
             } else {
                 this.setState({
                     ...this.state,
@@ -957,8 +996,6 @@ class ReleaseData extends React.Component {
         }
     }
 
-    
-
     updateRequest(collection, fieldName, fieldValue, fieldType, selectedIds) {
         const requestOptions = {
             method: 'PUT',
@@ -971,32 +1008,74 @@ class ReleaseData extends React.Component {
             })
         };
         return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-        .then( () => {
-            this.setState({
-                ...this.state,
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
-                showEditValues: false,
-                alert: {
-                    type:'alert-success',
-                    message:'Field sucessfully updated.'
+        .then(responce => responce.text().then(text => {
+            const data = text && JSON.parse(text);
+            if (!responce.ok) {
+                if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
                 }
-            }, this.refreshStore);
+                this.setState({
+                    selectedField: '',
+                    selectedType: 'text',
+                    updateValue:'',
+                    showEditValues: false,
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshStore);
+            } else {
+                this.setState({
+                    selectedField: '',
+                    selectedType: 'text',
+                    updateValue:'',
+                    showEditValues: false,
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshStore);
+            }
         })
         .catch( () => {
             this.setState({
-                ...this.state,
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
                 showEditValues: false,
                 alert: {
-                    type:'alert-danger',
-                    message:'Field could not be updated.'
+                    type: 'alert-danger',
+                    message: 'Field could not be updated.'
                 }
-            });
-        });
+            }, this.refreshStore);
+        }));
+        // .then( () => {
+        //     this.setState({
+        //         ...this.state,
+        //         selectedField: '',
+        //         selectedType: 'text',
+        //         updateValue:'',
+        //         showEditValues: false,
+        //         alert: {
+        //             type:'alert-success',
+        //             message:'Field sucessfully updated.'
+        //         }
+        //     }, this.refreshStore);
+        // })
+        // .catch( () => {
+        //     this.setState({
+        //         ...this.state,
+        //         selectedField: '',
+        //         selectedType: 'text',
+        //         updateValue:'',
+        //         showEditValues: false,
+        //         alert: {
+        //             type:'alert-danger',
+        //             message:'Field could not be updated.'
+        //         }
+        //     });
+        // });
     }
 
     handleUpdateValue(event, isErase) {

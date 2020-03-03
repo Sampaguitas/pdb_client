@@ -628,7 +628,6 @@ class Overview extends React.Component {
             });
             if (found) {
                 this.setState({
-                    ...this.state,
                     updateValue: '',
                     selectedType: getInputType(found.type),
                 });
@@ -807,7 +806,6 @@ class Overview extends React.Component {
 
     updateSelectedIds(selectedIds) {
         this.setState({
-            ...this.state,
             selectedIds: selectedIds
         });
     }
@@ -824,37 +822,79 @@ class Overview extends React.Component {
             })
         };
         return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-        .then( () => {
-            this.refreshStore();
-            this.setState({
-                ...this.state,
-                inputNfi: '',
-                showAssignNfi: false,
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
-                showEditValues: false,
-                alert: {
-                    type:'alert-success',
-                    message:'Field sucessfully updated.'
+        .then(responce => responce.text().then(text => {
+            const data = text && JSON.parse(text);
+            if (!responce.ok) {
+                if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
                 }
-            });
+                this.setState({
+                    selectedField: '',
+                    selectedType: 'text',
+                    updateValue:'',
+                    showEditValues: false,
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshStore);
+            } else {
+                this.setState({
+                    selectedField: '',
+                    selectedType: 'text',
+                    updateValue:'',
+                    showEditValues: false,
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshStore);
+            }
         })
         .catch( () => {
             this.setState({
-                ...this.state,
-                inputNfi: '',
-                showAssignNfi: false,
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
                 showEditValues: false,
                 alert: {
-                    type:'alert-danger',
-                    message:'Field could not be updated.'
+                    type: 'alert-danger',
+                    message: 'Field could not be updated.'
                 }
-            });
-        });
+            }, this.refreshStore);
+        }));
+        // .then( () => {
+        //     this.refreshStore();
+        //     this.setState({
+        //         ...this.state,
+        //         inputNfi: '',
+        //         showAssignNfi: false,
+        //         selectedField: '',
+        //         selectedType: 'text',
+        //         updateValue:'',
+        //         showEditValues: false,
+        //         alert: {
+        //             type:'alert-success',
+        //             message:'Field sucessfully updated.'
+        //         }
+        //     });
+        // })
+        // .catch( () => {
+        //     this.setState({
+        //         ...this.state,
+        //         inputNfi: '',
+        //         showAssignNfi: false,
+        //         selectedField: '',
+        //         selectedType: 'text',
+        //         updateValue:'',
+        //         showEditValues: false,
+        //         alert: {
+        //             type:'alert-danger',
+        //             message:'Field could not be updated.'
+        //         }
+        //     });
+        // });
     }
 
     handleUpdateValue(event, isErase) {
@@ -863,7 +903,6 @@ class Overview extends React.Component {
         const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue} = this.state;
         if (!selectedField) {
             this.setState({
-                ...this.state,
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -875,7 +914,6 @@ class Overview extends React.Component {
             });
         } else if (_.isEmpty(selectedIds)) {
             this.setState({
-                ...this.state,
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -887,7 +925,6 @@ class Overview extends React.Component {
             });
         } else if (_.isEmpty(fieldnames)){
             this.setState({
-                ...this.state,
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -907,7 +944,6 @@ class Overview extends React.Component {
 
             if (found.edit && !unlocked) {
                 this.setState({
-                    ...this.state,
                     selectedField: '',
                     selectedType: 'text',
                     updateValue:'',
@@ -924,7 +960,6 @@ class Overview extends React.Component {
                 let fieldType = selectedType;
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
-                        ...this.state,
                         selectedField: '',
                         selectedType: 'text',
                         updateValue:'',
@@ -947,7 +982,6 @@ class Overview extends React.Component {
         const { selectedIds, projectId, unlocked } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
-                ...this.state,
                 showDelete: false,
                 alert: {
                     type:'alert-danger',
@@ -956,7 +990,6 @@ class Overview extends React.Component {
             });
         } else if (!unlocked) {
             this.setState({
-                ...this.state,
                 showDelete: false,
                 alert: {
                     type:'alert-danger',
@@ -973,7 +1006,6 @@ class Overview extends React.Component {
         const { showSplitLine, selectedIds } = this.state;
         if (!showSplitLine && (_.isEmpty(selectedIds) || selectedIds.length > 1)) {
             this.setState({
-                ...this.state,
                 alert: {
                     type:'alert-danger',
                     message:'Select one Line.'
@@ -981,7 +1013,6 @@ class Overview extends React.Component {
             });
         } else {
             this.setState({
-                ...this.state,
                 alert: {
                     type:'',
                     message:''
@@ -996,7 +1027,6 @@ class Overview extends React.Component {
         const { showEditValues, selectedIds } = this.state;
         if (!showEditValues && _.isEmpty(selectedIds)) {
             this.setState({
-                ...this.state,
                 alert: {
                     type:'alert-danger',
                     message:'Select line(s) to be updated.'
@@ -1004,7 +1034,6 @@ class Overview extends React.Component {
             });
         } else {
             this.setState({
-                ...this.state,
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -1022,7 +1051,6 @@ class Overview extends React.Component {
         const { showGenerate, docList, selectedIds } = this.state;
         if (!showGenerate && _.isEmpty(selectedIds)) {
             this.setState({
-                ...this.state,
                 alert: {
                     type:'alert-danger',
                     message:'Select line(s) to be displayed in the ESR.'
@@ -1030,7 +1058,6 @@ class Overview extends React.Component {
             });
         } else {
             this.setState({
-                ...this.state,
                 selectedTemplate: (!showGenerate  && docList) ? docList[0]._id : '',
                 alert: {
                     type:'',
@@ -1046,7 +1073,6 @@ class Overview extends React.Component {
         const { showDelete, unlocked, selectedIds } = this.state;
         if (!showDelete && _.isEmpty(selectedIds)) {
             this.setState({
-                ...this.state,
                 alert: {
                     type:'alert-danger',
                     message:'Select line(s) to be deleted.'
@@ -1054,7 +1080,6 @@ class Overview extends React.Component {
             });
         } else if (!showDelete && !unlocked) {
             this.setState({
-                ...this.state,
                 alert: {
                     type:'alert-danger',
                     message:'Unlock table in order to delete line(s).'
@@ -1062,7 +1087,6 @@ class Overview extends React.Component {
             });
         } else {
             this.setState({
-                ...this.state,
                 alert: {
                     type:'',
                     message:''

@@ -501,7 +501,6 @@ class PackingDetails extends React.Component {
         const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue} = this.state;
         if (!selectedField) {
             this.setState({
-                ...this.state,
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -510,7 +509,6 @@ class PackingDetails extends React.Component {
             });
         } else if (_.isEmpty(selectedIds)) {
             this.setState({
-                ...this.state,
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -519,7 +517,6 @@ class PackingDetails extends React.Component {
             });
         } else if (_.isEmpty(fieldnames)){
             this.setState({
-                ...this.state,
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
@@ -535,7 +532,6 @@ class PackingDetails extends React.Component {
             });
             if (found.edit && !unlocked) {
                 this.setState({
-                    ...this.state,
                     showEditValues: false,
                     alert: {
                         type:'alert-danger',
@@ -569,27 +565,60 @@ class PackingDetails extends React.Component {
                         })
                     };
                     return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                    .then( () => {
-                        this.refreshStore();
-                        this.setState({
-                            ...this.state,
-                            showEditValues: false,
-                            alert: {
-                                type:'alert-success',
-                                message:'Field sucessfully updated.'
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
+                        if (!responce.ok) {
+                            if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
                             }
-                        });
+                            this.setState({
+                                showEditValues: false,
+                                alert: {
+                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                    message: data.message
+                                }
+                            }, this.refreshStore);
+                        } else {
+                            this.setState({
+                                showEditValues: false,
+                                alert: {
+                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                    message: data.message
+                                }
+                            }, this.refreshStore);
+                        }
                     })
                     .catch( () => {
                         this.setState({
-                            ...this.state,
                             showEditValues: false,
                             alert: {
-                                type:'alert-danger',
-                                message:'Field cannot be updated.'
+                                type: 'alert-danger',
+                                message: 'Field could not be updated.'
                             }
-                        });
-                    });
+                        }, this.refreshStore);
+                    }));
+                    // .then( () => {
+                    //     this.refreshStore();
+                    //     this.setState({
+                    //         ...this.state,
+                    //         showEditValues: false,
+                    //         alert: {
+                    //             type:'alert-success',
+                    //             message:'Field sucessfully updated.'
+                    //         }
+                    //     });
+                    // })
+                    // .catch( () => {
+                    //     this.setState({
+                    //         ...this.state,
+                    //         showEditValues: false,
+                    //         alert: {
+                    //             type:'alert-danger',
+                    //             message:'Field cannot be updated.'
+                    //         }
+                    //     });
+                    // });
                 }
             }  
         }

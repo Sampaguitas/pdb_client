@@ -594,27 +594,60 @@ class Certificates extends React.Component {
                         })
                     };
                     return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                    .then( () => {
-                        this.setState({
-                            ...this.state,
-                            showEditValues: false,
-                            alert: {
-                                type:'alert-success',
-                                message:'Field sucessfully updated.'
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
+                        if (!responce.ok) {
+                            if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
                             }
-                        });
-                        this.refreshStore();
+                            this.setState({
+                                showEditValues: false,
+                                alert: {
+                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                    message: data.message
+                                }
+                            }, this.refreshStore);
+                        } else {
+                            this.setState({
+                                showEditValues: false,
+                                alert: {
+                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                    message: data.message
+                                }
+                            }, this.refreshStore);
+                        }
                     })
                     .catch( () => {
                         this.setState({
-                            ...this.state,
                             showEditValues: false,
                             alert: {
-                                type:'alert-danger',
-                                message:'Field cannot be updated.'
+                                type: 'alert-danger',
+                                message: 'Field could not be updated.'
                             }
-                        });
-                    });
+                        }, this.refreshStore);
+                    }));
+                    // .then( () => {
+                    //     this.setState({
+                    //         ...this.state,
+                    //         showEditValues: false,
+                    //         alert: {
+                    //             type:'alert-success',
+                    //             message:'Field sucessfully updated.'
+                    //         }
+                    //     });
+                    //     this.refreshStore();
+                    // })
+                    // .catch( () => {
+                    //     this.setState({
+                    //         ...this.state,
+                    //         showEditValues: false,
+                    //         alert: {
+                    //             type:'alert-danger',
+                    //             message:'Field cannot be updated.'
+                    //         }
+                    //     });
+                    // });
                 }
             }  
         }
