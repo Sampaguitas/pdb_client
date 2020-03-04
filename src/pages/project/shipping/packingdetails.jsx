@@ -395,7 +395,7 @@ class PackingDetails extends React.Component {
         const { dispatch } = this.props;
         const { projectId } = this.state;
         if (projectId) {
-            dispatch(poActions.getAll(projectId));
+            dispatch(collipackActions.getAll(projectId));
         }
     }
 
