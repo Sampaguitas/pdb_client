@@ -1,11 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
+import config from 'config';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
     alertActions,
     docdefActions,
     collipackActions,
+    collitypeActions,
     fieldnameActions,
     fieldActions,
     poActions,
@@ -14,7 +18,7 @@ import {
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import Modal from '../../../_components/modal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
@@ -241,15 +245,27 @@ function generateScreenBody(screenId, fieldnames, collipacks){
             screenHeaders.map(screenHeader => {
                 switch(screenHeader.fields.fromTbl) {
                     case 'collipack':
-                        arrayRow.push({
-                            collection: 'collipack',
-                            objectId: collipack._id,
-                            fieldName: screenHeader.fields.name,
-                            fieldValue: collipack[screenHeader.fields.name],
-                            disabled: screenHeader.edit,
-                            align: screenHeader.align,
-                            fieldType: getInputType(screenHeader.fields.type),
-                        });
+                        if (screenHeader.fields.name === 'plNr' || screenHeader.fields.name === 'colliNr') {
+                            arrayRow.push({
+                                collection: 'virtual',
+                                objectId: collipack._id,
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: collipack[screenHeader.fields.name],
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            });
+                        } else {
+                            arrayRow.push({
+                                collection: 'collipack',
+                                objectId: collipack._id,
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: collipack[screenHeader.fields.name],
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            });
+                        }
                         break;
                     default: arrayRow.push({
                         collection: 'virtual',
@@ -327,6 +343,7 @@ class PackingDetails extends React.Component {
             loadingAccesses,
             loadingDocdefs,
             loadingCollipacks,
+            loadingCollitypes,
             loadingFieldnames,
             loadingFields,
             loadingPos,
@@ -346,6 +363,9 @@ class PackingDetails extends React.Component {
             if (!loadingCollipacks) {
                 dispatch(collipackActions.getAll(qs.id));
             }
+            if (!loadingCollitypes) {
+                dispatch(collitypeActions.getAll(qs.id));
+            }
             if (!loadingFieldnames) {
                 dispatch(fieldnameActions.getAll(qs.id));
             }
@@ -357,8 +377,7 @@ class PackingDetails extends React.Component {
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
-            }
-            
+            } 
         }
     }
 
@@ -520,7 +539,7 @@ class PackingDetails extends React.Component {
                 showEditValues: false,
                 alert: {
                     type:'alert-danger',
-                    message:'An error occured'
+                    message:'An error occured, line(s) where not updated.'
                 }
             });
             if (projectId) {
@@ -543,7 +562,7 @@ class PackingDetails extends React.Component {
                 let fieldName = found.fields.name;
                 let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
-                let selectedIds = selectedIds;
+
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
                         ...this.state,
@@ -554,6 +573,7 @@ class PackingDetails extends React.Component {
                         }
                     });
                 } else {
+                    console.log('selectedIds:', selectedIds);
                     const requestOptions = {
                         method: 'PUT',
                         headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -879,24 +899,27 @@ class PackingDetails extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, docdefs, collipacks, fieldnames, fields, pos, selection } = state;
+    const { accesses, alert, collipacks, collitypes, docdefs, fieldnames, fields, pos, selection } = state;
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
     const { loadingCollipacks } = collipacks;
+    const { loadingCollitypes } = collitypes;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingPos } = pos;
     const { loadingSelection } = selection;
     return {
         accesses,
-        collipacks,
         alert,
+        collipacks,
+        collitypes,
         docdefs,
         fieldnames,
         fields,
         loadingAccesses,
         loadingDocdefs,
         loadingCollipacks,
+        loadingCollitypes,
         loadingFieldnames,
         loadingFields,
         loadingPos,
