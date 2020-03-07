@@ -14,6 +14,7 @@ import {
     fieldActions,
     poActions,
     projectActions,
+    erpActions,
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
@@ -327,6 +328,7 @@ class PackingDetails extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
+        this.handleUpdateWeight = this.handleUpdateWeight.bind(this);
         // this.handleSplitLine = this.handleSplitLine.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
@@ -573,7 +575,6 @@ class PackingDetails extends React.Component {
                         }
                     });
                 } else {
-                    console.log('selectedIds:', selectedIds);
                     const requestOptions = {
                         method: 'PUT',
                         headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -620,6 +621,77 @@ class PackingDetails extends React.Component {
                     }));
                 }
             }  
+        }
+    }
+
+    handleUpdateWeight(event) {
+        event.preventDefault();
+        const { selection } = this.props;
+        const { projectId, selectedIds } = this.state;
+
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                showEditValues: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to get weight.'
+                }
+            });
+        } else if (!selection.hasOwnProperty('project') || _.isEmpty(selection.project.erp)) {
+            this.setState({
+                showEditValues: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'An error occured, line(s) where not updated.'
+                }
+            });
+            
+            if (projectId) {
+                dispatch(projectActions.getById(projectId));
+            }
+        } else {
+            const requestOptions = {
+                method: 'PUT',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    erp: selection.project.erp.name,
+                    selectedIds: selectedIds
+                })
+            };
+            return fetch(`${config.apiUrl}/extract/setWeight`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (!responce.ok) {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        showEditValues: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
+                } else {
+                    this.setState({
+                        showEditValues: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
+                }
+            })
+            .catch( () => {
+                this.setState({
+                    showEditValues: false,
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'Field could not be updated.'
+                    }
+                }, this.refreshStore);
+            }));
         }
     }
 
@@ -768,7 +840,7 @@ class PackingDetails extends React.Component {
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Assign Colli Type"> {/* onClick={event => this.toggleAssignNfi(event)} */}
                             <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Colli Type</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Calculate Net Weight"> {/* onClick={event => this.toggleAssignNfi(event)} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Calculate Net Weight" onClick={event => this.handleUpdateWeight(event)}> {/* onClick={event => this.toggleAssignNfi(event)} */}
                             <span><FontAwesomeIcon icon="balance-scale-left" className="fa-lg mr-2"/>Net Weight</span>
                         </button>
                         <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Generate Shipping Docs" onClick={event => this.toggleGenerate(event)}>
