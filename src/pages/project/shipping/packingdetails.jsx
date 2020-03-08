@@ -565,6 +565,11 @@ class PackingDetails extends React.Component {
                 let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
 
+                console.log('collection:', collection);
+                console.log('fieldName:', fieldName);
+                console.log('fieldValue:', fieldValue);
+                console.log('fieldType:', fieldType);
+
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
                         ...this.state,
