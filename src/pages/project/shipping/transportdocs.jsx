@@ -397,7 +397,7 @@ function selectionHasData (selectedIds, pos, field) {
 
                 let currSubHasData = currSub.packitems.reduce(function (accPackitem, currPackitem) {
 
-                if(selectedPackItemIds.includes(currPackitem._id) && currPackitem.hasOwnProperty(field) && !_.isNull(currPackitem[field])) {
+                if(selectedPackItemIds.includes(currPackitem._id) && currPackitem.hasOwnProperty(field) && !!currPackitem[field]) {
                     accPackitem = true
                 }
                 return accPackitem;
