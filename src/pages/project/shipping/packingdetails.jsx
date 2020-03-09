@@ -185,9 +185,11 @@ function docConf(array) {
         '5d1927141424114e3884ac83' //SI01 Shipping Invoice
         // '5d1927131424114e3884ac7f' //NFI1 Notification for Inspection
     ];
-    return array.filter(function (element) {
-        return tpeOf.includes(element.doctypeId);
-    });
+    if (array) {
+        return array.filter(function (element) {
+            return tpeOf.includes(element.doctypeId);
+        });
+    }
 }
 
 function findObj(array, search) {
@@ -299,6 +301,29 @@ function generateScreenBody(screenId, fieldnames, collipacks){
     } 
 }
 
+function getPlList(collipacks) {
+    if (collipacks.hasOwnProperty('items') && !_.isUndefined(collipacks.items)){
+        let tempPl = collipacks.items.reduce(function (acc, cur) {
+                if(!!cur.plNr && !acc.includes(cur.plNr)) {
+                    acc.push(cur.plNr);
+                }
+                return acc;
+        }, []);
+        // let uniqueNfi = [...new Set(tempPl)];
+        tempPl.sort((a, b) => Number(b) - Number(a));
+        return tempPl.reduce(function(acc, cur) {
+            acc.push({_id: cur, name: cur});
+            return acc;
+        }, []);
+    }
+}
+
+function generateOptions(list) {
+    if (list) {
+        return list.map((element, index) => <option key={index} value={element._id}>{element.name}</option>);
+    }
+}
+
 class PackingDetails extends React.Component {
     constructor(props) {
         super(props);
@@ -308,10 +333,13 @@ class PackingDetails extends React.Component {
             unlocked: false,
             screen: 'packingdetails',
             selectedIds: [],
-            selectedTemplate: '0',
+            selectedPl: '',
+            selectedTemplate: '',
             selectedField: '',
             selectedType: 'text',
             updateValue:'',
+            plList: [],
+            docList: [],
             alert: {
                 type:'',
                 message:''
@@ -350,7 +378,10 @@ class PackingDetails extends React.Component {
             loadingFields,
             loadingPos,
             loadingSelection,
-            location 
+            location,
+            //-----
+            docdefs,
+            collipacks,
         } = this.props;
 
         var qs = queryString.parse(location.search);
@@ -381,11 +412,16 @@ class PackingDetails extends React.Component {
                 dispatch(projectActions.getById(qs.id));
             } 
         }
+
+        this.setState({
+            plList: getPlList(collipacks),
+            docList: arraySorted(docConf(docdefs.items), "name")
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {
         const { selectedField } = this.state;
-        const { fields } = this.props;
+        const { fields, docdefs, collipacks } = this.props;
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
                 return f._id === selectedField;
@@ -398,6 +434,14 @@ class PackingDetails extends React.Component {
                 });
             }
         }
+
+        if (collipacks != prevProps.collipacks) {
+            this.setState({plList: getPlList(collipacks)});
+        }
+
+        if (docdefs != prevProps.docdefs) {
+            this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
+        } 
     }
 
     handleClearAlert(event){
@@ -467,7 +511,7 @@ class PackingDetails extends React.Component {
         event.preventDefault();
         const { docdefs } = this.props;
         const { selectedTemplate } = this.state;
-        if (selectedTemplate != "0") {
+        if (!!selectedTemplate) {
             let obj = findObj(docdefs.items, selectedTemplate);
              if (obj) {
                 const requestOptions = {
@@ -564,11 +608,6 @@ class PackingDetails extends React.Component {
                 let fieldName = found.fields.name;
                 let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
-
-                console.log('collection:', collection);
-                console.log('fieldName:', fieldName);
-                console.log('fieldValue:', fieldValue);
-                console.log('fieldType:', fieldType);
 
                 if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
                     this.setState({
@@ -741,7 +780,7 @@ class PackingDetails extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '0',
+                selectedTemplate: '',
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -756,13 +795,11 @@ class PackingDetails extends React.Component {
 
     toggleGenerate(event) {
         event.preventDefault();
-        const { showGenerate } = this.state;
+        const { showGenerate, plList, docList } = this.state;
         this.setState({
             ...this.state,
-            selectedTemplate: '0',
-            selectedField: '',
-            selectedType: 'text',
-            updateValue:'',
+            selectedPl: (!showGenerate  && plList) ? plList[0]._id : '',
+            selectedTemplate: (!showGenerate  && docList) ? docList[0]._id : '',
             alert: {
                 type:'',
                 message:''
@@ -793,7 +830,7 @@ class PackingDetails extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                selectedTemplate: '0',
+                selectedTemplate: '',
                 selectedField: '',
                 selectedType: 'text',
                 updateValue:'',
@@ -813,10 +850,13 @@ class PackingDetails extends React.Component {
             screenId,
             selectedIds,
             unlocked,
+            selectedPl,
             selectedTemplate,
             selectedField,
             selectedType,
             updateValue,
+            plList,
+            docList,
             //show modals
             showEditValues,
             // showSplitLine,
@@ -922,33 +962,57 @@ class PackingDetails extends React.Component {
                     // size="modal-xl"
                 >
                     <div className="col-12">
-                            <div className="form-group">
-                                <label htmlFor="selectedTemplate">Select Document</label>
-                                <select
-                                    className="form-control"
-                                    name="selectedTemplate"
-                                    value={selectedTemplate}
-                                    placeholder="Select document..."
-                                    onChange={this.handleChange}
-                                >
-                                    <option key="0" value="0">Select document...</option>
-                                    {
-                                        docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
-                                            return (
-                                                <option 
-                                                    key={p._id}
-                                                    value={p._id}>{p.name}
-                                                </option>
-                                            );
-                                        })
-                                    }
-                                </select>
-                            </div>
-                            <div className="text-right">
-                                <button className="btn btn-success btn-lg" onClick={event => this.handleGenerateFile(event)}>
-                                    <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
-                                </button>
-                            </div>                   
+                        <div className="form-group">
+                            <label htmlFor="selectedPl">Select PL No</label>
+                            <select
+                                className="form-control"
+                                name="selectedPl"
+                                value={selectedPl}
+                                placeholder="Select document..."
+                                onChange={this.handleChange}
+                            >
+                                <option key="0" value="">Select PL No...</option>
+                                {generateOptions(plList)}
+                                {/* {
+                                    docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
+                                        return (
+                                            <option 
+                                                key={p._id}
+                                                value={p._id}>{p.name}
+                                            </option>
+                                        );
+                                    })
+                                } */}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="selectedTemplate">Select Document</label>
+                            <select
+                                className="form-control"
+                                name="selectedTemplate"
+                                value={selectedTemplate}
+                                placeholder="Select document..."
+                                onChange={this.handleChange}
+                            >
+                                <option key="0" value="">Select document...</option>
+                                {generateOptions(docList)}
+                                {/* {
+                                    docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
+                                        return (
+                                            <option 
+                                                key={p._id}
+                                                value={p._id}>{p.name}
+                                            </option>
+                                        );
+                                    })
+                                } */}
+                            </select>
+                        </div>
+                        <div className="text-right">
+                            <button className="btn btn-success btn-lg" onClick={event => this.handleGenerateFile(event)}>
+                                <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
+                            </button>
+                        </div>                   
                     </div>
                 </Modal>
 
