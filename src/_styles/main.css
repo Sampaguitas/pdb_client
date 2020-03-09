@@ -426,12 +426,13 @@ margin-left: 50px;
 
 .project-title {
   color: #6c757d;
-  /* white-space: nowrap; */
 }
 
 
 .breadcrumb {
-  /* background-color: #f8f9fa!important; */
   background-color: white!important;
   white-space: nowrap;
+  font-size: 14px;
+  padding: 7.500px 0px 7.500px 0px;
+  margin-bottom: 0px;
 }
