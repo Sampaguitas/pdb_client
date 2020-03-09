@@ -224,23 +224,29 @@ function getInputType(dbFieldType) {
     }
 }
 
-function generateScreenHeader(fieldnames, screenId) {
+function getHeaders(fieldnames, screenId, forWhat) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        return fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
         });
+        if (!tempArray) {
+            return [];
+        } else {
+            return tempArray.sort(function(a,b) {
+                return a[forWhat] - b[forWhat];
+            });
+        }
     } else {
         return [];
     }
 }
 
-function generateScreenBody(screenId, fieldnames, collipacks){
+function getBodys(collipacks, headersForShow){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
-    // let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
-    // let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
-    let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
+    let screenHeaders = headersForShow;
+
     let i = 1;
     if (!_.isUndefined(collipacks) && collipacks.hasOwnProperty('items') && !_.isEmpty(collipacks.items)) {
         collipacks.items.map(collipack => {
@@ -298,7 +304,9 @@ function generateScreenBody(screenId, fieldnames, collipacks){
         return arrayBody;
     } else {
         return [];
-    } 
+    }
+
+
 }
 
 function getPlList(collipacks) {
@@ -309,7 +317,6 @@ function getPlList(collipacks) {
                 }
                 return acc;
         }, []);
-        // let uniqueNfi = [...new Set(tempPl)];
         tempPl.sort((a, b) => Number(b) - Number(a));
         return tempPl.reduce(function(acc, cur) {
             acc.push({_id: cur, name: cur});
@@ -328,6 +335,8 @@ class PackingDetails extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            headersForShow: [],
+            bodysForShow: [],
             projectId:'',
             screenId: '5cd2b643fd333616dc360b67', //packing details
             unlocked: false,
@@ -380,9 +389,12 @@ class PackingDetails extends React.Component {
             loadingSelection,
             location,
             //-----
+            fieldnames,
             docdefs,
             collipacks,
         } = this.props;
+
+        const { screenId, headersForShow } = this.state;
 
         var qs = queryString.parse(location.search);
         if (qs.id) {
@@ -414,14 +426,16 @@ class PackingDetails extends React.Component {
         }
 
         this.setState({
+            headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+            bodysForShow: getBodys(collipacks, headersForShow),
             plList: getPlList(collipacks),
             docList: arraySorted(docConf(docdefs.items), "name")
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { selectedField } = this.state;
-        const { fields, docdefs, collipacks } = this.props;
+        const { selectedField, screenId, headersForShow } = this.state;
+        const { fields, fieldnames, docdefs, collipacks } = this.props;
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
                 return f._id === selectedField;
@@ -435,13 +449,23 @@ class PackingDetails extends React.Component {
             }
         }
 
+        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames){
+            this.setState({
+                headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+            });
+        }
+
+        if (collipacks != prevProps.collipacks || headersForShow != prevState.headersForShow) {
+            this.setState({bodysForShow: getBodys(collipacks, headersForShow)});
+        }
+
         if (collipacks != prevProps.collipacks) {
             this.setState({plList: getPlList(collipacks)});
         }
 
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
-        } 
+        }
     }
 
     handleClearAlert(event){
@@ -525,8 +549,11 @@ class PackingDetails extends React.Component {
     }
 
     selectedFieldOptions(fieldnames, fields, screenId) {
+
+        const { headersForShow } = this.state;
+
         if (fieldnames.items && fields.items) {
-            let screenHeaders = generateScreenHeader(fieldnames, screenId);
+            let screenHeaders = headersForShow;
             let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
                 if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
                     accumulator.push(currentValue.fieldId);
@@ -862,6 +889,9 @@ class PackingDetails extends React.Component {
             // showSplitLine,
             showGenerate,
             showDelete,
+            //---------
+            headersForShow,
+            bodysForShow
         }= this.state;
 
         const { accesses, docdefs, fieldnames, fields, collipacks, selection } = this.props;
@@ -895,8 +925,8 @@ class PackingDetails extends React.Component {
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {selection && selection.project && 
                             <ProjectTable
-                                screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
-                                screenBodys={generateScreenBody(screenId, fieldnames, collipacks)}
+                                screenHeaders={headersForShow}
+                                screenBodys={bodysForShow}
                                 projectId={projectId}
                                 screenId={screenId}
                                 selectedIds={selectedIds}
@@ -973,16 +1003,6 @@ class PackingDetails extends React.Component {
                             >
                                 <option key="0" value="">Select PL No...</option>
                                 {generateOptions(plList)}
-                                {/* {
-                                    docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
-                                        return (
-                                            <option 
-                                                key={p._id}
-                                                value={p._id}>{p.name}
-                                            </option>
-                                        );
-                                    })
-                                } */}
                             </select>
                         </div>
                         <div className="form-group">
@@ -996,16 +1016,6 @@ class PackingDetails extends React.Component {
                             >
                                 <option key="0" value="">Select document...</option>
                                 {generateOptions(docList)}
-                                {/* {
-                                    docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
-                                        return (
-                                            <option 
-                                                key={p._id}
-                                                value={p._id}>{p.name}
-                                            </option>
-                                        );
-                                    })
-                                } */}
                             </select>
                         </div>
                         <div className="text-right">
