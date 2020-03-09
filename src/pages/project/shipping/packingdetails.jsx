@@ -535,17 +535,28 @@ class PackingDetails extends React.Component {
     handleGenerateFile(event) {
         event.preventDefault();
         const { docdefs } = this.props;
-        const { selectedTemplate } = this.state;
-        if (!!selectedTemplate) {
+        const { selectedTemplate, selectedPl } = this.state;
+
+        function getRoute(doctypeId) {
+            switch(doctypeId) {
+                case '5d1927131424114e3884ac80': return 'generatePl';//PL01 Packing List
+                // case '5d1927141424114e3884ac84': return 'generateSm';//SM01 Shipping Mark
+                // case '5d1927131424114e3884ac81': return 'generatePn';//PN01 Packing Note
+                // case '5d1927141424114e3884ac83': return 'generateSi';//SI01 Shipping Invoice
+                default: return 'generatePl'; //handle other shipping templates temporarly,
+            }
+        }
+
+        if (!!selectedTemplate && !!selectedPl) {
             let obj = findObj(docdefs.items, selectedTemplate);
-             if (obj) {
+            if (!!obj) {
                 const requestOptions = {
                     method: 'GET',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 };
-                return fetch(`${config.apiUrl}/template/generate?docDef=${selectedTemplate}`, requestOptions)
+                return fetch(`${config.apiUrl}/template/${getRoute(obj.doctypeId)}?docDefId=${selectedTemplate}&locale=${locale}&selectedPl=${selectedPl}`, requestOptions)
                     .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
-             }
+            }
         }
     }
 
@@ -1002,40 +1013,43 @@ class PackingDetails extends React.Component {
                     show={showGenerate}
                     hideModal={this.toggleGenerate}
                     title="Generate Document"
-                    // size="modal-xl"
                 >
                     <div className="col-12">
-                        <div className="form-group">
-                            <label htmlFor="selectedPl">Select PL No</label>
-                            <select
-                                className="form-control"
-                                name="selectedPl"
-                                value={selectedPl}
-                                placeholder="Select document..."
-                                onChange={this.handleChange}
-                            >
-                                <option key="0" value="">Select PL No...</option>
-                                {generateOptions(plList)}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="selectedTemplate">Select Document</label>
-                            <select
-                                className="form-control"
-                                name="selectedTemplate"
-                                value={selectedTemplate}
-                                placeholder="Select document..."
-                                onChange={this.handleChange}
-                            >
-                                <option key="0" value="">Select document...</option>
-                                {generateOptions(docList)}
-                            </select>
-                        </div>
-                        <div className="text-right">
-                            <button className="btn btn-success btn-lg" onClick={event => this.handleGenerateFile(event)}>
-                                <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
-                            </button>
-                        </div>                   
+                        <form onSubmit={event => this.handleGenerateFile(event)}>
+                            <div className="form-group">
+                                <label htmlFor="selectedPl">Select PL No</label>
+                                <select
+                                    className="form-control"
+                                    name="selectedPl"
+                                    value={selectedPl}
+                                    placeholder="Select document..."
+                                    onChange={this.handleChange}
+                                    required
+                                >
+                                    <option key="0" value="">Select PL No...</option>
+                                    {generateOptions(plList)}
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="selectedTemplate">Select Document</label>
+                                <select
+                                    className="form-control"
+                                    name="selectedTemplate"
+                                    value={selectedTemplate}
+                                    placeholder="Select document..."
+                                    onChange={this.handleChange}
+                                    required
+                                >
+                                    <option key="0" value="">Select document...</option>
+                                    {generateOptions(docList)}
+                                </select>
+                            </div>
+                            <div className="text-right">
+                                <button className="btn btn-success btn-lg" type="submit">
+                                    <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
+                                </button>
+                            </div>
+                        </form>         
                     </div>
                 </Modal>
 
