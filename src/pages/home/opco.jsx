@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -266,7 +267,15 @@ class Opco extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Add operation company</h2>
+                <nav aria-label="breadcrumb">
+                    <ol className="breadcrumb">
+                        <li className="breadcrumb-item">
+                            <NavLink to={{ pathname: '/' }} tag="a">Home</NavLink>
+                        </li>
+                        <li className="breadcrumb-item active" aria-current="page">Add operation company</li>
+                    </ol>
+                </nav>
+                {/* <h2>Add operation company</h2> */}
                 <hr />
                 <div id="opco" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>

@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from 'react-router-dom';
 import { connect } from "react-redux";
 import { 
   accessActions,
@@ -294,7 +295,15 @@ class Settings extends React.Component {
             </button>
           </div>
         }
-          <h2>Settings</h2>
+        <nav aria-label="breadcrumb">
+            <ol className="breadcrumb">
+                <li className="breadcrumb-item">
+                    <NavLink to={{ pathname: '/' }} tag="a">Home</NavLink>
+                </li>
+                <li className="breadcrumb-item active" aria-current="page">Settings</li>
+            </ol>
+        </nav>
+          {/* <h2>Settings</h2> */}
           <hr />
           <div id="setting" className="full-height">
             <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>

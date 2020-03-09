@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { accessActions, alertActions, projectActions } from '../../../_actions';
 import Layout from '../../../_components/layout';
@@ -54,7 +54,16 @@ class Warehouse extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Warehouse > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <nav aria-label="breadcrumb">
+                    <ol className="breadcrumb">
+                        <li className="breadcrumb-item">
+                            <NavLink to={{ pathname: '/dashboard', search: '?id=' + projectId }} tag="a">Dashboard</NavLink>
+                        </li>
+                        <li className="breadcrumb-item active" aria-current="page">Warehouse:</li>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
+                    </ol>
+                </nav>
+                {/* <h2>Warehouse > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2> */}
                 <hr />
                 <div id="warehouse">
                     <div className="row justify-content-center">

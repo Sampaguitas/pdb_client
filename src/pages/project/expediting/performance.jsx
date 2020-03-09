@@ -1,4 +1,5 @@
 import React from 'react';
+import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
@@ -243,7 +244,7 @@ class Performance extends React.Component {
     }
 
     render() {
-        const { unit, period, clPo, clPoRev, data, loadingChart } = this.state;
+        const { unit, period, clPo, clPoRev, data, loadingChart, projectId } = this.state;
         const { accesses, pos, selection } = this.props;
         const alert = this.props.alert ? this.props.alert : this.state.alert;
 
@@ -256,7 +257,19 @@ class Performance extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Expediting | Performance Reports > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <nav aria-label="breadcrumb">
+                    <ol className="breadcrumb">
+                        <li className="breadcrumb-item">
+                            <NavLink to={{ pathname: '/dashboard', search: '?id=' + projectId }} tag="a">Dashboard</NavLink>
+                        </li>
+                        <li className="breadcrumb-item">
+                            <NavLink to={{ pathname: '/expediting', search: '?id=' + projectId }} tag="a">Expediting</NavLink>
+                        </li>
+                        <li className="breadcrumb-item active" aria-current="page">Performance Reports:</li>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
+                    </ol>
+                </nav>
+                {/* <h2>Expediting | Performance Reports > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2> */}
                 <hr />
                 <div id="performance" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>

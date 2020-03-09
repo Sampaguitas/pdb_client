@@ -420,3 +420,18 @@ margin-left: 50px;
   display: block;
   padding: 1.25rem; 
 }
+
+
+/* -------------breadcrumb------------------- */
+
+.project-title {
+  color: #6c757d;
+  /* white-space: nowrap; */
+}
+
+
+.breadcrumb {
+  /* background-color: #f8f9fa!important; */
+  background-color: white!important;
+  white-space: nowrap;
+}

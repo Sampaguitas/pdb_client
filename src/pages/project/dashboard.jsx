@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import { NavLink } from 'react-router-dom';
+import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { 
     accessActions,
@@ -202,7 +202,13 @@ class Dashboard extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Dashboard > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <nav aria-label="breadcrumb">
+                    <ol className="breadcrumb">
+                        <li className="breadcrumb-item active" aria-current="page">Dashboard:</li>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
+                    </ol>
+                </nav>
+                {/* <h2>Dashboard > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2> */}
                 <hr />
                 <div id="dashboard">
                     <div className="row justify-content-center">

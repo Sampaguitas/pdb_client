@@ -1,5 +1,6 @@
 import React from 'react';
 import config from 'config';
+import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { accessActions, alertActions, projectActions } from '../../_actions';
@@ -202,6 +203,7 @@ class Duf extends React.Component {
             responce,
             downloading,
             uploading,
+            projectId,
         } = this.state;
 
         const alert = this.state.alert ? this.state.alert : this.props.alert;
@@ -214,7 +216,16 @@ class Duf extends React.Component {
                         </button>
                     </div>
                 }
-                <h2>Data Upload File (DUF) > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2>
+                <nav aria-label="breadcrumb">
+                    <ol className="breadcrumb">
+                        <li className="breadcrumb-item">
+                            <NavLink to={{ pathname: '/dashboard', search: '?id=' + projectId }} tag="a">Dashboard</NavLink>
+                        </li>
+                        <li className="breadcrumb-item active" aria-current="page">Data Upload File (DUF):</li>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
+                    </ol>
+                </nav>
+                {/* <h2>Data Upload File (DUF) > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2> */}
                 <hr />
                 <div id="duf" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
