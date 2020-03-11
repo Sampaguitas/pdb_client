@@ -541,9 +541,9 @@ class PackingDetails extends React.Component {
             switch(doctypeId) {
                 case '5d1927131424114e3884ac80': return 'generatePl';//PL01 Packing List
                 case '5d1927141424114e3884ac84': return 'generateSm';//SM01 Shipping Mark
-                // case '5d1927131424114e3884ac81': return 'generatePn';//PN01 Packing Note
-                // case '5d1927141424114e3884ac83': return 'generateSi';//SI01 Shipping Invoice
-                default: return 'generatePl'; //handle other shipping templates temporarly,
+                case '5d1927131424114e3884ac81': return 'generatePn';//PN01 Packing Note
+                case '5d1927141424114e3884ac83': return 'generateSi';//SI01 Shipping Invoice
+                default: return 'generatePl';
             }
         }
 
