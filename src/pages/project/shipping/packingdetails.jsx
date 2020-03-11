@@ -332,6 +332,34 @@ function generateOptions(list) {
     }
 }
 
+
+function getClPo(pos, selectedPl) {
+    let badChars = /[^a-zA-Z0-9_()]/mg;
+    // let tempClPo = '';
+    if (!!pos.items) {
+        return pos.items.reduce(function(accPo, curPo){
+            if (!accPo) {
+                let tempSub = curPo.subs.reduce(function(accSub, curSub) {
+                    if (!accSub) {
+                        let tempPack = curSub.packitems.reduce(function(accPack, curPack) {
+                            if(!accPack && curPack.plNr == selectedPl) {
+                                accPack = curPo.clPo.replace(badChars, '_');
+                            }
+                            return accPack;
+                        }, '');
+                        accSub = tempPack;
+                    }
+                    return accSub;
+                }, '');
+                accPo = tempSub;
+            }
+            return accPo;
+        }, '');
+    } else {
+        return '';
+    }
+}
+
 class PackingDetails extends React.Component {
     constructor(props) {
         super(props);
@@ -534,7 +562,7 @@ class PackingDetails extends React.Component {
 
     handleGenerateFile(event) {
         event.preventDefault();
-        const { docdefs } = this.props;
+        const { docdefs, pos } = this.props;
         const { selectedTemplate, selectedPl } = this.state;
 
         function getRoute(doctypeId) {
@@ -549,13 +577,16 @@ class PackingDetails extends React.Component {
 
         if (!!selectedTemplate && !!selectedPl) {
             let obj = findObj(docdefs.items, selectedTemplate);
+            console.log('obj.code:', obj.code);
+            console.log('selectedPl:', selectedPl);
+            console.log('clPo:', getClPo(pos, selectedPl));
             if (!!obj) {
                 const requestOptions = {
                     method: 'GET',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 };
                 return fetch(`${config.apiUrl}/template/${getRoute(obj.doctypeId)}?docDefId=${selectedTemplate}&locale=${locale}&selectedPl=${selectedPl}`, requestOptions)
-                    .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
+                    .then(res => res.blob()).then(blob => saveAs(blob, `clPo${getClPo(pos, selectedPl)}_plNo${selectedPl}_doc${obj.code}.xlsx`)); //obj.field
             }
         }
     }
