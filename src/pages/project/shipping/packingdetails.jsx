@@ -26,6 +26,14 @@ const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
 const myLocale = Intl.DateTimeFormat(locale, options);
 
+function leadingChar(string, char, length) {
+    return string.toString().length > length ? string : char.repeat(length - string.toString().length) + string;
+}
+
+function baseTen(number) {
+    return number.toString().length > 2 ? number : '0' + number;
+}
+
 function getDateFormat(myLocale) {
     let tempDateFormat = ''
     myLocale.formatToParts().map(function (element) {
@@ -135,9 +143,7 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
 //     }
 // }
 
-function baseTen(number) {
-    return number.toString().length > 2 ? number : '0' + number;
-}
+
 
 
 // function arrayRemove(arr, value) {
@@ -547,7 +553,7 @@ class PackingDetails extends React.Component {
                 body: JSON.stringify({selectedIds: selectedIds})
             };
             return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
-            .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+            .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${leadingChar(month+1, '0', 2)}_${date}.xlsx`));
         }
     }
 
@@ -565,28 +571,25 @@ class PackingDetails extends React.Component {
         const { docdefs, pos } = this.props;
         const { selectedTemplate, selectedPl } = this.state;
 
-        function getRoute(doctypeId) {
+        function getProp(doctypeId) {
             switch(doctypeId) {
-                case '5d1927131424114e3884ac80': return 'generatePl';//PL01 Packing List
-                case '5d1927141424114e3884ac84': return 'generateSm';//SM01 Shipping Mark
-                case '5d1927131424114e3884ac81': return 'generatePn';//PN01 Packing Note
-                case '5d1927141424114e3884ac83': return 'generateSi';//SI01 Shipping Invoice
-                default: return 'generatePl';
+                case '5d1927131424114e3884ac80': return {route: 'generatePl', doc: 'PL'};//PL01 Packing List
+                case '5d1927141424114e3884ac84': return {route: 'generateSm', doc: 'SM'};//SM01 Shipping Mark
+                case '5d1927131424114e3884ac81': return {route: 'generatePn', doc: 'PN'};//PN01 Packing Note
+                case '5d1927141424114e3884ac83': return {route: 'generateSi', doc: 'SI'};//SI01 Shipping Invoice
+                default: return {route: 'generatePl', doc: 'PL'}; //default packing list
             }
         }
 
         if (!!selectedTemplate && !!selectedPl) {
             let obj = findObj(docdefs.items, selectedTemplate);
-            console.log('obj.code:', obj.code);
-            console.log('selectedPl:', selectedPl);
-            console.log('clPo:', getClPo(pos, selectedPl));
             if (!!obj) {
                 const requestOptions = {
                     method: 'GET',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 };
-                return fetch(`${config.apiUrl}/template/${getRoute(obj.doctypeId)}?docDefId=${selectedTemplate}&locale=${locale}&selectedPl=${selectedPl}`, requestOptions)
-                    .then(res => res.blob()).then(blob => saveAs(blob, `clPo${getClPo(pos, selectedPl)}_plNo${selectedPl}_doc${obj.code}.xlsx`)); //obj.field
+                return fetch(`${config.apiUrl}/template/${getProp(obj.doctypeId).route}?docDefId=${selectedTemplate}&locale=${locale}&selectedPl=${selectedPl}`, requestOptions)
+                    .then(res => res.blob()).then(blob => saveAs(blob, `${getClPo(pos, selectedPl)}_${getProp(obj.doctypeId).doc}_${leadingChar(selectedPl, '0', 3)}.xlsx`)); //obj.field
             }
         }
     }
