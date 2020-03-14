@@ -360,11 +360,11 @@ class Duf extends React.Component {
         if (array) {
         //   return arraySorted(array, 'forShow').filter(function (element) {
             return array.filter(function (element) {
-            return (doesMatch(selectedScreen, element.screenId, 'Id')
-            && element.fields && doesMatch(custom, element.fields.custom, 'String')
-            && doesMatch(forShow, element.forShow, 'Number')
-            );
-          });
+                return (doesMatch(selectedScreen, element.screenId, 'Id')
+                    && element.fields && doesMatch(custom, element.fields.custom, 'String')
+                    && doesMatch(forShow, element.forShow, 'Number')
+                );
+            });
         } else {
             return [];
         }

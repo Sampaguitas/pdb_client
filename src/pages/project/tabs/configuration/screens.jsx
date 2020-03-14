@@ -389,14 +389,14 @@ class Screens extends React.Component {
         if (array) {
         //   return arraySorted(array, 'fields.custom').filter(function (element) {
             return array.filter(function (element) {
-            return (doesMatch(selectedScreen, element.screenId, 'Id')
-            && element.fields && doesMatch(custom, element.fields.custom, 'String')
-            && doesMatch(forShow, element.forShow, 'Number')
-            && doesMatch(forSelect, element.forSelect, 'Number')
-            && doesMatch(align, element.align, 'Select')
-            && doesMatch(edit, element.edit, 'Boolean')
-            );
-          });
+                return (doesMatch(selectedScreen, element.screenId, 'Id')
+                    && element.fields && doesMatch(custom, element.fields.custom, 'String')
+                    && doesMatch(forShow, element.forShow, 'Number')
+                    && doesMatch(forSelect, element.forSelect, 'Number')
+                    && doesMatch(align, element.align, 'Select')
+                    && doesMatch(edit, element.edit, 'Boolean')
+                );
+            });
         } else {
             return [];
         }

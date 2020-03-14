@@ -129,13 +129,14 @@ function virtuals(packitems, uom) {
     return tempVirtuals;
 }
 
-function getBodys(selectedPo, headersForSelect, selectedIds){
+function getBodys(selectedPo, selection, headersForSelect, selectedIds){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
     let hasPackitems = getScreenTbls(headersForSelect).includes('packitem');
     let screenHeaders = headersForSelect;
     let subId = selectedIds.subId;
+    let project = selection.project || { _id: '0', name: '', number: '' };
     
     let i = 1;
 
@@ -148,15 +149,27 @@ function getBodys(selectedPo, headersForSelect, selectedIds){
                         screenHeaders.map(screenHeader => {
                             switch(screenHeader.fields.fromTbl) {
                                 case 'po':
-                                    arrayRow.push({
-                                        collection: 'po',
-                                        objectId: selectedPo._id,
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: selectedPo[screenHeader.fields.name],
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
+                                    if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: project._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'po',
+                                            objectId: selectedPo._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: selectedPo[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
                                     break;
                                 case 'sub':
                                     if (screenHeader.fields.name === 'relQty') {
@@ -223,15 +236,27 @@ function getBodys(selectedPo, headersForSelect, selectedIds){
                     screenHeaders.map(screenHeader => {
                         switch(screenHeader.fields.fromTbl) {
                             case 'po':
-                                arrayRow.push({
-                                    collection: 'po',
-                                    objectId: selectedPo._id,
-                                    fieldName: screenHeader.fields.name,
-                                    fieldValue: selectedPo[screenHeader.fields.name],
-                                    disabled: screenHeader.edit,
-                                    align: screenHeader.align,
-                                    fieldType: getInputType(screenHeader.fields.type),
-                                });
+                                if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: project._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else {
+                                    arrayRow.push({
+                                        collection: 'po',
+                                        objectId: selectedPo._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: selectedPo[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                }
                                 break;
                             case 'sub':
                                 arrayRow.push({
@@ -566,7 +591,7 @@ class SplitLine extends Component {
     }
 
     componentDidMount() {
-        const { selectedPo, headersForSelect, selectedIds } = this.props;
+        const { headersForSelect, selectedIds, selectedPo, selection } = this.props;
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
         const tableForShow = document.getElementById('forShow');
@@ -578,7 +603,7 @@ class SplitLine extends Component {
         
 
         this.setState({
-            bodysForSelect: getBodys(selectedPo, headersForSelect, selectedIds),
+            bodysForSelect: getBodys(selectedPo, selection, headersForSelect, selectedIds),
             selectedLine: '',
             virtuals: [],
             forShowSelectedRows:[],
@@ -587,11 +612,11 @@ class SplitLine extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForSelect, headersForShow, selectedIds, selectedPo } = this.props;
+        const { headersForSelect, headersForShow, selectedIds, selectedPo, selection } = this.props;
         const { selectedLine, bodysForSelect } = this.state;
-        if (prevProps.selectedPo != selectedPo || prevProps.headersForSelect != headersForSelect) {
+        if (prevProps.selectedPo != selectedPo || prevProps.selection != selection || prevProps.headersForSelect != headersForSelect) {
             this.setState({
-                bodysForSelect: getBodys(selectedPo, headersForSelect, selectedIds),
+                bodysForSelect: getBodys(selectedPo, selection, headersForSelect, selectedIds),
                 selectedLine: '',
                 virtuals: [],
                 forShowSelectedRows:[],
