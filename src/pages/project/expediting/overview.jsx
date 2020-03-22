@@ -17,8 +17,11 @@ import {
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
+import TabForSelect from '../../../_components/project-table/tab-for-select';
+import TabForShow from '../../../_components/project-table/tab-for-show';
 import Modal from '../../../_components/modal';
 import SplitLine from '../../../_components/split-line/split-sub';
+
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -351,6 +354,27 @@ function getHeaders(fieldnames, screenId, forWhat) {
     }
 }
 
+function initialiseSettingsCheck(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forSelect - b.forSelect;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push(cur._id);
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
 function getBodys(fieldnames, selection, pos, headersForShow){
     let arrayBody = [];
     let arrayRow = [];
@@ -552,6 +576,12 @@ function generateOptions(list) {
     }
 }
 
+// function generateSettingsCheck(fieldnames) {
+//     return fieldnames.reduce(function (acc, cur) {
+
+//     }, [])
+// }
+
 class Overview extends React.Component {
     constructor(props) {
         super(props);
@@ -560,6 +590,26 @@ class Overview extends React.Component {
             bodysForShow: [],
             splitHeadersForShow: [],
             splitHeadersForSelect:[],
+            settingsCheck: [],
+            settingsFilter: {},
+            tabs: [
+                {
+                    index: 0, 
+                    id: 'forShow', 
+                    label: 'for Show', 
+                    component: TabForShow, 
+                    active: true, 
+                    isLoaded: false
+                },
+                {
+                    index: 1, 
+                    id: 'forSelect', 
+                    label: 'for Select', 
+                    component: TabForSelect, 
+                    active: false, 
+                    isLoaded: false
+                }
+            ],
             projectId:'',
             screenId: '5cd2b642fd333616dc360b63', //Expediting
             splitScreenId: '5cd2b646fd333616dc360b70', //Expediting Splitwindow
@@ -579,6 +629,7 @@ class Overview extends React.Component {
             showEditValues: false,
             showSplitLine: false,
             showGenerate: false,
+            showSettings: false,
             showDelete: false,
         };
 
@@ -593,11 +644,13 @@ class Overview extends React.Component {
         
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
+        this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         //Toggle Modals
         this.toggleSplitLine = this.toggleSplitLine.bind(this);
         this.toggleEditValues = this.toggleEditValues.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
+        this.toggleSettings = this.toggleSettings.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
     }
 
@@ -650,7 +703,8 @@ class Overview extends React.Component {
             bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
             splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
             splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
-            docList: arraySorted(docConf(docdefs.items), "name")
+            docList: arraySorted(docConf(docdefs.items), "name"),
+            // settingsCheck: initialiseSettingsCheck(fieldnames, screenId)
         });
     }
 
@@ -687,6 +741,10 @@ class Overview extends React.Component {
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
         }
+
+        // if (fieldnames != prevProps.fieldnames) {
+        //     this.setState({settingsCheck: initialiseSettingsCheck(fieldnames, screenId)})
+        // }
 
     }
 
@@ -1073,6 +1131,26 @@ class Overview extends React.Component {
         }
     }
 
+    toggleSettings(event) {
+        event.preventDefault();
+        const { showSettings } = this.state;
+        this.setState({
+            showSettings: !showSettings
+        });
+    }
+
+    handleModalTabClick(event, tab){
+        event.preventDefault();
+        const { tabs } = this.state; // 1. Get tabs from state
+        tabs.forEach((t) => {t.active = false}); //2. Reset all tabs
+        tab.isLoaded = true; // 3. set current tab as active
+        tab.active = true;
+        this.setState({
+            ...this.state,
+            tabs // 4. update state
+        })
+    }
+
     toggleDelete(event) {
         event.preventDefault();
         const { showDelete, unlocked, selectedIds } = this.state;
@@ -1117,12 +1195,16 @@ class Overview extends React.Component {
             showEditValues,
             showSplitLine,
             showGenerate,
+            showSettings,
             showDelete,
             //--------
             headersForShow,
             bodysForShow,
             splitHeadersForShow,
             splitHeadersForSelect,
+            //'-------------------'
+            tabs,
+            settingsCheck
         } = this.state;
 
         const { accesses, fieldnames, fields, pos, selection } = this.props;
@@ -1178,6 +1260,7 @@ class Overview extends React.Component {
                                 screen={screen}
                                 fieldnames={fieldnames}
                                 fields={fields}
+                                toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 toggleDelete = {this.toggleDelete}
                             />
@@ -1272,6 +1355,52 @@ class Overview extends React.Component {
                                 </button>
                             </div>
                         </form>                  
+                    </div>
+                </Modal>
+
+                <Modal
+                    show={showSettings}
+                    hideModal={this.toggleSettings}
+                    title="Settings"
+                    size="modal-xl"
+                >
+                    <div id="modal-tabs">
+                        <ul className="nav nav-tabs">
+                        {tabs.map((tab) => 
+                            <li className={tab.active ? 'nav-item active' : 'nav-item'} key={tab.index}>
+                                <a className="nav-link" href={'#'+ tab.id} data-toggle="tab" onClick={event => this.handleModalTabClick(event,tab)} id={tab.id + '-tab'} aria-controls={tab.id} role="tab">
+                                    {tab.label}
+                                </a>
+                            </li>                        
+                        )}
+                        </ul>
+                        <div className="tab-content" id="modal-nav-tabContent">
+                            {tabs.map(tab =>
+                                <div
+                                    className={tab.active ? "tab-pane fade show active" : "tab-pane fade"}
+                                    id={tab.id}
+                                    role="tabpanel"
+                                    aria-labelledby={tab.id + '-tab'}
+                                    key={tab.index}
+                                >
+                                    <tab.component 
+                                        tab={tab}
+                                        settingsCheck={settingsCheck}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="text-right mt-3">
+                        <button className="btn btn-dark btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
+                            <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
+                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Apply</span>
+                        </button>
+                        <button className="btn btn-leeuwen btn-lg"> {/*onClick={event => this.handleDeleteRows(event)} */}
+                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                        </button>
                     </div>
                 </Modal>
 

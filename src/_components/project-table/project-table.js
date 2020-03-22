@@ -175,7 +175,7 @@ class ProjectTable extends Component {
             header: {},
             selectedRows: [],
             selectAllRows: false,
-            showModalSettings: false,
+            // showModalSettings: false,
             isEqual: false,
             showModalUpload: false,
             tabs: [
@@ -219,9 +219,9 @@ class ProjectTable extends Component {
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
         // this.matchingRow = this.matchingRow.bind(this);
-        this.toggleModalSettings = this.toggleModalSettings.bind(this);
+        // this.toggleModalSettings = this.toggleModalSettings.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
-        this.handleModalTabClick = this.handleModalTabClick.bind(this);
+        // this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
         this.fileInput = React.createRef();
@@ -494,13 +494,13 @@ class ProjectTable extends Component {
         return tempRows;
     }
 
-    toggleModalSettings() {
-        const { showModalSettings } = this.state;
-        this.setState({
-            ...this.state,
-            showModalSettings: !showModalSettings
-        });
-    }
+    // toggleModalSettings() {
+    //     const { showModalSettings } = this.state;
+    //     this.setState({
+    //         ...this.state,
+    //         showModalSettings: !showModalSettings
+    //     });
+    // }
 
     toggleModalUpload() {
         const { showModalUpload } = this.state;
@@ -519,17 +519,17 @@ class ProjectTable extends Component {
         });
     }
 
-    handleModalTabClick(event, tab){
-        event.preventDefault();
-        const { tabs } = this.state; // 1. Get tabs from state
-        tabs.forEach((t) => {t.active = false}); //2. Reset all tabs
-        tab.isLoaded = true; // 3. set current tab as active
-        tab.active = true;
-        this.setState({
-            ...this.state,
-            tabs // 4. update state
-        })
-    }
+    // handleModalTabClick(event, tab){
+    //     event.preventDefault();
+    //     const { tabs } = this.state; // 1. Get tabs from state
+    //     tabs.forEach((t) => {t.active = false}); //2. Reset all tabs
+    //     tab.isLoaded = true; // 3. set current tab as active
+    //     tab.active = true;
+    //     this.setState({
+    //         ...this.state,
+    //         tabs // 4. update state
+    //     })
+    // }
 
     onKeyPress(event) {
         if (event.which === 13 /* prevent form submit on key Enter */) {
@@ -625,6 +625,7 @@ class ProjectTable extends Component {
     render() {
 
         const { 
+            toggleSettings,
             toggleDelete,
             toggleUnlock,
             downloadTable,
@@ -638,7 +639,7 @@ class ProjectTable extends Component {
         const { 
             header,
             selectAllRows,
-            showModalSettings, 
+            // showModalSettings, 
             showModalUpload,
             isEqual, 
             tabs,
@@ -652,7 +653,7 @@ class ProjectTable extends Component {
         return (
             <div className="full-height">
                 <div className="btn-group-vertical pull-right" style={{marginLeft: '5px'}}>
-                    <button className="btn btn-outline-leeuwen-blue" title="Configs" onClick={event => this.toggleModalSettings(event)} style={{width: '40px', height: '40px'}}> 
+                    <button className="btn btn-outline-leeuwen-blue" title="Configs" onClick={event => toggleSettings(event)} style={{width: '40px', height: '40px'}}> 
                         <span><FontAwesomeIcon icon="cog" className="fas fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title="Refresh" onClick={refreshStore} style={{width: '40px', height: '40px'}}>
@@ -691,7 +692,7 @@ class ProjectTable extends Component {
                     </div>
                 </div>
 
-                <Modal
+                {/* <Modal
                     show={showModalSettings}
                     hideModal={this.toggleModalSettings}
                     title="Table Settings"
@@ -723,7 +724,7 @@ class ProjectTable extends Component {
                             )}
                         </div>
                     </div>
-                </Modal>
+                </Modal> */}
 
                 <Modal
                     show={showModalUpload}

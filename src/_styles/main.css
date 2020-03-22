@@ -436,3 +436,16 @@ margin-left: 50px;
   padding: 7.500px 0px 7.500px 0px;
   margin-bottom: 0px;
 }
+
+
+.vertical-devider {
+  color: #6c757d;
+  font-size: 12.5px;
+  text-align: center;
+  text-size-adjust:100%;
+  vertical-align:middle;
+  padding-bottom: 3.75px;
+  padding-left: 7.5px;
+  padding-right: 7.5px;
+  padding-top: 3.75px;
+}

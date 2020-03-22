@@ -16,6 +16,8 @@ import {
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
+import TabForSelect from '../../../_components/project-table/tab-for-select';
+import TabForShow from '../../../_components/project-table/tab-for-show';
 import Modal from '../../../_components/modal';
 import SplitLine from '../../../_components/split-line/split-packitem';
 
@@ -457,6 +459,26 @@ class TransportDocuments extends React.Component {
             bodysForShow: [],
             splitHeadersForShow: [],
             splitHeadersForSelect:[],
+            settingsCheck: [],
+            settingsFilter: {},
+            tabs: [
+                {
+                    index: 0, 
+                    id: 'forShow', 
+                    label: 'for Show', 
+                    component: TabForShow, 
+                    active: true, 
+                    isLoaded: false
+                },
+                {
+                    index: 1, 
+                    id: 'forSelect', 
+                    label: 'for Select', 
+                    component: TabForSelect, 
+                    active: false, 
+                    isLoaded: false
+                }
+            ],
             projectId:'',
             screenId: '5cd2b643fd333616dc360b66',
             splitScreenId: '5cd2b647fd333616dc360b72', //Assign Transport SplitWindow
@@ -488,18 +510,19 @@ class TransportDocuments extends React.Component {
         // this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleSplitLine = this.handleSplitLine.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
-
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.getPl = this.getPl.bind(this);
         this.handleUpdatePL = this.handleUpdatePL.bind(this);
         this.handleUpdateColli = this.handleUpdateColli.bind(this);
+        this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         //Toggle Modals
         this.toggleSplitLine = this.toggleSplitLine.bind(this);
         this.toggleEditValues = this.toggleEditValues.bind(this);
         this.toggleAssignPl = this.toggleAssignPl.bind(this);
         this.toggleAssignColli = this.toggleAssignColli.bind(this);
+        this.toggleSettings = this.toggleSettings.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
     }
 
@@ -1214,6 +1237,26 @@ class TransportDocuments extends React.Component {
         }
     }
 
+    toggleSettings(event) {
+        event.preventDefault();
+        const { showSettings } = this.state;
+        this.setState({
+            showSettings: !showSettings
+        });
+    }
+
+    handleModalTabClick(event, tab){
+        event.preventDefault();
+        const { tabs } = this.state; // 1. Get tabs from state
+        tabs.forEach((t) => {t.active = false}); //2. Reset all tabs
+        tab.isLoaded = true; // 3. set current tab as active
+        tab.active = true;
+        this.setState({
+            ...this.state,
+            tabs // 4. update state
+        })
+    }
+
     toggleDelete(event) {
         event.preventDefault();
         const { showDelete, unlocked, selectedIds } = this.state;
@@ -1263,12 +1306,16 @@ class TransportDocuments extends React.Component {
             showEditValues,
             showAssignPl,
             showAssignColli,
+            showSettings,
             showDelete,
             //--------
             headersForShow,
             bodysForShow,
             splitHeadersForShow,
             splitHeadersForSelect,
+            //'-------------------'
+            tabs,
+            settingsCheck
 
         }= this.state;
 
@@ -1328,6 +1375,7 @@ class TransportDocuments extends React.Component {
                                 screen={screen}
                                 fieldnames={fieldnames}
                                 fields={fields}
+                                toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 toggleDelete = {this.toggleDelete}
                             />
@@ -1468,6 +1516,52 @@ class TransportDocuments extends React.Component {
                                 </button>
                             </div>
                         </form>                 
+                    </div>
+                </Modal>
+
+                <Modal
+                    show={showSettings}
+                    hideModal={this.toggleSettings}
+                    title="Table Settings"
+                    size="modal-xl"
+                >
+                    <div id="modal-tabs">
+                        <ul className="nav nav-tabs">
+                        {tabs.map((tab) => 
+                            <li className={tab.active ? 'nav-item active' : 'nav-item'} key={tab.index}>
+                                <a className="nav-link" href={'#'+ tab.id} data-toggle="tab" onClick={event => this.handleModalTabClick(event,tab)} id={tab.id + '-tab'} aria-controls={tab.id} role="tab">
+                                    {tab.label}
+                                </a>
+                            </li>                        
+                        )}
+                        </ul>
+                        <div className="tab-content" id="modal-nav-tabContent">
+                            {tabs.map(tab =>
+                                <div
+                                    className={tab.active ? "tab-pane fade show active" : "tab-pane fade"}
+                                    id={tab.id}
+                                    role="tabpanel"
+                                    aria-labelledby={tab.id + '-tab'}
+                                    key={tab.index}
+                                >
+                                    <tab.component 
+                                        tab={tab}
+                                        settingsCheck={settingsCheck}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="text-right mt-3">
+                        <button className="btn btn-dark btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
+                            <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
+                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Apply</span>
+                        </button>
+                        <button className="btn btn-leeuwen btn-lg"> {/*onClick={event => this.handleDeleteRows(event)} */}
+                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                        </button>
                     </div>
                 </Modal>
 

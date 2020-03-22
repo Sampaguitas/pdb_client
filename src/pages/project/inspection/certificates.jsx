@@ -12,6 +12,8 @@ import {
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
+import TabForSelect from '../../../_components/project-table/tab-for-select';
+import TabForShow from '../../../_components/project-table/tab-for-show';
 import Modal from '../../../_components/modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -343,6 +345,26 @@ class Certificates extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            settingsCheck: [],
+            settingsFilter: {},
+            tabs: [
+                {
+                    index: 0, 
+                    id: 'forShow', 
+                    label: 'for Show', 
+                    component: TabForShow, 
+                    active: true, 
+                    isLoaded: false
+                },
+                {
+                    index: 1, 
+                    id: 'forSelect', 
+                    label: 'for Select', 
+                    component: TabForSelect, 
+                    active: false, 
+                    isLoaded: false
+                }
+            ],
             projectId:'',
             screenId: '5cd2b642fd333616dc360b65', //Certificates
             unlocked: false,
@@ -358,6 +380,7 @@ class Certificates extends React.Component {
             },
             //-----modals-----
             showEditValues: false,
+            showSettings: false,
             showDelete: false,
 
         };
@@ -367,9 +390,11 @@ class Certificates extends React.Component {
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
+        this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         //Toggle Modals
         this.toggleEditValues = this.toggleEditValues.bind(this);
+        this.toggleSettings = this.toggleSettings.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
     }
 
@@ -688,6 +713,27 @@ class Certificates extends React.Component {
         }
     }
 
+    toggleSettings(event) {
+        event.preventDefault();
+        const { showSettings } = this.state;
+        this.setState({
+            showSettings: !showSettings
+        });
+    }
+
+    handleModalTabClick(event, tab){
+        event.preventDefault();
+        const { tabs } = this.state; // 1. Get tabs from state
+        tabs.forEach((t) => {t.active = false}); //2. Reset all tabs
+        tab.isLoaded = true; // 3. set current tab as active
+        tab.active = true;
+        this.setState({
+            ...this.state,
+            tabs // 4. update state
+        })
+    }
+
+
     toggleDelete(event) {
         event.preventDefault();
         const { showDelete, unlocked, selectedIds } = this.state;
@@ -735,7 +781,11 @@ class Certificates extends React.Component {
             selectedType, 
             updateValue,
             showEditValues,
+            showSettings,
             showDelete,
+            //'-------------------'
+            tabs,
+            settingsCheck
         }= this.state;
         
         const { accesses, fieldnames, fields, pos, selection } = this.props;
@@ -784,6 +834,7 @@ class Certificates extends React.Component {
                                 screen={screen}
                                 fieldnames={fieldnames}
                                 fields={fields}
+                                toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 toggleDelete = {this.toggleDelete}
                             />
@@ -829,6 +880,52 @@ class Certificates extends React.Component {
                                 <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
                             </button>
                         </div>                   
+                    </div>
+                </Modal>
+
+                <Modal
+                    show={showSettings}
+                    hideModal={this.toggleSettings}
+                    title="Table Settings"
+                    size="modal-xl"
+                >
+                    <div id="modal-tabs">
+                        <ul className="nav nav-tabs">
+                        {tabs.map((tab) => 
+                            <li className={tab.active ? 'nav-item active' : 'nav-item'} key={tab.index}>
+                                <a className="nav-link" href={'#'+ tab.id} data-toggle="tab" onClick={event => this.handleModalTabClick(event,tab)} id={tab.id + '-tab'} aria-controls={tab.id} role="tab">
+                                    {tab.label}
+                                </a>
+                            </li>                        
+                        )}
+                        </ul>
+                        <div className="tab-content" id="modal-nav-tabContent">
+                            {tabs.map(tab =>
+                                <div
+                                    className={tab.active ? "tab-pane fade show active" : "tab-pane fade"}
+                                    id={tab.id}
+                                    role="tabpanel"
+                                    aria-labelledby={tab.id + '-tab'}
+                                    key={tab.index}
+                                >
+                                    <tab.component 
+                                        tab={tab}
+                                        settingsCheck={settingsCheck}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="text-right mt-3">
+                        <button className="btn btn-dark btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
+                            <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
+                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Apply</span>
+                        </button>
+                        <button className="btn btn-leeuwen btn-lg"> {/*onClick={event => this.handleDeleteRows(event)} */}
+                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                        </button>
                     </div>
                 </Modal>
 
