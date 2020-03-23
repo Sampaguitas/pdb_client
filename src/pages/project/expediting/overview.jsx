@@ -354,7 +354,7 @@ function getHeaders(fieldnames, screenId, forWhat) {
     }
 }
 
-function initialiseSettingsCheck(fieldnames, screenId) {
+function initialiseSettingsForSelect(fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         let tempArray = fieldnames.items.filter(function(element) {
             return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
@@ -366,7 +366,37 @@ function initialiseSettingsCheck(fieldnames, screenId) {
                 return a.forSelect - b.forSelect;
             });
             return tempArray.reduce(function(acc, cur) {
-                acc.push(cur._id);
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    isChecked: true
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
+function initialiseSettingsForShow(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forSelect - b.forSelect;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    value: '',
+                    type: cur.fields.type,
+                });
                 return acc; // console.log('cur:', cur)
             }, []);
         }
@@ -576,7 +606,7 @@ function generateOptions(list) {
     }
 }
 
-// function generateSettingsCheck(fieldnames) {
+// function generateSettingsForSelect(fieldnames) {
 //     return fieldnames.reduce(function (acc, cur) {
 
 //     }, [])
@@ -590,8 +620,8 @@ class Overview extends React.Component {
             bodysForShow: [],
             splitHeadersForShow: [],
             splitHeadersForSelect:[],
-            settingsCheck: [],
-            settingsFilter: {},
+            settingsForShow: {},
+            settingsForSelect: {},
             tabs: [
                 {
                     index: 0, 
@@ -704,7 +734,8 @@ class Overview extends React.Component {
             splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
             splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
             docList: arraySorted(docConf(docdefs.items), "name"),
-            // settingsCheck: initialiseSettingsCheck(fieldnames, screenId)
+            settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
+            settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
         });
     }
 
@@ -742,9 +773,12 @@ class Overview extends React.Component {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
         }
 
-        // if (fieldnames != prevProps.fieldnames) {
-        //     this.setState({settingsCheck: initialiseSettingsCheck(fieldnames, screenId)})
-        // }
+        if (fieldnames != prevProps.fieldnames) {
+            this.setState({
+                settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
+                settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
+            })
+        }
 
     }
 
@@ -1133,7 +1167,7 @@ class Overview extends React.Component {
 
     toggleSettings(event) {
         event.preventDefault();
-        const { showSettings } = this.state;
+        const { showSettings, settingsForSelect, settingsForShow } = this.state;
         this.setState({
             showSettings: !showSettings
         });
@@ -1204,7 +1238,8 @@ class Overview extends React.Component {
             splitHeadersForSelect,
             //'-------------------'
             tabs,
-            settingsCheck
+            settingsForShow,
+            settingsForSelect
         } = this.state;
 
         const { accesses, fieldnames, fields, pos, selection } = this.props;
@@ -1385,7 +1420,8 @@ class Overview extends React.Component {
                                 >
                                     <tab.component 
                                         tab={tab}
-                                        settingsCheck={settingsCheck}
+                                        settingsForShow={settingsForShow}
+                                        settingsForSelect={settingsForSelect}
                                     />
                                 </div>
                             )}

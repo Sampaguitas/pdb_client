@@ -20,20 +20,23 @@ function callback() {
 
 }
 
-function generateLayout(settingsInput, callback) {
+function generateLayout(settingsForShow, callback) {
     let tempArray = [];
-    settingsInput.map(function (input){
-        tempArray.push(
-            <InputSetting 
-                type={getInputType(input.type)}
-                title={input.custom}
-                name={input._id}
-                value={input.value}
-                onchange={callback}
-            />
-        );
-    });
-
+    
+    if (!!settingsForShow) {
+        settingsForShow.map(function (element){
+            tempArray.push(
+                <InputSetting 
+                    type={getInputType(element.type)}
+                    title={element.custom}
+                    name={element._id}
+                    value={element.value}
+                    onchange={callback}
+                />
+            );
+        });
+    }
+    
     return (
         <div style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd', height: '300px', overflowY: 'auto'}}>
             <div className="row ml-2 mr-2 mt-4">
@@ -45,51 +48,13 @@ function generateLayout(settingsInput, callback) {
 
 class TabForShow extends Component{
     render() {
-        // const { settingsCheck } = this.props;
-        let settingsInput = [
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-            { _id: '5e285fff70466e00163afd56', custom: 'Material code', value: '', type: 'String' },
-            { _id: '5e28600270466e00163afe56', custom: 'Exp Ready/Del date', value: '', type: 'Date' },
-            { _id: '5e28600270466e00163afe59', custom: 'RFS Date', value: '', type: 'Date' },
-        ];
+        const { settingsForShow } = this.props;
         return (
             <div>
                 <div className="row modal-btn-links mb-3">
                     <button className="btn btn btn-link mr-2" style={{fontSize: '12.5px'}}>Clear All</button>
                 </div>
-                {generateLayout(settingsInput, callback)}
+                {generateLayout(settingsForShow, callback)}
             </div>
 
         );
