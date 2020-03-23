@@ -371,13 +371,13 @@ function getClPo(pos, selectedPl) {
 function initialiseSettingsForSelect(fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
         });
         if (!tempArray) {
             return [];
         } else {
             tempArray.sort(function(a,b) {
-                return a.forSelect - b.forSelect;
+                return a.forShow - b.forShow;
             });
             return tempArray.reduce(function(acc, cur) {
                 acc.push({
@@ -396,13 +396,13 @@ function initialiseSettingsForSelect(fieldnames, screenId) {
 function initialiseSettingsForShow(fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
         });
         if (!tempArray) {
             return [];
         } else {
             tempArray.sort(function(a,b) {
-                return a.forSelect - b.forSelect;
+                return a.forShow - b.forShow;
             });
             return tempArray.reduce(function(acc, cur) {
                 acc.push({

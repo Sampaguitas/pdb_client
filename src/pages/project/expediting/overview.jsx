@@ -354,57 +354,6 @@ function getHeaders(fieldnames, screenId, forWhat) {
     }
 }
 
-function initialiseSettingsForSelect(fieldnames, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
-        });
-        if (!tempArray) {
-            return [];
-        } else {
-            tempArray.sort(function(a,b) {
-                return a.forSelect - b.forSelect;
-            });
-            return tempArray.reduce(function(acc, cur) {
-                acc.push({
-                    _id: cur._id,
-                    custom: cur.fields.custom,
-                    isChecked: true
-                });
-                return acc; // console.log('cur:', cur)
-            }, []);
-        }
-    } else {
-        return [];
-    }
-}
-
-function initialiseSettingsForShow(fieldnames, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
-        });
-        if (!tempArray) {
-            return [];
-        } else {
-            tempArray.sort(function(a,b) {
-                return a.forSelect - b.forSelect;
-            });
-            return tempArray.reduce(function(acc, cur) {
-                acc.push({
-                    _id: cur._id,
-                    custom: cur.fields.custom,
-                    value: '',
-                    type: cur.fields.type,
-                });
-                return acc; // console.log('cur:', cur)
-            }, []);
-        }
-    } else {
-        return [];
-    }
-}
-
 function getBodys(fieldnames, selection, pos, headersForShow){
     let arrayBody = [];
     let arrayRow = [];
@@ -606,11 +555,58 @@ function generateOptions(list) {
     }
 }
 
-// function generateSettingsForSelect(fieldnames) {
-//     return fieldnames.reduce(function (acc, cur) {
+function initialiseSettingsForSelect(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forShow - b.forShow;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    isChecked: true
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
 
-//     }, [])
-// }
+function initialiseSettingsForShow(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forShow - b.forShow;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    value: '',
+                    type: cur.fields.type,
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
+
 
 class Overview extends React.Component {
     constructor(props) {
@@ -1167,7 +1163,7 @@ class Overview extends React.Component {
 
     toggleSettings(event) {
         event.preventDefault();
-        const { showSettings, settingsForSelect, settingsForShow } = this.state;
+        const { showSettings } = this.state;
         this.setState({
             showSettings: !showSettings
         });
