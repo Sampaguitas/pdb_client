@@ -529,6 +529,57 @@ function generateOptions(list) {
     }
 }
 
+function initialiseSettingsForSelect(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forSelect - b.forSelect;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    isChecked: true
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
+function initialiseSettingsForShow(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forSelect - b.forSelect;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    value: '',
+                    type: cur.fields.type,
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
 class ReleaseData extends React.Component {
     constructor(props) {
         super(props);
@@ -537,8 +588,8 @@ class ReleaseData extends React.Component {
             bodysForShow: [],
             splitHeadersForShow: [],
             splitHeadersForSelect:[],
-            settingsCheck: [],
-            settingsFilter: {},
+            settingsForShow: {},
+            settingsForSelect: {},
             tabs: [
                 {
                     index: 0, 
@@ -666,7 +717,9 @@ class ReleaseData extends React.Component {
             splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
             nfiList: getNfiList(pos),
             locationList: getLocationList(suppliers),
-            docList: arraySorted(docConf(docdefs.items), "name")
+            docList: arraySorted(docConf(docdefs.items), "name"),
+            settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
+            settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
         });
 
     }
@@ -710,6 +763,13 @@ class ReleaseData extends React.Component {
 
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
+        }
+
+        if (fieldnames != prevProps.fieldnames) {
+            this.setState({
+                settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
+                settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
+            })
         }
     }
 
@@ -1371,7 +1431,8 @@ class ReleaseData extends React.Component {
             splitHeadersForSelect,
             //'-------------------'
             tabs,
-            settingsCheck
+            settingsForShow,
+            settingsForSelect
         }= this.state;
 
         const { accesses, fieldnames, fields, pos, selection, suppliers } = this.props;
@@ -1649,7 +1710,8 @@ class ReleaseData extends React.Component {
                                 >
                                     <tab.component 
                                         tab={tab}
-                                        settingsCheck={settingsCheck}
+                                        settingsForShow={settingsForShow}
+                                        settingsForSelect={settingsForSelect}
                                     />
                                 </div>
                             )}

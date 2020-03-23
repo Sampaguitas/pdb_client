@@ -368,6 +368,57 @@ function getClPo(pos, selectedPl) {
     }
 }
 
+function initialiseSettingsForSelect(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forSelect - b.forSelect;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    isChecked: true
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
+function initialiseSettingsForShow(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forSelect - b.forSelect;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    value: '',
+                    type: cur.fields.type,
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
 class PackingDetails extends React.Component {
     constructor(props) {
         super(props);
@@ -489,7 +540,9 @@ class PackingDetails extends React.Component {
             headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(collipacks, headersForShow),
             plList: getPlList(collipacks),
-            docList: arraySorted(docConf(docdefs.items), "name")
+            docList: arraySorted(docConf(docdefs.items), "name"),
+            settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
+            settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
         });
     }
 
@@ -525,6 +578,13 @@ class PackingDetails extends React.Component {
 
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
+        }
+
+        if (fieldnames != prevProps.fieldnames) {
+            this.setState({
+                settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
+                settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
+            })
         }
     }
 
@@ -986,7 +1046,8 @@ class PackingDetails extends React.Component {
             bodysForShow,
             //'-------------------'
             tabs,
-            settingsCheck
+            settingsForShow,
+            settingsForSelect
         }= this.state;
 
         const { accesses, docdefs, fieldnames, fields, collipacks, selection } = this.props;
@@ -1165,7 +1226,8 @@ class PackingDetails extends React.Component {
                                 >
                                     <tab.component 
                                         tab={tab}
-                                        settingsCheck={settingsCheck}
+                                        settingsForShow={settingsForShow}
+                                        settingsForSelect={settingsForSelect}
                                     />
                                 </div>
                             )}

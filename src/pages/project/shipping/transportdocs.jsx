@@ -450,6 +450,56 @@ function selectionHasData (selectedIds, pos, field) {
     }
 }
 
+function initialiseSettingsForSelect(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forSelect - b.forSelect;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    isChecked: true
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
+function initialiseSettingsForShow(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forSelect - b.forSelect;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    value: '',
+                    type: cur.fields.type,
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
 
 class TransportDocuments extends React.Component {
     constructor(props) {
@@ -568,6 +618,8 @@ class TransportDocuments extends React.Component {
             bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
             splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
             splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+            settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
+            settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
         });
     }
 
@@ -600,6 +652,13 @@ class TransportDocuments extends React.Component {
             this.setState({
                 bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
             });
+        }
+
+        if (fieldnames != prevProps.fieldnames) {
+            this.setState({
+                settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
+                settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
+            })
         }
     }
 
@@ -1315,7 +1374,8 @@ class TransportDocuments extends React.Component {
             splitHeadersForSelect,
             //'-------------------'
             tabs,
-            settingsCheck
+            settingsForShow,
+            settingsForSelect
 
         }= this.state;
 
@@ -1546,7 +1606,8 @@ class TransportDocuments extends React.Component {
                                 >
                                     <tab.component 
                                         tab={tab}
-                                        settingsCheck={settingsCheck}
+                                        settingsForShow={settingsForShow}
+                                        settingsForSelect={settingsForSelect}
                                     />
                                 </div>
                             )}

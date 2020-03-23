@@ -91,57 +91,10 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
     
 }
 
-// function getObjectIds(collection, selectedIds) {
-//     if (!_.isEmpty(selectedIds)) {
-//         switch(collection) {
-//             case 'po': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.poId)) {
-//                     acc.push(curr.poId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'sub': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.subId)) {
-//                     acc.push(curr.subId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'certificate': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.certificateId)) {
-//                     acc.push(curr.certificateId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'packitem': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.packItemId)) {
-//                     acc.push(curr.packItemId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'collipack': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.colliPackId)) {
-//                     acc.push(curr.colliPackId);
-//                 }
-//                 return acc;
-//             }, []);
-//             default: return [];
-//         }
-//     } else {
-//         return [];
-//     }
-// }
 
 function baseTen(number) {
     return number.toString().length > 2 ? number : '0' + number;
 }
-
-// function arrayRemove(arr, value) {
-
-//     return arr.filter(function(ele){
-//         return ele != value;
-//     });
- 
-//  }
 
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
@@ -340,13 +293,64 @@ function generateScreenBody(screenId, fieldnames, pos){
     
 }
 
+function initialiseSettingsForSelect(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forSelect - b.forSelect;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    isChecked: true
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
+function initialiseSettingsForShow(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forSelect); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forSelect - b.forSelect;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    custom: cur.fields.custom,
+                    value: '',
+                    type: cur.fields.type,
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
 
 class Certificates extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            settingsCheck: [],
-            settingsFilter: {},
+            settingsForShow: {},
+            settingsForSelect: {},
             tabs: [
                 {
                     index: 0, 
@@ -406,8 +410,11 @@ class Certificates extends React.Component {
             loadingFields,
             loadingPos,
             loadingSelection,
-            location 
+            location,
+            fieldnames
         } = this.props;
+
+        const { screenId } = this.state;
 
         var qs = queryString.parse(location.search);
         if (qs.id) {
@@ -428,12 +435,22 @@ class Certificates extends React.Component {
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
             }
-        } 
+        }
+
+        this.setState({
+            // headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+            // bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
+            // splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
+            // splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+            // docList: arraySorted(docConf(docdefs.items), "name"),
+            settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
+            settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { selectedField } = this.state;
-        const { fields } = this.props;
+        const { selectedField, screenId } = this.state;
+        const { fields, fieldnames } = this.props;
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
                 return f._id === selectedField;
@@ -445,6 +462,13 @@ class Certificates extends React.Component {
                     selectedType: getInputType(found.type),
                 });
             }
+        }
+
+        if (fieldnames != prevProps.fieldnames) {
+            this.setState({
+                settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
+                settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
+            })
         }
     }
 
@@ -785,7 +809,8 @@ class Certificates extends React.Component {
             showDelete,
             //'-------------------'
             tabs,
-            settingsCheck
+            settingsForShow,
+            settingsForSelect
         }= this.state;
         
         const { accesses, fieldnames, fields, pos, selection } = this.props;
@@ -910,7 +935,8 @@ class Certificates extends React.Component {
                                 >
                                     <tab.component 
                                         tab={tab}
-                                        settingsCheck={settingsCheck}
+                                        settingsForShow={settingsForShow}
+                                        settingsForSelect={settingsForSelect}
                                     />
                                 </div>
                             )}
