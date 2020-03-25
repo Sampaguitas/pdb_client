@@ -16,8 +16,8 @@ import {
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
-import TabForSelect from '../../../_components/project-table/tab-for-select';
-import TabForShow from '../../../_components/project-table/tab-for-show';
+import TabFilter from '../../../_components/setting/tab-filter';
+import TabDisplay from '../../../_components/setting/tab-display';
 import Modal from '../../../_components/modal';
 import SplitLine from '../../../_components/split-line/split-packitem';
 
@@ -450,7 +450,7 @@ function selectionHasData (selectedIds, pos, field) {
     }
 }
 
-function initialiseSettingsForSelect(fieldnames, screenId) {
+function initSettingsDisplay(fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         let tempArray = fieldnames.items.filter(function(element) {
             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
@@ -475,7 +475,7 @@ function initialiseSettingsForSelect(fieldnames, screenId) {
     }
 }
 
-function initialiseSettingsForShow(fieldnames, screenId) {
+function initSettingsFilter(fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         let tempArray = fieldnames.items.filter(function(element) {
             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
@@ -514,17 +514,17 @@ class TransportDocuments extends React.Component {
             tabs: [
                 {
                     index: 0, 
-                    id: 'forShow', 
-                    label: 'for Show', 
-                    component: TabForShow, 
+                    id: 'filter',
+                    label: 'Filter', 
+                    component: TabFilter, 
                     active: true, 
                     isLoaded: false
                 },
                 {
                     index: 1, 
-                    id: 'forSelect', 
-                    label: 'for Select', 
-                    component: TabForSelect, 
+                    id: 'display',
+                    label: 'Display',
+                    component: TabDisplay, 
                     active: false, 
                     isLoaded: false
                 }
@@ -574,6 +574,53 @@ class TransportDocuments extends React.Component {
         this.toggleAssignColli = this.toggleAssignColli.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
+        //Settings
+        this.handleInputSettings = this.handleInputSettings.bind(this);
+        this.handleClearInputSettings = this.handleClearInputSettings.bind(this);
+        this.handleCheckSettings = this.handleCheckSettings.bind(this);
+        this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
+    }
+
+    handleInputSettings(id, value) {
+        const { settingsFilter } = this.state;
+        let tempArray = settingsFilter;
+        let found = tempArray.find(element => element._id === id);
+        if(!!found) {
+            found.value = value;
+            this.setState({ settingsFilter: tempArray });
+        } 
+    }
+
+    handleClearInputSettings() {
+        const { settingsFilter } = this.state;
+        
+        let tempArray = settingsFilter;
+        tempArray.map(element => element.value = '');
+        this.setState({
+            settingsDisplay: tempArray 
+        });
+    }
+
+
+    handleCheckSettings(id) {
+        const { settingsDisplay } = this.state;
+        let tempArray = settingsDisplay;
+        let found = tempArray.find(element => element._id === id);
+        if(!!found) {
+            found.isChecked = !found.isChecked;
+            this.setState({
+                settingsDisplay: tempArray
+            });
+        }
+    }
+
+    handleCheckSettingsAll(bool) {
+        const { settingsDisplay } = this.state;
+        let tempArray = settingsDisplay;
+        tempArray.map(element => element.isChecked = bool);
+        this.setState({
+            settingsDisplay: tempArray 
+        });
     }
 
     componentDidMount() {
@@ -618,8 +665,8 @@ class TransportDocuments extends React.Component {
             bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
             splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
             splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
-            settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
-            settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
+            settingsFilter: initSettingsFilter(fieldnames, screenId),
+            settingsDisplay: initSettingsDisplay(fieldnames, screenId)
         });
     }
 
@@ -656,8 +703,8 @@ class TransportDocuments extends React.Component {
 
         if (fieldnames != prevProps.fieldnames) {
             this.setState({
-                settingsForShow: initialiseSettingsForShow(fieldnames, screenId),
-                settingsForSelect: initialiseSettingsForSelect(fieldnames, screenId)
+                settingsFilter: initSettingsFilter(fieldnames, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, screenId)
             })
         }
     }
@@ -1374,8 +1421,8 @@ class TransportDocuments extends React.Component {
             splitHeadersForSelect,
             //'-------------------'
             tabs,
-            settingsForShow,
-            settingsForSelect
+            settingsFilter,
+            settingsDisplay
 
         }= this.state;
 
@@ -1582,7 +1629,7 @@ class TransportDocuments extends React.Component {
                 <Modal
                     show={showSettings}
                     hideModal={this.toggleSettings}
-                    title="Table Settings"
+                    title="Field Settings"
                     size="modal-xl"
                 >
                     <div id="modal-tabs">
@@ -1606,8 +1653,12 @@ class TransportDocuments extends React.Component {
                                 >
                                     <tab.component 
                                         tab={tab}
-                                        settingsForShow={settingsForShow}
-                                        settingsForSelect={settingsForSelect}
+                                        settingsFilter={settingsFilter}
+                                        settingsDisplay={settingsDisplay}
+                                        handleInputSettings={this.handleInputSettings}
+                                        handleClearInputSettings={this.handleClearInputSettings}
+                                        handleCheckSettings={this.handleCheckSettings}
+                                        handleCheckSettingsAll={this.handleCheckSettingsAll}
                                     />
                                 </div>
                             )}

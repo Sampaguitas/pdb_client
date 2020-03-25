@@ -1,7 +1,4 @@
-import React, { Component } from 'react'
-import propTypes from 'prop-types';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import './check-setting.css'
+import React, { Component } from 'react';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
@@ -28,17 +25,39 @@ function getDateFormat(myLocale) {
     return tempDateFormat;
 }
 
-class InputSetting extends Component {
+class SettingInput extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { value:'' };
+        this.onChange = this.onChange.bind(this);
+    }
+
+    componentWillMount() {
+        const { value } = this.props;
+        this.setState({
+            value: value
+        });
+    }
+
+    componentDidUpdate(prevProps) {
+        const { name, value } = this.props;
+        if (prevProps.value != value || prevProps.name != name) {
+            this.setState({
+                value: value
+            });
+        }
+    }
+
+    onChange(event) {
+        const { name, handleInputSettings } = this.props;
+        const { value } = event.target;
+        this.setState({ value: value }, () => handleInputSettings(name, value))
+    }
 
     render(){
 
-        const { 
-            type,
-            title,
-            name,
-            value, 
-            onChange, 
-        } = this.props;
+        const { type, title, name } = this.props;
+        const { value } = this.state;
 
         return (
             <div className="form-group col-4">
@@ -48,7 +67,7 @@ class InputSetting extends Component {
                     type={type === 'number' ? 'number' : 'text'}
                     name={name}
                     value={value}
-                    onChange={onChange}
+                    onChange={this.onChange}
                     placeholder={type === 'date' ? getDateFormat(myLocale) : ''}
                 />
             </div>
@@ -56,4 +75,4 @@ class InputSetting extends Component {
     }
 }
 
-export default InputSetting;
+export default SettingInput;

@@ -17,8 +17,8 @@ import TableSelect from '../../_components/project-table/table-select';
 import TableCheckBox from '../../_components/project-table/table-check-box';
 import TableSelectionRow from '../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../_components/project-table/table-selection-all-row';
-import TabForSelect from './tab-for-select';
-import TabForShow from './tab-for-show';
+// import TabDisplay from '../setting/tab-display';
+// import TabFilter from '../setting/tab-filter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import { AST_SwitchBranch } from 'terser';
@@ -178,24 +178,24 @@ class ProjectTable extends Component {
             // showModalSettings: false,
             isEqual: false,
             showModalUpload: false,
-            tabs: [
-                {
-                    index: 0, 
-                    id: 'forShow', 
-                    label: 'for Show', 
-                    component: TabForShow, 
-                    active: true, 
-                    isLoaded: false
-                },
-                {
-                    index: 1, 
-                    id: 'forSelect', 
-                    label: 'for Select', 
-                    component: TabForSelect, 
-                    active: false, 
-                    isLoaded: false
-                }
-            ],
+            // tabs: [
+            //     {
+            //         index: 0, 
+            //         id: 'filter',
+            //         label: 'Filter', 
+            //         component: TabFilter, 
+            //         active: true, 
+            //         isLoaded: false
+            //     },
+            //     {
+            //         index: 1, 
+            //         id: 'display',
+            //         label: 'Display', 
+            //         component: TabDisplay, 
+            //         active: false, 
+            //         isLoaded: false
+            //     }
+            // ],
             fileName: '',
             inputKey: Date.now(),
             uploading: false,
@@ -695,7 +695,7 @@ class ProjectTable extends Component {
                 {/* <Modal
                     show={showModalSettings}
                     hideModal={this.toggleModalSettings}
-                    title="Table Settings"
+                    title="Field Settings"
                     size="modal-xl"
                 >
                     <div id="modal-tabs">

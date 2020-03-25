@@ -1,32 +1,49 @@
 import React, { Component } from 'react'
 import propTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import './check-setting.css'
+import './setting-check.css';
+import _ from 'lodash';
 
-class CheckSetting extends Component {
+class SettingCheck extends Component {
     constructor(props) {
         super(props);
-        this.state = {
-            fieldValue: true,
-        }
+        this.state = { isChecked: false };
         this.onChange = this.onChange.bind(this);
     }
 
+    componentWillMount() {
+        const { isChecked } = this.props;
+        this.setState({
+            isChecked: isChecked
+        });
+    }
+
+    componentDidUpdate(prevProps) {
+        const { isChecked } = this.props;
+        if (prevProps.isChecked != isChecked) {
+            this.setState({
+                isChecked: isChecked
+            });
+        }
+    }
+
     onChange(event) {
-        const { callback } = this.props;
-        this.setState({fieldValue: event.target.checked}, callback(event.target.checked))
+        const { handleCheckSettings, id } = this.props;
+        this.setState({
+            isChecked: event.target.checked
+        }, () => handleCheckSettings(id))
     }
 
     render(){
-        const { fieldValue } = this.state;
+        const { isChecked } = this.state;
         const { title } = this.props;
         return (
             <div className="col-4" style={{lineHeight: '1.5', fontSize: '1.25rem'}}> {/*marginBottom: '10px'*/}
             <label className="fancy-checkbox" style={{padding: '10px'}}>  {/*'19.5px'*/}
                 <input
                     type="checkbox"
-                    name="fieldValue"
-                    checked={fieldValue}
+                    name="isChecked"
+                    checked={isChecked}
                     onChange={this.onChange}
                 />
                 <FontAwesomeIcon icon="check-square" className="checked fa-lg mr-3" style={{color: '#0070C0', cursor: 'pointer'}}/>
@@ -38,4 +55,4 @@ class CheckSetting extends Component {
     }
 }
 
-export default CheckSetting;
+export default SettingCheck;
