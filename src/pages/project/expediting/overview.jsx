@@ -337,21 +337,38 @@ function getInputType(dbFieldType) {
 //     }
 // }
 
-function getHeaders(fieldnames, screenId, forWhat) {
+function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
+    let tempArray = [];
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
-        });
-        if (!tempArray) {
-            return [];
+        
+        let displayIds = settingsDisplay.reduce(function(acc, cur) {
+            if (!!cur.isChecked) {
+                acc.push(cur._id);
+            }
+            return acc;
+        }, []);
+
+        if (!!displayIds && forWhat === 'forShow') {
+            tempArray = fieldnames.items.filter(function(element) {
+                return (_.isEqual(element.screenId, screenId) && displayIds.includes(element._id) && !!element[forWhat]); 
+            });
         } else {
+            tempArray = fieldnames.items.filter(function(element) {
+                return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
+            });
+        }
+
+        if (!!tempArray) {
+        //     return [];
+        // } else {
             return tempArray.sort(function(a,b) {
                 return a[forWhat] - b[forWhat];
             });
         }
-    } else {
-        return [];
-    }
+    } 
+    // else {
+    return [];
+    // }
 }
 
 function getBodys(fieldnames, selection, pos, headersForShow){
@@ -545,7 +562,6 @@ function getBodys(fieldnames, selection, pos, headersForShow){
     } else {
         return [];
     }
-    
 }
 
 
@@ -555,7 +571,7 @@ function generateOptions(list) {
     }
 }
 
-function settingsDisplay(fieldnames, screenId) {
+function initSettingsDisplay(fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         let tempArray = fieldnames.items.filter(function(element) {
             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
@@ -605,7 +621,6 @@ function initSettingsFilter(fieldnames, screenId) {
         return [];
     }
 }
-
 
 
 class Overview extends React.Component {
@@ -714,7 +729,7 @@ class Overview extends React.Component {
             found.isChecked = !found.isChecked;
             this.setState({
                 settingsDisplay: tempArray
-            });
+            }, console.log(settingsDisplay));
         }
     }
 
@@ -748,7 +763,7 @@ class Overview extends React.Component {
             selection
         } = this.props;
 
-        const { screenId, splitScreenId, headersForShow, splitHeadersForSelect } = this.state;
+        const { screenId, splitScreenId, headersForShow, settingsDisplay } = this.state;
 
         var qs = queryString.parse(location.search);
         if (qs.id) {
@@ -774,18 +789,18 @@ class Overview extends React.Component {
         }
 
         this.setState({
-            headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+            headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
-            splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
-            splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+            splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
+            splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
             docList: arraySorted(docConf(docdefs.items), "name"),
             settingsFilter: initSettingsFilter(fieldnames, screenId),
-            settingsDisplay: settingsDisplay(fieldnames, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, screenId)
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, splitHeadersForSelect, screenId, splitScreenId, selectedField } = this.state;
+        const { headersForShow, splitHeadersForSelect, screenId, splitScreenId, selectedField, settingsDisplay } = this.state;
         const { fields, fieldnames, selection, pos, docdefs } = this.props;
         
         if (selectedField != prevState.selectedField && selectedField != '0') {
@@ -800,11 +815,12 @@ class Overview extends React.Component {
             }
         }
 
-        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames){
+        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames || settingsDisplay != prevState.settingsDisplay){
+            console.log('toto');
             this.setState({
-                headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
-                splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
-                splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+                splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
+                splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
             }); 
         }
 
@@ -821,7 +837,7 @@ class Overview extends React.Component {
         if (fieldnames != prevProps.fieldnames) {
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, screenId),
-                settingsDisplay: settingsDisplay(fieldnames, screenId)
+                settingsDisplay: initSettingsDisplay(fieldnames, screenId)
             })
         }
 
