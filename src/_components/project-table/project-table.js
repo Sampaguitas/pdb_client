@@ -404,6 +404,7 @@ class ProjectTable extends Component {
             return array.filter(function (element) {
                 let conditionMet = true;
                 for (const prop in header) {
+                    //-----------------------------header---------------------------------------
                     var fieldName =  screenHeaders.find(function (el) {
                         return _.isEqual(el._id, prop)
                     });
@@ -413,6 +414,8 @@ class ProjectTable extends Component {
                     if (!doesMatch(header[prop], matchingCol.fieldValue, fieldName.fields.type, isEqual)) {
                         conditionMet = false;
                     }
+
+                    //-----------------------------setings---------------------------------------
                 }
                 return conditionMet;
             });
@@ -691,40 +694,6 @@ class ProjectTable extends Component {
                         </table>
                     </div>
                 </div>
-
-                {/* <Modal
-                    show={showModalSettings}
-                    hideModal={this.toggleModalSettings}
-                    title="Field Settings"
-                    size="modal-xl"
-                >
-                    <div id="modal-tabs">
-                        <ul className="nav nav-tabs">
-                        {tabs.map((tab) => 
-                            <li className={tab.active ? 'nav-item active' : 'nav-item'} key={tab.index}>
-                                <a className="nav-link" href={'#'+ tab.id} data-toggle="tab" onClick={event => this.handleModalTabClick(event,tab)} id={tab.id + '-tab'} aria-controls={tab.id} role="tab">
-                                    {tab.label}
-                                </a>
-                            </li>                        
-                        )}
-                        </ul>
-                        <div className="tab-content" id="modal-nav-tabContent">
-                            {tabs.map(tab =>
-                                <div
-                                    className={tab.active ? "tab-pane fade show active" : "tab-pane fade"}
-                                    id={tab.id}
-                                    role="tabpanel"
-                                    aria-labelledby={tab.id + '-tab'}
-                                    key={tab.index}
-                                >
-                                    <tab.component 
-                                        tab={tab}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </Modal> */}
 
                 <Modal
                     show={showModalUpload}

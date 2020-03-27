@@ -277,21 +277,35 @@ function getInputType(dbFieldType) {
     }
 }
 
-function getHeaders(fieldnames, screenId, forWhat) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
-        });
-        if (!tempArray) {
-            return [];
+function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
+    let tempArray = [];
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        
+        
+        let displayIds = settingsDisplay.reduce(function(acc, cur) {
+            if (!!cur.isChecked) {
+                acc.push(cur._id);
+            }
+            return acc;
+        }, []);
+
+        if (!_.isEmpty(displayIds) && forWhat === 'forShow') {
+            tempArray = fieldnames.items.filter(function(element) {
+                return (_.isEqual(element.screenId, screenId) && !!element[forWhat] && displayIds.includes(element._id)); 
+            });
         } else {
+            tempArray = fieldnames.items.filter(function(element) {
+                return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
+            });
+        }
+
+        if (!!tempArray) {
             return tempArray.sort(function(a,b) {
                 return a[forWhat] - b[forWhat];
             });
-        }
-    } else {
-        return [];
+        } 
     }
+
+    return [];
 }
 
 function getBodys(fieldnames, selection, pos, headersForShow){
@@ -588,8 +602,8 @@ class ReleaseData extends React.Component {
             bodysForShow: [],
             splitHeadersForShow: [],
             splitHeadersForSelect:[],
-            settingsFilter: {},
-            settingsDisplay: {},
+            settingsFilter: [],
+            settingsDisplay: [],
             tabs: [
                 {
                     index: 0, 
@@ -667,48 +681,6 @@ class ReleaseData extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
     }
 
-    handleInputSettings(id, value) {
-        const { settingsFilter } = this.state;
-        let tempArray = settingsFilter;
-        let found = tempArray.find(element => element._id === id);
-        if(!!found) {
-            found.value = value;
-            this.setState({ settingsFilter: tempArray });
-        } 
-    }
-
-    handleClearInputSettings() {
-        const { settingsFilter } = this.state;
-        
-        let tempArray = settingsFilter;
-        tempArray.map(element => element.value = '');
-        this.setState({
-            settingsDisplay: tempArray 
-        });
-    }
-
-
-    handleCheckSettings(id) {
-        const { settingsDisplay } = this.state;
-        let tempArray = settingsDisplay;
-        let found = tempArray.find(element => element._id === id);
-        if(!!found) {
-            found.isChecked = !found.isChecked;
-            this.setState({
-                settingsDisplay: tempArray
-            });
-        }
-    }
-
-    handleCheckSettingsAll(bool) {
-        const { settingsDisplay } = this.state;
-        let tempArray = settingsDisplay;
-        tempArray.map(element => element.isChecked = bool);
-        this.setState({
-            settingsDisplay: tempArray 
-        });
-    }
-
     componentDidMount() {
         const { 
             dispatch,
@@ -728,7 +700,7 @@ class ReleaseData extends React.Component {
             selection
         } = this.props;
 
-        const { screenId, splitScreenId, headersForShow, splitHeadersForSelect } = this.state;
+        const { screenId, splitScreenId, headersForShow, settingsDisplay } = this.state;
         
         var qs = queryString.parse(location.search);
         if (qs.id) {
@@ -758,10 +730,10 @@ class ReleaseData extends React.Component {
         }
 
         this.setState({
-            headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+            headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
-            splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
-            splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+            splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
+            splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
             nfiList: getNfiList(pos),
             locationList: getLocationList(suppliers),
             docList: arraySorted(docConf(docdefs.items), "name"),
@@ -772,7 +744,7 @@ class ReleaseData extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, splitHeadersForSelect, screenId, splitScreenId, selectedField } = this.state;
+        const { headersForShow, screenId, splitScreenId, selectedField, settingsDisplay } = this.state;
         const { fields, fieldnames, selection, pos, suppliers, docdefs } = this.props;
 
         if (selectedField != prevState.selectedField && selectedField != '0') {
@@ -788,16 +760,20 @@ class ReleaseData extends React.Component {
             }
         }
 
-        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames){
+        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames || splitScreenId != prevState.splitScreenId){
             this.setState({
-                headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
-                splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
-                splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+                splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
+                splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
+                settingsFilter: initSettingsFilter(fieldnames, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, screenId)
             }); 
         }
 
-        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow || splitHeadersForSelect != prevState.splitHeadersForSelect) {
-            this.setState({bodysForShow: getBodys(fieldnames, selection, pos, headersForShow)});
+        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow) {
+            this.setState({
+                bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
+            });
         }
 
         if (pos != prevProps.pos) {
@@ -811,13 +787,6 @@ class ReleaseData extends React.Component {
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
         }
-
-        if (fieldnames != prevProps.fieldnames) {
-            this.setState({
-                settingsFilter: initSettingsFilter(fieldnames, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, screenId)
-            })
-        }
     }
 
     handleClearAlert(event){
@@ -830,6 +799,49 @@ class ReleaseData extends React.Component {
             } 
         });
         dispatch(alertActions.clear());
+    }
+
+    handleInputSettings(id, value) {
+        const { settingsFilter } = this.state;
+        let tempArray = settingsFilter;
+        let found = tempArray.find(element => element._id === id);
+        if(!!found) {
+            found.value = value;
+            this.setState({ settingsFilter: tempArray });
+        } 
+    }
+
+    handleClearInputSettings() {
+        const { settingsFilter } = this.state;
+        
+        let tempArray = settingsFilter;
+        tempArray.map(element => element.value = '');
+        this.setState({ settingsFilter: tempArray });
+    }
+
+    handleCheckSettings(id) {
+        const { fieldnames } = this.props;
+        const { settingsDisplay, screenId } = this.state;
+        let tempArray = settingsDisplay;
+        let found = tempArray.find(element => element._id === id);
+        if(!!found) {
+            found.isChecked = !found.isChecked;
+            this.setState({
+                settingsDisplay: tempArray,
+                headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+            });
+        }
+    }
+
+    handleCheckSettingsAll(bool) {
+        const { fieldnames } = this.props;
+        const { settingsDisplay, screenId } = this.state;
+        let tempArray = settingsDisplay;
+        tempArray.map(element => element.isChecked = bool);
+        this.setState({
+            settingsDisplay: tempArray,
+            headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+        });
     }
 
     refreshStore() {
@@ -1542,7 +1554,8 @@ class ReleaseData extends React.Component {
                                 fields={fields}
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
-                                toggleDelete = {this.toggleDelete}
+                                toggleDelete={this.toggleDelete}
+                                settingsFilter={settingsFilter}
                             />
                         }
                     </div>   
@@ -1733,7 +1746,7 @@ class ReleaseData extends React.Component {
                 <Modal
                     show={showSettings}
                     hideModal={this.toggleSettings}
-                    title="Field Settings"
+                    title="User Settings"
                     size="modal-xl"
                 >
                     <div id="modal-tabs">
@@ -1769,13 +1782,10 @@ class ReleaseData extends React.Component {
                         </div>
                     </div>
                     <div className="text-right mt-3">
-                        <button className="btn btn-dark btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2">
                             <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
-                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Apply</span>
-                        </button>
-                        <button className="btn btn-leeuwen btn-lg"> {/*onClick={event => this.handleDeleteRows(event)} */}
+                        <button className="btn btn-leeuwen btn-lg">
                             <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
                         </button>
                     </div>

@@ -326,20 +326,9 @@ function getInputType(dbFieldType) {
     }
 }
 
-// function generateScreenHeader(fieldnames, screenId) {
-//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        
-//         return fieldnames.items.filter(function(element) {
-//             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-//         });
-//     } else {
-//         return [];
-//     }
-// }
-
 function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     let tempArray = [];
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        
         
         let displayIds = settingsDisplay.reduce(function(acc, cur) {
             if (!!cur.isChecked) {
@@ -348,9 +337,9 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
             return acc;
         }, []);
 
-        if (!!displayIds && forWhat === 'forShow') {
+        if (!_.isEmpty(displayIds) && forWhat === 'forShow') {
             tempArray = fieldnames.items.filter(function(element) {
-                return (_.isEqual(element.screenId, screenId) && displayIds.includes(element._id) && !!element[forWhat]); 
+                return (_.isEqual(element.screenId, screenId) && !!element[forWhat] && displayIds.includes(element._id)); 
             });
         } else {
             tempArray = fieldnames.items.filter(function(element) {
@@ -359,16 +348,13 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
         }
 
         if (!!tempArray) {
-        //     return [];
-        // } else {
             return tempArray.sort(function(a,b) {
                 return a[forWhat] - b[forWhat];
             });
-        }
-    } 
-    // else {
+        } 
+    }
+
     return [];
-    // }
 }
 
 function getBodys(fieldnames, selection, pos, headersForShow){
@@ -488,15 +474,6 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                         screenHeaders.map(screenHeader => {
                             switch(screenHeader.fields.fromTbl) {
                                 case 'po':
-                                    // arrayRow.push({
-                                    //     collection: 'po',
-                                    //     objectId: po._id,
-                                    //     fieldName: screenHeader.fields.name,
-                                    //     fieldValue: po[screenHeader.fields.name],
-                                    //     disabled: screenHeader.edit,
-                                    //     align: screenHeader.align,
-                                    //     fieldType: getInputType(screenHeader.fields.type),
-                                    // });
                                     if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
                                         arrayRow.push({
                                             collection: 'virtual',
@@ -622,6 +599,17 @@ function initSettingsFilter(fieldnames, screenId) {
     }
 }
 
+// function sameArray(a, b) {
+//     return a.reduce(function(acc, cur, index) {
+//         for (var k in cur) {
+//             if (acc && !_.isUndefined(b[index]) && cur[k] != b[index][k]) { // 
+//                 acc = false;
+//             }
+//         }
+//         return acc;
+//     }, true);
+// }
+
 
 class Overview extends React.Component {
     constructor(props) {
@@ -631,8 +619,8 @@ class Overview extends React.Component {
             bodysForShow: [],
             splitHeadersForShow: [],
             splitHeadersForSelect:[],
-            settingsFilter: {},
-            settingsDisplay: {},
+            settingsFilter: [],
+            settingsDisplay: [],
             tabs: [
                 {
                     index: 0, 
@@ -700,52 +688,6 @@ class Overview extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
     }
 
-    handleInputSettings(id, value) {
-        const { settingsFilter } = this.state;
-        let tempArray = settingsFilter;
-        let found = tempArray.find(element => element._id === id);
-        if(!!found) {
-            found.value = value;
-            this.setState({ settingsFilter: tempArray });
-        } 
-    }
-
-    handleClearInputSettings() {
-        const { settingsFilter } = this.state;
-        
-        let tempArray = settingsFilter;
-        tempArray.map(element => element.value = '');
-        this.setState({
-            settingsDisplay: tempArray 
-        });
-    }
-
-
-    handleCheckSettings(id) {
-        const { settingsDisplay } = this.state;
-        let tempArray = settingsDisplay;
-        let found = tempArray.find(element => element._id === id);
-        if(!!found) {
-            found.isChecked = !found.isChecked;
-            this.setState({
-                settingsDisplay: tempArray
-            }, console.log(settingsDisplay));
-        }
-    }
-
-    handleCheckSettingsAll(bool) {
-        const { settingsDisplay } = this.state;
-        let tempArray = settingsDisplay;
-        tempArray.map(element => element.isChecked = bool);
-        this.setState({
-            settingsDisplay: tempArray 
-        });
-    }
-
-    
-
-
-
     componentDidMount() {
         const { 
             dispatch,
@@ -800,7 +742,7 @@ class Overview extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, splitHeadersForSelect, screenId, splitScreenId, selectedField, settingsDisplay } = this.state;
+        const { headersForShow, screenId, splitScreenId, selectedField, settingsDisplay } = this.state;
         const { fields, fieldnames, selection, pos, docdefs } = this.props;
         
         if (selectedField != prevState.selectedField && selectedField != '0') {
@@ -815,16 +757,17 @@ class Overview extends React.Component {
             }
         }
 
-        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames || settingsDisplay != prevState.settingsDisplay){
-            console.log('toto');
+        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames || splitScreenId != prevState.splitScreenId){
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
                 splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
+                settingsFilter: initSettingsFilter(fieldnames, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, screenId)
             }); 
         }
 
-        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow || splitHeadersForSelect != prevState.splitHeadersForSelect) {
+        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow) {
             this.setState({
                 bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
             });
@@ -832,13 +775,6 @@ class Overview extends React.Component {
         
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
-        }
-
-        if (fieldnames != prevProps.fieldnames) {
-            this.setState({
-                settingsFilter: initSettingsFilter(fieldnames, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, screenId)
-            })
         }
 
     }
@@ -853,6 +789,50 @@ class Overview extends React.Component {
             } 
         });
         dispatch(alertActions.clear());
+    }
+
+
+    handleInputSettings(id, value) {
+        const { settingsFilter } = this.state;
+        let tempArray = settingsFilter;
+        let found = tempArray.find(element => element._id === id);
+        if(!!found) {
+            found.value = value;
+            this.setState({ settingsFilter: tempArray });
+        } 
+    }
+
+    handleClearInputSettings() {
+        const { settingsFilter } = this.state;
+        
+        let tempArray = settingsFilter;
+        tempArray.map(element => element.value = '');
+        this.setState({ settingsFilter: tempArray });
+    }
+
+    handleCheckSettings(id) {
+        const { fieldnames } = this.props;
+        const { settingsDisplay, screenId } = this.state;
+        let tempArray = settingsDisplay;
+        let found = tempArray.find(element => element._id === id);
+        if(!!found) {
+            found.isChecked = !found.isChecked;
+            this.setState({
+                settingsDisplay: tempArray,
+                headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+            });
+        }
+    }
+
+    handleCheckSettingsAll(bool) {
+        const { fieldnames } = this.props;
+        const { settingsDisplay, screenId } = this.state;
+        let tempArray = settingsDisplay;
+        tempArray.map(element => element.isChecked = bool);
+        this.setState({
+            settingsDisplay: tempArray,
+            headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+        });
     }
 
     refreshStore() {
@@ -1358,6 +1338,7 @@ class Overview extends React.Component {
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 toggleDelete = {this.toggleDelete}
+                                settingsFilter = {settingsFilter}
                             />
                         }
                     </div>
@@ -1456,7 +1437,7 @@ class Overview extends React.Component {
                 <Modal
                     show={showSettings}
                     hideModal={this.toggleSettings}
-                    title="Field Settings"
+                    title="User Settings"
                     size="modal-xl"
                 >
                     <div id="modal-tabs">
@@ -1492,13 +1473,10 @@ class Overview extends React.Component {
                         </div>
                     </div>
                     <div className="text-right mt-3">
-                        <button className="btn btn-dark btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2">
                             <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
-                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Apply</span>
-                        </button>
-                        <button className="btn btn-leeuwen btn-lg"> {/*onClick={event => this.handleDeleteRows(event)} */}
+                        <button className="btn btn-leeuwen btn-lg">
                             <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
                         </button>
                     </div>

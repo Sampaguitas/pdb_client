@@ -105,56 +105,6 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
     
 }
 
-// function getObjectIds(collection, selectedIds) {
-//     if (!_.isEmpty(selectedIds)) {
-//         switch(collection) {
-//             case 'po': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.poId)) {
-//                     acc.push(curr.poId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'sub': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.subId)) {
-//                     acc.push(curr.subId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'certificate': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.certificateId)) {
-//                     acc.push(curr.certificateId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'packitem': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.packItemId)) {
-//                     acc.push(curr.packItemId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'collipack': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.colliPackId)) {
-//                     acc.push(curr.colliPackId);
-//                 }
-//                 return acc;
-//             }, []);
-//             default: return [];
-//         }
-//     } else {
-//         return [];
-//     }
-// }
-
-
-
-
-// function arrayRemove(arr, value) {
-//     return arr.filter(function(ele){
-//         return ele != value;
-//     });
- 
-//  }
-
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
         return prev ? prev[curr] : null
@@ -233,21 +183,35 @@ function getInputType(dbFieldType) {
     }
 }
 
-function getHeaders(fieldnames, screenId, forWhat) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
-        });
-        if (!tempArray) {
-            return [];
+function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
+    let tempArray = [];
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        
+        
+        let displayIds = settingsDisplay.reduce(function(acc, cur) {
+            if (!!cur.isChecked) {
+                acc.push(cur._id);
+            }
+            return acc;
+        }, []);
+
+        if (!_.isEmpty(displayIds) && forWhat === 'forShow') {
+            tempArray = fieldnames.items.filter(function(element) {
+                return (_.isEqual(element.screenId, screenId) && !!element[forWhat] && displayIds.includes(element._id)); 
+            });
         } else {
+            tempArray = fieldnames.items.filter(function(element) {
+                return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
+            });
+        }
+
+        if (!!tempArray) {
             return tempArray.sort(function(a,b) {
                 return a[forWhat] - b[forWhat];
             });
-        }
-    } else {
-        return [];
+        } 
     }
+
+    return [];
 }
 
 function getBodys(collipacks, headersForShow){
@@ -425,8 +389,8 @@ class PackingDetails extends React.Component {
         this.state = {
             headersForShow: [],
             bodysForShow: [],
-            settingsCheck: [],
-            settingsFilter: {},
+            settingsFilter: [],
+            settingsDisplay: [],
             tabs: [
                 {
                     index: 0, 
@@ -492,48 +456,6 @@ class PackingDetails extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
     }
 
-    handleInputSettings(id, value) {
-        const { settingsFilter } = this.state;
-        let tempArray = settingsFilter;
-        let found = tempArray.find(element => element._id === id);
-        if(!!found) {
-            found.value = value;
-            this.setState({ settingsFilter: tempArray });
-        } 
-    }
-
-    handleClearInputSettings() {
-        const { settingsFilter } = this.state;
-        
-        let tempArray = settingsFilter;
-        tempArray.map(element => element.value = '');
-        this.setState({
-            settingsDisplay: tempArray 
-        });
-    }
-
-
-    handleCheckSettings(id) {
-        const { settingsDisplay } = this.state;
-        let tempArray = settingsDisplay;
-        let found = tempArray.find(element => element._id === id);
-        if(!!found) {
-            found.isChecked = !found.isChecked;
-            this.setState({
-                settingsDisplay: tempArray
-            });
-        }
-    }
-
-    handleCheckSettingsAll(bool) {
-        const { settingsDisplay } = this.state;
-        let tempArray = settingsDisplay;
-        tempArray.map(element => element.isChecked = bool);
-        this.setState({
-            settingsDisplay: tempArray 
-        });
-    }
-
     componentDidMount() {
         const { 
             dispatch,
@@ -552,7 +474,7 @@ class PackingDetails extends React.Component {
             collipacks,
         } = this.props;
 
-        const { screenId, headersForShow } = this.state;
+        const { screenId, headersForShow, settingsDisplay } = this.state;
 
         var qs = queryString.parse(location.search);
         if (qs.id) {
@@ -584,7 +506,7 @@ class PackingDetails extends React.Component {
         }
 
         this.setState({
-            headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+            headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(collipacks, headersForShow),
             plList: getPlList(collipacks),
             docList: arraySorted(docConf(docdefs.items), "name"),
@@ -594,7 +516,7 @@ class PackingDetails extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { selectedField, screenId, headersForShow } = this.state;
+        const { headersForShow, screenId, selectedField, settingsDisplay } = this.state;
         const { fields, fieldnames, docdefs, collipacks } = this.props;
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
@@ -611,7 +533,9 @@ class PackingDetails extends React.Component {
 
         if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames){
             this.setState({
-                headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+                settingsFilter: initSettingsFilter(fieldnames, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, screenId)
             });
         }
 
@@ -626,13 +550,6 @@ class PackingDetails extends React.Component {
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
         }
-
-        if (fieldnames != prevProps.fieldnames) {
-            this.setState({
-                settingsFilter: initSettingsFilter(fieldnames, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, screenId)
-            })
-        }
     }
 
     handleClearAlert(event){
@@ -645,6 +562,49 @@ class PackingDetails extends React.Component {
             } 
         });
         dispatch(alertActions.clear());
+    }
+
+    handleInputSettings(id, value) {
+        const { settingsFilter } = this.state;
+        let tempArray = settingsFilter;
+        let found = tempArray.find(element => element._id === id);
+        if(!!found) {
+            found.value = value;
+            this.setState({ settingsFilter: tempArray });
+        } 
+    }
+
+    handleClearInputSettings() {
+        const { settingsFilter } = this.state;
+        
+        let tempArray = settingsFilter;
+        tempArray.map(element => element.value = '');
+        this.setState({ settingsFilter: tempArray });
+    }
+
+    handleCheckSettings(id) {
+        const { fieldnames } = this.props;
+        const { settingsDisplay, screenId } = this.state;
+        let tempArray = settingsDisplay;
+        let found = tempArray.find(element => element._id === id);
+        if(!!found) {
+            found.isChecked = !found.isChecked;
+            this.setState({
+                settingsDisplay: tempArray,
+                headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+            });
+        }
+    }
+
+    handleCheckSettingsAll(bool) {
+        const { fieldnames } = this.props;
+        const { settingsDisplay, screenId } = this.state;
+        let tempArray = settingsDisplay;
+        tempArray.map(element => element.isChecked = bool);
+        this.setState({
+            settingsDisplay: tempArray,
+            headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+        });
     }
 
     refreshStore() {
@@ -1155,6 +1115,7 @@ class PackingDetails extends React.Component {
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 toggleDelete = {this.toggleDelete}
+                                settingsFilter = {settingsFilter}
                             />
                         }
                     </div>
@@ -1249,7 +1210,7 @@ class PackingDetails extends React.Component {
                 <Modal
                     show={showSettings}
                     hideModal={this.toggleSettings}
-                    title="Field Settings"
+                    title="User Settings"
                     size="modal-xl"
                 >
                     <div id="modal-tabs">
@@ -1285,13 +1246,10 @@ class PackingDetails extends React.Component {
                         </div>
                     </div>
                     <div className="text-right mt-3">
-                        <button className="btn btn-dark btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2">
                             <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
-                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Apply</span>
-                        </button>
-                        <button className="btn btn-leeuwen btn-lg"> {/*onClick={event => this.handleDeleteRows(event)} */}
+                        <button className="btn btn-leeuwen btn-lg">
                             <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
                         </button>
                     </div>

@@ -148,23 +148,57 @@ function getInputType(dbFieldType) {
     }
 }
 
-function generateScreenHeader(fieldnames, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        return fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-        });
-    } else {
-        return [];
+// function generateScreenHeader(fieldnames, screenId) {
+//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+//         return fieldnames.items.filter(function(element) {
+//             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+//         });
+//     } else {
+//         return [];
+//     }
+// }
+
+function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
+    let tempArray = [];
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        
+        
+        let displayIds = settingsDisplay.reduce(function(acc, cur) {
+            if (!!cur.isChecked) {
+                acc.push(cur._id);
+            }
+            return acc;
+        }, []);
+
+        if (!_.isEmpty(displayIds) && forWhat === 'forShow') {
+            tempArray = fieldnames.items.filter(function(element) {
+                return (_.isEqual(element.screenId, screenId) && !!element[forWhat] && displayIds.includes(element._id)); 
+            });
+        } else {
+            tempArray = fieldnames.items.filter(function(element) {
+                return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
+            });
+        }
+
+        if (!!tempArray) {
+            return tempArray.sort(function(a,b) {
+                return a[forWhat] - b[forWhat];
+            });
+        } 
     }
+
+    return [];
 }
 
-function generateScreenBody(screenId, fieldnames, pos){
+
+function getBodys(fieldnames, selection, pos, headersForShow){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
     let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
-    let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
+    let screenHeaders = headersForShow;
+    let project = selection.project || { _id: '0', name: '', number: '' };
     let i = 1;
+
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
             if (po.subs) {
@@ -175,15 +209,36 @@ function generateScreenBody(screenId, fieldnames, pos){
                             screenHeaders.map(screenHeader => {
                                 switch(screenHeader.fields.fromTbl) {
                                     case 'po':
-                                        arrayRow.push({
-                                            collection: 'po',
-                                            objectId: po._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: po[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
+                                        if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                            arrayRow.push({
+                                                collection: 'virtual',
+                                                objectId: project._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                        } else {
+                                            arrayRow.push({
+                                                collection: 'po',
+                                                objectId: po._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: po[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                        }
+                                        // arrayRow.push({
+                                        //     collection: 'po',
+                                        //     objectId: po._id,
+                                        //     fieldName: screenHeader.fields.name,
+                                        //     fieldValue: po[screenHeader.fields.name],
+                                        //     disabled: screenHeader.edit,
+                                        //     align: screenHeader.align,
+                                        //     fieldType: getInputType(screenHeader.fields.type),
+                                        // });
                                         break;
                                     case 'sub':
                                         arrayRow.push({
@@ -237,15 +292,36 @@ function generateScreenBody(screenId, fieldnames, pos){
                         screenHeaders.map(screenHeader => {
                             switch(screenHeader.fields.fromTbl) {
                                 case 'po':
-                                    arrayRow.push({
-                                        collection: 'po',
-                                        objectId: po._id,
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: po[screenHeader.fields.name],
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
+                                    if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: project._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'po',
+                                            objectId: po._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    // arrayRow.push({
+                                    //     collection: 'po',
+                                    //     objectId: po._id,
+                                    //     fieldName: screenHeader.fields.name,
+                                    //     fieldValue: po[screenHeader.fields.name],
+                                    //     disabled: screenHeader.edit,
+                                    //     align: screenHeader.align,
+                                    //     fieldType: getInputType(screenHeader.fields.type),
+                                    // });
                                     break;
                                 case 'sub':
                                     arrayRow.push({
@@ -292,6 +368,141 @@ function generateScreenBody(screenId, fieldnames, pos){
     }
     
 }
+
+// function generateScreenBody(screenId, fieldnames, pos){
+//     let arrayBody = [];
+//     let arrayRow = [];
+//     let objectRow = {};
+//     let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
+//     let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
+//     let i = 1;
+//     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
+//         pos.items.map(po => {
+//             if (po.subs) {
+//                 po.subs.map(sub => {
+//                     if (!_.isEmpty(sub.certificates) && hasCertificates){
+//                         sub.certificates.map(certificate => {
+//                             arrayRow = [];
+//                             screenHeaders.map(screenHeader => {
+//                                 switch(screenHeader.fields.fromTbl) {
+//                                     case 'po':
+//                                         arrayRow.push({
+//                                             collection: 'po',
+//                                             objectId: po._id,
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: po[screenHeader.fields.name],
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                         });
+//                                         break;
+//                                     case 'sub':
+//                                         arrayRow.push({
+//                                             collection: 'sub',
+//                                             objectId: sub._id,
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: sub[screenHeader.fields.name],
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                         });
+//                                         break;
+//                                     case 'certificate':
+//                                         arrayRow.push({
+//                                             collection: 'certificate',
+//                                             objectId: certificate._id,
+//                                             fieldName: screenHeader.fields.name,
+//                                             fieldValue: certificate[screenHeader.fields.name],
+//                                             disabled: screenHeader.edit,
+//                                             align: screenHeader.align,
+//                                             fieldType: getInputType(screenHeader.fields.type),
+//                                         });
+//                                         break;
+//                                     default: arrayRow.push({
+//                                         collection: 'virtual',
+//                                         objectId: '0',
+//                                         fieldName: screenHeader.fields.name,
+//                                         fieldValue: '',
+//                                         disabled: screenHeader.edit,
+//                                         align: screenHeader.align,
+//                                         fieldType: getInputType(screenHeader.fields.type),
+//                                     });
+//                                 }
+//                             });
+//                             objectRow  = {
+//                                 _id: i, 
+//                                 tablesId: { 
+//                                     poId: po._id,
+//                                     subId: sub._id,
+//                                     certificateId: certificate._id,
+//                                     packItemId: '',
+//                                     colliPackId: '' 
+//                                 },
+//                                 fields: arrayRow
+//                             };
+//                             arrayBody.push(objectRow);
+//                             i++;
+//                         });
+//                     } else {
+//                         arrayRow = [];
+//                         screenHeaders.map(screenHeader => {
+//                             switch(screenHeader.fields.fromTbl) {
+//                                 case 'po':
+//                                     arrayRow.push({
+//                                         collection: 'po',
+//                                         objectId: po._id,
+//                                         fieldName: screenHeader.fields.name,
+//                                         fieldValue: po[screenHeader.fields.name],
+//                                         disabled: screenHeader.edit,
+//                                         align: screenHeader.align,
+//                                         fieldType: getInputType(screenHeader.fields.type),
+//                                     });
+//                                     break;
+//                                 case 'sub':
+//                                     arrayRow.push({
+//                                         collection: 'sub',
+//                                         objectId: sub._id,
+//                                         fieldName: screenHeader.fields.name,
+//                                         fieldValue: sub[screenHeader.fields.name],
+//                                         disabled: screenHeader.edit,
+//                                         align: screenHeader.align,
+//                                         fieldType: getInputType(screenHeader.fields.type),
+//                                     });
+//                                     break;
+//                                 default: arrayRow.push({
+//                                     collection: 'virtual',
+//                                     objectId: '0',
+//                                     fieldName: screenHeader.fields.name,
+//                                     fieldValue: '',
+//                                     disabled: screenHeader.edit,
+//                                     align: screenHeader.align,
+//                                     fieldType: getInputType(screenHeader.fields.type),
+//                                 }); 
+//                             }
+//                         });
+//                         objectRow  = {
+//                             _id: i, 
+//                             tablesId: { 
+//                                 poId: po._id,
+//                                 subId: sub._id,
+//                                 certificateId: '',
+//                                 packItemId: '',
+//                                 colliPackId: '' 
+//                             },
+//                             fields: arrayRow
+//                         };
+//                         arrayBody.push(objectRow);
+//                         i++;
+//                     }
+//                 })
+//             }
+//         });
+//         return arrayBody;
+//     } else {
+//         return [];
+//     }
+    
+// }
 
 function initSettingsDisplay(fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
@@ -348,8 +559,10 @@ class Certificates extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            settingsFilter: {},
-            settingsDisplay: {},
+            headersForShow: [],
+            bodysForShow: [],
+            settingsFilter: [],
+            settingsDisplay: [],
             tabs: [
                 {
                     index: 0, 
@@ -406,48 +619,6 @@ class Certificates extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
     }
 
-    handleInputSettings(id, value) {
-        const { settingsFilter } = this.state;
-        let tempArray = settingsFilter;
-        let found = tempArray.find(element => element._id === id);
-        if(!!found) {
-            found.value = value;
-            this.setState({ settingsFilter: tempArray });
-        } 
-    }
-
-    handleClearInputSettings() {
-        const { settingsFilter } = this.state;
-        
-        let tempArray = settingsFilter;
-        tempArray.map(element => element.value = '');
-        this.setState({
-            settingsDisplay: tempArray 
-        });
-    }
-
-
-    handleCheckSettings(id) {
-        const { settingsDisplay } = this.state;
-        let tempArray = settingsDisplay;
-        let found = tempArray.find(element => element._id === id);
-        if(!!found) {
-            found.isChecked = !found.isChecked;
-            this.setState({
-                settingsDisplay: tempArray
-            });
-        }
-    }
-
-    handleCheckSettingsAll(bool) {
-        const { settingsDisplay } = this.state;
-        let tempArray = settingsDisplay;
-        tempArray.map(element => element.isChecked = bool);
-        this.setState({
-            settingsDisplay: tempArray 
-        });
-    }
-
     componentDidMount() {
         const { 
             dispatch,
@@ -457,10 +628,14 @@ class Certificates extends React.Component {
             loadingPos,
             loadingSelection,
             location,
-            fieldnames
+            //---------
+            fieldnames,
+            pos,
+            docdefs,
+            selection
         } = this.props;
 
-        const { screenId } = this.state;
+        const { screenId, headersForShow, settingsDisplay } = this.state;
 
         var qs = queryString.parse(location.search);
         if (qs.id) {
@@ -484,19 +659,16 @@ class Certificates extends React.Component {
         }
 
         this.setState({
-            // headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
-            // bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
-            // splitHeadersForShow: getHeaders(fieldnames, splitScreenId, 'forShow'),
-            // splitHeadersForSelect: getHeaders(fieldnames, splitScreenId, 'forSelect'),
-            // docList: arraySorted(docConf(docdefs.items), "name"),
+            headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+            bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, screenId)
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { selectedField, screenId } = this.state;
-        const { fields, fieldnames } = this.props;
+        const { headersForShow, screenId, selectedField, settingsDisplay } = this.state;
+        const { fields, fieldnames, selection, pos, docdefs } = this.props;
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
                 return f._id === selectedField;
@@ -510,12 +682,20 @@ class Certificates extends React.Component {
             }
         }
 
-        if (fieldnames != prevProps.fieldnames) {
+        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames) {
             this.setState({
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, screenId)
-            })
+            });
         }
+
+        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow) {
+            this.setState({
+                bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
+            });
+        }
+
     }
 
     handleClearAlert(event){
@@ -528,6 +708,49 @@ class Certificates extends React.Component {
             } 
         });
         dispatch(alertActions.clear());
+    }
+
+    handleInputSettings(id, value) {
+        const { settingsFilter } = this.state;
+        let tempArray = settingsFilter;
+        let found = tempArray.find(element => element._id === id);
+        if(!!found) {
+            found.value = value;
+            this.setState({ settingsFilter: tempArray });
+        } 
+    }
+
+    handleClearInputSettings() {
+        const { settingsFilter } = this.state;
+        
+        let tempArray = settingsFilter;
+        tempArray.map(element => element.value = '');
+        this.setState({ settingsFilter: tempArray });
+    }
+
+    handleCheckSettings(id) {
+        const { fieldnames } = this.props;
+        const { settingsDisplay, screenId } = this.state;
+        let tempArray = settingsDisplay;
+        let found = tempArray.find(element => element._id === id);
+        if(!!found) {
+            found.isChecked = !found.isChecked;
+            this.setState({
+                settingsDisplay: tempArray,
+                headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+            });
+        }
+    }
+
+    handleCheckSettingsAll(bool) {
+        const { fieldnames } = this.props;
+        const { settingsDisplay, screenId } = this.state;
+        let tempArray = settingsDisplay;
+        tempArray.map(element => element.isChecked = bool);
+        this.setState({
+            settingsDisplay: tempArray,
+            headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+        });
     }
 
     refreshStore() {
@@ -581,9 +804,12 @@ class Certificates extends React.Component {
         });
     }
 
-    selectedFieldOptions(fieldnames, fields, screenId) {
+    selectedFieldOptions(fieldnames, fields) {
+
+        const { headersForShow } = this.state;
+
         if (fieldnames.items && fields.items) {
-            let screenHeaders = generateScreenHeader(fieldnames, screenId);
+            let screenHeaders = headersForShow;
             let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
                 if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
                     accumulator.push(currentValue.fieldId);
@@ -853,6 +1079,9 @@ class Certificates extends React.Component {
             showEditValues,
             showSettings,
             showDelete,
+            //--------
+            headersForShow,
+            bodysForShow,
             //'-------------------'
             tabs,
             settingsFilter,
@@ -893,8 +1122,8 @@ class Certificates extends React.Component {
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {selection && selection.project && 
                             <ProjectTable
-                                screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
-                                screenBodys={generateScreenBody(screenId, fieldnames, pos)}
+                                screenHeaders={headersForShow}
+                                screenBodys={bodysForShow}
                                 projectId={projectId}
                                 screenId={screenId}
                                 selectedIds={selectedIds}
@@ -908,6 +1137,7 @@ class Certificates extends React.Component {
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 toggleDelete = {this.toggleDelete}
+                                settingsFilter = {settingsFilter}
                             />
                         }
                     </div>
@@ -929,7 +1159,7 @@ class Certificates extends React.Component {
                                 onChange={this.handleChange}
                             >
                                 <option key="0" value="0">Select field...</option>
-                                {this.selectedFieldOptions(fieldnames, fields, screenId)}
+                                {this.selectedFieldOptions(fieldnames, fields)}
                             </select>
                         </div>
                         <div className="form-group">
@@ -957,7 +1187,7 @@ class Certificates extends React.Component {
                 <Modal
                     show={showSettings}
                     hideModal={this.toggleSettings}
-                    title="Field Settings"
+                    title="User Settings"
                     size="modal-xl"
                 >
                     <div id="modal-tabs">
@@ -993,13 +1223,10 @@ class Certificates extends React.Component {
                         </div>
                     </div>
                     <div className="text-right mt-3">
-                        <button className="btn btn-dark btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2">
                             <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2"> {/* onClick={event => this.toggleDelete(event)} */}
-                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Apply</span>
-                        </button>
-                        <button className="btn btn-leeuwen btn-lg"> {/*onClick={event => this.handleDeleteRows(event)} */}
+                        <button className="btn btn-leeuwen btn-lg">
                             <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
                         </button>
                     </div>
