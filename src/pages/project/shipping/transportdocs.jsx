@@ -578,6 +578,7 @@ class TransportDocuments extends React.Component {
         this.handleClearInputSettings = this.handleClearInputSettings.bind(this);
         this.handleCheckSettings = this.handleCheckSettings.bind(this);
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
+        this.handleSaveSettings = this.handleSaveSettings.bind(this);
     }
 
     componentDidMount() {
@@ -725,6 +726,67 @@ class TransportDocuments extends React.Component {
         this.setState({
             settingsDisplay: tempArray,
             headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+        });
+    }
+
+    handleSaveSettings(event) {
+        event.preventDefault();
+        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        let userId = JSON.parse(localStorage.getItem('user')).id;
+        this.setState({settingSaving: true}, () => {
+            let params = {
+                filter: settingsFilter.reduce(function(acc, cur) {
+                    if (!!cur.value) {
+                        acc.push({
+                            _id: cur._id,
+                            value: cur.value,
+                            isEqual: cur.isEqual
+                        });
+                    }
+                    return acc;
+                }, []),
+                display: settingsDisplay.reduce(function(acc, cur) {
+                    if (!cur.isChecked) {
+                        acc.push(cur._id);
+                    }
+                    return acc;
+                }, [])
+            }
+            const requestOptions = {
+                method: 'PUT',
+                headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    projectId: projectId,
+                    screenId: screenId,
+                    userId: userId,
+                    params: params
+                })
+            };
+            return fetch(`${config.apiUrl}/setting/upsert`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (!responce.ok) {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        settingSaving: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
+                } else {
+                    this.setState({
+                        settingSaving: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
+                }
+            }));
         });
     }
 
@@ -1437,8 +1499,8 @@ class TransportDocuments extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         
         return (
-            <Layout alert={showSplitLine ? {type:'', message:''} : alert} accesses={accesses}>
-                {alert.message && !showSplitLine &&
+            <Layout alert={showSplitLine || showSettings ? {type:'', message:''} : alert} accesses={accesses}>
+                {alert.message && !showSplitLine && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1607,7 +1669,7 @@ class TransportDocuments extends React.Component {
                 <Modal
                     show={showAssignColli}
                     hideModal={this.toggleAssignColli}
-                    title="Assign PL"
+                    title="Assign Colli"
                 >
                     <div className="col-12">
                         <form onSubmit={event => this.handleUpdateColli(event, false)}>
@@ -1651,6 +1713,13 @@ class TransportDocuments extends React.Component {
                         )}
                         </ul>
                         <div className="tab-content" id="modal-nav-tabContent">
+                            {alert.message &&
+                                <div className={`alert ${alert.type}`}>{alert.message}
+                                    <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                        <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                                    </button>
+                                </div>
+                            }
                             {tabs.map(tab =>
                                 <div
                                     className={tab.active ? "tab-pane fade show active" : "tab-pane fade"}
@@ -1677,7 +1746,7 @@ class TransportDocuments extends React.Component {
                         <button className="btn btn-leeuwen-blue btn-lg mr-2">
                             <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
                         </button>
-                        <button className="btn btn-leeuwen btn-lg">
+                        <button className="btn btn-leeuwen btn-lg" onClick={this.handleSaveSettings}>
                             <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
                         </button>
                     </div>

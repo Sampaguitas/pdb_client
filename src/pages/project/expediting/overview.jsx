@@ -118,46 +118,6 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
     }
 }
 
-// function getObjectIds(collection, selectedIds) {
-//     if (!_.isEmpty(selectedIds)) {
-//         switch(collection) {
-//             case 'po': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.poId)) {
-//                     acc.push(curr.poId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'sub': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.subId)) {
-//                     acc.push(curr.subId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'certificate': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.certificateId)) {
-//                     acc.push(curr.certificateId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'packitem': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.packItemId)) {
-//                     acc.push(curr.packItemId);
-//                 }
-//                 return acc;
-//             }, []);
-//             case 'collipack': return selectedIds.reduce(function(acc, curr) {
-//                 if(!acc.includes(curr.colliPackId)) {
-//                     acc.push(curr.colliPackId);
-//                 }
-//                 return acc;
-//             }, []);
-//             default: return [];
-//         }
-//     } else {
-//         return [];
-//     }
-// }
-
 function baseTen(number) {
     return number.toString().length > 2 ? number : '0' + number;
 }
@@ -674,10 +634,11 @@ class Overview extends React.Component {
         this.toggleDelete = this.toggleDelete.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
-        this.handleClearInputSettings = this.handleClearInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
+        this.handleClearInputSettings = this.handleClearInputSettings.bind(this);
         this.handleCheckSettings = this.handleCheckSettings.bind(this);
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
+        this.handleSaveSettings = this.handleSaveSettings.bind(this);
     }
 
     componentDidMount() {
@@ -783,7 +744,6 @@ class Overview extends React.Component {
         dispatch(alertActions.clear());
     }
 
-
     handleInputSettings(id, value) {
         const { settingsFilter } = this.state;
         let tempArray = settingsFilter;
@@ -837,6 +797,67 @@ class Overview extends React.Component {
         this.setState({
             settingsDisplay: tempArray,
             headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+        });
+    }
+
+    handleSaveSettings(event) {
+        event.preventDefault();
+        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        let userId = JSON.parse(localStorage.getItem('user')).id;
+        this.setState({settingSaving: true}, () => {
+            let params = {
+                filter: settingsFilter.reduce(function(acc, cur) {
+                    if (!!cur.value) {
+                        acc.push({
+                            _id: cur._id,
+                            value: cur.value,
+                            isEqual: cur.isEqual
+                        });
+                    }
+                    return acc;
+                }, []),
+                display: settingsDisplay.reduce(function(acc, cur) {
+                    if (!cur.isChecked) {
+                        acc.push(cur._id);
+                    }
+                    return acc;
+                }, [])
+            }
+            const requestOptions = {
+                method: 'PUT',
+                headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    projectId: projectId,
+                    screenId: screenId,
+                    userId: userId,
+                    params: params
+                })
+            };
+            return fetch(`${config.apiUrl}/setting/upsert`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (!responce.ok) {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        settingSaving: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
+                } else {
+                    this.setState({
+                        settingSaving: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
+                }
+            }));
         });
     }
 
@@ -1291,8 +1312,8 @@ class Overview extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout alert={showSplitLine ? {type:'', message:''} : alert} accesses={accesses}>
-                {alert.message && !showSplitLine &&
+            <Layout alert={showSplitLine || showSettings ? {type:'', message:''} : alert} accesses={accesses}>
+                {alert.message && !showSplitLine && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1359,12 +1380,11 @@ class Overview extends React.Component {
                         headersForSelect={splitHeadersForSelect}
                         headersForShow={splitHeadersForShow}
                         selection={selection}
-                        selectedIds = {passSelectedIds(selectedIds)}
-                        selectedPo = {passSelectedPo(selectedIds, pos)}
-                        alert = {alert}
+                        selectedIds={passSelectedIds(selectedIds)}
+                        selectedPo={passSelectedPo(selectedIds, pos)}
+                        alert={alert}
                         handleClearAlert={this.handleClearAlert}
                         handleSplitLine={this.handleSplitLine}
-
                     />
                 </Modal>
 
@@ -1456,6 +1476,13 @@ class Overview extends React.Component {
                         )}
                         </ul>
                         <div className="tab-content" id="modal-nav-tabContent">
+                            {alert.message &&
+                                <div className={`alert ${alert.type}`}>{alert.message}
+                                    <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                        <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                                    </button>
+                                </div>
+                            }
                             {tabs.map(tab =>
                                 <div
                                     className={tab.active ? "tab-pane fade show active" : "tab-pane fade"}
@@ -1469,9 +1496,9 @@ class Overview extends React.Component {
                                         settingsFilter={settingsFilter}
                                         settingsDisplay={settingsDisplay}
                                         handleInputSettings={this.handleInputSettings}
+                                        handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}
                                         handleCheckSettings={this.handleCheckSettings}
-                                        handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleCheckSettingsAll={this.handleCheckSettingsAll}
                                     />
                                 </div>
@@ -1482,7 +1509,7 @@ class Overview extends React.Component {
                         <button className="btn btn-leeuwen-blue btn-lg mr-2">
                             <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
                         </button>
-                        <button className="btn btn-leeuwen btn-lg">
+                        <button className="btn btn-leeuwen btn-lg" onClick={this.handleSaveSettings}>
                             <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
                         </button>
                     </div>
