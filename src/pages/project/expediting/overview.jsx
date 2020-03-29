@@ -548,6 +548,33 @@ function generateOptions(list) {
     }
 }
 
+function initSettingsFilter(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forShow - b.forShow;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    name: cur.fields.name,
+                    custom: cur.fields.custom,
+                    value: '',
+                    type: cur.fields.type,
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
 function initSettingsDisplay(fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         let tempArray = fieldnames.items.filter(function(element) {
@@ -572,43 +599,6 @@ function initSettingsDisplay(fieldnames, screenId) {
         return [];
     }
 }
-
-function initSettingsFilter(fieldnames, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-        });
-        if (!tempArray) {
-            return [];
-        } else {
-            tempArray.sort(function(a,b) {
-                return a.forShow - b.forShow;
-            });
-            return tempArray.reduce(function(acc, cur) {
-                acc.push({
-                    _id: cur._id,
-                    custom: cur.fields.custom,
-                    value: '',
-                    type: cur.fields.type,
-                });
-                return acc; // console.log('cur:', cur)
-            }, []);
-        }
-    } else {
-        return [];
-    }
-}
-
-// function sameArray(a, b) {
-//     return a.reduce(function(acc, cur, index) {
-//         for (var k in cur) {
-//             if (acc && !_.isUndefined(b[index]) && cur[k] != b[index][k]) { // 
-//                 acc = false;
-//             }
-//         }
-//         return acc;
-//     }, true);
-// }
 
 
 class Overview extends React.Component {
@@ -804,7 +794,6 @@ class Overview extends React.Component {
 
     handleClearInputSettings() {
         const { settingsFilter } = this.state;
-        
         let tempArray = settingsFilter;
         tempArray.map(element => element.value = '');
         this.setState({ settingsFilter: tempArray });

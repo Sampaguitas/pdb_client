@@ -543,6 +543,33 @@ function generateOptions(list) {
     }
 }
 
+function initSettingsFilter(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forShow - b.forShow;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    name: cur.fields.name,
+                    custom: cur.fields.custom,
+                    value: '',
+                    type: cur.fields.type,
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
 function initSettingsDisplay(fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         let tempArray = fieldnames.items.filter(function(element) {
@@ -559,32 +586,6 @@ function initSettingsDisplay(fieldnames, screenId) {
                     _id: cur._id,
                     custom: cur.fields.custom,
                     isChecked: true
-                });
-                return acc; // console.log('cur:', cur)
-            }, []);
-        }
-    } else {
-        return [];
-    }
-}
-
-function initSettingsFilter(fieldnames, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-        });
-        if (!tempArray) {
-            return [];
-        } else {
-            tempArray.sort(function(a,b) {
-                return a.forShow - b.forShow;
-            });
-            return tempArray.reduce(function(acc, cur) {
-                acc.push({
-                    _id: cur._id,
-                    custom: cur.fields.custom,
-                    value: '',
-                    type: cur.fields.type,
                 });
                 return acc; // console.log('cur:', cur)
             }, []);

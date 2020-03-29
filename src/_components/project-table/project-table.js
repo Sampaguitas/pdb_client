@@ -178,24 +178,6 @@ class ProjectTable extends Component {
             // showModalSettings: false,
             isEqual: false,
             showModalUpload: false,
-            // tabs: [
-            //     {
-            //         index: 0, 
-            //         id: 'filter',
-            //         label: 'Filter', 
-            //         component: TabFilter, 
-            //         active: true, 
-            //         isLoaded: false
-            //     },
-            //     {
-            //         index: 1, 
-            //         id: 'display',
-            //         label: 'Display', 
-            //         component: TabDisplay, 
-            //         active: false, 
-            //         isLoaded: false
-            //     }
-            // ],
             fileName: '',
             inputKey: Date.now(),
             uploading: false,
@@ -208,9 +190,6 @@ class ProjectTable extends Component {
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.resetHeaders = this.resetHeaders.bind(this);
-        // this.downloadTable = this.downloadTable.bind(this);
-        this.onFocusRow = this.onFocusRow.bind(this);
-        this.onBlurRow = this.onBlurRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.toggleEqual = this.toggleEqual.bind(this);
@@ -218,10 +197,7 @@ class ProjectTable extends Component {
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
-        // this.matchingRow = this.matchingRow.bind(this);
-        // this.toggleModalSettings = this.toggleModalSettings.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
-        // this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
         this.fileInput = React.createRef();
@@ -247,13 +223,6 @@ class ProjectTable extends Component {
         if (selectedRows !== prevState.selectedRows) {
             updateSelectedIds(getTableIds(selectedRows, screenBodys));
         }
-
-        // if (screenBodys !== prevProps.screenBodys) {
-        //     this.setState({
-        //         selectAllRows: false
-        //     });
-        // }
-        
     }
 
     handleClearAlert(event){
@@ -335,24 +304,6 @@ class ProjectTable extends Component {
         });
     }
 
-    onFocusRow(event) {
-        // event.preventDefault();
-        // const { selectedTemplate, newRowFocus } = this.state;
-        // if (selectedTemplate !='0' && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-        //     this.cerateNewRow(event);
-        // }
-    }
-
-    onBlurRow(event){
-        // event.preventDefault()
-        // if (event.currentTarget.dataset['type'] == 'newrow'){
-        //     this.setState({
-        //         ...this.state,
-        //         newRowFocus: true
-        //     });
-        // }
-    }
-
     toggleSelectAllRow() {
         const { selectAllRows } = this.state;
         const { screenBodys } = this.props;
@@ -397,27 +348,27 @@ class ProjectTable extends Component {
         }       
     }
 
-    filterName(array){
+    filterName(screenBodys){
         const {header, isEqual} = this.state;
-        const { screenHeaders } = this.props
-        if (array) {
-            return array.filter(function (element) {
-                let conditionMet = true;
-                for (const prop in header) {
-                    //-----------------------------header---------------------------------------
-                    var fieldName =  screenHeaders.find(function (el) {
-                        return _.isEqual(el._id, prop)
-                    });
-                    let matchingCol = element.fields.find(function (col) {
-                        return _.isEqual(col.fieldName, fieldName.fields.name);
-                    });
-                    if (!doesMatch(header[prop], matchingCol.fieldValue, fieldName.fields.type, isEqual)) {
-                        conditionMet = false;
-                    }
+        const { screenHeaders, settingsFilter } = this.props
+        if (screenBodys) {
+            return screenBodys.filter(function (element) {
+                return settingsFilter.reduce(function(acc, cur) {
+                    if (!!acc) {
+                        let matchingCol = element.fields.find(function (col) {
+                            return _.isEqual(col.fieldName, cur.name);
+                        });
 
-                    //-----------------------------setings---------------------------------------
-                }
-                return conditionMet;
+                        if (!_.isUndefined(matchingCol) && !doesMatch(header[cur._id], matchingCol.fieldValue, cur.type, isEqual)) {
+                            acc = false;
+                        }
+
+                        if (!_.isUndefined(matchingCol) && !doesMatch(cur.value, matchingCol.fieldValue, cur.type, false)) {
+                            acc = false;
+                        }
+                    }
+                    return acc;
+                }, true);
             });
         } else {
             return [];
@@ -497,14 +448,6 @@ class ProjectTable extends Component {
         return tempRows;
     }
 
-    // toggleModalSettings() {
-    //     const { showModalSettings } = this.state;
-    //     this.setState({
-    //         ...this.state,
-    //         showModalSettings: !showModalSettings
-    //     });
-    // }
-
     toggleModalUpload() {
         const { showModalUpload } = this.state;
         this.setState({
@@ -521,18 +464,6 @@ class ProjectTable extends Component {
             }
         });
     }
-
-    // handleModalTabClick(event, tab){
-    //     event.preventDefault();
-    //     const { tabs } = this.state; // 1. Get tabs from state
-    //     tabs.forEach((t) => {t.active = false}); //2. Reset all tabs
-    //     tab.isLoaded = true; // 3. set current tab as active
-    //     tab.active = true;
-    //     this.setState({
-    //         ...this.state,
-    //         tabs // 4. update state
-    //     })
-    // }
 
     onKeyPress(event) {
         if (event.which === 13 /* prevent form submit on key Enter */) {

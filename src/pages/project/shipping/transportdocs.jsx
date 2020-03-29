@@ -154,14 +154,6 @@ function baseTen(number) {
     return number.toString().length > 2 ? number : '0' + number;
 }
 
-// function arrayRemove(arr, value) {
-
-//     return arr.filter(function(ele){
-//         return ele != value;
-//     });
- 
-//  }
-
 function resolve(path, obj) {
     return path.split('.').reduce(function(prev, curr) {
         return prev ? prev[curr] : null
@@ -213,16 +205,6 @@ function getInputType(dbFieldType) {
         default: return 'text'
     }
 }
-
-// function generateScreenHeader(fieldnames, screenId) {
-//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-//         return fieldnames.items.filter(function(element) {
-//             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-//         });
-//     } else {
-//         return [];
-//     }
-// }
 
 function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     let tempArray = [];
@@ -464,6 +446,33 @@ function selectionHasData (selectedIds, pos, field) {
     }
 }
 
+function initSettingsFilter(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forShow - b.forShow;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    name: cur.fields.name,
+                    custom: cur.fields.custom,
+                    value: '',
+                    type: cur.fields.type,
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
 function initSettingsDisplay(fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         let tempArray = fieldnames.items.filter(function(element) {
@@ -480,32 +489,6 @@ function initSettingsDisplay(fieldnames, screenId) {
                     _id: cur._id,
                     custom: cur.fields.custom,
                     isChecked: true
-                });
-                return acc; // console.log('cur:', cur)
-            }, []);
-        }
-    } else {
-        return [];
-    }
-}
-
-function initSettingsFilter(fieldnames, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-        });
-        if (!tempArray) {
-            return [];
-        } else {
-            tempArray.sort(function(a,b) {
-                return a.forShow - b.forShow;
-            });
-            return tempArray.reduce(function(acc, cur) {
-                acc.push({
-                    _id: cur._id,
-                    custom: cur.fields.custom,
-                    value: '',
-                    type: cur.fields.type,
                 });
                 return acc; // console.log('cur:', cur)
             }, []);

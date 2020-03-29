@@ -40,18 +40,16 @@ class SettingInput extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        const { name, value } = this.props;
-        if (prevProps.value != value || prevProps.name != name) {
-            this.setState({
-                value: value
-            });
+        const { value } = this.props;
+        if (prevProps.value != value) {
+            this.setState({ value: value });
         }
     }
 
     onChange(event) {
-        const { name, handleInputSettings } = this.props;
+        const { id, handleInputSettings } = this.props;
         const { value } = event.target;
-        this.setState({ value: value }, () => handleInputSettings(name, value))
+        this.setState({ value: value }, () => handleInputSettings(id, value))
     }
 
     render(){
@@ -64,11 +62,11 @@ class SettingInput extends Component {
                 <label htmlFor={name}>{title}</label>
                 <input
                     className="form-control"
-                    type={type === 'number' ? 'number' : 'text'}
                     name={name}
                     value={value}
+                    type={type === 'Number' ? 'number' : 'text'}
+                    placeholder={type === 'Date' ? getDateFormat(myLocale) : ''}
                     onChange={this.onChange}
-                    placeholder={type === 'date' ? getDateFormat(myLocale) : ''}
                 />
             </div>
         );

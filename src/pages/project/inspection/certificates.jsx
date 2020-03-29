@@ -148,16 +148,6 @@ function getInputType(dbFieldType) {
     }
 }
 
-// function generateScreenHeader(fieldnames, screenId) {
-//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-//         return fieldnames.items.filter(function(element) {
-//             return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-//         });
-//     } else {
-//         return [];
-//     }
-// }
-
 function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     let tempArray = [];
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        
@@ -230,15 +220,6 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                                 fieldType: getInputType(screenHeader.fields.type),
                                             });
                                         }
-                                        // arrayRow.push({
-                                        //     collection: 'po',
-                                        //     objectId: po._id,
-                                        //     fieldName: screenHeader.fields.name,
-                                        //     fieldValue: po[screenHeader.fields.name],
-                                        //     disabled: screenHeader.edit,
-                                        //     align: screenHeader.align,
-                                        //     fieldType: getInputType(screenHeader.fields.type),
-                                        // });
                                         break;
                                     case 'sub':
                                         arrayRow.push({
@@ -313,15 +294,6 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                             fieldType: getInputType(screenHeader.fields.type),
                                         });
                                     }
-                                    // arrayRow.push({
-                                    //     collection: 'po',
-                                    //     objectId: po._id,
-                                    //     fieldName: screenHeader.fields.name,
-                                    //     fieldValue: po[screenHeader.fields.name],
-                                    //     disabled: screenHeader.edit,
-                                    //     align: screenHeader.align,
-                                    //     fieldType: getInputType(screenHeader.fields.type),
-                                    // });
                                     break;
                                 case 'sub':
                                     arrayRow.push({
@@ -369,140 +341,32 @@ function getBodys(fieldnames, selection, pos, headersForShow){
     
 }
 
-// function generateScreenBody(screenId, fieldnames, pos){
-//     let arrayBody = [];
-//     let arrayRow = [];
-//     let objectRow = {};
-//     let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
-//     let screenHeaders = arraySorted(generateScreenHeader(fieldnames, screenId), 'forShow');
-//     let i = 1;
-//     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
-//         pos.items.map(po => {
-//             if (po.subs) {
-//                 po.subs.map(sub => {
-//                     if (!_.isEmpty(sub.certificates) && hasCertificates){
-//                         sub.certificates.map(certificate => {
-//                             arrayRow = [];
-//                             screenHeaders.map(screenHeader => {
-//                                 switch(screenHeader.fields.fromTbl) {
-//                                     case 'po':
-//                                         arrayRow.push({
-//                                             collection: 'po',
-//                                             objectId: po._id,
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: po[screenHeader.fields.name],
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                         });
-//                                         break;
-//                                     case 'sub':
-//                                         arrayRow.push({
-//                                             collection: 'sub',
-//                                             objectId: sub._id,
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: sub[screenHeader.fields.name],
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                         });
-//                                         break;
-//                                     case 'certificate':
-//                                         arrayRow.push({
-//                                             collection: 'certificate',
-//                                             objectId: certificate._id,
-//                                             fieldName: screenHeader.fields.name,
-//                                             fieldValue: certificate[screenHeader.fields.name],
-//                                             disabled: screenHeader.edit,
-//                                             align: screenHeader.align,
-//                                             fieldType: getInputType(screenHeader.fields.type),
-//                                         });
-//                                         break;
-//                                     default: arrayRow.push({
-//                                         collection: 'virtual',
-//                                         objectId: '0',
-//                                         fieldName: screenHeader.fields.name,
-//                                         fieldValue: '',
-//                                         disabled: screenHeader.edit,
-//                                         align: screenHeader.align,
-//                                         fieldType: getInputType(screenHeader.fields.type),
-//                                     });
-//                                 }
-//                             });
-//                             objectRow  = {
-//                                 _id: i, 
-//                                 tablesId: { 
-//                                     poId: po._id,
-//                                     subId: sub._id,
-//                                     certificateId: certificate._id,
-//                                     packItemId: '',
-//                                     colliPackId: '' 
-//                                 },
-//                                 fields: arrayRow
-//                             };
-//                             arrayBody.push(objectRow);
-//                             i++;
-//                         });
-//                     } else {
-//                         arrayRow = [];
-//                         screenHeaders.map(screenHeader => {
-//                             switch(screenHeader.fields.fromTbl) {
-//                                 case 'po':
-//                                     arrayRow.push({
-//                                         collection: 'po',
-//                                         objectId: po._id,
-//                                         fieldName: screenHeader.fields.name,
-//                                         fieldValue: po[screenHeader.fields.name],
-//                                         disabled: screenHeader.edit,
-//                                         align: screenHeader.align,
-//                                         fieldType: getInputType(screenHeader.fields.type),
-//                                     });
-//                                     break;
-//                                 case 'sub':
-//                                     arrayRow.push({
-//                                         collection: 'sub',
-//                                         objectId: sub._id,
-//                                         fieldName: screenHeader.fields.name,
-//                                         fieldValue: sub[screenHeader.fields.name],
-//                                         disabled: screenHeader.edit,
-//                                         align: screenHeader.align,
-//                                         fieldType: getInputType(screenHeader.fields.type),
-//                                     });
-//                                     break;
-//                                 default: arrayRow.push({
-//                                     collection: 'virtual',
-//                                     objectId: '0',
-//                                     fieldName: screenHeader.fields.name,
-//                                     fieldValue: '',
-//                                     disabled: screenHeader.edit,
-//                                     align: screenHeader.align,
-//                                     fieldType: getInputType(screenHeader.fields.type),
-//                                 }); 
-//                             }
-//                         });
-//                         objectRow  = {
-//                             _id: i, 
-//                             tablesId: { 
-//                                 poId: po._id,
-//                                 subId: sub._id,
-//                                 certificateId: '',
-//                                 packItemId: '',
-//                                 colliPackId: '' 
-//                             },
-//                             fields: arrayRow
-//                         };
-//                         arrayBody.push(objectRow);
-//                         i++;
-//                     }
-//                 })
-//             }
-//         });
-//         return arrayBody;
-//     } else {
-//         return [];
-//     }
-    
-// }
+function initSettingsFilter(fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(function(element) {
+            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
+        });
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forShow - b.forShow;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                acc.push({
+                    _id: cur._id,
+                    name: cur.fields.name,
+                    custom: cur.fields.custom,
+                    value: '',
+                    type: cur.fields.type,
+                });
+                return acc; // console.log('cur:', cur)
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
 
 function initSettingsDisplay(fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
@@ -529,31 +393,7 @@ function initSettingsDisplay(fieldnames, screenId) {
     }
 }
 
-function initSettingsFilter(fieldnames, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-        });
-        if (!tempArray) {
-            return [];
-        } else {
-            tempArray.sort(function(a,b) {
-                return a.forShow - b.forShow;
-            });
-            return tempArray.reduce(function(acc, cur) {
-                acc.push({
-                    _id: cur._id,
-                    custom: cur.fields.custom,
-                    value: '',
-                    type: cur.fields.type,
-                });
-                return acc; // console.log('cur:', cur)
-            }, []);
-        }
-    } else {
-        return [];
-    }
-}
+
 
 class Certificates extends React.Component {
     constructor(props) {

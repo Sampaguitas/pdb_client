@@ -20,10 +20,11 @@ function generateLayout(settingsFilter, handleInputSettings) {
             tempArray.push(
                 <SettingInput
                     key={index}
-                    type={getInputType(element.type)}
+                    id={element._id}
+                    name={element.name}
                     title={element.custom}
-                    name={element._id}
                     value={element.value}
+                    type={element.type} //{getInputType(element.type)}
                     handleInputSettings={handleInputSettings}
                 />
             );
