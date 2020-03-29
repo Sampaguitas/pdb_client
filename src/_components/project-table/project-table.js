@@ -363,7 +363,7 @@ class ProjectTable extends Component {
                             acc = false;
                         }
 
-                        if (!_.isUndefined(matchingCol) && !doesMatch(cur.value, matchingCol.fieldValue, cur.type, false)) {
+                        if (!_.isUndefined(matchingCol) && !doesMatch(cur.value, matchingCol.fieldValue, cur.type, cur.isEqual)) {
                             acc = false;
                         }
                     }

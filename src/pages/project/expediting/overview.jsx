@@ -566,8 +566,9 @@ function initSettingsFilter(fieldnames, screenId) {
                     custom: cur.fields.custom,
                     value: '',
                     type: cur.fields.type,
+                    isEqual: false
                 });
-                return acc; // console.log('cur:', cur)
+                return acc;
             }, []);
         }
     } else {
@@ -674,6 +675,7 @@ class Overview extends React.Component {
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleClearInputSettings = this.handleClearInputSettings.bind(this);
+        this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
         this.handleCheckSettings = this.handleCheckSettings.bind(this);
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
     }
@@ -792,10 +794,24 @@ class Overview extends React.Component {
         } 
     }
 
+    handleIsEqualSettings(event, id) {
+        event.preventDefault();
+        const { settingsFilter } = this.state;
+        let tempArray = settingsFilter;
+        let found = tempArray.find(element => element._id === id);
+        if(!!found) {
+            found.isEqual = !found.isEqual;
+            this.setState({ settingsFilter: tempArray });
+        } 
+    }
+
     handleClearInputSettings() {
         const { settingsFilter } = this.state;
         let tempArray = settingsFilter;
-        tempArray.map(element => element.value = '');
+        tempArray.map(function (element) {
+            element.value = '';
+            element.isEqual = false;
+        });
         this.setState({ settingsFilter: tempArray });
     }
 
@@ -1455,6 +1471,7 @@ class Overview extends React.Component {
                                         handleInputSettings={this.handleInputSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}
                                         handleCheckSettings={this.handleCheckSettings}
+                                        handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleCheckSettingsAll={this.handleCheckSettingsAll}
                                     />
                                 </div>

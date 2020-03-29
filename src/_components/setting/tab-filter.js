@@ -12,7 +12,7 @@ function getInputType(dbFieldType) {
 }
 
 
-function generateLayout(settingsFilter, handleInputSettings) {
+function generateLayout(settingsFilter, handleInputSettings, handleIsEqualSettings) {
     let tempArray = [];
     
     if (!!settingsFilter) {
@@ -25,7 +25,9 @@ function generateLayout(settingsFilter, handleInputSettings) {
                     title={element.custom}
                     value={element.value}
                     type={element.type} //{getInputType(element.type)}
+                    isEqual={element.isEqual}
                     handleInputSettings={handleInputSettings}
+                    handleIsEqualSettings={handleIsEqualSettings}
                 />
             );
         });
@@ -53,7 +55,7 @@ class TabFilter extends Component{
     }
 
     render() {
-        const { settingsFilter, handleInputSettings } = this.props;
+        const { settingsFilter, handleInputSettings, handleIsEqualSettings } = this.props;
         return (
             <div>
                 <div className="row modal-btn-links mb-3">
@@ -65,7 +67,7 @@ class TabFilter extends Component{
                         Clear All
                     </button>
                 </div>
-                {generateLayout(settingsFilter, handleInputSettings)}
+                {generateLayout(settingsFilter, handleInputSettings, handleIsEqualSettings)}
             </div>
 
         );
