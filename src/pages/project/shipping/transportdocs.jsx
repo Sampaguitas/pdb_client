@@ -12,7 +12,8 @@ import {
     fieldnameActions,
     fieldActions,
     poActions,
-    projectActions 
+    projectActions,
+    settingActions
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
@@ -446,11 +447,11 @@ function selectionHasData (selectedIds, pos, field) {
     }
 }
 
-function initSettingsFilter(fieldnames, screenId) {
+function initSettingsFilter(fieldnames, settings, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-        });
+        let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow);
+        let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
+
         if (!tempArray) {
             return [];
         } else {
@@ -458,14 +459,37 @@ function initSettingsFilter(fieldnames, screenId) {
                 return a.forShow - b.forShow;
             });
             return tempArray.reduce(function(acc, cur) {
-                acc.push({
-                    _id: cur._id,
-                    name: cur.fields.name,
-                    custom: cur.fields.custom,
-                    value: '',
-                    type: cur.fields.type,
-                    isEqual: false
-                });
+                if (_.isUndefined(screenSettings) || _.isEmpty(screenSettings.params.filter)) {
+                    acc.push({
+                        _id: cur._id,
+                        name: cur.fields.name,
+                        custom: cur.fields.custom,
+                        value: '',
+                        type: cur.fields.type,
+                        isEqual: false
+                    });
+                } else {
+                    let found = screenSettings.params.filter.find(element => element._id === cur._id);
+                    if (_.isUndefined(found)) {
+                        acc.push({
+                            _id: cur._id,
+                            name: cur.fields.name,
+                            custom: cur.fields.custom,
+                            value: '',
+                            type: cur.fields.type,
+                            isEqual: false
+                        });
+                    } else {
+                        acc.push({
+                            _id: cur._id,
+                            name: cur.fields.name,
+                            custom: cur.fields.custom,
+                            value: found.value,
+                            type: cur.fields.type,
+                            isEqual: found.isEqual
+                        });
+                    }
+                }
                 return acc;
             }, []);
         }
@@ -474,11 +498,11 @@ function initSettingsFilter(fieldnames, screenId) {
     }
 }
 
-function initSettingsDisplay(fieldnames, screenId) {
+function initSettingsDisplay(fieldnames, settings, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-        });
+        let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow);
+        let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
+
         if (!tempArray) {
             return [];
         } else {
@@ -486,11 +510,19 @@ function initSettingsDisplay(fieldnames, screenId) {
                 return a.forShow - b.forShow;
             });
             return tempArray.reduce(function(acc, cur) {
-                acc.push({
-                    _id: cur._id,
-                    custom: cur.fields.custom,
-                    isChecked: true
-                });
+                if (_.isUndefined(screenSettings) || !screenSettings.params.display.includes(cur._id)) {
+                    acc.push({
+                        _id: cur._id,
+                        custom: cur.fields.custom,
+                        isChecked: true
+                    });
+                } else {
+                    acc.push({
+                        _id: cur._id,
+                        custom: cur.fields.custom,
+                        isChecked: false
+                    });
+                }
                 return acc; // console.log('cur:', cur)
             }, []);
         }
@@ -578,6 +610,7 @@ class TransportDocuments extends React.Component {
         this.handleClearInputSettings = this.handleClearInputSettings.bind(this);
         this.handleCheckSettings = this.handleCheckSettings.bind(this);
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
+        this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
     }
 
@@ -589,16 +622,19 @@ class TransportDocuments extends React.Component {
             loadingFields,
             loadingPos,
             loadingSelection,
+            loadingSettings,
             location,
             //---------
             fieldnames,
             pos,
-            selection
+            selection,
+            settings
         } = this.props;
 
         const { screenId, splitScreenId, headersForShow, settingsDisplay } = this.state;
-
         var qs = queryString.parse(location.search);
+        let userId = JSON.parse(localStorage.getItem('user')).id;
+
         if (qs.id) {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
@@ -616,6 +652,9 @@ class TransportDocuments extends React.Component {
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
             }
+            if (!loadingSettings) {
+                dispatch(settingActions.getAll(qs.id, userId));
+            }
         }
 
         this.setState({
@@ -623,14 +662,14 @@ class TransportDocuments extends React.Component {
             bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
             splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
             splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
-            settingsFilter: initSettingsFilter(fieldnames, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, screenId)
+            settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, splitHeadersForSelect, screenId, splitScreenId, selectedField, settingsDisplay } = this.state;
-        const { fields, fieldnames, pos, selection } = this.props;
+        const { headersForShow, screenId, splitScreenId, selectedField, settingsDisplay } = this.state;
+        const { fields, fieldnames, pos, selection, settings } = this.props;
 
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
@@ -650,8 +689,8 @@ class TransportDocuments extends React.Component {
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
                 splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
-                settingsFilter: initSettingsFilter(fieldnames, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, screenId)
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
             }); 
         }
 
@@ -661,6 +700,12 @@ class TransportDocuments extends React.Component {
             });
         }
 
+        if (settings != prevProps.settings) {
+            this.setState({
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            });
+        }
     }
 
     handleClearAlert(event){
@@ -729,6 +774,16 @@ class TransportDocuments extends React.Component {
         });
     }
 
+    handleRestoreSettings(event) {
+        event.preventDefault();
+        const { fieldnames, settings } = this.props;
+        const { screenId } = this.state;
+        this.setState({
+            settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+        });
+    }
+
     handleSaveSettings(event) {
         event.preventDefault();
         const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
@@ -793,8 +848,11 @@ class TransportDocuments extends React.Component {
     refreshStore() {
         const { dispatch } = this.props;
         const { projectId } = this.state;
+        let userId = JSON.parse(localStorage.getItem('user')).id;
+
         if (projectId) {
             dispatch(poActions.getAll(projectId));
+            dispatch(settingActions.getAll(projectId, userId));
         }
     }
 
@@ -1743,7 +1801,7 @@ class TransportDocuments extends React.Component {
                         </div>
                     </div>
                     <div className="text-right mt-3">
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2">
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
                             <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg" onClick={this.handleSaveSettings}>
@@ -1775,12 +1833,14 @@ class TransportDocuments extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, pos, selection } = state;
+    const { accesses, alert, fieldnames, fields, pos, selection, settings } = state;
     const { loadingAccesses } = accesses;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingPos } = pos;
     const { loadingSelection } = selection;
+    const { loadingSettings } = settings;
+    
     return {
         accesses,
         alert,
@@ -1790,8 +1850,10 @@ function mapStateToProps(state) {
         loadingFields,
         loadingPos,
         loadingSelection,
+        loadingSettings,
         pos,
-        selection
+        selection,
+        settings
     };
 }
 

@@ -14,6 +14,7 @@ import {
     fieldActions,
     poActions, 
     projectActions,
+    settingActions,
     supplierActions
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
@@ -543,11 +544,11 @@ function generateOptions(list) {
     }
 }
 
-function initSettingsFilter(fieldnames, screenId) {
+function initSettingsFilter(fieldnames, settings, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-        });
+        let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow);
+        let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
+
         if (!tempArray) {
             return [];
         } else {
@@ -555,14 +556,37 @@ function initSettingsFilter(fieldnames, screenId) {
                 return a.forShow - b.forShow;
             });
             return tempArray.reduce(function(acc, cur) {
-                acc.push({
-                    _id: cur._id,
-                    name: cur.fields.name,
-                    custom: cur.fields.custom,
-                    value: '',
-                    type: cur.fields.type,
-                    isEqual: false
-                });
+                if (_.isUndefined(screenSettings) || _.isEmpty(screenSettings.params.filter)) {
+                    acc.push({
+                        _id: cur._id,
+                        name: cur.fields.name,
+                        custom: cur.fields.custom,
+                        value: '',
+                        type: cur.fields.type,
+                        isEqual: false
+                    });
+                } else {
+                    let found = screenSettings.params.filter.find(element => element._id === cur._id);
+                    if (_.isUndefined(found)) {
+                        acc.push({
+                            _id: cur._id,
+                            name: cur.fields.name,
+                            custom: cur.fields.custom,
+                            value: '',
+                            type: cur.fields.type,
+                            isEqual: false
+                        });
+                    } else {
+                        acc.push({
+                            _id: cur._id,
+                            name: cur.fields.name,
+                            custom: cur.fields.custom,
+                            value: found.value,
+                            type: cur.fields.type,
+                            isEqual: found.isEqual
+                        });
+                    }
+                }
                 return acc;
             }, []);
         }
@@ -571,11 +595,11 @@ function initSettingsFilter(fieldnames, screenId) {
     }
 }
 
-function initSettingsDisplay(fieldnames, screenId) {
+function initSettingsDisplay(fieldnames, settings, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element.forShow); 
-        });
+        let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow);
+        let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
+
         if (!tempArray) {
             return [];
         } else {
@@ -583,11 +607,19 @@ function initSettingsDisplay(fieldnames, screenId) {
                 return a.forShow - b.forShow;
             });
             return tempArray.reduce(function(acc, cur) {
-                acc.push({
-                    _id: cur._id,
-                    custom: cur.fields.custom,
-                    isChecked: true
-                });
+                if (_.isUndefined(screenSettings) || !screenSettings.params.display.includes(cur._id)) {
+                    acc.push({
+                        _id: cur._id,
+                        custom: cur.fields.custom,
+                        isChecked: true
+                    });
+                } else {
+                    acc.push({
+                        _id: cur._id,
+                        custom: cur.fields.custom,
+                        isChecked: false
+                    });
+                }
                 return acc; // console.log('cur:', cur)
             }, []);
         }
@@ -682,6 +714,7 @@ class ReleaseData extends React.Component {
         this.handleClearInputSettings = this.handleClearInputSettings.bind(this);
         this.handleCheckSettings = this.handleCheckSettings.bind(this);
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
+        this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
     }
 
@@ -694,6 +727,7 @@ class ReleaseData extends React.Component {
             loadingFields,
             loadingPos,
             loadingSelection,
+            loadingSettings,
             loadingSuppliers, 
             location,
             //---------
@@ -701,12 +735,14 @@ class ReleaseData extends React.Component {
             pos,
             suppliers,
             docdefs,
-            selection
+            selection,
+            settings
         } = this.props;
 
         const { screenId, splitScreenId, headersForShow, settingsDisplay } = this.state;
-        
         var qs = queryString.parse(location.search);
+        let userId = JSON.parse(localStorage.getItem('user')).id;
+
         if (qs.id) {
             //State items with projectId
             this.setState({projectId: qs.id});
@@ -728,6 +764,9 @@ class ReleaseData extends React.Component {
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
             }
+            if (!loadingSettings) {
+                dispatch(settingActions.getAll(qs.id, userId));
+            }
             if (!loadingSuppliers) {
                 dispatch(supplierActions.getAll(qs.id));
             }
@@ -741,15 +780,15 @@ class ReleaseData extends React.Component {
             nfiList: getNfiList(pos),
             locationList: getLocationList(suppliers),
             docList: arraySorted(docConf(docdefs.items), "name"),
-            settingsFilter: initSettingsFilter(fieldnames, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, screenId)
+            settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
         });
 
     }
 
     componentDidUpdate(prevProps, prevState) {
         const { headersForShow, screenId, splitScreenId, selectedField, settingsDisplay } = this.state;
-        const { fields, fieldnames, selection, pos, suppliers, docdefs } = this.props;
+        const { fields, fieldnames, selection, pos, suppliers, docdefs, settings } = this.props;
 
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
@@ -769,8 +808,8 @@ class ReleaseData extends React.Component {
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
                 splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
-                settingsFilter: initSettingsFilter(fieldnames, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, screenId)
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
             }); 
         }
 
@@ -790,6 +829,17 @@ class ReleaseData extends React.Component {
 
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
+        }
+
+        if (settingsDisplay != prevState.settingsDisplay) {
+            this.setState({headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')});
+        }
+
+        if (settings != prevProps.settings) {
+            this.setState({
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            });
         }
     }
 
@@ -859,6 +909,16 @@ class ReleaseData extends React.Component {
         });
     }
 
+    handleRestoreSettings(event) {
+        event.preventDefault();
+        const { fieldnames, settings } = this.props;
+        const { screenId } = this.state;
+        this.setState({
+            settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+        });
+    }
+
     handleSaveSettings(event) {
         event.preventDefault();
         const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
@@ -923,8 +983,11 @@ class ReleaseData extends React.Component {
     refreshStore() {
         const { dispatch } = this.props;
         const { projectId } = this.state;
+        let userId = JSON.parse(localStorage.getItem('user')).id;
+
         if (projectId) {
             dispatch(poActions.getAll(projectId));
+            dispatch(settingActions.getAll(projectId, userId));
         }
     }
 
@@ -1866,7 +1929,7 @@ class ReleaseData extends React.Component {
                         </div>
                     </div>
                     <div className="text-right mt-3">
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2">
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
                             <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg" onClick={this.handleSaveSettings}>
@@ -1901,13 +1964,14 @@ class ReleaseData extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, docdefs, fieldnames, fields, pos, selection, suppliers } = state;
+    const { accesses, alert, docdefs, fieldnames, fields, pos, selection, settings, suppliers } = state;
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingPos } = pos;
     const { loadingSelection } = selection;
+    const { loadingSettings } = settings;
     const { loadingSuppliers } = suppliers;
     return {
         accesses,
@@ -1921,10 +1985,12 @@ function mapStateToProps(state) {
         loadingFields,
         loadingPos,
         loadingSelection,
+        loadingSettings,
         loadingSuppliers,
         pos,
         selection,
-        suppliers
+        suppliers,
+        settings
     };
 }
 

@@ -14,5 +14,6 @@ export * from './po.service';
 export * from './project.service';
 export * from './region.service';
 export * from './screen.service';
+export * from './setting.service';
 export * from './supplier.service';
 export * from './user.service';

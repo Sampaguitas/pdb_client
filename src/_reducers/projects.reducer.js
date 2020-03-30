@@ -15,8 +15,7 @@ export function projects(state = {}, action) {
             return {
                 error: action.error
             };
-        case projectConstants.GETALL_REQUEST:
-            console.log('state:', state);    
+        case projectConstants.GETALL_REQUEST:   
         return {  
                 projectLoading: true,
                 items: state.items //keep existing state during request

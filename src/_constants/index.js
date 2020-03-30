@@ -15,5 +15,6 @@ export * from './po.constants';
 export * from './project.constants';
 export * from './region.constants';
 export * from './screen.constants';
+export * from './setting.constants';
 export * from './supplier.constants';
 export * from './user.constants';

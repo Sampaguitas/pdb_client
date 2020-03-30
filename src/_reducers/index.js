@@ -22,6 +22,7 @@ import { requestpwd } from './requestpwd.reducer';
 import { resetpwd } from './resetpwd.reducer';
 import { screens } from './screens.reducer';
 import { selection } from './selection.reducer';
+import { settings } from './settings.reducer';
 import { suppliers } from './suppliers.reducer';
 import { users } from './users.reducer';
 
@@ -48,6 +49,7 @@ const rootReducer = combineReducers({
   resetpwd,
   screens,
   selection,
+  settings,
   suppliers,
   users
 });

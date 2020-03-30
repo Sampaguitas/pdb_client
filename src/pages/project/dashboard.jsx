@@ -15,6 +15,7 @@ import {
     poActions,
     projectActions,
     supplierActions,
+    settingActions,
     screenActions,
     userActions,
 } from '../../_actions';
@@ -119,6 +120,7 @@ class Dashboard extends React.Component {
             loadingFields,
             loadingPos,
             loadingSelection,
+            loadingSettings,
             loadingSuppliers,
             location,
             opcos,
@@ -127,6 +129,8 @@ class Dashboard extends React.Component {
         } = this.props;
 
         var qs = queryString.parse(location.search);
+        let userId = JSON.parse(localStorage.getItem('user')).id;
+        
         if (qs.id) {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
@@ -149,6 +153,9 @@ class Dashboard extends React.Component {
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
+            }
+            if (!loadingSettings) {
+                dispatch(settingActions.getAll(qs.id, userId));
             }
             if (!loadingSuppliers) {
                 dispatch(supplierActions.getAll(qs.id));
@@ -235,6 +242,7 @@ function mapStateToProps(state) {
         pos, 
         selection,
         suppliers,
+        settings,
         users
     } = state;
 
@@ -245,6 +253,7 @@ function mapStateToProps(state) {
     const { loadingFields } = fields;
     const { loadingPos } = pos;
     const { loadingSelection } = selection;
+    const { loadingSettings } = settings;
     const { loadingSuppliers } = suppliers;
     
     return {
@@ -264,10 +273,12 @@ function mapStateToProps(state) {
         loadingPos,
         loadingSelection,
         loadingSuppliers,
+        loadingSettings,
         opcos,
         pos,
         screens,
         selection,
+        settings,
         suppliers,
         users
     };
