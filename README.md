@@ -72,7 +72,7 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Timothee Desurmont** - *Business Development Manager* - [View profile](https://www.linkedin.com/in/timothee-desurmont-82243245/)
+**Timothee Desurmont** - *Business Development Manager* - [View profile](https://www.linkedin.com/in/timothee-desurmont-82243245/)
 
 ## License
 
@@ -80,6 +80,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* [The Van Leeuwen Pipe and Tube Group](https://www.vanleeuwen.com/en/)
+[The Van Leeuwen Pipe and Tube Group](https://www.vanleeuwen.com/en/)
 
-_The Van Leeuwen Pipe and Tube Group is a Dutch international industrial distributor of steel pipes, valves and fittings._
+_**The Van Leeuwen Pipe and Tube Group** is a Dutch international industrial distributor of steel pipes, valves and fittings._
