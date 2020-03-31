@@ -254,6 +254,26 @@ function virtuals(packitems, uom, packItemFields) {
                     });
                     accumulator.push(currentValue.plNr);
                 }
+            } else if (!accumulator.includes('0')) {
+                //packitems without PL no
+                let tempObject = {_id: '0'}
+                tempObject['shippedQty'] = '';
+                packItemFields.map(function (packItemField) {
+                    if (packItemField.name === 'plNr') {
+                        tempObject['plNr'] = ''
+                    } else {
+                        tempObject[packItemField.name] = [TypeToString(currentValue[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                    }
+                });
+                tempVirtuals.push(tempObject);
+                accumulator.push(currentValue.plNr);
+            } else {
+                let tempVirtual = tempVirtuals.find(element => element.plNr === '');
+                packItemFields.map(function (packItemField) {
+                    if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(currentValue[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
+                        tempVirtual[packItemField.name].push(TypeToString(currentValue[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                    }               
+                });
             }
             return accumulator;
         }, []);
@@ -335,7 +355,7 @@ function getBodys(fieldnames, selection, pos, headersForShow){
     let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
     let screenHeaders = headersForShow;
     let project = selection.project || { _id: '0', name: '', number: '' };
-    
+    // console.log('hasPackitems?', hasPackitems)
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
