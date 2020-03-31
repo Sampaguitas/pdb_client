@@ -279,7 +279,16 @@ function getInputType(dbFieldType) {
 }
 
 function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
+    
     let tempArray = [];
+    let screens = [
+        '5cd2b642fd333616dc360b63', //overview
+        '5cd2b642fd333616dc360b64', //releasedata
+        '5cd2b642fd333616dc360b65', //certificates
+        '5cd2b643fd333616dc360b67', //packing details
+        '5cd2b643fd333616dc360b66' //transportdocs
+    ];
+
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        
         
         let displayIds = settingsDisplay.reduce(function(acc, cur) {
@@ -289,7 +298,7 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
             return acc;
         }, []);
 
-        if (!_.isEmpty(displayIds) && forWhat === 'forShow') {
+        if (!_.isEmpty(displayIds) && screens.includes(screenId)) {
             tempArray = fieldnames.items.filter(function(element) {
                 return (_.isEqual(element.screenId, screenId) && !!element[forWhat] && displayIds.includes(element._id)); 
             });
@@ -878,9 +887,11 @@ class ReleaseData extends React.Component {
 
     handleClearInputSettings() {
         const { settingsFilter } = this.state;
-        
         let tempArray = settingsFilter;
-        tempArray.map(element => element.value = '');
+        tempArray.map(function (element) {
+            element.value = '';
+            element.isEqual = false;
+        });
         this.setState({ settingsFilter: tempArray });
     }
 
