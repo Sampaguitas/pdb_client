@@ -8,7 +8,7 @@
 
 Van Leeuwen PDB is a project management platform. It has been disign for the execution of large scale projects (LTA/CAPEX).
 
-## External documents
+## External links
 
 * [todo list](TODO.md)
 
