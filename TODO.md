@@ -15,5 +15,5 @@
 
 ### User settings
 - [X] Filter: display only forSelect.
-- [ ] Display: clear all isEqual=false
+- [X] Display: clear all isEqual=false
 - [X] OK button.

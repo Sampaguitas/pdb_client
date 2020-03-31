@@ -637,9 +637,11 @@ class Certificates extends React.Component {
 
     handleClearInputSettings() {
         const { settingsFilter } = this.state;
-        
         let tempArray = settingsFilter;
-        tempArray.map(element => element.value = '');
+        tempArray.map(function (element) {
+            element.value = '';
+            element.isEqual = false;
+        });
         this.setState({ settingsFilter: tempArray });
     }
 
