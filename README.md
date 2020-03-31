@@ -1,10 +1,12 @@
 # [PROJECT DATABASE (PDB)](https://pdb-client.herokuapp.com/)
 
-### About the company
+## About
+
+### The company
 
 [The Van Leeuwen Pipe and Tube Group](https://www.vanleeuwen.com/en/) is an international distribution company specializing in steel pipes, and pipe and tube applications. The family-owned company, with its head office in Zwijndrecht, the Netherlands, was founded in 1924 and is active in virtually all industrial sectors. The Group, including the recently acquired company Benteler Distribution, has close to a hundred branches spread throughout Europe, the Middle East, Asia, Australia, and North America.
 
-### About this App
+### This App
 
 Van Leeuwen PDB is a project management platform. It has been disign for the execution of large scale projects (LTA/CAPEX).
 
