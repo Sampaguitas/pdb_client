@@ -252,7 +252,7 @@ function virtuals(packitems, uom, packItemFields) {
                             tempVirtual[packItemField.name].push(TypeToString(currentValue[packItemField.name], packItemField.type, getDateFormat(myLocale)));
                         }               
                     });
-                    accumulator.push(currentValue.plNr);
+                    // accumulator.push(currentValue.plNr);
                 }
             } else if (!accumulator.includes('0')) {
                 let tempObject = {_id: '0'}
@@ -265,7 +265,7 @@ function virtuals(packitems, uom, packItemFields) {
                     }
                 });
                 tempVirtuals.push(tempObject);
-                accumulator.push(currentValue.plNr);
+                accumulator.push('0');
             } else {
                 let tempVirtual = tempVirtuals.find(element => element.plNr === '');
                 packItemFields.map(function (packItemField) {
