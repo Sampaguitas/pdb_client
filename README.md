@@ -38,7 +38,7 @@ https://github.com/Sampaguitas/pdb_server
 Clone repository:
 
 ```
-$ git clone https://github.com/Sampaguitas/yervice_client.git
+$ git clone https://github.com/Sampaguitas/pdb_client.git
 ```
 
 Install dependencies:
@@ -69,7 +69,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/Sampaguitas/yervice_client/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/Sampaguitas/pdb_client/tags). 
 
 ## Authors
 
