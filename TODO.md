@@ -1,7 +1,7 @@
 ## Todo list
 
 ### Expediting module
-- [ ] correct virtuals with PL.
+- [X] correct virtuals with PL.
 
 ### Inspection module
 - [ ] certificate screen.

@@ -255,7 +255,6 @@ function virtuals(packitems, uom, packItemFields) {
                     accumulator.push(currentValue.plNr);
                 }
             } else if (!accumulator.includes('0')) {
-                //packitems without PL no
                 let tempObject = {_id: '0'}
                 tempObject['shippedQty'] = '';
                 packItemFields.map(function (packItemField) {
@@ -355,7 +354,6 @@ function getBodys(fieldnames, selection, pos, headersForShow){
     let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
     let screenHeaders = headersForShow;
     let project = selection.project || { _id: '0', name: '', number: '' };
-    // console.log('hasPackitems?', hasPackitems)
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
@@ -615,7 +613,7 @@ function initSettingsDisplay(fieldnames, settings, screenId) {
                         isChecked: false
                     });
                 }
-                return acc; // console.log('cur:', cur)
+                return acc;
             }, []);
         }
     } else {
