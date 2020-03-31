@@ -1,4 +1,4 @@
-## About
+## About this project
 
 [VAN LEEUWEN PROJECT DATABASE (PDB)](https://pdb-client.herokuapp.com/)
 is a Project Management Platform.
