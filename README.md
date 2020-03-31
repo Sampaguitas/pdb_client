@@ -55,7 +55,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Built With
 
-* [Node.js](https://nodejs.org/en/) - JavaScript runtime
+* [node.js](https://nodejs.org/en/) - JavaScript runtime
 * [npm](https://www.npmjs.com) - Dependency Management
 * [react](reactjs.org) - The web framework used
 
