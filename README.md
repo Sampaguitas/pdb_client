@@ -1,5 +1,5 @@
 [VAN LEEUWEN PROJECT DATABASE (PDB)](https://pdb-client.herokuapp.com/)
-is a Project Management Platform. It has been disign for the execution of large scale projects.
+is a Project Management Platform. It has been disign for the execution of large scale projects (LTA/CAPEX).
 
 ## Getting Started
 
