@@ -4,7 +4,8 @@
 
 ## About
 
-[vanleeuwenpdb.com] (https://pdb-client.herokuapp.com/) is a Project Management Platform.
+[vanleeuwenpdb.com](https://pdb-client.herokuapp.com/)
+is a Project Management Platform.
 
 ## Getting Started
 
