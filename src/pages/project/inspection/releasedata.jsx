@@ -555,14 +555,14 @@ function generateOptions(list) {
 
 function initSettingsFilter(fieldnames, settings, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow);
+        let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow && !!element.forSelect);
         let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
 
         if (!tempArray) {
             return [];
         } else {
             tempArray.sort(function(a,b) {
-                return a.forShow - b.forShow;
+                return a.forSelect - b.forSelect;
             });
             return tempArray.reduce(function(acc, cur) {
                 if (_.isUndefined(screenSettings) || _.isEmpty(screenSettings.params.filter)) {

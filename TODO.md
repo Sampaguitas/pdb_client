@@ -14,4 +14,5 @@
 - [ ] delete button.
 
 ### User settings
+- [X] Filter: display only forSelect.
 - [ ] OK button.
