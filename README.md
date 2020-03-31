@@ -1,4 +1,4 @@
-# [VAN LEEUWEN PROJECT DATABASE (PDB)](https://pdb-client.herokuapp.com/)
+# [PROJECT DATABASE (PDB)](https://pdb-client.herokuapp.com/)
 
 Van Leeuwen PDB is a Project Management Platform. It has been disign for the execution of large scale projects (LTA/CAPEX).
 
