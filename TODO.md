@@ -1,15 +1,17 @@
-# Expediting module
+## Todo list
+
+### Expediting module
 - [ ] correct virtuals with PL.
 
-# Inspection module
+### Inspection module
 - [ ] certificate screen.
 
-# Shipping module
+### Shipping module
 - [ ] collitype modal.
 
-# Custom table
-- [ ] sort header.
+### Custom table
+- [ ] sort function.
 - [ ] delete button.
 
-# User settings
+### User settings
 - [ ] OK button.
