@@ -1,10 +1,6 @@
-![alt text](https://camo.githubusercontent.com/2c75116533d0cd3742984ff9c161e3b5e659b30d/68747470733a2f2f7064622d636c69656e742e6865726f6b756170702e636f6d2f37306566303163373464303533366434326565616666623062303863633433662e737667)
-
-![alt text](https://camo.githubusercontent.com/ceb4f807327ceb99da0c5dba62642833ac2422ef/68747470733a2f2f7064622d636c69656e742e6865726f6b756170702e636f6d2f65663830353764616430386539653365646134653066656263653863366337642e737667)
-
 ## About
 
-[vanleeuwenpdb.com](https://pdb-client.herokuapp.com/)
+[VAN LEEUWEN PROJECT DATABASE (PDB)](https://pdb-client.herokuapp.com/)
 is a Project Management Platform.
 
 ## Getting Started
