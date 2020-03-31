@@ -63,7 +63,9 @@ $ npm run dev
 
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+For Deploying with Git to Heroku, click on the following link and follow the instructions: 
+
+[https://devcenter.heroku.com/articles/git](https://devcenter.heroku.com/articles/git)
 
 ## Built With
 
