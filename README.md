@@ -4,7 +4,7 @@ Van Leeuwen PDB is a Project Management Platform. It has been disign for the exe
 
 ## External documents
 
-* [tasks list](TODO.md)
+* [todo list](TODO.md)
 
 
 ## Getting Started
