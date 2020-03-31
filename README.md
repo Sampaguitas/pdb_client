@@ -81,4 +81,6 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-[The Van Leeuwen Pipe and Tube Group](https://www.vanleeuwen.com/en/) is a Dutch international industrial distributor of steel pipes, valves and fittings.
+[The Van Leeuwen Pipe and Tube Group](https://www.vanleeuwen.com/en/) is an international distribution company specializing in steel pipes, and pipe and tube applications. The family-owned company, with its head office in Zwijndrecht, the Netherlands, was founded in 1924 and is active in virtually all industrial sectors. The Group, including the recently acquired company Benteler Distribution, has close to a hundred branches spread throughout Europe, the Middle East, Asia, Australia, and North America.
+
+
