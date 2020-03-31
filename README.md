@@ -1,4 +1,4 @@
-![alt text](https://cdn1.nrgedge.net/company/VanLeeuwenocl.jpg)
+![alt text](https://pdb-client.herokuapp.com/ef8057dad08e9e3eda4e0febce8c6c7d.svg)
 
 # vanleeuwenpdb.com
 
