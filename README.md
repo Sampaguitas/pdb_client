@@ -1,4 +1,4 @@
-![alt text](https://yervice.s3.eu-west-3.amazonaws.com/assets/logo.png)
+![alt text](https://cdn1.nrgedge.net/company/VanLeeuwenocl.jpg)
 
 # vanleeuwenpdb.com
 
