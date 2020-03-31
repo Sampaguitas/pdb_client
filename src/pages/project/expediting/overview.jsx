@@ -1579,12 +1579,15 @@ class Overview extends React.Component {
                             )}
                         </div>
                     </div>
-                    <div className="text-right mt-3">
+                    <div className="text-right mt-3"> 
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
                             <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
                         </button>
-                        <button className="btn btn-leeuwen btn-lg" onClick={this.handleSaveSettings}>
+                        <button className="btn btn-leeuwen btn-lg mr-2" onClick={this.handleSaveSettings}>
                             <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
+                            <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
                         </button>
                     </div>
                 </Modal>
