@@ -252,7 +252,6 @@ function virtuals(packitems, uom, packItemFields) {
                             tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
                         }               
                     });
-                    // acc.push(cur.plNr);
                 }
             } else if (!acc.includes('0')) {
                 let tempObject = {_id: '0'}
@@ -267,7 +266,7 @@ function virtuals(packitems, uom, packItemFields) {
                 tempVirtuals.push(tempObject);
                 acc.push('0');
             } else {
-                let tempVirtual = tempVirtuals.find(element => element.plNr === '');
+                let tempVirtual = tempVirtuals.find(element => element._id === '0');
                 packItemFields.map(function (packItemField) {
                     if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
                         tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
@@ -277,24 +276,6 @@ function virtuals(packitems, uom, packItemFields) {
             return acc;
         }, []);
     } else {
-        // let tempObject = {_id: '0'}
-        // packitems.map(function (packitem){
-        //     if (packitem.plNr) {
-        //         if (!tempObject.hasOwnProperty('shippedQty')) {
-        //             tempObject['shippedQty'] = packitem[tempUom];
-        //         } else {
-        //             tempObject['shippedQty'] += packitem[tempUom];
-        //         }
-        //         packItemFields.map(function (packItemField) {
-        //             if (!tempObject.hasOwnProperty(packItemField.name)) {
-        //                 tempObject[packItemField.name] = [TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale))]
-        //             } else if(!tempObject[packItemField.name].includes(TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
-        //                 tempObject[packItemField.name].push(TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale)));
-        //             }
-        //         });
-        //     }
-        // });
-        // tempVirtuals.push(tempObject);
         packitems.reduce(function(acc, cur) {
             if (cur.plNr){
                 if (!acc.includes('1')) {
