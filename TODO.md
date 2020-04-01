@@ -9,6 +9,14 @@
 ### Shipping module
 - [ ] collitype modal.
 
+### Warhouse module
+- [ ] Goods receipt.
+- [ ] Stock management.
+- [ ] Call-off order.
+- [ ] Picking list.
+- [ ] Outstanding shipments.
+- [ ] Warhouse locations.
+
 ### Custom table
 - [ ] sort function.
 - [ ] delete button.
