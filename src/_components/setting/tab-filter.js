@@ -34,7 +34,7 @@ function generateLayout(settingsFilter, handleInputSettings, handleIsEqualSettin
     }
     
     return (
-        <div style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd', height: '300px', overflowY: 'auto'}}>
+        <div style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd', height: '400px', overflowY: 'auto'}}>
             <div className="row ml-2 mr-2 mt-4">
                 {tempArray}
             </div>
