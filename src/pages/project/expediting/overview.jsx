@@ -226,75 +226,113 @@ function virtuals(packitems, uom, packItemFields) {
     let tempVirtuals = [];
     let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(uom.toUpperCase()) ? 'mtrs' : 'pcs';
     if (hasPackingList(packItemFields)) {
-        packitems.reduce(function (accumulator, currentValue){
-            if (currentValue.plNr){
-                if (!accumulator.includes(currentValue.plNr)) {
+        packitems.reduce(function (acc, cur){
+            if (cur.plNr){
+                if (!acc.includes(cur.plNr)) {
                 
                     let tempObject = {};
-                    tempObject['shippedQty'] = currentValue[tempUom];
+                    tempObject['shippedQty'] = cur[tempUom];
                     packItemFields.map(function (packItemField) {
                         if (packItemField.name === 'plNr') {
-                            tempObject['plNr'] = currentValue['plNr'];
-                            tempObject['_id'] = currentValue['plNr'];
+                            tempObject['plNr'] = cur['plNr'];
+                            tempObject['_id'] = cur['plNr'];
                         } else {
-                            tempObject[packItemField.name] = [TypeToString(currentValue[packItemField.name], packItemField.type, getDateFormat(myLocale))]
+                            tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
                         }               
                     });
                     tempVirtuals.push(tempObject);
-                    accumulator.push(currentValue.plNr);
+                    acc.push(cur.plNr);
                     
-                } else if (accumulator.includes(currentValue.plNr)) {
+                } else if (acc.includes(cur.plNr)) {
         
-                    let tempVirtual = tempVirtuals.find(element => element.plNr === currentValue.plNr);            
-                    tempVirtual['shippedQty'] += currentValue[tempUom];
+                    let tempVirtual = tempVirtuals.find(element => element.plNr === cur.plNr);            
+                    tempVirtual['shippedQty'] += cur[tempUom];
                     packItemFields.map(function (packItemField) {
-                        if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(currentValue[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
-                            tempVirtual[packItemField.name].push(TypeToString(currentValue[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                        if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
+                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
                         }               
                     });
-                    // accumulator.push(currentValue.plNr);
+                    // acc.push(cur.plNr);
                 }
-            } else if (!accumulator.includes('0')) {
+            } else if (!acc.includes('0')) {
                 let tempObject = {_id: '0'}
                 tempObject['shippedQty'] = '';
                 packItemFields.map(function (packItemField) {
                     if (packItemField.name === 'plNr') {
                         tempObject['plNr'] = ''
                     } else {
-                        tempObject[packItemField.name] = [TypeToString(currentValue[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
                     }
                 });
                 tempVirtuals.push(tempObject);
-                accumulator.push('0');
+                acc.push('0');
             } else {
                 let tempVirtual = tempVirtuals.find(element => element.plNr === '');
                 packItemFields.map(function (packItemField) {
-                    if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(currentValue[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
-                        tempVirtual[packItemField.name].push(TypeToString(currentValue[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                    if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
+                        tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
                     }               
                 });
             }
-            return accumulator;
+            return acc;
         }, []);
     } else {
-        let tempObject = {_id: '0'}
-        packitems.map(function (packitem){
-            if (packitem.plNr) {
-                if (!tempObject.hasOwnProperty('shippedQty')) {
-                    tempObject['shippedQty'] = packitem[tempUom];
+        // let tempObject = {_id: '0'}
+        // packitems.map(function (packitem){
+        //     if (packitem.plNr) {
+        //         if (!tempObject.hasOwnProperty('shippedQty')) {
+        //             tempObject['shippedQty'] = packitem[tempUom];
+        //         } else {
+        //             tempObject['shippedQty'] += packitem[tempUom];
+        //         }
+        //         packItemFields.map(function (packItemField) {
+        //             if (!tempObject.hasOwnProperty(packItemField.name)) {
+        //                 tempObject[packItemField.name] = [TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale))]
+        //             } else if(!tempObject[packItemField.name].includes(TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
+        //                 tempObject[packItemField.name].push(TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+        //             }
+        //         });
+        //     }
+        // });
+        // tempVirtuals.push(tempObject);
+        packitems.reduce(function(acc, cur) {
+            if (cur.plNr){
+                if (!acc.includes('1')) {
+                    let tempObject = {_id: '1'}
+                    tempObject['shippedQty'] = cur[tempUom];
+                    packItemFields.map(function (packItemField) {
+                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                    });
+                    tempVirtuals.push(tempObject);
+                    acc.push('1');
                 } else {
-                    tempObject['shippedQty'] += packitem[tempUom];
+                    let tempVirtual = tempVirtuals.find(element => element._id === '1');
+                    tempVirtual['shippedQty'] += cur[tempUom];
+                    packItemFields.map(function (packItemField) {
+                        if (!tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
+                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                        }
+                    });
                 }
-                packItemFields.map(function (packItemField) {
-                    if (!tempObject.hasOwnProperty(packItemField.name)) {
-                        tempObject[packItemField.name] = [TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale))]
-                    } else if(!tempObject[packItemField.name].includes(TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
-                        tempObject[packItemField.name].push(TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale)));
-                    }
-                });
+            } else {
+                if (!acc.includes('0')) {
+                    let tempObject = {_id: '0'}
+                    packItemFields.map(function (packItemField) {
+                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                    });
+                    tempVirtuals.push(tempObject);
+                    acc.push('0');
+                } else {
+                    let tempVirtual = tempVirtuals.find(element => element._id === '0');
+                    packItemFields.map(function (packItemField) {
+                        if (!tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
+                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                        }
+                    });
+                }
             }
-        });
-        tempVirtuals.push(tempObject);
+            return acc;
+        }, [])
     }
     return tempVirtuals;
 }
