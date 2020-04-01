@@ -353,17 +353,15 @@ class ProjectTable extends Component {
         const { screenHeaders, settingsFilter } = this.props
         if (screenBodys) {
             return screenBodys.filter(function (element) {
-                return settingsFilter.reduce(function(acc, cur) {
+                return screenHeaders.reduce(function(acc, cur){
                     if (!!acc) {
-                        let matchingCol = element.fields.find(function (col) {
-                            return _.isEqual(col.fieldName, cur.name);
-                        });
-
-                        if (!_.isUndefined(matchingCol) && !doesMatch(header[cur._id], matchingCol.fieldValue, cur.type, isEqual)) {
+                        let matchingCol = element.fields.find(e => _.isEqual(e.fieldName, cur.fields.name));
+                        let matchingFilter = settingsFilter.find(e => _.isEqual(e.name, cur.fields.name));
+                        if (!_.isUndefined(matchingCol) && !doesMatch(header[cur._id], matchingCol.fieldValue, cur.fields.type, isEqual)) {
                             acc = false;
                         }
 
-                        if (!_.isUndefined(matchingCol) && !doesMatch(cur.value, matchingCol.fieldValue, cur.type, cur.isEqual)) {
+                        if (!_.isUndefined(matchingCol) && !_.isUndefined(matchingFilter) && !doesMatch(matchingFilter.value, matchingCol.fieldValue, matchingFilter.type, matchingFilter.isEqual)) {
                             acc = false;
                         }
                     }
@@ -384,9 +382,7 @@ class ProjectTable extends Component {
                 <HeaderInput
                     type= {screenHeader.fields.type === 'Number' ? 'number' : 'text' }
                     title={screenHeader.fields.custom}
-                    // name={screenHeader.fieldId}
                     name={screenHeader._id}
-                    // value={header[screenHeader.fieldId]}
                     value={header[screenHeader._id]}
                     onChange={this.handleChangeHeader}
                     key={screenHeader._id}

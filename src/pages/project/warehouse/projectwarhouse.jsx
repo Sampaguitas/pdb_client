@@ -66,8 +66,26 @@ class ProjectWarhouse extends React.Component {
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
                     </ol>
                 </nav>
-                {/* <h2>Warehouse | Warehouse locations > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2> */}
                 <hr />
+                <div id="projectwarhouse" className="full-height">
+                    <div className="row full-height">
+                        <div className="col-6 full-height">
+                            <div className="card full-height">
+                                <div className="card-header">
+                                    <h5>Warehouses</h5>
+                                </div>
+                            
+                            </div>
+                        </div>
+                        <div className="col-6 full-height">
+                            <div className="card full-height">
+                                <div className="card-header">
+                                    <h5>Locations</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </Layout>
         );
     }
