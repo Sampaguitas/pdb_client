@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-//import XLSX from 'xlsx';
-// import Excel from 'exceljs';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../_helpers';
@@ -17,8 +15,6 @@ import TableSelect from '../../_components/project-table/table-select';
 import TableCheckBox from '../../_components/project-table/table-check-box';
 import TableSelectionRow from '../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../_components/project-table/table-selection-all-row';
-// import TabDisplay from '../setting/tab-display';
-// import TabFilter from '../setting/tab-filter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import { AST_SwitchBranch } from 'terser';
@@ -110,9 +106,6 @@ function doesMatch(search, array, type, isEqual) {
                 if(isEqual) {
                     return _.isEqual(array.toUpperCase(), search.toUpperCase());
                 } else {
-                    // console.log('array.toUpperCase():', array.toUpperCase());
-                    // console.log('search.toUpperCase():', search.toUpperCase());
-
                     return array.toUpperCase().includes(search.toUpperCase());
                 }
             case 'Date':
@@ -173,9 +166,12 @@ class ProjectTable extends Component {
         super(props);
         this.state = {
             header: {},
+            sort: {
+                id: '',
+                isAscending: true,
+            },
             selectedRows: [],
             selectAllRows: false,
-            // showModalSettings: false,
             isEqual: false,
             showModalUpload: false,
             fileName: '',
@@ -189,6 +185,7 @@ class ProjectTable extends Component {
             }
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
+        this.toggleSort = this.toggleSort.bind(this);
         this.resetHeaders = this.resetHeaders.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
@@ -277,6 +274,32 @@ class ProjectTable extends Component {
         }
     }
 
+    toggleSort(id) {
+        const { sort } = this.state;
+        if (sort.id != id) {
+            this.setState({
+                sort: {
+                    id: id,
+                    isAscending: true
+                }
+            });
+        } else if (!!sort.isAscending) {
+            this.setState({
+                sort: {
+                    id: id,
+                    isAscending: false
+                }
+            });
+        } else {
+            this.setState({
+                sort: {
+                    id: '',
+                    isAscending: true
+                }
+            });
+        }
+    }
+
     resetHeaders(event) {
         event.preventDefault();
         let tmpObj = this.state.header;
@@ -284,8 +307,12 @@ class ProjectTable extends Component {
             tmpObj[index] = ''
         });
         this.setState({
-            ...this.state,
-            header: tmpObj
+            // ...this.state,
+            header: tmpObj,
+            sort: {
+                id: '',
+                isAscending: true
+            }
         });
     }
 
@@ -296,7 +323,7 @@ class ProjectTable extends Component {
         const { header } = this.state;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
-            ...this.state,
+            // ...this.state,
             header:{
                 ...header,
                 [name]: value
@@ -414,7 +441,7 @@ class ProjectTable extends Component {
                         <TableInput
                             collection={field.collection}
                             objectId={field.objectId}
-                            parentId={field.parentId} //<--------parentId
+                            parentId={field.parentId}
                             fieldName={field.fieldName}
                             fieldValue={field.fieldValue}
                             disabled={field.disabled}
@@ -609,7 +636,7 @@ class ProjectTable extends Component {
                     </button>
                 </div>
 
-                <div className="row ml-1 full-height" style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd'}}>
+                <div className="row ml-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                     <div className="table-responsive custom-table-container custom-table-container__fixed-row" > 
                         <table className="table table-bordered table-sm text-nowrap table-striped" id="myProjectTable">
                             <thead>                                   

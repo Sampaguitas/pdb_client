@@ -32,40 +32,51 @@ function arraySorted(array, field) {
     }
 }
 
-function doesMatch(search, array, type) {
+function doesMatch(search, array, type, isEqual) {
     if (!search) {
         return true;
     } else if (!array && search != 'any' && search != 'false') {
         return false;
     } else {
-        switch(type) {
-            case 'Id':
-                return _.isEqual(search, array);
-            case 'String':
-                search = search.replace(/([()[{*+.$^\\|?])/g, "");
-                return !!array.match(new RegExp(search, "i"));
-            case 'Number':
-                search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
-                return !!String(array).match(new RegExp(search, "i"));
-                //return array == Number(search);
-            case 'Boolean':
-                if(search == 'any') {
-                    return true; //any or equal
-                } else if (search == 'true' && !!array) {
-                    return true; //true
-                } else if (search == 'false' && !array) {
-                    return true; //true
-                } else {
-                    return false;
-                }                
-            case 'Select':
-                if(search == 'any' || _.isEqual(search, array)) {
-                    return true; //any or equal
-                } else {
-                    return false;
-                }
-            default: return true;
-        }
+      switch(type) {
+        case 'Id':
+            return _.isEqual(search, array);
+        case 'String':
+            if(isEqual) {
+                return _.isEqual(array.toUpperCase(), search.toUpperCase());
+            } else {
+                return array.toUpperCase().includes(search.toUpperCase());
+            }
+        case 'Date':
+            if (isEqual) {
+                return _.isEqual(TypeToString(array, 'date', getDateFormat(myLocale)), search);
+            } else {
+                return TypeToString(array, 'date', getDateFormat(myLocale)).includes(search);
+            }
+        case 'Number':
+            if (isEqual) {
+                return _.isEqual( Intl.NumberFormat().format(array).toString(), Intl.NumberFormat().format(search).toString());
+            } else {
+                return Intl.NumberFormat().format(array).toString().includes(Intl.NumberFormat().format(search).toString());
+            }
+        case 'Boolean':
+            if(search == 'any') {
+                return true; //any or equal
+            } else if (search == 'true' && !!array) {
+                return true; //true
+            } else if (search == 'false' && !array) {
+                return true; //true
+            } else {
+                return false;
+            }
+        case 'Select':
+            if(search == 'any' || _.isEqual(search, array)) {
+                return true; //any or equal
+            } else {
+                return false;
+            }
+        default: return true;
+      }
     }
 }
 
@@ -231,13 +242,13 @@ class General extends React.Component {
         const { userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration } = this.state
         if (users) {
           return arraySorted(users, 'name').filter(function (user) {
-            return (doesMatch(userName, user.userName, 'String')
-            && doesMatch(name, user.name, 'String') 
-            && doesMatch(isExpediting, user.isExpediting, 'Boolean') 
-            && doesMatch(isInspection, user.isInspection, 'Boolean')
-            && doesMatch(isShipping, user.isShipping, 'Boolean')
-            && doesMatch(isWarehouse, user.isWarehouse, 'Boolean')
-            && doesMatch(isConfiguration, user.isConfiguration, 'Boolean'));
+            return (doesMatch(userName, user.userName, 'String', false)
+            && doesMatch(name, user.name, 'String', false) 
+            && doesMatch(isExpediting, user.isExpediting, 'Boolean', false) 
+            && doesMatch(isInspection, user.isInspection, 'Boolean', false)
+            && doesMatch(isShipping, user.isShipping, 'Boolean', false)
+            && doesMatch(isWarehouse, user.isWarehouse, 'Boolean', false)
+            && doesMatch(isConfiguration, user.isConfiguration, 'Boolean', false));
           });
         }
     }

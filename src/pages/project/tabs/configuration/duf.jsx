@@ -42,40 +42,88 @@ function arraySorted(array, field) {
     }
 }
 
-function doesMatch(search, array, type) {
+// function doesMatch(search, array, type) {
+//     if (!search) {
+//         return true;
+//     } else if (!array && search) {
+//         return false;
+//     } else {
+//         switch(type) {
+//             case 'Id':
+//                 return _.isEqual(search, array);
+//             case 'String':
+//                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
+//                 return !!array.match(new RegExp(search, "i"));
+//             case 'Number':
+//                 search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
+//                 return !!String(array).match(new RegExp(search, "i"));
+//                 //return array == Number(search);
+//             case 'Boolean':
+//                 if(search == 'any') {
+//                     return true; //any or equal
+//                 } else if (search == 'true' && !!array) {
+//                     return true; //true
+//                 } else if (search == 'false' && !array) {
+//                     return true; //true
+//                 } else {
+//                     return false;
+//                 }
+//             case 'Select':
+//                 if(search == 'any' || _.isEqual(search, array)) {
+//                     return true; //any or equal
+//                 } else {
+//                     return false;
+//                 }
+//             default: return true;
+//         }
+//     }
+// }
+
+function doesMatch(search, array, type, isEqual) {
     if (!search) {
         return true;
-    } else if (!array && search) {
+    } else if (!array && search != 'any' && search != 'false') {
         return false;
     } else {
-        switch(type) {
-            case 'Id':
-                return _.isEqual(search, array);
-            case 'String':
-                search = search.replace(/([()[{*+.$^\\|?])/g, "");
-                return !!array.match(new RegExp(search, "i"));
-            case 'Number':
-                search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
-                return !!String(array).match(new RegExp(search, "i"));
-                //return array == Number(search);
-            case 'Boolean':
-                if(search == 'any') {
-                    return true; //any or equal
-                } else if (search == 'true' && !!array) {
-                    return true; //true
-                } else if (search == 'false' && !array) {
-                    return true; //true
-                } else {
-                    return false;
-                }
-            case 'Select':
-                if(search == 'any' || _.isEqual(search, array)) {
-                    return true; //any or equal
-                } else {
-                    return false;
-                }
-            default: return true;
-        }
+      switch(type) {
+        case 'Id':
+            return _.isEqual(search, array);
+        case 'String':
+            if(isEqual) {
+                return _.isEqual(array.toUpperCase(), search.toUpperCase());
+            } else {
+                return array.toUpperCase().includes(search.toUpperCase());
+            }
+        case 'Date':
+            if (isEqual) {
+                return _.isEqual(TypeToString(array, 'date', getDateFormat(myLocale)), search);
+            } else {
+                return TypeToString(array, 'date', getDateFormat(myLocale)).includes(search);
+            }
+        case 'Number':
+            if (isEqual) {
+                return _.isEqual( Intl.NumberFormat().format(array).toString(), Intl.NumberFormat().format(search).toString());
+            } else {
+                return Intl.NumberFormat().format(array).toString().includes(Intl.NumberFormat().format(search).toString());
+            }
+        case 'Boolean':
+            if(search == 'any') {
+                return true; //any or equal
+            } else if (search == 'true' && !!array) {
+                return true; //true
+            } else if (search == 'false' && !array) {
+                return true; //true
+            } else {
+                return false;
+            }
+        case 'Select':
+            if(search == 'any' || _.isEqual(search, array)) {
+                return true; //any or equal
+            } else {
+                return false;
+            }
+        default: return true;
+      }
     }
 }
 
@@ -360,9 +408,9 @@ class Duf extends React.Component {
         if (array) {
         //   return arraySorted(array, 'forShow').filter(function (element) {
             return array.filter(function (element) {
-                return (doesMatch(selectedScreen, element.screenId, 'Id')
-                    && element.fields && doesMatch(custom, element.fields.custom, 'String')
-                    && doesMatch(forShow, element.forShow, 'Number')
+                return (doesMatch(selectedScreen, element.screenId, 'Id', false)
+                    && element.fields && doesMatch(custom, element.fields.custom, 'String', false)
+                    && doesMatch(forShow, element.forShow, 'Number', false)
                 );
             });
         } else {

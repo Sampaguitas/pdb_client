@@ -39,31 +39,54 @@ function arraySorted(array, field) {
     }
 }
 
-function doesMatch(search, array, type) {
+function doesMatch(search, array, type, isEqual) {
+    
     if (!search) {
         return true;
-    } else if (!array) {
-        return true;
+    } else if (!array && search != 'any' && search != 'false') {
+        return false;
     } else {
         switch(type) {
+            case 'Id':
+                return _.isEqual(search, array);
             case 'String':
-                search = search.replace(/([()[{*+.$^\\|?])/g, "");
-                return !!array.match(new RegExp(search, "i"));
-            case 'Number': 
-                return array == Number(search);
+                if(isEqual) {
+                    return _.isEqual(array.toUpperCase(), search.toUpperCase());
+                } else {
+                    return array.toUpperCase().includes(search.toUpperCase());
+                }
+            case 'Date':
+                if (isEqual) {
+                    return _.isEqual(TypeToString(array, 'date', getDateFormat(myLocale)), search);
+                } else {
+                    return TypeToString(array, 'date', getDateFormat(myLocale)).includes(search);
+                }
+            case 'Number':
+                if (isEqual) {
+                    return _.isEqual( Intl.NumberFormat().format(array).toString(), Intl.NumberFormat().format(search).toString());
+                } else {
+                    return Intl.NumberFormat().format(array).toString().includes(Intl.NumberFormat().format(search).toString());
+                }
             case 'Boolean':
-                if (Number(search) == 1) {
-                return true;
-                } else if (Number(search) == 2) {
-                return !!array == 1;
-                } else if (Number(search) == 3) {
-                return !!array == 0;
+                if(search == 'any') {
+                    return true; //any or equal
+                } else if (search == 'true' && !!array) {
+                    return true; //true
+                } else if (search == 'false' && !array) {
+                    return true; //true
+                } else {
+                    return false;
+                }
+            case 'Select':
+                if(search == 'any' || _.isEqual(search, array)) {
+                    return true; //any or equal
+                } else {
+                    return false;
                 }
             default: return true;
         }
     }
 }
-
 
 class Opco extends React.Component {
     constructor(props) {
@@ -177,11 +200,11 @@ class Opco extends React.Component {
         if (array) {
         //   return arraySorted(opcos.items, 'name').filter(function (opco) {
             return array.filter(function (opco) {
-            return (doesMatch(code, opco.code, 'String') 
-            && doesMatch(name, opco.name, 'String') 
-            && doesMatch(city, opco.city, 'String')
-            && doesMatch(country, opco.country, 'String')
-            && doesMatch(region, opco.region.name, 'String'));
+            return (doesMatch(code, opco.code, 'String', false) 
+            && doesMatch(name, opco.name, 'String', false) 
+            && doesMatch(city, opco.city, 'String', false)
+            && doesMatch(country, opco.country, 'String', false)
+            && doesMatch(region, opco.region.name, 'String', false));
           });
         }
     }

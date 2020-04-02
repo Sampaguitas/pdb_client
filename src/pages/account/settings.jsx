@@ -40,28 +40,51 @@ function arraySorted(array, field) {
   }
 }
 
-function doesMatch(search, array, type) {
+function doesMatch(search, array, type, isEqual) {
   if (!search) {
       return true;
-  // } else if (!array) {
-  //     return true;
+  } else if (!array && search != 'any' && search != 'false') {
+      return false;
   } else {
-      switch(type) {
-          case 'String':
-              search = search.replace(/([()[{*+.$^\\|?])/g, "");
-              return !!array.match(new RegExp(search, "i"));
-          case 'Number': 
-              return array == Number(search);
-          case 'Boolean':
-            if (search == 'any') {
-              return true;
-            } else if (search == 'true') {
-              return !!array == 1;
-            } else if (search == 'false') {
-              return !!array == 0;
-            }
-          default: return true;
-      }
+    switch(type) {
+      case 'Id':
+          return _.isEqual(search, array);
+      case 'String':
+          if(isEqual) {
+              return _.isEqual(array.toUpperCase(), search.toUpperCase());
+          } else {
+              return array.toUpperCase().includes(search.toUpperCase());
+          }
+      case 'Date':
+          if (isEqual) {
+              return _.isEqual(TypeToString(array, 'date', getDateFormat(myLocale)), search);
+          } else {
+              return TypeToString(array, 'date', getDateFormat(myLocale)).includes(search);
+          }
+      case 'Number':
+          if (isEqual) {
+              return _.isEqual( Intl.NumberFormat().format(array).toString(), Intl.NumberFormat().format(search).toString());
+          } else {
+              return Intl.NumberFormat().format(array).toString().includes(Intl.NumberFormat().format(search).toString());
+          }
+      case 'Boolean':
+          if(search == 'any') {
+              return true; //any or equal
+          } else if (search == 'true' && !!array) {
+              return true; //true
+          } else if (search == 'false' && !array) {
+              return true; //true
+          } else {
+              return false;
+          }
+      case 'Select':
+          if(search == 'any' || _.isEqual(search, array)) {
+              return true; //any or equal
+          } else {
+              return false;
+          }
+      default: return true;
+    }
   }
 }
 
@@ -181,12 +204,12 @@ class Settings extends React.Component {
     if (array) {
       // return arraySorted(users.items, 'name').filter(function (user) {
         return array.filter(function (user) {
-        return (doesMatch(userName, user.userName, 'String') 
-        && doesMatch(name, user.name, 'String') 
-        && doesMatch(opco, user.opco.name, 'String')
-        && doesMatch(region, user.opco.region.name, 'String')
-        && doesMatch(isAdmin, user.isAdmin, 'Boolean')
-        && doesMatch(isSuperAdmin, user.isSuperAdmin, 'Boolean'));
+        return (doesMatch(userName, user.userName, 'String', false) 
+        && doesMatch(name, user.name, 'String', false) 
+        && doesMatch(opco, user.opco.name, 'String', false)
+        && doesMatch(region, user.opco.region.name, 'String', false)
+        && doesMatch(isAdmin, user.isAdmin, 'Boolean', false)
+        && doesMatch(isSuperAdmin, user.isSuperAdmin, 'Boolean', false));
       });
     }
   }

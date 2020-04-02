@@ -35,18 +35,67 @@ function projectSorted(project) {
     }
 }
 
-function doesMatch(search, array, type) {
+// function doesMatch(search, array, type) {
+//     if (!search) {
+//         return true;
+//     } else if (!array) {
+//         return true;
+//     } else {
+//         switch(type) {
+//             case 'String':
+//                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
+//                 return !!array.match(new RegExp(search, "i"));
+//             case 'Number': 
+//                 return array == Number(search);
+//             default: return true;
+//         }
+//     }
+// }
+
+function doesMatch(search, array, type, isEqual) {
+    
     if (!search) {
         return true;
-    } else if (!array) {
-        return true;
+    } else if (!array && search != 'any' && search != 'false') {
+        return false;
     } else {
         switch(type) {
+            case 'Id':
+                return _.isEqual(search, array);
             case 'String':
-                search = search.replace(/([()[{*+.$^\\|?])/g, "");
-                return !!array.match(new RegExp(search, "i"));
-            case 'Number': 
-                return array == Number(search);
+                if(isEqual) {
+                    return _.isEqual(array.toUpperCase(), search.toUpperCase());
+                } else {
+                    return array.toUpperCase().includes(search.toUpperCase());
+                }
+            case 'Date':
+                if (isEqual) {
+                    return _.isEqual(TypeToString(array, 'date', getDateFormat(myLocale)), search);
+                } else {
+                    return TypeToString(array, 'date', getDateFormat(myLocale)).includes(search);
+                }
+            case 'Number':
+                if (isEqual) {
+                    return _.isEqual( Intl.NumberFormat().format(array).toString(), Intl.NumberFormat().format(search).toString());
+                } else {
+                    return Intl.NumberFormat().format(array).toString().includes(Intl.NumberFormat().format(search).toString());
+                }
+            case 'Boolean':
+                if(search == 'any') {
+                    return true; //any or equal
+                } else if (search == 'true' && !!array) {
+                    return true; //true
+                } else if (search == 'false' && !array) {
+                    return true; //true
+                }else {
+                    return false;
+                }
+            case 'Select':
+                if(search == 'any' || _.isEqual(search, array)) {
+                    return true; //any or equal
+                } else {
+                    return false;
+                }
             default: return true;
         }
     }
@@ -112,10 +161,10 @@ class Home extends React.Component {
         if (array) {
             // return projectSorted(projects).filter(function (project) {
                 return array.filter(function (project) {
-                return (doesMatch(number, project.number, 'Number') 
-                && doesMatch(name, project.name, 'String') 
-                && doesMatch(opco, project.opco.name, 'String') 
-                && doesMatch(erp, project.erp.name, 'String'));
+                return (doesMatch(number, project.number, 'Number', false) 
+                && doesMatch(name, project.name, 'String', false) 
+                && doesMatch(opco, project.opco.name, 'String', false) 
+                && doesMatch(erp, project.erp.name, 'String', false));
             });
         }
     }
@@ -127,7 +176,7 @@ class Home extends React.Component {
 
     withoutProjectMaster(projects){
         return this.filterName(projects).filter(function (project){
-            return (!doesMatch('999999', project.number, 'Number'));
+            return (!doesMatch('999999', project.number, 'Number', false));
         });
     }
 

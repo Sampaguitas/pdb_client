@@ -85,47 +85,51 @@ function findObj(array, search) {
     }
 }
 
-function doesMatch(search, array, type) {
+function doesMatch(search, array, type, isEqual) {
     if (!search) {
         return true;
     } else if (!array && search != 'any' && search != 'false') {
         return false;
     } else {
-        switch(type) {
-            case 'Id':
-                return _.isEqual(search, array);
-            case 'String':
-                search = search.replace(/([()[{*+.$^\\|?])/g, "");
-                return !!array.match(new RegExp(search, "i"));
-            case 'Number':
-                search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
-                return !!String(array).match(new RegExp(search, "i"));
-                //return array == Number(search);
-            case 'Boolean':
-                // if (Number(search) == 1) {
-                //     return true; //any
-                // } else if (Number(search) == 2) {
-                //     return !!array == 1; //true
-                // } else if (Number(search) == 3) {
-                //     return !!array == 0; //false
-                // }
-                if(search == 'any') {
-                    return true; //any or equal
-                } else if (search == 'true' && !!array) {
-                    return true; //true
-                } else if (search == 'false' && !array) {
-                    return true; //true
-                }else {
-                    return false;
-                }
-            case 'Select':
-                if(search == 'any' || _.isEqual(search, array)) {
-                    return true; //any or equal
-                } else {
-                    return false;
-                }
-            default: return true;
-        }
+      switch(type) {
+        case 'Id':
+            return _.isEqual(search, array);
+        case 'String':
+            if(isEqual) {
+                return _.isEqual(array.toUpperCase(), search.toUpperCase());
+            } else {
+                return array.toUpperCase().includes(search.toUpperCase());
+            }
+        case 'Date':
+            if (isEqual) {
+                return _.isEqual(TypeToString(array, 'date', getDateFormat(myLocale)), search);
+            } else {
+                return TypeToString(array, 'date', getDateFormat(myLocale)).includes(search);
+            }
+        case 'Number':
+            if (isEqual) {
+                return _.isEqual( Intl.NumberFormat().format(array).toString(), Intl.NumberFormat().format(search).toString());
+            } else {
+                return Intl.NumberFormat().format(array).toString().includes(Intl.NumberFormat().format(search).toString());
+            }
+        case 'Boolean':
+            if(search == 'any') {
+                return true; //any or equal
+            } else if (search == 'true' && !!array) {
+                return true; //true
+            } else if (search == 'false' && !array) {
+                return true; //true
+            } else {
+                return false;
+            }
+        case 'Select':
+            if(search == 'any' || _.isEqual(search, array)) {
+                return true; //any or equal
+            } else {
+                return false;
+            }
+        default: return true;
+      }
     }
 }
 
@@ -776,12 +780,12 @@ class Documents extends React.Component {
         if (array) {
         //   return arraySorted(array, 'worksheet', 'location', 'row', 'col').filter(function (element) {
             return array.filter(function (element) {
-            return (doesMatch(selectedTemplate, element.docdefId, 'Id')
-            && doesMatch(worksheet, element.worksheet, 'Select')
-            && doesMatch(location, element.location, 'Select')
-            && doesMatch(row, element.row, 'Number')
-            && doesMatch(col, element.col, 'Number')
-            && element.fields && doesMatch(custom, element.fields.custom, 'String')
+            return (doesMatch(selectedTemplate, element.docdefId, 'Id', false)
+            && doesMatch(worksheet, element.worksheet, 'Select', false)
+            && doesMatch(location, element.location, 'Select', false)
+            && doesMatch(row, element.row, 'Number', false)
+            && doesMatch(col, element.col, 'Number', false)
+            && element.fields && doesMatch(custom, element.fields.custom, 'String', false)
             );
           });
         } else {
