@@ -407,7 +407,7 @@ class ProjectTable extends Component {
         screenHeaders.map(screenHeader => {
             tempInputArray.push(
                 <HeaderInput
-                    type= {screenHeader.fields.type === 'Number' ? 'number' : 'text' }
+                    type={screenHeader.fields.type === 'Number' ? 'number' : 'text' }
                     title={screenHeader.fields.custom}
                     name={screenHeader._id}
                     value={header[screenHeader._id]}

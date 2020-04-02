@@ -46,43 +46,6 @@ function arraySorted(array, field) {
     }
 }
 
-// function doesMatch(search, array, type) {
-//     if (!search) {
-//         return true;
-//     } else if (!array && search != 'any' && search != 'false') {
-//         return false;
-//     } else {
-//         switch(type) {
-//             case 'Id':
-//                 return _.isEqual(search, array);
-//             case 'String':
-//                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
-//                 return !!array.match(new RegExp(search, "i"));
-//             case 'Number':
-//                 search = String(search).replace(/([()[{*+.$^\\|?])/g, "");
-//                 return !!String(array).match(new RegExp(search, "i"));
-//                 //return array == Number(search);
-//             case 'Boolean':
-//                 if(search == 'any') {
-//                     return true; //any or equal
-//                 } else if (search == 'true' && !!array) {
-//                     return true; //true
-//                 } else if (search == 'false' && !array) {
-//                     return true; //true
-//                 } else {
-//                     return false;
-//                 }                
-//             case 'Select':
-//                 if(search == 'any' || _.isEqual(search, array)) {
-//                     return true; //any or equal
-//                 } else {
-//                     return false;
-//                 }
-//             default: return true;
-//         }
-//     }
-// }
-
 function doesMatch(search, array, type, isEqual) {
     if (!search) {
         return true;

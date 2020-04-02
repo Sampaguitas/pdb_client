@@ -35,23 +35,6 @@ function projectSorted(project) {
     }
 }
 
-// function doesMatch(search, array, type) {
-//     if (!search) {
-//         return true;
-//     } else if (!array) {
-//         return true;
-//     } else {
-//         switch(type) {
-//             case 'String':
-//                 search = search.replace(/([()[{*+.$^\\|?])/g, "");
-//                 return !!array.match(new RegExp(search, "i"));
-//             case 'Number': 
-//                 return array == Number(search);
-//             default: return true;
-//         }
-//     }
-// }
-
 function doesMatch(search, array, type, isEqual) {
     
     if (!search) {
@@ -87,7 +70,7 @@ function doesMatch(search, array, type, isEqual) {
                     return true; //true
                 } else if (search == 'false' && !array) {
                     return true; //true
-                }else {
+                } else {
                     return false;
                 }
             case 'Select':

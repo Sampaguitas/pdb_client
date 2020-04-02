@@ -225,26 +225,31 @@ h5 {
   top: -1px !important;
   z-index: 1;
   background-color:white;
-  box-shadow: 0px 0px 1px #ddd !important;
   box-sizing: border-box;
-
+  background: -webkit-gradient(linear, left bottom, left top, color-stop(0, #eeeeee), color-stop(1, #ffffff));
+  background-image: -webkit-gradient(linear, 0% 100%, 0% 0%, from(rgb(238, 238, 238)), to(rgb(255, 255, 255)));
+  border-bottom-style: none !important;
+  border-bottom-width: '0px' !important;
+  
 }
 
 .custom-table-container__fixed-row thead th:first-child {
   left: -1px !important;
   z-index: 2;
+  background-size: 29px;
+  background-image: linear-gradient(to right, #f0f0ee, #f0f0ee 28px, rgba(38, 41, 44, 0.32) 29px);
+  border-bottom-style: none !important;
+  border-bottom-width: '0px' !important;
 }
 
 .custom-table-container > table > tbody > tr > th {
   position: sticky !important;
   left: -1px !important;
   z-index: 1;
-  background-color:white;
-  box-shadow: 0px 0px 1px #ddd !important;
+  background-size: 29px;
+  background-image: linear-gradient(to right, #f0f0ee, #f0f0ee 28px, rgba(38, 41, 44, 0.32) 29px);
   box-sizing: border-box;
 }
-
-
 
   /* //////////// Modal ////////////*/
 
@@ -449,3 +454,17 @@ margin-left: 50px;
   padding-right: 7.5px;
   padding-top: 3.75px;
 }
+
+/*-------------------align left------------------*/
+
+/* .btn-header {
+  white-space: nowrap;
+}
+
+.btn-header>span {
+  display: inline-block;
+  width: calc(100% - 20px);
+  font-size: 12px;
+  vertical-align: middle;
+  margin: 0px;
+} */
