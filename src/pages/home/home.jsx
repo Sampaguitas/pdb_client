@@ -20,16 +20,17 @@ import HeaderInput from '../../_components/project-table/header-input';
 // import './home.css';
 
 function projectSorted(array, sort) {
+    let tempArray = array.slice(0);
     switch(sort.name) {
         case 'number':
             if (sort.isAscending) {
-                return array.sort((a, b) => a.number - b.number);
+                return tempArray.sort((a, b) => a.number - b.number);
             } else {
-                return array.sort((a, b) => b.number - a.number);
+                return tempArray.sort((a, b) => b.number - a.number);
             }
         case 'name':
             if (sort.isAscending) {
-                return array.sort(function (a, b) {
+                return tempArray.sort(function (a, b) {
                     let nameA = a.name.toUpperCase();
                     let nameB = b.name.toUpperCase();
                     if (nameA < nameB) {
@@ -41,7 +42,7 @@ function projectSorted(array, sort) {
                     }
                 });
             } else {
-                return array.sort(function (a, b) {
+                return tempArray.sort(function (a, b) {
                     let nameA = a.name.toUpperCase();
                     let nameB = b.name.toUpperCase();
                     if (nameA > nameB) {
@@ -55,7 +56,7 @@ function projectSorted(array, sort) {
             }
         case 'opco':
             if (sort.isAscending) {
-                return array.sort(function (a, b) {
+                return tempArray.sort(function (a, b) {
                     let opcoA = a.opco.name.toUpperCase();
                     let opcoB = b.opco.name.toUpperCase();
                     if (opcoA < opcoB) {
@@ -67,7 +68,7 @@ function projectSorted(array, sort) {
                     }
                 });
             } else {
-                return array.sort(function (a, b) {
+                return tempArray.sort(function (a, b) {
                     let opcoA = a.opco.name.toUpperCase();
                     let opcoB = b.opco.name.toUpperCase();
                     if (opcoA > opcoB) {
@@ -81,7 +82,7 @@ function projectSorted(array, sort) {
             }
         case 'erp':
             if (sort.isAscending) {
-                return array.sort(function (a, b) {
+                return tempArray.sort(function (a, b) {
                     let erpA = a.erp.name.toUpperCase();
                     let erpB = b.erp.name.toUpperCase();
                     if (erpA < erpB) {
@@ -93,7 +94,7 @@ function projectSorted(array, sort) {
                     }
                 });
             } else {
-                return array.sort(function (a, b) {
+                return tempArray.sort(function (a, b) {
                     let erpA = a.erp.name.toUpperCase();
                     let erpB = b.erp.name.toUpperCase();
                     if (erpA > erpB) {
