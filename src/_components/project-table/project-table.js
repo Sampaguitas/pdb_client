@@ -167,7 +167,7 @@ class ProjectTable extends Component {
         this.state = {
             header: {},
             sort: {
-                id: '',
+                name: '',
                 isAscending: true,
             },
             selectedRows: [],
@@ -274,26 +274,27 @@ class ProjectTable extends Component {
         }
     }
 
-    toggleSort(id) {
+    toggleSort(event, name) {
+        event.preventDefault();
         const { sort } = this.state;
-        if (sort.id != id) {
+        if (sort.name != name) {
             this.setState({
                 sort: {
-                    id: id,
+                    name: name,
                     isAscending: true
                 }
             });
         } else if (!!sort.isAscending) {
             this.setState({
                 sort: {
-                    id: id,
+                    name: name,
                     isAscending: false
                 }
             });
         } else {
             this.setState({
                 sort: {
-                    id: '',
+                    name: '',
                     isAscending: true
                 }
             });
@@ -310,7 +311,7 @@ class ProjectTable extends Component {
             // ...this.state,
             header: tmpObj,
             sort: {
-                id: '',
+                name: '',
                 isAscending: true
             }
         });
@@ -401,7 +402,7 @@ class ProjectTable extends Component {
     }
 
     generateHeader(screenHeaders) {
-        const {header, selectAllRows} = this.state;
+        const {header, sort, selectAllRows} = this.state;
         const tempInputArray = []
         
         screenHeaders.map(screenHeader => {
@@ -413,6 +414,8 @@ class ProjectTable extends Component {
                     value={header[screenHeader._id]}
                     onChange={this.handleChangeHeader}
                     key={screenHeader._id}
+                    sort={sort}
+                    toggleSort={this.toggleSort}
                 />
             );
         });

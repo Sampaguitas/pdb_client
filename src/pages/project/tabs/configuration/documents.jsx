@@ -158,6 +158,10 @@ class Documents extends React.Component {
             col: '',
             custom: '',
             param: '',
+            sort: {
+                name: '',
+                isAscending: true,
+            },
             description:'',
             selectedTemplate:'0',
             fileName:'',
@@ -180,6 +184,7 @@ class Documents extends React.Component {
             newRowColor: 'inherit',
 
         }
+        this.toggleSort = this.toggleSort.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
@@ -304,6 +309,33 @@ class Documents extends React.Component {
                             }
                         });
                     }
+                }
+            });
+        }
+    }
+
+    toggleSort(event, name) {
+        event.preventDefault();
+        const { sort } = this.state;
+        if (sort.name != name) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: true
+                }
+            });
+        } else if (!!sort.isAscending) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: false
+                }
+            });
+        } else {
+            this.setState({
+                sort: {
+                    name: '',
+                    isAscending: true
                 }
             });
         }
@@ -817,6 +849,7 @@ class Documents extends React.Component {
             col,
             custom,
             param,
+            sort,
             description,
             selectedTemplate,
             selectedRows,
@@ -962,6 +995,8 @@ class Documents extends React.Component {
                                                 optionText="worksheet"
                                                 onChange={this.handleChangeHeader}
                                                 width ="15%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />                                        
                                         }
                                         <HeaderSelect
@@ -971,7 +1006,9 @@ class Documents extends React.Component {
                                             options={ArrLocation}
                                             optionText="location"
                                             onChange={this.handleChangeHeader}
-                                            width ={multi ? '10%' : '15%'}                                        
+                                            width ={multi ? '10%' : '15%'} 
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}                                       
                                         />
                                         <HeaderInput
                                             type="number"
@@ -980,6 +1017,8 @@ class Documents extends React.Component {
                                             value={row}
                                             onChange={this.handleChangeHeader}
                                             width ={multi ? '10%': '15%'}
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}
                                         />
                                         <HeaderInput
                                             type="number"
@@ -988,6 +1027,8 @@ class Documents extends React.Component {
                                             value={col}
                                             onChange={this.handleChangeHeader}
                                             width ={multi ? '10%': '15%'}
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}
                                         />
                                         <HeaderInput
                                             type="text"
@@ -996,6 +1037,8 @@ class Documents extends React.Component {
                                             value={custom}
                                             onChange={this.handleChangeHeader}
                                             width ="40%"
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}
                                         />
                                         <HeaderInput
                                             type="text"
@@ -1004,6 +1047,8 @@ class Documents extends React.Component {
                                             value={param}
                                             onChange={this.handleChangeHeader}
                                             width ="15%"
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}
                                         />
                                     </tr>
                                 </thead>

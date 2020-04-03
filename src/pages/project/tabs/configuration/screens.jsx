@@ -98,13 +98,17 @@ class Screens extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            custom: '',
+            forShow: '',
+            forSelect: '',
             align: '',
             edit: '',
-            forSelect: '',
-            forShow: '',
+            sort: {
+                name: '',
+                isAscending: true,
+            },
             screenId: '',
             fieldId: '',
-            custom: '',
             selectedScreen:'5cd2b643fd333616dc360b66',
             // FromTbls: [],
             selectedRows: [],
@@ -120,6 +124,8 @@ class Screens extends React.Component {
             //creating new row
             newRowColor: 'inherit',
         }
+        this.toggleSort = this.toggleSort.bind(this);
+        this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
@@ -127,7 +133,6 @@ class Screens extends React.Component {
         this.handleDelete = this.handleDelete.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
-        this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeScreen = this.handleChangeScreen.bind(this);
         this.filterName = this.filterName.bind(this);
         this.generateScreensOptions = this.generateScreensOptions.bind(this);
@@ -189,6 +194,33 @@ class Screens extends React.Component {
                     target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
                 }
                 break;
+        }
+    }
+
+    toggleSort(event, name) {
+        event.preventDefault();
+        const { sort } = this.state;
+        if (sort.name != name) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: true
+                }
+            });
+        } else if (!!sort.isAscending) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: false
+                }
+            });
+        } else {
+            this.setState({
+                sort: {
+                    name: '',
+                    isAscending: true
+                }
+            });
         }
     }
 
@@ -444,13 +476,14 @@ class Screens extends React.Component {
         } = this.props;
         
         const {
+            custom,
+            forShow,
+            forSelect,
             align,
             edit,
-            forSelect,
-            forShow,
+            sort,
             screenId,
             fieldId,
-            custom,
             selectedScreen,
             selectedRows,
             selectAllRows,
@@ -540,6 +573,8 @@ class Screens extends React.Component {
                                         value={custom}
                                         onChange={this.handleChangeHeader}
                                         width="calc(45% - 30px)"
+                                        sort={sort}
+                                        toggleSort={this.toggleSort}
                                     />
                                     <HeaderInput
                                         type="number"
@@ -548,6 +583,8 @@ class Screens extends React.Component {
                                         value={forShow}
                                         onChange={this.handleChangeHeader}
                                         width ="15%"
+                                        sort={sort}
+                                        toggleSort={this.toggleSort}
                                     />                                
                                     <HeaderInput
                                         type="number"
@@ -556,15 +593,19 @@ class Screens extends React.Component {
                                         value={forSelect}
                                         onChange={this.handleChangeHeader}
                                         width ="15%"
+                                        sort={sort}
+                                        toggleSort={this.toggleSort}
                                     />                                 
                                     <HeaderSelect
-                                            title="Location"
-                                            name="align"
-                                            value={align}
-                                            options={arrAlign}
-                                            optionText="name"
-                                            onChange={this.handleChangeHeader}
-                                            width ="15%"
+                                        title="Location"
+                                        name="align"
+                                        value={align}
+                                        options={arrAlign}
+                                        optionText="name"
+                                        onChange={this.handleChangeHeader}
+                                        width ="15%"
+                                        sort={sort}
+                                        toggleSort={this.toggleSort}
                                     />                         
                                     <HeaderCheckBox 
                                         title="Disable"
@@ -572,6 +613,8 @@ class Screens extends React.Component {
                                         value={edit}
                                         onChange={this.handleChangeHeader}
                                         width ="10%"
+                                        sort={sort}
+                                        toggleSort={this.toggleSort}
                                     />
                                 </tr>
                             </thead>

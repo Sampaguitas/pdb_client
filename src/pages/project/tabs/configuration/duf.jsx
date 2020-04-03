@@ -98,6 +98,10 @@ class Duf extends React.Component {
             screenId: '',
             fieldId: '',
             custom: '',
+            sort: {
+                name: '',
+                isAscending: true,
+            },
             selectedScreen:'5cd2b646fd333616dc360b6d',
             selectedRows: [],
             selectAllRows: false,
@@ -112,6 +116,7 @@ class Duf extends React.Component {
             //creating new row
             newRowColor: 'inherit',
         }
+        this.toggleSort = this.toggleSort.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
@@ -177,6 +182,33 @@ class Duf extends React.Component {
                     target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
                 }
                 break;
+        }
+    }
+
+    toggleSort(event, name) {
+        event.preventDefault();
+        const { sort } = this.state;
+        if (sort.name != name) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: true
+                }
+            });
+        } else if (!!sort.isAscending) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: false
+                }
+            });
+        } else {
+            this.setState({
+                sort: {
+                    name: '',
+                    isAscending: true
+                }
+            });
         }
     }
 
@@ -404,6 +436,7 @@ class Duf extends React.Component {
             screenId,
             fieldId,
             custom,
+            sort,
             selectedScreen,
             selectedRows,
             selectAllRows,
@@ -449,6 +482,8 @@ class Duf extends React.Component {
                                         value={forShow}
                                         onChange={this.handleChangeHeader}
                                         width="calc(15% - 30px)"
+                                        sort={sort}
+                                        toggleSort={this.toggleSort}
                                     />                                
                                     <HeaderInput
                                         type="text"
@@ -457,6 +492,8 @@ class Duf extends React.Component {
                                         value={custom}
                                         onChange={this.handleChangeHeader}
                                         width="85%"
+                                        sort={sort}
+                                        toggleSort={this.toggleSort}
                                     />                
                                 </tr>
                             </thead>

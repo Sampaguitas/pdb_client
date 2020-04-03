@@ -92,9 +92,14 @@ class Home extends React.Component {
             name: '',
             opco:'',
             erp: '',
+            sort: {
+                name: '',
+                isAscending: true,
+            },
             loaded: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
+        this.toggleSort = this.toggleSort.bind(this);
         this.handleOnclick = this.handleOnclick.bind(this);
         this.filterName = this.filterName.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -122,6 +127,33 @@ class Home extends React.Component {
         event.preventDefault;
         const { dispatch } = this.props;
         dispatch(alertActions.clear());
+    }
+
+    toggleSort(event, name) {
+        event.preventDefault();
+        const { sort } = this.state;
+        if (sort.name != name) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: true
+                }
+            });
+        } else if (!!sort.isAscending) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: false
+                }
+            });
+        } else {
+            this.setState({
+                sort: {
+                    name: '',
+                    isAscending: true
+                }
+            });
+        }
     }
 
     handleOnclick(event, project) {
@@ -164,7 +196,7 @@ class Home extends React.Component {
     }
 
     render() {
-        const { number, name, opco, erp  } = this.state;
+        const { number, name, opco, erp, sort } = this.state;
         const { alert, projects } = this.props;
         return (
             <Layout alert={alert}>
@@ -180,7 +212,6 @@ class Home extends React.Component {
                         <li className="breadcrumb-item active" aria-current="page">Home</li>
                     </ol>
                 </nav>
-                {/* <h2>Overview</h2> */}
                 <hr />
                 <div id="overview" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
@@ -207,6 +238,8 @@ class Home extends React.Component {
                                                 value={number}
                                                 onChange={this.handleChange}
                                                 width="10%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                                 
                                             />
                                             <HeaderInput
@@ -216,6 +249,8 @@ class Home extends React.Component {
                                                 value={name}
                                                 onChange={this.handleChange}
                                                 width="40%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -224,6 +259,8 @@ class Home extends React.Component {
                                                 value={opco}
                                                 onChange={this.handleChange}
                                                 width="40%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -232,16 +269,18 @@ class Home extends React.Component {
                                                 value={erp}
                                                 onChange={this.handleChange}
                                                 width="10%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                         </tr>
                                     </thead>
                                     <tbody className="full-height">
                                         {projects.items && this.withoutProjectMaster(projects.items).map((project) =>
                                             <tr key={project._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, project)}>
-                                                <td>{project.number}</td>
-                                                <td>{project.name}</td>
-                                                <td>{project.opco.name}</td>
-                                                <td>{project.erp.name}</td>
+                                                <td className="no-select">{project.number}</td>
+                                                <td className="no-select">{project.name}</td>
+                                                <td className="no-select">{project.opco.name}</td>
+                                                <td className="no-select">{project.erp.name}</td>
                                             </tr>
                                         )}
                                     </tbody>

@@ -104,19 +104,23 @@ class Settings extends React.Component {
     super(props);
     this.state = {
       user: {},
-      userName: "",
-      name: "",
-      opco: "",
-      region: "",
+      userName: '',
+      name: '',
+      opco: '',
+      region: '',
       isAdmin: 0,
       isSuperAdmin: 0,
-      // users: [],
+      sort: {
+        name: '',
+        isAscending: true,
+      },
       loaded: false,
       submitted: false,
       show: false
       
     };
     this.handleClearAlert = this.handleClearAlert.bind(this);
+    this.toggleSort = this.toggleSort.bind(this);
     this.showModal = this.showModal.bind(this);
     this.hideModal = this.hideModal.bind(this);
     this.handleChangeUser = this.handleChangeUser.bind(this);
@@ -151,6 +155,33 @@ class Settings extends React.Component {
     const { dispatch } = this.props;
     dispatch(alertActions.clear());
   }
+
+  toggleSort(event, name) {
+    event.preventDefault();
+    const { sort } = this.state;
+    if (sort.name != name) {
+        this.setState({
+            sort: {
+                name: name,
+                isAscending: true
+            }
+        });
+    } else if (!!sort.isAscending) {
+        this.setState({
+            sort: {
+                name: name,
+                isAscending: false
+            }
+        });
+    } else {
+        this.setState({
+            sort: {
+                name: '',
+                isAscending: true
+            }
+        });
+    }
+}
 
   showModal() {
     this.setState({
@@ -306,7 +337,7 @@ class Settings extends React.Component {
   }
 
   render() {
-    const { user, userName, name, opco, region, isAdmin, isSuperAdmin, submitted } = this.state;
+    const { user, userName, name, opco, region, isAdmin, isSuperAdmin, sort, submitted } = this.state;
     const { users, registering, userUpdating, userDeleting, alert, opcos } = this.props;
 
     return (
@@ -326,7 +357,6 @@ class Settings extends React.Component {
                 <li className="breadcrumb-item active" aria-current="page">Settings</li>
             </ol>
         </nav>
-          {/* <h2>Settings</h2> */}
           <hr />
           <div id="setting" className="full-height">
             <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
@@ -352,7 +382,9 @@ class Settings extends React.Component {
                             name="userName"
                             value={userName}
                             onChange={this.handleChangeHeader}
-                            width="10%" 
+                            width="10%"
+                            sort={sort}
+                            toggleSort={this.toggleSort} 
                         />
                         <HeaderInput
                             type="text"
@@ -360,7 +392,9 @@ class Settings extends React.Component {
                             name="name"
                             value={name}
                             onChange={this.handleChangeHeader}
-                            width="30%" 
+                            width="30%"
+                            sort={sort}
+                            toggleSort={this.toggleSort} 
                         />
                         <HeaderInput
                             type="text"
@@ -369,6 +403,8 @@ class Settings extends React.Component {
                             value={opco}
                             onChange={this.handleChangeHeader}
                             width="30%"
+                            sort={sort}
+                            toggleSort={this.toggleSort} 
                         />
                         <HeaderInput
                             type="text"
@@ -377,6 +413,8 @@ class Settings extends React.Component {
                             value={region}
                             onChange={this.handleChangeHeader}
                             width="10%"
+                            sort={sort}
+                            toggleSort={this.toggleSort} 
                         />
                         <HeaderCheckBox
                             title="Admin"
@@ -384,6 +422,8 @@ class Settings extends React.Component {
                             value={isAdmin}
                             onChange={this.handleChangeHeader}
                             width="10%"
+                            sort={sort}
+                            toggleSort={this.toggleSort} 
                         />
                         <HeaderCheckBox
                             title="SpAdmin"
@@ -391,16 +431,18 @@ class Settings extends React.Component {
                             value={isSuperAdmin}
                             onChange={this.handleChangeHeader}
                             width="10%"
+                            sort={sort}
+                            toggleSort={this.toggleSort} 
                         />
                       </tr>
                     </thead>
                     <tbody className="full-height">
                       {users.items && this.filterName(users.items).map((u) =>
                         <tr key={u._id}>
-                          <td onClick={(event) => this.handleOnclick(event, u._id)}>{u.userName}</td>
-                          <td onClick={(event) => this.handleOnclick(event, u._id)}>{u.name}</td>
-                          <td onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.name}</td>
-                          <td onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.region.name}</td>
+                          <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.userName}</td>
+                          <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.name}</td>
+                          <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.name}</td>
+                          <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.region.name}</td>
                           <td data-type="checkbox">
                               <TableCheckBoxAdmin
                                   id={u._id}

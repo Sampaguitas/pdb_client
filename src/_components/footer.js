@@ -9,7 +9,7 @@ class Footer extends Component {
                 {isLoggedIn() &&
                     <footer className="footer fixed-bottom bg-light" >
                         <div className="text-right mr-5">
-                            <span className="text-muted">© {(new Date().getFullYear())} - Van Leeuwen Pipe and Tube. All rights reserved (v0.1) - {process.env.NODE_ENV}</span>
+                            <span className="text-muted no-select">© {(new Date().getFullYear())} - Van Leeuwen Pipe and Tube. All rights reserved (v0.1) - {process.env.NODE_ENV}</span>
                         </div>
                     </footer>
                 }

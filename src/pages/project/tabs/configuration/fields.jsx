@@ -83,13 +83,18 @@ class Fields extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: '',
-            custom: '',
             fromTbl: '',
+            name: '',
             type: '',
+            custom: '',
+            sort: {
+                name: '',
+                isAscending: true,
+            },
             loaded: false,
             show: false,
         }
+        this.toggleSort = this.toggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
         this.generateHeader = this.generateHeader.bind(this);
@@ -153,6 +158,33 @@ class Fields extends React.Component {
         }
     }
 
+    toggleSort(event, name) {
+        event.preventDefault();
+        const { sort } = this.state;
+        if (sort.name != name) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: true
+                }
+            });
+        } else if (!!sort.isAscending) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: false
+                }
+            });
+        } else {
+            this.setState({
+                sort: {
+                    name: '',
+                    isAscending: true
+                }
+            });
+        }
+    }
+
     handleChangeHeader(event) {
         const target = event.target;
         const name = target.name;
@@ -186,7 +218,7 @@ class Fields extends React.Component {
     }
 
     generateHeader() {
-        const { name, custom, fromTbl, type } = this.state;
+        const { fromTbl, name, type, custom, sort } = this.state;
         return (
             <tr>
                 <HeaderInput
@@ -195,6 +227,8 @@ class Fields extends React.Component {
                     name="fromTbl"
                     value={fromTbl}
                     onChange={this.handleChangeHeader}
+                    sort={sort}
+                    toggleSort={this.toggleSort}
                 />
                 <HeaderInput
                     type="text"
@@ -202,6 +236,8 @@ class Fields extends React.Component {
                     name="name"
                     value={name}
                     onChange={this.handleChangeHeader}
+                    sort={sort}
+                    toggleSort={this.toggleSort}
                 />                                
                 <HeaderInput
                     type="text"
@@ -209,6 +245,8 @@ class Fields extends React.Component {
                     name="type"
                     value={type}
                     onChange={this.handleChangeHeader}
+                    sort={sort}
+                    toggleSort={this.toggleSort}
 
                 />                                    
                 <HeaderInput
@@ -217,6 +255,8 @@ class Fields extends React.Component {
                     name="custom"
                     value={custom}
                     onChange={this.handleChangeHeader}
+                    sort={sort}
+                    toggleSort={this.toggleSort}
                 />                                      
             </tr>
         );

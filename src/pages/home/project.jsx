@@ -112,9 +112,14 @@ class Project extends React.Component {
             isShipping: '',
             isWarehouse: '',
             isConfiguration: '',
+            sort: {
+                name: '',
+                isAscending: true,
+            },
             submitted: false
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
+        this.toggleSort = this.toggleSort.bind(this);
         this.handleChangeProject = this.handleChangeProject.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
@@ -203,6 +208,33 @@ class Project extends React.Component {
         dispatch(alertActions.clear());
     }
 
+    toggleSort(event, name) {
+        event.preventDefault();
+        const { sort } = this.state;
+        if (sort.name != name) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: true
+                }
+            });
+        } else if (!!sort.isAscending) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: false
+                }
+            });
+        } else {
+            this.setState({
+                sort: {
+                    name: '',
+                    isAscending: true
+                }
+            });
+        }
+    }
+
     handleChangeProject(event) {
         const { project } = this.state;
         const { name, value } = event.target;
@@ -287,7 +319,7 @@ class Project extends React.Component {
 
     render() {
         const { alert, currencies, erps, projectCreating, opcos, projects, users } = this.props;
-        const { project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, submitted } = this.state; //loaded
+        const { project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, sort, submitted } = this.state; //loaded
         const { projectUsers } = this.state.project;
         return (
             <Layout alert={alert}>
@@ -321,7 +353,9 @@ class Project extends React.Component {
                                                 name="userName"
                                                 value={userName}
                                                 onChange={this.handleChangeHeader}
-                                                width="10%" 
+                                                width="10%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -329,7 +363,9 @@ class Project extends React.Component {
                                                 name="name"
                                                 value={name}
                                                 onChange={this.handleChangeHeader}
-                                                width="40%" 
+                                                width="40%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort} 
                                             />
                                             <HeaderCheckBox
                                                 title="Expediting"
@@ -337,6 +373,8 @@ class Project extends React.Component {
                                                 value={isExpediting}
                                                 onChange={this.handleChangeHeader}
                                                 width="10%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                             <HeaderCheckBox
                                                 title="Inspection"
@@ -344,6 +382,8 @@ class Project extends React.Component {
                                                 value={isInspection}
                                                 onChange={this.handleChangeHeader}
                                                 width="10%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                             <HeaderCheckBox
                                                 title="Shipping"
@@ -351,6 +391,8 @@ class Project extends React.Component {
                                                 value={isShipping}
                                                 onChange={this.handleChangeHeader}
                                                 width="10%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                             <HeaderCheckBox
                                                 title="Warehouse"
@@ -358,6 +400,8 @@ class Project extends React.Component {
                                                 value={isWarehouse}
                                                 onChange={this.handleChangeHeader}
                                                 width="10%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                             <HeaderCheckBox
                                                 title="Config"
@@ -365,14 +409,16 @@ class Project extends React.Component {
                                                 value={isConfiguration}
                                                 onChange={this.handleChangeHeader}
                                                 width="10%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                         </tr>
                                     </thead>
                                     <tbody className="full-height">
                                         {projectUsers && this.filterName(projectUsers).map(u => (
                                             <tr key={u.userId}>
-                                                <td>{u.userName}</td>
-                                                <td>{u.name}</td>
+                                                <td className="no-select">{u.userName}</td>
+                                                <td className="no-select">{u.name}</td>
                                                 <TableCheckBoxRole
                                                     id={u.userId}
                                                     checked={u.isExpediting}

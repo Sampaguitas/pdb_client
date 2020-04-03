@@ -99,11 +99,15 @@ class General extends React.Component {
             isShipping: '',
             isWarehouse: '',
             isConfiguration: '',
+            sort: {
+                name: '',
+                isAscending: true,
+            },
         };
-        
+        this.toggleSort = this.toggleSort.bind(this);
+        this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleIsRole = this.handleIsRole.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
         this.accessibleArray = this.accessibleArray.bind(this);
         this.handleIsRole = this.handleIsRole.bind(this);
@@ -210,6 +214,40 @@ class General extends React.Component {
         }
     }
 
+    toggleSort(event, name) {
+        event.preventDefault();
+        const { sort } = this.state;
+        if (sort.name != name) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: true
+                }
+            });
+        } else if (!!sort.isAscending) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: false
+                }
+            });
+        } else {
+            this.setState({
+                sort: {
+                    name: '',
+                    isAscending: true
+                }
+            });
+        }
+    }
+
+    handleChangeHeader(event) {
+        const { name, value } = event.target;
+        this.setState({
+            [name]: value
+        });
+    }
+
     handleIsRole(event, role) {
         const { name } = event.target;
         const { projectUsers } = this.state.project;
@@ -228,13 +266,6 @@ class General extends React.Component {
                 ...project,
                 [name]: value
             }
-        });
-    }
-
-    handleChangeHeader(event) {
-        const { name, value } = event.target;
-        this.setState({
-            [name]: value
         });
     }
 
@@ -315,6 +346,7 @@ class General extends React.Component {
             isShipping,
             isWarehouse,
             isConfiguration,
+            sort
         } = this.state;  
 
         const { projectUsers } = this.state.project;
@@ -333,6 +365,8 @@ class General extends React.Component {
                                             value={userName}
                                             onChange={this.handleChangeHeader}
                                             width ="10%"
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}
                                         />                                            
                                         <HeaderInput
                                             type="text"
@@ -341,6 +375,8 @@ class General extends React.Component {
                                             value={name}
                                             onChange={this.handleChangeHeader}
                                             width ="40%"
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}
                                         />                                             
                                         <HeaderCheckBox 
                                             title="Expediting"
@@ -348,6 +384,8 @@ class General extends React.Component {
                                             value={isExpediting}
                                             onChange={this.handleChangeHeader}
                                             width ="10%"
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}
                                         />                                            
                                         <HeaderCheckBox 
                                             title="Inspection"
@@ -355,6 +393,8 @@ class General extends React.Component {
                                             value={isInspection}
                                             onChange={this.handleChangeHeader}
                                             width ="10%"
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}
                                         /> 
                                         <HeaderCheckBox 
                                             title="Shipping"
@@ -362,6 +402,8 @@ class General extends React.Component {
                                             value={isShipping}
                                             onChange={this.handleChangeHeader}
                                             width ="10%"
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}
                                         /> 
                                         <HeaderCheckBox 
                                             title="Warehouse"
@@ -369,6 +411,8 @@ class General extends React.Component {
                                             value={isWarehouse}
                                             onChange={this.handleChangeHeader}
                                             width ="10%"
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}
                                         />
                                         <HeaderCheckBox 
                                             title="Config"
@@ -376,14 +420,16 @@ class General extends React.Component {
                                             value={isConfiguration}
                                             onChange={this.handleChangeHeader}
                                             width ="10%"
+                                            sort={sort}
+                                            toggleSort={this.toggleSort}
                                         />
                                     </tr>
                                 </thead>
                                 <tbody className="full-height">
                                     {projectUsers && this.filterName(projectUsers).map(u => (
                                         <tr key={u.userId}>
-                                            <td>{u.userName}</td>
-                                            <td>{u.name}</td>
+                                            <td className="no-select">{u.userName}</td>
+                                            <td className="no-select">{u.name}</td>
                                             <TableCheckBoxRole
                                                 id={u.userId}
                                                 checked={u.isExpediting}

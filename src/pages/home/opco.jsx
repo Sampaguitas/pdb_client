@@ -94,15 +94,20 @@ class Opco extends React.Component {
 
         this.state = {
             opco: {},
-            code: "",
-            name: "",
-            city: "",
-            country: "",
-            region: "",
+            code: '',
+            name: '',
+            city: '',
+            country: '',
+            region: '',
+            sort: {
+                name: '',
+                isAscending: true,
+            },
             submitted: false,
             show: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
+        this.toggleSort = this.toggleSort.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
         this.handleChangeOpco = this.handleChangeOpco.bind(this);
@@ -137,6 +142,33 @@ class Opco extends React.Component {
         event.preventDefault;
         const { dispatch } = this.props;
         dispatch(alertActions.clear());
+    }
+
+    toggleSort(event, name) {
+        event.preventDefault();
+        const { sort } = this.state;
+        if (sort.name != name) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: true
+                }
+            });
+        } else if (!!sort.isAscending) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: false
+                }
+            });
+        } else {
+            this.setState({
+                sort: {
+                    name: '',
+                    isAscending: true
+                }
+            });
+        }
     }
 
     showModal() {
@@ -280,7 +312,7 @@ class Opco extends React.Component {
 
     render() {
         const { alert, opcoCreating, opcoUpdating, opcoDeleting, locales, regions, opcos } = this.props;
-        const { opco, show, code, name, city, country, region, submitted } = this.state;
+        const { opco, show, code, name, city, country, region, sort, submitted } = this.state;
         return (
             <Layout alert={alert}>
                 {alert.message && 
@@ -324,7 +356,9 @@ class Opco extends React.Component {
                                                 name="code"
                                                 value={code}
                                                 onChange={this.handleChangeHeader}
-                                                width="15%" 
+                                                width="15%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -332,7 +366,9 @@ class Opco extends React.Component {
                                                 name="name"
                                                 value={name}
                                                 onChange={this.handleChangeHeader}
-                                                width="40%" 
+                                                width="40%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort} 
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -340,7 +376,9 @@ class Opco extends React.Component {
                                                 name="city"
                                                 value={city}
                                                 onChange={this.handleChangeHeader}
-                                                width="15%" 
+                                                width="15%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -348,7 +386,9 @@ class Opco extends React.Component {
                                                 name="country"
                                                 value={country}
                                                 onChange={this.handleChangeHeader}
-                                                width="15%" 
+                                                width="15%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -356,18 +396,20 @@ class Opco extends React.Component {
                                                 name="region"
                                                 value={region}
                                                 onChange={this.handleChangeHeader}
-                                                width="15%" 
+                                                width="15%"
+                                                sort={sort}
+                                                toggleSort={this.toggleSort} 
                                             />
                                         </tr>
                                     </thead>
                                     <tbody className="full-height">
                                         {opcos.items && this.filterName(opcos.items).map((o) =>
                                             <tr key={o._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, o._id)}>
-                                                <td>{o.code}</td>
-                                                <td>{o.name}</td>
-                                                <td>{o.city}</td>
-                                                <td>{o.country}</td>
-                                                <td>{o.region.name}</td>
+                                                <td className="no-select">{o.code}</td>
+                                                <td className="no-select">{o.name}</td>
+                                                <td className="no-select">{o.city}</td>
+                                                <td className="no-select">{o.country}</td>
+                                                <td className="no-select">{o.region.name}</td>
                                             </tr>
                                         )}
                                     </tbody>

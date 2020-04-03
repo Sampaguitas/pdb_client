@@ -183,6 +183,10 @@ class Suppliers extends React.Component {
             // selectedIds: [],
             //project-table
             header: {},
+            sort: {
+                name: '',
+                isAscending: true,
+            },
             selectedRows: [],
             selectAllRows: false,
             isEqual: false,
@@ -196,7 +200,7 @@ class Suppliers extends React.Component {
         }
         // this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
-        
+        this.toggleSort = this.toggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeRow = this.handleChangeRow.bind(this);
 
@@ -294,6 +298,33 @@ class Suppliers extends React.Component {
                     target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
                 }
                 break;
+        }
+    }
+
+    toggleSort(event, name) {
+        event.preventDefault();
+        const { sort } = this.state;
+        if (sort.name != name) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: true
+                }
+            });
+        } else if (!!sort.isAscending) {
+            this.setState({
+                sort: {
+                    name: name,
+                    isAscending: false
+                }
+            });
+        } else {
+            this.setState({
+                sort: {
+                    name: '',
+                    isAscending: true
+                }
+            });
         }
     }
 
@@ -414,7 +445,7 @@ class Suppliers extends React.Component {
     }
 
     generateHeader(screenHeaders) {
-        const {header, selectAllRows} = this.state;
+        const {header, selectAllRows, sort} = this.state;
         if (!_.isEmpty(screenHeaders)) {
             const tempInputArray = [];
             screenHeaders.map(screenHeader => {
@@ -422,12 +453,12 @@ class Suppliers extends React.Component {
                     <HeaderInput
                         type={screenHeader.fields.type === 'Number' ? 'number' : 'text' }
                         title={screenHeader.fields.custom}
-                        // name={screenHeader.fieldId}
                         name={screenHeader._id}
-                        // value={header[screenHeader.fieldId]}
                         value={header[screenHeader._id]}
                         onChange={this.handleChangeHeader}
                         key={screenHeader._id}
+                        sort={sort}
+                        toggleSort={this.toggleSort}
                     />
                 );
             });

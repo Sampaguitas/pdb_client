@@ -457,14 +457,40 @@ margin-left: 50px;
 
 /*-------------------align left------------------*/
 
-/* .btn-header {
+.btn-header {
   white-space: nowrap;
+  height: 27px;
+  padding: 5px;
 }
 
 .btn-header>span {
   display: inline-block;
-  width: calc(100% - 20px);
   font-size: 12px;
   vertical-align: middle;
   margin: 0px;
-} */
+  padding: 0px;
+}
+
+.btn-header-title {
+ text-align: left;
+ width: calc(100% - 20px);
+}
+
+.btn-header-icon {
+  text-align: right;
+  width: 20px;
+ }
+
+ .btn-header-icon__icon {
+   vertical-align: top;
+ }
+
+.no-select {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
