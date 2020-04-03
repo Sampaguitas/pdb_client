@@ -101,46 +101,46 @@ function opcoSorted(array, sort) {
     }
 }
 
-function doesMatch(search, array, type, isEqual) {
+function doesMatch(search, value, type, isEqual) {
     
     if (!search) {
         return true;
-    } else if (!array && search != 'any' && search != 'false') {
+    } else if (!value && search != 'any' && search != 'false') {
         return false;
     } else {
         switch(type) {
             case 'Id':
-                return _.isEqual(search, array);
+                return _.isEqual(search, value);
             case 'String':
                 if(isEqual) {
-                    return _.isEqual(array.toUpperCase(), search.toUpperCase());
+                    return _.isEqual(value.toUpperCase(), search.toUpperCase());
                 } else {
-                    return array.toUpperCase().includes(search.toUpperCase());
+                    return value.toUpperCase().includes(search.toUpperCase());
                 }
             case 'Date':
                 if (isEqual) {
-                    return _.isEqual(TypeToString(array, 'date', getDateFormat(myLocale)), search);
+                    return _.isEqual(TypeToString(value, 'date', getDateFormat(myLocale)), search);
                 } else {
-                    return TypeToString(array, 'date', getDateFormat(myLocale)).includes(search);
+                    return TypeToString(value, 'date', getDateFormat(myLocale)).includes(search);
                 }
             case 'Number':
                 if (isEqual) {
-                    return _.isEqual( Intl.NumberFormat().format(array).toString(), Intl.NumberFormat().format(search).toString());
+                    return _.isEqual( Intl.NumberFormat().format(value).toString(), Intl.NumberFormat().format(search).toString());
                 } else {
-                    return Intl.NumberFormat().format(array).toString().includes(Intl.NumberFormat().format(search).toString());
+                    return Intl.NumberFormat().format(value).toString().includes(Intl.NumberFormat().format(search).toString());
                 }
             case 'Boolean':
                 if(search == 'any') {
                     return true; //any or equal
-                } else if (search == 'true' && !!array) {
+                } else if (search == 'true' && !!value) {
                     return true; //true
-                } else if (search == 'false' && !array) {
+                } else if (search == 'false' && !value) {
                     return true; //true
                 } else {
                     return false;
                 }
             case 'Select':
-                if(search == 'any' || _.isEqual(search, array)) {
+                if(search == 'any' || _.isEqual(search, value)) {
                     return true; //any or equal
                 } else {
                     return false;
