@@ -39,6 +39,68 @@ function arraySorted(array, field) {
     }
 }
 
+function opcoSorted(array, sort) {
+    let tempArray = array.slice(0);
+    switch(sort.name) {
+        case 'code':
+        case 'name':
+        case 'city':
+        case 'country':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a[sort.name].toUpperCase();
+                    let nameB = b[sort.name].toUpperCase();
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a[sort.name].toUpperCase();
+                    let nameB = b[sort.name].toUpperCase();
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        case 'region':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a.region.name.toUpperCase();
+                    let nameB = b.region.name.toUpperCase();
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a.region.name.toUpperCase();
+                    let nameB = b.region.name.toUpperCase();
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        default: return array; 
+    }
+}
+
 function doesMatch(search, array, type, isEqual) {
     
     if (!search) {
@@ -228,10 +290,9 @@ class Opco extends React.Component {
     }
 
     filterName(array){
-        const { code, name, city, country, region } = this.state
+        const { code, name, city, country, region, sort } = this.state
         if (array) {
-        //   return arraySorted(opcos.items, 'name').filter(function (opco) {
-            return array.filter(function (opco) {
+          return opcoSorted(array, sort).filter(function (opco) {
             return (doesMatch(code, opco.code, 'String', false) 
             && doesMatch(name, opco.name, 'String', false) 
             && doesMatch(city, opco.city, 'String', false)
@@ -330,7 +391,6 @@ class Opco extends React.Component {
                         <li className="breadcrumb-item active" aria-current="page">Add operation company</li>
                     </ol>
                 </nav>
-                {/* <h2>Add operation company</h2> */}
                 <hr />
                 <div id="opco" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
