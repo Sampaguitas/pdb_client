@@ -19,19 +19,93 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeaderInput from '../../_components/project-table/header-input';
 // import './home.css';
 
-function projectSorted(project) {
-    if (project.items) {
-        const newArray = project.items
-        newArray.sort(function(a,b){
-            if (a.number < b.number) {
-                return -1;
+function projectSorted(array, sort) {
+    switch(sort.name) {
+        case 'number':
+            if (sort.isAscending) {
+                return array.sort((a, b) => a.number - b.number);
+            } else {
+                return array.sort((a, b) => b.number - a.number);
             }
-            if (a.number > b.number) {
-                return 1;
+        case 'name':
+            if (sort.isAscending) {
+                return array.sort(function (a, b) {
+                    let nameA = a.name.toUpperCase();
+                    let nameB = b.name.toUpperCase();
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return array.sort(function (a, b) {
+                    let nameA = a.name.toUpperCase();
+                    let nameB = b.name.toUpperCase();
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
             }
-            return 0;
-        });
-        return newArray;
+        case 'opco':
+            if (sort.isAscending) {
+                return array.sort(function (a, b) {
+                    let opcoA = a.opco.name.toUpperCase();
+                    let opcoB = b.opco.name.toUpperCase();
+                    if (opcoA < opcoB) {
+                        return -1;
+                    } else if (opcoA > opcoB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return array.sort(function (a, b) {
+                    let opcoA = a.opco.name.toUpperCase();
+                    let opcoB = b.opco.name.toUpperCase();
+                    if (opcoA > opcoB) {
+                        return -1;
+                    } else if (opcoA < opcoB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        case 'erp':
+            if (sort.isAscending) {
+                return array.sort(function (a, b) {
+                    let erpA = a.erp.name.toUpperCase();
+                    let erpB = b.erp.name.toUpperCase();
+                    if (erpA < erpB) {
+                        return -1;
+                    } else if (erpA > erpB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return array.sort(function (a, b) {
+                    let erpA = a.erp.name.toUpperCase();
+                    let erpB = b.erp.name.toUpperCase();
+                    if (erpA > erpB) {
+                        return -1;
+                    } else if (erpA < erpB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        default: return array; 
     }
 }
 
@@ -172,10 +246,9 @@ class Home extends React.Component {
     }
 
     filterName(array){
-        const { number, name, opco, erp } = this.state
+        const { number, name, opco, erp, sort } = this.state
         if (array) {
-            // return projectSorted(projects).filter(function (project) {
-                return array.filter(function (project) {
+            return projectSorted(array, sort).filter(function (project) {
                 return (doesMatch(number, project.number, 'Number', false) 
                 && doesMatch(name, project.name, 'String', false) 
                 && doesMatch(opco, project.opco.name, 'String', false) 
