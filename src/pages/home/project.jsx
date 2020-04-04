@@ -44,6 +44,70 @@ function arraySorted(array, field) {
     }
 }
 
+function projectSorted(array, sort) {
+    let tempArray = array.slice(0);
+    switch(sort.name) {
+        case 'userName':
+        case 'name':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a[sort.name].toUpperCase();
+                    let nameB = b[sort.name].toUpperCase();
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a[sort.name].toUpperCase();
+                    let nameB = b[sort.name].toUpperCase();
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        case 'isExpediting':
+        case 'isInspection':
+        case 'isShipping':
+        case 'isWarehouse':
+        case 'isConfiguration':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a[sort.name];
+                    let nameB = b[sort.name];
+                    if (nameA === nameB) {
+                        return 0;
+                    } else if (!!nameA) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a[sort.name];
+                    let nameB = b[sort.name];
+                    if (nameA === nameB) {
+                        return 0;
+                    } else if (!!nameA) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+            }
+        default: return array; 
+    }
+}
+
 function doesMatch(search, value, type, isEqual) {
     
     if (!search) {
@@ -254,17 +318,16 @@ class Project extends React.Component {
     }
 
     filterName(array){
-        const { userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration } = this.state
+        const { userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, sort } = this.state
         if (array) {
-            console.log('array:', array);
-          return arraySorted(array, 'name').filter(function (user) {
-            return (doesMatch(userName, user.userName, 'String', false)
-            && doesMatch(name, user.name, 'String', false) 
-            && doesMatch(isExpediting, user.isExpediting, 'Boolean', false) 
-            && doesMatch(isInspection, user.isInspection, 'Boolean', false)
-            && doesMatch(isShipping, user.isShipping, 'Boolean', false)
-            && doesMatch(isWarehouse, user.isWarehouse, 'Boolean', false)
-            && doesMatch(isConfiguration, user.isConfiguration, 'Boolean', false));
+          return projectSorted(array, sort).filter(function (object) {
+            return (doesMatch(userName, object.userName, 'String', false)
+            && doesMatch(name, object.name, 'String', false) 
+            && doesMatch(isExpediting, object.isExpediting, 'Boolean', false) 
+            && doesMatch(isInspection, object.isInspection, 'Boolean', false)
+            && doesMatch(isShipping, object.isShipping, 'Boolean', false)
+            && doesMatch(isWarehouse, object.isWarehouse, 'Boolean', false)
+            && doesMatch(isConfiguration, object.isConfiguration, 'Boolean', false));
           });
         }
     }
@@ -339,7 +402,6 @@ class Project extends React.Component {
                         <li className="breadcrumb-item active" aria-current="page">Add project</li>
                     </ol>
                 </nav>
-                {/* <h2>Add project</h2> */}
                 <hr />
                 <div id="project" className="full-height">
                     <div className="col-md-8 mb-md-0 col-sm-12 mb-sm-3 full-height">

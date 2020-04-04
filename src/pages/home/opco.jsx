@@ -292,12 +292,12 @@ class Opco extends React.Component {
     filterName(array){
         const { code, name, city, country, region, sort } = this.state
         if (array) {
-          return opcoSorted(array, sort).filter(function (opco) {
-            return (doesMatch(code, opco.code, 'String', false) 
-            && doesMatch(name, opco.name, 'String', false) 
-            && doesMatch(city, opco.city, 'String', false)
-            && doesMatch(country, opco.country, 'String', false)
-            && doesMatch(region, opco.region.name, 'String', false));
+          return opcoSorted(array, sort).filter(function (object) {
+            return (doesMatch(code, object.code, 'String', false) 
+            && doesMatch(name, object.name, 'String', false) 
+            && doesMatch(city, object.city, 'String', false)
+            && doesMatch(country, object.country, 'String', false)
+            && doesMatch(region, object.region.name, 'String', false));
           });
         }
     }

@@ -249,11 +249,11 @@ class Home extends React.Component {
     filterName(array){
         const { number, name, opco, erp, sort } = this.state
         if (array) {
-            return projectSorted(array, sort).filter(function (project) {
-                return (doesMatch(number, project.number, 'Number', false) 
-                && doesMatch(name, project.name, 'String', false) 
-                && doesMatch(opco, project.opco.name, 'String', false) 
-                && doesMatch(erp, project.erp.name, 'String', false));
+            return projectSorted(array, sort).filter(function (object) {
+                return (doesMatch(number, object.number, 'Number', false) 
+                && doesMatch(name, object.name, 'String', false) 
+                && doesMatch(opco, object.opco.name, 'String', false) 
+                && doesMatch(erp, object.erp.name, 'String', false));
             });
         }
     }
