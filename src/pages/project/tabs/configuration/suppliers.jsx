@@ -29,21 +29,84 @@ function resolve(path, obj) {
     }, obj || self)
 }
 
-function arraySorted(array, field) {
-    if (array) {
-        const newArray = array
-        newArray.sort(function(a,b){
-            if (resolve(field, a) < resolve(field, b)) {
-                return -1;
-            } else if ((resolve(field, a) > resolve(field, b))) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        return newArray;             
-    }
+function sortCustom(array, headersForShow, sort) {
+    let found = headersForShow.find(element => element._id === sort.name);
+    if (!found) {
+        return array;
+    } else {
+        let tempArray = array.slice(0);
+        let fieldName = found.fields.name
+        switch(found.fields.type) {
+            case 'String':
+                if (sort.isAscending) {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = !_.isUndefined(fieldA.fieldValue) ? fieldA.fieldValue.toUpperCase() : '';
+                            let valueB = !_.isUndefined(fieldB.fieldValue) ? fieldB.fieldValue.toUpperCase() : '';
+                            if (valueA < valueB) {
+                                return -1;
+                            } else if (valueA > valueB) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    });
+                } else {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = !_.isUndefined(fieldA.fieldValue) ? fieldA.fieldValue.toUpperCase() : '';
+                            let valueB = !_.isUndefined(fieldB.fieldValue) ? fieldB.fieldValue.toUpperCase() : '';
+                            if (valueA > valueB) {
+                                return -1;
+                            } else if (valueA < valueB) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    });
+                }
+            case 'Number':
+                if (sort.isAscending) {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = fieldA.fieldValue || 0;
+                            let valueB = fieldB.fieldValue || 0;
+                            return valueA - valueB;
+                        }
+                    });
+                } else {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = fieldA.fieldValue || 0;
+                            let valueB = fieldB.fieldValue || 0;
+                            return valueB - valueA;
+                        }
+                    });
+                }
+            default: return array;
+        }
+    }   
 }
+
+
 
 function doesMatch(search, array, type, isEqual) {
     
@@ -421,16 +484,17 @@ class Suppliers extends React.Component {
     
 
     filterName(array){
-        const {header, isEqual, headersForShow} = this.state;
+        const {header, isEqual, headersForShow, sort} = this.state;
         // const { screenHeaders } = this.props
         if (array) {
-            return array.filter(function (element) {
+            return sortCustom(array, headersForShow, sort).filter(function (object) {
+            // return array.filter(function (object) {
                 let conditionMet = true;
                 for (const prop in header) {
                     var fieldName =  headersForShow.find(function (el) {
                         return _.isEqual(el._id, prop)
                     });
-                    let matchingCol = element.fields.find(function (col) {
+                    let matchingCol = object.fields.find(function (col) {
                         return _.isEqual(col.fieldName, fieldName.fields.name);
                     });
                     if (!doesMatch(header[prop], matchingCol.fieldValue, fieldName.fields.type, isEqual)) {
