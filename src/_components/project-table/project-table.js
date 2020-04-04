@@ -92,6 +92,83 @@ function arraySorted(array, field) {
     }
 }
 
+function sortCustom(array, headersForShow, sort) {
+    let found = headersForShow.find(element => element._id === sort.name);
+    if (!found) {
+        return array;
+    } else {
+        let tempArray = array.slice(0);
+        let fieldName = found.fields.name
+        switch(found.fields.type) {
+            case 'String':
+                if (sort.isAscending) {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = !_.isUndefined(fieldA.fieldValue) ? fieldA.fieldValue.toUpperCase() : '';
+                            let valueB = !_.isUndefined(fieldB.fieldValue) ? fieldB.fieldValue.toUpperCase() : '';
+                            if (valueA < valueB) {
+                                return -1;
+                            } else if (valueA > valueB) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    });
+                } else {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = !_.isUndefined(fieldA.fieldValue) ? fieldA.fieldValue.toUpperCase() : '';
+                            let valueB = !_.isUndefined(fieldB.fieldValue) ? fieldB.fieldValue.toUpperCase() : '';
+                            if (valueA > valueB) {
+                                return -1;
+                            } else if (valueA < valueB) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    });
+                }
+            case 'Number':
+                if (sort.isAscending) {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = fieldA.fieldValue || 0;
+                            let valueB = fieldB.fieldValue || 0;
+                            return valueA - valueB;
+                        }
+                    });
+                } else {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = fieldA.fieldValue || 0;
+                            let valueB = fieldB.fieldValue || 0;
+                            return valueB - valueA;
+                        }
+                    });
+                }
+            default: return array;
+        }
+    }   
+}
+
 function doesMatch(search, array, type, isEqual) {
     
     if (!search) {
@@ -377,10 +454,10 @@ class ProjectTable extends Component {
     }
 
     filterName(screenBodys){
-        const {header, isEqual} = this.state;
+        const {header, isEqual, sort} = this.state;
         const { screenHeaders, settingsFilter } = this.props
         if (screenBodys) {
-            return screenBodys.filter(function (element) {
+            return sortCustom(screenBodys, screenHeaders, sort).filter(function (element) {
                 return screenHeaders.reduce(function(acc, cur){
                     if (!!acc) {
                         let matchingCol = element.fields.find(e => _.isEqual(e.fieldName, cur.fields.name));
