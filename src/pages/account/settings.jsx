@@ -40,45 +40,158 @@ function arraySorted(array, field) {
   }
 }
 
-function doesMatch(search, array, type, isEqual) {
+function settingSorted(array, sort) {
+  let tempArray = array.slice(0);
+  switch(sort.name) {
+    case 'userName':
+    case 'name':
+        if (sort.isAscending) {
+            return tempArray.sort(function (a, b) {
+                let nameA = a[sort.name].toUpperCase();
+                let nameB = b[sort.name].toUpperCase();
+                if (nameA < nameB) {
+                    return -1;
+                } else if (nameA > nameB) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+        } else {
+            return tempArray.sort(function (a, b) {
+                let nameA = a[sort.name].toUpperCase();
+                let nameB = b[sort.name].toUpperCase();
+                if (nameA > nameB) {
+                    return -1;
+                } else if (nameA < nameB) {
+                    return 1;
+                } else {
+                    return 0;
+                }
+            });
+        }
+    case 'opco':
+      if (sort.isAscending) {
+        return tempArray.sort(function (a, b) {
+            let nameA = a.opco.name.toUpperCase();
+            let nameB = b.opco.name.toUpperCase();
+            if (nameA < nameB) {
+                return -1;
+            } else if (nameA > nameB) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+      } else {
+          return tempArray.sort(function (a, b) {
+              let nameA = a.opco.name.toUpperCase();
+              let nameB = b.opco.name.toUpperCase();
+              if (nameA > nameB) {
+                  return -1;
+              } else if (nameA < nameB) {
+                  return 1;
+              } else {
+                  return 0;
+              }
+          });
+      }
+    case 'region':
+      if (sort.isAscending) {
+        return tempArray.sort(function (a, b) {
+            let nameA = a.opco.region.name.toUpperCase();
+            let nameB = b.opco.region.name.toUpperCase();
+            if (nameA < nameB) {
+                return -1;
+            } else if (nameA > nameB) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
+      } else {
+          return tempArray.sort(function (a, b) {
+              let nameA = a.opco.region.name.toUpperCase();
+              let nameB = b.opco.region.name.toUpperCase();
+              if (nameA > nameB) {
+                  return -1;
+              } else if (nameA < nameB) {
+                  return 1;
+              } else {
+                  return 0;
+              }
+          });
+      }
+    case 'isAdmin':
+    case 'isSuperAdmin':
+        if (sort.isAscending) {
+            return tempArray.sort(function (a, b) {
+                let nameA = a[sort.name];
+                let nameB = b[sort.name];
+                if (nameA === nameB) {
+                    return 0;
+                } else if (!!nameA) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            });
+        } else {
+            return tempArray.sort(function (a, b) {
+                let nameA = a[sort.name];
+                let nameB = b[sort.name];
+                if (nameA === nameB) {
+                    return 0;
+                } else if (!!nameA) {
+                    return -1;
+                } else {
+                    return 1;
+                }
+            });
+        }
+    default: return array; 
+  }
+}
+
+function doesMatch(search, value, type, isEqual) {
   if (!search) {
       return true;
-  } else if (!array && search != 'any' && search != 'false') {
+  } else if (!value && search != 'any' && search != 'false') {
       return false;
   } else {
     switch(type) {
       case 'Id':
-          return _.isEqual(search, array);
+          return _.isEqual(search, value);
       case 'String':
           if(isEqual) {
-              return _.isEqual(array.toUpperCase(), search.toUpperCase());
+              return _.isEqual(value.toUpperCase(), search.toUpperCase());
           } else {
-              return array.toUpperCase().includes(search.toUpperCase());
+              return value.toUpperCase().includes(search.toUpperCase());
           }
       case 'Date':
           if (isEqual) {
-              return _.isEqual(TypeToString(array, 'date', getDateFormat(myLocale)), search);
+              return _.isEqual(TypeToString(value, 'date', getDateFormat(myLocale)), search);
           } else {
-              return TypeToString(array, 'date', getDateFormat(myLocale)).includes(search);
+              return TypeToString(value, 'date', getDateFormat(myLocale)).includes(search);
           }
       case 'Number':
           if (isEqual) {
-              return _.isEqual( Intl.NumberFormat().format(array).toString(), Intl.NumberFormat().format(search).toString());
+              return _.isEqual( Intl.NumberFormat().format(value).toString(), Intl.NumberFormat().format(search).toString());
           } else {
-              return Intl.NumberFormat().format(array).toString().includes(Intl.NumberFormat().format(search).toString());
+              return Intl.NumberFormat().format(value).toString().includes(Intl.NumberFormat().format(search).toString());
           }
       case 'Boolean':
           if(search == 'any') {
               return true; //any or equal
-          } else if (search == 'true' && !!array) {
+          } else if (search == 'true' && !!value) {
               return true; //true
-          } else if (search == 'false' && !array) {
+          } else if (search == 'false' && !value) {
               return true; //true
           } else {
               return false;
           }
       case 'Select':
-          if(search == 'any' || _.isEqual(search, array)) {
+          if(search == 'any' || _.isEqual(search, value)) {
               return true; //any or equal
           } else {
               return false;
@@ -231,16 +344,15 @@ class Settings extends React.Component {
   }
 
   filterName(array){
-    const { userName, name, opco, region, isAdmin, isSuperAdmin } = this.state
+    const { userName, name, opco, region, isAdmin, isSuperAdmin, sort } = this.state
     if (array) {
-      // return arraySorted(users.items, 'name').filter(function (user) {
-        return array.filter(function (user) {
-        return (doesMatch(userName, user.userName, 'String', false) 
-        && doesMatch(name, user.name, 'String', false) 
-        && doesMatch(opco, user.opco.name, 'String', false)
-        && doesMatch(region, user.opco.region.name, 'String', false)
-        && doesMatch(isAdmin, user.isAdmin, 'Boolean', false)
-        && doesMatch(isSuperAdmin, user.isSuperAdmin, 'Boolean', false));
+      return settingSorted(array, sort).filter(function (object) {
+        return (doesMatch(userName, object.userName, 'String', false) 
+        && doesMatch(name, object.name, 'String', false) 
+        && doesMatch(opco, object.opco.name, 'String', false)
+        && doesMatch(region, object.opco.region.name, 'String', false)
+        && doesMatch(isAdmin, object.isAdmin, 'Boolean', false)
+        && doesMatch(isSuperAdmin, object.isSuperAdmin, 'Boolean', false));
       });
     }
   }
