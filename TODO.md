@@ -7,6 +7,7 @@
 - [ ] certificate screen.
 
 ### Shipping module
+
 - [ ] collitype modal.
 
 ### Warhouse module
@@ -17,8 +18,12 @@
 - [ ] Outstanding shipments.
 - [ ] Warhouse locations.
 
+### Configs module
+- [X] duplicate modal when creating project.
+- [ ] loading icon in action buttons / alerts API responce.
+
 ### Custom table
-- [ ] sort function.
+- [X] sort function.
 - [ ] delete button.
 
 ### User settings
