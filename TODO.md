@@ -7,7 +7,6 @@
 - [ ] certificate screen.
 
 ### Shipping module
-
 - [ ] collitype modal.
 
 ### Warhouse module
