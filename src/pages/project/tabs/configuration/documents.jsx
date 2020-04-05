@@ -61,6 +61,82 @@ function arraySorted(array, fieldOne, fieldTwo, fieldThree, fieldFour) {
     }
 }
 
+function docSorted(array, sort) {
+    let tempArray = array.slice(0);
+    switch(sort.name) {
+        case 'worksheet':
+        case 'location':
+        case 'param':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? a[sort.name].toUpperCase() : '';
+                    let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? b[sort.name].toUpperCase() : '';
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? a[sort.name].toUpperCase() : '';
+                    let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? b[sort.name].toUpperCase() : '';
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        case 'row':
+        case 'col':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let valueA = a[sort.name] || 0;
+                    let valueB = b[sort.name] || 0;
+                    return valueA - valueB;
+                });
+            } else {
+                return tempArray.sort(function (a, b){
+                    let valueA = a[sort.name] || 0;
+                    let valueB = b[sort.name] || 0;
+                    return valueB - valueA
+                });
+            }
+        case 'custom':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? a.fields.custom.toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? b.fields.custom.toUpperCase() : '';
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? a.fields.custom.toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? b.fields.custom.toUpperCase() : '';
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        default: return array;
+    }
+}
+
 function docConf(array) {
     const tpeOf = [
         '5d1927121424114e3884ac7e', //ESR01 Expediting status report
@@ -807,16 +883,17 @@ class Documents extends React.Component {
             custom,
             param,
             selectedTemplate,
+            sort
         } = this.state;
 
         if (array) {
-        //   return arraySorted(array, 'worksheet', 'location', 'row', 'col').filter(function (element) {
-            return array.filter(function (element) {
+        return docSorted(array, sort).filter(function (element) {
             return (doesMatch(selectedTemplate, element.docdefId, 'Id', false)
             && doesMatch(worksheet, element.worksheet, 'Select', false)
             && doesMatch(location, element.location, 'Select', false)
             && doesMatch(row, element.row, 'Number', false)
             && doesMatch(col, element.col, 'Number', false)
+            && doesMatch(param, element.param, 'String', false)
             && element.fields && doesMatch(custom, element.fields.custom, 'String', false)
             );
           });
