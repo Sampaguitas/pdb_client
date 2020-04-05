@@ -46,6 +46,106 @@ function arraySorted(array, field) {
     }
 }
 
+function screenSorted(array, sort) {
+    let tempArray = array.slice(0);
+    switch(sort.name) {
+        case 'custom':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? a.fields.custom.toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? b.fields.custom.toUpperCase() : '';
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? a.fields.custom.toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? b.fields.custom.toUpperCase() : '';
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        case 'forShow':
+        case 'forSelect':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let valueA = a[sort.name] || 0;
+                    let valueB = b[sort.name] || 0;
+                    return valueA - valueB;
+                });
+            } else {
+                return tempArray.sort(function (a, b){
+                    let valueA = a[sort.name] || 0;
+                    let valueB = b[sort.name] || 0;
+                    return valueB - valueA
+                });
+            }
+        case 'align':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.align) && !_.isNull(a.align) ? a.align.toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.align) && !_.isNull(b.align) ? b.align.toUpperCase() : '';
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.align) && !_.isNull(a.align) ? a.align.toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.align) && !_.isNull(b.align) ? b.align.toUpperCase() : '';
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        case 'edit':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a.edit;
+                    let nameB = b.edit;
+                    if (nameA === nameB) {
+                        return 0;
+                    } else if (!!nameA) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a.edit;
+                    let nameB = b.edit;
+                    if (nameA === nameB) {
+                        return 0;
+                    } else if (!!nameA) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+            }
+        default: return array;
+    }
+}
+
 function doesMatch(search, array, type, isEqual) {
     if (!search) {
         return true;
@@ -415,9 +515,6 @@ class Screens extends React.Component {
     }  
     
     filterName(array){
-
-        // const { fields } = this.props;
-        
         const { 
             align,
             edit,
@@ -427,11 +524,11 @@ class Screens extends React.Component {
             fieldId,
             custom,
             selectedScreen,
+            sort
         } = this.state;
 
         if (array) {
-        //   return arraySorted(array, 'fields.custom').filter(function (element) {
-            return array.filter(function (element) {
+            return screenSorted(array, sort).filter(function (element) {
                 return (doesMatch(selectedScreen, element.screenId, 'Id', false)
                     && element.fields && doesMatch(custom, element.fields.custom, 'String', false)
                     && doesMatch(forShow, element.forShow, 'Number', false)

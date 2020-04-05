@@ -31,6 +31,42 @@ function arraySorted(array, fieldOne, fieldTwo) {
     }
 }
 
+function fieldSorted(array, sort) {
+    let tempArray = array.slice(0);
+    switch(sort.name) {
+        case 'fromTbl':
+        case 'name':
+        case 'type':
+        case 'custom':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? a[sort.name].toUpperCase() : '';
+                    let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? b[sort.name].toUpperCase() : '';
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? a[sort.name].toUpperCase() : '';
+                    let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? b[sort.name].toUpperCase() : '';
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        default: return array; 
+    }
+}
+
 function doesMatch(search, array, type, isEqual) {
     if (!search) {
         return true;
@@ -202,10 +238,11 @@ class Fields extends React.Component {
             custom,
             fromTbl,
             type,
+            sort
         } = this.state;
 
         if (array) {
-          return arraySorted(array, 'fromTbl', 'name').filter(function (element) { //'fromTbl.name'
+        return fieldSorted(array, sort).filter(function (element) {
             return (['article', 'certificate', 'collipack', 'packitem', 'po', 'sub','supplier', 'storedproc'].includes(element.fromTbl)
             && doesMatch(name, element.name, 'String', false)
             && doesMatch(custom, element.custom, 'String', false)

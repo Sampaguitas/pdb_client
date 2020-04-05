@@ -45,8 +45,8 @@ function sortCustom(array, headersForShow, sort) {
                         if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
                             return 0;
                         } else {
-                            let valueA = !_.isUndefined(fieldA.fieldValue) ? fieldA.fieldValue.toUpperCase() : '';
-                            let valueB = !_.isUndefined(fieldB.fieldValue) ? fieldB.fieldValue.toUpperCase() : '';
+                            let valueA = !_.isUndefined(fieldA.fieldValue) && !_.isNull(fieldA.fieldValue) ? fieldA.fieldValue.toUpperCase() : '';
+                            let valueB = !_.isUndefined(fieldB.fieldValue) && !_.isNull(fieldB.fieldValue) ?  fieldB.fieldValue.toUpperCase() : '';
                             if (valueA < valueB) {
                                 return -1;
                             } else if (valueA > valueB) {
@@ -63,8 +63,8 @@ function sortCustom(array, headersForShow, sort) {
                         if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
                             return 0;
                         } else {
-                            let valueA = !_.isUndefined(fieldA.fieldValue) ? fieldA.fieldValue.toUpperCase() : '';
-                            let valueB = !_.isUndefined(fieldB.fieldValue) ? fieldB.fieldValue.toUpperCase() : '';
+                            let valueA = !_.isUndefined(fieldA.fieldValue) && !_.isNull(fieldA.fieldValue) ? fieldA.fieldValue.toUpperCase() : '';
+                            let valueB = !_.isUndefined(fieldB.fieldValue) && !_.isNull(fieldB.fieldValue) ?  fieldB.fieldValue.toUpperCase() : '';
                             if (valueA > valueB) {
                                 return -1;
                             } else if (valueA < valueB) {

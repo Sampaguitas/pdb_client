@@ -24,15 +24,23 @@ function projectSorted(array, sort) {
     switch(sort.name) {
         case 'number':
             if (sort.isAscending) {
-                return tempArray.sort((a, b) => a.number - b.number);
+                return tempArray.sort(function (a, b) {
+                    let valueA = a.number || 0;
+                    let valueB = b.number || 0;
+                    return valueA - valueB;
+                });
             } else {
-                return tempArray.sort((a, b) => b.number - a.number);
+                return tempArray.sort(function (a, b){
+                    let valueA = a.number || 0;
+                    let valueB = b.number || 0;
+                    return valueB - valueA
+                });
             }
         case 'name':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = a.name.toUpperCase();
-                    let nameB = b.name.toUpperCase();
+                    let nameA = !_.isUndefined(a.name) && !_.isNull(a.name) ? a.name.toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.name) && !_.isNull(b.name) ? b.name.toUpperCase() : '';
                     if (nameA < nameB) {
                         return -1;
                     } else if (nameA > nameB) {
@@ -43,8 +51,8 @@ function projectSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let nameA = a.name.toUpperCase();
-                    let nameB = b.name.toUpperCase();
+                    let nameA = !_.isUndefined(a.name) && !_.isNull(a.name) ? a.name.toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.name) && !_.isNull(b.name) ? b.name.toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {
@@ -57,8 +65,8 @@ function projectSorted(array, sort) {
         case 'opco':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let opcoA = a.opco.name.toUpperCase();
-                    let opcoB = b.opco.name.toUpperCase();
+                    let opcoA = !_.isUndefined(a.opco.name) && !_.isNull(a.opco.name) ? a.opco.name.toUpperCase() : '';
+                    let opcoB = !_.isUndefined(b.opco.name) && !_.isNull(b.opco.name) ? b.opco.name.toUpperCase() : '';
                     if (opcoA < opcoB) {
                         return -1;
                     } else if (opcoA > opcoB) {
@@ -69,8 +77,8 @@ function projectSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let opcoA = a.opco.name.toUpperCase();
-                    let opcoB = b.opco.name.toUpperCase();
+                    let opcoA = !_.isUndefined(a.opco.name) && !_.isNull(a.opco.name) ? a.opco.name.toUpperCase() : '';
+                    let opcoB = !_.isUndefined(b.opco.name) && !_.isNull(b.opco.name) ? b.opco.name.toUpperCase() : '';
                     if (opcoA > opcoB) {
                         return -1;
                     } else if (opcoA < opcoB) {
@@ -83,8 +91,8 @@ function projectSorted(array, sort) {
         case 'erp':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let erpA = a.erp.name.toUpperCase();
-                    let erpB = b.erp.name.toUpperCase();
+                    let erpA = !_.isUndefined(a.erp.name) && !_.isNull(a.erp.name) ? a.erp.name.toUpperCase() : '';
+                    let erpB = !_.isUndefined(b.erp.name) && !_.isNull(b.erp.name) ? b.erp.name.toUpperCase() : '';
                     if (erpA < erpB) {
                         return -1;
                     } else if (erpA > erpB) {
@@ -95,8 +103,8 @@ function projectSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let erpA = a.erp.name.toUpperCase();
-                    let erpB = b.erp.name.toUpperCase();
+                    let erpA = !_.isUndefined(a.erp.name) && !_.isNull(a.erp.name) ? a.erp.name.toUpperCase() : '';
+                    let erpB = !_.isUndefined(b.erp.name) && !_.isNull(b.erp.name) ? b.erp.name.toUpperCase() : '';
                     if (erpA > erpB) {
                         return -1;
                     } else if (erpA < erpB) {

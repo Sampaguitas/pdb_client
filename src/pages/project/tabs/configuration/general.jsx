@@ -32,15 +32,15 @@ function arraySorted(array, field) {
     }
 }
 
-function projectSorted(array, sort) {
+function userSorted(array, sort) {
     let tempArray = array.slice(0);
     switch(sort.name) {
         case 'userName':
         case 'name':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = a[sort.name].toUpperCase();
-                    let nameB = b[sort.name].toUpperCase();
+                    let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? a[sort.name].toUpperCase() : '';
+                    let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? b[sort.name].toUpperCase() : '';
                     if (nameA < nameB) {
                         return -1;
                     } else if (nameA > nameB) {
@@ -51,8 +51,8 @@ function projectSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let nameA = a[sort.name].toUpperCase();
-                    let nameB = b[sort.name].toUpperCase();
+                    let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? a[sort.name].toUpperCase() : '';
+                    let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? b[sort.name].toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {
@@ -336,7 +336,7 @@ class General extends React.Component {
     filterName(array){
         const { userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, sort } = this.state
         if (array) {
-          return projectSorted(array, sort).filter(function (object) {
+          return userSorted(array, sort).filter(function (object) {
             return (doesMatch(userName, object.userName, 'String', false)
             && doesMatch(name, object.name, 'String', false) 
             && doesMatch(isExpediting, object.isExpediting, 'Boolean', false) 
