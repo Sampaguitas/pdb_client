@@ -22,6 +22,7 @@ import ProjectTable from '../../../_components/project-table/project-table';
 import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
 import Modal from '../../../_components/modal';
+import ColliType from '../../../_components/split-line/collitype';
 
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
@@ -1232,7 +1233,7 @@ class PackingDetails extends React.Component {
             settingsDisplay
         }= this.state;
 
-        const { accesses, docdefs, fieldnames, fields, collipacks, selection } = this.props;
+        const { accesses, docdefs, fieldnames, fields, collipacks, collitypes, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
             <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses}>
@@ -1339,43 +1340,13 @@ class PackingDetails extends React.Component {
                 <Modal
                     show={showColliTypes}
                     hideModal={this.toggleColliTypes}
-                    title="Assign ColliType"
+                    title="Assign Colli Type"
                     size="modal-xl"
                 >
-                    <div className="col-12">
-                        {/* <div className="form-group">
-                            <label htmlFor="selectedField">Select Field</label>
-                            <select
-                                className="form-control"
-                                name="selectedField"
-                                value={selectedField}
-                                placeholder="Select field..."
-                                onChange={this.handleChange}
-                            >
-                                <option key="0" value="0">Select field...</option>
-                                {this.selectedFieldOptions(fieldnames, fields, screenId)}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="updateValue">Value</label>
-                            <input
-                                className="form-control"
-                                type={selectedType === 'number' ? 'number' : 'text'}
-                                name="updateValue"
-                                value={updateValue}
-                                onChange={this.handleChange}
-                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
-                            />
-                        </div>
-                        <div className="text-right">
-                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.handleUpdateValue(event, false)}>
-                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
-                            </button>
-                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleUpdateValue(event, true)}>
-                                <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
-                            </button>
-                        </div>                    */}
-                    </div>
+                    <ColliType 
+                    collitypes={collitypes}
+                    alert={alert}
+                    />
                 </Modal>
 
                 <Modal

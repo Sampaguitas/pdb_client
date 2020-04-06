@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeaderInput from '../project-table/header-input';
+import TableInput from '../project-table/table-input';
 import TableSelectionRow from '../project-table/table-selection-row';
 import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import moment from 'moment';
@@ -48,8 +49,8 @@ function colliTypeSorted(array, sort) {
         case 'type':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.type) && !_.isNull(a.type) ? a.type.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.type) && !_.isNull(b.type) ? b.type.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? a[sort.name].toUpperCase() : '';
+                    let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? b[sort.name].toUpperCase() : '';
                     if (nameA < nameB) {
                         return -1;
                     } else if (nameA > nameB) {
@@ -60,8 +61,8 @@ function colliTypeSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? a.fields.custom.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? b.fields.custom.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? a[sort.name].toUpperCase() : '';
+                    let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? b[sort.name].toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {
@@ -168,6 +169,10 @@ class ColliType extends Component {
                 name: '',
                 isAscending: true,
             },
+            alert: {
+                type:'',
+                message:''
+            }
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
@@ -175,6 +180,8 @@ class ColliType extends Component {
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
         this.filterName = this.filterName.bind(this);
+        this.handleChangeHeader = this.handleChangeHeader.bind(this);
+        this.handleAssign = this.handleAssign.bind(this);
     }
 
     toggleSort(event, name) {
@@ -236,11 +243,23 @@ class ColliType extends Component {
             }         
         }
     }
+
+    handleAssign(event) {
+        event.preventDefault();
+    }
+
+    handleChangeHeader(event) {
+        // event.preventDefault();
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        this.setState({ [name]: value });
+    }
     
     
 
     generateHeader() {
-        const { type, length, width, height, pkWeight, selectAllRows } = this.state;
+        const { type, length, width, height, pkWeight, selectAllRows, sort } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -392,10 +411,41 @@ class ColliType extends Component {
     }
 
     render() {
-
+        const alert = this.state.alert.message ? this.state.alert : this.props.alert;
+        const { collitypes } = this.props;
         return (
             <div id='colliType'>
-
+                <div className="ml-2 mr-2">
+                    {alert.message && 
+                        <div className={`alert ${alert.type} mt-3`}>{alert.message}
+                            <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                            </button>
+                        </div>
+                    }
+                    <div className="row">
+                        <div className="col">
+                            <h3>Select type:</h3>
+                        </div>
+                    </div>
+                    <div style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd', height: '400px'}}>
+                        <div className="table-responsive custom-table-container custom-table-container__fixed-row" >
+                            <table className="table table-bordered table-sm text-nowrap table-striped" id="collitypeTable">
+                                <thead>
+                                    {this.generateHeader()}
+                                </thead>
+                                <tbody>
+                                    {this.generateBody(collitypes)}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div className="text-right mt-2">
+                        <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleAssign(event)}>
+                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign</span>
+                        </button>
+                    </div>
+                </div>
             </div>
         );
     }
