@@ -469,6 +469,7 @@ class PackingDetails extends React.Component {
             },
             //-----modals-----
             showEditValues: false,
+            showColliTypes: false,
             // showSplitLine: false,
             showGenerate: false,
             showSettings: false,
@@ -488,6 +489,7 @@ class PackingDetails extends React.Component {
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         //Toggle Modals
         this.toggleEditValues = this.toggleEditValues.bind(this);
+        this.toggleColliTypes = this.toggleColliTypes.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         this.toggleDelete = this.toggleDelete.bind(this);
@@ -1108,6 +1110,28 @@ class PackingDetails extends React.Component {
         }
     }
 
+    toggleColliTypes(event) {
+        event.preventDefault();
+        const { showColliTypes, selectedIds } = this.state;
+        if (!showColliTypes && _.isEmpty(selectedIds)) {
+            this.setState({
+                ...this.state,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to be updated.'
+                }
+            }); 
+        } else {
+            this.setState({
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showColliTypes: !showColliTypes,
+            });
+        }
+    }
+
     toggleGenerate(event) {
         event.preventDefault();
         const { showGenerate, plList, docList } = this.state;
@@ -1194,6 +1218,7 @@ class PackingDetails extends React.Component {
             docList,
             //show modals
             showEditValues,
+            showColliTypes,
             // showSplitLine,
             showGenerate,
             showSettings,
@@ -1230,17 +1255,16 @@ class PackingDetails extends React.Component {
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
                     </ol>
                 </nav>
-                {/* <h2>Shipping | Complete packing details > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2> */}
                 <hr />
                 <div id="packingdetails" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Edit Values" onClick={event => this.toggleEditValues(event)}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Assign Colli Type"> {/* onClick={event => this.toggleAssignNfi(event)} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Assign Colli Type" onClick={event => this.toggleColliTypes(event)}>
                             <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Colli Type</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Calculate Net Weight" onClick={event => this.handleUpdateWeight(event)}> {/* onClick={event => this.toggleAssignNfi(event)} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Calculate Net Weight" onClick={event => this.handleUpdateWeight(event)}>
                             <span><FontAwesomeIcon icon="balance-scale-left" className="fa-lg mr-2"/>Net Weight</span>
                         </button>
                         <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Generate Shipping Docs" onClick={event => this.toggleGenerate(event)}>
@@ -1309,6 +1333,48 @@ class PackingDetails extends React.Component {
                                 <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
                             </button>
                         </div>                   
+                    </div>
+                </Modal>
+
+                <Modal
+                    show={showColliTypes}
+                    hideModal={this.toggleColliTypes}
+                    title="Assign ColliType"
+                    size="modal-xl"
+                >
+                    <div className="col-12">
+                        {/* <div className="form-group">
+                            <label htmlFor="selectedField">Select Field</label>
+                            <select
+                                className="form-control"
+                                name="selectedField"
+                                value={selectedField}
+                                placeholder="Select field..."
+                                onChange={this.handleChange}
+                            >
+                                <option key="0" value="0">Select field...</option>
+                                {this.selectedFieldOptions(fieldnames, fields, screenId)}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="updateValue">Value</label>
+                            <input
+                                className="form-control"
+                                type={selectedType === 'number' ? 'number' : 'text'}
+                                name="updateValue"
+                                value={updateValue}
+                                onChange={this.handleChange}
+                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                            />
+                        </div>
+                        <div className="text-right">
+                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.handleUpdateValue(event, false)}>
+                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
+                            </button>
+                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleUpdateValue(event, true)}>
+                                <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
+                            </button>
+                        </div>                    */}
                     </div>
                 </Modal>
 

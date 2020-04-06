@@ -16,10 +16,10 @@ import TableCheckBox from '../../_components/project-table/table-check-box';
 import TableSelectionRow from '../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../_components/project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import _ from 'lodash';
 import { AST_SwitchBranch } from 'terser';
 import { isThisISOWeek } from 'date-fns/esm';
 import moment from 'moment';
+import _ from 'lodash';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
@@ -169,46 +169,58 @@ function sortCustom(array, headersForShow, sort) {
     }   
 }
 
-function doesMatch(search, array, type, isEqual) {
+function doesMatch(search, value, type, isEqual) {
     
     if (!search) {
         return true;
-    } else if (!array && search != 'any' && search != 'false') {
+    } else if (!value && search != 'any' && search != 'false' && search != '-1' && String(search).toUpperCase() != '=BLANK') {
         return false;
     } else {
         switch(type) {
             case 'Id':
-                return _.isEqual(search, array);
+                return _.isEqual(search, value);
             case 'String':
-                if(isEqual) {
-                    return _.isEqual(array.toUpperCase(), search.toUpperCase());
+                if (String(search).toUpperCase() === '=BLANK') {
+                    return !value;
+                } else if (String(search).toUpperCase() === '=NOTBLANK') {
+                    return !!value;
+                } else if (isEqual) {
+                    return _.isEqual(String(value).toUpperCase(), String(search).toUpperCase());
                 } else {
-                    return array.toUpperCase().includes(search.toUpperCase());
+                    return String(value).toUpperCase().includes(String(search).toUpperCase());
                 }
             case 'Date':
-                if (isEqual) {
-                    return _.isEqual(TypeToString(array, 'date', getDateFormat(myLocale)), search);
+                if (String(search).toUpperCase() === '=BLANK') {
+                    return !value;
+                } else if (String(search).toUpperCase() === '=NOTBLANK') {
+                    return !!value;
+                } else if (isEqual) {
+                    return _.isEqual(TypeToString(value, 'date', getDateFormat(myLocale)), search);
                 } else {
-                    return TypeToString(array, 'date', getDateFormat(myLocale)).includes(search);
+                    return TypeToString(value, 'date', getDateFormat(myLocale)).includes(search);
                 }
             case 'Number':
-                if (isEqual) {
-                    return _.isEqual( Intl.NumberFormat().format(array).toString(), Intl.NumberFormat().format(search).toString());
+                if (search === '-1') {
+                    return !value;
+                } else if (search === '-2') {
+                    return !!value;
+                } else if (isEqual) {
+                    return _.isEqual( Intl.NumberFormat().format(value).toString(), Intl.NumberFormat().format(search).toString());
                 } else {
-                    return Intl.NumberFormat().format(array).toString().includes(Intl.NumberFormat().format(search).toString());
+                    return Intl.NumberFormat().format(value).toString().includes(Intl.NumberFormat().format(search).toString());
                 }
             case 'Boolean':
                 if(search == 'any') {
                     return true; //any or equal
-                } else if (search == 'true' && !!array) {
+                } else if (search == 'true' && !!value) {
                     return true; //true
-                } else if (search == 'false' && !array) {
+                } else if (search == 'false' && !value) {
                     return true; //true
                 }else {
                     return false;
                 }
             case 'Select':
-                if(search == 'any' || _.isEqual(search, array)) {
+                if(search == 'any' || _.isEqual(search, value)) {
                     return true; //any or equal
                 } else {
                     return false;
