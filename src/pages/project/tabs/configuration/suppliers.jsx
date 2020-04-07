@@ -688,8 +688,6 @@ class Suppliers extends React.Component {
 
     onFocusRow(event) {
         event.preventDefault();
-        console.log('onFocus');
-        console.log('data-type:', event.currentTarget.dataset['type']);
         const { newRowFocus } = this.state;
         if (event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
             this.cerateNewRow(event);
@@ -698,8 +696,6 @@ class Suppliers extends React.Component {
 
     onBlurRow(event){
         event.preventDefault()
-        console.log('onBlurRow');
-        console.log('data-type:', event.currentTarget.dataset['type']);
         if (event.currentTarget.dataset['type'] == 'newrow'){
             this.setState({
                 ...this.state,

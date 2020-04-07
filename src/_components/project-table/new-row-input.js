@@ -143,6 +143,7 @@ class NewRowInput extends Component{
 
     render() {
         const {
+            align,
             color,
             disabled,
             fieldType,

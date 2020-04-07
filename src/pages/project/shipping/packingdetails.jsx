@@ -483,8 +483,10 @@ class PackingDetails extends React.Component {
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.handleUpdateWeight = this.handleUpdateWeight.bind(this);
+        this.assignColliType = this.assignColliType.bind(this);
         // this.handleSplitLine = this.handleSplitLine.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
+        this.refreshColliTypes = this.refreshColliTypes.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
@@ -763,8 +765,16 @@ class PackingDetails extends React.Component {
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
         if (projectId) {
-            dispatch(poActions.getAll(projectId));
+            dispatch(collipackActions.getAll(projectId));
             dispatch(settingActions.getAll(projectId, userId));
+        }
+    }
+
+    refreshColliTypes() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+        if (projectId) {
+            dispatch(collitypeActions.getAll(projectId));
         }
     }
 
@@ -1057,6 +1067,103 @@ class PackingDetails extends React.Component {
         }
     }
 
+    assignColliType(collitypeId) {
+        const { selection, collitypes } = this.props;
+        const { projectId, selectedIds } = this.state;
+        if (!collitypeId) {
+            this.setState({
+                showColliTypes: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'collitypeId is missing.'
+                }
+            });
+        } else if (_.isEmpty(selectedIds)) {
+            this.setState({
+                showColliTypes: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to assign Colli Type.'
+                }
+            });
+        } else if (!selection.hasOwnProperty('project') || _.isEmpty(selection.project.erp)) {
+            this.setState({
+                showColliTypes: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'An error occured, line(s) where not updated.'
+                }
+            });
+            
+            if (projectId) {
+                dispatch(projectActions.getById(projectId));
+            }
+        } else if (!collitypes.hasOwnProperty('items') || _.isEmpty(collitypes.items)) {
+            this.setState({
+                showColliTypes: false,
+                alert: {
+                    type:'alert-danger',
+                    message:'An error occured, line(s) where not updated.'
+                }
+            });
+        } else {
+            let colliType = collitypes.items.find(element => element._id ===collitypeId);
+            if (_.isUndefined(colliType)) {
+                this.setState({
+                    showColliTypes: false,
+                    alert: {
+                        type:'alert-danger',
+                        message:'An error occured, line(s) where not updated.'
+                    }
+                });
+            } else {
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        colliType: colliType,
+                        erp: selection.project.erp.name,
+                        selectedIds: selectedIds
+                    })
+                };
+                return fetch(`${config.apiUrl}/extract/setCollitype`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        }
+                        this.setState({
+                            showColliTypes: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    } else {
+                        this.setState({
+                            showColliTypes: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    }
+                })
+                .catch( () => {
+                    this.setState({
+                        showColliTypes: false,
+                        alert: {
+                            type: 'alert-danger',
+                            message: 'Colli Type could not be assigned.'
+                        }
+                    }, this.refreshStore);
+                }));
+            }
+        }
+    }
+
     handleDeleteRows(event) {
         event.preventDefault;
         const { dispatch } = this.props;
@@ -1236,8 +1343,8 @@ class PackingDetails extends React.Component {
         const { accesses, docdefs, fieldnames, fields, collipacks, collitypes, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses}>
-                {alert.message && !showSettings && 
+            <Layout alert={showSettings || showColliTypes ? {type:'', message:''} : alert} accesses={accesses}>
+                {alert.message && !showSettings && !showColliTypes &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1345,7 +1452,11 @@ class PackingDetails extends React.Component {
                 >
                     <ColliType 
                     collitypes={collitypes}
+                    refreshColliTypes={this.refreshColliTypes}
+                    projectId={projectId}
                     alert={alert}
+                    handleClearAlert={this.handleClearAlert}
+                    assignColliType={this.assignColliType}
                     />
                 </Modal>
 

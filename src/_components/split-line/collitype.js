@@ -1,9 +1,14 @@
 import React, { Component } from 'react';
+import config from 'config';
+import { authHeader } from '../../_helpers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeaderInput from '../project-table/header-input';
+import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import TableInput from '../project-table/table-input';
 import TableSelectionRow from '../project-table/table-selection-row';
-import TableSelectionAllRow from '../project-table/table-selection-all-row';
+import NewRowCreate from '../project-table/new-row-create';
+import NewRowInput from '../project-table/new-row-input';
+
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -41,6 +46,14 @@ function getDateFormat(myLocale) {
         }
     });
     return tempDateFormat;
+}
+
+function arrayRemove(arr, value) {
+
+    return arr.filter(function(ele){
+        return ele != value;
+    });
+ 
 }
 
 function colliTypeSorted(array, sort) {
@@ -165,6 +178,17 @@ class ColliType extends Component {
             pkWeight: '',
             selectedRows: [],
             selectAllRows: false,
+            newRow: false,
+            fieldName:{
+                type: '',
+                length: '',
+                width: '',
+                height: '',
+                pkWeight: ''
+            },
+            newRowFocus:false,
+            creating: false,
+            newRowColor: 'inherit',
             sort: {
                 name: '',
                 isAscending: true,
@@ -175,13 +199,75 @@ class ColliType extends Component {
             }
         }
         this.toggleSort = this.toggleSort.bind(this);
-        this.updateSelectedRows = this.updateSelectedRows.bind(this);
+        this.toggleNewRow = this.toggleNewRow.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
+        
+        this.handleAssign = this.handleAssign.bind(this);
+        this.handleChangeHeader = this.handleChangeHeader.bind(this);
+        this.handleChangeNewRow = this.handleChangeNewRow.bind(this);
+        this.handleClearAlert = this.handleClearAlert.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
+
+        this.cerateNewRow = this.cerateNewRow.bind(this);
+        this.onFocusRow = this.onFocusRow.bind(this);
+        this.onBlurRow = this.onBlurRow.bind(this);
+        this.updateSelectedRows = this.updateSelectedRows.bind(this);
+
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
         this.filterName = this.filterName.bind(this);
-        this.handleChangeHeader = this.handleChangeHeader.bind(this);
-        this.handleAssign = this.handleAssign.bind(this);
+    }
+
+    componentDidMount() {
+        const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
+        const nodes = ["INPUT", "SELECT", "SPAN"];
+        const tableCollitype = document.getElementById('collitype');
+        tableCollitype.addEventListener('keydown', (e) => { 
+            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
+                return this.keyHandlerCollitype(e);
+            }
+        });
+    }
+
+    keyHandlerCollitype(e) {
+
+        let target = e.target;
+        let colIndex = target.parentElement.cellIndex;               
+        let rowIndex = target.parentElement.parentElement.rowIndex;
+        var nRows = target.parentElement.parentElement.parentElement.childNodes.length;
+        
+        switch(e.keyCode) {
+            case 9:// tab
+                if(target.parentElement.nextSibling) {
+                    target.parentElement.nextSibling.click(); 
+                }
+                break;
+            case 13: //enter
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
+            case 37: //left
+                if(colIndex > 1 && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.previousSibling.click();
+                } 
+                break;
+            case 38: //up
+                if(rowIndex > 1) {
+                    target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();    
+                }
+                break;
+            case 39: //right
+                if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.nextSibling.click();
+                }
+                break;
+            case 40: //down
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
+        }
     }
 
     toggleSort(event, name) {
@@ -211,19 +297,19 @@ class ColliType extends Component {
         }
     }
 
-    updateSelectedRows(id) {
-        const { selectedRows } = this.state;
-        if (selectedRows.includes(id)) {
-            this.setState({
-                // ...this.state,
-                selectedRows: arrayRemove(selectedRows, id)
-            });
-        } else {
-            this.setState({
-                // ...this.state,
-                selectedRows: [...selectedRows, id]
-            });
-        }       
+    toggleNewRow(event) {
+        event.preventDefault()
+        const { newRow } = this.state;
+        this.setState({
+            newRow: !newRow,
+            fieldName:{
+                type: '',
+                length: '',
+                width: '',
+                height: '',
+                pkWeight: ''
+            }
+        });
     }
 
     toggleSelectAllRow() {
@@ -246,6 +332,18 @@ class ColliType extends Component {
 
     handleAssign(event) {
         event.preventDefault();
+        const { selectedRows } = this.state;
+        const { assignColliType } = this.props;
+        if (selectedRows.length != 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one line.'
+                }
+            });
+        } else {
+            assignColliType(selectedRows[0]);
+        }
     }
 
     handleChangeHeader(event) {
@@ -255,8 +353,152 @@ class ColliType extends Component {
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({ [name]: value });
     }
+
+    handleChangeNewRow(event){
+        const { projectId } = this.props;
+        const { fieldName } = this.state;
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        if (projectId) {
+            this.setState({
+                ...this.state,
+                fieldName: {
+                    ...fieldName,
+                    [name]: value,
+                    projectId: projectId
+                }
+            });
+        } 
+    }
     
-    
+    handleClearAlert(event){
+        const { handleClearAlert } = this.props;
+        event.preventDefault;
+        this.setState({ 
+            alert: {
+                type:'',
+                message:'' 
+            }
+        }, handleClearAlert(event));
+    }
+
+    handleDelete(event, selectedRows) {
+        event.preventDefault();
+        const { refreshColliTypes } = this.props;
+        if(_.isEmpty(selectedRows)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be deleted.'
+                }
+            });
+        } else {
+            this.setState({
+                // ...this.state,
+                deleting: true
+            }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader()},
+                };
+                return fetch(`${config.apiUrl}/collitype/delete?id=${JSON.stringify(selectedRows)}`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        // ...this.state,
+                        deleting: false
+                    }, refreshColliTypes);
+                })
+                .catch( err => {
+                    this.setState({
+                        // ...this.state,
+                        deleting: false
+                    }, refreshColliTypes);
+                });
+            });
+        }
+    }
+
+    cerateNewRow(event) {
+        event.preventDefault();
+        const { refreshColliTypes } = this.props;
+        const { fieldName } = this.state;
+        this.setState({
+            // ...this.state,
+            creating: true
+        }, () => {
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: JSON.stringify(fieldName)
+            };
+            return fetch(`${config.apiUrl}/collitype/create`, requestOptions)
+            .then( () => {
+                this.setState({
+                    // ...this.state,
+                    creating: false,
+                    newRowColor: 'green'
+                }, () => {
+                    setTimeout( () => {
+                        this.setState({
+                            // ...this.state,
+                            newRowColor: 'inherit',
+                            newRow:false,
+                            fieldName:{},
+                            newRowFocus: false
+                        }, refreshColliTypes);
+                    }, 1000);                                
+                });
+            })
+            .catch( () => {
+                this.setState({
+                    // ...this.state,
+                    creating: false,
+                    newRowColor: 'red'
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            // ...this.state,
+                            newRowColor: 'inherit',
+                            newRow:false,
+                            fieldName:{},
+                            newRowFocus: false                                    
+                        }, refreshColliTypes);
+                    }, 1000);                                                      
+                });
+            });
+        });
+    }
+
+    onFocusRow(event) {
+        event.preventDefault();
+        const { newRowFocus } = this.state;
+        if (event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+            this.cerateNewRow(event);
+        }
+    }
+
+    onBlurRow(event){
+        event.preventDefault()
+        if (event.currentTarget.dataset['type'] == 'newrow'){
+            this.setState({ newRowFocus: true });
+        }
+    }
+
+    updateSelectedRows(id) {
+        const { selectedRows } = this.state;
+        if (selectedRows.includes(id)) {
+            this.setState({
+                selectedRows: arrayRemove(selectedRows, id)
+            });
+        } else {
+            this.setState({
+                selectedRows: [...selectedRows, id]
+            });
+        }       
+    }
+
+
 
     generateHeader() {
         const { type, length, width, height, pkWeight, selectAllRows, sort } = this.state;
@@ -317,9 +559,60 @@ class ColliType extends Component {
     }
 
     generateBody(collitypes) {
-        const { refreshStore } = this.props;
-        const { selectAllRows } = this.state;
+        const { refreshColliTypes } = this.props;
+        const { selectAllRows, newRow, fieldName, newRowColor } = this.state;
         let tempRows = [];
+        
+        if (newRow) {
+            tempRows.push(
+                <tr
+                    onBlur={this.onBlurRow}
+                    onFocus={this.onFocusRow}
+                    data-type="newrow"
+                >
+                    <NewRowCreate
+                        onClick={event => this.cerateNewRow(event)}
+                    />
+                    <NewRowInput
+                        fieldType="text"
+                        fieldName="type"
+                        fieldValue={fieldName.type}
+                        onChange={event => this.handleChangeNewRow(event)}
+                        color={newRowColor}
+                    />
+                    <NewRowInput
+                        fieldType="number"
+                        fieldName="length"
+                        fieldValue={fieldName.length}
+                        onChange={event => this.handleChangeNewRow(event)}
+                        color={newRowColor}
+                    />
+                    <NewRowInput
+                        fieldType="number"
+                        fieldName="width"
+                        fieldValue={fieldName.width}
+                        onChange={event => this.handleChangeNewRow(event)}
+                        color={newRowColor}
+                    />
+                    <NewRowInput
+                        fieldType="number"
+                        fieldName="height"
+                        fieldValue={fieldName.height}
+                        onChange={event => this.handleChangeNewRow(event)}
+                        color={newRowColor}
+                    />
+                    <NewRowInput
+                        fieldType="number"
+                        fieldName="pkWeight"
+                        fieldValue={fieldName.pkWeight}
+                        onChange={event => this.handleChangeNewRow(event)}
+                        color={newRowColor}
+                    />
+                </tr>
+            );
+            
+        }
+
         if (collitypes.items) {
             this.filterName(collitypes.items).map(collitype => {
                 tempRows.push(
@@ -327,7 +620,7 @@ class ColliType extends Component {
                         <TableSelectionRow
                             id={collitype._id}
                             selectAllRows={selectAllRows}
-                            callBack={this.updateSelectedRows}
+                            callback={this.updateSelectedRows}
                         />
                         <TableInput
                             collection="collitype"
@@ -337,7 +630,7 @@ class ColliType extends Component {
                             disabled={false}
                             align="left"
                             fieldType="text"
-                            refreshStore={refreshStore}
+                            refreshStore={refreshColliTypes}
                         />
                         <TableInput
                             collection="collitype"
@@ -347,7 +640,7 @@ class ColliType extends Component {
                             disabled={false}
                             align="left"
                             fieldType="number"
-                            refreshStore={refreshStore}
+                            refreshStore={refreshColliTypes}
                         />
                         <TableInput
                             collection="collitype"
@@ -357,7 +650,7 @@ class ColliType extends Component {
                             disabled={false}
                             align="left"
                             fieldType="number"
-                            refreshStore={refreshStore}
+                            refreshStore={refreshColliTypes}
                         />
                         <TableInput
                             collection="collitype"
@@ -367,7 +660,7 @@ class ColliType extends Component {
                             disabled={false}
                             align="left"
                             fieldType="number"
-                            refreshStore={refreshStore}
+                            refreshStore={refreshColliTypes}
                         />
                         <TableInput
                             collection="collitype"
@@ -377,7 +670,7 @@ class ColliType extends Component {
                             disabled={false}
                             align="left"
                             fieldType="number"
-                            refreshStore={refreshStore}
+                            refreshStore={refreshColliTypes}
                         />
                     </tr>
                 );
@@ -411,10 +704,11 @@ class ColliType extends Component {
     }
 
     render() {
-        const alert = this.state.alert.message ? this.state.alert : this.props.alert;
+        const { selectedRows, deleting, creating } = this.state;
         const { collitypes } = this.props;
+        const alert = this.state.alert.message ? this.state.alert : this.props.alert;
         return (
-            <div id='colliType'>
+            <div>
                 <div className="ml-2 mr-2">
                     {alert.message && 
                         <div className={`alert ${alert.type} mt-3`}>{alert.message}
@@ -423,14 +717,36 @@ class ColliType extends Component {
                             </button>
                         </div>
                     }
-                    <div className="row">
-                        <div className="col">
-                            <h3>Select type:</h3>
+                    <div className={`row ${alert.message ? "mt-1" : "mt-5"} mb-2`}>
+                        <div className="col"> 
+                            <h3>Select Colli Type</h3>
+                        </div>
+                        <div className="col text-right">
+                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewRow}>
+                                <span>
+                                    { creating ? 
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/> 
+                                    :
+                                        <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
+                                    }
+                                    Create
+                                </span>
+                            </button>
+                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedRows)}>
+                                <span>
+                                    { deleting ? 
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/> 
+                                    :
+                                        <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
+                                    }
+                                    Delete
+                                </span>
+                            </button>
                         </div>
                     </div>
                     <div style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd', height: '400px'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row" >
-                            <table className="table table-bordered table-sm text-nowrap table-striped" id="collitypeTable">
+                            <table className="table table-bordered table-sm text-nowrap table-striped" id="collitype">
                                 <thead>
                                     {this.generateHeader()}
                                 </thead>
