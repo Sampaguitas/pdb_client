@@ -1354,8 +1354,8 @@ class TransportDocuments extends React.Component {
 
     handleDeleteRows(event) {
         event.preventDefault;
-        const { dispatch } = this.props;
-        const { selectedIds, projectId } = this.state;
+        // const { dispatch } = this.props;
+        const { selectedIds } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
                 alert: {

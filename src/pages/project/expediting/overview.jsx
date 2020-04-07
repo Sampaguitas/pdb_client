@@ -1252,26 +1252,52 @@ class Overview extends React.Component {
 
     handleDeleteRows(event) {
         event.preventDefault;
-        const { dispatch } = this.props;
-        const { selectedIds, projectId, unlocked } = this.state;
+        // const { dispatch } = this.props;
+        const { selectedIds } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
-                showDelete: false,
                 alert: {
                     type:'alert-danger',
                     message:'Select line(s) to be deleted.'
                 }
             });
-        } else if (!unlocked) {
-            this.setState({
-                showDelete: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Unlock table in order to delete line(s).'
+        } else if (confirm('Selected line(s) will be permanently deleted! would you like to proceed?')){
+            const requestOptions = {
+                method: 'DELETE',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: JSON.stringify({ selectedIds: selectedIds })
+            };
+            return fetch(`${config.apiUrl}/sub/delete`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (!responce.ok) {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
+                } else {
+                    this.setState({
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
                 }
-            });
-        } else {
-            console.log('toto');
+            })
+            .catch( () => {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'Line(s) could not be deleted.'
+                    }
+                }, this.refreshStore);
+            }));
         }
     }
 

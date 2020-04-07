@@ -1166,20 +1166,12 @@ class PackingDetails extends React.Component {
 
     handleDeleteRows(event) {
         event.preventDefault;
-        const { dispatch } = this.props;
-        const { selectedIds, projectId, unlocked } = this.state;
-        if (_.isEmpty(selectedIds)) {
-            this.setState({
-                ...this.state,
-                showDelete: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be deleted.'
-                }
-            });
-        } else {
-            console.log('selectedIds:', selectedIds);
-        }
+        this.setState({
+            alert: {
+                type:'alert-danger',
+                message:'Cannot be deleted from this screen, go to Transport Documents and remove Colli(s) numbers.'
+            }
+        });
     }
 
     toggleEditValues(event) {

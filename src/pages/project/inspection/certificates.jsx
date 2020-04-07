@@ -947,29 +947,12 @@ class Certificates extends React.Component {
 
     handleDeleteRows(event) {
         event.preventDefault;
-        const { dispatch } = this.props;
-        const { selectedIds, projectId, unlocked } = this.state;
-        if (_.isEmpty(selectedIds)) {
-            this.setState({
-                ...this.state,
-                showDelete: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be deleted.'
-                }
-            });
-        } else if (!unlocked) {
-            this.setState({
-                ...this.state,
-                showDelete: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Unlock table in order to delete line(s).'
-                }
-            });
-        } else {
-            console.log('toto');
-        }
+        this.setState({
+            alert: {
+                type:'alert-danger',
+                message:'Certificates cannot be deleted at the moment.'
+            }
+        });
     }
 
     toggleEditValues(event) {
