@@ -27,7 +27,11 @@
 
 ### Custom table
 - [X] sort function.
-- [ ] delete button.
+- [ ] delete button:
+
+1- post delete packitem middlewhere: if no other packitems with same plNr & colliNr => delete collipack;
+2- post delete sub middlewhere: delete all packitems with that subId and delete po if no other sub with same subId;
+3- post delete po middlewhere: delete all subs with that poId
 
 ### User settings
 - [X] Filter: display only forSelect.
