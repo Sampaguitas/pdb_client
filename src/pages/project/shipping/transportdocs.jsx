@@ -612,7 +612,7 @@ class TransportDocuments extends React.Component {
         this.toggleAssignPl = this.toggleAssignPl.bind(this);
         this.toggleAssignColli = this.toggleAssignColli.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
-        this.toggleDelete = this.toggleDelete.bind(this);
+        // this.toggleDelete = this.toggleDelete.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -1355,27 +1355,51 @@ class TransportDocuments extends React.Component {
     handleDeleteRows(event) {
         event.preventDefault;
         const { dispatch } = this.props;
-        const { selectedIds, projectId, unlocked } = this.state;
+        const { selectedIds, projectId } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
-                ...this.state,
-                showDelete: false,
                 alert: {
                     type:'alert-danger',
                     message:'Select line(s) to be deleted.'
                 }
             });
-        } else if (!unlocked) {
-            this.setState({
-                ...this.state,
-                showDelete: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Unlock table in order to delete line(s).'
+        } else if (confirm('Selected line(s) will be permanently deleted! would you like to proceed?')){
+            const requestOptions = {
+                method: 'DELETE',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: JSON.stringify({ selectedIds: selectedIds })
+            };
+            return fetch(`${config.apiUrl}/packitem/delete`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (!responce.ok) {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
+                } else {
+                    this.setState({
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
                 }
-            });
-        } else {
-            console.log('toto');
+            })
+            .catch( () => {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'Line(s) could not be deleted.'
+                    }
+                }, this.refreshStore);
+            }));
         }
     }
 
@@ -1501,36 +1525,36 @@ class TransportDocuments extends React.Component {
         })
     }
 
-    toggleDelete(event) {
-        event.preventDefault();
-        const { showDelete, unlocked, selectedIds } = this.state;
-        if (!showDelete && _.isEmpty(selectedIds)) {
-            this.setState({
-                ...this.state,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be deleted.'
-                }
-            });
-        } else if (!showDelete && !unlocked) {
-            this.setState({
-                ...this.state,
-                alert: {
-                    type:'alert-danger',
-                    message:'Unlock table in order to delete line(s).'
-                }
-            });
-        } else {
-            this.setState({
-                ...this.state,
-                alert: {
-                    type:'',
-                    message:''
-                },
-                showDelete: !showDelete
-            });
-        }
-    }
+    // toggleDelete(event) {
+    //     event.preventDefault();
+    //     const { showDelete, unlocked, selectedIds } = this.state;
+    //     if (!showDelete && _.isEmpty(selectedIds)) {
+    //         this.setState({
+    //             ...this.state,
+    //             alert: {
+    //                 type:'alert-danger',
+    //                 message:'Select line(s) to be deleted.'
+    //             }
+    //         });
+    //     } else if (!showDelete && !unlocked) {
+    //         this.setState({
+    //             ...this.state,
+    //             alert: {
+    //                 type:'alert-danger',
+    //                 message:'Unlock table in order to delete line(s).'
+    //             }
+    //         });
+    //     } else {
+    //         this.setState({
+    //             ...this.state,
+    //             alert: {
+    //                 type:'',
+    //                 message:''
+    //             },
+    //             showDelete: !showDelete
+    //         });
+    //     }
+    // }
 
     render() {
         const { 
@@ -1622,7 +1646,7 @@ class TransportDocuments extends React.Component {
                                 fields={fields}
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
-                                toggleDelete={this.toggleDelete}
+                                handleDeleteRows={this.handleDeleteRows}
                                 settingsFilter={settingsFilter}
                             />
                         }
@@ -1824,7 +1848,7 @@ class TransportDocuments extends React.Component {
                     </div>
                 </Modal>
 
-                <Modal
+                {/* <Modal
                     show={showDelete}
                     hideModal={this.toggleDelete}
                     title="Delete Value(s)"
@@ -1840,7 +1864,7 @@ class TransportDocuments extends React.Component {
                             </button>
                         </div>                   
                     </div>
-                </Modal>
+                </Modal> */}
             </Layout>
         );
     }

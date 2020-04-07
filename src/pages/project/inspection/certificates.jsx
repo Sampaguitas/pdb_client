@@ -495,7 +495,7 @@ class Certificates extends React.Component {
         //Toggle Modals
         this.toggleEditValues = this.toggleEditValues.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
-        this.toggleDelete = this.toggleDelete.bind(this);
+        // this.toggleDelete = this.toggleDelete.bind(this);
         //settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -1021,41 +1021,41 @@ class Certificates extends React.Component {
     }
 
 
-    toggleDelete(event) {
-        event.preventDefault();
-        const { showDelete, unlocked, selectedIds } = this.state;
-        if (!showDelete && _.isEmpty(selectedIds)) {
-            this.setState({
-                ...this.state,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be deleted.'
-                }
-            });
-        } else if (!showDelete && !unlocked) {
-            this.setState({
-                ...this.state,
-                alert: {
-                    type:'alert-danger',
-                    message:'Unlock table in order to delete line(s).'
-                }
-            });
-        } else {
-            this.setState({
-                ...this.state,
-                selectedTemplate: '0',
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
-                alert: {
-                    type:'',
-                    message:''
-                },
-                showEditValues: false,
-                showDelete: !showDelete
-            });
-        }
-    }
+    // toggleDelete(event) {
+    //     event.preventDefault();
+    //     const { showDelete, unlocked, selectedIds } = this.state;
+    //     if (!showDelete && _.isEmpty(selectedIds)) {
+    //         this.setState({
+    //             ...this.state,
+    //             alert: {
+    //                 type:'alert-danger',
+    //                 message:'Select line(s) to be deleted.'
+    //             }
+    //         });
+    //     } else if (!showDelete && !unlocked) {
+    //         this.setState({
+    //             ...this.state,
+    //             alert: {
+    //                 type:'alert-danger',
+    //                 message:'Unlock table in order to delete line(s).'
+    //             }
+    //         });
+    //     } else {
+    //         this.setState({
+    //             ...this.state,
+    //             selectedTemplate: '0',
+    //             selectedField: '',
+    //             selectedType: 'text',
+    //             updateValue:'',
+    //             alert: {
+    //                 type:'',
+    //                 message:''
+    //             },
+    //             showEditValues: false,
+    //             showDelete: !showDelete
+    //         });
+    //     }
+    // }
 
     render() {
         const { 
@@ -1127,7 +1127,7 @@ class Certificates extends React.Component {
                                 fields={fields}
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
-                                toggleDelete = {this.toggleDelete}
+                                handleDeleteRows = {this.handleDeleteRows}
                                 settingsFilter = {settingsFilter}
                             />
                         }
@@ -1234,7 +1234,7 @@ class Certificates extends React.Component {
                     </div>
                 </Modal>
 
-                <Modal
+                {/* <Modal
                     show={showDelete}
                     hideModal={this.toggleDelete}
                     title="Delete Value(s)"
@@ -1250,7 +1250,7 @@ class Certificates extends React.Component {
                             </button>
                         </div>                   
                     </div>
-                </Modal>
+                </Modal> */}
 
             </Layout>
         );

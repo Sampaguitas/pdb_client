@@ -495,7 +495,7 @@ class PackingDetails extends React.Component {
         this.toggleColliTypes = this.toggleColliTypes.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
-        this.toggleDelete = this.toggleDelete.bind(this);
+        // this.toggleDelete = this.toggleDelete.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -1177,17 +1177,8 @@ class PackingDetails extends React.Component {
                     message:'Select line(s) to be deleted.'
                 }
             });
-        } else if (!unlocked) {
-            this.setState({
-                ...this.state,
-                showDelete: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Unlock table in order to delete line(s).'
-                }
-            });
         } else {
-            console.log('toto');
+            console.log('selectedIds:', selectedIds);
         }
     }
 
@@ -1275,40 +1266,40 @@ class PackingDetails extends React.Component {
         })
     }
 
-    toggleDelete(event) {
-        event.preventDefault();
-        const { showDelete, unlocked, selectedIds } = this.state;
-        if (!showDelete && _.isEmpty(selectedIds)) {
-            this.setState({
-                ...this.state,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be deleted.'
-                }
-            });
-        } else if (!showDelete && !unlocked) {
-            this.setState({
-                ...this.state,
-                alert: {
-                    type:'alert-danger',
-                    message:'Unlock table in order to delete line(s).'
-                }
-            });
-        } else {
-            this.setState({
-                ...this.state,
-                selectedTemplate: '',
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
-                alert: {
-                    type:'',
-                    message:''
-                },
-                showDelete: !showDelete
-            });
-        }
-    }
+    // toggleDelete(event) {
+    //     event.preventDefault();
+    //     const { showDelete, unlocked, selectedIds } = this.state;
+    //     if (!showDelete && _.isEmpty(selectedIds)) {
+    //         this.setState({
+    //             ...this.state,
+    //             alert: {
+    //                 type:'alert-danger',
+    //                 message:'Select line(s) to be deleted.'
+    //             }
+    //         });
+    //     } else if (!showDelete && !unlocked) {
+    //         this.setState({
+    //             ...this.state,
+    //             alert: {
+    //                 type:'alert-danger',
+    //                 message:'Unlock table in order to delete line(s).'
+    //             }
+    //         });
+    //     } else {
+    //         this.setState({
+    //             ...this.state,
+    //             selectedTemplate: '',
+    //             selectedField: '',
+    //             selectedType: 'text',
+    //             updateValue:'',
+    //             alert: {
+    //                 type:'',
+    //                 message:''
+    //             },
+    //             showDelete: !showDelete
+    //         });
+    //     }
+    // }
 
     render() {
         const { 
@@ -1396,7 +1387,7 @@ class PackingDetails extends React.Component {
                                 fields={fields}
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
-                                toggleDelete = {this.toggleDelete}
+                                handleDeleteRows = {this.handleDeleteRows}
                                 settingsFilter = {settingsFilter}
                             />
                         }
@@ -1564,7 +1555,7 @@ class PackingDetails extends React.Component {
                     </div>
                 </Modal>
 
-                <Modal
+                {/* <Modal
                     show={showDelete}
                     hideModal={this.toggleDelete}
                     title="Delete Value(s)"
@@ -1580,7 +1571,7 @@ class PackingDetails extends React.Component {
                             </button>
                         </div>                   
                     </div>
-                </Modal>
+                </Modal> */}
 
             </Layout>
         );
