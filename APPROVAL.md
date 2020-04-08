@@ -4,3 +4,4 @@
 * [Approval - Phase V](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+V.pdf)
 * [Approval - Phase VI-XI](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+VI+-+XI.pdf)
 * [Approval - Phase XII](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XII.pdf)
+* [Approval - Phase XVII](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XVII.pdf)
