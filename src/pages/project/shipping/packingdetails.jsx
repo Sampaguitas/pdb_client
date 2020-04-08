@@ -1107,7 +1107,7 @@ class PackingDetails extends React.Component {
                 }
             });
         } else {
-            let colliType = collitypes.items.find(element => element._id ===collitypeId);
+            let colliType = collitypes.items.find(element => element._id === collitypeId);
             if (_.isUndefined(colliType)) {
                 this.setState({
                     showColliTypes: false,
@@ -1169,7 +1169,7 @@ class PackingDetails extends React.Component {
         this.setState({
             alert: {
                 type:'alert-danger',
-                message:'Cannot be deleted from this screen, go to Transport Documents and remove Colli(s) numbers.'
+                message:'For the Selected line(s) all packing details shall be deleted. Are you sure you want to proceed?'
             }
         });
     }

@@ -638,7 +638,7 @@ class SplitLine extends Component {
                         forShowIsAll: false,
                         alert: {
                             type: screenBody.isPacked ? 'alert-warning' : '',
-                            message: screenBody.isPacked ? 'Line contains packed item(s) and cannot be splet! First delete packed items in the shipping module to proceed.' : ''
+                            message: screenBody.isPacked ? 'Line contains packed item(s) and cannot be split! First delete packed items in the shipping module to proceed.' : ''
                         }
                     });
                 } else {
@@ -840,7 +840,7 @@ class SplitLine extends Component {
             this.setState({
                 alert: {
                     type: 'alert-danger',
-                    message: 'Line contains packed item(s) and cannot be splet! First delete packed items in the shipping module and try again.'
+                    message: 'Line contains packed item(s) and cannot be split! First delete packed items in the shipping module and try again.'
                 }
             });
         } else if (remainingQty != 0) {

@@ -1261,7 +1261,7 @@ class Overview extends React.Component {
                     message:'Select line(s) to be deleted.'
                 }
             });
-        } else if (confirm('Selected line(s) will be permanently deleted! would you like to proceed?')){
+        } else if (confirm('For the Selected line(s) all sub details, certificates and packing details shall be deleted. Are you sure you want to proceed?')){
             const requestOptions = {
                 method: 'DELETE',
                 headers: { ...authHeader(), 'Content-Type': 'application/json' },

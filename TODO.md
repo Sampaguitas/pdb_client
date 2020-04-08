@@ -1,18 +1,13 @@
 ## Todo list
 
 ### Expediting module
-- [X] correct virtuals with PL on Exp table.
-- [X] correct virtuals with PL on ESR.
 
 ### Inspection module
 - [ ] certificate screen.
 
 ### Shipping module
-- [X] collitype modal.
-- [X] create colli type.
-- [X] delete colli type(s).
-- [X] Assign colli type.
-
+- [ ] fix assing colli type
+ 
 ### Warhouse module
 - [ ] Goods receipt.
 - [ ] Stock management.
@@ -22,18 +17,7 @@
 - [ ] Warhouse locations.
 
 ### Configs module
-- [X] duplicate modal when creating project.
-- [ ] Loading icon for all action buttons (some missing).
 
 ### Custom table
-- [X] sort function.
-- [ ] delete button:
-
-1- post delete packitem middlewhere: if no other packitems with same plNr & colliNr => delete collipack;
-2- post delete sub middlewhere: delete all packitems with that subId and delete po if no other sub with same subId;
-3- post delete po middlewhere: delete all subs with that poId
 
 ### User settings
-- [X] Filter: display only forSelect.
-- [X] Display: clear all isEqual=false
-- [X] OK button.
