@@ -6,7 +6,7 @@ import { accessActions, alertActions, projectActions } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-class ProjectWarhouse extends React.Component {
+class Locations extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -62,12 +62,12 @@ class ProjectWarhouse extends React.Component {
                         <li className="breadcrumb-item">
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
-                        <li className="breadcrumb-item active" aria-current="page">Warehouse locations:</li>
+                        <li className="breadcrumb-item active" aria-current="page">Locations:</li>
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
                     </ol>
                 </nav>
                 <hr />
-                <div id="projectwarhouse" className="full-height">
+                <div id="locations" className="full-height">
                     <div className="row full-height">
                         <div className="col-6 full-height">
                             <div className="card full-height">
@@ -105,5 +105,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedProjectWarhouse = connect(mapStateToProps)(ProjectWarhouse);
-export { connectedProjectWarhouse as ProjectWarhouse };
+const connectedLocations = connect(mapStateToProps)(Locations);
+export { connectedLocations as Locations };

@@ -412,7 +412,7 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                                 collection: 'virtual',
                                                 objectId: sub._id,
                                                 fieldName: 'shippedQty',
-                                                fieldValue: virtual.shippedQty,
+                                                fieldValue: virtual.shippedQty || '',
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
@@ -1251,7 +1251,7 @@ class Overview extends React.Component {
     }
 
     handleDeleteRows(event) {
-        event.preventDefault;
+        event.preventDefault();
         // const { dispatch } = this.props;
         const { selectedIds } = this.state;
         if (_.isEmpty(selectedIds)) {

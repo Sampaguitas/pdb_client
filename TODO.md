@@ -8,13 +8,13 @@
 ### Shipping module
 - [ ] fix assing colli type
  
-### Warhouse module
+### Warehouse module
 - [ ] Goods receipt.
 - [ ] Stock management.
 - [ ] Call-off order.
 - [ ] Picking list.
 - [ ] Outstanding shipments.
-- [ ] Warhouse locations.
+- [ ] Warehouse locations.
 
 ### Configs module
 

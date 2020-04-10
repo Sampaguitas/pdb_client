@@ -34,7 +34,7 @@ import { StockManagement } from '../pages/project/warehouse/stockmanagement.jsx'
 import { CallOffOrder } from '../pages/project/warehouse/callofforder.jsx';
 import { PickingLists } from '../pages/project/warehouse/pickinglists.jsx';
 import { OutgoingShipments } from '../pages/project/warehouse/outgoingshipments.jsx';
-import { ProjectWarhouse } from '../pages/project/warehouse/projectwarhouse.jsx';
+import { Locations } from '../pages/project/warehouse/locations.jsx';
 import { Configuration } from '../pages/project/configuration.jsx';
 
 
@@ -93,7 +93,7 @@ class App extends React.Component {
                         <PrivateRoute path="/callofforder" component={CallOffOrder} user={user}/>
                         <PrivateRoute path="/pickinglists" component={PickingLists} user={user}/>
                         <PrivateRoute path="/outgoingshipments" component={OutgoingShipments} user={user}/>
-                        <PrivateRoute path="/projectwarhouse" component={ProjectWarhouse} user={user}/>
+                        <PrivateRoute path="/locations" component={Locations} user={user}/>
                         <PrivateRoute path="/configuration" component={Configuration} user={user}/>
                         <Route component={NotFound} user={user}/>
                     </Switch>

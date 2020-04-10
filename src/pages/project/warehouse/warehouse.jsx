@@ -148,18 +148,18 @@ class Warehouse extends React.Component {
                         </div>
                     </NavLink>
                     <NavLink to={{ 
-                            pathname: "/projectwarhouse",
+                            pathname: "/locations",
                             search: '?id=' + projectId
                         }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
                         <div className="card-body">
                             <div className="text-center">
                                 <FontAwesomeIcon 
-                                    icon="inventory" 
+                                    icon="map-marked-alt" //inventory map-marked-alt
                                     className="fa-5x mb-3" 
                                     name="inventory"
                                 />
-                                <h3>Warehouse locations</h3>
+                                <h3>Locations</h3>
                             </div>
                         </div>
                     </NavLink>

@@ -52,7 +52,7 @@ const project_menu = [
             { id: 2, title: 'Call-off order', href: '/callofforder', icon: 'phone-square', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
             { id: 3, title: 'Picking lists', href: '/pickinglists', icon: 'clipboard-list', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] },
             { id: 4, title: 'Outgoing shipments', href: '/outgoingshipments', icon: 'ship', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
-            { id: 5, title: 'Warehouse locations', href: '/projectwarhouse', icon: 'inventory', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] } 
+            { id: 5, title: 'Locations', href: '/locations', icon: 'map-marked-alt', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] } 
         ] 
     },
     { id: 6, title: 'Configuration', href: '/configuration', icon: 'cog', roles: ['isAdmin', 'isSuperAdmin', 'isConfiguration'] }
@@ -120,7 +120,7 @@ class SideBarMenu extends Component {
             case '/callofforder':
             case '/pickinglists':
             case '/outgoingshipments':
-            case '/projectwarhouse':
+            case '/locations':
             case '/configuration': 
                 return false;
                 break
