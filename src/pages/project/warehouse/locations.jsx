@@ -68,20 +68,30 @@ class Locations extends React.Component {
                 </nav>
                 <hr />
                 <div id="locations" className="full-height">
-                    <div className="row full-height">
-                        <div className="col-6 full-height">
-                            <div className="card full-height">
-                                <div className="card-header">
-                                    <h5>Warehouses</h5>
-                                </div>
-                            
-                            </div>
-                        </div>
-                        <div className="col-6 full-height">
-                            <div className="card full-height">
-                                <div className="card-header">
-                                    <h5>Locations</h5>
-                                </div>
+                    <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Show Warehouses"> {/* onClick={event => this.toggleWarhouses(event)} */}
+                            <span><FontAwesomeIcon icon="warehouse" className="fa-lg mr-2"/>Warehouses</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Show Warehouses"> {/* onClick={event => this.toggleWarhouses(event)} */}
+                            <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>DUF File</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add Location"> {/* onClick={event => this.toggleGenerate(event)} */}
+                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Location</span>
+                        </button>
+                        <button className="btn btn-leeuwen btn-lg mr-2" style={{height: '34px'}} title="Delete Location"> {/* onClick={event => this.toggleGenerate(event)} */}
+                            <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Location(s)</span>
+                        </button>
+                    </div>
+                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                        <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
+                            <div className="table-responsive custom-table-container custom-table-container__fixed-row">
+                                <table className="table table-bordered table-sm text-nowrap table-striped" id="locationsTable">
+                                    <thead>
+                                        <tr>
+
+                                        </tr>
+                                    </thead>
+                                </table>
                             </div>
                         </div>
                     </div>

@@ -474,7 +474,6 @@ class PackingDetails extends React.Component {
             // showSplitLine: false,
             showGenerate: false,
             showSettings: false,
-            showDelete: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -495,7 +494,6 @@ class PackingDetails extends React.Component {
         this.toggleColliTypes = this.toggleColliTypes.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
-        // this.toggleDelete = this.toggleDelete.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -1258,41 +1256,6 @@ class PackingDetails extends React.Component {
         })
     }
 
-    // toggleDelete(event) {
-    //     event.preventDefault();
-    //     const { showDelete, unlocked, selectedIds } = this.state;
-    //     if (!showDelete && _.isEmpty(selectedIds)) {
-    //         this.setState({
-    //             ...this.state,
-    //             alert: {
-    //                 type:'alert-danger',
-    //                 message:'Select line(s) to be deleted.'
-    //             }
-    //         });
-    //     } else if (!showDelete && !unlocked) {
-    //         this.setState({
-    //             ...this.state,
-    //             alert: {
-    //                 type:'alert-danger',
-    //                 message:'Unlock table in order to delete line(s).'
-    //             }
-    //         });
-    //     } else {
-    //         this.setState({
-    //             ...this.state,
-    //             selectedTemplate: '',
-    //             selectedField: '',
-    //             selectedType: 'text',
-    //             updateValue:'',
-    //             alert: {
-    //                 type:'',
-    //                 message:''
-    //             },
-    //             showDelete: !showDelete
-    //         });
-    //     }
-    // }
-
     render() {
         const { 
             projectId, 
@@ -1313,7 +1276,6 @@ class PackingDetails extends React.Component {
             // showSplitLine,
             showGenerate,
             showSettings,
-            showDelete,
             //---------
             headersForShow,
             bodysForShow,
@@ -1546,24 +1508,6 @@ class PackingDetails extends React.Component {
                         </button>
                     </div>
                 </Modal>
-
-                {/* <Modal
-                    show={showDelete}
-                    hideModal={this.toggleDelete}
-                    title="Delete Value(s)"
-                >
-                    <div className="col-12">
-                        <p className="font-weight-bold">Selected Lines will be permanently deleted!</p>
-                        <div className="text-right">
-                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleDelete(event)}>
-                                <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Cancel</span>
-                            </button>
-                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteRows(event)}>
-                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Proceed</span>
-                            </button>
-                        </div>                   
-                    </div>
-                </Modal> */}
 
             </Layout>
         );

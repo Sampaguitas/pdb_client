@@ -66,7 +66,6 @@ class CallOffOrder extends React.Component {
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
                     </ol>
                 </nav>
-                {/* <h2>Warehouse | Call-off order > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2> */}
                 <hr />
             </Layout>
         );

@@ -114,7 +114,6 @@ class User extends React.Component {
                         <li className="breadcrumb-item active" aria-current="page">User Page</li>
                     </ol>
                 </nav>
-                {/* <h2>User Page</h2> */}
                 <hr />
                 <div id="user" className="full-height">
                     <div className="row">

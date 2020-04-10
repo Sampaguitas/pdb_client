@@ -690,8 +690,7 @@ class ReleaseData extends React.Component {
             showEditValues: false,
             showAssignNfi: false,
             showGenerate: false,
-            showSettings: false,
-            showDelete: false,                      
+            showSettings: false,                      
         };
 
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -716,7 +715,6 @@ class ReleaseData extends React.Component {
         this.toggleAssignNfi = this.toggleAssignNfi.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
-        // this.toggleDelete = this.toggleDelete.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -1600,38 +1598,6 @@ class ReleaseData extends React.Component {
         })
     }
 
-
-    // toggleDelete(event) {
-    //     event.preventDefault();
-    //     const { showDelete, unlocked, selectedIds } = this.state;
-    //     if (!showDelete && _.isEmpty(selectedIds)) {
-    //         this.setState({
-    //             ...this.state,
-    //             alert: {
-    //                 type:'alert-danger',
-    //                 message:'Select line(s) to be deleted.'
-    //             }
-    //         });
-    //     } else if (!showDelete && !unlocked) {
-    //         this.setState({
-    //             ...this.state,
-    //             alert: {
-    //                 type:'alert-danger',
-    //                 message:'Unlock table in order to delete line(s).'
-    //             }
-    //         });
-    //     } else {
-    //         this.setState({
-    //             ...this.state,
-    //             alert: {
-    //                 type:'',
-    //                 message:''
-    //             },
-    //             showDelete: !showDelete
-    //         });
-    //     }
-    // }
-
     render() {
         const { 
             projectId, 
@@ -1656,7 +1622,6 @@ class ReleaseData extends React.Component {
             showAssignNfi,
             showGenerate,
             showSettings,
-            showDelete,
             //--------
             headersForShow,
             bodysForShow,
@@ -1692,7 +1657,6 @@ class ReleaseData extends React.Component {
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
                     </ol>
                 </nav>
-                {/* <h2>Inspection | Inspection & Release data > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2> */}
                 <hr />
                 <div id="inspection" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
@@ -1975,26 +1939,6 @@ class ReleaseData extends React.Component {
                         </button>
                     </div>
                 </Modal>
-
-                {/* <Modal
-                    show={showDelete}
-                    hideModal={this.toggleDelete}
-                    title="Delete Value(s)"
-                >
-                    <div className="col-12">
-                        <p className="font-weight-bold">Selected Lines will be permanently deleted!</p>
-                        <div className="text-right">
-                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleDelete(event)}>
-                                <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Cancel</span>
-                            </button>
-                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteRows(event)}>
-                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Proceed</span>
-                            </button>
-                        </div>                   
-                    </div>
-                </Modal> */}
-
-                
 
             </Layout>
         );

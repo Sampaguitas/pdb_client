@@ -481,7 +481,6 @@ class Certificates extends React.Component {
             //-----modals-----
             showEditValues: false,
             showSettings: false,
-            showDelete: false,
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -495,7 +494,6 @@ class Certificates extends React.Component {
         //Toggle Modals
         this.toggleEditValues = this.toggleEditValues.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
-        // this.toggleDelete = this.toggleDelete.bind(this);
         //settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -978,7 +976,6 @@ class Certificates extends React.Component {
                     message:''
                 },
                 showEditValues: !showEditValues,
-                showDelete: false
             });
         }
     }
@@ -1003,43 +1000,6 @@ class Certificates extends React.Component {
         })
     }
 
-
-    // toggleDelete(event) {
-    //     event.preventDefault();
-    //     const { showDelete, unlocked, selectedIds } = this.state;
-    //     if (!showDelete && _.isEmpty(selectedIds)) {
-    //         this.setState({
-    //             ...this.state,
-    //             alert: {
-    //                 type:'alert-danger',
-    //                 message:'Select line(s) to be deleted.'
-    //             }
-    //         });
-    //     } else if (!showDelete && !unlocked) {
-    //         this.setState({
-    //             ...this.state,
-    //             alert: {
-    //                 type:'alert-danger',
-    //                 message:'Unlock table in order to delete line(s).'
-    //             }
-    //         });
-    //     } else {
-    //         this.setState({
-    //             ...this.state,
-    //             selectedTemplate: '0',
-    //             selectedField: '',
-    //             selectedType: 'text',
-    //             updateValue:'',
-    //             alert: {
-    //                 type:'',
-    //                 message:''
-    //             },
-    //             showEditValues: false,
-    //             showDelete: !showDelete
-    //         });
-    //     }
-    // }
-
     render() {
         const { 
             projectId, 
@@ -1052,7 +1012,6 @@ class Certificates extends React.Component {
             updateValue,
             showEditValues,
             showSettings,
-            showDelete,
             //--------
             headersForShow,
             bodysForShow,
@@ -1085,7 +1044,6 @@ class Certificates extends React.Component {
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
                     </ol>
                 </nav>
-                {/* <h2>Inspection | Certificates > {selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</h2> */}
                 <hr />
                 <div id="certificates" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
@@ -1216,24 +1174,6 @@ class Certificates extends React.Component {
                         </button>
                     </div>
                 </Modal>
-
-                {/* <Modal
-                    show={showDelete}
-                    hideModal={this.toggleDelete}
-                    title="Delete Value(s)"
-                >
-                    <div className="col-12">
-                        <p className="font-weight-bold">Selected Lines will be permanently deleted!</p>
-                        <div className="text-right">
-                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleDelete(event)}>
-                                <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Cancel</span>
-                            </button>
-                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteRows(event)}>
-                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Proceed</span>
-                            </button>
-                        </div>                   
-                    </div>
-                </Modal> */}
 
             </Layout>
         );
