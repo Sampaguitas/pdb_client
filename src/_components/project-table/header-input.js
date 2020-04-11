@@ -5,7 +5,7 @@ class HeaderInput extends Component{
 
     render() {
         
-        const { type, title, name, value, onChange, width, textNoWrap, sort, toggleSort } = this.props;
+        const { type, title, name, value, onChange, width, textNoWrap, sort, toggleSort, maxLength } = this.props;
         
         return (
             <th style={{width: `${width ? width : 'auto'}`, whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`, padding: '0px' }}>
@@ -33,6 +33,7 @@ class HeaderInput extends Component{
                             height: '20px',
                             padding: '0rem .75rem'
                         }}
+                        maxLength={maxLength || 524288}
                     />
                 </div>
             </th>
