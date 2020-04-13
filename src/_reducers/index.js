@@ -25,6 +25,7 @@ import { selection } from './selection.reducer';
 import { settings } from './settings.reducer';
 import { suppliers } from './suppliers.reducer';
 import { users } from './users.reducer';
+import { warehouses } from './warehouses.reducer';
 
 const rootReducer = combineReducers({
   accesses,
@@ -51,7 +52,8 @@ const rootReducer = combineReducers({
   selection,
   settings,
   suppliers,
-  users
+  users,
+  warehouses
 });
 
 export default rootReducer;

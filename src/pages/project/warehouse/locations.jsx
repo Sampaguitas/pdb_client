@@ -3,7 +3,12 @@ import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { accessActions, alertActions, projectActions } from '../../../_actions';
+import { 
+    accessActions,
+    alertActions,
+    projectActions,
+    warehouseActions
+} from '../../../_actions';
 import Layout from '../../../_components/layout';
 import HeaderInput from '../../../_components/project-table/header-input';
 import HeaderCheckBox from '../../../_components/project-table/header-check-box';
@@ -13,6 +18,8 @@ import TableSelect from '../../../_components/project-table/table-select';
 import TableCheckBox from '../../../_components/project-table/table-check-box';
 import TableSelectionRow from '../../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../../_components/project-table/table-selection-all-row';
+import Modal from '../../../_components/modal';
+import Warehouse from '../../../_components/split-line/warhouse';
 
 function locationSorted(array, sort) {
     let tempArray = array.slice(0);
@@ -43,18 +50,11 @@ function locationSorted(array, sort) {
                     }
                 });
             }
-        case 'location':
         case 'area':
-        case 'hall':
-        case 'row':
-        case 'col':
-        case 'height':
-        case 'tc':
-        case 'type':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.location[sort.name]) && !_.isNull(a.location[sort.name]) ? a.location[sort.name].toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.location[sort.name]) && !_.isNull(b.location[sort.name]) ? b.location[sort.name].toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.area.name) && !_.isNull(a.area.name) ? a.area.name.toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.area.name) && !_.isNull(b.area.name) ? b.area.name.toUpperCase() : '';
                     if (nameA < nameB) {
                         return -1;
                     } else if (nameA > nameB) {
@@ -65,8 +65,40 @@ function locationSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.location[sort.name]) && !_.isNull(a.location[sort.name]) ? a.location[sort.name].toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.location[sort.name]) && !_.isNull(b.location[sort.name]) ? b.location[sort.name].toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.area.name) && !_.isNull(a.area.name) ? a.area.name.toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.area.name) && !_.isNull(b.area.name) ? b.area.name.toUpperCase() : '';
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        case 'location':
+        case 'hall':
+        case 'row':
+        case 'col':
+        case 'height':
+        case 'tc':
+        case 'type':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.area.location[sort.name]) && !_.isNull(a.area.location[sort.name]) ? a.area.location[sort.name].toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.area.location[sort.name]) && !_.isNull(b.area.location[sort.name]) ? b.area.location[sort.name].toUpperCase() : '';
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.area.location[sort.name]) && !_.isNull(a.area.location[sort.name]) ? a.area.location[sort.name].toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.area.location[sort.name]) && !_.isNull(b.area.location[sort.name]) ? b.area.location[sort.name].toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {
@@ -167,6 +199,7 @@ class Locations extends React.Component {
         this.toggleSort = this.toggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
+        this.toggleWarehouse = this.toggleWarehouse.bind(this);
         this.filterName = this.filterName.bind(this);
     }
 
@@ -174,7 +207,8 @@ class Locations extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
-            loadingSelection, 
+            loadingSelection,
+            loadingWarehouses, 
             location 
         } = this.props;
 
@@ -187,6 +221,9 @@ class Locations extends React.Component {
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
+            }
+            if (!loadingWarehouses) {
+                dispatch(warehouseActions.getAll(qs.id));
             }
         }
     }
@@ -253,26 +290,32 @@ class Locations extends React.Component {
             }         
         }
     }
+
+    toggleWarehouse(event) {
+        event.preventDefault();
+        const { showWarehouse } = this.state;
+        this.setState({ showWarehouse: !showWarehouse });
+    }
     
     filterName(array){
         const { warehouse, location, area, hall, row, col, height, tc, type, sort } = this.state
         if (array) {
             return locationSorted(array, sort).filter(function (object) {
                 return (doesMatch(warehouse, object.name, 'String', false) 
-                && doesMatch(location, object.location.name, 'String', false) 
-                && doesMatch(area, object.location.area, 'String', false) 
-                && doesMatch(hall, object.location.hall, 'String', false)
-                && doesMatch(row, object.location.row, 'String', false)
-                && doesMatch(col, object.location.col, 'String', false)
-                && doesMatch(height, object.location.height, 'String', false)
-                && doesMatch(tc, object.location.tc, 'Select', false)
-                && doesMatch(type, object.location.type, 'String', false));
+                && doesMatch(location, object.area.location.name, 'String', false) 
+                && doesMatch(area, object.area.area, 'String', false) 
+                && doesMatch(hall, object.area.location.hall, 'String', false)
+                && doesMatch(row, object.area.location.row, 'String', false)
+                && doesMatch(col, object.area.location.col, 'String', false)
+                && doesMatch(height, object.area.location.height, 'String', false)
+                && doesMatch(tc, object.area.location.tc, 'Select', false)
+                && doesMatch(type, object.area.location.type, 'String', false));
             });
         }
     }
 
     render() {
-        const { accesses, alert, selection } = this.props;
+        const { accesses, alert, selection, warehouses } = this.props;
 
         const {
             projectId,
@@ -287,7 +330,9 @@ class Locations extends React.Component {
             height,
             type,
             tc,
-            sort
+            sort,
+            //show modals
+            showWarehouse
         } = this.state;
 
         const arrTc = [
@@ -319,10 +364,10 @@ class Locations extends React.Component {
                 <hr />
                 <div id="locations" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Show Warehouses"> {/* onClick={event => this.toggleWarhouses(event)} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Show Warehouses" onClick={this.toggleWarehouse}>
                             <span><FontAwesomeIcon icon="warehouse" className="fa-lg mr-2"/>Warehouses</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Show Warehouses"> {/* onClick={event => this.toggleWarhouses(event)} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="DUF File"> {/* onClick={event => this.toggleWarhouses(event)} */}
                             <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>DUF File</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add Location"> {/* onClick={event => this.toggleGenerate(event)} */}
@@ -348,7 +393,6 @@ class Locations extends React.Component {
                                                 name="location"
                                                 value={location}
                                                 onChange={this.handleChangeHeader}
-                                                // width="calc(45% - 30px)"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
                                             />
@@ -358,7 +402,6 @@ class Locations extends React.Component {
                                                 name="warehouse"
                                                 value={warehouse}
                                                 onChange={this.handleChangeHeader}
-                                                // width="calc(45% - 30px)"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
                                             />
@@ -368,7 +411,6 @@ class Locations extends React.Component {
                                                 name="area"
                                                 value={area}
                                                 onChange={this.handleChangeHeader}
-                                                maxLength={1}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
                                             />
@@ -419,7 +461,6 @@ class Locations extends React.Component {
                                                 options={arrTc}
                                                 optionText="name"
                                                 onChange={this.handleChangeHeader}
-                                                // width ="15%"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
                                             /> 
@@ -429,7 +470,6 @@ class Locations extends React.Component {
                                                 name="type"
                                                 value={type}
                                                 onChange={this.handleChangeHeader}
-                                                // width="calc(45% - 30px)"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
                                             />
@@ -440,22 +480,39 @@ class Locations extends React.Component {
                         </div>
                     </div>
                 </div>
+                <Modal
+                    show={showWarehouse}
+                    hideModal={this.toggleWarehouse}
+                    title="Warehouses"
+                    size="modal-lg"
+                >
+                    <Warehouse 
+                        alert={alert}
+                        warehouses={warehouses}
+                        handleClearAlert={this.handleClearAlert}
+                        toggleWarehouse={this.toggleWarehouse}
+                    />
+                </Modal>
+                
             </Layout>
         );
     }
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, selection } = state;
+    const { accesses, alert, selection, warehouses } = state;
     const { loadingAccesses } = accesses;
     const { loadingSelection } = selection;
+    const { loadingWarehouses } = warehouses;
     
     return {
         accesses,
         alert,
         loadingAccesses,
         loadingSelection,
-        selection
+        loadingWarehouses,
+        selection,
+        warehouses
     };
 }
 
