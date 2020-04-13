@@ -196,6 +196,7 @@ class Locations extends React.Component {
             },
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
+        this.refreshStore = this.refreshStore.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
@@ -225,6 +226,14 @@ class Locations extends React.Component {
             if (!loadingWarehouses) {
                 dispatch(warehouseActions.getAll(qs.id));
             }
+        }
+    }
+
+    refreshStore() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+        if (projectId) {
+            dispatch(warehouseActions.getAll(projectId));
         }
     }
 
@@ -488,8 +497,10 @@ class Locations extends React.Component {
                 >
                     <Warehouse 
                         alert={alert}
+                        projectId={projectId}
                         warehouses={warehouses}
                         handleClearAlert={this.handleClearAlert}
+                        refreshStore={this.refreshStore}
                         toggleWarehouse={this.toggleWarehouse}
                     />
                 </Modal>

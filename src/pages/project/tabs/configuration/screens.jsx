@@ -278,7 +278,7 @@ class Screens extends React.Component {
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
-        this.cerateNewRow = this.cerateNewRow.bind(this);
+        this.createNewRow = this.createNewRow.bind(this);
         this.onFocusRow = this.onFocusRow.bind(this);
         this.onBlurRow = this.onBlurRow.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
@@ -376,7 +376,7 @@ class Screens extends React.Component {
         }
     }
 
-    cerateNewRow(event) {
+    createNewRow(event) {
         event.preventDefault();
         const { refreshFields, refreshFieldnames } = this.props;
         const { fieldName } = this.state;
@@ -431,7 +431,7 @@ class Screens extends React.Component {
         event.preventDefault();
         const { selectedScreen, newRowFocus } = this.state;
         if (selectedScreen && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-            this.cerateNewRow(event);
+            this.createNewRow(event);
         }
     }
 
@@ -775,7 +775,7 @@ class Screens extends React.Component {
                                         data-type="newrow"
                                     >
                                         <NewRowCreate
-                                            onClick={ event => this.cerateNewRow(event)}
+                                            onClick={ event => this.createNewRow(event)}
                                         />
                                         <NewRowSelect 
                                             fieldName="fieldId"
