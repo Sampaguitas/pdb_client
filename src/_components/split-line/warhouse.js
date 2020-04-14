@@ -201,6 +201,59 @@ class Warehouse extends Component {
         
     }
 
+    componentDidMount() {
+
+        const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
+        const nodes = ["INPUT", "SELECT", "SPAN"];
+        const table = document.getElementById('warehouseTable');
+        table.addEventListener('keydown', (e) => { 
+            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
+                return this.keyHandler(e);
+            }
+        });
+    }
+
+    keyHandler(e) {
+
+        let target = e.target;
+        let colIndex = target.parentElement.cellIndex;               
+        let rowIndex = target.parentElement.parentElement.rowIndex;
+        var nRows = target.parentElement.parentElement.parentElement.childNodes.length;
+        
+        switch(e.keyCode) {
+            case 9:// tab
+                if(target.parentElement.nextSibling) {
+                    target.parentElement.nextSibling.click();
+                }
+                break;
+            case 13: //enter
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
+            case 37: //left
+                if(colIndex > 0 && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.previousSibling.click();
+                } 
+                break;
+            case 38: //up
+                if(rowIndex > 1) {
+                    target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();
+                }
+                break;
+            case 39: //right
+                if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.nextSibling.click();
+                }
+                break;
+            case 40: //down
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
+        }
+    }
+
     handleClearAlert(event){
         const { handleClearAlert } = this.props;
         event.preventDefault;
@@ -422,7 +475,7 @@ class Warehouse extends Component {
                     </div> 
                     <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: '200px'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row">
-                            <table className="table table-bordered table-sm table-hover text-nowrap" id="warehouse">
+                            <table className="table table-bordered table-sm table-hover text-nowrap" id="warehouseTable">
                                 <thead>
                                     <tr>
                                         <TableSelectionAllRow
@@ -499,7 +552,7 @@ class Warehouse extends Component {
                     </div>
                     <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: '200px'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row">
-                            <table className="table table-bordered table-sm text-nowrap table-striped" id="area">
+                            <table className="table table-bordered table-sm text-nowrap table-striped" id="areaTable">
                                 <thead>
                                     <tr>
                                     </tr>

@@ -1,23 +1,10 @@
-## Todo list
-
-### Expediting module
-
-### Inspection module
-- [ ] certificate screen.
-
-### Shipping module
-- [ ] fix assing colli type
- 
-### Warehouse module
-- [ ] Goods receipt.
-- [ ] Stock management.
-- [ ] Call-off order.
-- [ ] Picking list.
-- [ ] Outstanding shipments.
-- [ ] Warehouse locations.
-
-### Configs module
-
-### Custom table
-
-### User settings
+## Warehouse module
+### Locations
+1) Warehouse Modal
+- [X] Warhouse table
+- [X] Add Warhouse
+- [X] Delete Warhouse(s)
+- [X] Key event listner
+- [ ] Area table
+- [ ] Add Area
+- [ ] Delete Area(s)
