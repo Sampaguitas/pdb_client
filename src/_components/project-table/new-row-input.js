@@ -151,7 +151,8 @@ class NewRowInput extends Component{
             onChange,
             textNoWrap,
             fieldValue, 
-            width
+            width,
+            maxLength
         } = this.props;
 
         const { isEditing, isSelected } = this.state;
@@ -192,6 +193,7 @@ class NewRowInput extends Component{
                         // disabled={disabled}
                         onKeyDown={event => this.onKeyDown(event)}
                         placeholder={fieldType === 'date' ? getDateFormat(myLocale) : ''}
+                        maxLength={maxLength || 524288}
                     />
                 :
                     <span>{this.formatText(fieldValue, fieldType)}</span>

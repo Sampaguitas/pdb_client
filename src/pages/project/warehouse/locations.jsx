@@ -27,8 +27,8 @@ function locationSorted(array, sort) {
         case 'warehouse':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.name) && !_.isNull(a.name) ? a.name.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.name) && !_.isNull(b.name) ? b.name.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.name) && !_.isNull(a.name) ? String(a.name).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.name) && !_.isNull(b.name) ? String(b.name).toUpperCase() : '';
                     if (nameA < nameB) {
                         return -1;
                     } else if (nameA > nameB) {
@@ -39,8 +39,8 @@ function locationSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.name) && !_.isNull(a.name) ? a.name.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.name) && !_.isNull(b.name) ? b.name.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.name) && !_.isNull(a.name) ? String(a.name).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.name) && !_.isNull(b.name) ? String(b.name).toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {
@@ -53,8 +53,8 @@ function locationSorted(array, sort) {
         case 'area':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.area.name) && !_.isNull(a.area.name) ? a.area.name.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.area.name) && !_.isNull(b.area.name) ? b.area.name.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.area.name) && !_.isNull(a.area.name) ? String(a.area.name).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.area.name) && !_.isNull(b.area.name) ? String(b.area.name).toUpperCase() : '';
                     if (nameA < nameB) {
                         return -1;
                     } else if (nameA > nameB) {
@@ -65,8 +65,8 @@ function locationSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.area.name) && !_.isNull(a.area.name) ? a.area.name.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.area.name) && !_.isNull(b.area.name) ? b.area.name.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.area.name) && !_.isNull(a.area.name) ? String(a.area.name).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.area.name) && !_.isNull(b.area.name) ? String(b.area.name).toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {
@@ -85,8 +85,8 @@ function locationSorted(array, sort) {
         case 'type':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.area.location[sort.name]) && !_.isNull(a.area.location[sort.name]) ? a.area.location[sort.name].toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.area.location[sort.name]) && !_.isNull(b.area.location[sort.name]) ? b.area.location[sort.name].toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.area.location[sort.name]) && !_.isNull(a.area.location[sort.name]) ? String(a.area.location[sort.name]).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.area.location[sort.name]) && !_.isNull(b.area.location[sort.name]) ? String(b.area.location[sort.name]).toUpperCase() : '';
                     if (nameA < nameB) {
                         return -1;
                     } else if (nameA > nameB) {
@@ -97,8 +97,8 @@ function locationSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.area.location[sort.name]) && !_.isNull(a.area.location[sort.name]) ? a.area.location[sort.name].toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.area.location[sort.name]) && !_.isNull(b.area.location[sort.name]) ? b.area.location[sort.name].toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.area.location[sort.name]) && !_.isNull(a.area.location[sort.name]) ? String(a.area.location[sort.name]).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.area.location[sort.name]) && !_.isNull(b.area.location[sort.name]) ? String(b.area.location[sort.name]).toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {

@@ -86,8 +86,8 @@ function screenSorted(array, sort) {
         case 'custom':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? a.fields.custom.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? b.fields.custom.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? String(a.fields.custom).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? String(b.fields.custom).toUpperCase() : '';
                     if (nameA < nameB) {
                         return -1;
                     } else if (nameA > nameB) {
@@ -98,8 +98,8 @@ function screenSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? a.fields.custom.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? b.fields.custom.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? String(a.fields.custom).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? String(b.fields.custom).toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {
@@ -127,8 +127,8 @@ function screenSorted(array, sort) {
         case 'align':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.align) && !_.isNull(a.align) ? a.align.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.align) && !_.isNull(b.align) ? b.align.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.align) && !_.isNull(a.align) ? String(a.align).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.align) && !_.isNull(b.align) ? String(b.align).toUpperCase() : '';
                     if (nameA < nameB) {
                         return -1;
                     } else if (nameA > nameB) {
@@ -139,8 +139,8 @@ function screenSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.align) && !_.isNull(a.align) ? a.align.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.align) && !_.isNull(b.align) ? b.align.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.align) && !_.isNull(a.align) ? String(a.align).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.align) && !_.isNull(b.align) ? String(b.align).toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {

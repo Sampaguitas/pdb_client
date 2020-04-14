@@ -85,8 +85,8 @@ function settingSorted(array, sort) {
     case 'name':
         if (sort.isAscending) {
             return tempArray.sort(function (a, b) {
-                let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? a[sort.name].toUpperCase() : '';
-                let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? b[sort.name].toUpperCase() : '';
+                let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? String(a[sort.name]).toUpperCase() : '';
+                let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? String(b[sort.name]).toUpperCase() : '';
                 if (nameA < nameB) {
                     return -1;
                 } else if (nameA > nameB) {
@@ -97,8 +97,8 @@ function settingSorted(array, sort) {
             });
         } else {
             return tempArray.sort(function (a, b) {
-              let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? a[sort.name].toUpperCase() : '';
-              let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? b[sort.name].toUpperCase() : '';
+              let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? String(a[sort.name]).toUpperCase() : '';
+              let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? String(b[sort.name]).toUpperCase() : '';
                 if (nameA > nameB) {
                     return -1;
                 } else if (nameA < nameB) {
@@ -111,8 +111,8 @@ function settingSorted(array, sort) {
     case 'opco':
       if (sort.isAscending) {
         return tempArray.sort(function (a, b) {
-            let nameA = !_.isUndefined(a.opco.name) && !_.isNull(a.opco.name) ? a.opco.name.toUpperCase() : '';
-            let nameB = !_.isUndefined(b.opco.name) && !_.isNull(b.opco.name) ? b.opco.name.toUpperCase() : '';
+            let nameA = !_.isUndefined(a.opco.name) && !_.isNull(a.opco.name) ? String(a.opco.name).toUpperCase() : '';
+            let nameB = !_.isUndefined(b.opco.name) && !_.isNull(b.opco.name) ? String(b.opco.name).toUpperCase() : '';
             if (nameA < nameB) {
                 return -1;
             } else if (nameA > nameB) {
@@ -123,8 +123,8 @@ function settingSorted(array, sort) {
         });
       } else {
           return tempArray.sort(function (a, b) {
-            let nameA = !_.isUndefined(a.opco.name) && !_.isNull(a.opco.name) ? a.opco.name.toUpperCase() : '';
-            let nameB = !_.isUndefined(b.opco.name) && !_.isNull(b.opco.name) ? b.opco.name.toUpperCase() : '';
+            let nameA = !_.isUndefined(a.opco.name) && !_.isNull(a.opco.name) ? String(a.opco.name).toUpperCase() : '';
+            let nameB = !_.isUndefined(b.opco.name) && !_.isNull(b.opco.name) ? String(b.opco.name).toUpperCase() : '';
             if (nameA > nameB) {
                 return -1;
             } else if (nameA < nameB) {
@@ -137,8 +137,8 @@ function settingSorted(array, sort) {
     case 'region':
       if (sort.isAscending) {
         return tempArray.sort(function (a, b) {
-            let nameA = !_.isUndefined(a.opco.region.name) && !_.isNull(a.opco.region.name) ? a.opco.region.name.toUpperCase() : '';
-            let nameB = !_.isUndefined(b.opco.region.name) && !_.isNull(b.opco.region.name) ? b.opco.region.name.toUpperCase() : '';
+            let nameA = !_.isUndefined(a.opco.region.name) && !_.isNull(a.opco.region.name) ? String(a.opco.region.name).toUpperCase() : '';
+            let nameB = !_.isUndefined(b.opco.region.name) && !_.isNull(b.opco.region.name) ? String(b.opco.region.name).toUpperCase() : '';
             if (nameA < nameB) {
                 return -1;
             } else if (nameA > nameB) {
@@ -149,8 +149,8 @@ function settingSorted(array, sort) {
         });
       } else {
           return tempArray.sort(function (a, b) {
-            let nameA = !_.isUndefined(a.opco.region.name) && !_.isNull(a.opco.region.name) ? a.opco.region.name.toUpperCase() : '';
-            let nameB = !_.isUndefined(b.opco.region.name) && !_.isNull(b.opco.region.name) ? b.opco.region.name.toUpperCase() : '';
+            let nameA = !_.isUndefined(a.opco.region.name) && !_.isNull(a.opco.region.name) ? String(a.opco.region.name).toUpperCase() : '';
+            let nameB = !_.isUndefined(b.opco.region.name) && !_.isNull(b.opco.region.name) ? String(b.opco.region.name).toUpperCase() : '';
             if (nameA > nameB) {
                 return -1;
             } else if (nameA < nameB) {

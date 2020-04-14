@@ -170,7 +170,7 @@ class TableInput extends Component{
         this.setState({
             ...this.state,
             isEditing: true,
-            [name]: value //decodeURI(
+            [name]: value
         });
     }
 
@@ -261,7 +261,8 @@ class TableInput extends Component{
             disabled,
             textNoWrap,
             unlocked,
-            width
+            width,
+            maxLength
         } = this.props;
 
         const {
@@ -304,6 +305,7 @@ class TableInput extends Component{
                         onBlur={event => this.onBlur(event)}
                         onKeyDown={event => this.onKeyDown(event)}
                         placeholder={fieldType === 'date' ? getDateFormat(myLocale) : ''}
+                        maxLength={maxLength || 524288}
                     />
                 :
                     <span>{this.formatText(fieldValue, fieldType)}</span>

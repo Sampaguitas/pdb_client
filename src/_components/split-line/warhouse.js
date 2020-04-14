@@ -57,14 +57,16 @@ function arrayRemove(arr, value) {
  
 }
 
-function warehouseSorted(array, sortWh) {
+function arraySorted(array, sort) {
     let tempArray = array.slice(0);
-    switch(sortWh.name) {
+    console.log('sort.name:', sort.name);
+    switch(sort.name) {
         case 'whName':
-            if (sortWh.isAscending) {
+        case 'areaName':
+            if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.name) && !_.isNull(a.name) ? a.name.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.name) && !_.isNull(b.name) ? b.name.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.name) && !_.isNull(a.name) ? String(a.name).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.name) && !_.isNull(b.name) ? String(b.name).toUpperCase() : '';
                     if (nameA < nameB) {
                         return -1;
                     } else if (nameA > nameB) {
@@ -75,8 +77,34 @@ function warehouseSorted(array, sortWh) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.name) && !_.isNull(a.name) ? a.name.toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.name) && !_.isNull(b.name) ? b.name.toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.name) && !_.isNull(a.name) ? String(a.name).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.name) && !_.isNull(b.name) ? String(b.name).toUpperCase() : '';
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        case 'areaNumber':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.number) && !_.isNull(a.number) ? String(a.number).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.number) && !_.isNull(b.number) ? String(b.number).toUpperCase() : '';
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.number) && !_.isNull(a.number) ? String(a.number).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.number) && !_.isNull(b.number) ? String(b.number).toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {
@@ -151,11 +179,23 @@ function doesMatch(search, value, type, isEqual) {
     }
 }
 
+function getAreas(warehouses, selectedWh) {
+    let arrayBody = [];
+    if (warehouses.hasOwnProperty('items') && !_.isEmpty(warehouses.items) && selectedWh.length === 1) {
+        let warehouse = warehouses.items.find(element => element._id === selectedWh[0]);
+        if (!_.isUndefined(warehouse)) {
+            arrayBody = warehouse.areas;
+        }
+    }
+    return arrayBody;
+}
+
 class Warehouse extends Component {
     constructor(props) {
         super(props);
         this.state = {
             selectedWh: [],
+            areas: [],
             selectedAreas: [],
             selectAllWh: false,
             selectAllAreas: false,
@@ -174,7 +214,7 @@ class Warehouse extends Component {
             creatingNewWh: false,
             creatingNewArea: false,
             deletingWh: false,
-            deletingArea: false,
+            deletingAreas: false,
             //sorts
             sortWh: {
                 name: '',
@@ -200,7 +240,8 @@ class Warehouse extends Component {
         //newWh
         this.createNewWh = this.createNewWh.bind(this);
         this.createNewArea = this.createNewArea.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
+        this.handleDeleteWh = this.handleDeleteWh.bind(this);
+        this.handleDeleteAreas = this.handleDeleteAreas.bind(this);
         this.onFocusWh = this.onFocusWh.bind(this);
         this.onFocusArea = this.onFocusArea.bind(this);
         this.onBlurWh = this.onBlurWh.bind(this);
@@ -210,12 +251,13 @@ class Warehouse extends Component {
         this.handleChangeNewWh = this.handleChangeNewWh.bind(this);
         //selected wh
         this.updateSelectedWh = this.updateSelectedWh.bind(this);
+        this.updateSelectedArea = this.updateSelectedArea.bind(this);
         this.filterWarehouses = this.filterWarehouses.bind(this);
+        this.filterAreas = this.filterAreas.bind(this);
         
     }
 
     componentDidMount() {
-
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
         const warehouseTable = document.getElementById('warehouseTable');
@@ -230,6 +272,24 @@ class Warehouse extends Component {
                 return this.keyHandler(e);
             }
         });
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { selectedWh, sortArea } = this.state;
+        const { warehouses } = this.props;
+        if (selectedWh != prevState.selectedWh || warehouses != prevProps.warehouses) {
+            this.setState({
+                areas: getAreas(warehouses, selectedWh),
+                selectedAreas: [],
+                selectAllAreas: false
+            });
+        }
+
+        if (sortArea != prevState.sortArea) {
+            console.log('sortArea:', sortArea);
+        }
+
+        
     }
 
     keyHandler(e) {
@@ -305,23 +365,22 @@ class Warehouse extends Component {
     }
 
     toggleSelectAllArea() {
-        // const { selectAllWh } = this.state;
-        // const { warehouses } = this.props;
-        // if (warehouses.items) {
-        //     if (selectAllWh) {
-        //         this.setState({
-        //             ...this.state,
-        //             selectedWh: [],
-        //             selectAllWh: false
-        //         });
-        //     } else {
-        //         this.setState({
-        //             ...this.state,
-        //             selectedWh: this.filterWarehouses(warehouses.items).map(w => w._id),
-        //             selectAllWh: true
-        //         });
-        //     }         
-        // }
+        const { selectAllAreas, areas } = this.state;
+        if (areas) {
+            if (selectAllAreas) {
+                this.setState({
+                    ...this.state,
+                    selectedAreas: [],
+                    selectAllAreas: false
+                });
+            } else {
+                this.setState({
+                    ...this.state,
+                    selectedAreas: this.filterAreas(areas).map(w => w._id),
+                    selectAllAreas: true
+                });
+            }        
+        }
     }
 
     toggleSortWh(event, name) {
@@ -353,29 +412,29 @@ class Warehouse extends Component {
 
     toggleSortArea(event, name) {
         event.preventDefault();
-        // const { sortWh } = this.state;
-        // if (sortWh.name != name) {
-        //     this.setState({
-        //         sortWh: {
-        //             name: name,
-        //             isAscending: true
-        //         }
-        //     });
-        // } else if (!!sortWh.isAscending) {
-        //     this.setState({
-        //         sortWh: {
-        //             name: name,
-        //             isAscending: false
-        //         }
-        //     });
-        // } else {
-        //     this.setState({
-        //         sortWh: {
-        //             name: '',
-        //             isAscending: true
-        //         }
-        //     });
-        // }
+        const { sortArea } = this.state;
+        if (sortArea.name != name) {
+            this.setState({
+                sortArea: {
+                    name: name,
+                    isAscending: true
+                }
+            });
+        } else if (!!sortArea.isAscending) {
+            this.setState({
+                sortArea: {
+                    name: name,
+                    isAscending: false
+                }
+            });
+        } else {
+            this.setState({
+                sortArea: {
+                    name: '',
+                    isAscending: true
+                }
+            });
+        }
     }
 
     handleChangeHeader(event) {
@@ -435,84 +494,155 @@ class Warehouse extends Component {
 
     createNewArea(event) {
         event.preventDefault();
-        // const { refreshStore } = this.props;
-        // const { warehouse } = this.state;
-        // this.setState({
-        //     ...this.state,
-        //     creatingNewWh: true
-        // }, () => {
-        //     const requestOptions = {
-        //         method: 'POST',
-        //         headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        //         body: JSON.stringify(warehouse)
-        //     };
-        //     return fetch(`${config.apiUrl}/warehouse/create`, requestOptions)
-        //     .then( () => {
-        //         this.setState({
-        //             creatingNewWh: false,
-        //             newWhColor: 'green'
-        //         }, () => {
-        //             setTimeout( () => {
-        //                 this.setState({
-        //                     newWhColor: 'inherit',
-        //                     newWh:false,
-        //                     warehouse:{},
-        //                     newWhFocus: false
-        //                 }, refreshStore);
-        //             }, 1000);                                
-        //         });
-        //     })
-        //     .catch( () => {
-        //         this.setState({
-        //             creatingNewWh: false,
-        //             newWhColor: 'red'
-        //         }, () => {
-        //             setTimeout(() => {
-        //                 this.setState({
-        //                     newWhColor: 'inherit',
-        //                     newWh:false,
-        //                     warehouse:{},
-        //                     newWhFocus: false                                    
-        //                 }, refreshStore);
-        //             }, 1000);                                                      
-        //         });
-        //     });
-        // });
+        const { refreshStore } = this.props;
+        const { area } = this.state;
+        this.setState({
+            creatingNewArea: true
+        }, () => {
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: JSON.stringify(area)
+            };
+            return fetch(`${config.apiUrl}/area/create`, requestOptions)
+            .then( () => {
+                this.setState({
+                    creatingNewArea: false,
+                    newAreaColor: 'green'
+                }, () => {
+                    setTimeout( () => {
+                        this.setState({
+                            newAreaColor: 'inherit',
+                            newArea:false,
+                            area:{},
+                            newAreaFocus: false
+                        }, refreshStore);
+                    }, 1000);                                
+                });
+            })
+            .catch( () => {
+                this.setState({
+                    creatingNewArea: false,
+                    newAreaColor: 'red'
+                }, () => {
+                    setTimeout(() => {
+                        this.setState({
+                            newAreaColor: 'inherit',
+                            newArea:false,
+                            area:{},
+                            newAreaFocus: false                                    
+                        }, refreshStore);
+                    }, 1000);                                                      
+                });
+            });
+        });
     }
 
-    handleDelete(event) {
+    handleDeleteWh(event) {
         event.preventDefault();
-        const { refreshStore } = this.props;
+        const { refreshStore, warehouses } = this.props;
         const { selectedWh } = this.state;
         if(_.isEmpty(selectedWh)) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
-                    message: 'Select warhouse(s) to be deleted.'
+                    message: 'Select warehouse(s) to be deleted.'
                 }
             });
         } else {
-            this.setState({
-                ...this.state,
-                deletingWh: true
-            }, () => {
-                const requestOptions = {
-                    method: 'DELETE',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({ selectedIds: selectedWh })
-                };
-                return fetch(`${config.apiUrl}/warehouse/delete`, requestOptions)
-                .then( () => {
-                    this.setState({
-                        deletingWh: false
-                    }, refreshStore);
-                })
-                .catch( err => {
-                    this.setState({
-                        deletingWh: false
-                    }, refreshStore);
+            
+            let hasAreas = warehouses.items.reduce(function (acc, cur) {
+                if (!acc && selectedWh.includes(cur._id) && !_.isEmpty(cur.areas)) {
+                    acc = true;
+                }
+                return acc;
+            }, false);
+
+            if (hasAreas) {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'Selection contains area(s), remove those before deleting warehouse(s).'
+                    }
                 });
+            } else {
+                this.setState({
+                    ...this.state,
+                    deletingWh: true
+                }, () => {
+                    const requestOptions = {
+                        method: 'DELETE',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                        body: JSON.stringify({ selectedIds: selectedWh })
+                    };
+                    return fetch(`${config.apiUrl}/warehouse/delete`, requestOptions)
+                    .then( () => {
+                        this.setState({
+                            selectedWh: [],
+                            deletingWh: false
+                        }, refreshStore);
+                    })
+                    .catch( err => {
+                        this.setState({
+                            selectedWh: [],
+                            deletingWh: false
+                        }, refreshStore);
+                    });
+                });
+            }
+        }
+    }
+
+    handleDeleteAreas(event) {
+        event.preventDefault();
+        const { refreshStore } = this.props;
+        const { selectedAreas, areas } = this.state;
+        if(_.isEmpty(selectedAreas)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select area(s) to be deleted.'
+                }
             });
+        } else {
+            let hasLocations = areas.reduce(function (acc, cur) {
+                if (!acc && selectedAreas.includes(cur._id) && !_.isEmpty(cur.locations)) {
+                    acc = true;
+                }
+                return acc;
+            }, false);
+
+            if (hasLocations) {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'Selection contains location(s), remove those before deleting area(s).'
+                    }
+                });
+            } else {
+                this.setState({
+                    deletingAreas: true
+                }, () => {
+                    const requestOptions = {
+                        method: 'DELETE',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                        body: JSON.stringify({ selectedIds: selectedAreas })
+                    };
+                    return fetch(`${config.apiUrl}/area/delete`, requestOptions)
+                    .then( () => {
+                        this.setState({
+                            selectedAreas: [],
+                            deletingAreas: false
+                        }, refreshStore);
+                    })
+                    .catch( err => {
+                        this.setState({
+                            selectedAreas: [],
+                            deletingAreas: false
+                        }, refreshStore);
+                    });
+                });
+            }
         }
     }
 
@@ -557,12 +687,12 @@ class Warehouse extends Component {
 
     toggleNewArea(event) {
         event.preventDefault();
-        const { selectedWh, area } = this.state;
+        const { selectedWh, newArea } = this.state;
         if (selectedWh.length != 1) {
             this.setState({ 
                 alert: {
                     type: 'alert-danger',
-                    message: 'Select one warhouse.'
+                    message: 'Select one warehouse.'
                 }
             });
         } else {
@@ -615,11 +745,32 @@ class Warehouse extends Component {
         }
     }
 
+    updateSelectedArea(id) {
+        const { selectedAreas } = this.state;
+        if (selectedAreas.includes(id)) {
+            this.setState({ selectedAreas: arrayRemove(selectedAreas, id) });
+        } else {
+            this.setState({ selectedAreas: [...selectedAreas, id] });
+        }
+    }
+
     filterWarehouses(array){
         const { whName, sortWh } = this.state;
         if (array) {
-            return warehouseSorted(array, sortWh).filter(function (object) {
+            return arraySorted(array, sortWh).filter(function (object) {
                 return (doesMatch(whName, object.name, 'String', false));
+            });
+        } else {
+            return [];
+        }
+    }
+
+    filterAreas(array) {
+        const { areaNumber, areaName, sortArea } = this.state;
+        if (array) {
+            return arraySorted(array, sortArea).filter(function (object) {
+                return (doesMatch(areaNumber, object.number, 'String', false)
+                && doesMatch(areaName, object.name, 'String', false));
             });
         } else {
             return [];
@@ -643,6 +794,11 @@ class Warehouse extends Component {
             newAreaColor,
             warehouse,
             area,
+            areas,
+            deletingWh,
+            deletingAreas,
+            creatingNewArea,
+            creatingNewWh
         } = this.state;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
 
@@ -652,10 +808,24 @@ class Warehouse extends Component {
                     <div className="row mb-2">
                         <div className="col text-right">
                             <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewWh}>
-                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add</span>
+                                <span>
+                                    {creatingNewWh ?
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                    :
+                                        <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
+                                    }
+                                    Add
+                                </span>
                             </button>
-                            <button className="btn btn-leeuwen btn-lg" onClick={this.handleDelete}>
-                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete</span>
+                            <button className="btn btn-leeuwen btn-lg" onClick={this.handleDeleteWh}>
+                                <span>
+                                    {deletingWh ?
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                    :
+                                        <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
+                                    }
+                                    Delete
+                                </span>
                             </button>
                         </div>
                     </div> 
@@ -729,10 +899,24 @@ class Warehouse extends Component {
                     <div className={`row ${alert.message ? "mt-1" : "mt-5"} mb-2`}>
                         <div className="col text-right">
                             <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewArea}>
-                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add</span>
+                                <span>
+                                    {creatingNewArea ?
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                    :
+                                        <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
+                                    }
+                                    Add
+                                </span>
                             </button>
-                            <button className="btn btn-leeuwen btn-lg">
-                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete</span>
+                            <button className="btn btn-leeuwen btn-lg" onClick={this.handleDeleteAreas}>
+                                <span>
+                                    {deletingAreas ?
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                    :
+                                        <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
+                                    }
+                                    Delete
+                                </span>
                             </button>
                         </div>
                     </div>
@@ -783,6 +967,7 @@ class Warehouse extends Component {
                                                 fieldValue={area.number}
                                                 onChange={event => this.handleChangeNewArea(event)}
                                                 color={newAreaColor}
+                                                maxLength={1}
                                             />
                                             <NewRowInput
                                                 fieldType="text"
@@ -793,7 +978,31 @@ class Warehouse extends Component {
                                             />
                                         </tr>
                                     }
-                                    
+                                    {areas && this.filterAreas(areas).map((a) =>
+                                        <tr key={a._id} onBlur={this.onBlurArea} onFocus={this.onFocusArea}>
+                                            <TableSelectionRow
+                                                id={a._id}
+                                                selectAllRows={selectAllAreas}
+                                                callback={this.updateSelectedArea}
+                                            />
+                                            <TableInput 
+                                                collection="area"
+                                                objectId={a._id}
+                                                fieldName="number"
+                                                fieldValue={a.number}
+                                                fieldType="text"
+                                                refreshStore={refreshStore}
+                                            />
+                                            <TableInput 
+                                                collection="area"
+                                                objectId={a._id}
+                                                fieldName="name"
+                                                fieldValue={a.name}
+                                                fieldType="text"
+                                                refreshStore={refreshStore}
+                                            />
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
