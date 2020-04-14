@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 // import SplitInput from './split-input';
 import moment from 'moment';
 import _ from 'lodash';
+import { throws } from 'assert';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
@@ -163,11 +164,17 @@ class Warehouse extends Component {
             areaNumber: '',
             //newRows
             newWh: false,
+            newArea: false,
             newWhColor: 'inherit',
+            newAreaColor: 'inherit',
             warehouse: {},
+            area: {},
             newWhFocus:false,
+            newAreaFocus: false,
             creatingNewWh: false,
+            creatingNewArea: false,
             deletingWh: false,
+            deletingArea: false,
             //sorts
             sortWh: {
                 name: '',
@@ -186,14 +193,20 @@ class Warehouse extends Component {
         this.handleClearAlert = this.handleClearAlert.bind(this);
         //Wh header
         this.toggleSelectAllWh = this.toggleSelectAllWh.bind(this);
+        this.toggleSelectAllArea = this.toggleSelectAllArea.bind(this);
         this.toggleSortWh = this.toggleSortWh.bind(this);
+        this.toggleSortArea = this.toggleSortArea.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         //newWh
         this.createNewWh = this.createNewWh.bind(this);
+        this.createNewArea = this.createNewArea.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.onFocusWh = this.onFocusWh.bind(this);
+        this.onFocusArea = this.onFocusArea.bind(this);
         this.onBlurWh = this.onBlurWh.bind(this);
+        this.onBlurArea = this.onBlurArea.bind(this);
         this.toggleNewWh = this.toggleNewWh.bind(this);
+        this.toggleNewArea = this.toggleNewArea.bind(this);
         this.handleChangeNewWh = this.handleChangeNewWh.bind(this);
         //selected wh
         this.updateSelectedWh = this.updateSelectedWh.bind(this);
@@ -205,8 +218,14 @@ class Warehouse extends Component {
 
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
-        const table = document.getElementById('warehouseTable');
-        table.addEventListener('keydown', (e) => { 
+        const warehouseTable = document.getElementById('warehouseTable');
+        const areaTable = document.getElementById('areaTable');
+        warehouseTable.addEventListener('keydown', (e) => { 
+            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
+                return this.keyHandler(e);
+            }
+        });
+        areaTable.addEventListener('keydown', (e) => { 
             if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
                 return this.keyHandler(e);
             }
@@ -285,6 +304,26 @@ class Warehouse extends Component {
         }
     }
 
+    toggleSelectAllArea() {
+        // const { selectAllWh } = this.state;
+        // const { warehouses } = this.props;
+        // if (warehouses.items) {
+        //     if (selectAllWh) {
+        //         this.setState({
+        //             ...this.state,
+        //             selectedWh: [],
+        //             selectAllWh: false
+        //         });
+        //     } else {
+        //         this.setState({
+        //             ...this.state,
+        //             selectedWh: this.filterWarehouses(warehouses.items).map(w => w._id),
+        //             selectAllWh: true
+        //         });
+        //     }         
+        // }
+    }
+
     toggleSortWh(event, name) {
         event.preventDefault();
         const { sortWh } = this.state;
@@ -310,6 +349,33 @@ class Warehouse extends Component {
                 }
             });
         }
+    }
+
+    toggleSortArea(event, name) {
+        event.preventDefault();
+        // const { sortWh } = this.state;
+        // if (sortWh.name != name) {
+        //     this.setState({
+        //         sortWh: {
+        //             name: name,
+        //             isAscending: true
+        //         }
+        //     });
+        // } else if (!!sortWh.isAscending) {
+        //     this.setState({
+        //         sortWh: {
+        //             name: name,
+        //             isAscending: false
+        //         }
+        //     });
+        // } else {
+        //     this.setState({
+        //         sortWh: {
+        //             name: '',
+        //             isAscending: true
+        //         }
+        //     });
+        // }
     }
 
     handleChangeHeader(event) {
@@ -367,11 +433,65 @@ class Warehouse extends Component {
         });
     }
 
+    createNewArea(event) {
+        event.preventDefault();
+        // const { refreshStore } = this.props;
+        // const { warehouse } = this.state;
+        // this.setState({
+        //     ...this.state,
+        //     creatingNewWh: true
+        // }, () => {
+        //     const requestOptions = {
+        //         method: 'POST',
+        //         headers: { ...authHeader(), 'Content-Type': 'application/json' },
+        //         body: JSON.stringify(warehouse)
+        //     };
+        //     return fetch(`${config.apiUrl}/warehouse/create`, requestOptions)
+        //     .then( () => {
+        //         this.setState({
+        //             creatingNewWh: false,
+        //             newWhColor: 'green'
+        //         }, () => {
+        //             setTimeout( () => {
+        //                 this.setState({
+        //                     newWhColor: 'inherit',
+        //                     newWh:false,
+        //                     warehouse:{},
+        //                     newWhFocus: false
+        //                 }, refreshStore);
+        //             }, 1000);                                
+        //         });
+        //     })
+        //     .catch( () => {
+        //         this.setState({
+        //             creatingNewWh: false,
+        //             newWhColor: 'red'
+        //         }, () => {
+        //             setTimeout(() => {
+        //                 this.setState({
+        //                     newWhColor: 'inherit',
+        //                     newWh:false,
+        //                     warehouse:{},
+        //                     newWhFocus: false                                    
+        //                 }, refreshStore);
+        //             }, 1000);                                                      
+        //         });
+        //     });
+        // });
+    }
+
     handleDelete(event) {
         event.preventDefault();
         const { refreshStore } = this.props;
         const { selectedWh } = this.state;
-        if(!_.isEmpty(selectedWh)) {
+        if(_.isEmpty(selectedWh)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select warhouse(s) to be deleted.'
+                }
+            });
+        } else {
             this.setState({
                 ...this.state,
                 deletingWh: true
@@ -404,6 +524,14 @@ class Warehouse extends Component {
         }
     }
 
+    onFocusArea(event) {
+        event.preventDefault();
+        const { newAreaFocus } = this.state;
+        if (event.currentTarget.dataset['type'] == undefined && newAreaFocus == true){
+            this.createNewArea(event);
+        }
+    }
+
     onBlurWh(event){
         event.preventDefault()
         if (event.currentTarget.dataset['type'] == 'newWh'){
@@ -411,10 +539,38 @@ class Warehouse extends Component {
         }
     }
 
+    onBlurArea(event){
+        event.preventDefault()
+        if (event.currentTarget.dataset['type'] == 'newArea'){
+            this.setState({ newAreaFocus: true });
+        }
+    }
+
     toggleNewWh(event) {
         event.preventDefault()
         const { newWh } = this.state;
-        this.setState({ newWh: !newWh });
+        this.setState({
+            newWh: !newWh,
+            warehouse: {}
+        });
+    }
+
+    toggleNewArea(event) {
+        event.preventDefault();
+        const { selectedWh, area } = this.state;
+        if (selectedWh.length != 1) {
+            this.setState({ 
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one warhouse.'
+                }
+            });
+        } else {
+            this.setState({ 
+                newArea: !newArea,
+                area: {}
+            });
+        }
     }
 
     handleChangeNewWh(event){
@@ -432,6 +588,22 @@ class Warehouse extends Component {
                 }
             });
         } 
+    }
+
+    handleChangeNewArea(event) {
+        const { selectedWh, area } = this.state;
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        if (selectedWh.length === 1) {
+            this.setState({
+                area: {
+                    ...area,
+                    [name]: value,
+                    warehouseId: selectedWh[0]
+                }
+            });
+        }
     }
 
     updateSelectedWh(id) {
@@ -457,7 +629,21 @@ class Warehouse extends Component {
     render() {
 
         const { toggleWarehouse, warehouses, refreshStore } = this.props;
-        const { selectAllWh, whName, sortWh, newWh, newWhColor, warehouse } = this.state;
+        const { 
+            selectAllWh,
+            selectAllAreas,
+            whName,
+            areaNumber,
+            areaName,
+            sortWh, 
+            sortArea,
+            newWh,
+            newArea,
+            newWhColor,
+            newAreaColor,
+            warehouse,
+            area,
+        } = this.state;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
 
         return (
@@ -542,7 +728,7 @@ class Warehouse extends Component {
                     }
                     <div className={`row ${alert.message ? "mt-1" : "mt-5"} mb-2`}>
                         <div className="col text-right">
-                            <button className="btn btn-leeuwen-blue btn-lg mr-2">
+                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewArea}>
                                 <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add</span>
                             </button>
                             <button className="btn btn-leeuwen btn-lg">
@@ -555,9 +741,58 @@ class Warehouse extends Component {
                             <table className="table table-bordered table-sm text-nowrap table-striped" id="areaTable">
                                 <thead>
                                     <tr>
+                                        <TableSelectionAllRow
+                                            checked={selectAllAreas}
+                                            onChange={this.toggleSelectAllArea}
+                                        />
+                                        <HeaderInput
+                                            type="text"
+                                            title="Nr"
+                                            name="areaNumber"
+                                            value={areaNumber}
+                                            onChange={this.handleChangeHeader}
+                                            sort={sortArea}
+                                            toggleSort={this.toggleSortArea}
+                                            width='20%'
+                                        />
+                                        <HeaderInput
+                                            type="text"
+                                            title="Area"
+                                            name="areaName"
+                                            value={areaName}
+                                            onChange={this.handleChangeHeader}
+                                            sort={sortArea}
+                                            toggleSort={this.toggleSortArea}
+                                            width='calc(30px - 20%)'
+                                        />
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {newArea && 
+                                        <tr
+                                            onBlur={this.onBlurArea}
+                                            onFocus={this.onFocusWh}
+                                            data-type="newArea"
+                                        >
+                                            <NewRowCreate
+                                                onClick={ event => this.createNewArea(event)}
+                                            />
+                                            <NewRowInput
+                                                fieldType="text"
+                                                fieldName="number"
+                                                fieldValue={area.number}
+                                                onChange={event => this.handleChangeNewArea(event)}
+                                                color={newAreaColor}
+                                            />
+                                            <NewRowInput
+                                                fieldType="text"
+                                                fieldName="name"
+                                                fieldValue={area.name}
+                                                onChange={event => this.handleChangeNewArea(event)}
+                                                color={newAreaColor}
+                                            />
+                                        </tr>
+                                    }
                                     
                                 </tbody>
                             </table>
