@@ -8,6 +8,16 @@
 - [X] Area table
 - [X] Add Area
 - [X] Delete Area(s)
+- [X] Sort/Filter (both tables)
+- [X] Toggle Select (both tables)
 2) Location Modal
-3) DUF Download
-4) DUF Upload
+- [X] Form (add location)
+3) Location Table
+- [X] Display Locations
+- [X] Virtual Location name
+- [X] Sort/Filter
+- [X] Toggle Select
+- [ ] Key event listner
+- [ ] Delete Location(s)
+4) DUF Download
+5) DUF Upload

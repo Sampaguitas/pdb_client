@@ -535,7 +535,7 @@ class Locations extends React.Component {
                                             />
                                             <HeaderInput
                                                 type="text"
-                                                title="Location"
+                                                title="WH Location"
                                                 name="location"
                                                 value={location}
                                                 onChange={this.handleChangeHeader}
@@ -562,7 +562,7 @@ class Locations extends React.Component {
                                             />
                                             <HeaderInput
                                                 type="text"
-                                                title="Hall"
+                                                title="Sub Area/Hall"
                                                 name="hall"
                                                 value={hall}
                                                 onChange={this.handleChangeHeader}
@@ -580,7 +580,7 @@ class Locations extends React.Component {
                                             />
                                             <HeaderInput
                                                 type="text"
-                                                title="Col"
+                                                title="Location/Column"
                                                 name="col"
                                                 value={col}
                                                 onChange={this.handleChangeHeader}
@@ -589,7 +589,7 @@ class Locations extends React.Component {
                                             />
                                             <HeaderInput
                                                 type="text"
-                                                title="Height"
+                                                title="Depth/Height"
                                                 name="height"
                                                 value={height}
                                                 onChange={this.handleChangeHeader}
@@ -608,7 +608,7 @@ class Locations extends React.Component {
                                             /> 
                                             <HeaderInput
                                                 type="text"
-                                                title="Type"
+                                                title="Loc Type"
                                                 name="type"
                                                 value={type}
                                                 onChange={this.handleChangeHeader}
@@ -782,7 +782,7 @@ class Locations extends React.Component {
                                 </select>
                             </div>
                             <div className="form-group">
-                                <label htmlFor="hall">Sub Area / Hall</label>
+                                <label htmlFor="hall">Sub Area/Hall</label>
                                 <input
                                     className="form-control"
                                     type="text"
@@ -808,7 +808,7 @@ class Locations extends React.Component {
                                 />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="col">Location / Column</label>
+                                <label htmlFor="col">Location/Column</label>
                                 <input
                                     className="form-control"
                                     type="text"
@@ -821,7 +821,7 @@ class Locations extends React.Component {
                                 />
                             </div>
                             <div className="form-group">
-                                <label htmlFor="height">Depth / Height</label>
+                                <label htmlFor="height">Depth/Height</label>
                                 <input
                                     className="form-control"
                                     type="text"
