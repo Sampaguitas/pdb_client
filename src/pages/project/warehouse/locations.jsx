@@ -159,9 +159,9 @@ function getLocations(warehouses) {
                 area.locations.map(location => {
                     arrayBody.push({
                         _id: location._id,
-                        location: `${area.number}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`,
-                        warehouse: warehouse.name,
-                        area: `${area.name} (${area.number})`,
+                        location: `${area.areaNr}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`,
+                        warehouse: warehouse.warehouse,
+                        area: `${area.area} (${area.areaNr})`,
                         hall: location.hall,
                         row: location.row,
                         col: leadingChar(location.col, '0', 3),
@@ -1077,7 +1077,7 @@ class Locations extends React.Component {
                                     required
                                 >
                                     <option key="0" value="">Select...</option>
-                                    {warehouses.items && warehouses.items.map((element, index) => <option key={index} value={element._id}>{element.name}</option>)}
+                                    {warehouses.items && warehouses.items.map((element, index) => <option key={index} value={element._id}>{element.warehouse}</option>)}
                                 </select>
                             </div>
                             <div className="form-group">
@@ -1091,7 +1091,7 @@ class Locations extends React.Component {
                                     required
                                 >
                                     <option key="0" value="">Select...</option>
-                                    {areas && areas.map((element, index) => <option key={index} value={element._id}>{`${element.name} (${element.number})`}</option>)}
+                                    {areas && areas.map((element, index) => <option key={index} value={element._id}>{`${element.area} (${element.areaNr})`}</option>)}
                                 </select>
                             </div>
                             <div className="form-group">

@@ -60,8 +60,8 @@ function arrayRemove(arr, value) {
 function arraySorted(array, sort) {
     let tempArray = array.slice(0);
     switch(sort.name) {
-        case 'whName':
-        case 'areaName':
+        case 'warehouse':
+        case 'area':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
                     let nameA = !_.isUndefined(a.name) && !_.isNull(a.name) ? String(a.name).toUpperCase() : '';
@@ -87,7 +87,7 @@ function arraySorted(array, sort) {
                     }
                 });
             }
-        case 'areaNumber':
+        case 'areaNr':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
                     let nameA = !_.isUndefined(a.number) && !_.isNull(a.number) ? String(a.number).toUpperCase() : '';
@@ -198,9 +198,11 @@ class Warehouse extends Component {
             selectedAreas: [],
             selectAllWh: false,
             selectAllAreas: false,
-            whName: '',
-            areaName: '',
-            areaNumber: '',
+            header: {
+                warehouse: '',
+                area: '',
+                areaNr: '',
+            },
             //newRows
             newWh: false,
             newArea: false,
@@ -251,8 +253,8 @@ class Warehouse extends Component {
         //selected wh
         this.updateSelectedWh = this.updateSelectedWh.bind(this);
         this.updateSelectedArea = this.updateSelectedArea.bind(this);
-        this.filterWarehouses = this.filterWarehouses.bind(this);
-        this.filterAreas = this.filterAreas.bind(this);
+        this.filterName = this.filterName.bind(this);
+        // this.filterAreas = this.filterAreas.bind(this);
         
     }
 
@@ -350,7 +352,7 @@ class Warehouse extends Component {
             } else {
                 this.setState({
                     ...this.state,
-                    selectedWh: this.filterWarehouses(warehouses.items).map(w => w._id),
+                    selectedWh: this.filterName(warehouses.items, true).map(w => w._id),
                     selectAllWh: true
                 });
             }         
@@ -369,7 +371,7 @@ class Warehouse extends Component {
             } else {
                 this.setState({
                     ...this.state,
-                    selectedAreas: this.filterAreas(areas).map(w => w._id),
+                    selectedAreas: this.filterName(areas, false).map(w => w._id),
                     selectAllAreas: true
                 });
             }        
@@ -434,7 +436,13 @@ class Warehouse extends Component {
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
-        this.setState({ [name]: value });
+        const { header } = this.state;
+        this.setState({
+            header: {
+                ...header,
+                [name]: value
+            } 
+        });
     }
 
     createNewWh(event) {
@@ -718,7 +726,7 @@ class Warehouse extends Component {
         const value = target.type === 'checkbox' ? target.checked : target.value;
         const { selectedWh, area } = this.state;
         let regexp = /(^$|^[0-9]*$)/
-        if (['name'].includes(name) || regexp.test(value)) {
+        if (['area'].includes(name) || regexp.test(value)) {
             this.setState({
                 area: {
                     ...area,
@@ -747,28 +755,33 @@ class Warehouse extends Component {
         }
     }
 
-    filterWarehouses(array){
-        const { whName, sortWh } = this.state;
-        if (array) {
+    filterName(array, isWh){
+        const { header, sortWh, sortArea } = this.state;
+        if (!array) {
+            return [];
+        } else if(isWh) {
             return arraySorted(array, sortWh).filter(function (object) {
-                return (doesMatch(whName, object.name, 'String', false));
+                return (doesMatch(header.warehouse, object.warehouse, 'String', false));
             });
         } else {
-            return [];
+            return arraySorted(array, sortArea).filter(function (object) {
+                return (doesMatch(header.areaNr, object.areaNr, 'String', false)
+                && doesMatch(header.area, object.area, 'String', false));
+            });
         }
     }
 
-    filterAreas(array) {
-        const { areaNumber, areaName, sortArea } = this.state;
-        if (array) {
-            return arraySorted(array, sortArea).filter(function (object) {
-                return (doesMatch(areaNumber, object.number, 'String', false)
-                && doesMatch(areaName, object.name, 'String', false));
-            });
-        } else {
-            return [];
-        }
-    }
+    // filterAreas(array) {
+    //     const { header, sortArea } = this.state;
+    //     if (array) {
+    //         return arraySorted(array, sortArea).filter(function (object) {
+    //             return (doesMatch(header.areaNr, object.number, 'String', false)
+    //             && doesMatch(header.area, object.name, 'String', false));
+    //         });
+    //     } else {
+    //         return [];
+    //     }
+    // }
 
     render() {
 
@@ -776,9 +789,10 @@ class Warehouse extends Component {
         const { 
             selectAllWh,
             selectAllAreas,
-            whName,
-            areaNumber,
-            areaName,
+            header,
+            // warehouse,
+            // areaNr,
+            // area,
             sortWh, 
             sortArea,
             newWh,
@@ -834,8 +848,8 @@ class Warehouse extends Component {
                                         <HeaderInput
                                             type="text"
                                             title="Warehouse"
-                                            name="whName"
-                                            value={whName}
+                                            name="warehouse"
+                                            value={header.warehouse}
                                             onChange={this.handleChangeHeader}
                                             sort={sortWh}
                                             toggleSort={this.toggleSortWh}
@@ -854,14 +868,14 @@ class Warehouse extends Component {
                                             />
                                             <NewRowInput
                                                 fieldType="text"
-                                                fieldName="name"
-                                                fieldValue={warehouse.name}
+                                                fieldName="warehouse"
+                                                fieldValue={warehouse.warehouse}
                                                 onChange={event => this.handleChangeNewWh(event)}
                                                 color={newWhColor}
                                             />
                                         </tr>
                                     }
-                                    {warehouses.items && this.filterWarehouses(warehouses.items).map((w) =>
+                                    {warehouses.items && this.filterName(warehouses.items, true).map((w) =>
                                         <tr key={w._id} onBlur={this.onBlurWh} onFocus={this.onFocusWh}>
                                             <TableSelectionRow
                                                 id={w._id}
@@ -871,8 +885,8 @@ class Warehouse extends Component {
                                             <TableInput 
                                                 collection="warehouse"
                                                 objectId={w._id}
-                                                fieldName="name"
-                                                fieldValue={w.name}
+                                                fieldName="warehouse"
+                                                fieldValue={w.warehouse}
                                                 fieldType="text"
                                                 refreshStore={refreshStore}
                                             />
@@ -925,8 +939,8 @@ class Warehouse extends Component {
                                         <HeaderInput
                                             type="text"
                                             title="Nr"
-                                            name="areaNumber"
-                                            value={areaNumber}
+                                            name="areaNr"
+                                            value={header.areaNr}
                                             onChange={this.handleChangeHeader}
                                             sort={sortArea}
                                             toggleSort={this.toggleSortArea}
@@ -935,8 +949,8 @@ class Warehouse extends Component {
                                         <HeaderInput
                                             type="text"
                                             title="Area"
-                                            name="areaName"
-                                            value={areaName}
+                                            name="area"
+                                            value={header.area}
                                             onChange={this.handleChangeHeader}
                                             sort={sortArea}
                                             toggleSort={this.toggleSortArea}
@@ -956,22 +970,22 @@ class Warehouse extends Component {
                                             />
                                             <NewRowInput
                                                 fieldType="text"
-                                                fieldName="number"
-                                                fieldValue={area.number}
+                                                fieldName="areaNr"
+                                                fieldValue={area.areaNr}
                                                 onChange={event => this.handleChangeNewArea(event)}
                                                 color={newAreaColor}
                                                 maxLength={1}
                                             />
                                             <NewRowInput
                                                 fieldType="text"
-                                                fieldName="name"
-                                                fieldValue={area.name}
+                                                fieldName="area"
+                                                fieldValue={area.area}
                                                 onChange={event => this.handleChangeNewArea(event)}
                                                 color={newAreaColor}
                                             />
                                         </tr>
                                     }
-                                    {areas && this.filterAreas(areas).map((a) =>
+                                    {areas && this.filterName(areas, false).map((a) =>
                                         <tr key={a._id} onBlur={this.onBlurArea} onFocus={this.onFocusArea}>
                                             <TableSelectionRow
                                                 id={a._id}
@@ -981,16 +995,16 @@ class Warehouse extends Component {
                                             <TableInput 
                                                 collection="area"
                                                 objectId={a._id}
-                                                fieldName="number"
-                                                fieldValue={a.number}
+                                                fieldName="areaNr"
+                                                fieldValue={a.areaNr}
                                                 fieldType="text"
                                                 refreshStore={refreshStore}
                                             />
                                             <TableInput 
                                                 collection="area"
                                                 objectId={a._id}
-                                                fieldName="name"
-                                                fieldValue={a.name}
+                                                fieldName="area"
+                                                fieldValue={a.area}
                                                 fieldType="text"
                                                 refreshStore={refreshStore}
                                             />
