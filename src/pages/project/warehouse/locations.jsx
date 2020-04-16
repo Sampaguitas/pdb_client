@@ -197,12 +197,14 @@ class Locations extends React.Component {
             tc: '',
             showWarehouse: false,
             showLocation: false,
+            deletingLocations: false,
+            creatingLocation: false,
             newLocation: {
                 hall: '',
                 row: '',
                 col: '',
                 height: '',
-                tc: '',
+                tc: 'C',
                 type: '',
                 areaId: '',
                 warehouseId: ''
@@ -226,6 +228,7 @@ class Locations extends React.Component {
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleWarehouse = this.toggleWarehouse.bind(this);
         this.toggleLocation = this.toggleLocation.bind(this);
+        this.handleDeleteLocations = this.handleDeleteLocations.bind(this);
         this.filterName = this.filterName.bind(this);
     }
 
@@ -239,6 +242,12 @@ class Locations extends React.Component {
         } = this.props;
 
         var qs = queryString.parse(location.search);
+
+        const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
+        const nodes = ["INPUT", "SELECT", "SPAN"];
+        const locationTable = document.getElementById('locationTable');
+        
+
         if (qs.id) {
             //State items with projectId
             this.setState({projectId: qs.id});
@@ -252,10 +261,16 @@ class Locations extends React.Component {
                 dispatch(warehouseActions.getAll(qs.id));
             }
         }
+
+        locationTable.addEventListener('keydown', (e) => { 
+            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
+                return this.keyHandler(e);
+            }
+        });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { newLocation } = this.state;
+        const { newLocation, areas } = this.state;
         const { warehouses } = this.props;
         if (newLocation.warehouseId != prevState.newLocation.warehouseId) {
             this.setState({
@@ -267,8 +282,59 @@ class Locations extends React.Component {
             })
         }
 
+        if (areas != prevState.areas) {
+            this.setState({
+                newLocation: {
+                    ...newLocation,
+                    areaId: !_.isEmpty(areas) ? areas[0]._id : ''
+                }
+            });
+        }
+
         if (warehouses != prevProps.warehouses) {
             this.setState({ locations: getLocations(warehouses) });
+        }
+
+    }
+
+    keyHandler(e) {
+
+        let target = e.target;
+        let colIndex = target.parentElement.cellIndex;               
+        let rowIndex = target.parentElement.parentElement.rowIndex;
+        var nRows = target.parentElement.parentElement.parentElement.childNodes.length;
+        
+        switch(e.keyCode) {
+            case 9:// tab
+                if(target.parentElement.nextSibling) {
+                    target.parentElement.nextSibling.click();
+                }
+                break;
+            case 13: //enter
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
+            case 37: //left
+                if(colIndex > 0 && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.previousSibling.click();
+                } 
+                break;
+            case 38: //up
+                if(rowIndex > 1) {
+                    target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();
+                }
+                break;
+            case 39: //right
+                if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.nextSibling.click();
+                }
+                break;
+            case 40: //down
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
         }
     }
 
@@ -346,7 +412,8 @@ class Locations extends React.Component {
 
     createNewLocation(event) {
         event.preventDefault();
-        const { newLocation } = this.state;
+        const { newLocation, areas } = this.state;
+        const { warehouses } = this.props;
         const { hall, row, col, tc, type, areaId, warehouseId } = newLocation;
         if (!!hall && !!row && !!col && !!tc && !!type && !!areaId && !!warehouseId) {
             this.setState({
@@ -369,7 +436,16 @@ class Locations extends React.Component {
                         this.setState({
                             creatingLocation: false,
                             showLocation: false,
-                            newLocation: {},
+                            newLocation: {
+                                hall: '',
+                                row: '',
+                                col: '',
+                                height: '',
+                                tc: 'C',
+                                type: '',
+                                areaId: !_.isEmpty(areas) ? areas[0]._id : '',
+                                warehouseId: warehouses.items ? warehouses.items[0]._id : ''
+                            },
                             alert: {
                                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                 message: data.message
@@ -379,7 +455,16 @@ class Locations extends React.Component {
                         this.setState({
                             creatingLocation: false,
                             showLocation: false,
-                            newLocation: {},
+                            newLocation: {
+                                hall: '',
+                                row: '',
+                                col: '',
+                                height: '',
+                                tc: 'C',
+                                type: '',
+                                areaId: !_.isEmpty(areas) ? areas[0]._id : '',
+                                warehouseId: warehouses.items ? warehouses.items[0]._id : ''
+                            },
                             alert: {
                                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                 message: data.message
@@ -434,9 +519,74 @@ class Locations extends React.Component {
 
     toggleLocation(event) {
         event.preventDefault();
-        const { showLocation } = this.state;
-        this.setState({ showLocation: !showLocation });
+        const { showLocation, areas } = this.state;
+        const { warehouses } = this.props;
+        this.setState({
+            showLocation: !showLocation,
+            newLocation: {
+                hall: '',
+                row: '',
+                col: '',
+                height: '',
+                tc: 'C',
+                type: '',
+                areaId: !_.isEmpty(areas) ? areas[0]._id : '',
+                warehouseId: warehouses.items ? warehouses.items[0]._id : ''
+            }
+        });
     }
+
+    handleDeleteLocations(event) {
+        event.preventDefault();
+        const { selectedRows, deletingLocations } = this.state;
+        if(_.isEmpty(selectedRows)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select location(s) to be deleted.'
+                }
+            });
+        } else {
+            this.setState({
+                deletingLocations: true
+            }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({ selectedIds: selectedRows })
+                };
+                return fetch(`${config.apiUrl}/location/delete`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        }
+                        this.setState({
+                            deletingLocations: false,
+                            selectedRows: [],
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    } else {
+                        this.setState({
+                            deletingLocations: false,
+                            selectedRows: [],
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    }
+                }));
+            });
+        }
+    }
+
+    
     
     filterName(array){
         const { warehouse, location, area, hall, row, col, height, tc, type, sort } = this.state
@@ -519,14 +669,14 @@ class Locations extends React.Component {
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add Location" onClick={this.toggleLocation}>
                             <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Location</span>
                         </button>
-                        <button className="btn btn-leeuwen btn-lg mr-2" style={{height: '34px'}} title="Delete Location(s)"> {/* onClick={event => this.toggleGenerate(event)} */}
+                        <button className="btn btn-leeuwen btn-lg mr-2" style={{height: '34px'}} title="Delete Location(s)" onClick={this.handleDeleteLocations}>
                             <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Location(s)</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                             <div className="table-responsive custom-table-container custom-table-container__fixed-row">
-                                <table className="table table-bordered table-sm text-nowrap table-striped" id="locationsTable">
+                                <table className="table table-bordered table-sm text-nowrap table-striped" id="locationTable">
                                     <thead>
                                         <tr>
                                             <TableSelectionAllRow
@@ -702,7 +852,7 @@ class Locations extends React.Component {
                                                     fieldValue={l.tc}
                                                     fieldType="text"
                                                     refreshStore={this.refreshStore}
-                                                    align="left"
+                                                    align="center"
                                                     disabled={true}
                                                 />
                                                 <TableInput 
@@ -842,7 +992,7 @@ class Locations extends React.Component {
                                     onChange={this.handleChangeNewLocation}
                                     required
                                 >
-                                    <option key="0" value="">Select...</option>
+                                    {/* <option key="0" value="">Select...</option> */}
                                     <option key="1" value="C">C</option>
                                     <option key="2" value="T">T</option>
                                 </select>
