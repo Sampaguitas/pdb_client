@@ -28,7 +28,7 @@
 4) DUF 
 - [X] Duf modal
 - [X] Input file
-- [ ] table nP/nA/nE/nR
-- [ ] table rejections
-- [ ] Download Duf
+- [X] table nP/nA/nE/nR
+- [X] table rejections
+- [X] Download Duf
 - [ ] Upload Duf

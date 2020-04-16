@@ -245,6 +245,7 @@ class Locations extends React.Component {
         this.onKeyPress = this.onKeyPress.bind(this);
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
+        this.generateRejectionRows = this.generateRejectionRows.bind(this);
         this.handleDownloadFile = this.handleDownloadFile.bind(this);
 
 
@@ -603,6 +604,34 @@ class Locations extends React.Component {
         event.preventDefault();
     }
 
+    handleDownloadFile(event){
+        event.preventDefault();
+        this.setState({downloading: true});
+        const requestOptions = {
+            method: 'GET',
+            headers: { ...authHeader(), 'Content-Type': 'application/json'},
+        }
+        return fetch(`${config.apiUrl}/location/download`, requestOptions)
+        .then(responce => {
+            if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
+            } else if (responce.status === 400) {
+                this.setState({
+                    downloading: false,
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'an error has occured'  
+                    }
+                });
+            } else {
+                this.setState({
+                    downloading: false
+                }, () => responce.blob().then(blob => saveAs(blob, 'Duf.xlsx')));
+            }
+        });      
+    }
+
     handleFileChange(event){
         if(event.target.files.length > 0) {
             this.setState({
@@ -612,12 +641,28 @@ class Locations extends React.Component {
         }
     }
 
-    handleDownloadFile(event) {
-        event.preventDefault();
+    generateRejectionRows(responce){
+        let temp =[]
+        if (!_.isEmpty(responce.rejections)) {
+            responce.rejections.map(function(r, index) {
+                temp.push(
+                    <tr key={index}>
+                        <td>{r.row}</td>
+                        <td>{r.reason}</td>
+                    </tr>
+                );
+            });
+            return (temp);
+        } else {
+            return (
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            );
+        }
     }
 
-    
-    
     filterName(array){
         const { header, sort } = this.state
         if (array) {
@@ -974,6 +1019,32 @@ class Locations extends React.Component {
                                     </button> 
                                 </div>       
                             </div>
+                            {!_.isEmpty(responce) &&
+                                <div className="ml-1 mr-1">
+                                    <div className="form-group table-resonsive">
+                                        <strong>Total Processed:</strong> {responce.nProcessed}<br />
+                                        <strong>Total Records Edited:</strong> {responce.nEdited}<br />
+                                        <strong>Total Records Rejected:</strong> {responce.nRejected}<br />
+                                        <hr />
+                                    </div>
+                                    {!_.isEmpty(responce.rejections) &&
+                                        <div className="rejections">
+                                            <h3>Rejections</h3>
+                                                <table className="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style={{width: '10%'}}>Row</th>
+                                                            <th style={{width: '90%'}}>Reason</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {this.generateRejectionRows(responce)}
+                                                    </tbody>
+                                                </table>
+                                        </div>
+                                    }
+                                </div>
+                            }
                         </form>                    
                     </div>
 
