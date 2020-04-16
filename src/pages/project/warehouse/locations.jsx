@@ -600,8 +600,63 @@ class Locations extends React.Component {
         }
     }
 
-    handleUploadFile(event) {
+    handleUploadFile(event){
         event.preventDefault();
+        const { projectId, fileName } = this.state
+        if(this.dufInput.current.files[0] && projectId && fileName) {
+            this.setState({uploading: true});
+            var data = new FormData()
+            data.append('file', this.dufInput.current.files[0]);
+            data.append('projectId', projectId);
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
+                body: data
+            }
+            return fetch(`${config.apiUrl}/location/upload`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (responce.status === 401) {
+                    // console.log('responce not ok');
+                    // if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    // }
+                    // const error = (data && data.message) || responce.statusText;
+                    
+                    // this.setState({
+                    //     uploading: false,
+                    //     responce: {
+                    //         rejections: data.rejections,
+                    //         nProcessed: data.nProcessed,
+                    //         nRejected: data.nRejected,
+                    //         nAdded: data.nAdded,
+                    //         nEdited: data.nEdited
+                    //     },
+                    //     alert: {
+                    //         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                    //         message: data.message
+                    //     }
+                    // });
+                } else {
+                    // console.log('responce ok')
+                    this.setState({
+                        uploading: false,
+                        responce: {
+                            rejections: data.rejections,
+                            nProcessed: data.nProcessed,
+                            nRejected: data.nRejected,
+                            nAdded: data.nAdded,
+                            nEdited: data.nEdited
+                        },
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
+                }
+            }));            
+        }       
     }
 
     handleDownloadFile(event){
@@ -988,37 +1043,39 @@ class Locations extends React.Component {
                             </div>
                         }
                         <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
-                        <form
-                            className="col-12"
-                            encType="multipart/form-data"
-                            onSubmit={this.handleUploadFile}
-                            onKeyPress={this.onKeyPress}
-                            style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
-                        >
-                            <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
-                                    <input
-                                        type="file"
-                                        name="dufInput"
-                                        id="dufInput"
-                                        ref={this.dufInput}
-                                        className="custom-file-input"
-                                        style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
-                                        onChange={this.handleFileChange}
-                                        key={inputKey}
-                                    />
+                            <form
+                                className="col-12"
+                                encType="multipart/form-data"
+                                onSubmit={this.handleUploadFile}
+                                onKeyPress={this.onKeyPress}
+                                style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
+                            >
+                                <div className="input-group">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
+                                        <input
+                                            type="file"
+                                            name="dufInput"
+                                            id="dufInput"
+                                            ref={this.dufInput}
+                                            className="custom-file-input"
+                                            style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
+                                            onChange={this.handleFileChange}
+                                            key={inputKey}
+                                        />
+                                    </div>
+                                    <label type="text" className="form-control text-left" htmlFor="dufInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
+                                    <div className="input-group-append">
+                                        <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
+                                            <span><FontAwesomeIcon icon={uploading ? 'spinner' : 'upload'} className={uploading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Upload</span>
+                                        </button>
+                                        <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={this.handleDownloadFile}>
+                                            <span><FontAwesomeIcon icon={downloading ? 'spinner' : 'download'} className={downloading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Download</span>
+                                        </button> 
+                                    </div>       
                                 </div>
-                                <label type="text" className="form-control text-left" htmlFor="dufInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
-                                <div className="input-group-append">
-                                    <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
-                                        <span><FontAwesomeIcon icon={uploading ? 'spinner' : 'upload'} className={uploading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Upload</span>
-                                    </button>
-                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={this.handleDownloadFile}>
-                                        <span><FontAwesomeIcon icon={downloading ? 'spinner' : 'download'} className={downloading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Download</span>
-                                    </button> 
-                                </div>       
-                            </div>
+                            </form>                    
+                        </div>
                             {!_.isEmpty(responce) &&
                                 <div className="ml-1 mr-1">
                                     <div className="form-group table-resonsive">
@@ -1045,9 +1102,6 @@ class Locations extends React.Component {
                                     }
                                 </div>
                             }
-                        </form>                    
-                    </div>
-
                     </div>
                 </Modal>
 
