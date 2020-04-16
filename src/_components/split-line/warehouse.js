@@ -59,7 +59,6 @@ function arrayRemove(arr, value) {
 
 function arraySorted(array, sort) {
     let tempArray = array.slice(0);
-    console.log('sort.name:', sort.name);
     switch(sort.name) {
         case 'whName':
         case 'areaName':
@@ -283,13 +282,7 @@ class Warehouse extends Component {
                 selectedAreas: [],
                 selectAllAreas: false
             });
-        }
-
-        if (sortArea != prevState.sortArea) {
-            console.log('sortArea:', sortArea);
-        }
-
-        
+        }        
     }
 
     keyHandler(e) {
@@ -444,7 +437,6 @@ class Warehouse extends Component {
         this.setState({ [name]: value });
     }
 
-    
     createNewWh(event) {
         event.preventDefault();
         const { refreshStore } = this.props;
@@ -459,36 +451,31 @@ class Warehouse extends Component {
                 body: JSON.stringify(warehouse)
             };
             return fetch(`${config.apiUrl}/warehouse/create`, requestOptions)
-            .then( () => {
-                this.setState({
-                    creatingNewWh: false,
-                    newWhColor: 'green'
-                }, () => {
-                    setTimeout( () => {
-                        this.setState({
-                            newWhColor: 'inherit',
-                            newWh:false,
-                            warehouse:{},
-                            newWhFocus: false
-                        }, refreshStore);
-                    }, 1000);                                
-                });
-            })
-            .catch( () => {
-                this.setState({
-                    creatingNewWh: false,
-                    newWhColor: 'red'
-                }, () => {
-                    setTimeout(() => {
-                        this.setState({
-                            newWhColor: 'inherit',
-                            newWh:false,
-                            warehouse:{},
-                            newWhFocus: false                                    
-                        }, refreshStore);
-                    }, 1000);                                                      
-                });
-            });
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                } else {
+                    this.setState({
+                        creatingNewWh: false,
+                        newWhColor: responce.status === 200 ? 'green' : 'red',
+                        alert: {
+                            type: responce.status === 200 ? '' : 'alert-danger',
+                            message: responce.status === 200 ? '' : data.message
+                        }
+                    }, () => {
+                        setTimeout( () => {
+                            this.setState({
+                                newWhColor: 'inherit',
+                                newWh:false,
+                                warehouse:{},
+                                newWhFocus: false
+                            }, refreshStore);
+                        }, 1000);                                
+                    });
+                }
+            }));
         });
     }
 
@@ -505,36 +492,31 @@ class Warehouse extends Component {
                 body: JSON.stringify(area)
             };
             return fetch(`${config.apiUrl}/area/create`, requestOptions)
-            .then( () => {
-                this.setState({
-                    creatingNewArea: false,
-                    newAreaColor: 'green'
-                }, () => {
-                    setTimeout( () => {
-                        this.setState({
-                            newAreaColor: 'inherit',
-                            newArea:false,
-                            area:{},
-                            newAreaFocus: false
-                        }, refreshStore);
-                    }, 1000);                                
-                });
-            })
-            .catch( () => {
-                this.setState({
-                    creatingNewArea: false,
-                    newAreaColor: 'red'
-                }, () => {
-                    setTimeout(() => {
-                        this.setState({
-                            newAreaColor: 'inherit',
-                            newArea:false,
-                            area:{},
-                            newAreaFocus: false                                    
-                        }, refreshStore);
-                    }, 1000);                                                      
-                });
-            });
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                } else {
+                    this.setState({
+                        creatingNewArea: false,
+                        newAreaColor: responce.status === 200 ? 'green' : 'red',
+                        alert: {
+                            type: responce.status === 200 ? '' : 'alert-danger',
+                            message: responce.status === 200 ? '' : data.message
+                        }
+                    }, () => {
+                        setTimeout( () => {
+                            this.setState({
+                                newAreaColor: 'inherit',
+                                newArea:false,
+                                area:{},
+                                newAreaFocus: false
+                            }, refreshStore);
+                        }, 1000);                                
+                    });
+                }
+            }));
         });
     }
 
@@ -576,18 +558,23 @@ class Warehouse extends Component {
                         body: JSON.stringify({ selectedIds: selectedWh })
                     };
                     return fetch(`${config.apiUrl}/warehouse/delete`, requestOptions)
-                    .then( () => {
-                        this.setState({
-                            selectedWh: [],
-                            deletingWh: false
-                        }, refreshStore);
-                    })
-                    .catch( err => {
-                        this.setState({
-                            selectedWh: [],
-                            deletingWh: false
-                        }, refreshStore);
-                    });
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        } else {
+                            this.setState({
+                                deletingWh: false,
+                                selectedWh: [],
+                                selectAllWh: false,
+                                alert: {
+                                    type: responce.status === 200 ? '' : 'alert-danger',
+                                    message: responce.status === 200 ? '' : data.message
+                                }
+                            }, refreshStore);
+                        }
+                    }));
                 });
             }
         }
@@ -629,18 +616,23 @@ class Warehouse extends Component {
                         body: JSON.stringify({ selectedIds: selectedAreas })
                     };
                     return fetch(`${config.apiUrl}/area/delete`, requestOptions)
-                    .then( () => {
-                        this.setState({
-                            selectedAreas: [],
-                            deletingAreas: false
-                        }, refreshStore);
-                    })
-                    .catch( err => {
-                        this.setState({
-                            selectedAreas: [],
-                            deletingAreas: false
-                        }, refreshStore);
-                    });
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        } else {
+                            this.setState({
+                                deletingAreas: false,
+                                selectedAreas: [],
+                                selectAllAreas: false,
+                                alert: {
+                                    type: responce.status === 200 ? '' : 'alert-danger',
+                                    message: responce.status === 200 ? '' : data.message
+                                }
+                            }, refreshStore);
+                        }
+                    }));
                 });
             }
         }
@@ -721,16 +713,17 @@ class Warehouse extends Component {
     }
 
     handleChangeNewArea(event) {
-        const { selectedWh, area } = this.state;
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
-        if (selectedWh.length === 1) {
+        const { selectedWh, area } = this.state;
+        let regexp = /(^$|^[0-9]*$)/
+        if (['name'].includes(name) || regexp.test(value)) {
             this.setState({
                 area: {
                     ...area,
                     [name]: value,
-                    warehouseId: selectedWh[0]
+                    warehouseId: selectedWh.length === 1 ? selectedWh[0] : ''
                 }
             });
         }

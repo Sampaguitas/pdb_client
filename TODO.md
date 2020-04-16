@@ -25,5 +25,10 @@
 - [X] Toggle Select
 - [X] Key event listner
 - [X] Delete Location(s)
-4) DUF Download
-5) DUF Upload
+4) DUF 
+- [X] Duf modal
+- [X] Input file
+- [ ] table nP/nA/nE/nR
+- [ ] table rejections
+- [ ] Download Duf
+- [ ] Upload Duf

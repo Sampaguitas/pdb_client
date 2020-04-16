@@ -164,7 +164,7 @@ function getLocations(warehouses) {
                         area: `${area.name} (${area.number})`,
                         hall: location.hall,
                         row: location.row,
-                        col: location.col,
+                        col: leadingChar(location.col, '0', 3),
                         height: location.height || '',
                         tc: location.tc || '',
                         type: location.type || ''
@@ -186,19 +186,17 @@ class Locations extends React.Component {
             locations: [],
             selectedRows: [],
             selectAllRows: false,
-            warehouse: '',
-            location: '',
-            area: '',
-            hall: '',
-            row: '',
-            col: '',
-            height: '',
-            type: '',
-            tc: '',
-            showWarehouse: false,
-            showLocation: false,
-            deletingLocations: false,
-            creatingLocation: false,
+            header: {
+                warehouse: '',
+                location: '',
+                area: '',
+                hall: '',
+                row: '',
+                col: '',
+                height: '',
+                tc: '',
+                type: ''
+            },
             newLocation: {
                 hall: '',
                 row: '',
@@ -209,6 +207,18 @@ class Locations extends React.Component {
                 areaId: '',
                 warehouseId: ''
             },
+            showWarehouse: false,
+            showDuf: false,
+            showLocation: false,
+            deletingLocations: false,
+            creatingLocation: false,
+            
+            //duf
+            fileName: '',
+            inputKey: Date.now(),
+            uploading: false,
+            downloading: false,
+            responce:{},
             sort: {
                 name: '',
                 isAscending: true,
@@ -227,9 +237,19 @@ class Locations extends React.Component {
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleWarehouse = this.toggleWarehouse.bind(this);
+        this.toggleDuf = this.toggleDuf.bind(this);
         this.toggleLocation = this.toggleLocation.bind(this);
         this.handleDeleteLocations = this.handleDeleteLocations.bind(this);
         this.filterName = this.filterName.bind(this);
+        //duf
+        this.onKeyPress = this.onKeyPress.bind(this);
+        this.handleUploadFile = this.handleUploadFile.bind(this);
+        this.handleFileChange = this.handleFileChange.bind(this);
+        this.handleDownloadFile = this.handleDownloadFile.bind(this);
+
+
+        
+        this.dufInput = React.createRef();
     }
 
     componentDidMount() {
@@ -389,8 +409,12 @@ class Locations extends React.Component {
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
+        const { header } = this.state;
         this.setState({
-            [name]: value
+            header: {
+                ...header,
+                [name]: value
+            }
         });
     }
 
@@ -428,33 +452,15 @@ class Locations extends React.Component {
                 return fetch(`${config.apiUrl}/location/create`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
-                    if (!responce.ok) {
-                        if (responce.status === 401) {
+                    if (responce.status === 401) {
                             localStorage.removeItem('user');
-                            location.reload(true);
-                        }
-                        this.setState({
-                            creatingLocation: false,
-                            showLocation: false,
-                            newLocation: {
-                                hall: '',
-                                row: '',
-                                col: '',
-                                height: '',
-                                tc: 'C',
-                                type: '',
-                                areaId: !_.isEmpty(areas) ? areas[0]._id : '',
-                                warehouseId: warehouses.items ? warehouses.items[0]._id : ''
-                            },
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, this.refreshStore);
+                            location.reload(true);;
                     } else {
                         this.setState({
                             creatingLocation: false,
                             showLocation: false,
+                            selectedRows: [],
+                            selectAllRows: false,
                             newLocation: {
                                 hall: '',
                                 row: '',
@@ -466,8 +472,8 @@ class Locations extends React.Component {
                                 warehouseId: warehouses.items ? warehouses.items[0]._id : ''
                             },
                             alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
+                                type: responce.status === 200 ? '' : 'alert-danger',
+                                message: responce.status === 200 ? '' : data.message
                             }
                         }, this.refreshStore);
                     }
@@ -517,6 +523,16 @@ class Locations extends React.Component {
         this.setState({ showWarehouse: !showWarehouse });
     }
 
+    toggleDuf(event) {
+        event.preventDefault();
+        const { showDuf } = this.state;
+        this.setState({
+            showDuf: !showDuf,
+            inputKey: Date.now(),
+            fileName: '',
+        });
+    }
+
     toggleLocation(event) {
         event.preventDefault();
         const { showLocation, areas } = this.state;
@@ -538,7 +554,7 @@ class Locations extends React.Component {
 
     handleDeleteLocations(event) {
         event.preventDefault();
-        const { selectedRows, deletingLocations } = this.state;
+        const { selectedRows } = this.state;
         if(_.isEmpty(selectedRows)) {
             this.setState({
                 alert: {
@@ -558,26 +574,17 @@ class Locations extends React.Component {
                 return fetch(`${config.apiUrl}/location/delete`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
-                    if (!responce.ok) {
-                        if (responce.status === 401) {
+                    if (responce.status === 401) {
                             localStorage.removeItem('user');
                             location.reload(true);
-                        }
-                        this.setState({
-                            deletingLocations: false,
-                            selectedRows: [],
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, this.refreshStore);
                     } else {
                         this.setState({
                             deletingLocations: false,
                             selectedRows: [],
+                            selectAllRows: false,
                             alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
+                                type: responce.status === 200 ? '' : 'alert-danger',
+                                message: responce.status === 200 ? '' : data.message
                             }
                         }, this.refreshStore);
                     }
@@ -586,21 +593,44 @@ class Locations extends React.Component {
         }
     }
 
+    onKeyPress(event) {
+        if (event.which === 13 /* prevent form submit on key Enter */) {
+          event.preventDefault();
+        }
+    }
+
+    handleUploadFile(event) {
+        event.preventDefault();
+    }
+
+    handleFileChange(event){
+        if(event.target.files.length > 0) {
+            this.setState({
+                ...this.state,
+                fileName: event.target.files[0].name
+            });
+        }
+    }
+
+    handleDownloadFile(event) {
+        event.preventDefault();
+    }
+
     
     
     filterName(array){
-        const { warehouse, location, area, hall, row, col, height, tc, type, sort } = this.state
+        const { header, sort } = this.state
         if (array) {
             return locationSorted(array, sort).filter(function (object) {
-                return (doesMatch(warehouse, object.warehouse, 'String', false) 
-                && doesMatch(location, object.location, 'String', false) 
-                && doesMatch(area, object.area, 'String', false) 
-                && doesMatch(hall, object.hall, 'String', false)
-                && doesMatch(row, object.row, 'String', false)
-                && doesMatch(col, object.col, 'String', false)
-                && doesMatch(height, object.height, 'String', false)
-                && doesMatch(tc, object.tc, 'Select', false)
-                && doesMatch(type, object.type, 'String', false));
+                return (doesMatch(header.warehouse, object.warehouse, 'String', false) 
+                && doesMatch(header.location, object.location, 'String', false) 
+                && doesMatch(header.area, object.area, 'String', false) 
+                && doesMatch(header.hall, object.hall, 'String', false)
+                && doesMatch(header.row, object.row, 'String', false)
+                && doesMatch(header.col, object.col, 'String', false)
+                && doesMatch(header.height, object.height, 'String', false)
+                && doesMatch(header.tc, object.tc, 'Select', false)
+                && doesMatch(header.type, object.type, 'String', false));
             });
         }
     }
@@ -614,21 +644,22 @@ class Locations extends React.Component {
             areas,
             selectedRows,
             selectAllRows,
-            warehouse,
-            location,
-            area,
-            hall,
-            row,
-            col,
-            height,
-            type,
-            tc,
+            header,
             sort,
             newLocation,
             //show modals
             showWarehouse,
+            showDuf,
             showLocation,
-            locations
+            locations,
+            //duf
+            fileName,
+            inputKey,
+            uploading,
+            downloading,
+            responce,
+            creatingLocation,
+            deletingLocations,
         } = this.state;
 
         const arrTc = [
@@ -637,8 +668,8 @@ class Locations extends React.Component {
         ]
 
         return (
-            <Layout alert={showWarehouse || showLocation ? {type:'', message:''} : alert} accesses={accesses}>
-                {alert.message && !showWarehouse && !showLocation &&
+            <Layout alert={showWarehouse || showDuf || showLocation ? {type:'', message:''} : alert} accesses={accesses}>
+                {alert.message && !showWarehouse && !showDuf && !showLocation &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -663,14 +694,21 @@ class Locations extends React.Component {
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Show WH / Areas" onClick={this.toggleWarehouse}>
                             <span><FontAwesomeIcon icon="warehouse" className="fa-lg mr-2"/>WH / Areas</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="DUF File"> {/* onClick={event => this.toggleWarhouses(event)} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="DUF File" onClick={this.toggleDuf}> {/* onClick={event => this.toggleWarhouses(event)} */}
                             <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>DUF File</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add Location" onClick={this.toggleLocation}>
                             <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Location</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg mr-2" style={{height: '34px'}} title="Delete Location(s)" onClick={this.handleDeleteLocations}>
-                            <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Location(s)</span>
+                            <span>
+                                {deletingLocations ?
+                                    <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                :
+                                    <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
+                                }
+                                Delete Location(s)
+                            </span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
@@ -687,7 +725,7 @@ class Locations extends React.Component {
                                                 type="text"
                                                 title="WH Location"
                                                 name="location"
-                                                value={location}
+                                                value={header.location}
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
@@ -696,7 +734,7 @@ class Locations extends React.Component {
                                                 type="text"
                                                 title="Warehouse"
                                                 name="warehouse"
-                                                value={warehouse}
+                                                value={header.warehouse}
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
@@ -705,7 +743,7 @@ class Locations extends React.Component {
                                                 type="text"
                                                 title="Area"
                                                 name="area"
-                                                value={area}
+                                                value={header.area}
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
@@ -714,7 +752,7 @@ class Locations extends React.Component {
                                                 type="text"
                                                 title="Sub Area/Hall"
                                                 name="hall"
-                                                value={hall}
+                                                value={header.hall}
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
@@ -723,7 +761,7 @@ class Locations extends React.Component {
                                                 type="text"
                                                 title="Row"
                                                 name="row"
-                                                value={row}
+                                                value={header.row}
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
@@ -732,7 +770,7 @@ class Locations extends React.Component {
                                                 type="text"
                                                 title="Location/Column"
                                                 name="col"
-                                                value={col}
+                                                value={header.col}
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
@@ -741,7 +779,7 @@ class Locations extends React.Component {
                                                 type="text"
                                                 title="Depth/Height"
                                                 name="height"
-                                                value={height}
+                                                value={header.height}
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
@@ -749,7 +787,7 @@ class Locations extends React.Component {
                                             <HeaderSelect
                                                 title="TC"
                                                 name="tc"
-                                                value={tc}
+                                                value={header.tc}
                                                 options={arrTc}
                                                 optionText="name"
                                                 onChange={this.handleChangeHeader}
@@ -760,7 +798,7 @@ class Locations extends React.Component {
                                                 type="text"
                                                 title="Loc Type"
                                                 name="type"
-                                                value={type}
+                                                value={header.type}
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
@@ -873,6 +911,7 @@ class Locations extends React.Component {
                         </div>
                     </div>
                 </div>
+
                 <Modal
                     show={showWarehouse}
                     hideModal={this.toggleWarehouse}
@@ -888,6 +927,59 @@ class Locations extends React.Component {
                         toggleWarehouse={this.toggleWarehouse}
                     />
                 </Modal>
+
+                <Modal
+                    show={showDuf}
+                    hideModal={this.toggleDuf}
+                    title="Download Upload File"
+                    size="modal-xl"
+                >
+                    <div className="col-12">
+                        {alert.message && 
+                            <div className={`alert ${alert.type} mb-2`}>{alert.message}
+                                <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                    <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                                </button>
+                            </div>
+                        }
+                        <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                        <form
+                            className="col-12"
+                            encType="multipart/form-data"
+                            onSubmit={this.handleUploadFile}
+                            onKeyPress={this.onKeyPress}
+                            style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
+                        >
+                            <div className="input-group">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
+                                    <input
+                                        type="file"
+                                        name="dufInput"
+                                        id="dufInput"
+                                        ref={this.dufInput}
+                                        className="custom-file-input"
+                                        style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
+                                        onChange={this.handleFileChange}
+                                        key={inputKey}
+                                    />
+                                </div>
+                                <label type="text" className="form-control text-left" htmlFor="dufInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
+                                <div className="input-group-append">
+                                    <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
+                                        <span><FontAwesomeIcon icon={uploading ? 'spinner' : 'upload'} className={uploading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Upload</span>
+                                    </button>
+                                    <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={this.handleDownloadFile}>
+                                        <span><FontAwesomeIcon icon={downloading ? 'spinner' : 'download'} className={downloading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Download</span>
+                                    </button> 
+                                </div>       
+                            </div>
+                        </form>                    
+                    </div>
+
+                    </div>
+                </Modal>
+
                 <Modal
                     show={showLocation}
                     hideModal={this.toggleLocation}
@@ -1011,13 +1103,20 @@ class Locations extends React.Component {
                             </div>
                             <div className="text-right">
                                 <button type="submit" className="btn btn-leeuwen-blue btn-lg mr-2">
-                                    <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
+                                    <span>
+                                        {creatingLocation ?
+                                            <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                            :
+                                            <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
+                                        }
+                                        Create
+                                    </span>
                                 </button>
                             </div> 
                         </form>                  
                     </div>
                 </Modal>
-                
+
             </Layout>
         );
     }
