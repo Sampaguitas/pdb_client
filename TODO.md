@@ -24,7 +24,7 @@
 - [X] Sort/Filter
 - [X] Toggle Select
 - [X] Key event listner
-- [ ] Delete Location(s)
+- [X] Delete Location(s)
 
 4) DUF 
 - [X] Duf modal
