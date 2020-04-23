@@ -65,6 +65,7 @@ module.exports = {
         // global app config object
         config: JSON.stringify({
             apiUrl: process.env.NODE_ENV === 'dev' ? 'http://localhost:5000' : 'https://pdb-server.herokuapp.com',
+            version: require('./package.json').version
         })
     },
     //workaround can't resolve 'fs' in glob
