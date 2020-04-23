@@ -484,9 +484,9 @@ class Locations extends React.Component {
     }
 
     toggleSelectAllRow() {
-        const { selectAllRows } = this.state;
-        const { warehouses } = this.props;
-        if (warehouses.items) {
+        const { selectAllRows, locations } = this.state;
+        // const { warehouses } = this.props;
+        if (locations) {
             if (selectAllRows) {
                 this.setState({
                     ...this.state,
@@ -496,7 +496,7 @@ class Locations extends React.Component {
             } else {
                 this.setState({
                     ...this.state,
-                    selectedRows: this.filterName(warehouses.items).map(s => s._id),
+                    selectedRows: this.filterName(locations).map(s => s._id),
                     selectAllRows: true
                 });
             }         
@@ -531,6 +531,7 @@ class Locations extends React.Component {
             showDuf: !showDuf,
             inputKey: Date.now(),
             fileName: '',
+            responce:{},
         });
     }
 
@@ -556,6 +557,7 @@ class Locations extends React.Component {
     handleDeleteLocations(event) {
         event.preventDefault();
         const { selectedRows } = this.state;
+        console.log('selectedRows:', selectedRows)
         if(_.isEmpty(selectedRows)) {
             this.setState({
                 alert: {
@@ -1080,6 +1082,7 @@ class Locations extends React.Component {
                                 <div className="ml-1 mr-1">
                                     <div className="form-group table-resonsive">
                                         <strong>Total Processed:</strong> {responce.nProcessed}<br />
+                                        <strong>Total Records Added:</strong> {responce.nAdded}<br />
                                         <strong>Total Records Edited:</strong> {responce.nEdited}<br />
                                         <strong>Total Records Rejected:</strong> {responce.nRejected}<br />
                                         <hr />

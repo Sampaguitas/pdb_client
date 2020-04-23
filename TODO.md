@@ -24,11 +24,13 @@
 - [X] Sort/Filter
 - [X] Toggle Select
 - [X] Key event listner
-- [X] Delete Location(s)
+- [ ] Delete Location(s)
+
 4) DUF 
 - [X] Duf modal
 - [X] Input file
 - [X] table nP/nA/nE/nR
 - [X] table rejections
 - [X] Download Duf
-- [ ] Upload Duf
+- [X] Upload Duf
+- [X] Clear responce on toggleDuf
