@@ -3,7 +3,6 @@ import HeaderBarMenu from "./header-bar-menu/header-bar-menu.js";
 import SideBarMenu from "./side-bar-menu/side-bar-menu.js";
 import Footer from "./footer.js";
 import "../_styles/bootstrap.min.css";
-import Background from '../_assets/background.jpg';
 import { callbackify, inherits } from 'util';
 // import "../_styles/main.css";
 
@@ -28,13 +27,13 @@ class Layout extends Component {
     }
 
     render() {
-        const { alert } = this.props;
-        const { collapsed, background } = this.state;
+        const { accesses, alert, selection } = this.props;
+        const { collapsed } = this.state;
         return (
             <div className="full-height">
                 <div className="full-height">
                     <HeaderBarMenu id="headerbar" className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={this.toggleCollapse}/>
-                    <SideBarMenu className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={this.toggleCollapse} accesses={this.props.accesses}/>
+                    <SideBarMenu className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={this.toggleCollapse} accesses={accesses} selection={selection}/>
                     <div id="content" className={collapsed ? "collapsed" : ''} style={{height: `calc(100% - ${alert.message ? '190px' : '145px'})`}}>
                         {this.props.children}
                     </div>

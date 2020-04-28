@@ -770,7 +770,7 @@ class Locations extends React.Component {
         ]
 
         return (
-            <Layout alert={showWarehouse || showDuf || showLocation ? {type:'', message:''} : alert} accesses={accesses}>
+            <Layout alert={showWarehouse || showDuf || showLocation ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
                 {alert.message && !showWarehouse && !showDuf && !showLocation &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

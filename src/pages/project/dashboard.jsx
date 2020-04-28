@@ -21,6 +21,7 @@ import {
 } from '../../_actions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import _ from 'lodash';
 
 function isRole(accesses, user, role) {
     if (!_.isUndefined(accesses) && accesses.hasOwnProperty('items') && user && role) {
@@ -35,11 +36,41 @@ function isRole(accesses, user, role) {
     }
 }
 
-function menuList(menu, accesses){
-    var listMenu = []
+function menuList(menu, accesses, selection){
+    let enabledMenus = [];
+    let listMenu = [];
     // const { accesses } = this.props
     let user = JSON.parse(localStorage.getItem('user'));
-        menu.forEach(function(item) {
+    if (!!selection && selection.hasOwnProperty('project') && !_.isEmpty(selection.project)) {
+        
+        menu.forEach(function (item) {
+            switch(item.title) {
+                case 'Data Upload File (DUF)':
+                case 'Expediting':
+                    if (!!selection.project.enableInspection || !!selection.project.enableShipping) {
+                        enabledMenus.push(item);
+                    }
+                    break;
+                case 'Inspection':
+                    if (!!selection.project.enableInspection) {
+                        enabledMenus.push(item);
+                    }
+                    break;
+                case 'Shipping':
+                    if (!!selection.project.enableShipping) {
+                        enabledMenus.push(item);
+                    }
+                    break;
+                case 'Warehouse':
+                    if (!!selection.project.enableWarehouse) {
+                        enabledMenus.push(item);
+                    }
+                    break;
+                default: enabledMenus.push(item);
+            }
+        });
+
+        enabledMenus.forEach(function(item) {
             if (!item.roles){
                 listMenu.push(item);
             } else if (item.roles.includes('isAdmin') && user.isAdmin) {
@@ -58,6 +89,8 @@ function menuList(menu, accesses){
                 listMenu.push(item);
             }
         });
+
+    } 
     return listMenu;
 }
 
@@ -201,7 +234,7 @@ class Dashboard extends React.Component {
         const { accesses, alert, selection } = this.props;
 
         return (
-            <Layout alert={alert} accesses={accesses}>
+            <Layout alert={alert} accesses={accesses} selection={selection}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -218,7 +251,7 @@ class Dashboard extends React.Component {
                 <hr />
                 <div id="dashboard">
                     <div className="row justify-content-center">
-                        {generateMenu(menuList(menu, accesses), projectId, accesses)}
+                        {generateMenu(menuList(menu, accesses, selection), projectId, accesses)}
                     </div>
                 </div>
             </Layout>

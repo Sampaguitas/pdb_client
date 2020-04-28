@@ -6,6 +6,7 @@ import HeaderInput from '../../../../_components/project-table/header-input';
 import Input from '../../../../_components/input';
 import Select from '../../../../_components/select';
 import TableCheckBoxRole from '../../../../_components/project-table/table-check-box-role';
+import CheckBox from '../../../../_components/check-box';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -203,7 +204,10 @@ class General extends React.Component {
                 erpId: '',
                 currencyId: '',
                 opcoId: '',
-                projectUsers: []
+                projectUsers: [],
+                enableInspection: false,
+                enableShipping: false,
+                enableWarehouse: false
             },
             userName: '',
             name: '',
@@ -272,6 +276,9 @@ class General extends React.Component {
                     currencyId: selection.project.currencyId,
                     opcoId: selection.project.opcoId,
                     projectUsers: userArray,
+                    enableInspection: selection.project.enableInspection || false,
+                    enableShipping: selection.project.enableShipping || false,
+                    enableWarehouse: selection.project.enableWarehouse || false,
                 }
             });
         };
@@ -320,6 +327,9 @@ class General extends React.Component {
                         currencyId: selection.project.currencyId,
                         opcoId: selection.project.opcoId,
                         projectUsers: userArray,
+                        enableInspection: selection.project.enableInspection || false,
+                        enableShipping: selection.project.enableShipping || false,
+                        enableWarehouse: selection.project.enableWarehouse || false,
                     }
                 });
             };
@@ -580,59 +590,81 @@ class General extends React.Component {
                         </div>
                     </div>
                 </div>
-                <div className="col-md-4 col-sm-12 pl-md-3 p-sm-0">
-                    <div className="card">
+                <div className="col-md-4 col-sm-12 pl-md-3 p-sm-0 full-height">
+                    <div className="card full-height">
                         <div className="card-header">
                             <h5>General information</h5>
                         </div>
-                        <div className="card-body">
+                        <div className="card-body" style={{height: 'calc(100% - 20px)', overflowY: 'auto'}}>
                             <form
                                 onKeyPress={this.onKeyPress}
+                                className="row full-height m-0"
+                                // style={{margin: '0px'}}
                             >
-                                <Input
-                                    title="Name"
-                                    name="name"
-                                    type="text"
-                                    value={project.name}
-                                    onChange={this.handleChange}
-                                    submittedProject={submittedProject}
-                                    inline={false}
-                                    required={false}
-                                />
-                                <Select
-                                    title="ERP"
-                                    name="erpId"
-                                    options={erps.items}
-                                    value={project.erpId}
-                                    onChange={this.handleChange}
-                                    placeholder=""
-                                    submittedProject={submittedProject}
-                                    inline={false}
-                                    required={false}
-                                />
-                                <Select
-                                    title="OPCO"
-                                    name="opcoId"
-                                    options={opcos.items}
-                                    value={project.opcoId}
-                                    onChange={this.handleChange}
-                                    placeholder=""
-                                    submittedProject={submittedProject}
-                                    inline={false}
-                                    required={false}
-                                />
-                                <Select
-                                    title="Currency"
-                                    name="currencyId"
-                                    options={currencies.items}
-                                    value={project.currencyId}
-                                    onChange={this.handleChange}
-                                    placeholder=""
-                                    submittedProject={submittedProject}
-                                    inline={false}
-                                    required={false}
-                                />
-                                <div className="text-right">
+                                <div className="col-12 justify-content-around p-0">
+                                    <Input
+                                        title="Name"
+                                        name="name"
+                                        type="text"
+                                        value={project.name}
+                                        onChange={this.handleChange}
+                                        submittedProject={submittedProject}
+                                        inline={false}
+                                        required={false}
+                                    />
+                                    <Select
+                                        title="ERP"
+                                        name="erpId"
+                                        options={erps.items}
+                                        value={project.erpId}
+                                        onChange={this.handleChange}
+                                        placeholder=""
+                                        submittedProject={submittedProject}
+                                        inline={false}
+                                        required={false}
+                                    />
+                                    <Select
+                                        title="OPCO"
+                                        name="opcoId"
+                                        options={opcos.items}
+                                        value={project.opcoId}
+                                        onChange={this.handleChange}
+                                        placeholder=""
+                                        submittedProject={submittedProject}
+                                        inline={false}
+                                        required={false}
+                                    />
+                                    <Select
+                                        title="Currency"
+                                        name="currencyId"
+                                        options={currencies.items}
+                                        value={project.currencyId}
+                                        onChange={this.handleChange}
+                                        placeholder=""
+                                        submittedProject={submittedProject}
+                                        inline={false}
+                                        required={false}
+                                    />
+                                    <CheckBox 
+                                        title="Enable Inspection Module"
+                                        name="enableInspection"
+                                        checked={project.enableInspection}
+                                        onChange={this.handleChange}
+                                    />
+                                    <CheckBox 
+                                        title="Enable Shipping Module"
+                                        name="enableShipping"
+                                        checked={project.enableShipping}
+                                        onChange={this.handleChange}
+                                    />
+                                    <CheckBox 
+                                        title="Enable Warehouse Module"
+                                        name="enableWarehouse"
+                                        checked={project.enableWarehouse}
+                                        onChange={this.handleChange}
+                                    />
+                                </div>
+                                <div className="col-12 text-right align-self-end p-0">
                                     {project.id &&
                                         <div>
                                             <button

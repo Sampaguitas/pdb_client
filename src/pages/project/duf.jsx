@@ -208,7 +208,7 @@ class Duf extends React.Component {
 
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout alert={alert} accesses={accesses}>
+            <Layout alert={alert} accesses={accesses} selection={selection}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

@@ -46,7 +46,7 @@ class CallOffOrder extends React.Component {
         const { accesses, alert, selection } = this.props;
         const { projectId } = this.state;
         return (
-            <Layout alert={alert} accesses={accesses}>
+            <Layout alert={alert} accesses={accesses} selection={selection}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

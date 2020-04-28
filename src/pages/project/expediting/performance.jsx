@@ -249,7 +249,7 @@ class Performance extends React.Component {
         const alert = this.props.alert ? this.props.alert : this.state.alert;
 
         return (
-            <Layout alert={alert} accesses={accesses}>
+            <Layout alert={alert} accesses={accesses} selection={selection}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

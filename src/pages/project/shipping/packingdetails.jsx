@@ -1288,7 +1288,7 @@ class PackingDetails extends React.Component {
         const { accesses, docdefs, fieldnames, fields, collipacks, collitypes, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout alert={showSettings || showColliTypes ? {type:'', message:''} : alert} accesses={accesses}>
+            <Layout alert={showSettings || showColliTypes ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
                 {alert.message && !showSettings && !showColliTypes &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

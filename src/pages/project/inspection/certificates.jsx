@@ -1024,7 +1024,7 @@ class Certificates extends React.Component {
         const { accesses, fieldnames, fields, pos, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses}>
+            <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
                 {alert.message && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

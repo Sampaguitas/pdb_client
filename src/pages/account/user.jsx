@@ -16,11 +16,9 @@ import {
 import { authHeader } from '../../_helpers';
 import config from 'config';
 //Components
-import CheckBox from '../../_components/check-box';
 import Input from '../../_components/input';
 import Select from '../../_components/select';
 import Layout from '../../_components/layout';
-
 
 class User extends React.Component {
     constructor(props){

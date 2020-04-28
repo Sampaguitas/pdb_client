@@ -138,10 +138,11 @@ class SideBarMenu extends Component {
         });
     }
 
-    menuList(menu){
+    menuList(menu, accesses, selection, isHome){
+        let enabledMenus = [];
         var listMenu = []
-        const { accesses } = this.props
         let user = JSON.parse(localStorage.getItem('user'));
+        if (isHome) {
             menu.forEach(function(item) {
                 if (!item.roles){
                     listMenu.push(item);
@@ -160,12 +161,61 @@ class SideBarMenu extends Component {
                 } else if (item.roles.includes('isConfiguration') && isRole(accesses, user, 'isConfiguration')) {
                     listMenu.push(item);
                 }
+            });  
+        } else if (!!selection && selection.hasOwnProperty('project') && !_.isEmpty(selection.project)) {
+
+            menu.forEach(function (item) {
+                switch(item.title) {
+                    case 'Data Upload File (DUF)':
+                    case 'Expediting':
+                        if (!!selection.project.enableInspection || !!selection.project.enableShipping) {
+                            enabledMenus.push(item);
+                        }
+                        break;
+                    case 'Inspection':
+                        if (!!selection.project.enableInspection) {
+                            enabledMenus.push(item);
+                        }
+                        break;
+                    case 'Shipping':
+                        if (!!selection.project.enableShipping) {
+                            enabledMenus.push(item);
+                        }
+                        break;
+                    case 'Warehouse':
+                        if (!!selection.project.enableWarehouse) {
+                            enabledMenus.push(item);
+                        }
+                        break;
+                    default: enabledMenus.push(item);
+                }
             });
+
+            enabledMenus.forEach(function(item) {
+                if (!item.roles){
+                    listMenu.push(item);
+                } else if (item.roles.includes('isAdmin') && user.isAdmin) {
+                    listMenu.push(item);
+                } else if (item.roles.includes('isSuperAdmin') && user.isSuperAdmin) {
+                    listMenu.push(item);
+                } else if (item.roles.includes('isExpediting') && isRole(accesses, user, 'isExpediting')) {
+                    listMenu.push(item);
+                } else if (item.roles.includes('isInspection') && isRole(accesses, user, 'isInspection')) {
+                    listMenu.push(item);
+                } else if (item.roles.includes('isShipping') && isRole(accesses, user, 'isShipping')) {
+                    listMenu.push(item);
+                } else if (item.roles.includes('isWarehouse') && isRole(accesses, user, 'isWarehouse')) {
+                    listMenu.push(item);
+                } else if (item.roles.includes('isConfiguration') && isRole(accesses, user, 'isConfiguration')) {
+                    listMenu.push(item);
+                }
+            });
+        }
         return listMenu;
     }
 
     render() {
-        const { collapsed } = this.props;
+        const { collapsed, accesses, selection } = this.props;
         const { projectId, show, mobileItem } = this.state
         return (
             <div>
@@ -177,11 +227,11 @@ class SideBarMenu extends Component {
                         <ul className="default-list menu-list">
                         {
                             this.isHome() ?
-                                this.menuList(home_menu).map((item) => 
+                                this.menuList(home_menu, accesses, selection, true).map((item) => 
                                     <Item item={item} key={item.id} projectId={projectId} collapsed={collapsed} show={show} handleItemOver={this.handleItemOver}/>
                                 )
                             :
-                                this.menuList(project_menu).map((item) => 
+                                this.menuList(project_menu, accesses, selection, false).map((item) => 
                                     <Item item={item} key={item.id} projectId={projectId} collapsed={collapsed} show={show} handleItemOver={this.handleItemOver}/>
                                 )
                         }

@@ -17,11 +17,11 @@ import {
     userActions 
 } from '../../_actions';
 import { history } from '../../_helpers';
-import CheckBox from '../../_components/check-box';
 import TableCheckBoxRole from '../../_components/project-table/table-check-box-role';
 import Input from '../../_components/input';
 import Select from '../../_components/select';
 import Layout from '../../_components/layout';
+import CheckBox from '../../_components/check-box';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeaderInput from '../../_components/project-table/header-input';
 import HeaderCheckBox from '../../_components/project-table/header-check-box';
@@ -216,6 +216,9 @@ class Project extends React.Component {
                 currencyId: '',
                 opcoId:'',
                 projectUsers: [],
+                enableInspection: false,
+                enableShipping: false,
+                enableWarehouse: false
             },
             userName: '',
             name: '',
@@ -232,7 +235,7 @@ class Project extends React.Component {
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
-        this.handleChangeProject = this.handleChangeProject.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
         this.handleIsRole = this.handleIsRole.bind(this)
@@ -347,9 +350,18 @@ class Project extends React.Component {
         }
     }
 
-    handleChangeProject(event) {
-        const { project } = this.state;
+    handleChangeHeader(event) {
         const { name, value } = event.target;
+        this.setState({
+            [name]: value
+        });
+    }
+
+    handleChange(event) {
+        const { project } = this.state;
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
             project: {
                 ...project,
@@ -358,12 +370,7 @@ class Project extends React.Component {
         });
     }
 
-    handleChangeHeader(event) {
-        const { name, value } = event.target;
-        this.setState({
-            [name]: value
-        });
-    }
+    
 
     filterName(array){
         const { userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, sort } = this.state
@@ -568,83 +575,104 @@ class Project extends React.Component {
                             </div>
                         </div>
                     </div>
-                    <div className="col-md-4 col-sm-12 pl-md-3 p-sm-0">
-                        <div className="card">
+                    <div className="col-md-4 col-sm-12 pl-md-3 p-sm-0 full-height">
+                        <div className="card full-height">
                             <div className="card-header">
                                 <h5>General information</h5>
                             </div>
-                            <div className="card-body">
-                            <form 
-                                onSubmit={this.handleSubmit}
-                                onKeyPress={this.onKeyPress}
-                            >
-                                    <Select
-                                        title="Copy settings from project"
-                                        name="copyId"
-                                        options={arraySorted(projects.items, 'name')}
-                                        value={project.copyId}
-                                        onChange={this.handleChangeProject}
-                                        placeholder=""
-                                        submitted={submitted}
-                                        inline={false}
-                                        required={true}
-                                    />
-                                    <Input
-                                        title="Name"
-                                        name="name"
-                                        type="text"
-                                        value={project.name}
-                                        onChange={this.handleChangeProject}
-                                        submitted={submitted}
-                                        inline={false}
-                                        required={true}
-                                    />
-                                    <Select
-                                        title="ERP"
-                                        name="erpId"
-                                        options={arraySorted(erps.items, 'name')}
-                                        value={project.erpId}
-                                        onChange={this.handleChangeProject}
-                                        placeholder=""
-                                        submitted={submitted}
-                                        inline={false}
-                                        required={true}
-                                    />
-                                    <Select
-                                        title="OPCO"
-                                        name="opcoId"
-                                        options={this.accessibleArray(opcos.items, 'name')}
-                                        value={project.opcoId}
-                                        onChange={this.handleChangeProject}
-                                        placeholder=""
-                                        submitted={submitted}
-                                        inline={false}
-                                        required={true}
-                                    />
-                                    <Select
-                                        title="Currency"
-                                        name="currencyId"
-                                        options={arraySorted(currencies.items, 'name')}
-                                        value={project.currencyId}
-                                        onChange={this.handleChangeProject}
-                                        placeholder=""
-                                        submitted={submitted}
-                                        inline={false}
-                                        required={true}
-                                    />
-                                    <div className="text-right">
-                                        <button
-                                            type="submit"
-                                            className="btn btn-leeuwen-blue btn-full btn-lg mb-3"
-                                        >
-                                            {projectCreating ?
-                                                <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2" />
-                                            :
-                                            
-                                                <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
-                                            }    
-                                            Create Project
-                                        </button>
+                            <div className="card-body" style={{height: 'calc(100% - 20px)', overflowY: 'auto'}}>
+                                <form 
+                                    onSubmit={this.handleSubmit}
+                                    onKeyPress={this.onKeyPress}
+                                    className="row full-height m-0"
+                                >
+                                    <div className="col-12 justify-content-around p-0">
+                                        <Select
+                                            title="Copy settings from project"
+                                            name="copyId"
+                                            options={arraySorted(projects.items, 'name')}
+                                            value={project.copyId}
+                                            onChange={this.handleChange}
+                                            placeholder=""
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Input
+                                            title="Name"
+                                            name="name"
+                                            type="text"
+                                            value={project.name}
+                                            onChange={this.handleChange}
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Select
+                                            title="ERP"
+                                            name="erpId"
+                                            options={arraySorted(erps.items, 'name')}
+                                            value={project.erpId}
+                                            onChange={this.handleChange}
+                                            placeholder=""
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Select
+                                            title="OPCO"
+                                            name="opcoId"
+                                            options={this.accessibleArray(opcos.items, 'name')}
+                                            value={project.opcoId}
+                                            onChange={this.handleChange}
+                                            placeholder=""
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <Select
+                                            title="Currency"
+                                            name="currencyId"
+                                            options={arraySorted(currencies.items, 'name')}
+                                            value={project.currencyId}
+                                            onChange={this.handleChange}
+                                            placeholder=""
+                                            submitted={submitted}
+                                            inline={false}
+                                            required={true}
+                                        />
+                                        <CheckBox 
+                                            title="Enable Inspection Module"
+                                            name="enableInspection"
+                                            checked={project.enableInspection}
+                                            onChange={this.handleChange}
+                                        />
+                                        <CheckBox 
+                                            title="Enable Shipping Module"
+                                            name="enableShipping"
+                                            checked={project.enableShipping}
+                                            onChange={this.handleChange}
+                                        />
+                                        <CheckBox 
+                                            title="Enable Warehouse Module"
+                                            name="enableWarehouse"
+                                            checked={project.enableWarehouse}
+                                            onChange={this.handleChange}
+                                        />
+                                    </div>
+                                    <div className="col-12 text-right align-self-end p-0">
+                                            <button
+                                                type="submit"
+                                                className="btn btn-leeuwen-blue btn-full btn-lg mb-3"
+                                            >
+                                                {projectCreating ?
+                                                    <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2" />
+                                                :
+                                                
+                                                    <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
+                                                }    
+                                                Create Project
+                                            </button>
                                     </div>
                                 </form>                                
                             </div>

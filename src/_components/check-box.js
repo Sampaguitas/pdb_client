@@ -6,7 +6,7 @@ import './check-box.css'
 class CheckBox extends Component {
     render(){
         return (
-            <div className="mt-4 mb-4" style={{lineHeight: '1.5', fontSize: '1.25rem'}}>
+            <div className="mb-3" style={{lineHeight: '1.5', fontSize: '1.25rem'}}>
             <label className="fancy-checkbox">
             <input
                 id="thisCheckBox"
