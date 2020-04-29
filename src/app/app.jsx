@@ -29,7 +29,7 @@ import { Shipping } from '../pages/project/shipping/shipping.jsx';
 import { TransportDocuments } from '../pages/project/shipping/transportdocs.jsx';
 import { PackingDetails } from '../pages/project/shipping/packingdetails.jsx';
 import { Warehouse } from '../pages/project/warehouse/warehouse.jsx';
-import { GoodsReceipt } from '../pages/project/warehouse/goodsreceipt.jsx';
+// import { GoodsReceipt } from '../pages/project/warehouse/goodsreceipt.jsx';
 import { StockManagement } from '../pages/project/warehouse/stockmanagement.jsx';
 import { CallOffOrder } from '../pages/project/warehouse/callofforder.jsx';
 import { PickingLists } from '../pages/project/warehouse/pickinglists.jsx';
@@ -88,7 +88,7 @@ class App extends React.Component {
                         <PrivateRoute path="/transportdocs" component={TransportDocuments} user={user}/>
                         <PrivateRoute path="/packingdetails" component={PackingDetails} user={user}/>
                         <PrivateRoute path="/warehouse" component={Warehouse} user={user}/>
-                        <PrivateRoute path="/goodsreceipt" component={GoodsReceipt} user={user}/>
+                        {/* <PrivateRoute path="/goodsreceipt" component={GoodsReceipt} user={user}/> */}
                         <PrivateRoute path="/stockmanagement" component={StockManagement} user={user}/>
                         <PrivateRoute path="/callofforder" component={CallOffOrder} user={user}/>
                         <PrivateRoute path="/pickinglists" component={PickingLists} user={user}/>

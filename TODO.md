@@ -7,9 +7,9 @@
 - [X] Add new screen for Stock Management.
 - [X] Add Location and Transaction fields to project configs.
 - [X] Configure Stock Management fields name for the stock management Field.
-- [ ] Remove Goods Recipt page (will be merged with Stock Management).
-- [ ] Redux boilerplate for Transactions.
+- [X] Remove Goods Recipt page (will be merged with Stock Management).
 - [ ] Add custom table to Stock Management Screen.
+- [ ] Redux boilerplate for Transactions.
 - [ ] Goods Receipt with PL (Shipping Enabled).
 - [ ] Goods Receipt with NFI (Inspection Enabled).
 - [ ] Goods Receipt with DUF file (Stand Alone).

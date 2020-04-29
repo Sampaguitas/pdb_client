@@ -66,7 +66,7 @@ class Warehouse extends React.Component {
                 <hr />
                 <div id="warehouse">
                     <div className="row justify-content-center">
-                    <NavLink to={{ 
+                    {/* <NavLink to={{ 
                             pathname: "/goodsreceipt",
                             search: '?id=' + projectId
                         }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
@@ -81,7 +81,7 @@ class Warehouse extends React.Component {
                                 <h3>Goods receipt</h3>
                             </div>
                         </div>
-                    </NavLink>
+                    </NavLink> */}
                     <NavLink to={{ 
                             pathname: "/stockmanagement",
                             search: '?id=' + projectId
