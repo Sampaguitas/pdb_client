@@ -1,8 +1,15 @@
 ## Warehouse module
-###Goods receipt
+###Goods receipt / Stock Management
 - [X] Create Transaction Schema.
-- [X] Enable Inspection / Shipping / Warhouse Modules.
-- [ ] Add new screen for Stock Management.
+- [X] Enable Inspection / Shipping / Warhouse checkboxes to project creation.
+- [X] set checkboxes to true on all existing projects.
+- [X] show / hide modules based on checkbox values.
+- [X] Add new screen for Stock Management.
+- [X] Add Location and Transaction fields to project configs.
+- [X] Configure Stock Management fields name for the stock management Field.
+- [ ] Remove Goods Recipt page (will be merged with Stock Management).
+- [ ] Redux boilerplate for Transactions.
+- [ ] Add custom table to Stock Management Screen.
 - [ ] Goods Receipt with PL (Shipping Enabled).
 - [ ] Goods Receipt with NFI (Inspection Enabled).
 - [ ] Goods Receipt with DUF file (Stand Alone).
