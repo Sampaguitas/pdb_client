@@ -94,6 +94,18 @@ class StockManagement extends React.Component {
                 <div id="overview" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
                         {generateGoodsReceiptButton(selection)}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Stock Transfer">
+                            <span><FontAwesomeIcon icon="exchange" className="fa-lg mr-2"/>Stock Transfer</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Stock Correction">
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Stock Correction</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Change/Add Heat Numbers">
+                            <span><FontAwesomeIcon icon="file-certificate" className="fa-lg mr-2"/>Heat Numbers</span>
+                        </button>
+                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Stock History">
+                            <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Stock History</span>
+                        </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {/* {fieldnames.items && 
