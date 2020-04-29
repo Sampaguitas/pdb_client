@@ -1,5 +1,5 @@
 ## Warehouse module
-###Goods receipt / Stock Management
+### Goods receipt / Stock Management
 - [X] Create Transaction Schema.
 - [X] Enable Inspection / Shipping / Warhouse checkboxes to project creation.
 - [X] set checkboxes to true on all existing projects.
