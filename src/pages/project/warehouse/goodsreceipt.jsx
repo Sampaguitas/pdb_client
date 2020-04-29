@@ -10,7 +10,8 @@
 //     constructor(props) {
 //         super(props);
 //         this.state = {
-//             projectId: ''
+//             projectId: '',
+//             screenId: '5cd2b642fd333616dc360b63', //Expediting
 //         };
 //         this.handleClearAlert = this.handleClearAlert.bind(this);
 //     }
@@ -67,22 +68,61 @@
 //                     </ol>
 //                 </nav>
 //                 <hr />
+//                 <div id="availableStock" className="full-height">
+//                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
+//                     </div>
+//                     <div className="" style={{height: 'calc(100% - 44px)'}}>
+//                         {/* {fieldnames.items && 
+//                             <ProjectTable
+//                                 screenHeaders={headersForShow}
+//                                 screenBodys={bodysForShow}
+//                                 projectId={projectId}
+//                                 screenId={screenId}
+//                                 selectedIds={selectedIds}
+//                                 updateSelectedIds = {this.updateSelectedIds}
+//                                 toggleUnlock={this.toggleUnlock}
+//                                 downloadTable={this.downloadTable}
+//                                 unlocked={unlocked}
+//                                 screen={screen}
+//                                 fieldnames={fieldnames}
+//                                 fields={fields}
+//                                 toggleSettings={this.toggleSettings}
+//                                 refreshStore={this.refreshStore}
+//                                 handleDeleteRows = {this.handleDeleteRows}
+//                                 settingsFilter = {settingsFilter}
+//                             />
+//                         } */}
+//                     </div>
+//                 </div>
 //             </Layout>
 //         );
 //     }
 // }
 
 // function mapStateToProps(state) {
-//     const { accesses, alert, selection } = state;
+//     const { accesses, alert, fieldnames, fields, pos, selection, settings } = state;
 //     const { loadingAccesses } = accesses;
+//     const { loadingFieldnames } = fieldnames;
+//     const { loadingFields } = fields;
+//     const { loadingPos } = pos;
 //     const { loadingSelection } = selection;
+//     const { loadingSettings } = settings;
     
 //     return {
 //         accesses,
 //         alert,
+//         fieldnames,
+//         fields,
 //         loadingAccesses,
+//         loadingDocdefs,
+//         loadingFieldnames,
+//         loadingFields,
+//         loadingPos,
 //         loadingSelection,
-//         selection
+//         loadingSettings,
+//         pos,
+//         selection,
+//         settings
 //     };
 // }
 
