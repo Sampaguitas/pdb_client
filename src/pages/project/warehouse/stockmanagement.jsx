@@ -6,6 +6,30 @@ import { accessActions, alertActions, projectActions } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+
+function generateGoodsReceiptButton(selection) {
+    if (!!selection.project && !!selection.project.enableShipping) {
+        return (
+            <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Goods Receipt with PL">
+                <span><FontAwesomeIcon icon="cubes" className="fa-lg mr-2"/>Goods Receipt</span>
+            </button>
+        );
+    } else if (!!selection.project && !!selection.project.enableInspection) {
+        return (
+            <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Goods Receipt with NFI">
+                <span><FontAwesomeIcon icon="cubes" className="fa-lg mr-2"/>Goods Receipt</span>
+            </button>
+        );
+    } else {
+        return (
+            <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Goods Receipt with DUF">
+                <span><FontAwesomeIcon icon="cubes" className="fa-lg mr-2"/>Goods Receipt</span>
+            </button>
+        );
+    }
+}
+
+
 class StockManagement extends React.Component {
     constructor(props) {
         super(props);
@@ -67,6 +91,33 @@ class StockManagement extends React.Component {
                     </ol>
                 </nav>
                 <hr />
+                <div id="overview" className="full-height">
+                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
+                        {generateGoodsReceiptButton(selection)}
+                    </div>
+                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                        {/* {fieldnames.items && 
+                            <ProjectTable
+                                screenHeaders={headersForShow}
+                                screenBodys={bodysForShow}
+                                projectId={projectId}
+                                screenId={screenId}
+                                selectedIds={selectedIds}
+                                updateSelectedIds = {this.updateSelectedIds}
+                                toggleUnlock={this.toggleUnlock}
+                                downloadTable={this.downloadTable}
+                                unlocked={unlocked}
+                                screen={screen}
+                                fieldnames={fieldnames}
+                                fields={fields}
+                                toggleSettings={this.toggleSettings}
+                                refreshStore={this.refreshStore}
+                                handleDeleteRows = {this.handleDeleteRows}
+                                settingsFilter = {settingsFilter}
+                            />
+                        } */}
+                    </div>
+                </div>
             </Layout>
         );
     }

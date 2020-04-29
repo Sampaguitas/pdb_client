@@ -21,7 +21,7 @@
 //             dispatch,
 //             loadingAccesses,
 //             loadingSelection, 
-//             location 
+//             location
 //         } = this.props;
 
 //         var qs = queryString.parse(location.search);
