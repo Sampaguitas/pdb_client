@@ -24,6 +24,7 @@ import { screens } from './screens.reducer';
 import { selection } from './selection.reducer';
 import { settings } from './settings.reducer';
 import { suppliers } from './suppliers.reducer';
+import { transactions } from './transactions.reducer';
 import { users } from './users.reducer';
 import { warehouses } from './warehouses.reducer';
 
@@ -52,6 +53,7 @@ const rootReducer = combineReducers({
   selection,
   settings,
   suppliers,
+  transactions,
   users,
   warehouses
 });

@@ -17,5 +17,6 @@ export * from './region.constants';
 export * from './screen.constants';
 export * from './setting.constants';
 export * from './supplier.constants';
+export * from './transaction.constants';
 export * from './user.constants';
 export * from './warehouse.constants';

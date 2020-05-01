@@ -16,5 +16,6 @@ export * from './region.service';
 export * from './screen.service';
 export * from './setting.service';
 export * from './supplier.service';
+export * from './transaction.service';
 export * from './user.service';
 export * from './warehouse.service';

@@ -334,7 +334,8 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
         '5cd2b642fd333616dc360b64', //releasedata
         '5cd2b642fd333616dc360b65', //certificates
         '5cd2b643fd333616dc360b67', //packing details
-        '5cd2b643fd333616dc360b66' //transportdocs
+        '5cd2b643fd333616dc360b66', //transportdocs
+        '5ea8eefb7c213e2096462a2c', //Stock Management
     ];
 
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        

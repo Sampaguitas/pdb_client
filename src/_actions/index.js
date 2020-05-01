@@ -17,5 +17,6 @@ export * from './region.actions';
 export * from './screen.actions';
 export * from './setting.actions';
 export * from './supplier.actions';
+export * from './transaction.actions';
 export * from './user.actions';
 export * from './warehouse.actions';
