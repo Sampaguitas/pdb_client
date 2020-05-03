@@ -347,12 +347,8 @@ class Home extends React.Component {
                 <div id="overview" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
                         <div className="ml-auto pull-right">
-                            <button
-                                className="btn btn-leeuwen-blue btn-lg"
-                                onClick={this.gotoProject}
-                                style={{height: '34px'}}
-                            >
-                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create Project</span>
+                            <button title="Create Project" className="btn btn-leeuwen-blue btn-lg" onClick={this.gotoProject} style={{height: '34px'}}>
+                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
                             </button>
                         </div>
                     </div>

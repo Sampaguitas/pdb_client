@@ -183,7 +183,8 @@ function docConf(array) {
         '5d1927141424114e3884ac84', //SM01 Shipping Mark
         '5d1927131424114e3884ac81', //PN01 Packing Note
         '5d1927141424114e3884ac83', //SI01 Shipping Invoice
-        '5d1927131424114e3884ac7f' //NFI01 Notification for inspection
+        '5d1927131424114e3884ac7f', //NFI01 Notification for inspection,
+        '5eacef91e7179a42f172feea' //SH01 Stock History Report
     ];
     return array.filter(function (element) {
         return tpeOf.includes(element.doctypeId);
@@ -299,10 +300,11 @@ class Documents extends React.Component {
             selectAllRows: false,
             loaded: false,
             deletingFields: false,
-            deletingDoc: false,
             show: false,
             submitted: false,
-            loading: false,
+            deletingDocDef: false,
+            updatingDocDef: false,
+            creatingDocDef: false,
             //create new row
             docDef:{},
             newRow: false,
@@ -685,35 +687,62 @@ class Documents extends React.Component {
 
     handleDeleteDocDef(event, id) {
         event.preventDefault();
-        const { refreshDocdefs } = this.props;
+        const { refreshDocdefs, handleSetAlert } = this.props;
         if (id != '0') {
             this.setState({
                 ...this.state,
-                deletingDoc: true 
+                deletingDocDef: true 
             }, () => {
                 const requestOptions = {
                     method: 'DELETE',
                     headers: { ...authHeader()},
                 };
                 return fetch(`${config.apiUrl}/docdef/delete?id=${id}`, requestOptions)
-                .then( () => {
-                    this.setState({
-                        ...this.state,
-                        deletingDoc: false,
-                        selectedTemplate: '0',
-                        fileName: '',
-                        inputKey: Date.now()
-                    }, refreshDocdefs);
-                })
-                .catch( err => {
-                    this.setState({
-                        ...this.state,
-                        deletingDoc: false,
-                        selectedTemplate: '0',
-                        fileName: '',
-                        inputKey: Date.now()
-                    }, refreshDocdefs);
-                });
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        }
+                        // const error = (data && data.message) || responce.statusText;
+                        this.setState({
+                            ...this.state,
+                            deletingDocDef: false,
+                            selectedTemplate: '0',
+                            fileName: '',
+                            inputKey: Date.now()
+                            
+                        }, handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs));
+                    } else {
+                        this.setState({
+                            ...this.state,
+                            deletingDocDef: false,
+                            selectedTemplate: '0',
+                            fileName: '',
+                            inputKey: Date.now()
+                            
+                        }, handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs));
+                    }
+                }));
+                // .then( () => {
+                //     this.setState({
+                //         ...this.state,
+                //         deletingDoc: false,
+                //         selectedTemplate: '0',
+                //         fileName: '',
+                //         inputKey: Date.now()
+                //     }, refreshDocdefs);
+                // })
+                // .catch( err => {
+                //     this.setState({
+                //         ...this.state,
+                //         deletingDoc: false,
+                //         selectedTemplate: '0',
+                //         fileName: '',
+                //         inputKey: Date.now()
+                //     }, refreshDocdefs);
+                // });
             });
         }
     }
@@ -722,7 +751,7 @@ class Documents extends React.Component {
     handleSubmitDocDef(event) {
         event.preventDefault();
         const { docDef } = this.state;
-        const { refreshDocdefs } = this.props;
+        const { refreshDocdefs, handleSetAlert } = this.props;
         this.setState({
             ...this.state,
             submitted: true
@@ -730,7 +759,7 @@ class Documents extends React.Component {
             if (docDef.id && docDef.description && docDef.doctypeId && docDef.row1 && docDef.col1 && docDef.projectId) {
                 this.setState({
                     ...this.state,
-                    loading: true
+                    updatingDocDef: true
                 }, () => {
                     const requestOptions = {
                         method: 'PUT',
@@ -738,62 +767,71 @@ class Documents extends React.Component {
                         body: JSON.stringify(docDef)
                     }
                     return fetch(`${config.apiUrl}/docdef/update?id=${docDef.id}`, requestOptions)
-                    .then( () => {
-                        this.setState({
-                            ...this.state,
-                            submitted: false, 
-                            loading: false
-                        },
-                            ()=> {
-                                this.hideModal(event),
-                                refreshDocdefs;
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
+                        if (!responce.ok) {
+                            if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
+                            }
+                            // const error = (data && data.message) || responce.statusText;
+                            this.setState({
+                                ...this.state,
+                                submitted: false,
+                                updatingDocDef: false  
+                            }, () => {
+                                this.hideModal(event);
+                                handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs)
                             });
-                    })
-                    .catch( err => {
-                        this.setState({
-                            ...this.state,
-                            submitted: false,
-                            loading: false
-                        },
-                            ()=> {
-                                this.hideModal(event),
-                                refreshDocdefs;
+                        } else {
+                            this.setState({
+                                ...this.state,
+                                submitted: false,
+                                updatingDocDef: false  
+                            }, () => {
+                                this.hideModal(event);
+                                handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs)
                             });
-                    });
+                        }
+                    }));
                 });
             } else if (docDef.description && docDef.doctypeId && docDef.row1 && docDef.col1 && docDef.projectId){
                 this.setState({
                     ...this.state,
-                    loading: true
+                    creatingDocDef: true
                 }, () => {
                     const requestOptions = {
                         method: 'POST',
-                        headers: { ...authHeader(), 'Content-Type': 'application/json' }, //, 'Content-Type': 'application/json'
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
                         body: JSON.stringify(docDef)
                     }
                     return fetch(`${config.apiUrl}/docdef/create`, requestOptions)
-                    .then( () => {
-                        this.setState({
-                            ...this.state,
-                            submitted: false,
-                            loading: false
-                        },
-                            ()=> {
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
+                        if (!responce.ok) {
+                            if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
+                            }
+                            this.setState({
+                                ...this.state,
+                                submitted: false,
+                                creatingDocDef: false  
+                            }, () => {
                                 this.hideModal(event),
-                                refreshDocdefs;
-                            })
-                    })
-                    .catch( err => {
-                        this.setState({
-                            ...this.state,
-                            submitted: false,
-                            loading: false
-                        },
-                            ()=> {
-                                this.hideModal(event),
-                                refreshDocdefs;
+                                handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs)
                             });
-                    });
+                        } else {
+                            this.setState({
+                                ...this.state,
+                                submitted: false,
+                                creatingDocDef: false  
+                            }, () => {
+                                this.hideModal(event),
+                                handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs)
+                            });
+                        }
+                    }));
                 });
             }
         });
@@ -987,8 +1025,9 @@ class Documents extends React.Component {
             multi,
             show,
             submitted,
-            loading,
-            deletingDoc,
+            updatingDocDef,
+            creatingDocDef,
+            deletingDocDef,
             docDef,
             newRow,
             docField,
@@ -1006,18 +1045,13 @@ class Documents extends React.Component {
         ]
 
         const ArrType = [
-            {_id: '5d1927121424114e3884ac7e', code: 'ESR01' , name: 'Expediting status report'}, //ESR01 Expediting status report
-            {_id: '5d1927131424114e3884ac80', code: 'PL01' , name: 'Packing List'}, //PL01 Packing List
-            {_id: '5d1927141424114e3884ac84', code: 'SM01' , name: 'Shipping Mark'}, //SM01 Shipping Mark
-            {_id: '5d1927131424114e3884ac81', code: 'PN01' , name: 'Packing Note'}, //PN01 Packing Note
-            {_id: '5d1927141424114e3884ac83', code: 'SI01' , name: 'Shipping Invoice'} //SI01 Shipping Invoice
+            {_id: '5d1927121424114e3884ac7e', code: 'ESR01' , name: 'Expediting status report'},
+            {_id: '5d1927131424114e3884ac80', code: 'PL01' , name: 'Packing List'},
+            {_id: '5d1927141424114e3884ac84', code: 'SM01' , name: 'Shipping Mark'},
+            {_id: '5d1927131424114e3884ac81', code: 'PN01' , name: 'Packing Note'},
+            {_id: '5d1927141424114e3884ac83', code: 'SI01' , name: 'Shipping Invoice'},
+            {_id: '5eacef91e7179a42f172feea', code: 'SH01', name: 'Stock History Report'}
         ]
-        
-        // '5d1927121424114e3884ac7e', //ESR01 Expediting status report
-        // '5d1927131424114e3884ac80', //PL01 Packing List
-        // '5d1927141424114e3884ac84', //SM01 Shipping Mark
-        // '5d1927131424114e3884ac81', //PN01 Packing Note
-        // '5d1927141424114e3884ac83' //SI01 Shipping Invoice
 
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
@@ -1047,7 +1081,7 @@ class Documents extends React.Component {
                                 <span><FontAwesomeIcon icon="edit" className="fa-lg"/> </span>
                             </button>
                             <button className="btn btn-leeuwen btn-lg" onClick={ (event) => this.handleDeleteDocDef(event, selectedTemplate)} title="Delete">
-                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg"/> </span>
+                                <span><FontAwesomeIcon icon={deletingDocDef ? "spinner" : "trash-alt"} className={deletingDocDef ? "fa-pulse fa-lg fa-fw" : "fa-lg"}/></span>
                             </button>  
                         </div>
                     </div>
@@ -1087,19 +1121,11 @@ class Documents extends React.Component {
                                 </button>   
                             </div>
                             <div className="pull-right">
-                                <button
-                                    className="btn btn-leeuwen-blue btn-lg mr-2"
-                                    onClick={event => this.toggleNewRow(event)}
-                                    style={{height: '34px'}}
-                                >
-                                    <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Field</span>
+                                <button title="Add Field" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleNewRow(event)} style={{height: '34px'}}>
+                                    <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add</span>
                                 </button>                                               
-                                <button
-                                    className="btn btn-leeuwen btn-lg"
-                                    onClick={ (event) => this.handleDeleteDocFields(event, selectedRows)}
-                                    style={{height: '34px'}}
-                                >
-                                    <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Field(s)</span>
+                                <button title="Delete Field(s)" className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteDocFields(event, selectedRows)} style={{height: '34px'}}>
+                                    <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete</span>
                                 </button> 
                             </div>        
                         </div>
@@ -1315,6 +1341,7 @@ class Documents extends React.Component {
                                     <form
                                         name="form"
                                         onKeyPress={this.onKeyPress}
+                                        onSubmit={(event) => this.handleSubmitDocDef(event, docDef)}
                                     >
                                         <Input
                                             title="Description"
@@ -1393,54 +1420,15 @@ class Documents extends React.Component {
                                         }
 
                                         <div className="modal-footer">
-                                            {docDef.id ?
-                                                <div className="row">
-                                                    <div className="col-6">
-                                                        <button
-                                                            type="submit"
-                                                            className="btn btn-outline-dark btn-lg"
-                                                            onClick={(event) => this.handleDeleteDocDef(event, docDef.id)}
-                                                        >
-                                                            {deletingDoc && (
-                                                                <FontAwesomeIcon
-                                                                    icon="spinner"
-                                                                    className="fa-pulse fa-1x fa-fw" 
-                                                                />
-                                                            )}
-                                                            Delete
-                                                        </button>
-                                                    </div>
-                                                    <div className="col-6">
-                                                        <button
-                                                            type="submit"
-                                                            className="btn btn-outline-leeuwen btn-lg"
-                                                            onClick={(event) => this.handleSubmitDocDef(event, docDef)}
-                                                        >
-                                                            {loading && (
-                                                                <FontAwesomeIcon
-                                                                    icon="spinner"
-                                                                    className="fa-pulse fa-1x fa-fw" 
-                                                                />
-                                                            )}
-                                                            Update
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            :
-                                                <button
-                                                    type="submit"
-                                                    className="btn btn-outline-leeuwen btn-lg btn-full"
-                                                    onClick={(event) => this.handleSubmitDocDef(event, docDef)}
-                                                >
-                                                    {loading && (
-                                                        <FontAwesomeIcon
-                                                            icon="spinner"
-                                                            className="fa-pulse fa-1x fa-fw" 
-                                                        />
-                                                    )}
-                                                    Create
-                                                </button>
-                                            }
+                                            <button type="submit" className="btn btn-leeuwen-blue btn-lg btn-full">
+                                                <span>
+                                                    <FontAwesomeIcon
+                                                        icon={updatingDocDef ? "spinner" : docDef.id ? "edit" : "plus"}
+                                                        className={updatingDocDef ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}
+                                                    />
+                                                    {docDef.id ? "Update" : "Create"}
+                                                </span>
+                                            </button>
                                         </div>
                                     </form>
                                 </div>

@@ -57,6 +57,7 @@ class Configuration extends React.Component {
             }
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
+        this.handleSetAlert = this.handleSetAlert.bind(this);
         this.handleSubmitProject=this.handleSubmitProject.bind(this);
         this.handleDeleteProject=this.handleDeleteProject.bind(this);
         this.refreshProject = this.refreshProject.bind(this);
@@ -146,6 +147,15 @@ class Configuration extends React.Component {
             } 
         });
         dispatch(alertActions.clear());
+    }
+
+    handleSetAlert(type, message, callback) {
+        this.setState({
+            alert: {
+                type: type,
+                message: message 
+            }
+        }, callback);
     }
 
     refreshProject() {
@@ -320,7 +330,7 @@ class Configuration extends React.Component {
                             <NavLink to={{ pathname: '/dashboard', search: '?id=' + projectId }} tag="a">Dashboard</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Configuration:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
                     </ol>
                 </nav>
                 <hr />
@@ -330,6 +340,8 @@ class Configuration extends React.Component {
                         //Functions
                         handleSubmitProject={this.handleSubmitProject}
                         handleDeleteProject={this.handleDeleteProject}
+                        handleSetAlert={this.handleSetAlert}
+                        handleClearAlert={this.handleClearAlert}
                         
                         //refreshStore
                         refreshProject={this.refreshProject}

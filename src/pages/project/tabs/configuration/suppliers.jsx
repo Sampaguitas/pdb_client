@@ -797,33 +797,11 @@ class Suppliers extends React.Component {
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
                 <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
                     <div className="ml-auto pull-right">
-                        {/* <button
-                            className="btn btn-leeuwen-blue btn-lg"
-                            onClick={this.showModal}
-                            style={{height: '34px'}}
-                        >
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create Supplier</span>
-                        </button> */}
-                        <button
-                            className="btn btn-leeuwen-blue btn-lg mr-2"
-                            onClick={event => this.toggleNewRow(event)}
-                            style={{height: '34px'}}
-                        >
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Supplier</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Add Supplier" onClick={event => this.toggleNewRow(event)} style={{height: '34px'}}>
+                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add</span>
                         </button>
-                        <button
-                            className="btn btn-leeuwen btn-lg"
-                            onClick={ (event) => this.handleDelete(event, selectedRows)}
-                            style={{height: '34px'}}
-                        >
-                            <span>
-                                { deleting ? 
-                                    <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/> 
-                                :
-                                    <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
-                                }
-                                Delete Supplier(s)
-                            </span>
+                        <button className="btn btn-leeuwen btn-lg" title="Delete Supplier(s)" onClick={event => this.handleDelete(event, selectedRows)} style={{height: '34px'}}>
+                            <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Delete</span>
                         </button>
                     </div>
                 </div>

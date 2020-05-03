@@ -91,7 +91,8 @@ class Login extends React.Component {
               <form
                 name="form"
                 onKeyPress={this.onKeyPress}
-              >
+                onSubmit={this.handleSubmit
+              }>
                 <InputIcon
                   title="Email"
                   name="email"
@@ -115,18 +116,8 @@ class Login extends React.Component {
                   autoComplete="current-password"
                 />
                 <hr />
-                <button
-                  type="submit"
-                  className="btn btn-leeuwen btn-full btn-lg"
-                  onClick={this.handleSubmit}
-                >
-                  {loggingIn && (
-                    <FontAwesomeIcon
-                      icon="spinner"
-                      className="fa-pulse fa-1x fa-fw"
-                    />
-                  )}
-                  Login
+                <button type="submit" className="btn btn-leeuwen btn-full btn-lg" style={{height: '34px'}}> 
+                  <span><FontAwesomeIcon icon={loggingIn ? "spinner" : "sign-in-alt"} className={loggingIn ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>Login</span>
                 </button>
                 <NavLink
                   to={{

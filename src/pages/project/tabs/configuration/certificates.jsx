@@ -136,28 +136,14 @@ class Certificates extends React.Component {
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[cif]')}>cif</span>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[heatNr]')}>heatNr</span>
                             <div className="text-right">
-                                <button
-                                        className="btn btn-leeuwen-blue btn-lg mr-2"
-                                        onClick={(event) => this.handleUpdateDpattern(event)}
-                                        // style={{ marginRight: 10 }}
-                                    >
-                                    {dpatternUpdating ?
-                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
-                                    :
-                                        <FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>
-                                    }
-                                    Update
+                                <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={(event) => this.handleUpdateDpattern(event)}>
+                                        <span><FontAwesomeIcon icon={dpatternUpdating ? "spinner" : "edit"} className={dpatternUpdating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Update</span>
                                 </button>
                                 <button
                                     className="btn btn-leeuwen btn-lg"
                                     onClick={(event) => this.handleDeleteDpattern(event)}
                                 >
-                                    {dpatternDeleting ?
-                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
-                                    :
-                                        <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/> 
-                                    }
-                                    Delete
+                                    <span><FontAwesomeIcon icon={dpatternDeleting ? "spinner" : "trash-alt"} className={dpatternDeleting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Delete</span>
                                 </button>
                                 
                             </div>   

@@ -115,6 +115,7 @@ class ResetPwd extends React.Component {
                     <form
                         name="form"
                         onKeyPress={this.onKeyPress}
+                        onSubmit={this.handleSubmit}
                     >
                         <InputIcon
                             title="New Password"
@@ -139,31 +140,12 @@ class ResetPwd extends React.Component {
                             autoComplete="new-password"
                         />
                         <hr />
-                        <button
-                        type="submit"
-                        className="btn btn-leeuwen btn-full btn-lg"
-                        onClick={this.handleSubmit}
-                        >
-                        {reseting && (
-                            <FontAwesomeIcon
-                            icon="spinner"
-                            className="fa-pulse fa-1x fa-fw"
-                            />
-                        )}
-                        Reset your password
+                        <button type="submit" className="btn btn-leeuwen btn-full btn-lg">
+                          <span><FontAwesomeIcon icon={reseting ? "spinner" : "hand-point-right"} className={reseting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Reset</span>
                         </button>
-                        <NavLink
-                          to={{
-                            pathname: "/login"
-                          }}
-                          className="btn btn-link" tag="a"
-                        >
-                          Go back to login page
-                        </NavLink>
+                        <NavLink to={{ pathname: "/login" }} className="btn btn-link" tag="a">Go back to login page</NavLink>
                         <br />
-                        {alert.message && (
-                        <div className={`alert ${alert.type}`}>{alert.message}</div>
-                        )}
+                        {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                     </form>
                     </div>
                 </div>

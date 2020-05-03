@@ -581,10 +581,10 @@ class Project extends React.Component {
                                 <h5>General information</h5>
                             </div>
                             <div className="card-body" style={{height: 'calc(100% - 20px)', overflowY: 'auto'}}>
-                                <form 
-                                    onSubmit={this.handleSubmit}
-                                    onKeyPress={this.onKeyPress}
+                                <form
                                     className="row full-height m-0"
+                                    onKeyPress={this.onKeyPress}
+                                    onSubmit={this.handleSubmit}
                                 >
                                     <div className="col-12 justify-content-around p-0">
                                         <Select
@@ -661,18 +661,9 @@ class Project extends React.Component {
                                         />
                                     </div>
                                     <div className="col-12 text-right align-self-end p-0">
-                                            <button
-                                                type="submit"
-                                                className="btn btn-leeuwen-blue btn-full btn-lg mb-3"
-                                            >
-                                                {projectCreating ?
-                                                    <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2" />
-                                                :
-                                                
-                                                    <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
-                                                }    
-                                                Create Project
-                                            </button>
+                                        <button type="submit" className="btn btn-leeuwen-blue btn-full btn-lg mb-3">
+                                            <span><FontAwesomeIcon icon={projectCreating ? "spinner" : "plus"} className={projectCreating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
+                                        </button>
                                     </div>
                                 </form>                                
                             </div>

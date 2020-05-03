@@ -90,6 +90,7 @@ class RequestPwd extends React.Component {
                     <form
                         name="form"
                         onKeyPress={this.onKeyPress}
+                        onSubmit={this.handleSubmit}
                     >
                         <InputIcon
                         title="Email"
@@ -103,31 +104,12 @@ class RequestPwd extends React.Component {
                         autoComplete="email"
                         />
                         <hr />
-                        <button
-                          type="submit"
-                          className="btn btn-leeuwen btn-full btn-lg"
-                          onClick={this.handleSubmit}
-                        >
-                        {requesting && (
-                            <FontAwesomeIcon
-                            icon="spinner"
-                            className="fa-pulse fa-1x fa-fw"
-                            />
-                        )}
-                        Get a new password
+                        <button type="submit" className="btn btn-leeuwen btn-full btn-lg">
+                          <span><FontAwesomeIcon icon={requesting ? "spinner" : "hand-point-right"} className={requesting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Submit</span>
                         </button>
-                        <NavLink
-                          to={{
-                            pathname: "/login"
-                          }}
-                          className="btn btn-link" tag="a"
-                        >
-                          Go back to login page
-                        </NavLink>
+                        <NavLink to={{ pathname: "/login" }} className="btn btn-link" tag="a"> Go back to login page</NavLink>
                         <br />
-                        {alert.message && (
-                        <div className={`alert ${alert.type}`}>{alert.message}</div>
-                        )}
+                        {alert.message && <div className={`alert ${alert.type}`}>{alert.message}</div>}
                     </form>
                     </div>
                 </div>

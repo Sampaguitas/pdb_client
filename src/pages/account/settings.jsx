@@ -524,12 +524,8 @@ class Settings extends React.Component {
           <div id="setting" className="full-height">
             <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
               <div className="ml-auto pull-right">
-                  <button
-                      className="btn btn-leeuwen-blue btn-lg"
-                      onClick={this.showModal}
-                      style={{height: '34px'}}
-                  >
-                      <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create User</span>
+                  <button title="Create User" className="btn btn-leeuwen-blue btn-lg" onClick={this.showModal} style={{height: '34px'}}>
+                      <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
                   </button>
               </div>
             </div>
@@ -641,6 +637,7 @@ class Settings extends React.Component {
                     <form
                       name="form"
                       onKeyPress={this.onKeyPress}
+                      onSubmit={this.handleSubmit}
                     >
                       <Input
                         title="Initials"
@@ -711,46 +708,19 @@ class Settings extends React.Component {
                         {this.state.user.id ?
                             <div className="row">
                                 <div className="col-6">
-                                    <button
-                                        className="btn btn-leeuwen btn-lg"
-                                        onClick={(event) => {this.handleDeletUser(event, this.state.user.id)}}
-                                    >
-                                        {userDeleting && (
-                                            <FontAwesomeIcon
-                                                icon="spinner"
-                                                className="fa-pulse fa-1x fa-fw" 
-                                            />
-                                        )}
-                                        Delete
+                                    <button className="btn btn-leeuwen btn-lg" onClick={(event) => {this.handleDeletUser(event, this.state.user.id)}}>
+                                      <span><FontAwesomeIcon icon={userDeleting ? "spinner" : "trash-alt"} className={userDeleting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Delete</span>
                                     </button>
                                 </div>
                                 <div className="col-6">
-                                    <button
-                                        className="btn btn-leeuwen-blue btn-lg"
-                                        onClick={event => this.handleSubmit(event)}
-                                    >
-                                        {userUpdating && (
-                                            <FontAwesomeIcon
-                                                icon="spinner"
-                                                className="fa-pulse fa-1x fa-fw" 
-                                            />
-                                        )}
-                                        Update
+                                    <button type="submit" className="btn btn-leeuwen-blue btn-lg">
+                                      <span><FontAwesomeIcon icon={userUpdating ? "spinner" : "edit"} className={userUpdating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Update</span>
                                     </button>
                                 </div>
                             </div>
                         :
-                            <button
-                                className="btn btn-leeuwen-blue btn-lg btn-full"
-                                onClick={event => this.handleSubmit(event)}
-                            >
-                                {registering && (
-                                    <FontAwesomeIcon
-                                        icon="spinner"
-                                        className="fa-pulse fa-1x fa-fw" 
-                                    />
-                                )}
-                                Create
+                            <button type="submit" className="btn btn-leeuwen-blue btn-lg btn-full">
+                              <span><FontAwesomeIcon icon={registering ? "spinner" : "plus"} className={registering ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
                             </button>
                         }
                         </div>

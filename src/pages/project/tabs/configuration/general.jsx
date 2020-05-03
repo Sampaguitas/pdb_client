@@ -597,9 +597,9 @@ class General extends React.Component {
                         </div>
                         <div className="card-body" style={{height: 'calc(100% - 20px)', overflowY: 'auto'}}>
                             <form
-                                onKeyPress={this.onKeyPress}
                                 className="row full-height m-0"
-                                // style={{margin: '0px'}}
+                                onKeyPress={this.onKeyPress}
+                                onSubmit={event => handleSubmitProject(event, project)}
                             >
                                 <div className="col-12 justify-content-around p-0">
                                     <Input
@@ -667,27 +667,11 @@ class General extends React.Component {
                                 <div className="col-12 text-right align-self-end p-0">
                                     {project.id &&
                                         <div>
-                                            <button
-                                                className="btn btn-leeuwen btn-lg mr-2"
-                                                onClick={(event) => { handleDeleteProject(event, project.id)}} 
-                                            >
-                                                {projectDeleting ?
-                                                    <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
-                                                    : 
-                                                    <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
-                                                }
-                                                Delete
+                                            <button className="btn btn-leeuwen btn-lg mr-2" onClick={event => handleDeleteProject(event, project.id)}>
+                                                <span><FontAwesomeIcon icon={projectDeleting ? "spinner" : "trash-alt"} className={projectDeleting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Delete</span>
                                             </button>
-                                            <button
-                                                className="btn btn-leeuwen-blue btn-lg"
-                                                onClick={(event) => { handleSubmitProject(event, project)} }
-                                            >
-                                                {projectUpdating ?
-                                                    <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
-                                                :
-                                                    <FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>
-                                                }
-                                                Update
+                                            <button type="submit" className="btn btn-leeuwen-blue btn-lg">
+                                                <span><FontAwesomeIcon icon={projectUpdating ? "spinner" : "edit"} className={projectUpdating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Update</span>
                                             </button>
                                         </div>
                                     }

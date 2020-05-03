@@ -19,6 +19,8 @@ import config from 'config';
 import Input from '../../_components/input';
 import Select from '../../_components/select';
 import Layout from '../../_components/layout';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 class User extends React.Component {
     constructor(props){
@@ -144,7 +146,8 @@ class User extends React.Component {
                                 <div className="card-header">Change Password</div>
                                 <div className="card-body">
                                     <form
-                                    onKeyPress={this.onKeyPress}
+                                        onKeyPress={this.onKeyPress}
+                                        onSubmit={this.handleSubmit}
                                     >
                                         <Input
                                             title="Current Password"
@@ -179,9 +182,8 @@ class User extends React.Component {
                                             required={true}
                                             autocomplete="new-password"
                                         />
-                                        <button type="submit" className="btn btn-leeuwen-blue btn-full btn-lg mb-3" onClick={this.handleSubmit}>
-                                            {userUpdating ? <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" /> : ''}
-                                            Change Password
+                                        <button type="submit" className="btn btn-leeuwen-blue btn-full btn-lg mb-3">
+                                            <span><FontAwesomeIcon icon={userUpdating ? "spinner" : "hand-point-right"} className={userUpdating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"} />Submit</span>
                                         </button>
                                     </form>
                                 </div>

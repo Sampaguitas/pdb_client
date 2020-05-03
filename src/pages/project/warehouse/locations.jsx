@@ -787,7 +787,7 @@ class Locations extends React.Component {
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Locations:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
                     </ol>
                 </nav>
                 <hr />
@@ -1069,10 +1069,10 @@ class Locations extends React.Component {
                                     <label type="text" className="form-control text-left" htmlFor="dufInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
                                     <div className="input-group-append">
                                         <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
-                                            <span><FontAwesomeIcon icon={uploading ? 'spinner' : 'upload'} className={uploading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Upload</span>
+                                            <span><FontAwesomeIcon icon={uploading ? "spinner" : "upload"} className={uploading ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Upload</span>
                                         </button>
                                         <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={this.handleDownloadFile}>
-                                            <span><FontAwesomeIcon icon={downloading ? 'spinner' : 'download'} className={downloading ? 'fa-pulse fa-1x fa-fw' : 'fa-lg mr-2'}/>Download</span>
+                                            <span><FontAwesomeIcon icon={downloading ? "spinner" : "download"} className={downloading ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Download</span>
                                         </button> 
                                     </div>       
                                 </div>

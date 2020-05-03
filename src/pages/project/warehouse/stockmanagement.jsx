@@ -152,12 +152,13 @@ function arraySorted(array, fieldOne, fieldTwo, fieldThree) {
 
 function docConf(array) {
     const tpeOf = [
-        '5d1927121424114e3884ac7e', //ESR01 Expediting status report
+        //'5d1927121424114e3884ac7e', //ESR01 Expediting status report
         // '5d1927131424114e3884ac80', //PL01 Packing List
         // '5d1927141424114e3884ac84', //SM01 Shipping Mark
         // '5d1927131424114e3884ac81', //PN01 Packing Note
         // '5d1927141424114e3884ac83' //SI01 Shipping Invoice
         // '5d1927131424114e3884ac7f' //NFI1 Notification for Inspection
+        '5eacef91e7179a42f172feea' //SH01 Stock History Report
     ];
     if (array) {
         return array.filter(function (element) {
@@ -1447,7 +1448,7 @@ class StockManagement extends React.Component {
                         <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Stock management:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
                     </ol>
                 </nav>
                 <hr />

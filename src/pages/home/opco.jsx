@@ -445,12 +445,8 @@ class Opco extends React.Component {
                 <div id="opco" className="full-height">
                     <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
                         <div className="ml-auto pull-right">
-                            <button
-                                className="btn btn-leeuwen-blue btn-lg"
-                                onClick={this.showModal}
-                                style={{height: '34px'}}
-                            >
-                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create Opco</span>
+                            <button title="Create Opco" className="btn btn-leeuwen-blue btn-lg" onClick={this.showModal} style={{height: '34px'}}>
+                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
                             </button>
                         </div>
                     </div>
@@ -538,8 +534,8 @@ class Opco extends React.Component {
                             <div className="col-12">
                                 <form
                                     name="form"
-                                    onSubmit={this.handleSubmit}
                                     onKeyPress={this.onKeyPress}
+                                    onSubmit={this.handleSubmit}
                                 >
                                     <Input
                                         title="Code"
@@ -627,44 +623,19 @@ class Opco extends React.Component {
                                     {opco.id ?
                                         <div className="row">
                                             <div className="col-6">
-                                                <button
-                                                    // type="submit"
-                                                    className="btn btn-leeuwen btn-lg"
-                                                    onClick={(event) => {this.handleDeletOpco(event, opco.id)}}
-                                                >
-                                                    {opcoDeleting ?
-                                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2" />
-                                                    :
-                                                        <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
-                                                    }
-                                                    Delete
+                                                <button className="btn btn-leeuwen btn-lg" onClick={(event) => {this.handleDeletOpco(event, opco.id)}}>
+                                                    <span><FontAwesomeIcon icon={opcoDeleting ? "spinner" : "trash-alt"} className={opcoDeleting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Delete</span>
                                                 </button>
                                             </div>
                                             <div className="col-6">
-                                                <button
-                                                    type="submit"
-                                                    className="btn btn-leeuwen-blue btn-lg"
-                                                >
-                                                    {opcoUpdating ?
-                                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
-                                                    :
-                                                        <FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>
-                                                    }
-                                                    Update
+                                                <button type="submit" className="btn btn-leeuwen-blue btn-lg" >
+                                                    <span><FontAwesomeIcon icon={opcoUpdating ? "spinner" : "edit"} className={opcoUpdating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Update</span>
                                                 </button>
                                             </div>
                                         </div>
                                     :
-                                        <button
-                                            type="submit"
-                                            className="btn btn-leeuwen-blue btn-lg btn-full"
-                                        >
-                                            {opcoCreating ?
-                                                <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/>
-                                            :
-                                                <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
-                                            }
-                                            Create
+                                        <button type="submit" className="btn btn-leeuwen-blue btn-lg btn-full" >
+                                            <span><FontAwesomeIcon icon={opcoCreating ? "spinner" : "plus"} className={opcoCreating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
                                         </button>
                                     }
                                     </div>

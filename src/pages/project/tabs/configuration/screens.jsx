@@ -684,26 +684,11 @@ class Screens extends React.Component {
                             {this.generateScreensOptions(screens)}
                         </select>
                         <div className="pull-right"> {/* col-12 text-right */}
-                            <button 
-                                className="btn btn-leeuwen-blue btn-lg mr-2"
-                                onClick={event => this.toggleNewRow(event)}
-                                style={{height: '34px'}}
-                            >
-                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Field</span>
+                            <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Add Field" onClick={event => this.toggleNewRow(event)} style={{height: '34px'}}>
+                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add</span>
                             </button>
-                            <button
-                                className="btn btn-leeuwen btn-lg"
-                                onClick={ (event) => this.handleDelete(event, selectedRows)}
-                                style={{height: '34px'}}
-                            >
-                                <span>
-                                    { deleting ? 
-                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-1x fa-fw mr-2"/> 
-                                    :
-                                        <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
-                                    }
-                                    Delete Field(s)
-                                </span>
+                            <button className="btn btn-leeuwen btn-lg" title="Delete Field(s)" onClick={event => this.handleDelete(event, selectedRows)} style={{height: '34px'}}>
+                                <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Delete</span>
                             </button>                                     
                         </div>
                     </div>

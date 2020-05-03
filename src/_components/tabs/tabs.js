@@ -36,6 +36,8 @@ class Tabs extends Component {
             handleDeleteProject,
             handleSubmitSupplier,
             handleDeleteSupplier,
+            handleSetAlert,
+            handleClearAlert,
             //refreshStore
             refreshProject,
             refreshDocdefs,
@@ -95,6 +97,8 @@ class Tabs extends Component {
                                 handleDeleteProject={handleDeleteProject}
                                 handleSubmitSupplier={handleSubmitSupplier}
                                 handleDeleteSupplier={handleDeleteSupplier}
+                                handleSetAlert={handleSetAlert}
+                                handleClearAlert={handleClearAlert}
                                 //refreshStore
                                 refreshProject={refreshProject}
                                 refreshDocdefs={refreshDocdefs}
