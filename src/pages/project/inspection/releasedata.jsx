@@ -138,14 +138,14 @@ function getObjectIds(collection, selectedIds) {
                 return acc;
             }, []);
             case 'packitem': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.packItemId)) {
-                    acc.push(curr.packItemId);
+                if(!acc.includes(curr.packitemId)) {
+                    acc.push(curr.packitemId);
                 }
                 return acc;
             }, []);
             case 'collipack': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.colliPackId)) {
-                    acc.push(curr.colliPackId);
+                if(!acc.includes(curr.collipackId)) {
+                    acc.push(curr.collipackId);
                 }
                 return acc;
             }, []);
@@ -400,8 +400,8 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                     poId: po._id,
                                     subId: sub._id,
                                     certificateId: '',
-                                    packItemId: '',
-                                    colliPackId: '' 
+                                    packitemId: '',
+                                    collipackId: '' 
                                 },
                                 fields: arrayRow
                             };
@@ -463,8 +463,8 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                 poId: po._id,
                                 subId: sub._id,
                                 certificateId: '',
-                                packItemId: '',
-                                colliPackId: '' 
+                                packitemId: '',
+                                collipackId: '' 
                             },
                             fields: arrayRow
                         };

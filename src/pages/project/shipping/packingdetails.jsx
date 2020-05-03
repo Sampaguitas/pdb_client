@@ -277,8 +277,8 @@ function getBodys(collipacks, headersForShow){
                     poId: '',
                     subId: '',
                     certificateId: '',
-                    packItemId: '',
-                    colliPackId: collipack._id
+                    packitemId: '',
+                    collipackId: collipack._id
                 },
                 fields: arrayRow
             }

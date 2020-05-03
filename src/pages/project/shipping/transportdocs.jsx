@@ -133,14 +133,14 @@ function getObjectIds(collection, selectedIds) {
                 return acc;
             }, []);
             case 'packitem': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.packItemId)) {
-                    acc.push(curr.packItemId);
+                if(!acc.includes(curr.packitemId)) {
+                    acc.push(curr.packitemId);
                 }
                 return acc;
             }, []);
             case 'collipack': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.colliPackId)) {
-                    acc.push(curr.colliPackId);
+                if(!acc.includes(curr.collipackId)) {
+                    acc.push(curr.collipackId);
                 }
                 return acc;
             }, []);
@@ -330,8 +330,8 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                     poId: po._id,
                                     subId: sub._id,
                                     certificateId: '',
-                                    packItemId: packitem._id,
-                                    colliPackId: '' 
+                                    packitemId: packitem._id,
+                                    collipackId: '' 
                                 },
                                 fields: arrayRow
                             };
@@ -405,8 +405,8 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                 poId: po._id,
                                 subId: sub._id,
                                 certificateId: '',
-                                packItemId: '',
-                                colliPackId: '' 
+                                packitemId: '',
+                                collipackId: '' 
                             },
                             fields: arrayRow
                         };
@@ -915,7 +915,7 @@ class TransportDocuments extends React.Component {
             headers: { ...authHeader(), 'Content-Type': 'application/json'},
             body: JSON.stringify({virtuals: virtuals})
         }
-        return fetch(`${config.apiUrl}/split/packitem?subId=${selectionIds.subId}&packItemId=${selectionIds.packItemId}`, requestOptions)
+        return fetch(`${config.apiUrl}/split/packitem?subId=${selectionIds.subId}&packitemId=${selectionIds.packitemId}`, requestOptions)
         .then(responce => responce.text().then(text => {
             const data = text && JSON.parse(text);
             if (!responce.ok) {

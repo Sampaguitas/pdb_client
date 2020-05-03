@@ -471,8 +471,8 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                     poId: po._id,
                                     subId: sub._id,
                                     certificateId: '',
-                                    packItemId: '',
-                                    colliPackId: ''
+                                    packitemId: '',
+                                    collipackId: ''
                                 },
                                 fields: arrayRow
                             };
@@ -534,8 +534,8 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                 poId: po._id,
                                 subId: sub._id,
                                 certificateId: '',
-                                packItemId: '',
-                                colliPackId: ''
+                                packitemId: '',
+                                collipackId: ''
                             },
                             fields: arrayRow
                         };

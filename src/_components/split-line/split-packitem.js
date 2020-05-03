@@ -222,8 +222,8 @@ function getBodys(selectedPo, selection, headersForSelect, selectedIds){
                                 poId: selectedPo._id,
                                 subId: sub._id,
                                 certificateId: '',
-                                packItemId: packitem._id,
-                                colliPackId: ''
+                                packitemId: packitem._id,
+                                collipackId: ''
                             },
                             isPacked: true,
                             fields: arrayRow
@@ -286,8 +286,8 @@ function getBodys(selectedPo, selection, headersForSelect, selectedIds){
                             poId: selectedPo._id,
                             subId: sub._id,
                             certificateId: '',
-                            packItemId: '',
-                            colliPackId: ''
+                            packitemId: '',
+                            collipackId: ''
                         },
                         isPacked: _.isEmpty(sub.packitems) ? false : true,
                         fields: arrayRow
@@ -307,7 +307,7 @@ function getBodys(selectedPo, selection, headersForSelect, selectedIds){
 function getFirstVirtual(selectedPo, screenBody, headersForShow) {
     if (!_.isEmpty(selectedPo) && !_.isEmpty(screenBody) && !_.isEmpty(headersForShow)){
         let selectedSub = selectedPo.subs.find(sub => sub._id === screenBody.tablesId.subId);
-        let selectedPackitem = selectedSub.packitems.find(packitem => packitem._id === screenBody.tablesId.packItemId);
+        let selectedPackitem = selectedSub.packitems.find(packitem => packitem._id === screenBody.tablesId.packitemId);
         
         return headersForShow.reduce(function (acc, curr){
             if (curr.fields.fromTbl === 'po') {
@@ -363,7 +363,7 @@ function generateBodyForSelect(screenBodys, selectedLine, selectedIds, handleCli
             tempRows.push(
                 <tr
                     key={screenBody._id}
-                    style={selectedLine === screenBody._id ? {backgroundColor: '#A7A9AC', color: 'white', cursor: 'pointer'} : screenBody.tablesId.packItemId === selectedIds.packItemId ? {backgroundColor: '#C9DDE1', cursor: 'pointer'} : {cursor: 'pointer'}} 
+                    style={selectedLine === screenBody._id ? {backgroundColor: '#A7A9AC', color: 'white', cursor: 'pointer'} : screenBody.tablesId.packitemId === selectedIds.packitemId ? {backgroundColor: '#C9DDE1', cursor: 'pointer'} : {cursor: 'pointer'}} 
                     onClick={event => handleClickLine(event, screenBody)}>
                     {tempCol}
                 </tr>
@@ -436,7 +436,7 @@ function generateBodyForShow(virtuals, headersForShow, IsAll, toggleRow, handleC
 function getSelectedPackItemIndex(selectedIds, bodysForSelect) {
     if (!_.isEmpty(selectedIds) && !_.isEmpty(bodysForSelect)){
         let found = bodysForSelect.find(function (b) {
-            return b.tablesId.packItemId === selectedIds.packItemId;
+            return b.tablesId.packitemId === selectedIds.packitemId;
         });
         if (!_.isUndefined(found)) {
             return found._id
@@ -459,8 +459,8 @@ function getSelecetionIds(bodysForSelect, selectedLine) {
             poId: '',
             subId: '',
             certificateId: '',
-            packItemId: '',
-            colliPackId: ''
+            packitemId: '',
+            collipackId: ''
         };
     }
 }
@@ -492,7 +492,7 @@ function getSelectionQty(selectedPo, selectionIds, tempUom) {
     if (selectedPo.hasOwnProperty('subs') && !_.isEmpty(selectedPo.subs)) {
         let selectedSub = selectedPo.subs.find(sub => sub._id === selectionIds.subId);
         if (!_.isUndefined(selectedSub)) { //&& selectedSub.hasOwnProperty('packitems') && !_.isEmpty(selectedSub)
-            let selectedPackitem = selectedSub.packitems.find(packitem => packitem._id === selectionIds.packItemId);
+            let selectedPackitem = selectedSub.packitems.find(packitem => packitem._id === selectionIds.packitemId);
             if (!_.isUndefined(selectedPackitem)) {
                 return Number(selectedPackitem[tempUom]) || 0;
             } else {
