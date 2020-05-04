@@ -722,11 +722,11 @@ class ColliType extends Component {
                             <h3>Select Colli Type</h3>
                         </div>
                         <div className="col text-right">
-                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewRow}>
-                                <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/></span>
+                            <button title="Add Collitype"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewRow}>
+                                <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>Add</span>
                             </button>
-                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedRows)}>
-                                <span><FontAwesomeIcon icon={deleting ? "spinner" : trash-alt} className={deleting ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/></span>
+                            <button title="Delete Collitype(s)"className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedRows)}>
+                                <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>Delete</span>
                             </button>
                         </div>
                     </div>

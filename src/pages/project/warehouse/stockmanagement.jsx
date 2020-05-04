@@ -22,8 +22,10 @@ import ProjectTable from '../../../_components/project-table/project-table';
 import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
 import Modal from '../../../_components/modal';
+import GoodsReceipt from '../../../_components/split-line/goods-receipt';
 import moment from 'moment';
 import _ from 'lodash';
+
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
@@ -343,7 +345,6 @@ function getPlBodys (fieldnames, selection, pos, transactions, headersForShow, s
     let hasLocation = hasFieldName(getTblFields (screenHeaders, 'location'), 'location');
     let hasArea = hasFieldName(getTblFields (screenHeaders, 'location'), 'area');
     let hasWarehouse = hasFieldName(getTblFields (screenHeaders, 'location'), 'warehouse');
-
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
@@ -733,8 +734,8 @@ class StockManagement extends React.Component {
         this.state = {
             headersForShow: [],
             bodysForShow: [],
-            headersPL: [],
-            bodysPL: [],
+            headersPl: [],
+            bodysPl: [],
             headersNfi: [],
             bodysNfi: [],
             settingsFilter: [],
@@ -764,6 +765,7 @@ class StockManagement extends React.Component {
             unlocked: false,
             screen: 'Stock Management',
             selectedIds: [],
+            selectedIdsGoodsReceipt: [],
             selectedTemplate: '',
             // selectedField: '',
             // selectedType: 'text',
@@ -790,6 +792,7 @@ class StockManagement extends React.Component {
 
         this.refreshStore = this.refreshStore.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
+        this.updateSelectedIdsGoodsReceipt = this.updateSelectedIdsGoodsReceipt.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
 
@@ -838,7 +841,7 @@ class StockManagement extends React.Component {
             plScreenId, 
             headersForShow, 
             headersNfi, 
-            headersPL, 
+            headersPl, 
             settingsDisplay 
         } = this.state;
 
@@ -880,10 +883,10 @@ class StockManagement extends React.Component {
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
-            headersPL: getHeaders([], fieldnames, plScreenId, 'forShow'),
+            headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
             bodysForShow: getPoBodys (fieldnames, selection, pos, transactions, headersForShow, screenId),
-            bodysNfi: getNfiBodys (fieldnames, selection, pos, transactions, headersNfi, nfiScreenId),
-            bodysPl: getPlBodys (fieldnames, selection, pos, transactions, headersPL, plScreenId),
+            bodysNfi: getNfiBodys(fieldnames, selection, pos, transactions, headersNfi, nfiScreenId),
+            bodysPl: getPlBodys(fieldnames, selection, pos, transactions, headersPl, plScreenId),
             docList: arraySorted(docConf(docdefs.items), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
@@ -905,7 +908,7 @@ class StockManagement extends React.Component {
         const {
             headersForShow,
             headersNfi,
-            headersPL,
+            headersPl,
             screenId,
             nfiScreenId,
             plScreenId,
@@ -935,13 +938,13 @@ class StockManagement extends React.Component {
 
         if (fieldnames != prevProps.fieldnames || nfiScreenId != prevState.nfiScreenId) {
             this.setState({
-                headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
+                headersNfi: getHeaders(settingsDisplay, fieldnames, nfiScreenId, 'forShow'),
             })
         }
 
         if (fieldnames != prevProps.fieldnames || plScreenId != prevState.plScreenId) {
             this.setState({
-                headersPL: getHeaders([], fieldnames, plScreenId, 'forShow'),
+                headersPl: getHeaders(settingsDisplay, fieldnames, plScreenId, 'forShow'),
             })
         }
 
@@ -957,9 +960,10 @@ class StockManagement extends React.Component {
             });
         }
 
-        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersPL != prevState.headersPL || plScreenId != prevState.plScreenId) {
+        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersPl != prevState.headersPl || plScreenId != prevState.plScreenId) {
+            console.log('bodysPl:', getPlBodys(fieldnames, selection, pos, transactions, headersPl, plScreenId));
             this.setState({
-                bodysPl: getPlBodys(fieldnames, selection, pos, transactions, headersPL, plScreenId),
+                bodysPl: getPlBodys(fieldnames, selection, pos, transactions, headersPl, plScreenId),
             });
         }
         
@@ -1226,6 +1230,12 @@ class StockManagement extends React.Component {
         });
     }
 
+    updateSelectedIdsGoodsReceipt(selectedIds) {
+        this.setState({
+            selectedIdsGoodsReceipt: selectedIds
+        });
+    }
+
     handleDeleteRows(event) {
         event.preventDefault();
         // const { dispatch } = this.props;
@@ -1389,12 +1399,9 @@ class StockManagement extends React.Component {
             projectId, 
             screen, 
             screenId,
-            selectedIds, 
+            selectedIds,
+            selectedIdsGoodsReceipt, 
             unlocked, 
-            selectedTemplate, 
-            selectedField,
-            selectedType, 
-            updateValue,
             docList,
             //show modals
             showGrPl,
@@ -1405,12 +1412,17 @@ class StockManagement extends React.Component {
             //--------
             headersForShow,
             bodysForShow,
+            headersPl,
+            bodysPl,
+            headersNfi,
+            bodysNfi,
             // splitHeadersForShow,
             // splitHeadersForSelect,
             //'-------------------'
             tabs,
             settingsFilter,
-            settingsDisplay
+            settingsDisplay,
+            //----------------
         } = this.state;
 
         const { accesses, fieldnames, fields, pos, selection } = this.props;
@@ -1431,7 +1443,7 @@ class StockManagement extends React.Component {
                             <NavLink to={{ pathname: '/dashboard', search: '?id=' + projectId }} tag="a">Dashboard</NavLink>
                         </li>
                         <li className="breadcrumb-item">
-                        <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
+                            <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Stock management:</li>
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
@@ -1469,6 +1481,17 @@ class StockManagement extends React.Component {
                     title="Goods Receipt with Packing List"
                     size="modal-xl"
                 >
+                    <GoodsReceipt
+                        alert={alert}
+                        selectedIds={selectedIdsGoodsReceipt}
+                        updateSelectedIds={this.updateSelectedIdsGoodsReceipt}
+                        screenHeaders={headersPl}
+                        screenBodys={bodysPl}
+                        handleClearAlert={this.handleClearAlert}
+                        settingsFilter={[]}
+                        unlocked={unlocked}
+                        refreshStore={this.refreshStore}
+                    />
                     
                 </Modal>
                 <Modal
@@ -1490,7 +1513,7 @@ class StockManagement extends React.Component {
                         <div className="tab-content" id="modal-nav-tabContent">
                             {alert.message &&
                                 <div className={`alert ${alert.type}`}>{alert.message}
-                                    <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                    <button className="close" onClick={this.handleClearAlert}>
                                         <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
                                     </button>
                                 </div>
