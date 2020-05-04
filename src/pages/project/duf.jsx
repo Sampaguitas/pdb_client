@@ -89,7 +89,6 @@ class Duf extends React.Component {
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
                 if (!responce.ok) {
-                    console.log('responce not ok');
                     if (responce.status === 401) {
                         localStorage.removeItem('user');
                         location.reload(true);
@@ -110,7 +109,6 @@ class Duf extends React.Component {
                         }
                     });
                 } else {
-                    console.log('responce ok')
                     this.setState({
                         uploading: false,
                         responce: {

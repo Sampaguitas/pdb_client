@@ -419,7 +419,7 @@ function initSettingsDisplay(fieldnames, settings, screenId) {
                         isChecked: false
                     });
                 }
-                return acc; // console.log('cur:', cur)
+                return acc;
             }, []);
         }
     } else {

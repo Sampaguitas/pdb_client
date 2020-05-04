@@ -91,7 +91,7 @@ class TableCheckBox extends Component {
                 const requestOptions = {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: `{"${fieldName}":${fieldValue}}`
+                    body: `{"${fieldName}":${value}}`
                 };
                 return fetch(`${config.apiUrl}/${collection}/update?id=${objectId}`, requestOptions)
                 .then( () => {

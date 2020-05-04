@@ -473,7 +473,6 @@ class GoodsReceipt extends Component {
     }
 
     generateBody(screenBodys) {
-        console.log('screenBodys:', screenBodys);
         const { unlocked, refreshStore } = this.props;
         const { selectAllRows } = this.state;
         let tempRows = [];
@@ -525,15 +524,15 @@ class GoodsReceipt extends Component {
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
         return (
             <div>
-                <div className="ml-2 mr-2">
+                <div className="ml-2 mt-2 mr-2">
                     {alert.message && 
-                        <div className={`alert ${alert.type} mt-3`}>{alert.message}
+                        <div className={`alert ${alert.type} mb-3`}>{alert.message}
                             <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                                 <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
                             </button>
                         </div>
                     }
-                    <div style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd', height: '400px'}}>
+                    <div className="mt-2" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd', height: '400px'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row" >
                             <table className="table table-bordered table-sm text-nowrap table-striped" id="goodsReceipt">
                                 <thead>

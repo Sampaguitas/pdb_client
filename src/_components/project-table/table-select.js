@@ -144,7 +144,6 @@ class TableSelect extends Component{
         event.preventDefault();
         const {disabled, unlocked, refreshStore} = this.props;
         const { collection, objectId, fieldName, fieldValue } = this.state;
-
         if ((unlocked || !disabled) && collection && objectId && fieldName && objectId) {
             if (_.isEqual(fieldValue, this.props.fieldValue)) {
                 this.setState({

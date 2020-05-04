@@ -28,22 +28,10 @@ class Certificates extends React.Component {
         });
     }
 
-    // componentDidUpdate(pProps){
-    //     const { selection } = this.props;
-    //     if(pProps.selection.project.name != this.props.selection.project.name){
-    //         console.log('PropsNameOld:',pProps.selection.project);
-    //         console.log('PropsNameNew:',this.props.selection.project);
-    //     }
-    // }
-
     handlePushField(event, field) {
         event.preventDefault();
         const { dpattern } = this.state;
-        // if (!dpattern) {
-        //     this.setState({dpattern: field});
-        // } else {
             this.setState({dpattern: dpattern.concat(field)});
-        // }
     }
 
     handleDeleteDpattern(event) {
@@ -59,7 +47,6 @@ class Certificates extends React.Component {
 
     handleUpdateDpattern(event) {
         event.preventDefault();
-        console.log('toto');
         this.setState({dpatternUpdating: true});
         setTimeout(() => {
             this.setState({

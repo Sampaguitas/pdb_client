@@ -13,16 +13,12 @@ import {
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import HeaderInput from '../../../_components/project-table/header-input';
-import HeaderCheckBox from '../../../_components/project-table/header-check-box';
 import HeaderSelect from '../../../_components/project-table/header-select';
 import TableInput from '../../../_components/project-table/table-input';
-import TableSelect from '../../../_components/project-table/table-select';
-import TableCheckBox from '../../../_components/project-table/table-check-box';
 import TableSelectionRow from '../../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../../_components/project-table/table-selection-all-row';
 import Modal from '../../../_components/modal';
 import Warehouse from '../../../_components/split-line/warehouse';
-import { warehouseService } from '../../../_services';
 
 function arrayRemove(arr, value) {
 
@@ -557,7 +553,6 @@ class Locations extends React.Component {
     handleDeleteLocations(event) {
         event.preventDefault();
         const { selectedRows } = this.state;
-        console.log('selectedRows:', selectedRows)
         if(_.isEmpty(selectedRows)) {
             this.setState({
                 alert: {
@@ -619,29 +614,9 @@ class Locations extends React.Component {
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
                 if (responce.status === 401) {
-                    // console.log('responce not ok');
-                    // if (responce.status === 401) {
                         localStorage.removeItem('user');
                         location.reload(true);
-                    // }
-                    // const error = (data && data.message) || responce.statusText;
-                    
-                    // this.setState({
-                    //     uploading: false,
-                    //     responce: {
-                    //         rejections: data.rejections,
-                    //         nProcessed: data.nProcessed,
-                    //         nRejected: data.nRejected,
-                    //         nAdded: data.nAdded,
-                    //         nEdited: data.nEdited
-                    //     },
-                    //     alert: {
-                    //         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                    //         message: data.message
-                    //     }
-                    // });
                 } else {
-                    // console.log('responce ok')
                     this.setState({
                         uploading: false,
                         responce: {

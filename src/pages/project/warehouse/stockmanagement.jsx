@@ -938,13 +938,13 @@ class StockManagement extends React.Component {
 
         if (fieldnames != prevProps.fieldnames || nfiScreenId != prevState.nfiScreenId) {
             this.setState({
-                headersNfi: getHeaders(settingsDisplay, fieldnames, nfiScreenId, 'forShow'),
+                headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
             })
         }
 
         if (fieldnames != prevProps.fieldnames || plScreenId != prevState.plScreenId) {
             this.setState({
-                headersPl: getHeaders(settingsDisplay, fieldnames, plScreenId, 'forShow'),
+                headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
             })
         }
 
@@ -961,7 +961,6 @@ class StockManagement extends React.Component {
         }
 
         if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersPl != prevState.headersPl || plScreenId != prevState.plScreenId) {
-            console.log('bodysPl:', getPlBodys(fieldnames, selection, pos, transactions, headersPl, plScreenId));
             this.setState({
                 bodysPl: getPlBodys(fieldnames, selection, pos, transactions, headersPl, plScreenId),
             });
@@ -1399,6 +1398,8 @@ class StockManagement extends React.Component {
             projectId, 
             screen, 
             screenId,
+            nfiScreenId,
+            plScreenId,
             selectedIds,
             selectedIdsGoodsReceipt, 
             unlocked, 
@@ -1476,23 +1477,44 @@ class StockManagement extends React.Component {
                     </div>
                 </div>
                 <Modal
-                    show={showGrPl}
-                    hideModal={this.toggleGrPl}
-                    title="Goods Receipt with Packing List"
+                    show={showGrNfi}
+                    hideModal={this.toggleGrNfi}
+                    title="Goods Receipt with NFI"
                     size="modal-xl"
                 >
                     <GoodsReceipt
                         alert={alert}
+                        screenHeaders={headersNfi}
+                        screenBodys={bodysNfi}
+                        projectId={projectId}
+                        screenId={nfiScreenId}
                         selectedIds={selectedIdsGoodsReceipt}
                         updateSelectedIds={this.updateSelectedIdsGoodsReceipt}
+                        unlocked={false}
+                        handleClearAlert={this.handleClearAlert}
+                        refreshStore={this.refreshStore}
+                        settingsFilter={[]}
+                    />
+                </Modal>
+                <Modal
+                    show={showGrPl}
+                    hideModal={this.toggleGrPl}
+                    title="Goods Receipt with PL"
+                    size="modal-xl"
+                >
+                    <GoodsReceipt
+                        alert={alert}
                         screenHeaders={headersPl}
                         screenBodys={bodysPl}
+                        projectId={projectId}
+                        screenId={plScreenId}
+                        selectedIds={selectedIdsGoodsReceipt}
+                        updateSelectedIds={this.updateSelectedIdsGoodsReceipt}
+                        unlocked={false}
                         handleClearAlert={this.handleClearAlert}
-                        settingsFilter={[]}
-                        unlocked={unlocked}
                         refreshStore={this.refreshStore}
+                        settingsFilter={[]}
                     />
-                    
                 </Modal>
                 <Modal
                     show={showSettings}
