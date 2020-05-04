@@ -15,7 +15,8 @@ import {
     poActions, 
     projectActions,
     settingActions,
-    transactionActions
+    transactionActions,
+    warehouseActions
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
@@ -30,6 +31,10 @@ import _ from 'lodash';
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
 const myLocale = Intl.DateTimeFormat(locale, options);
+
+function leadingChar(string, char, length) {
+    return string.toString().length > length ? string : char.repeat(length - string.toString().length) + string;
+}
 
 function getDateFormat(myLocale) {
     let tempDateFormat = ''
@@ -281,7 +286,7 @@ function virtuals(transactions, id, whichId, hasLocation, hasArea, hasWarehouse)
                     } else if (hasWarehouse) {
                         return element._id === cur.location.area.warehouse._id;
                     } else {
-                        return element._id === '0';
+                        return element._id === '';
                     }
                 });
                 if (!_.isUndefined(found)) {
@@ -298,6 +303,7 @@ function virtuals(transactions, id, whichId, hasLocation, hasArea, hasWarehouse)
                         warehouse: cur.location.area.warehouse.warehouse,
                         area: cur.location.area.area,
                         location: `${areaNr}/${hall}${row}-${leadingChar(col, '0', 3)}${!!height ? '-' + height : ''}`,
+                        locationId: cur.locationId,
                     });
                 } else if(hasArea) {
                     acc.push({
@@ -305,17 +311,20 @@ function virtuals(transactions, id, whichId, hasLocation, hasArea, hasWarehouse)
                         stockQty: cur.transQty || 0,
                         warehouse: cur.location.area.warehouse.warehouse,
                         area: cur.location.area.area,
+                        locationId: '',
                     });
                 } else if (hasWarehouse) {
                     acc.push({
                         _id: cur.location.area.warehouse._id,
                         stockQty: cur.transQty || 0,
                         warehouse: cur.location.area.warehouse.warehouse,
+                        locationId: '',
                     });
                 } else {
                     acc.push({
-                        _id: '0',
+                        _id: '',
                         stockQty: cur.transQty || 0,
+                        locationId: '',
                     });
                 }
             }
@@ -326,22 +335,23 @@ function virtuals(transactions, id, whichId, hasLocation, hasArea, hasWarehouse)
         return tempResult;
     } else {
         return [{
-            _id: '0',
+            _id: '',
             stockQty: 0,
             warehouse: '',
             area: '',
-            location: '', 
+            location: '',
+            locationId: '', 
         }];
     }
 }
 
-function getPlBodys (fieldnames, selection, pos, transactions, headersForShow, screenId) {
+function getPlBodys (selection, pos, transactions, headersForShow) {
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
     let screenHeaders = headersForShow;
     let project = selection.project || { _id: '0', name: '', number: '' };
-    let hasPackitems = getScreenTbls(fieldnames, screenId).includes('packitem');
+    // let hasPackitems = getScreenTbls(fieldnames, screenId).includes('packitem');
     let hasLocation = hasFieldName(getTblFields (screenHeaders, 'location'), 'location');
     let hasArea = hasFieldName(getTblFields (screenHeaders, 'location'), 'area');
     let hasWarehouse = hasFieldName(getTblFields (screenHeaders, 'location'), 'warehouse');
@@ -350,7 +360,7 @@ function getPlBodys (fieldnames, selection, pos, transactions, headersForShow, s
         pos.items.map(po => {
             if (po.subs) {
                 po.subs.map(sub => {
-                    if (!_.isEmpty(sub.packitems) && hasPackitems) {
+                    if (!_.isEmpty(sub.packitems)) { //&& hasPackitems
                         sub.packitems.map(packitem => {
                             if (!!packitem.plNr && !!packitem.colliNr) {
                                 virtuals(transactions, packitem._id, 'packitemId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
@@ -452,7 +462,7 @@ function getPlBodys (fieldnames, selection, pos, transactions, headersForShow, s
     }
 }
 
-function getNfiBodys (fieldnames, selection, pos, transactions, headersForShow, screenId) {
+function getNfiBodys (selection, pos, transactions, headersForShow) {
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
@@ -467,7 +477,7 @@ function getNfiBodys (fieldnames, selection, pos, transactions, headersForShow, 
         pos.items.map(po => {
             if (po.subs) {
                 po.subs.map(sub => {
-                    if (!!sub.nfi) {
+                    if (!!sub.nfi && !!sub.relQty) {
                         virtuals(transactions, sub._id, 'subId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
                             arrayRow = [];
                             screenHeaders.map(screenHeader => {
@@ -553,7 +563,7 @@ function getNfiBodys (fieldnames, selection, pos, transactions, headersForShow, 
     }
 }
 
-function getPoBodys (fieldnames, selection, pos, transactions, headersForShow, screenId) {
+function getBodysForShow (selection, pos, transactions, headersForShow) {
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
@@ -567,68 +577,71 @@ function getPoBodys (fieldnames, selection, pos, transactions, headersForShow, s
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
             virtuals(transactions, po._id, 'subId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
-                arrayRow = [];
-                screenHeaders.map(screenHeader => {
-                    switch(screenHeader.fields.fromTbl) {
-                        case 'po':
-                            if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                // if (!!virtual._id) {
+                    arrayRow = [];
+                    screenHeaders.map(screenHeader => {
+                        switch(screenHeader.fields.fromTbl) {
+                            case 'po':
+                                if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: project._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else {
+                                    arrayRow.push({
+                                        collection: 'po',
+                                        objectId: po._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: po[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                }
+                                break;
+                            case 'location':
                                 arrayRow.push({
                                     collection: 'virtual',
-                                    objectId: project._id,
+                                    objectId: virtual._id,
                                     fieldName: screenHeader.fields.name,
-                                    fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                    fieldValue: virtual[screenHeader.fields.name],
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
                                 });
-                            } else {
-                                arrayRow.push({
-                                    collection: 'po',
-                                    objectId: po._id,
-                                    fieldName: screenHeader.fields.name,
-                                    fieldValue: po[screenHeader.fields.name],
-                                    disabled: screenHeader.edit,
-                                    align: screenHeader.align,
-                                    fieldType: getInputType(screenHeader.fields.type),
-                                });
-                            }
-                            break;
-                        case 'location':
-                            arrayRow.push({
+                                break;
+                            default: arrayRow.push({
                                 collection: 'virtual',
-                                objectId: virtual._id,
+                                objectId: '0',
                                 fieldName: screenHeader.fields.name,
-                                fieldValue: virtual[screenHeader.fields.name],
+                                fieldValue: '',
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
                             });
-                            break;
-                        default: arrayRow.push({
-                            collection: 'virtual',
-                            objectId: '0',
-                            fieldName: screenHeader.fields.name,
-                            fieldValue: '',
-                            disabled: screenHeader.edit,
-                            align: screenHeader.align,
-                            fieldType: getInputType(screenHeader.fields.type),
-                        });
-                    }
-                });
-                
-                objectRow  = {
-                    _id: i, 
-                    tablesId: { 
-                        poId: po._id,
-                        subId: '',
-                        certificateId: '',
-                        packitemId: '',
-                        collipackId: '' 
-                    },
-                    fields: arrayRow
-                };
-                arrayBody.push(objectRow);
-                i++;
+                        }
+                    });
+                    
+                    objectRow  = {
+                        _id: i, 
+                        tablesId: { 
+                            poId: po._id,
+                            subId: '',
+                            certificateId: '',
+                            packitemId: '',
+                            collipackId: '',
+                            locationId: virtual.locationId,
+                        },
+                        fields: arrayRow
+                    };
+                    arrayBody.push(objectRow);
+                    i++;
+                // }
             });
         });
         return arrayBody;
@@ -637,6 +650,54 @@ function getPoBodys (fieldnames, selection, pos, transactions, headersForShow, s
     }
 }
 
+function getWhList(warehouses) {
+    let whList = [];
+    if (warehouses.hasOwnProperty('items') && !_.isUndefined(warehouses.items)) {
+        whList = warehouses.items.reduce(function(acc, cur) {
+            acc.push({_id: cur._id, name: cur.warehouse});
+            return acc;
+        }, []);
+    }
+    return whList;
+}
+
+function getAreaList(warehouses, warehouseId) {
+    let areaList = [];
+    if (warehouses.hasOwnProperty('items') && !_.isUndefined(warehouses.items)) {
+        warehouses.items.map(warehouse => {
+            if(warehouse._id === warehouseId) {
+                warehouse.areas.map(area => {
+                    areaList.push({
+                        _id: area._id,
+                        name: `${area.area} (${area.areaNr})`
+                    });
+                });     
+            }
+        });
+    }
+    return areaList;
+}
+
+function getLocList(warehouses, warehouseId, areaId) {
+    let locList = [];
+    if (warehouses.hasOwnProperty('items') && !_.isUndefined(warehouses.items)) {
+        warehouses.items.map(warehouse => {
+            if(warehouse._id === warehouseId) {
+                warehouse.areas.map(area => {
+                    if (area._id === areaId) {
+                        area.locations.map(location => {
+                            locList.push({
+                                _id: location._id,
+                                name: `${area.areaNr}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`
+                            });
+                        });
+                    }
+                });     
+            }
+        });
+    }
+    return locList;
+}
 
 function generateOptions(list) {
     if (list) {
@@ -767,10 +828,15 @@ class StockManagement extends React.Component {
             selectedIds: [],
             selectedIdsGoodsReceipt: [],
             selectedTemplate: '',
-            // selectedField: '',
-            // selectedType: 'text',
-            // updateValue:'',
             docList: [],
+            transQty: '',
+            toWarehouse: '',
+            toArea: '',
+            toLocation: '',
+            transDate: '',
+            whList: [],
+            areaList: [],
+            locList: [],
             alert: {
                 type:'',
                 message:''
@@ -785,12 +851,12 @@ class StockManagement extends React.Component {
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handleGoodsReciptPl = this.handleGoodsReciptPl.bind(this);
+        this.handleGoodsReciptNfi = this.handleGoodsReciptNfi.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
-        // this.selectedFieldOptions = this.selectedFieldOptions.bind(this);
-        // this.handleUpdateValue = this.handleUpdateValue.bind(this);
-        // this.updateRequest = this.updateRequest.bind(this);
 
         this.refreshStore = this.refreshStore.bind(this);
+        this.refreshTransactions = this.refreshTransactions.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.updateSelectedIdsGoodsReceipt = this.updateSelectedIdsGoodsReceipt.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
@@ -800,7 +866,6 @@ class StockManagement extends React.Component {
         this.toggleGrNfi = this.toggleGrNfi.bind(this);
         this.toggleGrPl = this.toggleGrPl.bind(this);
         this.toggleGrDuf = this.toggleGrDuf.bind(this);
-        // this.toggleEditValues = this.toggleEditValues.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         
@@ -825,6 +890,7 @@ class StockManagement extends React.Component {
             loadingSelection,
             loadingSettings,
             loadingTransactions,
+            loadingWarehouses,
             location,
             //---------
             fieldnames,
@@ -832,7 +898,8 @@ class StockManagement extends React.Component {
             docdefs,
             selection,
             settings,
-            transactions 
+            transactions,
+
         } = this.props;
 
         const { 
@@ -878,15 +945,18 @@ class StockManagement extends React.Component {
             if (!loadingTransactions) {
                 dispatch(transactionActions.getAll(qs.id));
             }
+            if (!loadingWarehouses) {
+                dispatch(warehouseActions.getAll(qs.id));
+            }
         }
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
             headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
-            bodysForShow: getPoBodys (fieldnames, selection, pos, transactions, headersForShow, screenId),
-            bodysNfi: getNfiBodys(fieldnames, selection, pos, transactions, headersNfi, nfiScreenId),
-            bodysPl: getPlBodys(fieldnames, selection, pos, transactions, headersPl, plScreenId),
+            bodysForShow: getBodysForShow (selection, pos, transactions, headersForShow),
+            bodysNfi: getNfiBodys(selection, pos, transactions, headersNfi),
+            bodysPl: getPlBodys(selection, pos, transactions, headersPl),
             docList: arraySorted(docConf(docdefs.items), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
@@ -902,7 +972,8 @@ class StockManagement extends React.Component {
             transactions,
             settings,
             pos,
-            docdefs
+            docdefs,
+            warehouses
         } = this.props;
 
         const {
@@ -913,7 +984,12 @@ class StockManagement extends React.Component {
             nfiScreenId,
             plScreenId,
             selectedField,
-            settingsDisplay
+            settingsDisplay,
+            toWarehouse,
+            toArea,
+            whList,
+            areaList,
+            locList
         } = this.state;
         
         if (selectedField != prevState.selectedField && selectedField != '0') {
@@ -928,44 +1004,34 @@ class StockManagement extends React.Component {
             }
         }
 
-        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames){
+        if (fieldnames != prevProps.fieldnames){
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+                headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
+                headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
             }); 
         }
 
-        if (fieldnames != prevProps.fieldnames || nfiScreenId != prevState.nfiScreenId) {
+        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersForShow != prevState.headersForShow) {
             this.setState({
-                headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
-            })
-        }
-
-        if (fieldnames != prevProps.fieldnames || plScreenId != prevState.plScreenId) {
-            this.setState({
-                headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
-            })
-        }
-
-        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersForShow != prevState.headersForShow || screenId != prevState.screenId) {
-            this.setState({
-                bodysForShow: getPoBodys(fieldnames, selection, pos, transactions, headersForShow, screenId),
+                bodysForShow: getBodysForShow(selection, pos, transactions, headersForShow),
             });
         }
 
-        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersNfi != prevState.headersNfi || nfiScreenId != prevState.nfiScreenId) {
+        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersNfi != prevState.headersNfi) {
             this.setState({
-                bodysNfi: getNfiBodys(fieldnames, selection, pos, transactions, headersNfi, nfiScreenId),
+                bodysNfi: getNfiBodys(selection, pos, transactions, headersNfi),
             });
         }
 
-        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersPl != prevState.headersPl || plScreenId != prevState.plScreenId) {
+        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersPl != prevState.headersPl) {
             this.setState({
-                bodysPl: getPlBodys(fieldnames, selection, pos, transactions, headersPl, plScreenId),
+                bodysPl: getPlBodys(selection, pos, transactions, headersPl),
             });
         }
-        
+
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
         }
@@ -978,6 +1044,42 @@ class StockManagement extends React.Component {
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            });
+        }
+
+        if (warehouses != prevProps.warehouses) {
+            this.setState({
+                whList: getWhList(warehouses)
+            });
+        }
+
+        if (warehouses != prevProps.warehouses || toWarehouse != prevState.toWarehouse) {
+            this.setState({
+                areaList: getAreaList(warehouses, toWarehouse)
+            });
+        }
+
+        if (warehouses != prevProps.warehouses || toWarehouse != prevState.toWarehouse || toArea != prevState.toArea) {
+            this.setState({
+                locList: getLocList(warehouses, toWarehouse, toArea)
+            });
+        }
+
+        if (whList != prevState.whList) {
+            this.setState({
+                toWarehouse: !_.isEmpty(whList) ? whList[0]._id : ''
+            });
+        }
+
+        if (areaList != prevState.areaList) {
+            this.setState({
+                toArea: !_.isEmpty(areaList) ? areaList[0]._id : ''
+            });
+        }
+
+        if (locList != prevState.locList) {
+            this.setState({
+                toLocation: !_.isEmpty(locList) ? locList[0]._id : ''
             });
         }
 
@@ -1129,8 +1231,15 @@ class StockManagement extends React.Component {
 
         if (projectId) {
             dispatch(poActions.getAll(projectId));
+            dispatch(transactionActions.getAll(projectId));
             dispatch(settingActions.getAll(projectId, userId));
         }
+    }
+
+    refreshTransactions() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+        dispatch(transactionActions.getAll(projectId));
     }
 
     toggleUnlock(event) {
@@ -1167,12 +1276,89 @@ class StockManagement extends React.Component {
     }
 
     handleChange(event) {
-        event.preventDefault();
-        const name =  event.target.name;
-        const value =  event.target.value;
+        // event.preventDefault();
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
             [name]: value
         });
+    }
+
+    handleGoodsReciptPl(event) {
+        event.preventDefault;
+        const { selectedIdsGoodsReceipt, projectId } = this.state;
+        if (_.isEmpty(selectedIdsGoodsReceipt)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be imported.'
+                }
+            });
+        } else {
+            this.setState({
+                receiving: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIdsGoodsReceipt: selectedIdsGoodsReceipt})
+                };
+                return fetch(`${config.apiUrl}/transaction/goodsReceiptPl?projectId=${projectId}`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        receiving: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshTransactions);
+                }));
+            });
+        }
+    }
+
+    handleGoodsReciptNfi(event) {
+        event.preventDefault;
+        const { selectedIdsGoodsReceipt, projectId } = this.state;
+        if (_.isEmpty(selectedIdsGoodsReceipt)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be imported.'
+                }
+            });
+        } else {
+            this.setState({
+                receiving: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIdsGoodsReceipt: selectedIdsGoodsReceipt})
+                };
+                return fetch(`${config.apiUrl}/transaction/goodsReceiptNfi?projectId=${projectId}`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        receiving: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshTransactions);
+                }));
+            });
+        }
     }
 
     handleGenerateFile(event) {
@@ -1288,25 +1474,37 @@ class StockManagement extends React.Component {
 
     toggleGrNfi(event) {
         event.preventDefault();
-        const { showGrNfi } = this.state;
+        const { showGrNfi, whList } = this.state;
         this.setState({
-            showGrNfi: !showGrNfi
+            showGrNfi: !showGrNfi,
+            // isSameQty: true,
+            transQty: '',
+            toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
+            transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
         });
     }
 
     toggleGrPl(event) {
         event.preventDefault();
-        const { showGrPl } = this.state;
+        const { showGrPl, whList } = this.state;
         this.setState({
-            showGrPl: !showGrPl
+            showGrPl: !showGrPl,
+            // isSameQty: true,
+            transQty: '',
+            toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
+            transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
         });
     }
 
     toggleGrDuf(event) {
         event.preventDefault();
-        const { showGrDuf } = this.state;
+        const { showGrDuf, whList } = this.state;
         this.setState({
-            showGrDuf: !showGrDuf
+            showGrDuf: !showGrDuf,
+            // isSameQty: true,
+            transQty: '',
+            toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
+            transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
         });
     }
 
@@ -1424,9 +1622,17 @@ class StockManagement extends React.Component {
             settingsFilter,
             settingsDisplay,
             //----------------
+            transQty,
+            toWarehouse,
+            toArea,
+            toLocation,
+            transDate,
+            whList,
+            areaList,
+            locList,
         } = this.state;
 
-        const { accesses, fieldnames, fields, pos, selection } = this.props;
+        const { accesses, fieldnames, fields, pos, selection, warehouses } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         
         return (
@@ -1494,6 +1700,17 @@ class StockManagement extends React.Component {
                         handleClearAlert={this.handleClearAlert}
                         refreshStore={this.refreshStore}
                         settingsFilter={[]}
+                        handleGoodsRecipt={this.handleGoodsReciptNfi}
+                        handleChange={this.handleChange}
+                        transQty={transQty}
+                        qtyPlaceHolder="Leave empty to receive balance Qty (released - already in stock)..."
+                        toWarehouse={toWarehouse}
+                        toArea={toArea}
+                        toLocation={toLocation}
+                        transDate={transDate}
+                        whOptions={generateOptions(whList)}
+                        areaOptions={generateOptions(areaList)}
+                        locOptions={generateOptions(locList)}
                     />
                 </Modal>
                 <Modal
@@ -1514,6 +1731,17 @@ class StockManagement extends React.Component {
                         handleClearAlert={this.handleClearAlert}
                         refreshStore={this.refreshStore}
                         settingsFilter={[]}
+                        handleGoodsRecipt={this.handleGoodsReciptPl}
+                        handleChange={this.handleChange}
+                        transQty={transQty}
+                        qtyPlaceHolder="Leave empty to receive balance Qty (packed - already in stock)..."
+                        toWarehouse={toWarehouse}
+                        toArea={toArea}
+                        toLocation={toLocation}
+                        transDate={transDate}
+                        whOptions={generateOptions(whList)}
+                        areaOptions={generateOptions(areaList)}
+                        locOptions={generateOptions(locList)}
                     />
                 </Modal>
                 <Modal
@@ -1581,7 +1809,7 @@ class StockManagement extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, docdefs, fieldnames, fields, pos, selection, settings, transactions } = state;
+    const { accesses, alert, docdefs, fieldnames, fields, pos, selection, settings, transactions, warehouses } = state;
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
     const { loadingFieldnames } = fieldnames;
@@ -1590,6 +1818,7 @@ function mapStateToProps(state) {
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
     const { loadingTransactions } = transactions;
+    const { loadingWarehouses } = warehouses;
 
     return {
         accesses,
@@ -1605,10 +1834,12 @@ function mapStateToProps(state) {
         loadingSelection,
         loadingSettings,
         loadingTransactions,
+        loadingWarehouses,
         pos,
         selection,
         settings,
-        transactions
+        transactions,
+        warehouses
     };
 }
 

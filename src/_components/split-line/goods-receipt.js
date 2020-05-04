@@ -6,6 +6,7 @@ import HeaderInput from '../project-table/header-input';
 import TableInput from '../project-table/table-input';
 import TableSelectionRow from '../project-table/table-selection-row';
 import TableSelectionAllRow from '../project-table/table-selection-all-row';
+import CheckBox from '../../_components/check-box';
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -518,7 +519,20 @@ class GoodsReceipt extends Component {
     render() {
         const { 
             screenHeaders, 
-            screenBodys, 
+            screenBodys,
+            // isSameQty,
+            // checkBoxTitle,
+            transQty,
+            qtyPlaceHolder,
+            toWarehouse,
+            toArea,
+            toLocation,
+            transDate,
+            handleGoodsRecipt, 
+            handleChange,
+            whOptions,
+            areaOptions,
+            locOptions
         } = this.props;
 
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
@@ -532,7 +546,7 @@ class GoodsReceipt extends Component {
                             </button>
                         </div>
                     }
-                    <div className="mt-2" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd', height: '400px'}}>
+                    <div className="mt-2" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd', height: '300px'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row" >
                             <table className="table table-bordered table-sm text-nowrap table-striped" id="goodsReceipt">
                                 <thead>
@@ -544,8 +558,94 @@ class GoodsReceipt extends Component {
                             </table>
                         </div>
                     </div>
+                    <div className="mt-4">
+                        <div className="form-group">
+                            <div className="input-group">
+                                <div className="input-group-prepend">
+                                    <label className="input-group-text" style={{width: '70px'}}>Quantity:</label>
+                                </div>
+                                <input
+                                    className="form-control"
+                                    type="number"
+                                    name="transQty"
+                                    value={transQty}
+                                    onChange={handleChange}
+                                    placeholder={qtyPlaceHolder}
+                                    // aria-describedby="transQtyHelp"
+                                />
+                            </div>
+                            {/* <small id="transQtyHelp" className="form-text text-muted">Leave empty to receive balance Qty (total - already in stock).</small> */}
+                        </div>
+                        <div className="form-group">
+                            <div className="input-group">
+                                <div className="input-group-prepend">
+                                    <label className="input-group-text" style={{width: '70px'}}>Warehouse:</label>
+                                </div>
+                                <select
+                                    className="form-control"
+                                    name="toWarehouse"
+                                    value={toWarehouse}
+                                    placeholder="Select Warehouse..."
+                                    onChange={handleChange}
+                                >
+                                    <option key="0" value="">Select Warehouse...</option>
+                                    {whOptions}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <div className="input-group">
+                                <div className="input-group-prepend">
+                                    <label className="input-group-text" style={{width: '70px'}}>Area:</label>
+                                </div>
+                                <select
+                                    className="form-control"
+                                    name="toArea"
+                                    value={toArea}
+                                    placeholder="Select Area..."
+                                    onChange={handleChange}
+                                >
+                                    <option key="0" value="">Select Area...</option>
+                                    {areaOptions}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <div className="input-group">
+                                <div className="input-group-prepend">
+                                    <label className="input-group-text" style={{width: '70px'}}>Location:</label>
+                                </div>
+                                <select
+                                    className="form-control"
+                                    name="toLocation"
+                                    value={toLocation}
+                                    placeholder="Select Warehouse..."
+                                    onChange={handleChange}
+                                >
+                                    <option key="0" value="">Select Location...</option>
+                                    {locOptions}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="form-group">
+                            <div className="input-group">
+                                <div className="input-group-prepend">
+                                    <label className="input-group-text" style={{width: '70px'}}>Date:</label>
+                                </div>
+                                <input
+                                    className="form-control"
+                                    type="text"
+                                    name="transDate"
+                                    value={transDate}
+                                    onChange={handleChange}
+                                    placeholder={getDateFormat(myLocale)}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div className="text-right mt-2">
-                        <button className="btn btn-leeuwen-blue btn-lg">
+                        <button className="btn btn-leeuwen-blue btn-lg" onClick={handleGoodsRecipt}>
                             <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Add to Stock</span>
                         </button>
                     </div>
