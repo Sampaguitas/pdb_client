@@ -1401,50 +1401,49 @@ class StockManagement extends React.Component {
 
     handleGoodsReceipt(event, route) {
         event.preventDefault();
-        console.log('route:', route);
-        // const { selectedIdsGr, projectId, toLocation, transQty,  transDate } = this.state;
-        // if (_.isEmpty(selectedIdsGr)) {
-        //     this.setState({
-        //         alert: {
-        //             type: 'alert-danger',
-        //             message: 'Select line(s) to be received.'
-        //         }
-        //     });
-        // } else if (!!transQty && selectedIdsGr.length > 1){
-        //     this.setState({
-        //         alert: {
-        //             type: 'alert-danger',
-        //             message: 'Select one line or leave the quantity to be received empty.'
-        //         }
-        //     });
-        // } else {
-        //     this.setState({ receiving: true});
-        //     const requestOptions = {
-        //         method: 'POST',
-        //         headers: { ...authHeader(), 'Content-Type': 'application/json'},
-        //         body: JSON.stringify({
-        //             selectedIdsGr: selectedIdsGr,
-        //             toLocation: toLocation,
-        //             transQty: transQty,
-        //             transDate: transDate
-        //         })
-        //     };
-        //     return fetch(`${config.apiUrl}/transaction/${route}?projectId=${projectId}`, requestOptions)
-        //     .then(responce => responce.text().then(text => {
-        //         const data = text && JSON.parse(text);
-        //         if (responce.status === 401) {
-        //             localStorage.removeItem('user');
-        //             location.reload(true);
-        //         }
-        //         this.setState({
-        //             receiving: false,
-        //             alert: {
-        //                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-        //                 message: data.message
-        //             }
-        //         }, this.refreshTransactions);
-        //     }));
-        // }
+        const { selectedIdsGr, projectId, toLocation, transQty,  transDate } = this.state;
+        if (_.isEmpty(selectedIdsGr)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be received.'
+                }
+            });
+        } else if (!!transQty && selectedIdsGr.length > 1){
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one line or leave the quantity to be received empty.'
+                }
+            });
+        } else {
+            this.setState({ receiving: true});
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    selectedIdsGr: selectedIdsGr,
+                    toLocation: toLocation,
+                    transQty: transQty,
+                    transDate: transDate
+                })
+            };
+            return fetch(`${config.apiUrl}/transaction/${route}?projectId=${projectId}`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
+                }
+                this.setState({
+                    receiving: false,
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshTransactions);
+            }));
+        }
     }
 
     handleGenerateFile(event) {

@@ -558,94 +558,98 @@ class GoodsReceipt extends Component {
                         </div>
                     </div>
                     <div className="mt-4">
-                        <div className="form-group">
-                            <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <label className="input-group-text" style={{width: '70px'}}>Quantity:</label>
+                        <form onSubmit={event => handleGoodsReceipt(event, myRoute)}>
+                            <div className="form-group">
+                                <div className="input-group">
+                                    <div className="input-group-prepend">
+                                        <label className="input-group-text" style={{width: '70px'}}>Quantity:</label>
+                                    </div>
+                                    <input
+                                        className="form-control"
+                                        type="number"
+                                        name="transQty"
+                                        value={transQty}
+                                        onChange={handleChange}
+                                        placeholder={qtyPlaceHolder}
+                                    />
                                 </div>
-                                <input
-                                    className="form-control"
-                                    type="number"
-                                    name="transQty"
-                                    value={transQty}
-                                    onChange={handleChange}
-                                    placeholder={qtyPlaceHolder}
-                                    // aria-describedby="transQtyHelp"
-                                />
                             </div>
-                            {/* <small id="transQtyHelp" className="form-text text-muted">Leave empty to receive balance Qty (total - already in stock).</small> */}
-                        </div>
-                        <div className="form-group">
-                            <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <label className="input-group-text" style={{width: '70px'}}>Warehouse:</label>
+                            <div className="form-group">
+                                <div className="input-group">
+                                    <div className="input-group-prepend">
+                                        <label className="input-group-text" style={{width: '70px'}}>Warehouse:</label>
+                                    </div>
+                                    <select
+                                        className="form-control"
+                                        name="toWarehouse"
+                                        value={toWarehouse}
+                                        placeholder="Select Warehouse..."
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option key="0" value="">Select Warehouse...</option>
+                                        {whOptions}
+                                    </select>
                                 </div>
-                                <select
-                                    className="form-control"
-                                    name="toWarehouse"
-                                    value={toWarehouse}
-                                    placeholder="Select Warehouse..."
-                                    onChange={handleChange}
-                                >
-                                    <option key="0" value="">Select Warehouse...</option>
-                                    {whOptions}
-                                </select>
                             </div>
-                        </div>
-                        <div className="form-group">
-                            <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <label className="input-group-text" style={{width: '70px'}}>Area:</label>
+                            <div className="form-group">
+                                <div className="input-group">
+                                    <div className="input-group-prepend">
+                                        <label className="input-group-text" style={{width: '70px'}}>Area:</label>
+                                    </div>
+                                    <select
+                                        className="form-control"
+                                        name="toArea"
+                                        value={toArea}
+                                        placeholder="Select Area..."
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option key="0" value="">Select Area...</option>
+                                        {areaOptions}
+                                    </select>
                                 </div>
-                                <select
-                                    className="form-control"
-                                    name="toArea"
-                                    value={toArea}
-                                    placeholder="Select Area..."
-                                    onChange={handleChange}
-                                >
-                                    <option key="0" value="">Select Area...</option>
-                                    {areaOptions}
-                                </select>
                             </div>
-                        </div>
-                        <div className="form-group">
-                            <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <label className="input-group-text" style={{width: '70px'}}>Location:</label>
+                            <div className="form-group">
+                                <div className="input-group">
+                                    <div className="input-group-prepend">
+                                        <label className="input-group-text" style={{width: '70px'}}>Location:</label>
+                                    </div>
+                                    <select
+                                        className="form-control"
+                                        name="toLocation"
+                                        value={toLocation}
+                                        placeholder="Select Warehouse..."
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        <option key="0" value="">Select Location...</option>
+                                        {locOptions}
+                                    </select>
                                 </div>
-                                <select
-                                    className="form-control"
-                                    name="toLocation"
-                                    value={toLocation}
-                                    placeholder="Select Warehouse..."
-                                    onChange={handleChange}
-                                >
-                                    <option key="0" value="">Select Location...</option>
-                                    {locOptions}
-                                </select>
                             </div>
-                        </div>
-                        <div className="form-group">
-                            <div className="input-group">
-                                <div className="input-group-prepend">
-                                    <label className="input-group-text" style={{width: '70px'}}>Date:</label>
+                            <div className="form-group">
+                                <div className="input-group">
+                                    <div className="input-group-prepend">
+                                        <label className="input-group-text" style={{width: '70px'}}>Date:</label>
+                                    </div>
+                                    <input
+                                        className="form-control"
+                                        type="text"
+                                        name="transDate"
+                                        value={transDate}
+                                        onChange={handleChange}
+                                        placeholder={getDateFormat(myLocale)}
+                                        required
+                                    />
                                 </div>
-                                <input
-                                    className="form-control"
-                                    type="text"
-                                    name="transDate"
-                                    value={transDate}
-                                    onChange={handleChange}
-                                    placeholder={getDateFormat(myLocale)}
-                                />
                             </div>
-                        </div>
-                        <div className="text-right mt-2">
-                            <button className="btn btn-leeuwen-blue btn-lg" onClick={event => handleGoodsReceipt(event, myRoute)}>
-                                <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Add to Stock</span>
-                            </button>
-                        </div>
+                            <div className="text-right mt-2">
+                                <button type="submit" className="btn btn-leeuwen-blue btn-lg">
+                                    <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Add to Stock</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
