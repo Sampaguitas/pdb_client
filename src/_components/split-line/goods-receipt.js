@@ -520,15 +520,14 @@ class GoodsReceipt extends Component {
         const { 
             screenHeaders, 
             screenBodys,
-            // isSameQty,
-            // checkBoxTitle,
             transQty,
             qtyPlaceHolder,
             toWarehouse,
             toArea,
             toLocation,
             transDate,
-            handleGoodsRecipt, 
+            handleGoodsRecipt,
+            route,
             handleChange,
             whOptions,
             areaOptions,
@@ -645,7 +644,7 @@ class GoodsReceipt extends Component {
                     </div>
                     
                     <div className="text-right mt-2">
-                        <button className="btn btn-leeuwen-blue btn-lg" onClick={handleGoodsRecipt}>
+                        <button className="btn btn-leeuwen-blue btn-lg" onClick={event => handleGoodsRecipt(event, route)}>
                             <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Add to Stock</span>
                         </button>
                     </div>

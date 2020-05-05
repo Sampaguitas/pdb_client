@@ -949,8 +949,7 @@ class StockManagement extends React.Component {
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleGoodsReciptPl = this.handleGoodsReciptPl.bind(this);
-        this.handleGoodsReciptNfi = this.handleGoodsReciptNfi.bind(this);
+        this.handleGoodsRecipt = this.handleGoodsRecipt.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
 
         this.refreshStore = this.refreshStore.bind(this);
@@ -1394,7 +1393,7 @@ class StockManagement extends React.Component {
         });
     }
 
-    handleGoodsReciptPo(event) {
+    handleGoodsRecipt(event, route) {
         event.preventDefault;
         const { selectedIdsGr, projectId } = this.state;
         if (_.isEmpty(selectedIdsGr)) {
@@ -1413,83 +1412,7 @@ class StockManagement extends React.Component {
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                     body: JSON.stringify({selectedIdsGr: selectedIdsGr})
                 };
-                return fetch(`${config.apiUrl}/transaction/goodsReceiptPo?projectId=${projectId}`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    }
-                    this.setState({
-                        receiving: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshTransactions);
-                }));
-            });
-        }
-    }
-
-    handleGoodsReciptPl(event) {
-        event.preventDefault;
-        const { selectedIdsGr, projectId } = this.state;
-        if (_.isEmpty(selectedIdsGr)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select line(s) to be imported.'
-                }
-            });
-        } else {
-            this.setState({
-                receiving: true
-            }, () => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIdsGr: selectedIdsGr})
-                };
-                return fetch(`${config.apiUrl}/transaction/goodsReceiptPl?projectId=${projectId}`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    }
-                    this.setState({
-                        receiving: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshTransactions);
-                }));
-            });
-        }
-    }
-
-    handleGoodsReciptNfi(event) {
-        event.preventDefault;
-        const { selectedIdsGr, projectId } = this.state;
-        if (_.isEmpty(selectedIdsGr)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select line(s) to be imported.'
-                }
-            });
-        } else {
-            this.setState({
-                receiving: true
-            }, () => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIdsGr: selectedIdsGr})
-                };
-                return fetch(`${config.apiUrl}/transaction/goodsReceiptNfi?projectId=${projectId}`, requestOptions)
+                return fetch(`${config.apiUrl}/transaction/${route}?projectId=${projectId}`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
                     if (responce.status === 401) {
@@ -1716,14 +1639,14 @@ class StockManagement extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         class goodsReceiptObject {
-            constructor(handleGoodsReciptPo, handleGoodsReciptNfi, handleGoodsReciptPl) {
+            constructor() {
                 if (!!selection.project && !!selection.project.enableShipping) {
                     this.title = "Goods Receipt with PL";
                     this.qtyPlaceHolder = "Leave empty to receive balance Qty (packed - already in stock)...";
                     this.screenHeaders = headersPl;
                     this.screenBodys = bodysPl;
                     this.screenId = plScreenId;
-                    this.handleGoodsRecipt = handleGoodsReciptPl;
+                    this.route = "goodsReceiptPl";
                 }
                 else if (!!selection.project && !!selection.project.enableInspection) {
                     this.title = "Goods Receipt with NFI";
@@ -1731,7 +1654,7 @@ class StockManagement extends React.Component {
                     this.screenHeaders = headersNfi;
                     this.screenBodys = bodysNfi;
                     this.screenId = nfiScreenId;
-                    this.handleGoodsRecipt = handleGoodsReciptNfi;
+                    this.route = "goodsReceiptNfi";
                 }
                 else {
                     this.title = "Goods Receipt with PO";
@@ -1739,12 +1662,12 @@ class StockManagement extends React.Component {
                     this.screenHeaders =headersPo;
                     this.screenBodys = bodysPo;
                     this.screenId = poScreenId;
-                    this.handleGoodsRecipt = handleGoodsReciptPo;
+                    this.route = "goodsReceiptPo";
                 }
             }
         }
         
-        var myGoodsReceipt = new goodsReceiptObject(this.handleGoodsReciptPo, this.handleGoodsReciptNfi, this.handleGoodsReciptPl);
+        var myGoodsReceipt = new goodsReceiptObject();
         
         return (
             <Layout alert={alert} accesses={accesses} selection={selection}>
@@ -1827,7 +1750,8 @@ class StockManagement extends React.Component {
                         handleClearAlert={this.handleClearAlert}
                         refreshStore={this.refreshStore}
                         settingsFilter={[]}
-                        handleGoodsRecipt={myGoodsReceipt.handleGoodsRecipt}
+                        handleGoodsRecipt={this.handleGoodsRecipt}
+                        route={myGoodsReceipt.route}
                         handleChange={this.handleChange}
                         transQty={transQty}
                         qtyPlaceHolder={myGoodsReceipt.qtyPlaceHolder}
