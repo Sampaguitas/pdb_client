@@ -45,7 +45,6 @@ function menuList(menu, accesses, selection){
         
         menu.forEach(function (item) {
             switch(item.title) {
-                case 'Data Upload File (DUF)':
                 case 'Expediting':
                     if (!!selection.project.enableInspection || !!selection.project.enableShipping) {
                         enabledMenus.push(item);
@@ -94,11 +93,11 @@ function menuList(menu, accesses, selection){
     return listMenu;
 }
 
-function generateMenu(menuList, projectId, accesses) {
-    if (_.isEmpty(menuList) && accesses.items) {
+function generateMenu(menuList, projectId, accesses, selection) {
+    if (_.isEmpty(menuList) && accesses.items && selection.project) {
         return (
             <div>
-                <h3 className="mt-3">You currently don't have access to any of the project modules.</h3>
+                <h3 className="mt-3">You currently don't have access to any of the enabled project modules.</h3>
                 <p>Contact one of your administrators to be granted access...</p>
             </div>
         )
@@ -251,7 +250,7 @@ class Dashboard extends React.Component {
                 <hr />
                 <div id="dashboard">
                     <div className="row justify-content-center">
-                        {generateMenu(menuList(menu, accesses, selection), projectId, accesses)}
+                        {generateMenu(menuList(menu, accesses, selection), projectId, accesses, selection)}
                     </div>
                 </div>
             </Layout>

@@ -155,11 +155,19 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     
     let tempArray = [];
     let screens = [
-        '5cd2b642fd333616dc360b63', //overview
-        '5cd2b642fd333616dc360b64', //releasedata
-        '5cd2b642fd333616dc360b65', //certificates
-        '5cd2b643fd333616dc360b67', //packing details
-        '5cd2b643fd333616dc360b66' //transportdocs
+        '5cd2b642fd333616dc360b63', //Expediting
+        '5cd2b646fd333616dc360b70', //Expediting Splitwindow
+        '5cd2b642fd333616dc360b64', //Inspection
+        '5cd2b647fd333616dc360b71', //Inspection Splitwindow
+        '5cd2b643fd333616dc360b66', //Assign Transport
+        '5cd2b647fd333616dc360b72', //Assign Transport SplitWindow
+        '5cd2b643fd333616dc360b67', //Print Transportdocuments
+        '5cd2b642fd333616dc360b65', //Certificates
+        '5cd2b644fd333616dc360b69', //Suppliers
+        '5ea8eefb7c213e2096462a2c', //Stock Management
+        '5eb0f60ce7179a42f173de47', //Goods Receipt with PO
+        '5ea911747c213e2096462d79', //Goods Receipt with NFI
+        '5ea919727c213e2096462e3f', //Goods Receipt with PL
     ];
 
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        

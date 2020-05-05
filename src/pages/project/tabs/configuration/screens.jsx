@@ -654,14 +654,15 @@ class Screens extends React.Component {
             {_id: '5cd2b642fd333616dc360b64', name: 'Inspection', fromTbls: ['po', 'sub', 'certificate']},
             {_id: '5cd2b647fd333616dc360b71', name: 'Inspection Splitwindow', fromTbls: ['po', 'sub', 'certificate']},
             {_id: '5cd2b643fd333616dc360b66', name: 'Assign Transport', fromTbls: ['po', 'sub', 'article', 'packitem']},
-            {_id: '5cd2b647fd333616dc360b72', name: 'Assign Transport SplitWindow', fromTbls: ['po', 'sub', 'article', 'packitem']}, // weight from table 'article' what if we dont have itemcode?
+            {_id: '5cd2b647fd333616dc360b72', name: 'Assign Transport SplitWindow', fromTbls: ['po', 'sub', 'article', 'packitem']},
             {_id: '5cd2b643fd333616dc360b67', name: 'Print Transportdocuments', fromTbls: ['collipack']},
             {_id: '5cd2b642fd333616dc360b65', name: 'Certificates', fromTbls: ['po', 'sub', 'certificate']},
-            {_id: '5cd2b643fd333616dc360b68', name: 'Data Upload File', fromTbls: ['packitem', 'collipack']}, //what is this screen Dave?
-            {_id: '5cd2b644fd333616dc360b69', name: 'Suppliers', fromTbls: ['supplier']}, //do we need to edit?
+            {_id: '5cd2b644fd333616dc360b69', name: 'Suppliers', fromTbls: ['supplier']},
             {_id: '5ea8eefb7c213e2096462a2c', name: 'Stock Management', fromTbls: ['po', 'location']},
+            {_id: '5eb0f60ce7179a42f173de47', name: 'Goods Receipt with PO', fromTbls: ['po', 'location']},
             {_id: '5ea911747c213e2096462d79', name: 'Goods Receipt with NFI', fromTbls: ['po', 'sub', 'location']},
             {_id: '5ea919727c213e2096462e3f', name: 'Goods Receipt with PL', fromTbls: ['po', 'sub', 'packitem', 'location']},
+            // {_id: '5cd2b643fd333616dc360b68', name: 'Data Upload File', fromTbls: ['packitem', 'collipack']}, //what is this screen Dave?
             // {_id: '5cd2b644fd333616dc360b6a', name: 'Delete Items', fromTbls: []}, //what is this screen Dave?
             // {_id: '5cd2b644fd333616dc360b6b', name: 'Projects', fromTbls: []}, //main screen no need to customise
             // {_id: '5cd2b645fd333616dc360b6c', name: 'Screens', fromTbls: []}, //screen from config no need to customise

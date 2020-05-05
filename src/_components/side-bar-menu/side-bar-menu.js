@@ -166,7 +166,6 @@ class SideBarMenu extends Component {
 
             menu.forEach(function (item) {
                 switch(item.title) {
-                    case 'Data Upload File (DUF)':
                     case 'Expediting':
                         if (!!selection.project.enableInspection || !!selection.project.enableShipping) {
                             enabledMenus.push(item);

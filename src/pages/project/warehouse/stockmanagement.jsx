@@ -234,12 +234,19 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     
     let tempArray = [];
     let screens = [
-        '5cd2b642fd333616dc360b63', //overview
-        '5cd2b642fd333616dc360b64', //releasedata
-        '5cd2b642fd333616dc360b65', //certificates
-        '5cd2b643fd333616dc360b67', //packing details
-        '5cd2b643fd333616dc360b66', //transportdocs
+        '5cd2b642fd333616dc360b63', //Expediting
+        '5cd2b646fd333616dc360b70', //Expediting Splitwindow
+        '5cd2b642fd333616dc360b64', //Inspection
+        '5cd2b647fd333616dc360b71', //Inspection Splitwindow
+        '5cd2b643fd333616dc360b66', //Assign Transport
+        '5cd2b647fd333616dc360b72', //Assign Transport SplitWindow
+        '5cd2b643fd333616dc360b67', //Print Transportdocuments
+        '5cd2b642fd333616dc360b65', //Certificates
+        '5cd2b644fd333616dc360b69', //Suppliers
         '5ea8eefb7c213e2096462a2c', //Stock Management
+        '5eb0f60ce7179a42f173de47', //Goods Receipt with PO
+        '5ea911747c213e2096462d79', //Goods Receipt with NFI
+        '5ea919727c213e2096462e3f', //Goods Receipt with PL
     ];
 
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        
@@ -563,6 +570,92 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
     }
 }
 
+function getPoBodys (selection, pos, transactions, headersForShow) {
+    let arrayBody = [];
+    let arrayRow = [];
+    let objectRow = {};
+    let screenHeaders = headersForShow;
+    let project = selection.project || { _id: '0', name: '', number: '' };
+    let hasLocation = hasFieldName(getTblFields (screenHeaders, 'location'), 'location');
+    let hasArea = hasFieldName(getTblFields (screenHeaders, 'location'), 'area');
+    let hasWarehouse = hasFieldName(getTblFields (screenHeaders, 'location'), 'warehouse');
+
+    let i = 1;
+    if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
+        pos.items.map(po => {
+            virtuals(transactions, po._id, 'poId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
+                    arrayRow = [];
+                    screenHeaders.map(screenHeader => {
+                        switch(screenHeader.fields.fromTbl) {
+                            case 'po':
+                                if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: project._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else {
+                                    arrayRow.push({
+                                        collection: 'po',
+                                        objectId: po._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: po[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                }
+                                break;
+                            case 'location':
+                                arrayRow.push({
+                                    collection: 'virtual',
+                                    objectId: virtual._id,
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: virtual[screenHeader.fields.name],
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                                break;
+                            default: arrayRow.push({
+                                collection: 'virtual',
+                                objectId: '0',
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: '',
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            });
+                        }
+                    });
+                    
+                    objectRow  = {
+                        _id: i, 
+                        tablesId: { 
+                            poId: po._id,
+                            subId: '',
+                            certificateId: '',
+                            packitemId: '',
+                            collipackId: '',
+                            locationId: virtual.locationId,
+                        },
+                        fields: arrayRow
+                    };
+                    arrayBody.push(objectRow);
+                    i++;
+                // }
+            });
+        });
+        return arrayBody;
+    } else {
+        return [];
+    }
+}
+
 function getBodysForShow (selection, pos, transactions, headersForShow) {
     let arrayBody = [];
     let arrayRow = [];
@@ -576,7 +669,7 @@ function getBodysForShow (selection, pos, transactions, headersForShow) {
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
-            virtuals(transactions, po._id, 'subId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
+            virtuals(transactions, po._id, 'poId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
                 // if (!!virtual._id) {
                     arrayRow = [];
                     screenHeaders.map(screenHeader => {
@@ -793,12 +886,17 @@ class StockManagement extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            //headers
             headersForShow: [],
-            bodysForShow: [],
-            headersPl: [],
-            bodysPl: [],
+            headersPo: [],
             headersNfi: [],
+            headersPl: [],
+            //bodys
+            bodysForShow: [],
+            bodysPo: [],
             bodysNfi: [],
+            bodysPl: [],
+            //settings
             settingsFilter: [],
             settingsDisplay: [],
             tabs: [
@@ -821,6 +919,7 @@ class StockManagement extends React.Component {
             ],
             projectId:'',
             screenId: '5ea8eefb7c213e2096462a2c', //Stock Management
+            poScreenId: '5eb0f60ce7179a42f173de47', //Goods Receipt with PO
             nfiScreenId: '5ea911747c213e2096462d79', //Goods Receipt with NFI
             plScreenId: '5ea919727c213e2096462e3f', //Goods Receipt with PL
             unlocked: false,
@@ -843,7 +942,7 @@ class StockManagement extends React.Component {
             },
             showGrNfi: false,
             showGrPl: false,
-            showGrDuf: false,
+            showGrPo: false,
             showEditValues: false,
             showSettings: false,
         };
@@ -865,7 +964,7 @@ class StockManagement extends React.Component {
         //Toggle Modals
         this.toggleGrNfi = this.toggleGrNfi.bind(this);
         this.toggleGrPl = this.toggleGrPl.bind(this);
-        this.toggleGrDuf = this.toggleGrDuf.bind(this);
+        this.toggleGrPo = this.toggleGrPo.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         
@@ -904,9 +1003,11 @@ class StockManagement extends React.Component {
 
         const { 
             screenId, 
+            poScreenId,
             nfiScreenId, 
             plScreenId, 
-            headersForShow, 
+            headersForShow,
+            headersPo, 
             headersNfi, 
             headersPl, 
             settingsDisplay 
@@ -952,9 +1053,11 @@ class StockManagement extends React.Component {
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+            headersPo: getHeaders([], fieldnames, poScreenId, 'forShow'),
             headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
             headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
             bodysForShow: getBodysForShow (selection, pos, transactions, headersForShow),
+            bodysPo: getPoBodys(selection, pos, transactions, headersPo),
             bodysNfi: getNfiBodys(selection, pos, transactions, headersNfi),
             bodysPl: getPlBodys(selection, pos, transactions, headersPl),
             docList: arraySorted(docConf(docdefs.items), "name"),
@@ -978,9 +1081,11 @@ class StockManagement extends React.Component {
 
         const {
             headersForShow,
+            headersPo,
             headersNfi,
             headersPl,
             screenId,
+            poScreenId,
             nfiScreenId,
             plScreenId,
             selectedField,
@@ -1007,6 +1112,7 @@ class StockManagement extends React.Component {
         if (fieldnames != prevProps.fieldnames){
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+                headersPo: getHeaders([], fieldnames, poScreenId, 'forShow'),
                 headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
                 headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
@@ -1014,21 +1120,27 @@ class StockManagement extends React.Component {
             }); 
         }
 
-        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersForShow != prevState.headersForShow) {
+        if (selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersForShow != prevState.headersForShow) {
             this.setState({
                 bodysForShow: getBodysForShow(selection, pos, transactions, headersForShow),
             });
         }
 
-        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersNfi != prevState.headersNfi) {
+        if (selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersNfi != prevState.headersNfi) {
             this.setState({
                 bodysNfi: getNfiBodys(selection, pos, transactions, headersNfi),
             });
         }
 
-        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersPl != prevState.headersPl) {
+        if (selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersPl != prevState.headersPl) {
             this.setState({
                 bodysPl: getPlBodys(selection, pos, transactions, headersPl),
+            });
+        }
+
+        if (selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersPo != prevState.headersPo) {
+            this.setState({
+                bodysPo: getPoBodys(selection, pos, transactions, headersPo),
             });
         }
 
@@ -1285,6 +1397,44 @@ class StockManagement extends React.Component {
         });
     }
 
+    handleGoodsReciptPo(event) {
+        event.preventDefault;
+        const { selectedIdsGoodsReceipt, projectId } = this.state;
+        if (_.isEmpty(selectedIdsGoodsReceipt)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be imported.'
+                }
+            });
+        } else {
+            this.setState({
+                receiving: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIdsGoodsReceipt: selectedIdsGoodsReceipt})
+                };
+                return fetch(`${config.apiUrl}/transaction/goodsReceiptPo?projectId=${projectId}`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        receiving: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshTransactions);
+                }));
+            });
+        }
+    }
+
     handleGoodsReciptPl(event) {
         event.preventDefault;
         const { selectedIdsGoodsReceipt, projectId } = this.state;
@@ -1496,11 +1646,11 @@ class StockManagement extends React.Component {
         });
     }
 
-    toggleGrDuf(event) {
+    toggleGrPo(event) {
         event.preventDefault();
-        const { showGrDuf, whList } = this.state;
+        const { showGrPo, whList } = this.state;
         this.setState({
-            showGrDuf: !showGrDuf,
+            showGrPo: !showGrPo,
             // isSameQty: true,
             transQty: '',
             toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
@@ -1567,7 +1717,7 @@ class StockManagement extends React.Component {
             );
         } else {
             goodsRecipt.push(
-                <button key="0" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Goods Receipt with DUF" onClick={this.toggleGrDuf}>
+                <button key="0" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Goods Receipt with PO" onClick={this.toggleGrPo}>
                     <span><FontAwesomeIcon icon="cubes" className="fa-lg mr-2"/>Goods Receipt</span>
                 </button>
             );
@@ -1596,6 +1746,7 @@ class StockManagement extends React.Component {
             projectId, 
             screen, 
             screenId,
+            poScreenId,
             nfiScreenId,
             plScreenId,
             selectedIds,
@@ -1605,18 +1756,18 @@ class StockManagement extends React.Component {
             //show modals
             showGrPl,
             showGrNfi,
-            showGrDuf,
+            showGrPo,
             showGenerate,
             showSettings,
             //--------
             headersForShow,
             bodysForShow,
-            headersPl,
-            bodysPl,
+            headersPo,
             headersNfi,
+            headersPl,
+            bodysPo,
             bodysNfi,
-            // splitHeadersForShow,
-            // splitHeadersForSelect,
+            bodysPl,
             //'-------------------'
             tabs,
             settingsFilter,
@@ -1682,6 +1833,37 @@ class StockManagement extends React.Component {
                         }
                     </div>
                 </div>
+                <Modal
+                    show={showGrPo}
+                    hideModal={this.toggleGrPo}
+                    title="Goods Receipt with PO"
+                    size="modal-xl"
+                >
+                    <GoodsReceipt
+                        alert={alert}
+                        screenHeaders={headersPo}
+                        screenBodys={bodysPo}
+                        projectId={projectId}
+                        screenId={poScreenId}
+                        selectedIds={selectedIdsGoodsReceipt}
+                        updateSelectedIds={this.updateSelectedIdsGoodsReceipt}
+                        unlocked={false}
+                        handleClearAlert={this.handleClearAlert}
+                        refreshStore={this.refreshStore}
+                        settingsFilter={[]}
+                        handleGoodsRecipt={this.handleGoodsReciptPo}
+                        handleChange={this.handleChange}
+                        transQty={transQty}
+                        qtyPlaceHolder="Leave empty to receive balance Qty (purchased - already in stock)..."
+                        toWarehouse={toWarehouse}
+                        toArea={toArea}
+                        toLocation={toLocation}
+                        transDate={transDate}
+                        whOptions={generateOptions(whList)}
+                        areaOptions={generateOptions(areaList)}
+                        locOptions={generateOptions(locList)}
+                    />
+                </Modal>
                 <Modal
                     show={showGrNfi}
                     hideModal={this.toggleGrNfi}
