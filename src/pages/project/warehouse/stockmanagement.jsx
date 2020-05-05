@@ -26,6 +26,7 @@ import Modal from '../../../_components/modal';
 import GoodsReceipt from '../../../_components/split-line/goods-receipt';
 import moment from 'moment';
 import _ from 'lodash';
+import { th } from 'date-fns/locale';
 
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
@@ -670,7 +671,7 @@ function getBodysForShow (selection, pos, transactions, headersForShow) {
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
             virtuals(transactions, po._id, 'poId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
-                // if (!!virtual._id) {
+                if (!!virtual._id) {
                     arrayRow = [];
                     screenHeaders.map(screenHeader => {
                         switch(screenHeader.fields.fromTbl) {
@@ -734,7 +735,7 @@ function getBodysForShow (selection, pos, transactions, headersForShow) {
                     };
                     arrayBody.push(objectRow);
                     i++;
-                // }
+                }
             });
         });
         return arrayBody;
@@ -925,7 +926,7 @@ class StockManagement extends React.Component {
             unlocked: false,
             screen: 'Stock Management',
             selectedIds: [],
-            selectedIdsGoodsReceipt: [],
+            selectedIdsGr: [],
             selectedTemplate: '',
             docList: [],
             transQty: '',
@@ -940,9 +941,7 @@ class StockManagement extends React.Component {
                 type:'',
                 message:''
             },
-            showGrNfi: false,
-            showGrPl: false,
-            showGrPo: false,
+            showGoodsReceipt: false,
             showEditValues: false,
             showSettings: false,
         };
@@ -957,14 +956,12 @@ class StockManagement extends React.Component {
         this.refreshStore = this.refreshStore.bind(this);
         this.refreshTransactions = this.refreshTransactions.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
-        this.updateSelectedIdsGoodsReceipt = this.updateSelectedIdsGoodsReceipt.bind(this);
+        this.updateSelectedIdsGr = this.updateSelectedIdsGr.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
 
         //Toggle Modals
-        this.toggleGrNfi = this.toggleGrNfi.bind(this);
-        this.toggleGrPl = this.toggleGrPl.bind(this);
-        this.toggleGrPo = this.toggleGrPo.bind(this);
+        this.toggleGoodsReceipt = this.toggleGoodsReceipt.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         
@@ -1399,8 +1396,8 @@ class StockManagement extends React.Component {
 
     handleGoodsReciptPo(event) {
         event.preventDefault;
-        const { selectedIdsGoodsReceipt, projectId } = this.state;
-        if (_.isEmpty(selectedIdsGoodsReceipt)) {
+        const { selectedIdsGr, projectId } = this.state;
+        if (_.isEmpty(selectedIdsGr)) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
@@ -1414,7 +1411,7 @@ class StockManagement extends React.Component {
                 const requestOptions = {
                     method: 'POST',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIdsGoodsReceipt: selectedIdsGoodsReceipt})
+                    body: JSON.stringify({selectedIdsGr: selectedIdsGr})
                 };
                 return fetch(`${config.apiUrl}/transaction/goodsReceiptPo?projectId=${projectId}`, requestOptions)
                 .then(responce => responce.text().then(text => {
@@ -1437,8 +1434,8 @@ class StockManagement extends React.Component {
 
     handleGoodsReciptPl(event) {
         event.preventDefault;
-        const { selectedIdsGoodsReceipt, projectId } = this.state;
-        if (_.isEmpty(selectedIdsGoodsReceipt)) {
+        const { selectedIdsGr, projectId } = this.state;
+        if (_.isEmpty(selectedIdsGr)) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
@@ -1452,7 +1449,7 @@ class StockManagement extends React.Component {
                 const requestOptions = {
                     method: 'POST',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIdsGoodsReceipt: selectedIdsGoodsReceipt})
+                    body: JSON.stringify({selectedIdsGr: selectedIdsGr})
                 };
                 return fetch(`${config.apiUrl}/transaction/goodsReceiptPl?projectId=${projectId}`, requestOptions)
                 .then(responce => responce.text().then(text => {
@@ -1475,8 +1472,8 @@ class StockManagement extends React.Component {
 
     handleGoodsReciptNfi(event) {
         event.preventDefault;
-        const { selectedIdsGoodsReceipt, projectId } = this.state;
-        if (_.isEmpty(selectedIdsGoodsReceipt)) {
+        const { selectedIdsGr, projectId } = this.state;
+        if (_.isEmpty(selectedIdsGr)) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
@@ -1490,7 +1487,7 @@ class StockManagement extends React.Component {
                 const requestOptions = {
                     method: 'POST',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIdsGoodsReceipt: selectedIdsGoodsReceipt})
+                    body: JSON.stringify({selectedIdsGr: selectedIdsGr})
                 };
                 return fetch(`${config.apiUrl}/transaction/goodsReceiptNfi?projectId=${projectId}`, requestOptions)
                 .then(responce => responce.text().then(text => {
@@ -1565,9 +1562,9 @@ class StockManagement extends React.Component {
         });
     }
 
-    updateSelectedIdsGoodsReceipt(selectedIds) {
+    updateSelectedIdsGr(selectedIds) {
         this.setState({
-            selectedIdsGoodsReceipt: selectedIds
+            selectedIdsGr: selectedIds
         });
     }
 
@@ -1622,36 +1619,11 @@ class StockManagement extends React.Component {
         }
     }
 
-    toggleGrNfi(event) {
+    toggleGoodsReceipt(event) {
         event.preventDefault();
-        const { showGrNfi, whList } = this.state;
+        const { showGoodsReceipt, whList } = this.state;
         this.setState({
-            showGrNfi: !showGrNfi,
-            // isSameQty: true,
-            transQty: '',
-            toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
-            transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
-        });
-    }
-
-    toggleGrPl(event) {
-        event.preventDefault();
-        const { showGrPl, whList } = this.state;
-        this.setState({
-            showGrPl: !showGrPl,
-            // isSameQty: true,
-            transQty: '',
-            toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
-            transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
-        });
-    }
-
-    toggleGrPo(event) {
-        event.preventDefault();
-        const { showGrPo, whList } = this.state;
-        this.setState({
-            showGrPo: !showGrPo,
-            // isSameQty: true,
+            showGoodsReceipt: !showGoodsReceipt,
             transQty: '',
             toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
             transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
@@ -1700,47 +1672,6 @@ class StockManagement extends React.Component {
         })
     }
 
-    generateActionRow() {
-        const { selection } = this.props;
-        let goodsRecipt = [];
-        if (!!selection.project && !!selection.project.enableShipping) {
-            goodsRecipt.push(
-                <button key="0" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Goods Receipt with PL" onClick={this.toggleGrPl}>
-                    <span><FontAwesomeIcon icon="cubes" className="fa-lg mr-2"/>Goods Receipt</span>
-                </button>
-            );
-        } else if (!!selection.project && !!selection.project.enableInspection) {
-            goodsRecipt.push(
-                <button key="0" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Goods Receipt with NFI" onClick={this.toggleGrNfi}>
-                    <span><FontAwesomeIcon icon="cubes" className="fa-lg mr-2"/>Goods Receipt</span>
-                </button>
-            );
-        } else {
-            goodsRecipt.push(
-                <button key="0" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Goods Receipt with PO" onClick={this.toggleGrPo}>
-                    <span><FontAwesomeIcon icon="cubes" className="fa-lg mr-2"/>Goods Receipt</span>
-                </button>
-            );
-        }
-        return (
-            <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                {goodsRecipt}
-                <button key="1" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Stock Transfer">
-                    <span><FontAwesomeIcon icon="exchange" className="fa-lg mr-2"/>Stock Transfer</span>
-                </button>
-                <button key="2"className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Stock Correction">
-                    <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Stock Correction</span>
-                </button>
-                <button key="3" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Change/Add Heat Numbers">
-                    <span><FontAwesomeIcon icon="file-certificate" className="fa-lg mr-2"/>Heat Numbers</span>
-                </button>
-                <button key="4" className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Stock History">
-                    <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Stock History</span>
-                </button>
-            </div>
-        );
-    }
-
     render() {
         const { 
             projectId, 
@@ -1750,13 +1681,11 @@ class StockManagement extends React.Component {
             nfiScreenId,
             plScreenId,
             selectedIds,
-            selectedIdsGoodsReceipt, 
+            selectedIdsGr, 
             unlocked, 
             docList,
             //show modals
-            showGrPl,
-            showGrNfi,
-            showGrPo,
+            showGoodsReceipt,
             showGenerate,
             showSettings,
             //--------
@@ -1785,6 +1714,37 @@ class StockManagement extends React.Component {
 
         const { accesses, fieldnames, fields, pos, selection, warehouses } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
+
+        class goodsReceiptObject {
+            constructor(handleGoodsReciptPo, handleGoodsReciptNfi, handleGoodsReciptPl) {
+                if (!!selection.project && !!selection.project.enableShipping) {
+                    this.title = "Goods Receipt with PL";
+                    this.qtyPlaceHolder = "Leave empty to receive balance Qty (packed - already in stock)...";
+                    this.screenHeaders = headersPl;
+                    this.screenBodys = bodysPl;
+                    this.screenId = plScreenId;
+                    this.handleGoodsRecipt = handleGoodsReciptPl;
+                }
+                else if (!!selection.project && !!selection.project.enableInspection) {
+                    this.title = "Goods Receipt with NFI";
+                    this.qtyPlaceHolder = "Leave empty to receive balance Qty (released - already in stock)...";
+                    this.screenHeaders = headersNfi;
+                    this.screenBodys = bodysNfi;
+                    this.screenId = nfiScreenId;
+                    this.handleGoodsRecipt = handleGoodsReciptNfi;
+                }
+                else {
+                    this.title = "Goods Receipt with PO";
+                    this.qtyPlaceHolder = "Leave empty to receive balance Qty (purchased - already in stock)...";
+                    this.screenHeaders =headersPo;
+                    this.screenBodys = bodysPo;
+                    this.screenId = poScreenId;
+                    this.handleGoodsRecipt = handleGoodsReciptPo;
+                }
+            }
+        }
+        
+        var myGoodsReceipt = new goodsReceiptObject(this.handleGoodsReciptPo, this.handleGoodsReciptNfi, this.handleGoodsReciptPl);
         
         return (
             <Layout alert={alert} accesses={accesses} selection={selection}>
@@ -1809,7 +1769,23 @@ class StockManagement extends React.Component {
                 </nav>
                 <hr />
                 <div id="stockManagement" className="full-height">
-                    {this.generateActionRow()}
+                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
+                        <button title={myGoodsReceipt.title} className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleGoodsReceipt}>
+                            <span><FontAwesomeIcon icon="cubes" className="fa-lg mr-2"/>Goods Receipt</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Stock Transfer">
+                            <span><FontAwesomeIcon icon="exchange" className="fa-lg mr-2"/>Stock Transfer</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Stock Correction">
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Stock Correction</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Change/Add Heat Numbers">
+                            <span><FontAwesomeIcon icon="file-certificate" className="fa-lg mr-2"/>Heat Numbers</span>
+                        </button>
+                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Stock History">
+                            <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Stock History</span>
+                        </button>
+                    </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {fieldnames.items &&
                             <ProjectTable
@@ -1834,89 +1810,27 @@ class StockManagement extends React.Component {
                     </div>
                 </div>
                 <Modal
-                    show={showGrPo}
-                    hideModal={this.toggleGrPo}
-                    title="Goods Receipt with PO"
+                    show={showGoodsReceipt}
+                    hideModal={this.toggleGoodsReceipt}
+                    title={myGoodsReceipt.title}
                     size="modal-xl"
                 >
                     <GoodsReceipt
                         alert={alert}
-                        screenHeaders={headersPo}
-                        screenBodys={bodysPo}
+                        screenHeaders={myGoodsReceipt.screenHeaders}
+                        screenBodys={myGoodsReceipt.screenBodys}
                         projectId={projectId}
-                        screenId={poScreenId}
-                        selectedIds={selectedIdsGoodsReceipt}
-                        updateSelectedIds={this.updateSelectedIdsGoodsReceipt}
+                        screenId={myGoodsReceipt.poScreenId}
+                        selectedIds={selectedIdsGr}
+                        updateSelectedIds={this.updateSelectedIdsGr}
                         unlocked={false}
                         handleClearAlert={this.handleClearAlert}
                         refreshStore={this.refreshStore}
                         settingsFilter={[]}
-                        handleGoodsRecipt={this.handleGoodsReciptPo}
+                        handleGoodsRecipt={myGoodsReceipt.handleGoodsRecipt}
                         handleChange={this.handleChange}
                         transQty={transQty}
-                        qtyPlaceHolder="Leave empty to receive balance Qty (purchased - already in stock)..."
-                        toWarehouse={toWarehouse}
-                        toArea={toArea}
-                        toLocation={toLocation}
-                        transDate={transDate}
-                        whOptions={generateOptions(whList)}
-                        areaOptions={generateOptions(areaList)}
-                        locOptions={generateOptions(locList)}
-                    />
-                </Modal>
-                <Modal
-                    show={showGrNfi}
-                    hideModal={this.toggleGrNfi}
-                    title="Goods Receipt with NFI"
-                    size="modal-xl"
-                >
-                    <GoodsReceipt
-                        alert={alert}
-                        screenHeaders={headersNfi}
-                        screenBodys={bodysNfi}
-                        projectId={projectId}
-                        screenId={nfiScreenId}
-                        selectedIds={selectedIdsGoodsReceipt}
-                        updateSelectedIds={this.updateSelectedIdsGoodsReceipt}
-                        unlocked={false}
-                        handleClearAlert={this.handleClearAlert}
-                        refreshStore={this.refreshStore}
-                        settingsFilter={[]}
-                        handleGoodsRecipt={this.handleGoodsReciptNfi}
-                        handleChange={this.handleChange}
-                        transQty={transQty}
-                        qtyPlaceHolder="Leave empty to receive balance Qty (released - already in stock)..."
-                        toWarehouse={toWarehouse}
-                        toArea={toArea}
-                        toLocation={toLocation}
-                        transDate={transDate}
-                        whOptions={generateOptions(whList)}
-                        areaOptions={generateOptions(areaList)}
-                        locOptions={generateOptions(locList)}
-                    />
-                </Modal>
-                <Modal
-                    show={showGrPl}
-                    hideModal={this.toggleGrPl}
-                    title="Goods Receipt with PL"
-                    size="modal-xl"
-                >
-                    <GoodsReceipt
-                        alert={alert}
-                        screenHeaders={headersPl}
-                        screenBodys={bodysPl}
-                        projectId={projectId}
-                        screenId={plScreenId}
-                        selectedIds={selectedIdsGoodsReceipt}
-                        updateSelectedIds={this.updateSelectedIdsGoodsReceipt}
-                        unlocked={false}
-                        handleClearAlert={this.handleClearAlert}
-                        refreshStore={this.refreshStore}
-                        settingsFilter={[]}
-                        handleGoodsRecipt={this.handleGoodsReciptPl}
-                        handleChange={this.handleChange}
-                        transQty={transQty}
-                        qtyPlaceHolder="Leave empty to receive balance Qty (packed - already in stock)..."
+                        qtyPlaceHolder={myGoodsReceipt.qtyPlaceHolder}
                         toWarehouse={toWarehouse}
                         toArea={toArea}
                         toLocation={toLocation}
