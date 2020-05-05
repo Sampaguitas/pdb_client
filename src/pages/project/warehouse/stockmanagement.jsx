@@ -952,7 +952,7 @@ class StockManagement extends React.Component {
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleGoodsRecipt = this.handleGoodsRecipt.bind(this);
+        this.handleGoodsReceipt = this.handleGoodsReceipt.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
 
         this.refreshStore = this.refreshStore.bind(this);
@@ -1399,8 +1399,9 @@ class StockManagement extends React.Component {
         });
     }
 
-    handleGoodsRecipt(event, route) {
-        event.preventDefault;
+    handleGoodsReceipt(event, route) {
+        event.preventDefault();
+        console.log('route:', route);
         // const { selectedIdsGr, projectId, toLocation, transQty,  transDate } = this.state;
         // if (_.isEmpty(selectedIdsGr)) {
         //     this.setState({
@@ -1832,7 +1833,7 @@ class StockManagement extends React.Component {
                         handleClearAlert={this.handleClearAlert}
                         refreshStore={this.refreshStore}
                         settingsFilter={[]}
-                        handleGoodsRecipt={this.handleGoodsRecipt}
+                        handleGoodsReceipt={this.handleGoodsReceipt}
                         myRoute={myGoodsReceipt.myRoute}
                         handleChange={this.handleChange}
                         transQty={transQty}
