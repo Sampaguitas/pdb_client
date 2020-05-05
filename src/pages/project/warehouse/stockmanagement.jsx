@@ -942,7 +942,10 @@ class StockManagement extends React.Component {
                 message:''
             },
             showGoodsReceipt: false,
-            showEditValues: false,
+            showTransfer: false,
+            showCorrection: false,
+            showHeat: false,
+            showGenerate: false,
             showSettings: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -961,6 +964,9 @@ class StockManagement extends React.Component {
 
         //Toggle Modals
         this.toggleGoodsReceipt = this.toggleGoodsReceipt.bind(this);
+        this.toggleTransfer = this.toggleTransfer.bind(this);
+        this.toggleCorrection = this.toggleCorrection.bind(this);
+        this.toggleHeat = this.toggleHeat.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         
@@ -1395,40 +1401,49 @@ class StockManagement extends React.Component {
 
     handleGoodsRecipt(event, route) {
         event.preventDefault;
-        const { selectedIdsGr, projectId } = this.state;
-        if (_.isEmpty(selectedIdsGr)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select line(s) to be imported.'
-                }
-            });
-        } else {
-            this.setState({
-                receiving: true
-            }, () => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIdsGr: selectedIdsGr})
-                };
-                return fetch(`${config.apiUrl}/transaction/${route}?projectId=${projectId}`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    }
-                    this.setState({
-                        receiving: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshTransactions);
-                }));
-            });
-        }
+        // const { selectedIdsGr, projectId, toLocation, transQty,  transDate } = this.state;
+        // if (_.isEmpty(selectedIdsGr)) {
+        //     this.setState({
+        //         alert: {
+        //             type: 'alert-danger',
+        //             message: 'Select line(s) to be received.'
+        //         }
+        //     });
+        // } else if (!!transQty && selectedIdsGr.length > 1){
+        //     this.setState({
+        //         alert: {
+        //             type: 'alert-danger',
+        //             message: 'Select one line or leave the quantity to be received empty.'
+        //         }
+        //     });
+        // } else {
+        //     this.setState({ receiving: true});
+        //     const requestOptions = {
+        //         method: 'POST',
+        //         headers: { ...authHeader(), 'Content-Type': 'application/json'},
+        //         body: JSON.stringify({
+        //             selectedIdsGr: selectedIdsGr,
+        //             toLocation: toLocation,
+        //             transQty: transQty,
+        //             transDate: transDate
+        //         })
+        //     };
+        //     return fetch(`${config.apiUrl}/transaction/${route}?projectId=${projectId}`, requestOptions)
+        //     .then(responce => responce.text().then(text => {
+        //         const data = text && JSON.parse(text);
+        //         if (responce.status === 401) {
+        //             localStorage.removeItem('user');
+        //             location.reload(true);
+        //         }
+        //         this.setState({
+        //             receiving: false,
+        //             alert: {
+        //                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+        //                 message: data.message
+        //             }
+        //         }, this.refreshTransactions);
+        //     }));
+        // }
     }
 
     handleGenerateFile(event) {
@@ -1493,13 +1508,12 @@ class StockManagement extends React.Component {
 
     handleDeleteRows(event) {
         event.preventDefault();
-        // const { dispatch } = this.props;
         const { selectedIds } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
                 alert: {
                     type:'alert-danger',
-                    message:'Select line(s) to be deleted.'
+                    message:'Select line(s) to delete stock movements.'
                 }
             });
         } else if (confirm('For the Selected line(s) all stock movements shall be deleted. Are you sure you want to proceed?')){
@@ -1553,14 +1567,78 @@ class StockManagement extends React.Component {
         });
     }
 
-    toggleGenerate(event) {
+    toggleTransfer(event) {
         event.preventDefault();
-        const { showGenerate, docList, selectedIds } = this.state;
-        if (!showGenerate && _.isEmpty(selectedIds)) {
+        const { showTransfer, selectedIds, whList } = this.state;
+        if (!showTransfer && selectedIds.length != 1) {
             this.setState({
                 alert: {
                     type:'alert-danger',
-                    message:'Select line(s) to be displayed in the ESR.'
+                    message:'Select one line to transfer units another location.'
+                }
+            });
+        } else {
+            this.setState({
+                showTransfer: !showTransfer,
+                transQty: '',
+                toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
+                transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
+            });
+        }
+    }
+
+    toggleCorrection(event) {
+        event.preventDefault();
+        const { showCorrection, selectedIds } = this.state;
+        if (!showCorrection && selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type:'alert-danger',
+                    message:'Select one line for stock correction.'
+                }
+            });
+        } else {
+            this.setState({
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showCorrection: !showCorrection,
+                transQty: '',
+                transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
+            });
+        }
+    }
+
+    toggleHeat(event) {
+        event.preventDefault();
+        const { showHeat, selectedIds } = this.state;
+        if (!showHeat && selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type:'alert-danger',
+                    message:'Select one line to change/add heat numbers.'
+                }
+            });
+        } else {
+            this.setState({
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showHeat: !showHeat
+            });
+        }
+    }
+
+    toggleGenerate(event) {
+        event.preventDefault();
+        const { showGenerate, docList, selectedIds } = this.state;
+        if (!showGenerate && selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type:'alert-danger',
+                    message:'Select one line to display the stock history.'
                 }
             });
         } else {
@@ -1605,10 +1683,14 @@ class StockManagement extends React.Component {
             plScreenId,
             selectedIds,
             selectedIdsGr, 
-            unlocked, 
+            unlocked,
+            selectedTemplate,
             docList,
             //show modals
             showGoodsReceipt,
+            showTransfer,
+            showCorrection,
+            showHeat,
             showGenerate,
             showSettings,
             //--------
@@ -1646,7 +1728,7 @@ class StockManagement extends React.Component {
                     this.screenHeaders = headersPl;
                     this.screenBodys = bodysPl;
                     this.screenId = plScreenId;
-                    this.route = "goodsReceiptPl";
+                    this.myRoute = "goodsReceiptPl";
                 }
                 else if (!!selection.project && !!selection.project.enableInspection) {
                     this.title = "Goods Receipt with NFI";
@@ -1654,7 +1736,7 @@ class StockManagement extends React.Component {
                     this.screenHeaders = headersNfi;
                     this.screenBodys = bodysNfi;
                     this.screenId = nfiScreenId;
-                    this.route = "goodsReceiptNfi";
+                    this.myRoute = "goodsReceiptNfi";
                 }
                 else {
                     this.title = "Goods Receipt with PO";
@@ -1662,7 +1744,7 @@ class StockManagement extends React.Component {
                     this.screenHeaders =headersPo;
                     this.screenBodys = bodysPo;
                     this.screenId = poScreenId;
-                    this.route = "goodsReceiptPo";
+                    this.myRoute = "goodsReceiptPo";
                 }
             }
         }
@@ -1670,8 +1752,8 @@ class StockManagement extends React.Component {
         var myGoodsReceipt = new goodsReceiptObject();
         
         return (
-            <Layout alert={alert} accesses={accesses} selection={selection}>
-                {alert.message && 
+            <Layout alert={showGoodsReceipt ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+                {alert.message && !showGoodsReceipt &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1696,16 +1778,16 @@ class StockManagement extends React.Component {
                         <button title={myGoodsReceipt.title} className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleGoodsReceipt}>
                             <span><FontAwesomeIcon icon="cubes" className="fa-lg mr-2"/>Goods Receipt</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Stock Transfer">
+                        <button title="Stock Transfer" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleTransfer}>
                             <span><FontAwesomeIcon icon="exchange" className="fa-lg mr-2"/>Stock Transfer</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Stock Correction">
+                        <button title="Stock Correction" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleCorrection}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Stock Correction</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Change/Add Heat Numbers">
+                        <button title="Change/Add Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleHeat}>
                             <span><FontAwesomeIcon icon="file-certificate" className="fa-lg mr-2"/>Heat Numbers</span>
                         </button>
-                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Stock History">
+                        <button title="Stock History" className="btn btn-success btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleGenerate}>
                             <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Stock History</span>
                         </button>
                     </div>
@@ -1751,7 +1833,7 @@ class StockManagement extends React.Component {
                         refreshStore={this.refreshStore}
                         settingsFilter={[]}
                         handleGoodsRecipt={this.handleGoodsRecipt}
-                        route={myGoodsReceipt.route}
+                        myRoute={myGoodsReceipt.myRoute}
                         handleChange={this.handleChange}
                         transQty={transQty}
                         qtyPlaceHolder={myGoodsReceipt.qtyPlaceHolder}
@@ -1763,6 +1845,59 @@ class StockManagement extends React.Component {
                         areaOptions={generateOptions(areaList)}
                         locOptions={generateOptions(locList)}
                     />
+                </Modal>
+                <Modal
+                    show={showTransfer}
+                    hideModal={this.toggleTransfer}
+                    title="Stock Transfer"
+                    size="modal-lg"
+                >
+                    
+                </Modal>
+                <Modal
+                    show={showCorrection}
+                    hideModal={this.toggleCorrection}
+                    title="Stock Correction"
+                    size="modal-lg"
+                >
+                    
+                </Modal>
+                <Modal
+                    show={showHeat}
+                    hideModal={this.toggleHeat}
+                    title="Change/Add Heat numbers"
+                    size="modal-lg"
+                >
+                    
+                </Modal>
+                <Modal
+                    show={showGenerate}
+                    hideModal={this.toggleGenerate}
+                    title="Generate Stock History"
+                >
+                    <div className="col-12">
+                        <form onSubmit={event => this.handleGenerateFile(event)}>
+                            <div className="form-group">
+                                <label htmlFor="selectedTemplate">Select Document</label>
+                                <select
+                                    className="form-control"
+                                    name="selectedTemplate"
+                                    value={selectedTemplate}
+                                    placeholder="Select document..."
+                                    onChange={this.handleChange}
+                                    required
+                                >
+                                    <option key="0" value="">Select document...</option>
+                                    {generateOptions(docList)}
+                                </select>
+                            </div>
+                            <div className="text-right">
+                                <button type="submit" className="btn btn-success btn-lg">
+                                    <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
+                                </button>
+                            </div>
+                        </form>                  
+                    </div>
                 </Modal>
                 <Modal
                     show={showSettings}
