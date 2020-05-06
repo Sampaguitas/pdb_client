@@ -294,7 +294,7 @@ function virtuals(transactions, id, whichId, hasLocation, hasArea, hasWarehouse)
                     } else if (hasWarehouse) {
                         return element._id === cur.location.area.warehouse._id;
                     } else {
-                        return element._id === '';
+                        return element._id === '0';
                     }
                 });
                 if (!_.isUndefined(found)) {
@@ -330,7 +330,7 @@ function virtuals(transactions, id, whichId, hasLocation, hasArea, hasWarehouse)
                     });
                 } else {
                     acc.push({
-                        _id: '',
+                        _id: '0',
                         stockQty: cur.transQty || 0,
                         locationId: '',
                     });
