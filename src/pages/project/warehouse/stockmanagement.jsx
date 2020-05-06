@@ -336,6 +336,7 @@ function virtuals(transactions, id, whichId, hasLocation, hasArea, hasWarehouse)
                     });
                 }
             }
+            return acc;
         }, []);
     }
 
@@ -372,6 +373,7 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                         sub.packitems.map(packitem => {
                             if (!!packitem.plNr && !!packitem.colliNr) {
                                 virtuals(transactions, packitem._id, 'packitemId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
+                                    console.log('virtual:',virtual);
                                     arrayRow = [];
                                     screenHeaders.map(screenHeader => {
                                         switch(screenHeader.fields.fromTbl) {
@@ -1416,6 +1418,13 @@ class StockManagement extends React.Component {
                     message: 'Select one line or leave the quantity to be received empty.'
                 }
             });
+        } else if (!isValidFormat(transDate, 'date', getDateFormat(myLocale))) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Please enter a valid date format.'
+                }
+            });
         } else {
             this.setState({ receiving: true});
             const requestOptions = {
@@ -1425,7 +1434,7 @@ class StockManagement extends React.Component {
                     selectedIdsGr: selectedIdsGr,
                     toLocation: toLocation,
                     transQty: transQty,
-                    transDate: transDate
+                    transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat(myLocale))),
                 })
             };
             return fetch(`${config.apiUrl}/transaction/${route}?projectId=${projectId}`, requestOptions)
