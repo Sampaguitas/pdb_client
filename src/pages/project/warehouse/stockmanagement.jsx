@@ -373,7 +373,6 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                         sub.packitems.map(packitem => {
                             if (!!packitem.plNr && !!packitem.colliNr) {
                                 virtuals(transactions, packitem._id, 'packitemId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
-                                    console.log('virtual:',virtual);
                                     arrayRow = [];
                                     screenHeaders.map(screenHeader => {
                                         switch(screenHeader.fields.fromTbl) {
@@ -673,7 +672,7 @@ function getBodysForShow (selection, pos, transactions, headersForShow) {
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
             virtuals(transactions, po._id, 'poId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
-                if (!!virtual._id) {
+                if (!!virtual._id && !!virtual.stockQty) {
                     arrayRow = [];
                     screenHeaders.map(screenHeader => {
                         switch(screenHeader.fields.fromTbl) {
@@ -955,6 +954,7 @@ class StockManagement extends React.Component {
         this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleGoodsReceipt = this.handleGoodsReceipt.bind(this);
+        this.handleStockTransfer = this.handleStockTransfer.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
 
         this.refreshStore = this.refreshStore.bind(this);
@@ -1411,13 +1411,6 @@ class StockManagement extends React.Component {
                     message: 'Select line(s) to be received.'
                 }
             });
-        } else if (!!transQty && selectedIdsGr.length > 1){
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select one line or leave the quantity to be received empty.'
-                }
-            });
         } else if (!isValidFormat(transDate, 'date', getDateFormat(myLocale))) {
             this.setState({
                 alert: {
@@ -1438,6 +1431,54 @@ class StockManagement extends React.Component {
                 })
             };
             return fetch(`${config.apiUrl}/transaction/${route}?projectId=${projectId}`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
+                }
+                this.setState({
+                    receiving: false,
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshTransactions);
+            }));
+        }
+    }
+
+    handleStockTransfer(event) {
+        event.preventDefault();
+        const { selectedIds, projectId, toLocation, transQty,  transDate } = this.state;
+        if (selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Please select one line only.'
+                }
+            });
+        } else if (!isValidFormat(transDate, 'date', getDateFormat(myLocale))) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Please enter a valid date format.'
+                }
+            });
+        } else {
+            this.setState({ transfering: true});
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    poId: selectedIds[0].poId,
+                    fromLocation: selectedIds[0].locationId,
+                    toLocation: toLocation,
+                    transQty: transQty,
+                    transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat(myLocale))),
+                })
+            };
+            return fetch(`${config.apiUrl}/transaction/transfer?projectId=${projectId}`, requestOptions)
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
                 if (responce.status === 401) {
@@ -1761,8 +1802,8 @@ class StockManagement extends React.Component {
         var myGoodsReceipt = new goodsReceiptObject();
         
         return (
-            <Layout alert={showGoodsReceipt ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
-                {alert.message && !showGoodsReceipt &&
+            <Layout alert={showGoodsReceipt || showTransfer ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+                {alert.message && !showGoodsReceipt && !showTransfer &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1861,6 +1902,109 @@ class StockManagement extends React.Component {
                     title="Stock Transfer"
                     size="modal-lg"
                 >
+                    <div className="ml-2 mt-2 mr-2">
+                        {alert.message &&
+                            <div className={`alert ${alert.type} mb-3`}>{alert.message}
+                                <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                    <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                                </button>
+                            </div>
+                        }
+                        <div>
+                            <form onSubmit={this.handleStockTransfer}>
+                                <div className="form-group">
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <label className="input-group-text" style={{width: '70px'}}>Quantity:</label>
+                                        </div>
+                                        <input
+                                            className="form-control"
+                                            type="number"
+                                            name="transQty"
+                                            value={transQty}
+                                            onChange={this.handleChange}
+                                            placeholder="Leave empty to transfer all the units from location..."
+                                        />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <label className="input-group-text" style={{width: '70px'}}>Warehouse:</label>
+                                        </div>
+                                        <select
+                                            className="form-control"
+                                            name="toWarehouse"
+                                            value={toWarehouse}
+                                            placeholder="Select Warehouse..."
+                                            onChange={this.handleChange}
+                                            required
+                                        >
+                                            <option key="0" value="">Select Warehouse...</option>
+                                            {generateOptions(whList)}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <label className="input-group-text" style={{width: '70px'}}>Area:</label>
+                                        </div>
+                                        <select
+                                            className="form-control"
+                                            name="toArea"
+                                            value={toArea}
+                                            placeholder="Select Area..."
+                                            onChange={this.handleChange}
+                                            required
+                                        >
+                                            <option key="0" value="">Select Area...</option>
+                                            {generateOptions(areaList)}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <label className="input-group-text" style={{width: '70px'}}>Location:</label>
+                                        </div>
+                                        <select
+                                            className="form-control"
+                                            name="toLocation"
+                                            value={toLocation}
+                                            placeholder="Select Warehouse..."
+                                            onChange={this.handleChange}
+                                            required
+                                        >
+                                            <option key="0" value="">Select Location...</option>
+                                            {generateOptions(locList)}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <label className="input-group-text" style={{width: '70px'}}>Date:</label>
+                                        </div>
+                                        <input
+                                            className="form-control"
+                                            type="text"
+                                            name="transDate"
+                                            value={transDate}
+                                            onChange={this.handleChange}
+                                            placeholder={getDateFormat(myLocale)}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="text-right mt-2">
+                                    <button type="submit" className="btn btn-leeuwen-blue btn-lg">
+                                        <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Transfer</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     
                 </Modal>
                 <Modal
