@@ -1526,7 +1526,7 @@ class StockManagement extends React.Component {
                     transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat(myLocale))),
                 })
             };
-            return fetch(`${config.apiUrl}/transaction/transfer?projectId=${projectId}`, requestOptions)
+            return fetch(`${config.apiUrl}/transaction/correction?projectId=${projectId}`, requestOptions)
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
                 if (responce.status === 401) {
@@ -1850,8 +1850,8 @@ class StockManagement extends React.Component {
         var myGoodsReceipt = new goodsReceiptObject();
         
         return (
-            <Layout alert={showGoodsReceipt || showTransfer ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
-                {alert.message && !showGoodsReceipt && !showTransfer &&
+            <Layout alert={showGoodsReceipt || showTransfer  || showCorrection ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+                {alert.message && !showGoodsReceipt && !showTransfer && !showCorrection &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
