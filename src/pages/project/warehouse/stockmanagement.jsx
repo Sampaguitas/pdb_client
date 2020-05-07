@@ -955,6 +955,7 @@ class StockManagement extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleGoodsReceipt = this.handleGoodsReceipt.bind(this);
         this.handleStockTransfer = this.handleStockTransfer.bind(this);
+        this.handleCorrection = this.handleCorrection.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
 
         this.refreshStore = this.refreshStore.bind(this);
@@ -1486,7 +1487,54 @@ class StockManagement extends React.Component {
                     location.reload(true);
                 }
                 this.setState({
-                    receiving: false,
+                    transfering: false,
+                    alert: {
+                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                        message: data.message
+                    }
+                }, this.refreshTransactions);
+            }));
+        }
+    }
+
+    handleCorrection(event) {
+        event.preventDefault();
+        const { selectedIds, projectId, transQty,  transDate } = this.state;
+        if (selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Please select one line only.'
+                }
+            });
+        } else if (!isValidFormat(transDate, 'date', getDateFormat(myLocale))) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Please enter a valid date format.'
+                }
+            });
+        } else {
+            this.setState({ correcting: true});
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    poId: selectedIds[0].poId,
+                    locationId: selectedIds[0].locationId,
+                    transQty: transQty,
+                    transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat(myLocale))),
+                })
+            };
+            return fetch(`${config.apiUrl}/transaction/transfer?projectId=${projectId}`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (responce.status === 401) {
+                    localStorage.removeItem('user');
+                    location.reload(true);
+                }
+                this.setState({
+                    correcting: false,
                     alert: {
                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                         message: data.message
@@ -2005,7 +2053,6 @@ class StockManagement extends React.Component {
                             </form>
                         </div>
                     </div>
-                    
                 </Modal>
                 <Modal
                     show={showCorrection}
@@ -2013,7 +2060,56 @@ class StockManagement extends React.Component {
                     title="Stock Correction"
                     size="modal-lg"
                 >
-                    
+                    <div className="ml-2 mt-2 mr-2">
+                        {alert.message &&
+                            <div className={`alert ${alert.type} mb-3`}>{alert.message}
+                                <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                    <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                                </button>
+                            </div>
+                        }
+                        <div>
+                            <form onSubmit={this.handleCorrection}>
+                                <div className="form-group">
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <label className="input-group-text" style={{width: '70px'}}>Quantity:</label>
+                                        </div>
+                                        <input
+                                            className="form-control"
+                                            type="number"
+                                            name="transQty"
+                                            value={transQty}
+                                            onChange={this.handleChange}
+                                            placeholder="Number of units to be added / removed"
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="form-group">
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <label className="input-group-text" style={{width: '70px'}}>Date:</label>
+                                        </div>
+                                        <input
+                                            className="form-control"
+                                            type="text"
+                                            name="transDate"
+                                            value={transDate}
+                                            onChange={this.handleChange}
+                                            placeholder={getDateFormat(myLocale)}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                                <div className="text-right mt-2">
+                                    <button type="submit" className="btn btn-leeuwen-blue btn-lg">
+                                        <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Reevaluate</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </Modal>
                 <Modal
                     show={showHeat}
