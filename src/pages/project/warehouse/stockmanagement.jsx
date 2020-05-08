@@ -24,6 +24,7 @@ import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
 import Modal from '../../../_components/modal';
 import GoodsReceipt from '../../../_components/split-line/goods-receipt';
+import HeatLocation from '../../../_components/split-line/heat-location';
 import moment from 'moment';
 import _ from 'lodash';
 import { th } from 'date-fns/locale';
@@ -2115,9 +2116,12 @@ class StockManagement extends React.Component {
                     show={showHeat}
                     hideModal={this.toggleHeat}
                     title="Change/Add Heat numbers"
-                    size="modal-lg"
+                    size="modal-xl"
                 >
-                    
+                    <HeatLocation
+                        alert={alert}
+                        handleClearAlert={this.handleClearAlert}
+                    />
                 </Modal>
                 <Modal
                     show={showGenerate}
