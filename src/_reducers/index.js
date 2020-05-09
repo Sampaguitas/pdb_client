@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 import { accesses } from './accesses.reducer';
 import { alert } from './alert.reducer';
 import { authentication } from './authentication.reducer';
+import { certificates } from './certificates.reducer';
 import { collitypes } from './collitypes.reducer';
 import { collipacks } from './collipacks.reducer';
 import { currencies } from './currencies.reducer';
@@ -32,6 +33,7 @@ const rootReducer = combineReducers({
   accesses,
   alert,
   authentication,
+  certificates,
   collitypes,
   collipacks,
   currencies,

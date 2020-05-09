@@ -1,4 +1,5 @@
 export * from './access.service';
+export * from './certificate.service';
 export * from './collitype.service';
 export * from './collipack.service';
 export * from './currency.service';

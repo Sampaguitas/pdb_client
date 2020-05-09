@@ -1,4 +1,5 @@
 export * from './alert.constants';
+export * from './certificate.constants';
 export * from './access.constants';
 export * from './collitype.constants';
 export * from './collipack.constants';

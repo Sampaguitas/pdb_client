@@ -7,6 +7,7 @@ import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
     alertActions,
+    certificateActions,
     fieldnameActions,
     fieldActions,
     poActions,
@@ -19,6 +20,7 @@ import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
 import Modal from '../../../_components/modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Certificate from '../../../_components/split-line/certificate';
 
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
@@ -199,166 +201,115 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     return [];
 }
 
+function virtuals(heats) {
+    let tempVirtuals = [];
+    
+    if (!_.isEmpty(heats)) {
+        tempVirtuals = heats.reduce(function(acc, cur) {
+            acc.push({
+                cif: cur.certificate.cif,
+                heatNr: cur.heatNr,
+                heatId: cur._id,
+                certificateId: cur.certificateId
+            });
+            return acc;
+        }, []);
+    }
+
+    if (!_.isEmpty(tempVirtuals)) {
+        return tempVirtuals;
+    } else {
+        return ([
+            {
+                cif: '',
+                heatNr: '',
+                heatId: '0',
+                certificateId: '0',
+            }
+        ]);
+    }
+}
+
 
 function getBodys(fieldnames, selection, pos, headersForShow){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
-    let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
     let screenHeaders = headersForShow;
     let project = selection.project || { _id: '0', name: '', number: '' };
     let i = 1;
 
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
-            if (po.subs) {
-                po.subs.map(sub => {
-                    if (!_.isEmpty(sub.certificates) && hasCertificates){
-                        sub.certificates.map(certificate => {
-                            arrayRow = [];
-                            screenHeaders.map(screenHeader => {
-                                switch(screenHeader.fields.fromTbl) {
-                                    case 'po':
-                                        if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
-                                            arrayRow.push({
-                                                collection: 'virtual',
-                                                objectId: project._id,
-                                                fieldName: screenHeader.fields.name,
-                                                fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
-                                                disabled: screenHeader.edit,
-                                                align: screenHeader.align,
-                                                fieldType: getInputType(screenHeader.fields.type),
-                                            });
-                                        } else {
-                                            arrayRow.push({
-                                                collection: 'po',
-                                                objectId: po._id,
-                                                fieldName: screenHeader.fields.name,
-                                                fieldValue: po[screenHeader.fields.name],
-                                                disabled: screenHeader.edit,
-                                                align: screenHeader.align,
-                                                fieldType: getInputType(screenHeader.fields.type),
-                                            });
-                                        }
-                                        break;
-                                    case 'sub':
-                                        arrayRow.push({
-                                            collection: 'sub',
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                        break;
-                                    case 'certificate':
-                                        arrayRow.push({
-                                            collection: 'certificate',
-                                            objectId: certificate._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: certificate[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                        break;
-                                    default: arrayRow.push({
-                                        collection: 'virtual',
-                                        objectId: '0',
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: '',
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
-                                }
-                            });
-                            objectRow  = {
-                                _id: i, 
-                                tablesId: { 
-                                    poId: po._id,
-                                    subId: sub._id,
-                                    certificateId: certificate._id,
-                                    packitemId: '',
-                                    collipackId: '' 
-                                },
-                                fields: arrayRow
-                            };
-                            arrayBody.push(objectRow);
-                            i++;
-                        });
-                    } else {
-                        arrayRow = [];
-                        screenHeaders.map(screenHeader => {
-                            switch(screenHeader.fields.fromTbl) {
-                                case 'po':
-                                    if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: project._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'po',
-                                            objectId: po._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: po[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    }
-                                    break;
-                                case 'sub':
-                                    arrayRow.push({
-                                        collection: 'sub',
-                                        objectId: sub._id,
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: sub[screenHeader.fields.name],
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
-                                    break;
-                                default: arrayRow.push({
+            virtuals(po.heats).map(function(virtual){
+                arrayRow = [];
+                screenHeaders.map(screenHeader => {
+                    switch(screenHeader.fields.fromTbl) {
+                        case 'po':
+                            if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                arrayRow.push({
                                     collection: 'virtual',
-                                    objectId: '0',
+                                    objectId: project._id,
                                     fieldName: screenHeader.fields.name,
-                                    fieldValue: '',
+                                    fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
-                                }); 
+                                });
+                            } else {
+                                arrayRow.push({
+                                    collection: 'po',
+                                    objectId: po._id,
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: po[screenHeader.fields.name],
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
                             }
+                            break;
+                        case 'certificate':
+                            arrayRow.push({
+                                collection: 'virtual',
+                                objectId: virtual._id,
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: virtual[screenHeader.fields.name],
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            });
+                            break;
+                        default: arrayRow.push({
+                            collection: 'virtual',
+                            objectId: '0',
+                            fieldName: screenHeader.fields.name,
+                            fieldValue: '',
+                            disabled: screenHeader.edit,
+                            align: screenHeader.align,
+                            fieldType: getInputType(screenHeader.fields.type),
                         });
-                        objectRow  = {
-                            _id: i, 
-                            tablesId: { 
-                                poId: po._id,
-                                subId: sub._id,
-                                certificateId: '',
-                                packitemId: '',
-                                collipackId: '' 
-                            },
-                            fields: arrayRow
-                        };
-                        arrayBody.push(objectRow);
-                        i++;
                     }
-                })
-            }
+                });
+                objectRow  = {
+                    _id: i, 
+                    tablesId: { 
+                        poId: po._id,
+                        subId: '',
+                        packitemId: '',
+                        collipackId: '',
+                        certificateId: virtual.certificateId,
+                        heatId: virtual.heatId
+                    },
+                    fields: arrayRow
+                };
+                arrayBody.push(objectRow);
+                i++;
+            });
         });
         return arrayBody;
     } else {
         return [];
     }
-    
 }
 
 function initSettingsFilter(fieldnames, settings, screenId) {
@@ -478,29 +429,26 @@ class Certificates extends React.Component {
             unlocked: false,
             screen: 'certificates',
             selectedIds: [],
-            // selectedTemplate: '0',
-            selectedField: '',
-            selectedType: 'text',
-            updateValue:'',
             alert: {
                 type:'',
                 message:''
             },
             //-----modals-----
-            showEditValues: false,
+            showCif: false,
             showSettings: false,
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
-        this.handleUpdateValue = this.handleUpdateValue.bind(this);
+        // this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
+        this.refreshCifs = this.refreshCifs.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         //Toggle Modals
-        this.toggleEditValues = this.toggleEditValues.bind(this);
+        this.toggleCif = this.toggleCif.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         //settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
@@ -516,6 +464,7 @@ class Certificates extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
+            loadingCertificates,
             loadingFieldnames,
             loadingFields,
             loadingPos,
@@ -539,6 +488,9 @@ class Certificates extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingCertificates) {
+                dispatch(certificateActions.getAll(qs.id));
             }
             if (!loadingFieldnames) {
                 dispatch(fieldnameActions.getAll(qs.id));
@@ -758,6 +710,14 @@ class Certificates extends React.Component {
         }
     }
 
+    refreshCifs() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+        if (projectId) {
+            dispatch(certificateActions.getAll(projectId));
+        }
+    }
+
     toggleUnlock(event) {
         event.preventDefault()
         const { unlocked } = this.state;
@@ -840,117 +800,6 @@ class Certificates extends React.Component {
         });
     }
 
-    handleUpdateValue(event, isErase) {
-        event.preventDefault();
-        const { dispatch, fieldnames } = this.props;
-        const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue} = this.state;
-        if (!selectedField) {
-            this.setState({
-                ...this.state,
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'You have not selected the field to be updated.'
-                }
-            });
-        } else if (_.isEmpty(selectedIds)) {
-            this.setState({
-                ...this.state,
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be updated.'
-                }
-            });
-        } else if (_.isEmpty(fieldnames)){
-            this.setState({
-                ...this.state,
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'An error occured'
-                }
-            });
-            if (projectId) {
-                dispatch(fieldActions.getAll(projectId));
-            }
-        } else {
-            let found = fieldnames.items.find( function (f) {
-                return f.fields._id === selectedField;
-            });
-            if (found.edit && !unlocked) {
-                this.setState({
-                    ...this.state,
-                    showEditValues: false,
-                    alert: {
-                        type:'alert-danger',
-                        message:'Selected  field is disabled, please unlock table and try again.'
-                    }
-                });
-            } else {
-                let collection = found.fields.fromTbl;
-                let fieldName = found.fields.name;
-                let fieldValue = isErase ? '' : updateValue;
-                let fieldType = selectedType;
-                if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
-                    this.setState({
-                        ...this.state,
-                        showEditValues: false,
-                        alert: {
-                            type:'alert-danger',
-                            message:'Wrong Date Format.'
-                        }
-                    });
-                } else {
-                    const requestOptions = {
-                        method: 'PUT',
-                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            collection: collection,
-                            fieldName: fieldName,
-                            fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
-                            selectedIds: selectedIds
-                        })
-                    };
-                    return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                    .then(responce => responce.text().then(text => {
-                        const data = text && JSON.parse(text);
-                        if (!responce.ok) {
-                            if (responce.status === 401) {
-                                localStorage.removeItem('user');
-                                location.reload(true);
-                            }
-                            this.setState({
-                                showEditValues: false,
-                                alert: {
-                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                    message: data.message
-                                }
-                            }, this.refreshStore);
-                        } else {
-                            this.setState({
-                                showEditValues: false,
-                                alert: {
-                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                    message: data.message
-                                }
-                            }, this.refreshStore);
-                        }
-                    })
-                    .catch( () => {
-                        this.setState({
-                            showEditValues: false,
-                            alert: {
-                                type: 'alert-danger',
-                                message: 'Field could not be updated.'
-                            }
-                        }, this.refreshStore);
-                    }));
-                }
-            }  
-        }
-    }
-
     handleDeleteRows(event) {
         event.preventDefault;
         this.setState({
@@ -961,31 +810,12 @@ class Certificates extends React.Component {
         });
     }
 
-    toggleEditValues(event) {
+    toggleCif(event) {
         event.preventDefault();
-        const { showEditValues, selectedIds } = this.state;
-        if (!showEditValues && _.isEmpty(selectedIds)) {
-            this.setState({
-                ...this.state,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be updated.'
-                }
-            });
-        } else {
-            this.setState({
-                ...this.state,
-                selectedTemplate: '0',
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
-                alert: {
-                    type:'',
-                    message:''
-                },
-                showEditValues: !showEditValues,
-            });
-        }
+        const { showCif } = this.state;
+        this.setState({
+            showCif: !showCif
+        });
     }
 
     toggleSettings(event) {
@@ -1018,7 +848,7 @@ class Certificates extends React.Component {
             selectedField,
             selectedType, 
             updateValue,
-            showEditValues,
+            showCif,
             showSettings,
             //--------
             headersForShow,
@@ -1029,11 +859,11 @@ class Certificates extends React.Component {
             settingsDisplay
         }= this.state;
         
-        const { accesses, fieldnames, fields, pos, selection } = this.props;
+        const { accesses, certificates, fieldnames, fields, pos, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
-                {alert.message && !showSettings &&
+            <Layout alert={showSettings || showCif ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+                {alert.message && !showSettings && !showCif &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1054,9 +884,15 @@ class Certificates extends React.Component {
                 </nav>
                 <hr />
                 <div id="certificates" className="full-height">
-                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleEditValues(event)}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
+                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
+                        <button title="Add/Edit Certificates" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleCif} style={{height: '34px'}}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Certificates</span>
+                        </button>
+                        <button title="Add/Edit Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Heat Numbers</span>
+                        </button>
+                        <button title="Download Certificate" className="btn btn-success btn-lg mr-2" style={{height: '34px'}}>
+                            <span><FontAwesomeIcon icon="file-pdf" className="fa-lg mr-2"/>Download CIF</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
@@ -1084,44 +920,39 @@ class Certificates extends React.Component {
                 </div>
 
                 <Modal
-                    show={showEditValues}
-                    hideModal={this.toggleEditValues}
-                    title="Edit Values"
+                    show={showCif}
+                    hideModal={this.toggleCif}
+                    title="Add/Edit Certificates"
+                    size="modal-xl"
                 >
-                    <div className="col-12">
-                        <div className="form-group">
-                            <label htmlFor="selectedField">Select Field</label>
-                            <select
-                                className="form-control"
-                                name="selectedField"
-                                value={selectedField}
-                                placeholder="Select field..."
-                                onChange={this.handleChange}
-                            >
-                                <option key="0" value="0">Select field...</option>
-                                {this.selectedFieldOptions(fieldnames, fields)}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="updateValue">Value</label>
-                            <input
-                                className="form-control"
-                                type={selectedType === 'number' ? 'number' : 'text'}
-                                name="updateValue"
-                                value={updateValue}
-                                onChange={this.handleChange}
-                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
-                            />
-                        </div>
-                        <div className="text-right">
-                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.handleUpdateValue(event, false)}>
-                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
-                            </button>
-                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleUpdateValue(event, true)}>
-                                <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
-                            </button>
-                        </div>                   
-                    </div>
+                    <Certificate 
+                        alert={alert}
+                        handleClearAlert={this.handleClearAlert}
+                        certificates={certificates}
+                        projectId={projectId}
+                        refreshCifs={this.refreshCifs}
+                    />
+                    {/* <table className="table">
+                        <thead>
+
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div className="input-group">
+                                    <label type="text" className="form-control text-left" style={{display:'inline-block', padding: '7px'}}>toto</label>
+                                        <div className="input-group-append">
+                                            <button type="button" className="btn btn-dark btn-lg" ><span><FontAwesomeIcon icon="download" className="fa"/></span></button>
+                                            <button type="button" className="btn btn-leeuwen-blue btn-lg" ><span><FontAwesomeIcon icon="upload" className="fa"/></span></button>
+                                            <button type="button" className="btn btn-leeuwen btn-lg" ><span><FontAwesomeIcon icon="trash-alt" className="fa"/></span></button>
+                                        </div>
+
+                                    </div>
+                                    
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table> */}
                 </Modal>
 
                 <Modal
@@ -1189,8 +1020,9 @@ class Certificates extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, pos, selection, settings } = state;
+    const { accesses, alert, certificates, fieldnames, fields, pos, selection, settings } = state;
     const { loadingAccesses } = accesses;
+    const { loadingCertificates } = certificates;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingPos } = pos;
@@ -1200,9 +1032,11 @@ function mapStateToProps(state) {
     return {
         accesses,
         alert,
+        certificates,
         fieldnames,
         fields,
         loadingAccesses,
+        loadingCertificates,
         loadingFieldnames,
         loadingFields,
         loadingPos,
