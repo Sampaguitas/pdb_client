@@ -4,7 +4,7 @@ import { authHeader } from '../../_helpers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeaderInput from '../project-table/header-input';
 import TableSelectionAllRow from '../project-table/table-selection-all-row';
-import TableInput from '../project-table/table-input';
+import CifInput from '../project-table/cif-input';
 import TableSelectionRow from '../project-table/table-selection-row';
 import NewRowCreate from '../project-table/new-row-create';
 import NewRowInput from '../project-table/new-row-input';
@@ -179,6 +179,7 @@ class Certificate extends Component {
         
         // this.handleAssign = this.handleAssign.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
+        this.setAlert = this.setAlert.bind(this);
         this.handleChangeNewRow = this.handleChangeNewRow.bind(this);
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
@@ -207,9 +208,9 @@ class Certificate extends Component {
     keyHandler(e) {
 
         let target = e.target;
-        let colIndex = target.parentElement.cellIndex;               
-        let rowIndex = target.parentElement.parentElement.rowIndex;
-        var nRows = target.parentElement.parentElement.parentElement.childNodes.length;
+        let colIndex = target.parentElement.parentElement.cellIndex;               
+        let rowIndex = target.parentElement.parentElement.parentElement.rowIndex;
+        var nRows = target.parentElement.parentElement.parentElement.parentElement.childNodes.length;
         
         switch(e.keyCode) {
             case 9:// tab
@@ -219,27 +220,27 @@ class Certificate extends Component {
                 break;
             case 13: //enter
                 if(rowIndex < nRows) {
-                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                    target.parentElement.parentElement.parentElement.nextSibling.childNodes[colIndex].firstChild.firstChild.click();
                 }
                 break;
             case 37: //left
-                if(colIndex > 1 && !target.parentElement.classList.contains('isEditing')) {
-                    target.parentElement.previousSibling.click();
+                if(colIndex > 1 && !target.parentElement.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.parentElement.previousSibling.click();
                 } 
                 break;
             case 38: //up
                 if(rowIndex > 1) {
-                    target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();    
+                    target.parentElement.parentElement.parentElement.previousSibling.childNodes[colIndex].firstChild.firstChild.click() 
                 }
                 break;
             case 39: //right
-                if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
-                    target.parentElement.nextSibling.click();
+                if(target.parentElement.parentElement.nextSibling && !target.parentElement.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.parentElement.nextSibling.click();
                 }
                 break;
             case 40: //down
                 if(rowIndex < nRows) {
-                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                    target.parentElement.parentElement.parentElement.nextSibling.childNodes[colIndex].firstChild.firstChild.click();
                 }
                 break;
         }
@@ -342,10 +343,20 @@ class Certificate extends Component {
             });
         } 
     }
+
+    setAlert(type, message) {
+        this.setState({
+            alert: {
+                type: type,
+                message: message
+            }
+        })
+
+    }
     
     handleClearAlert(event){
         const { handleClearAlert } = this.props;
-        event.preventDefault;
+        event.preventDefault();
         this.setState({ 
             alert: {
                 type:'',
@@ -497,7 +508,7 @@ class Certificate extends Component {
     }
 
     generateBody(certificates) {
-        const { refreshCifs } = this.props;
+        const { refreshCifs, projectNr } = this.props;
         const { selectAllRows, newRow, newCif, newRowColor } = this.state;
         let tempRows = [];
         
@@ -532,15 +543,18 @@ class Certificate extends Component {
                             selectAllRows={selectAllRows}
                             callback={this.updateSelectedIds}
                         />
-                        <TableInput
+                        <CifInput
                             collection="certificate"
                             objectId={certificate._id}
                             fieldName="cif"
                             fieldValue={certificate.cif}
+                            hasFile={certificate.hasFile}
+                            projectNr={projectNr}
                             disabled={false}
                             align="left"
                             fieldType="text"
                             refreshStore={refreshCifs}
+                            setAlert={this.setAlert}
                         />
                     </tr>
                 );
@@ -601,6 +615,7 @@ class Certificate extends Component {
                             </table>
                         </div>
                     </div>
+
                     <div className="text-right mt-2">
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={event => handleClose(event)}>
                             <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Close</span>

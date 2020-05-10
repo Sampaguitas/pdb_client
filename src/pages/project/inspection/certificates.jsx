@@ -930,6 +930,7 @@ class Certificates extends React.Component {
                         handleClearAlert={this.handleClearAlert}
                         certificates={certificates}
                         projectId={projectId}
+                        projectNr={selection.project ? selection.project.number : ''}
                         refreshCifs={this.refreshCifs}
                     />
                     {/* <table className="table">
