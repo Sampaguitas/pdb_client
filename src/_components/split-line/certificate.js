@@ -7,7 +7,7 @@ import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import CifInput from '../project-table/cif-input';
 import TableSelectionRow from '../project-table/table-selection-row';
 import NewRowCreate from '../project-table/new-row-create';
-import NewRowInput from '../project-table/new-row-input';
+import CifNewRowInput from '../project-table/cif-new-row-input';
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -302,22 +302,6 @@ class Certificate extends Component {
         }
     }
 
-    // handleAssign(event) {
-    //     event.preventDefault();
-    //     const { selectedIds } = this.state;
-    //     const { assignColliType } = this.props;
-    //     if (selectedIds.length != 1) {
-    //         this.setState({
-    //             alert: {
-    //                 type: 'alert-danger',
-    //                 message: 'Select one line.'
-    //             }
-    //         });
-    //     } else {
-    //         assignColliType(selectedIds[0]);
-    //     }
-    // }
-
     handleChangeHeader(event) {
         // event.preventDefault();
         const target = event.target;
@@ -522,7 +506,7 @@ class Certificate extends Component {
                     <NewRowCreate
                         onClick={event => this.cerateNewRow(event)}
                     />
-                    <NewRowInput
+                    <CifNewRowInput
                         fieldType="text"
                         fieldName="cif"
                         fieldValue={newCif.cif}

@@ -168,39 +168,44 @@ class CifInput extends Component{
         const { objectId } = this.props;
         const { refreshStore, setAlert } = this.props;
         if(!!this.fileInput.current.files[0] && !!objectId) {
-            this.setState({
-                isUploading: true
-            }, () => {
-                var data = new FormData()
-                data.append('file', this.fileInput.current.files[0]);
-                data.append('id', objectId);
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
-                    body: data
-                }
-                return fetch(`${config.apiUrl}/certificate/uploadCif`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (responce.status === 401) {
-                            localStorage.removeItem('user');
-                            location.reload(true);
-                    } else {
-                        this.setState({
-                            isUploading: false,
-                            inputKey: Date.now()
-                        }, () => {
-                            setAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message);
-                            refreshStore();
-                        });
+            if (this.fileInput.current.files[0].name.split('.')[1] != 'pdf') {
+                setAlert('alert-danger', 'Convert your document to PDF before uploading it (only .pdf extension is allowed).');
+            } else {
+                this.setState({
+                    isUploading: true
+                }, () => {
+                    var data = new FormData()
+                    data.append('file', this.fileInput.current.files[0]);
+                    data.append('id', objectId);
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
+                        body: data
                     }
-                }));
-            });
+                    return fetch(`${config.apiUrl}/certificate/uploadCif`, requestOptions)
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
+                        if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
+                        } else {
+                            this.setState({
+                                isUploading: false,
+                                inputKey: Date.now()
+                            }, () => {
+                                setAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message);
+                                refreshStore();
+                            });
+                        }
+                    }));
+                });
+            }
         }
     }
 
     handleDownloadCif(event) {
         event.preventDefault();
+        const { fieldValue } = this.state;
         const { objectId } = this.props;
         if(!!objectId) {
             this.setState({
@@ -212,7 +217,7 @@ class CifInput extends Component{
                 }
                 return fetch(`${config.apiUrl}/certificate/downloadCif?id=${encodeURI(objectId)}`, requestOptions)
                 .then(res => res.blob()).then(blob => {
-                    saveAs(blob, 'toto.pdf');
+                    saveAs(blob, `MTC_${fieldValue}.pdf`);
                     this.setState({ isDownloading: false });
                 });
             });
@@ -239,7 +244,6 @@ class CifInput extends Component{
                     } else {
                         this.setState({
                             isDeleting: false,
-                            // inputKey: Date.now()
                         }, () => {
                             setAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message);
                             refreshStore();
@@ -251,11 +255,14 @@ class CifInput extends Component{
     }
 
     onKeyDown(event) {
+        let patt = new RegExp(/[\w\s\_\-\[\]]/);
         const { isEditing } = this.state;
         if (event.keyCode === 38 || event.keyCode === 40 || event.keyCode === 9 || event.keyCode === 13){ //up //down //tab //enter
             this.onBlur(event);  
         } else if (!isEditing && (event.keyCode === 37 || event.keyCode === 39)) { //left //right
             this.onBlur(event);
+        } else if (!patt.test(event.key)) {
+            event.preventDefault();
         }
     }
 
