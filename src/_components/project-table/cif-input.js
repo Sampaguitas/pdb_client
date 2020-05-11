@@ -165,7 +165,8 @@ class CifInput extends Component{
 
     handleUploadCif(event){
         event.preventDefault();
-        const { objectId, refreshStore, setAlert } = this.props;
+        const { objectId } = this.props;
+        const { refreshStore, setAlert } = this.props;
         if(!!this.fileInput.current.files[0] && !!objectId) {
             this.setState({
                 isUploading: true
@@ -200,7 +201,7 @@ class CifInput extends Component{
 
     handleDownloadCif(event) {
         event.preventDefault();
-        const { objectId, setAlert } = this.props;
+        const { objectId } = this.props;
         if(!!objectId) {
             this.setState({
                 isDownloading: true
@@ -363,7 +364,8 @@ class CifInput extends Component{
             unlocked,
             width,
             maxLength,
-            hasFile
+            objectId,
+            hasFile,
         } = this.props;
 
         const {
@@ -434,16 +436,52 @@ class CifInput extends Component{
                         <input
                             type="file"
                             name="fileInput"
-                            id="fileInput"
+                            id={`fileInput_${objectId}`}
                             ref={this.fileInput}
                             className="custom-file-input"
                             style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
                             onChange={this.handleUploadCif}
                             key={inputKey}
                         />
-                        <button type="button" title="Download File" className="btn btn-success btn-lg" disabled={hasFile ? false : true} onClick={this.handleDownloadCif}><span><FontAwesomeIcon icon={isDownloading ? "spinner" : "download"} className={isDownloading ? "fa-pulse fa-fw" : "fa"}/></span></button>
-                        <label type="button" className="btn btn-leeuwen-blue btn-lg" htmlFor="fileInput"><span><FontAwesomeIcon icon={isUploading ? "spinner" : "upload"} className={isUploading ? "fa-pulse fa-fw" : "fa"}/></span></label>
-                        <button type="button" title="Delete File" className="btn btn-leeuwen btn-lg" disabled={hasFile ? false : true} onClick={this.handleDeleteCif}><span><FontAwesomeIcon icon={isDeleting ? "spinner" : "trash-alt"} className={isDeleting ? "fa-pulse fa-fw" : "fa"}/></span></button>
+                        <button
+                            type="button"
+                            title="Download File"
+                            className="btn btn-success btn-lg"
+                            disabled={hasFile ? false : true}
+                            onClick={this.handleDownloadCif}
+                        >
+                            <span>
+                                <FontAwesomeIcon
+                                    icon={isDownloading ? "spinner" : "download"}
+                                    className={isDownloading ? "fa-pulse fa-fw" : "fa"}
+                                />
+                            </span>
+                        </button>
+                        <label
+                            type="button"
+                            className="btn btn-leeuwen-blue btn-lg"
+                            htmlFor={`fileInput_${objectId}`}
+                        >
+                            <span>
+                                <FontAwesomeIcon
+                                    icon={isUploading ? "spinner" : "upload"}
+                                    className={isUploading ? "fa-pulse fa-fw" : "fa"}/>
+                            </span>
+                        </label>
+                        <button
+                            type="button"
+                            title="Delete File"
+                            className="btn btn-leeuwen btn-lg"
+                            disabled={hasFile ? false : true}
+                            onClick={this.handleDeleteCif}
+                        >
+                            <span>
+                                <FontAwesomeIcon
+                                    icon={isDeleting ? "spinner" : "trash-alt"}
+                                    className={isDeleting ? "fa-pulse fa-fw" : "fa"}
+                                />
+                            </span>
+                        </button>
                     </div>
                 </div>
             </td>
