@@ -508,7 +508,7 @@ class Certificate extends Component {
     }
 
     generateBody(certificates) {
-        const { refreshCifs, projectNr } = this.props;
+        const { refreshCifs } = this.props;
         const { selectAllRows, newRow, newCif, newRowColor } = this.state;
         let tempRows = [];
         
@@ -549,7 +549,6 @@ class Certificate extends Component {
                             fieldName="cif"
                             fieldValue={certificate.cif}
                             hasFile={certificate.hasFile}
-                            projectNr={projectNr}
                             disabled={false}
                             align="left"
                             fieldType="text"

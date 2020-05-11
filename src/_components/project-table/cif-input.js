@@ -93,6 +93,7 @@ class CifInput extends Component{
             isEditing: false,
             isSelected: false,
             isUploading: false,
+            isDeleting: false,
             isDownloading: false
             // disabled: false
         }
@@ -102,7 +103,8 @@ class CifInput extends Component{
         this.formatText = this.formatText.bind(this);
         this.onClick = this.onClick.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
-        this.handleFileChange=this.handleFileChange.bind(this);
+        this.handleUploadCif = this.handleUploadCif.bind(this);
+        this.handleDeleteCif = this.handleDeleteCif.bind(this);
         this.fileInput = React.createRef();
     }
     
@@ -159,19 +161,16 @@ class CifInput extends Component{
         }
     }
 
-    handleFileChange(event){
+    handleUploadCif(event){
         event.preventDefault();
-        const { projectNr, objectId, refreshStore, setAlert } = this.props;
-        console.log('projectNr:', projectNr);
-        console.log('objectId:', objectId);
-        if(!!this.fileInput.current.files[0] && !!projectNr && !!objectId) {
+        const { objectId, refreshStore, setAlert } = this.props;
+        if(!!this.fileInput.current.files[0] && !!objectId) {
             this.setState({
                 isUploading: true
             }, () => {
                 var data = new FormData()
                 data.append('file', this.fileInput.current.files[0]);
                 data.append('id', objectId);
-                data.append('projectNr', String(projectNr));
                 const requestOptions = {
                     method: 'POST',
                     headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
@@ -186,6 +185,38 @@ class CifInput extends Component{
                     } else {
                         this.setState({
                             isUploading: false,
+                            inputKey: Date.now()
+                        }, () => {
+                            setAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message),
+                            refreshStore
+                        });
+                    }
+                }));
+            });
+        }
+    }
+
+    handleDeleteCif(event){
+        event.preventDefault();
+        const { objectId, refreshStore, setAlert } = this.props;
+        if(!!objectId) {
+            this.setState({
+                isDeleting: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader()},
+                }
+                return fetch(`${config.apiUrl}/certificate/deleteCif?id=${JSON.stringify(objectId)}`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            isDeleting: false,
+                            // inputKey: Date.now()
                         }, () => {
                             setAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message),
                             refreshStore
@@ -316,7 +347,8 @@ class CifInput extends Component{
             fieldType,
             inputKey,
             isUploading,
-            isDownloading
+            isDownloading,
+            isDeleting,
         } = this.state;
 
         const tdClasses = classNames(
@@ -379,13 +411,12 @@ class CifInput extends Component{
                             ref={this.fileInput}
                             className="custom-file-input"
                             style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
-                            onChange={this.handleFileChange}
+                            onChange={this.handleUploadCif}
                             key={inputKey}
                         />
                         <button type="button" title="Download File" className="btn btn-success btn-lg" disabled={hasFile ? false : true}><span><FontAwesomeIcon icon={isDownloading ? "spinner" : "download"} className={isDownloading ? "fa-pulse fa-fw" : "fa"}/></span></button>
-                        <label type="button" className="btn btn-leeuwen-blue btn-lg" htmlFor="fileInput"><span><FontAwesomeIcon icon={isUploading ? "spinner" : "upload"} className={isUploading ? "fa-pulse fa-fw" : "fa"}/></span></label>  
-                        {/* <button type="button" title="Upload File" className="btn btn-leeuwen-blue btn-lg"><span><FontAwesomeIcon icon="upload" className="fa"/></span></button> */}
-                        <button type="button" title="Delete File" className="btn btn-leeuwen btn-lg" disabled={hasFile ? false : true}><span><FontAwesomeIcon icon="trash-alt" className="fa"/></span></button>
+                        <label type="button" className="btn btn-leeuwen-blue btn-lg" htmlFor="fileInput"><span><FontAwesomeIcon icon={isUploading ? "spinner" : "upload"} className={isUploading ? "fa-pulse fa-fw" : "fa"}/></span></label>
+                        <button type="button" title="Delete File" className="btn btn-leeuwen btn-lg" disabled={hasFile ? false : true} onClick={this.handleDeleteCif}><span><FontAwesomeIcon icon={isDeleting ? "spinner" : "trash-alt"} className={isDeleting ? "fa-pulse fa-fw" : "fa"}/></span></button>
                     </div>
                 </div>
             </td>

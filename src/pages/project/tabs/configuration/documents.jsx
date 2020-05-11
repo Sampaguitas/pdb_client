@@ -700,20 +700,9 @@ class Documents extends React.Component {
                 return fetch(`${config.apiUrl}/docdef/delete?id=${id}`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
-                    if (!responce.ok) {
-                        if (responce.status === 401) {
+                    if (responce.status === 401) {
                             localStorage.removeItem('user');
                             location.reload(true);
-                        }
-                        // const error = (data && data.message) || responce.statusText;
-                        this.setState({
-                            ...this.state,
-                            deletingDocDef: false,
-                            selectedTemplate: '0',
-                            fileName: '',
-                            inputKey: Date.now()
-                            
-                        }, handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs));
                     } else {
                         this.setState({
                             ...this.state,
@@ -725,24 +714,6 @@ class Documents extends React.Component {
                         }, handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs));
                     }
                 }));
-                // .then( () => {
-                //     this.setState({
-                //         ...this.state,
-                //         deletingDoc: false,
-                //         selectedTemplate: '0',
-                //         fileName: '',
-                //         inputKey: Date.now()
-                //     }, refreshDocdefs);
-                // })
-                // .catch( err => {
-                //     this.setState({
-                //         ...this.state,
-                //         deletingDoc: false,
-                //         selectedTemplate: '0',
-                //         fileName: '',
-                //         inputKey: Date.now()
-                //     }, refreshDocdefs);
-                // });
             });
         }
     }

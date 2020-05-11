@@ -923,37 +923,15 @@ class Certificates extends React.Component {
                     show={showCif}
                     hideModal={this.toggleCif}
                     title="Add/Edit Certificates"
-                    size="modal-xl"
+                    size="modal-lg"
                 >
                     <Certificate 
                         alert={alert}
                         handleClearAlert={this.handleClearAlert}
                         certificates={certificates}
                         projectId={projectId}
-                        projectNr={selection.project ? selection.project.number : ''}
                         refreshCifs={this.refreshCifs}
                     />
-                    {/* <table className="table">
-                        <thead>
-
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <div className="input-group">
-                                    <label type="text" className="form-control text-left" style={{display:'inline-block', padding: '7px'}}>toto</label>
-                                        <div className="input-group-append">
-                                            <button type="button" className="btn btn-dark btn-lg" ><span><FontAwesomeIcon icon="download" className="fa"/></span></button>
-                                            <button type="button" className="btn btn-leeuwen-blue btn-lg" ><span><FontAwesomeIcon icon="upload" className="fa"/></span></button>
-                                            <button type="button" className="btn btn-leeuwen btn-lg" ><span><FontAwesomeIcon icon="trash-alt" className="fa"/></span></button>
-                                        </div>
-
-                                    </div>
-                                    
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table> */}
                 </Modal>
 
                 <Modal
