@@ -231,7 +231,6 @@ function virtuals(heats) {
     }
 }
 
-
 function getBodys(selection, pos, headersForShow){
     let arrayBody = [];
     let arrayRow = [];
@@ -242,48 +241,72 @@ function getBodys(selection, pos, headersForShow){
 
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
-            virtuals(po.heats).map(function(virtual){
-                arrayRow = [];
-                screenHeaders.map(screenHeader => {
-                    switch(screenHeader.fields.fromTbl) {
-                        case 'po':
-                            if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
-                                arrayRow.push({
+            if (po.subs) {
+                po.subs.map(sub => {
+                    virtuals(sub.heats).map(function(virtual){
+                        arrayRow = [];
+                        screenHeaders.map(screenHeader => {
+                            switch(screenHeader.fields.fromTbl) {
+                                case 'po':
+                                    if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: project._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'po',
+                                            objectId: po._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    break;
+                                case 'sub': 
+                                    if (screenHeader.fields.name === 'heatNr') {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: virtual._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: virtual[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'sub',
+                                            objectId: sub._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: sub[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    break;
+                                case 'certificate':
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: virtual._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: virtual[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                    break;
+                                default: arrayRow.push({
                                     collection: 'virtual',
-                                    objectId: project._id,
-                                    fieldName: screenHeader.fields.name,
-                                    fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
-                                    disabled: screenHeader.edit,
-                                    align: screenHeader.align,
-                                    fieldType: getInputType(screenHeader.fields.type),
-                                });
-                            } else {
-                                arrayRow.push({
-                                    collection: 'po',
-                                    objectId: po._id,
-                                    fieldName: screenHeader.fields.name,
-                                    fieldValue: po[screenHeader.fields.name],
-                                    disabled: screenHeader.edit,
-                                    align: screenHeader.align,
-                                    fieldType: getInputType(screenHeader.fields.type),
-                                });
-                            }
-                            break;
-                        case 'sub': {
-                            if (screenHeader.fields.name === 'heatNr') {
-                                arrayRow.push({
-                                    collection: 'virtual',
-                                    objectId: virtual._id,
-                                    fieldName: screenHeader.fields.name,
-                                    fieldValue: virtual[screenHeader.fields.name],
-                                    disabled: screenHeader.edit,
-                                    align: screenHeader.align,
-                                    fieldType: getInputType(screenHeader.fields.type),
-                                });
-                            } else {
-                                arrayRow.push({
-                                    collection: 'virtual',
-                                    objectId: '',
+                                    objectId: '0',
                                     fieldName: screenHeader.fields.name,
                                     fieldValue: '',
                                     disabled: screenHeader.edit,
@@ -291,44 +314,24 @@ function getBodys(selection, pos, headersForShow){
                                     fieldType: getInputType(screenHeader.fields.type),
                                 });
                             }
-                        }
-                        case 'certificate':
-                            arrayRow.push({
-                                collection: 'virtual',
-                                objectId: virtual._id,
-                                fieldName: screenHeader.fields.name,
-                                fieldValue: virtual[screenHeader.fields.name],
-                                disabled: screenHeader.edit,
-                                align: screenHeader.align,
-                                fieldType: getInputType(screenHeader.fields.type),
-                            });
-                            break;
-                        default: arrayRow.push({
-                            collection: 'virtual',
-                            objectId: '0',
-                            fieldName: screenHeader.fields.name,
-                            fieldValue: '',
-                            disabled: screenHeader.edit,
-                            align: screenHeader.align,
-                            fieldType: getInputType(screenHeader.fields.type),
                         });
-                    }
+                        objectRow  = {
+                            _id: i, 
+                            tablesId: { 
+                                poId: po._id,
+                                subId: sub._id,
+                                packitemId: '',
+                                collipackId: '',
+                                certificateId: virtual.certificateId,
+                                heatId: virtual.heatId
+                            },
+                            fields: arrayRow
+                        };
+                        arrayBody.push(objectRow);
+                        i++;
+                    });
                 });
-                objectRow  = {
-                    _id: i, 
-                    tablesId: { 
-                        poId: po._id,
-                        subId: '',
-                        packitemId: '',
-                        collipackId: '',
-                        certificateId: virtual.certificateId,
-                        heatId: virtual.heatId
-                    },
-                    fields: arrayRow
-                };
-                arrayBody.push(objectRow);
-                i++;
-            });
+            }
         });
         return arrayBody;
     } else {
@@ -338,9 +341,12 @@ function getBodys(selection, pos, headersForShow){
 
 function getHeats(selectedIds, pos) {
     if (selectedIds.length === 1 && !_.isEmpty(pos.items)) {
-        let found = pos.items.find(po => po._id === selectedIds[0].poId);
-        if (!_.isUndefined(found)) {
-            return found.heats;
+        let selectedPo = pos.items.find(po => po._id === selectedIds[0].poId);
+        if (!_.isUndefined(selectedPo)) {
+            let selectedSub = selectedPo.subs.find(sub => sub._id === selectedIds[0].subId);
+            if (!_.isUndefined(selectedSub)) {
+                return selectedSub.heats;
+            }
         }
     }
     return [];
@@ -573,7 +579,7 @@ class Certificates extends React.Component {
             }
         }
 
-        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames) {
+        if (fieldnames != prevProps.fieldnames) {
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
@@ -1090,6 +1096,7 @@ class Certificates extends React.Component {
                         certificates={certificates}
                         heats={heats}
                         poId={selectedIds.length === 1 ? selectedIds[0].poId : ''}
+                        subId={selectedIds.length === 1 ? selectedIds[0].subId : ''}
                         projectId={projectId}
                     />
                 </Modal>

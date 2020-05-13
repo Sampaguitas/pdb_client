@@ -239,39 +239,6 @@ function getScreenTbls (fieldnames, screenId) {
     
 }
 
-// function getCertificateFields (screenHeaders) {
-//     if (screenHeaders) {
-//         let tempArray = [];
-//         screenHeaders.reduce(function (accumulator, currentValue) {
-//             if (currentValue.fields.fromTbl === 'certificate' && !accumulator.includes(currentValue.fields._id)) {
-//                 tempArray.push(currentValue.fields);
-//                 accumulator.push(currentValue.fields._id);
-//             }
-//             return accumulator;
-//         },[]);
-//         return tempArray;
-//     } else {
-//         return [];
-//     }
-// }
-
-// function virtuals(certificates, certificateFields) {
-//     let tempVirtuals = [];
-//     let tempObject = {_id: '0'}
-//     certificates.map(function (certificate){
-//         certificateFields.map(function (certificateField) {
-//             if (!tempObject.hasOwnProperty(certificateField.name)) {
-//                 tempObject[certificateField.name] = [TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale))]
-//             } else if(!tempObject[certificateField.name].includes(TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale)))) {
-//                 tempObject[certificateField.name].push(TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale)));
-//             }
-//         });
-//     });
-//     tempVirtuals.push(tempObject);
-//     return tempVirtuals;
-// }
-
-
 function virtuals(packitems, uom, packItemFields) {
     let tempVirtuals = [];
     let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(uom.toUpperCase()) ? 'mtrs' : 'pcs';
@@ -430,30 +397,27 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
     let arrayRow = [];
     let objectRow = {};
     let hasPackitems = getScreenTbls(fieldnames, screenId).includes('packitem');
-    // let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
     let screenHeaders = headersForShow;
     let project = selection.project || { _id: '0', name: '', number: '' };
     
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
-            let certificate = po.heats.reduce(function (acc, cur) {
-                if (!acc.heatNr.split(' | ').includes(cur.heatNr)) {
-                    acc.heatNr = !acc.heatNr ? cur.heatNr : `${acc.heatNr} | ${cur.heatNr}`
-                }
-                if (!acc.cif.split(' | ').includes(cur.certificate.cif)) {
-                    acc.cif = !acc.cif ? cur.certificate.cif : `${acc.cif} | ${cur.certificate.cif}`
-                }
-                return acc;
-            }, {
-                heatNr: '',
-                cif: ''
-            });
             if (po.subs) {
                 po.subs.map(sub => {
-                    // if (!_.isEmpty(sub.certificates) && hasCertificates){
+                    let certificate = sub.heats.reduce(function (acc, cur) {
+                        if (!acc.heatNr.split(' | ').includes(cur.heatNr)) {
+                            acc.heatNr = !acc.heatNr ? cur.heatNr : `${acc.heatNr} | ${cur.heatNr}`
+                        }
+                        if (!acc.cif.split(' | ').includes(cur.certificate.cif)) {
+                            acc.cif = !acc.cif ? cur.certificate.cif : `${acc.cif} | ${cur.certificate.cif}`
+                        }
+                        return acc;
+                    }, {
+                        heatNr: '',
+                        cif: ''
+                    });
                     if (!_.isEmpty(sub.packitems) && hasPackitems) {
-                        // virtuals(sub.certificates, getCertificateFields(screenHeaders)).map(virtual => {
                         virtuals(sub.packitems, po.uom, getPackItemFields(screenHeaders)).map(virtual => {
                             arrayRow = [];
                             screenHeaders.map(screenHeader => {
@@ -548,17 +512,6 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             });
                                         }
                                         break;
-                                    // case 'certificate':
-                                    //     arrayRow.push({
-                                    //         collection: 'virtual',
-                                    //         objectId: virtual._id,
-                                    //         fieldName: screenHeader.fields.name,
-                                    //         fieldValue: virtual[screenHeader.fields.name].join(' | '),
-                                    //         disabled: screenHeader.edit,
-                                    //         align: screenHeader.align,
-                                    //         fieldType: getInputType(screenHeader.fields.type),
-                                    //     });
-                                    //     break;
                                     default: arrayRow.push({
                                             collection: 'virtual',
                                             objectId: '0',

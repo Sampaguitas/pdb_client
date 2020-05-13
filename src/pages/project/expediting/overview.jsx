@@ -399,20 +399,20 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
-            let certificate = po.heats.reduce(function (acc, cur) {
-                if (!acc.heatNr.split(' | ').includes(cur.heatNr)) {
-                    acc.heatNr = !acc.heatNr ? cur.heatNr : `${acc.heatNr} | ${cur.heatNr}`
-                }
-                if (!acc.cif.split(' | ').includes(cur.certificate.cif)) {
-                    acc.cif = !acc.cif ? cur.certificate.cif : `${acc.cif} | ${cur.certificate.cif}`
-                }
-                return acc;
-            }, {
-                heatNr: '',
-                cif: ''
-            });
             if (po.subs) {
                 po.subs.map(sub => {
+                    let certificate = sub.heats.reduce(function (acc, cur) {
+                        if (!acc.heatNr.split(' | ').includes(cur.heatNr)) {
+                            acc.heatNr = !acc.heatNr ? cur.heatNr : `${acc.heatNr} | ${cur.heatNr}`
+                        }
+                        if (!acc.cif.split(' | ').includes(cur.certificate.cif)) {
+                            acc.cif = !acc.cif ? cur.certificate.cif : `${acc.cif} | ${cur.certificate.cif}`
+                        }
+                        return acc;
+                    }, {
+                        heatNr: '',
+                        cif: ''
+                    });
                     if (!_.isEmpty(sub.packitems) && hasPackitems) {
                         virtuals(sub.packitems, po.uom, getPackItemFields(screenHeaders)).map(virtual => {
                             arrayRow = [];

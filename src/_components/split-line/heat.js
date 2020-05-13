@@ -360,7 +360,7 @@ class Heat extends Component {
     }
 
     handleChangeNewRow(event){
-        const { projectId, poId } = this.props;
+        const { projectId, poId, subId } = this.props;
         const { newHeat } = this.state;
         const target = event.target;
         const name = target.name;
@@ -372,6 +372,7 @@ class Heat extends Component {
                     ...newHeat,
                     [name]: value,
                     poId: poId,
+                    subId: subId,
                     projectId: projectId
                 }
             });
