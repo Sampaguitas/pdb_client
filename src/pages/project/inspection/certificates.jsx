@@ -21,6 +21,7 @@ import TabDisplay from '../../../_components/setting/tab-display';
 import Modal from '../../../_components/modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Certificate from '../../../_components/split-line/certificate';
+import Heat from '../../../_components/split-line/heat';
 
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
@@ -231,7 +232,7 @@ function virtuals(heats) {
 }
 
 
-function getBodys(fieldnames, selection, pos, headersForShow){
+function getBodys(selection, pos, headersForShow){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
@@ -268,7 +269,31 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                 });
                             }
                             break;
+                        case 'sub': {
+                            if (screenHeader.fields.name === 'heatNr') {
+                                arrayRow.push({
+                                    collection: 'virtual',
+                                    objectId: virtual._id,
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: virtual[screenHeader.fields.name],
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                            } else {
+                                arrayRow.push({
+                                    collection: 'virtual',
+                                    objectId: '0',
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: '',
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                            }
+                        }
                         case 'certificate':
+                            console.log(screenHeader.fields.type);
                             arrayRow.push({
                                 collection: 'virtual',
                                 objectId: virtual._id,
@@ -310,6 +335,16 @@ function getBodys(fieldnames, selection, pos, headersForShow){
     } else {
         return [];
     }
+}
+
+function getHeats(selectedIds, pos) {
+    if (selectedIds.length === 1 && !_.isEmpty(pos.items)) {
+        let found = pos.items.find(po => po._id === selectedIds[0].poId);
+        if (!_.isUndefined(found)) {
+            return found.heats;
+        }
+    }
+    return [];
 }
 
 function initSettingsFilter(fieldnames, settings, screenId) {
@@ -404,6 +439,7 @@ class Certificates extends React.Component {
         this.state = {
             headersForShow: [],
             bodysForShow: [],
+            heats: [],
             settingsFilter: [],
             settingsDisplay: [],
             tabs: [
@@ -435,6 +471,7 @@ class Certificates extends React.Component {
             },
             //-----modals-----
             showCif: false,
+            showHeat: false,
             showSettings: false,
 
         };
@@ -444,11 +481,13 @@ class Certificates extends React.Component {
         // this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.refreshCifs = this.refreshCifs.bind(this);
+        this.refreshPos = this.refreshPos.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         //Toggle Modals
         this.toggleCif = this.toggleCif.bind(this);
+        this.toggleHeat = this.toggleHeat.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         //settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
@@ -511,14 +550,14 @@ class Certificates extends React.Component {
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-            bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
+            bodysForShow: getBodys(selection, pos, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, screenId, selectedField, settingsDisplay } = this.state;
+        const { headersForShow, screenId, selectedField, settingsDisplay, selectedIds } = this.state;
         const { fields, fieldnames, selection, settings, pos } = this.props;
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
@@ -543,7 +582,7 @@ class Certificates extends React.Component {
 
         if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow) {
             this.setState({
-                bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
+                bodysForShow: getBodys(selection, pos, headersForShow),
             });
         }
 
@@ -555,6 +594,12 @@ class Certificates extends React.Component {
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            });
+        }
+        
+        if (selectedIds != prevState.selectedIds || pos != prevProps.pos) {
+            this.setState({
+                heats: getHeats(selectedIds, pos)
             });
         }
 
@@ -718,6 +763,15 @@ class Certificates extends React.Component {
         }
     }
 
+    refreshPos() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+
+        if (projectId) {
+            dispatch(poActions.getAll(projectId));
+        }
+    }
+
     toggleUnlock(event) {
         event.preventDefault()
         const { unlocked } = this.state;
@@ -818,6 +872,23 @@ class Certificates extends React.Component {
         });
     }
 
+    toggleHeat(event) {
+        event.preventDefault();
+        const { showHeat, selectedIds } = this.state;
+        if (!showHeat && selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one line to assign Heat Numbers.'
+                }
+            });
+        } else {
+            this.setState({
+                showHeat: !showHeat
+            });
+        }
+    }
+
     toggleSettings(event) {
         event.preventDefault();
         const { showSettings } = this.state;
@@ -849,10 +920,12 @@ class Certificates extends React.Component {
             selectedType, 
             updateValue,
             showCif,
+            showHeat,
             showSettings,
             //--------
             headersForShow,
             bodysForShow,
+            heats,
             //'-------------------'
             tabs,
             settingsFilter,
@@ -888,7 +961,7 @@ class Certificates extends React.Component {
                         <button title="Add/Edit Certificates" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleCif} style={{height: '34px'}}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Certificates</span>
                         </button>
-                        <button title="Add/Edit Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}}>
+                        <button title="Add/Edit Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleHeat} style={{height: '34px'}}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Heat Numbers</span>
                         </button>
                         <button title="Download Certificate" className="btn btn-success btn-lg mr-2" style={{height: '34px'}}>
@@ -931,6 +1004,25 @@ class Certificates extends React.Component {
                         certificates={certificates}
                         projectId={projectId}
                         refreshCifs={this.refreshCifs}
+                        toggleCif={this.toggleCif}
+                    />
+                </Modal>
+
+                <Modal
+                    show={showHeat}
+                    hideModal={this.toggleHeat}
+                    title="Add/Edit Heat Numbers"
+                    size="modal-lg"
+                >
+                    <Heat
+                        alert={alert}
+                        handleClearAlert={this.handleClearAlert}
+                        refreshPos={this.refreshPos}
+                        toggleHeat={this.toggleHeat}
+                        certificates={certificates}
+                        heats={heats}
+                        poId={selectedIds.length === 1 ? selectedIds[0].poId : ''}
+                        projectId={projectId}
                     />
                 </Modal>
 

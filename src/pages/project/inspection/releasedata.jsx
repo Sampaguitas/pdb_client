@@ -225,10 +225,10 @@ function findObj(array, search) {
     }
 }
 
-function getScreenTbls (fieldnames) {
+function getScreenTbls (fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         return fieldnames.items.reduce(function (accumulator, currentValue) {
-            if(!accumulator.includes(currentValue.fields.fromTbl)) {
+            if(!accumulator.includes(currentValue.fields.fromTbl) && currentValue.screenId === screenId) {
                 accumulator.push(currentValue.fields.fromTbl)
             }
             return accumulator;
@@ -239,37 +239,135 @@ function getScreenTbls (fieldnames) {
     
 }
 
-function getCertificateFields (screenHeaders) {
-    if (screenHeaders) {
-        let tempArray = [];
-        screenHeaders.reduce(function (accumulator, currentValue) {
-            if (currentValue.fields.fromTbl === 'certificate' && !accumulator.includes(currentValue.fields._id)) {
-                tempArray.push(currentValue.fields);
-                accumulator.push(currentValue.fields._id);
-            }
-            return accumulator;
-        },[]);
-        return tempArray;
-    } else {
-        return [];
-    }
-}
+// function getCertificateFields (screenHeaders) {
+//     if (screenHeaders) {
+//         let tempArray = [];
+//         screenHeaders.reduce(function (accumulator, currentValue) {
+//             if (currentValue.fields.fromTbl === 'certificate' && !accumulator.includes(currentValue.fields._id)) {
+//                 tempArray.push(currentValue.fields);
+//                 accumulator.push(currentValue.fields._id);
+//             }
+//             return accumulator;
+//         },[]);
+//         return tempArray;
+//     } else {
+//         return [];
+//     }
+// }
 
-function virtuals(certificates, certificateFields) {
+// function virtuals(certificates, certificateFields) {
+//     let tempVirtuals = [];
+//     let tempObject = {_id: '0'}
+//     certificates.map(function (certificate){
+//         certificateFields.map(function (certificateField) {
+//             if (!tempObject.hasOwnProperty(certificateField.name)) {
+//                 tempObject[certificateField.name] = [TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale))]
+//             } else if(!tempObject[certificateField.name].includes(TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale)))) {
+//                 tempObject[certificateField.name].push(TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale)));
+//             }
+//         });
+//     });
+//     tempVirtuals.push(tempObject);
+//     return tempVirtuals;
+// }
+
+
+function virtuals(packitems, uom, packItemFields) {
     let tempVirtuals = [];
-    let tempObject = {_id: '0'}
-    certificates.map(function (certificate){
-        certificateFields.map(function (certificateField) {
-            if (!tempObject.hasOwnProperty(certificateField.name)) {
-                tempObject[certificateField.name] = [TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale))]
-            } else if(!tempObject[certificateField.name].includes(TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale)))) {
-                tempObject[certificateField.name].push(TypeToString(certificate[certificateField.name], certificateField.type, getDateFormat(myLocale)));
+    let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(uom.toUpperCase()) ? 'mtrs' : 'pcs';
+    if (hasPackingList(packItemFields)) {
+        packitems.reduce(function (acc, cur){
+            if (cur.plNr){
+                if (!acc.includes(cur.plNr)) {
+                
+                    let tempObject = {};
+                    tempObject['shippedQty'] = cur[tempUom];
+                    packItemFields.map(function (packItemField) {
+                        if (packItemField.name === 'plNr') {
+                            tempObject['plNr'] = cur['plNr'];
+                            tempObject['_id'] = cur['plNr'];
+                        } else {
+                            tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                        }               
+                    });
+                    tempVirtuals.push(tempObject);
+                    acc.push(cur.plNr);
+                    
+                } else if (acc.includes(cur.plNr)) {
+        
+                    let tempVirtual = tempVirtuals.find(element => element.plNr === cur.plNr);            
+                    tempVirtual['shippedQty'] += cur[tempUom];
+                    packItemFields.map(function (packItemField) {
+                        if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
+                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                        }               
+                    });
+                }
+            } else if (!acc.includes('0')) {
+                let tempObject = {_id: '0'}
+                tempObject['shippedQty'] = '';
+                packItemFields.map(function (packItemField) {
+                    if (packItemField.name === 'plNr') {
+                        tempObject['plNr'] = ''
+                    } else {
+                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                    }
+                });
+                tempVirtuals.push(tempObject);
+                acc.push('0');
+            } else {
+                let tempVirtual = tempVirtuals.find(element => element._id === '0');
+                packItemFields.map(function (packItemField) {
+                    if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
+                        tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                    }               
+                });
             }
-        });
-    });
-    tempVirtuals.push(tempObject);
+            return acc;
+        }, []);
+    } else {
+        packitems.reduce(function(acc, cur) {
+            if (cur.plNr){
+                if (!acc.includes('1')) {
+                    let tempObject = {_id: '1'}
+                    tempObject['shippedQty'] = cur[tempUom];
+                    packItemFields.map(function (packItemField) {
+                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                    });
+                    tempVirtuals.push(tempObject);
+                    acc.push('1');
+                } else {
+                    let tempVirtual = tempVirtuals.find(element => element._id === '1');
+                    tempVirtual['shippedQty'] += cur[tempUom];
+                    packItemFields.map(function (packItemField) {
+                        if (!tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
+                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                        }
+                    });
+                }
+            } else {
+                if (!acc.includes('0')) {
+                    let tempObject = {_id: '0'}
+                    packItemFields.map(function (packItemField) {
+                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                    });
+                    tempVirtuals.push(tempObject);
+                    acc.push('0');
+                } else {
+                    let tempVirtual = tempVirtuals.find(element => element._id === '0');
+                    packItemFields.map(function (packItemField) {
+                        if (!tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
+                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                        }
+                    });
+                }
+            }
+            return acc;
+        }, [])
+    }
     return tempVirtuals;
 }
+
 
 function getInputType(dbFieldType) {
     switch(dbFieldType) {
@@ -327,22 +425,36 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     return [];
 }
 
-function getBodys(fieldnames, selection, pos, headersForShow){
+function getBodys(fieldnames, selection, pos, headersForShow, screenId){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
-    // let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
-    let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
+    let hasPackitems = getScreenTbls(fieldnames, screenId).includes('packitem');
+    // let hasCertificates = getScreenTbls(fieldnames).includes('certificate');
     let screenHeaders = headersForShow;
     let project = selection.project || { _id: '0', name: '', number: '' };
     
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
+            let certificate = po.heats.reduce(function (acc, cur) {
+                if (!acc.heatNr.split(' | ').includes(cur.heatNr)) {
+                    acc.heatNr = !acc.heatNr ? cur.heatNr : `${acc.heatNr} | ${cur.heatNr}`
+                }
+                if (!acc.cif.split(' | ').includes(cur.certificate.cif)) {
+                    acc.cif = !acc.cif ? cur.certificate.cif : `${acc.cif} | ${cur.certificate.cif}`
+                }
+                return acc;
+            }, {
+                heatNr: '',
+                cif: ''
+            });
             if (po.subs) {
                 po.subs.map(sub => {
-                    if (!_.isEmpty(sub.certificates) && hasCertificates){
-                        virtuals(sub.certificates, getCertificateFields(screenHeaders)).map(virtual => {
+                    // if (!_.isEmpty(sub.certificates) && hasCertificates){
+                    if (!_.isEmpty(sub.packitems) && hasPackitems) {
+                        // virtuals(sub.certificates, getCertificateFields(screenHeaders)).map(virtual => {
+                        virtuals(sub.packitems, po.uom, getPackItemFields(screenHeaders)).map(virtual => {
                             arrayRow = [];
                             screenHeaders.map(screenHeader => {
                                 switch(screenHeader.fields.fromTbl) {
@@ -370,27 +482,83 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                         }
                                         break;
                                     case 'sub':
-                                        arrayRow.push({
-                                            collection: 'sub',
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
+                                        if (screenHeader.fields.name === 'shippedQty') {
+                                            arrayRow.push({
+                                                collection: 'virtual',
+                                                objectId: sub._id,
+                                                fieldName: 'shippedQty',
+                                                fieldValue: virtual.shippedQty || '',
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                        } else if (screenHeader.fields.name === 'heatNr') {
+                                            arrayRow.push({
+                                                collection: 'virtual',
+                                                objectId: '0',
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: certificate[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                        } else {
+                                            arrayRow.push({
+                                                collection: 'sub',
+                                                objectId: sub._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: sub[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                        }
                                         break;
                                     case 'certificate':
                                         arrayRow.push({
                                             collection: 'virtual',
-                                            objectId: virtual._id,
+                                            objectId: '0',
                                             fieldName: screenHeader.fields.name,
-                                            fieldValue: virtual[screenHeader.fields.name].join(' | '),
+                                            fieldValue: certificate[screenHeader.fields.name],
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
                                         });
+                                        break
+                                    case 'packitem':
+                                        if (screenHeader.fields.name === 'plNr') {
+                                            arrayRow.push({
+                                                collection: 'virtual',
+                                                objectId: virtual._id,
+                                                fieldName: 'plNr',
+                                                fieldValue: virtual.plNr,
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                        } else {
+                                            arrayRow.push({
+                                                collection: 'virtual',
+                                                objectId: virtual._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: virtual[screenHeader.fields.name].join(' | '),
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: 'text',
+                                            });
+                                        }
                                         break;
+                                    // case 'certificate':
+                                    //     arrayRow.push({
+                                    //         collection: 'virtual',
+                                    //         objectId: virtual._id,
+                                    //         fieldName: screenHeader.fields.name,
+                                    //         fieldValue: virtual[screenHeader.fields.name].join(' | '),
+                                    //         disabled: screenHeader.edit,
+                                    //         align: screenHeader.align,
+                                    //         fieldType: getInputType(screenHeader.fields.type),
+                                    //     });
+                                    //     break;
                                     default: arrayRow.push({
                                             collection: 'virtual',
                                             objectId: '0',
@@ -444,16 +612,49 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                     }
                                     break;
                                 case 'sub':
+                                    if (screenHeader.fields.name === 'shippedQty') {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: sub._id,
+                                            fieldName: 'shippedQty',
+                                            fieldValue: virtual.shippedQty || '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else if (screenHeader.fields.name === 'heatNr') {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: '0',
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: certificate[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'sub',
+                                            objectId: sub._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: sub[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    break;
+                                case 'certificate':
                                     arrayRow.push({
-                                        collection: 'sub',
-                                        objectId: sub._id,
+                                        collection: 'virtual',
+                                        objectId: '0',
                                         fieldName: screenHeader.fields.name,
-                                        fieldValue: sub[screenHeader.fields.name],
+                                        fieldValue: certificate[screenHeader.fields.name],
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
                                     });
-                                    break;
+                                    break
                                 default: arrayRow.push({
                                     collection: 'virtual',
                                     objectId: '0',
@@ -790,7 +991,7 @@ class ReleaseData extends React.Component {
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-            bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
+            bodysForShow: getBodys(fieldnames, selection, pos, headersForShow, screenId),
             splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
             splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
             nfiList: getNfiList(pos),
@@ -831,7 +1032,7 @@ class ReleaseData extends React.Component {
 
         if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow) {
             this.setState({
-                bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
+                bodysForShow: getBodys(fieldnames, selection, pos, headersForShow, screenId),
             });
         }
 

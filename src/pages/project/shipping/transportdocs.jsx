@@ -267,6 +267,18 @@ function getBodys(fieldnames, selection, pos, headersForShow){
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
+            let certificate = po.heats.reduce(function (acc, cur) {
+                if (!acc.heatNr.split(' | ').includes(cur.heatNr)) {
+                    acc.heatNr = !acc.heatNr ? cur.heatNr : `${acc.heatNr} | ${cur.heatNr}`
+                }
+                if (!acc.cif.split(' | ').includes(cur.certificate.cif)) {
+                    acc.cif = !acc.cif ? cur.certificate.cif : `${acc.cif} | ${cur.certificate.cif}`
+                }
+                return acc;
+            }, {
+                heatNr: '',
+                cif: ''
+            });
             if (po.subs) {
                 po.subs.map(sub => {
                     if (!_.isEmpty(sub.packitems) && hasPackitems) {
@@ -298,16 +310,39 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                         }
                                         break;
                                     case 'sub':
+                                        if (screenHeader.fields.name === 'heatNr') {
+                                            arrayRow.push({
+                                                collection: 'virtual',
+                                                objectId: '0',
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: certificate[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                        } else {
+                                            arrayRow.push({
+                                                collection: 'sub',
+                                                objectId: sub._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: sub[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                        }
+                                        break;
+                                    case 'certificate':
                                         arrayRow.push({
-                                            collection: 'sub',
-                                            objectId: sub._id,
+                                            collection: 'virtual',
+                                            objectId: '0',
                                             fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
+                                            fieldValue: certificate[screenHeader.fields.name],
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
                                         });
-                                        break;
+                                        break
                                     case 'packitem':
                                         arrayRow.push({
                                             collection: 'packitem',
@@ -374,16 +409,39 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                     }
                                     break;
                                 case 'sub':
+                                    if (screenHeader.fields.name === 'heatNr') {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: '0',
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: certificate[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'sub',
+                                            objectId: sub._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: sub[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    break;
+                                case 'certificate':
                                     arrayRow.push({
-                                        collection: 'sub',
-                                        objectId: sub._id,
+                                        collection: 'virtual',
+                                        objectId: '0',
                                         fieldName: screenHeader.fields.name,
-                                        fieldValue: sub[screenHeader.fields.name],
+                                        fieldValue: certificate[screenHeader.fields.name],
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
                                     });
-                                    break;
+                                    break
                                 case 'packitem':
                                     arrayRow.push({
                                         collection: 'packitem',

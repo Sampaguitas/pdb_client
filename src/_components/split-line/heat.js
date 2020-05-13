@@ -4,10 +4,12 @@ import { authHeader } from '../../_helpers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeaderInput from '../project-table/header-input';
 import TableSelectionAllRow from '../project-table/table-selection-all-row';
-import CifInput from '../project-table/cif-input';
+import TableInput from '../project-table/table-input';
+import TableSelect from '../project-table/table-select';
 import TableSelectionRow from '../project-table/table-selection-row';
 import NewRowCreate from '../project-table/new-row-create';
-import CifNewRowInput from '../project-table/cif-new-row-input';
+import NewRowInput from '../project-table/new-row-input';
+import NewRowSelect from '../project-table/new-row-select';
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -59,7 +61,7 @@ function arrayRemove(arr, value) {
 function certificateSorted(array, sort) {
     let tempArray = array.slice(0);
     switch(sort.name) {
-        case 'cif':
+        case 'heatNr':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
                     let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? String(a[sort.name]).toUpperCase() : '';
@@ -76,6 +78,32 @@ function certificateSorted(array, sort) {
                 return tempArray.sort(function (a, b) {
                     let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? String(a[sort.name]).toUpperCase() : '';
                     let nameB = !_.isUndefined(b[sort.name]) && !_.isNull(b[sort.name]) ? String(b[sort.name]).toUpperCase() : '';
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        case 'cif':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.certificate.cif) && !_.isNull(a.certificate.cif) ? String(a.certificate.cif).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.certificate.cif) && !_.isNull(b.certificate.cif) ? String(b.certificate.cif).toUpperCase() : '';
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.certificate.cif) && !_.isNull(a.certificate.cif) ? String(a.certificate.cif).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.certificate.cif) && !_.isNull(b.certificate.cif) ? String(b.certificate.cif).toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {
@@ -150,16 +178,18 @@ function doesMatch(search, value, type, isEqual) {
     }
 }
 
-class Certificate extends Component {
+class Heat extends Component {
     constructor(props) {
         super(props);
         this.state = {
             cif: '',
+            heatNr: '',
             selectedIds: [],
             selectAllRows: false,
             newRow: false,
-            newCif:{
-                cif: ''
+            newHeat:{
+                heatNr: '',
+                certificateId: '',
             },
             newRowFocus:false,
             creating: false,
@@ -197,8 +227,8 @@ class Certificate extends Component {
     componentDidMount() {
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
-        const tableCertificate = document.getElementById('certificateTable');
-        tableCertificate.addEventListener('keydown', (e) => { 
+        const tableHeat = document.getElementById('heatTable');
+        tableHeat.addEventListener('keydown', (e) => { 
             if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
                 return this.keyHandler(e);
             }
@@ -208,39 +238,57 @@ class Certificate extends Component {
     keyHandler(e) {
 
         let target = e.target;
-        let colIndex = target.parentElement.parentElement.cellIndex;               
-        let rowIndex = target.parentElement.parentElement.parentElement.rowIndex;
-        var nRows = target.parentElement.parentElement.parentElement.parentElement.childNodes.length;
+        let colIndex = target.parentElement.cellIndex;               
+        let rowIndex = target.parentElement.parentElement.rowIndex;
+        var nRows = target.parentElement.parentElement.parentElement.childNodes.length;
         
         switch(e.keyCode) {
             case 9:// tab
+                if(rowIndex === nRows) {
+                    this.handleNextLine(target);
+                }
                 if(target.parentElement.nextSibling) {
                     target.parentElement.nextSibling.click(); 
                 }
                 break;
             case 13: //enter
+                if(rowIndex === nRows) {
+                    this.handleNextLine(target);
+                }
                 if(rowIndex < nRows) {
-                    target.parentElement.parentElement.parentElement.nextSibling.childNodes[colIndex].firstChild.firstChild.click();
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
                 }
                 break;
             case 37: //left
-                if(colIndex > 1 && !target.parentElement.parentElement.classList.contains('isEditing')) {
-                    target.parentElement.parentElement.previousSibling.click();
+                if (rowIndex === nRows && !target.parentElement.classList.contains('isEditing')) {
+                    this.handleNextLine(target);
+                }
+                if(colIndex > 1 && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.previousSibling.click();
                 } 
                 break;
             case 38: //up
+                if(rowIndex === nRows) {
+                    this.handleNextLine(target);
+                }
                 if(rowIndex > 1) {
-                    target.parentElement.parentElement.parentElement.previousSibling.childNodes[colIndex].firstChild.firstChild.click() 
+                    target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();    
                 }
                 break;
             case 39: //right
-                if(target.parentElement.parentElement.nextSibling && !target.parentElement.parentElement.classList.contains('isEditing')) {
-                    target.parentElement.parentElement.nextSibling.click();
+                if (rowIndex === nRows && !target.parentElement.classList.contains('isEditing')) {
+                    this.handleNextLine(target);
+                }
+                if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.nextSibling.click();
                 }
                 break;
             case 40: //down
+                if(rowIndex === nRows) {
+                    this.handleNextLine(target);
+                }
                 if(rowIndex < nRows) {
-                    target.parentElement.parentElement.parentElement.nextSibling.childNodes[colIndex].firstChild.firstChild.click();
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
                 }
                 break;
         }
@@ -278,8 +326,9 @@ class Certificate extends Component {
         const { newRow } = this.state;
         this.setState({
             newRow: !newRow,
-            newCif:{
-                cif: ''
+            newHeat:{
+                heatNr: '',
+                certificateId: ''
             }
         });
     }
@@ -311,17 +360,18 @@ class Certificate extends Component {
     }
 
     handleChangeNewRow(event){
-        const { projectId } = this.props;
-        const { newCif } = this.state;
+        const { projectId, poId } = this.props;
+        const { newHeat } = this.state;
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         if (projectId) {
             this.setState({
                 ...this.state,
-                newCif: {
-                    ...newCif,
+                newHeat: {
+                    ...newHeat,
                     [name]: value,
+                    poId: poId,
                     projectId: projectId
                 }
             });
@@ -351,7 +401,7 @@ class Certificate extends Component {
 
     handleDelete(event, selectedIds) {
         event.preventDefault();
-        const { refreshCifs } = this.props;
+        const { refreshPos } = this.props;
         if(_.isEmpty(selectedIds)) {
             this.setState({
                 alert: {
@@ -369,7 +419,7 @@ class Certificate extends Component {
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                     body: JSON.stringify({selectedIds: selectedIds})
                 };
-                return fetch(`${config.apiUrl}/certificate/delete`, requestOptions)
+                return fetch(`${config.apiUrl}/heat/delete`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
                     if (responce.status === 401) {
@@ -383,7 +433,7 @@ class Certificate extends Component {
                             type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                             message: data.message
                         }
-                    }, refreshCifs);
+                    }, refreshPos);
                 }));
             });
         }
@@ -391,8 +441,8 @@ class Certificate extends Component {
 
     cerateNewRow(event) {
         event.preventDefault();
-        const { refreshCifs } = this.props;
-        const { newCif } = this.state;
+        const { refreshPos } = this.props;
+        const { newHeat } = this.state;
         this.setState({
             // ...this.state,
             creating: true
@@ -400,9 +450,9 @@ class Certificate extends Component {
             const requestOptions = {
                 method: 'POST',
                 headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify(newCif)
+                body: JSON.stringify(newHeat)
             };
-            return fetch(`${config.apiUrl}/certificate/create`, requestOptions)
+            return fetch(`${config.apiUrl}/heat/create`, requestOptions)
             .then( () => {
                 this.setState({
                     // ...this.state,
@@ -414,9 +464,9 @@ class Certificate extends Component {
                             // ...this.state,
                             newRowColor: 'inherit',
                             newRow:false,
-                            newCif:{},
+                            newHeat:{},
                             newRowFocus: false
-                        }, refreshCifs);
+                        }, refreshPos);
                     }, 1000);                                
                 });
             })
@@ -431,9 +481,9 @@ class Certificate extends Component {
                             // ...this.state,
                             newRowColor: 'inherit',
                             newRow:false,
-                            newCif:{},
+                            newHeat:{},
                             newRowFocus: false                                    
-                        }, refreshCifs);
+                        }, refreshPos);
                     }, 1000);                                                      
                 });
             });
@@ -471,7 +521,7 @@ class Certificate extends Component {
 
 
     generateHeader() {
-        const { cif, selectAllRows, sort } = this.state;
+        const { cif, heatNr, selectAllRows, sort } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -480,9 +530,18 @@ class Certificate extends Component {
                 />
                 <HeaderInput
                     type="text"
-                    title="Certificate"
+                    title="CIF"
                     name="cif"
                     value={cif}
+                    onChange={this.handleChangeHeader}
+                    sort={sort}
+                    toggleSort={this.toggleSort}
+                /> 
+                <HeaderInput
+                    type="text"
+                    title="Heat Nr"
+                    name="heatNr"
+                    value={heatNr}
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
@@ -491,9 +550,9 @@ class Certificate extends Component {
         );
     }
 
-    generateBody(certificates) {
-        const { refreshCifs } = this.props;
-        const { selectAllRows, newRow, newCif, newRowColor } = this.state;
+    generateBody(heats) {
+        const { refreshPos, certificates } = this.props;
+        const { selectAllRows, newRow, newHeat, newRowColor } = this.state;
         let tempRows = [];
         
         if (newRow) {
@@ -506,38 +565,52 @@ class Certificate extends Component {
                     <NewRowCreate
                         onClick={event => this.cerateNewRow(event)}
                     />
-                    <CifNewRowInput
+                    <NewRowSelect
+                        fieldName="certificateId"
+                        fieldValue={newHeat.certificateId}
+                        options={certificates.items}
+                        optionText="cif"
+                        fromTbls={[]}
+                        onChange={event => this.handleChangeNewRow(event)}
+                        color={newRowColor}
+                    />
+                    <NewRowInput
                         fieldType="text"
-                        fieldName="cif"
-                        fieldValue={newCif.cif}
+                        fieldName="heatNr"
+                        fieldValue={newHeat.heatNr}
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
                     />
                 </tr>
             );
-            
         }
 
-        if (certificates.items) {
-            this.filterName(certificates.items).map(certificate => {
+        if (heats) {
+            this.filterName(heats).map(heat => {
                 tempRows.push(
-                    <tr key={certificate._id}>
+                    <tr key={heat._id}>
                         <TableSelectionRow
-                            id={certificate._id}
+                            id={heat._id}
                             selectAllRows={selectAllRows}
                             callback={this.updateSelectedIds}
                         />
-                        <CifInput
-                            collection="certificate"
-                            objectId={certificate._id}
-                            fieldName="cif"
-                            fieldValue={certificate.cif}
-                            hasFile={certificate.hasFile}
-                            disabled={false}
-                            align="left"
+                        <TableSelect
+                            collection="heat"
+                            objectId={heat._id}
+                            fieldName="certificateId"
+                            fieldValue={heat.certificateId}
+                            options={certificates.items}
+                            optionText="cif"
+                            fromTbls={[]}
+                            refreshStore={refreshPos}
+                        />
+                        <TableInput
+                            collection="heat"
+                            objectId={heat._id}
+                            fieldName="heatNr"
+                            fieldValue={heat.heatNr}
                             fieldType="text"
-                            refreshStore={refreshCifs}
-                            setAlert={this.setAlert}
+                            refreshStore={refreshPos}
                         />
                     </tr>
                 );
@@ -549,13 +622,14 @@ class Certificate extends Component {
     filterName(array){
         const { 
             cif,
+            heatNr,
             sort
         } = this.state;
 
         if (array) {
             return certificateSorted(array, sort).filter(function (element) {
-                return (doesMatch(cif, element.cif, 'String', false)
-                );
+                return (doesMatch(cif, element.certificate.cif, 'String', false)
+                && doesMatch(heatNr, element.heatNr, 'String', false));
             });
         } else {
             return [];
@@ -564,7 +638,7 @@ class Certificate extends Component {
 
     render() {
         const { selectedIds, deleting, creating } = this.state;
-        const { certificates, toggleCif } = this.props;
+        const { heats, toggleHeat } = this.props;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
         return (
             <div>
@@ -578,29 +652,29 @@ class Certificate extends Component {
                     }
                     <div className={`row ${alert.message ? "mt-1" : "mt-2"} mb-2`}>
                         <div className="col text-right">
-                            <button title="Add Certificate"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewRow}>
+                            <button title="Add Heat Nr"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewRow}>
                                 <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>Add</span>
                             </button>
-                            <button title="Delete Certificate(s)"className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedIds)}>
+                            <button title="Delete Heat(s)"className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedIds)}>
                                 <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>Delete</span>
                             </button>
                         </div>
                     </div>
                     <div style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd', height: '400px'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row" >
-                            <table className="table table-bordered table-sm text-nowrap table-striped" id="certificateTable">
+                            <table className="table table-bordered table-sm text-nowrap table-striped" id="heatTable">
                                 <thead>
                                     {this.generateHeader()}
                                 </thead>
                                 <tbody>
-                                    {this.generateBody(certificates)}
+                                    {this.generateBody(heats)}
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
                     <div className="text-right mt-2">
-                        <button className="btn btn-leeuwen-blue btn-lg" onClick={event => toggleCif(event)}>
+                        <button className="btn btn-leeuwen-blue btn-lg" onClick={event => toggleHeat(event)}>
                             <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
                         </button>
                     </div>
@@ -609,4 +683,4 @@ class Certificate extends Component {
         );
     }
 }
-export default Certificate;
+export default Heat;

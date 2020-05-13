@@ -520,7 +520,7 @@ class ProjectTable extends Component {
         this.filterName(screenBodys).map(screenBody => {
             let tempCol = [];
             screenBody.fields.map(function (field, index) {
-                if (field.objectId || field.parentId) {
+                // if (field.objectId || field.parentId) {
                     tempCol.push(
                         <TableInput
                             collection={field.collection}
@@ -537,9 +537,9 @@ class ProjectTable extends Component {
                             refreshStore={refreshStore}
                         />
                     );                        
-                } else {
-                    tempCol.push(<td key={index}></td>) 
-                }
+                // } else {
+                //     tempCol.push(<td key={index}></td>) 
+                // }
             });
             tempRows.push(
                 <tr key={screenBody._id}>

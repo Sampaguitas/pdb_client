@@ -649,11 +649,11 @@ class Screens extends React.Component {
         ]
 
         const screens = [
-            {_id: '5cd2b642fd333616dc360b63', name: 'Expediting', fromTbls: ['po', 'sub', 'packitem']},
+            {_id: '5cd2b642fd333616dc360b63', name: 'Expediting', fromTbls: ['po', 'sub', 'packitem', 'certificate']},
             {_id: '5cd2b646fd333616dc360b70', name: 'Expediting Splitwindow', fromTbls: ['po', 'sub']},
-            {_id: '5cd2b642fd333616dc360b64', name: 'Inspection', fromTbls: ['po', 'sub', 'certificate']},
+            {_id: '5cd2b642fd333616dc360b64', name: 'Inspection', fromTbls: ['po', 'sub', 'packitem', 'certificate']},
             {_id: '5cd2b647fd333616dc360b71', name: 'Inspection Splitwindow', fromTbls: ['po', 'sub', 'certificate']},
-            {_id: '5cd2b643fd333616dc360b66', name: 'Assign Transport', fromTbls: ['po', 'sub', 'article', 'packitem']},
+            {_id: '5cd2b643fd333616dc360b66', name: 'Assign Transport', fromTbls: ['po', 'sub', 'article', 'packitem', 'certificate']},
             {_id: '5cd2b647fd333616dc360b72', name: 'Assign Transport SplitWindow', fromTbls: ['po', 'sub', 'article', 'packitem']},
             {_id: '5cd2b643fd333616dc360b67', name: 'Print Transportdocuments', fromTbls: ['collipack']},
             {_id: '5cd2b642fd333616dc360b65', name: 'Certificates', fromTbls: ['po', 'sub', 'certificate']},

@@ -181,10 +181,24 @@ function findObj(array, search) {
     }
 }
 
-function getScreenTbls (fieldnames) {
+// function getScreenTbls (fieldnames) {
+//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+//         return fieldnames.items.reduce(function (accumulator, currentValue) {
+//             if(!accumulator.includes(currentValue.fields.fromTbl)) {
+//                 accumulator.push(currentValue.fields.fromTbl)
+//             }
+//             return accumulator;
+//         },[]);
+//     } else {
+//         return [];
+//     }
+    
+// }
+
+function getScreenTbls (fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         return fieldnames.items.reduce(function (accumulator, currentValue) {
-            if(!accumulator.includes(currentValue.fields.fromTbl)) {
+            if(!accumulator.includes(currentValue.fields.fromTbl) && currentValue.screenId === screenId) {
                 accumulator.push(currentValue.fields.fromTbl)
             }
             return accumulator;
@@ -375,16 +389,28 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     return [];
 }
 
-function getBodys(fieldnames, selection, pos, headersForShow){
+function getBodys(fieldnames, selection, pos, headersForShow, screenId){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
-    let hasPackitems = getScreenTbls(fieldnames).includes('packitem');
+    let hasPackitems = getScreenTbls(fieldnames, screenId).includes('packitem');
     let screenHeaders = headersForShow;
     let project = selection.project || { _id: '0', name: '', number: '' };
     let i = 1;
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
+            let certificate = po.heats.reduce(function (acc, cur) {
+                if (!acc.heatNr.split(' | ').includes(cur.heatNr)) {
+                    acc.heatNr = !acc.heatNr ? cur.heatNr : `${acc.heatNr} | ${cur.heatNr}`
+                }
+                if (!acc.cif.split(' | ').includes(cur.certificate.cif)) {
+                    acc.cif = !acc.cif ? cur.certificate.cif : `${acc.cif} | ${cur.certificate.cif}`
+                }
+                return acc;
+            }, {
+                heatNr: '',
+                cif: ''
+            });
             if (po.subs) {
                 po.subs.map(sub => {
                     if (!_.isEmpty(sub.packitems) && hasPackitems) {
@@ -426,6 +452,16 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
                                             });
+                                        } else if (screenHeader.fields.name === 'heatNr') {
+                                            arrayRow.push({
+                                                collection: 'virtual',
+                                                objectId: '0',
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: certificate[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
                                         } else {
                                             arrayRow.push({
                                                 collection: 'sub',
@@ -438,6 +474,17 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                             });
                                         }
                                         break;
+                                    case 'certificate':
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: '0',
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: certificate[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                        break
                                     case 'packitem':
                                         if (screenHeader.fields.name === 'plNr') {
                                             arrayRow.push({
@@ -514,16 +561,39 @@ function getBodys(fieldnames, selection, pos, headersForShow){
                                     }
                                     break;
                                 case 'sub':
+                                    if (screenHeader.fields.name === 'heatNr') {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: '0',
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: certificate[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'sub',
+                                            objectId: sub._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: sub[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    break;
+                                case 'certificate':
                                     arrayRow.push({
-                                        collection: 'sub',
-                                        objectId: sub._id,
+                                        collection: 'virtual',
+                                        objectId: '0',
                                         fieldName: screenHeader.fields.name,
-                                        fieldValue: sub[screenHeader.fields.name],
+                                        fieldValue: certificate[screenHeader.fields.name],
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
                                     });
-                                    break;
+                                    break
                                 default: arrayRow.push({
                                     collection: 'virtual',
                                         objectId: '0',
@@ -779,7 +849,7 @@ class Overview extends React.Component {
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-            bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
+            bodysForShow: getBodys(fieldnames, selection, pos, headersForShow, screenId),
             splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
             splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
             docList: arraySorted(docConf(docdefs.items), "name"),
@@ -816,7 +886,7 @@ class Overview extends React.Component {
 
         if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow) {
             this.setState({
-                bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
+                bodysForShow: getBodys(fieldnames, selection, pos, headersForShow, screenId),
             });
         }
         
