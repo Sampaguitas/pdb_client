@@ -224,8 +224,8 @@ function virtuals(heats) {
             {
                 cif: '',
                 heatNr: '',
-                heatId: '0',
-                certificateId: '0',
+                heatId: '',
+                certificateId: '',
             }
         ]);
     }
@@ -283,7 +283,7 @@ function getBodys(selection, pos, headersForShow){
                             } else {
                                 arrayRow.push({
                                     collection: 'virtual',
-                                    objectId: '0',
+                                    objectId: '',
                                     fieldName: screenHeader.fields.name,
                                     fieldValue: '',
                                     disabled: screenHeader.edit,
@@ -293,7 +293,6 @@ function getBodys(selection, pos, headersForShow){
                             }
                         }
                         case 'certificate':
-                            console.log(screenHeader.fields.type);
                             arrayRow.push({
                                 collection: 'virtual',
                                 objectId: virtual._id,
@@ -489,6 +488,8 @@ class Certificates extends React.Component {
         this.toggleCif = this.toggleCif.bind(this);
         this.toggleHeat = this.toggleHeat.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
+        // this.downloadCif = this.downloadCif.bind(this);
+        this.handleDownloadCif = this.handleDownloadCif.bind(this);
         //settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -587,7 +588,9 @@ class Certificates extends React.Component {
         }
 
         if (settingsDisplay != prevState.settingsDisplay) {
-            this.setState({headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')});
+            this.setState({
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')
+            });
         }
 
         if (settings != prevProps.settings) {
@@ -897,6 +900,71 @@ class Certificates extends React.Component {
         });
     }
 
+    handleDownloadCif(event) {
+
+        function hasFile(certificateId, certificates) {
+            if (certificates.hasOwnProperty('items') && !_.isEmpty(certificates.items)) {
+                let found = certificates.items.find(element => element._id === certificateId);
+                if (!_.isUndefined(found)) {
+                    return found.hasFile || false;
+                }
+            }
+            return false;
+        }
+
+        event.preventDefault();
+        const { selectedIds, bodysForShow } = this.state;
+        const { certificates } = this.props;
+        if (selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one line to download Certificate.'
+                }
+            });
+        } else if (!selectedIds[0].heatId){
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'No heatNr has been assigned to this line yet...'
+                }
+            });
+        } else {
+            let found = bodysForShow.find(element => element.tablesId.heatId === selectedIds[0].heatId);
+            if (!_.isUndefined(found)) {
+                let certificateId = found.tablesId.certificateId;
+                if (!hasFile(certificateId, certificates)) { 
+                    this.setState({
+                        alert: {
+                            type: 'alert-danger',
+                            message: 'No file has been uploaded for selected certificate yet...'
+                        }
+                    });
+                } else {
+                    let tdCif = found.fields.find(element => element.fieldName === 'cif');
+                    let tdHeatNr = found.fields.find(element => element.fieldName === 'heatNr');
+                    let cif = !_.isUndefined(tdCif) ? tdCif.fieldValue : '';
+                    let heatNr = !_.isUndefined(tdHeatNr) ? tdHeatNr.fieldValue : '';
+                    this.setState({
+                        isDownloading: true
+                    }, () => {
+                        const requestOptions = {
+                            method: 'GET',
+                            headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                        }
+                        return fetch(`${config.apiUrl}/certificate/downloadCif?id=${encodeURI(certificateId)}`, requestOptions)
+                        .then(res => res.blob()).then(blob => {
+                            saveAs(blob, `MTC${cif}_HeatNr${heatNr}.pdf`);
+                            this.setState({ isDownloading: false });
+                        });
+                    });
+                } 
+            }
+        }
+    }
+
+    
+
     handleModalTabClick(event, tab){
         event.preventDefault();
         const { tabs } = this.state; // 1. Get tabs from state
@@ -964,7 +1032,7 @@ class Certificates extends React.Component {
                         <button title="Add/Edit Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleHeat} style={{height: '34px'}}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Heat Numbers</span>
                         </button>
-                        <button title="Download Certificate" className="btn btn-success btn-lg mr-2" style={{height: '34px'}}>
+                        <button title="Download Certificate" className="btn btn-success btn-lg mr-2" onClick={this.handleDownloadCif} style={{height: '34px'}}>
                             <span><FontAwesomeIcon icon="file-pdf" className="fa-lg mr-2"/>Download CIF</span>
                         </button>
                     </div>
