@@ -495,7 +495,8 @@ class Certificates extends React.Component {
         this.toggleHeat = this.toggleHeat.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         // this.downloadCif = this.downloadCif.bind(this);
-        this.handleDownloadCif = this.handleDownloadCif.bind(this);
+        // this.handleDownloadCif = this.handleDownloadCif.bind(this);
+        this.handleDownloadMany = this.handleDownloadMany.bind(this);
         //settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -769,6 +770,7 @@ class Certificates extends React.Component {
         const { projectId } = this.state;
         if (projectId) {
             dispatch(certificateActions.getAll(projectId));
+            dispatch(poActions.getAll(projectId));
         }
     }
 
@@ -906,70 +908,100 @@ class Certificates extends React.Component {
         });
     }
 
-    handleDownloadCif(event) {
+    // handleDownloadCif(event) {
 
-        function hasFile(certificateId, certificates) {
-            if (certificates.hasOwnProperty('items') && !_.isEmpty(certificates.items)) {
-                let found = certificates.items.find(element => element._id === certificateId);
-                if (!_.isUndefined(found)) {
-                    return found.hasFile || false;
-                }
-            }
-            return false;
-        }
+    //     function hasFile(certificateId, certificates) {
+    //         if (certificates.hasOwnProperty('items') && !_.isEmpty(certificates.items)) {
+    //             let found = certificates.items.find(element => element._id === certificateId);
+    //             if (!_.isUndefined(found)) {
+    //                 return found.hasFile || false;
+    //             }
+    //         }
+    //         return false;
+    //     }
 
+    //     event.preventDefault();
+    //     const { selectedIds, bodysForShow } = this.state;
+    //     const { certificates } = this.props;
+    //     if (selectedIds.length != 1) {
+    //         this.setState({
+    //             alert: {
+    //                 type: 'alert-danger',
+    //                 message: 'Select one line to download Certificate.'
+    //             }
+    //         });
+    //     } else if (!selectedIds[0].heatId){
+    //         this.setState({
+    //             alert: {
+    //                 type: 'alert-danger',
+    //                 message: 'No heatNr has been assigned to this line yet...'
+    //             }
+    //         });
+    //     } else {
+    //         let found = bodysForShow.find(element => element.tablesId.heatId === selectedIds[0].heatId);
+    //         if (!_.isUndefined(found)) {
+    //             let certificateId = found.tablesId.certificateId;
+    //             if (!hasFile(certificateId, certificates)) { 
+    //                 this.setState({
+    //                     alert: {
+    //                         type: 'alert-danger',
+    //                         message: 'No file has been uploaded for selected certificate yet...'
+    //                     }
+    //                 });
+    //             } else {
+    //                 let tdCif = found.fields.find(element => element.fieldName === 'cif');
+    //                 let tdHeatNr = found.fields.find(element => element.fieldName === 'heatNr');
+    //                 let cif = !_.isUndefined(tdCif) ? tdCif.fieldValue : '';
+    //                 let heatNr = !_.isUndefined(tdHeatNr) ? tdHeatNr.fieldValue : '';
+    //                 this.setState({
+    //                     isDownloading: true
+    //                 }, () => {
+    //                     const requestOptions = {
+    //                         method: 'GET',
+    //                         headers: { ...authHeader(), 'Content-Type': 'application/json'},
+    //                     }
+    //                     return fetch(`${config.apiUrl}/certificate/downloadCif?id=${encodeURI(certificateId)}`, requestOptions)
+    //                     .then(res => res.blob()).then(blob => {
+    //                         saveAs(blob, `MTC${cif}_HeatNr${heatNr}.pdf`);
+    //                         this.setState({ isDownloading: false });
+    //                     });
+    //                 });
+    //             } 
+    //         }
+    //     }
+    // }
+
+    handleDownloadMany(event) {
         event.preventDefault();
-        const { selectedIds, bodysForShow } = this.state;
-        const { certificates } = this.props;
-        if (selectedIds.length != 1) {
+        const { projectId, selectedIds, screenId } = this.state;
+        if (selectedIds.length === 0) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
-                    message: 'Select one line to download Certificate.'
-                }
-            });
-        } else if (!selectedIds[0].heatId){
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'No heatNr has been assigned to this line yet...'
+                    message: 'Select lines to download Certificate.'
                 }
             });
         } else {
-            let found = bodysForShow.find(element => element.tablesId.heatId === selectedIds[0].heatId);
-            if (!_.isUndefined(found)) {
-                let certificateId = found.tablesId.certificateId;
-                if (!hasFile(certificateId, certificates)) { 
-                    this.setState({
-                        alert: {
-                            type: 'alert-danger',
-                            message: 'No file has been uploaded for selected certificate yet...'
-                        }
-                    });
-                } else {
-                    let tdCif = found.fields.find(element => element.fieldName === 'cif');
-                    let tdHeatNr = found.fields.find(element => element.fieldName === 'heatNr');
-                    let cif = !_.isUndefined(tdCif) ? tdCif.fieldValue : '';
-                    let heatNr = !_.isUndefined(tdHeatNr) ? tdHeatNr.fieldValue : '';
-                    this.setState({
-                        isDownloading: true
-                    }, () => {
-                        const requestOptions = {
-                            method: 'GET',
-                            headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                        }
-                        return fetch(`${config.apiUrl}/certificate/downloadCif?id=${encodeURI(certificateId)}`, requestOptions)
-                        .then(res => res.blob()).then(blob => {
-                            saveAs(blob, `MTC${cif}_HeatNr${heatNr}.pdf`);
-                            this.setState({ isDownloading: false });
-                        });
-                    });
-                } 
-            }
+            this.setState({
+                isDownloading: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'}, //
+                    body: JSON.stringify({
+                        projectId: projectId,
+                        screenId: screenId,
+                        selectedIds: selectedIds
+                    })
+                }
+                return fetch(`${config.apiUrl}/certificate/downloadMany`, requestOptions)
+                .then(res => res.blob()).then(blob => {
+                    saveAs(blob, 'MTCs.zip');
+                    this.setState({ isDownloading: false });
+                });
+            });
         }
     }
-
-    
 
     handleModalTabClick(event, tab){
         event.preventDefault();
@@ -996,6 +1028,7 @@ class Certificates extends React.Component {
             showCif,
             showHeat,
             showSettings,
+            isDownloading,
             //--------
             headersForShow,
             bodysForShow,
@@ -1038,8 +1071,11 @@ class Certificates extends React.Component {
                         <button title="Add/Edit Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleHeat} style={{height: '34px'}}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Heat Numbers</span>
                         </button>
-                        <button title="Download Certificate" className="btn btn-success btn-lg mr-2" onClick={this.handleDownloadCif} style={{height: '34px'}}>
+                        {/* <button title="Download Certificate" className="btn btn-success btn-lg mr-2" onClick={this.handleDownloadCif} style={{height: '34px'}}>
                             <span><FontAwesomeIcon icon="file-pdf" className="fa-lg mr-2"/>Download CIF</span>
+                        </button> */}
+                        <button title="Download Certificate(s)" className="btn btn-success btn-lg mr-2" onClick={this.handleDownloadMany} style={{height: '34px'}}>
+                            <span><FontAwesomeIcon icon={isDownloading ? "spinner" : "file-pdf"} className={isDownloading ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Download CIF(s)</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>

@@ -1,21 +1,37 @@
 import React from 'react';
+import config from 'config';
+import { authHeader } from '../../../../_helpers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 
 class Certificates extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dpattern: '',
-            dpatternDeleting: false,
-            dpatternUpdating: false
-
+            cifName: '',
+            updating: false
         }
         this.onChange = this.onChange.bind(this);
         this.handlePushField = this.handlePushField.bind(this);
-        this.handleDeleteDpattern = this.handleDeleteDpattern.bind(this);
-        this.handleUpdateDpattern = this.handleUpdateDpattern.bind(this);
+        this.handleUpdate = this.handleUpdate.bind(this);
         this.onKeyDown = this.onKeyDown.bind(this);
+    }
+
+    componentDidMount() {
+        const { selection } = this.props;
+        if (selection.project && selection.project.hasOwnProperty('cifName')) {
+            this.setState({
+                cifName: selection.project.cifName || ''
+            });
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        const { selection } = this.props;
+        if (selection != prevProps.selection && selection.project && selection.project.hasOwnProperty('cifName')) {
+            this.setState({
+                cifName: selection.project.cifName || ''
+            });
+        }
     }
 
     onChange(event) {
@@ -30,29 +46,37 @@ class Certificates extends React.Component {
 
     handlePushField(event, field) {
         event.preventDefault();
-        const { dpattern } = this.state;
-            this.setState({dpattern: dpattern.concat(field)});
+        const { cifName } = this.state;
+            this.setState({cifName: cifName.concat(field)});
     }
 
-    handleDeleteDpattern(event) {
+    handleUpdate(event) {
         event.preventDefault();
-        this.setState({dpatternDeleting: true});
-        setTimeout(() => {
+        const { cifName } = this.state;
+        const { selection, refreshProject, handleSetAlert } = this.props;
+        if (selection.project) {
             this.setState({
-                dpattern: '', 
-                dpatternDeleting: false
-            })
-        }, 1000);
-    }
-
-    handleUpdateDpattern(event) {
-        event.preventDefault();
-        this.setState({dpatternUpdating: true});
-        setTimeout(() => {
-            this.setState({
-                dpatternUpdating: false
-            })
-        }, 1000);
+                updating: true
+            }, () => {
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({cifName: cifName})
+                };
+                return fetch(`${config.apiUrl}/project/updateCifName?id=${selection.project._id}`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            updating: false
+                        }, handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshProject));
+                    }
+                }));
+            });
+        }
     }
 
     onKeyDown(event) {
@@ -68,9 +92,8 @@ class Certificates extends React.Component {
         } = this.props;
 
         const {
-            dpattern,
-            dpatternDeleting,
-            dpatternUpdating,
+            cifName,
+            updating,
         } = this.state;
 
         return ( 
@@ -83,15 +106,15 @@ class Certificates extends React.Component {
                         <div className="card-body">
                             
                             <div className="form-group">
-                                <label htmlFor="dpattern">Designation Pattern</label>
+                                <label htmlFor="cifName">Designation Pattern</label>
                                 <p>Click on the Tags below and add some text in between...</p>
                                 <input
                                     type="text"
                                     className="form-control"
-                                    name="dpattern"
-                                    value={dpattern}
+                                    name="cifName"
+                                    value={cifName}
                                     placeholder="Pattern"
-                                    aria-describedby="dpatternHelp"
+                                    aria-describedby="cifNameHelp"
                                     onChange={event => this.onChange(event)}
                                     onKeyDown={event => this.onKeyDown(event)}
                                     autoComplete="off"
@@ -100,7 +123,7 @@ class Certificates extends React.Component {
                                     spellCheck={false}
                                 />
                                 <small
-                                    id="dpatternHelp"
+                                    id="cifNameHelp"
                                     className="form-text text-muted"
                                 >
                                     Only alphanumeric characters, spaces, underscores and minus symbols are allowed.
@@ -108,31 +131,19 @@ class Certificates extends React.Component {
                             </div>
                             <p className="heading">Available Pattern Tags are:</p>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[clPo]')}>clPo</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[clPoItem]')}>clPoItem</span>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[clPoRev]')}>clPoRev</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[clPoItem]')}>clPoItem</span>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[clCode]')}>clCode</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[vlPo]')}>vlSo</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[vlPoItem]')}>vlSoItem</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[qty]')}>qty</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[udfPo91]')}>udfPo91</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[udfPoX1]')}>udfPoX1</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[vlSo]')}>vlSo</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[vlSoItem]')}>vlSoItem</span>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[nfi]')}>nfi</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[splitQty]')}>splitQty</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[udfSb91]')}>udfSb91</span>
-                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[udfSbX1]')}>udfSbX1</span>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[cif]')}>cif</span>
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[heatNr]')}>heatNr</span>
+                            <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[inspQty]')}>inspQty</span>
                             <div className="text-right">
-                                <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={(event) => this.handleUpdateDpattern(event)}>
-                                        <span><FontAwesomeIcon icon={dpatternUpdating ? "spinner" : "edit"} className={dpatternUpdating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Update</span>
+                                <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={(event) => this.handleUpdate(event)}>
+                                        <span><FontAwesomeIcon icon={updating ? "spinner" : "edit"} className={updating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Update</span>
                                 </button>
-                                <button
-                                    className="btn btn-leeuwen btn-lg"
-                                    onClick={(event) => this.handleDeleteDpattern(event)}
-                                >
-                                    <span><FontAwesomeIcon icon={dpatternDeleting ? "spinner" : "trash-alt"} className={dpatternDeleting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Delete</span>
-                                </button>
-                                
                             </div>   
                         </div>
                     </div>

@@ -284,9 +284,9 @@ class General extends React.Component {
         };
     }
     
-    componentDidUpdate(prevProp, prevState) {
+    componentDidUpdate(prevProps, prevState) {
         const { users, selection, accesses } = this.props;
-        if (prevProp.users != users || prevProp.selection != selection || prevProp.accesses != accesses) {
+        if (prevProps.users != users || prevProps.selection != selection || prevProps.accesses != accesses) {
             var userArray = [];
             if (users.items && selection.project && accesses.items) {
                 users.items.map(function (user) {

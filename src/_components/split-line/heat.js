@@ -184,11 +184,13 @@ class Heat extends Component {
         this.state = {
             cif: '',
             heatNr: '',
+            inspQty: '',
             selectedIds: [],
             selectAllRows: false,
             newRow: false,
             newHeat:{
                 heatNr: '',
+                inspQty: '',
                 certificateId: '',
             },
             newRowFocus:false,
@@ -522,7 +524,7 @@ class Heat extends Component {
 
 
     generateHeader() {
-        const { cif, heatNr, selectAllRows, sort } = this.state;
+        const { cif, heatNr, inspQty, selectAllRows, sort } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -543,6 +545,15 @@ class Heat extends Component {
                     title="Heat Nr"
                     name="heatNr"
                     value={heatNr}
+                    onChange={this.handleChangeHeader}
+                    sort={sort}
+                    toggleSort={this.toggleSort}
+                />
+                <HeaderInput
+                    type="number"
+                    title="Insp Qty"
+                    name="inspQty"
+                    value={inspQty}
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
@@ -582,6 +593,13 @@ class Heat extends Component {
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
                     />
+                    <NewRowInput
+                        fieldType="number"
+                        fieldName="inspQty"
+                        fieldValue={newHeat.inspQty}
+                        onChange={event => this.handleChangeNewRow(event)}
+                        color={newRowColor}
+                    />
                 </tr>
             );
         }
@@ -611,6 +629,14 @@ class Heat extends Component {
                             fieldName="heatNr"
                             fieldValue={heat.heatNr}
                             fieldType="text"
+                            refreshStore={refreshPos}
+                        />
+                        <TableInput
+                            collection="heat"
+                            objectId={heat._id}
+                            fieldName="inspQty"
+                            fieldValue={heat.inspQty}
+                            fieldType="number"
                             refreshStore={refreshPos}
                         />
                     </tr>
