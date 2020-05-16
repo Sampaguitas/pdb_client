@@ -936,11 +936,12 @@ class Certificates extends React.Component {
                 return fetch(`${config.apiUrl}/certificate/downloadHeat?heatId=${encodeURI(heatId)}`, requestOptions)
                 .then(res => {
                     if (!res.ok) {
-                        resolve();
+                        resolve({ isRejected: true });
                     } else {
                         let fileName = res.headers.get('Content-Disposition').split("filename=")[1];
                         res.blob().then(blob => {
-                            resolve(saveAs(blob, fileName));
+                            saveAs(blob, fileName);
+                            resolve({ isRejected: false });
                         });
                     }
                 });
@@ -956,9 +957,7 @@ class Certificates extends React.Component {
             });
         } else {
             let heatIds = selectedIds.reduce(function(acc, cur) {
-                if (!!cur.heatId && hasFile(cur.heatId) && !acc.includes(cur.heatId)) {
-                    acc.push(cur.heatId);
-                }
+                acc.push(cur.heatId);
                 return acc;
             }, []);
             if (_.isEmpty(heatIds)) {
@@ -975,9 +974,22 @@ class Certificates extends React.Component {
                     heatIds.forEach(heatId => {
                         myPromises.push(downloadPromise(heatId));
                     });
-                    Promise.all(myPromises).then( () => {
+                    Promise.all(myPromises).then( (results) => {
+                        let nRejected = 0;
+                        let nDownloaded = 0;
+                        results.map(result => {
+                            if (result.isRejected) {
+                                nRejected++;
+                            } else {
+                                nDownloaded++;
+                            }
+                        });
                         this.setState({
-                            isDownloading: false
+                            isDownloading: false,
+                            alert: {
+                                type: !!nRejected ? 'alert-danger' : 'alert-success',
+                                message: `${nDownloaded} Files Downloaded, ${nRejected} Files Rejected${!!nRejected ? '... Ensure that all lines selected have a heatNr and that a document has well been uploaded for each certificates.' : '.'}`
+                            }
                         });
                     });
                 });
