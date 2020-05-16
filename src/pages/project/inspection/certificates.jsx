@@ -935,10 +935,14 @@ class Certificates extends React.Component {
                 }
                 return fetch(`${config.apiUrl}/certificate/downloadHeat?heatId=${encodeURI(heatId)}`, requestOptions)
                 .then(res => {
-                    let fileName = res.headers.get('Content-Disposition').split("filename=")[1];
-                    res.blob().then(blob => {
-                        resolve(saveAs(blob, fileName));
-                    });
+                    if (!res.ok) {
+                        resolve();
+                    } else {
+                        let fileName = res.headers.get('Content-Disposition').split("filename=")[1];
+                        res.blob().then(blob => {
+                            resolve(saveAs(blob, fileName));
+                        });
+                    }
                 });
             });
         }
