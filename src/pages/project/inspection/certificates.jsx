@@ -996,7 +996,7 @@ class Certificates extends React.Component {
                 }
                 return fetch(`${config.apiUrl}/certificate/downloadMany`, requestOptions)
                 .then(res => res.blob()).then(blob => {
-                    saveAs(blob);
+                    saveAs(blob, 'mtcs.zip');
                     this.setState({ isDownloading: false });
                 });
             });
