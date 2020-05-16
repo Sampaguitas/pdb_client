@@ -934,8 +934,11 @@ class Certificates extends React.Component {
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 }
                 return fetch(`${config.apiUrl}/certificate/downloadHeat?heatId=${encodeURI(heatId)}`, requestOptions)
-                .then(res => res.blob()).then(blob => {
-                    resolve(saveAs(blob, `test.pdf`))
+                .then(res => {
+                    let fileName = res.headers.get('Content-Disposition').split("filename=")[1];
+                    res.blob().then(blob => {
+                        resolve(saveAs(blob, fileName));
+                    });
                 });
             });
         }
