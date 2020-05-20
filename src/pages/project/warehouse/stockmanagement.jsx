@@ -9,6 +9,7 @@ import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
     alertActions, 
+    certificateActions,
     docdefActions, 
     fieldnameActions,
     fieldActions,
@@ -960,6 +961,7 @@ class StockManagement extends React.Component {
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
 
         this.refreshStore = this.refreshStore.bind(this);
+        this.refreshCifs = this.refreshCifs.bind(this);
         this.refreshTransactions = this.refreshTransactions.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.updateSelectedIdsGr = this.updateSelectedIdsGr.bind(this);
@@ -988,6 +990,7 @@ class StockManagement extends React.Component {
         const { 
             dispatch,
             loadingAccesses,
+            loadingCertificates,
             loadingDocdefs,
             loadingFieldnames,
             loadingFields,
@@ -1027,6 +1030,9 @@ class StockManagement extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingCertificates) {
+                dispatch(certificateActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -1351,6 +1357,14 @@ class StockManagement extends React.Component {
             dispatch(poActions.getAll(projectId));
             dispatch(transactionActions.getAll(projectId));
             dispatch(settingActions.getAll(projectId, userId));
+        }
+    }
+
+    refreshCifs() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+        if (projectId) {
+            dispatch(certificateActions.getAll(projectId));
         }
     }
 
@@ -1816,7 +1830,7 @@ class StockManagement extends React.Component {
             locList,
         } = this.state;
 
-        const { accesses, fieldnames, fields, pos, selection, warehouses } = this.props;
+        const { accesses, certificates, fieldnames, fields, pos, selection, warehouses } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         class goodsReceiptObject {
@@ -2121,6 +2135,10 @@ class StockManagement extends React.Component {
                     <HeatLocation
                         alert={alert}
                         handleClearAlert={this.handleClearAlert}
+                        toggleHeat={this.toggleHeat}
+                        poId={!_.isEmpty(selectedIds) ? selectedIds[0].poId : ''}
+                        refreshCifs={this.refreshCifs}
+                        certificates={certificates}
                     />
                 </Modal>
                 <Modal
@@ -2217,8 +2235,9 @@ class StockManagement extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, docdefs, fieldnames, fields, pos, selection, settings, transactions, warehouses } = state;
+    const { accesses, alert, certificates, docdefs, fieldnames, fields, pos, selection, settings, transactions, warehouses } = state;
     const { loadingAccesses } = accesses;
+    const { loadingCertificates } = accesses;
     const { loadingDocdefs } = docdefs;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
@@ -2230,11 +2249,13 @@ function mapStateToProps(state) {
 
     return {
         accesses,
+        certificates,
         alert,
         docdefs,
         fieldnames,
         fields,
         loadingAccesses,
+        loadingCertificates,
         loadingDocdefs,
         loadingFieldnames,
         loadingFields,
