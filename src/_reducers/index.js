@@ -11,8 +11,9 @@ import { docdefs } from './docdefs.reducer';
 import { docfields } from './docfields.reducer';
 import { doctypes } from './doctypes.reducer';
 import { erps } from './erps.reducer';
-import { fields } from './fields.reducer';
 import { fieldnames } from './fieldnames.reducer';
+import { fields } from './fields.reducer';
+import { heatlocs } from './heatlocs.reducer';
 import { locales } from './locales.reducer';
 import { opcos } from './opcos.reducer';
 import { pos } from './pos.reducer';
@@ -43,6 +44,7 @@ const rootReducer = combineReducers({
   erps,
   fieldnames,
   fields,
+  heatlocs,
   locales,
   opcos,
   pos,

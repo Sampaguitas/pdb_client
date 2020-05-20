@@ -10,6 +10,7 @@ export * from './doctype.constants';
 export * from './erp.constants';
 export * from './field.constants';
 export * from './fieldname.constants';
+export * from './heatloc.constants';
 export * from './locale.constants';
 export * from './opco.constants';
 export * from './po.constants';

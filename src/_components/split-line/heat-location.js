@@ -608,7 +608,7 @@ class HeatLocation extends Component {
                     <div className="row" style={{height: "400px"}}>
                         <div className="col full-height">
                             <div className="form-group full-height">
-                                <label htmlFor="poLineHeatNrs" style={{height: '18px'}}>Order line</label>
+                                <label htmlFor="poLineHeatNrs" style={{height: '18px'}}>Order Line:</label>
                                 <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: 'calc(100% - 18px)'}}>
                                     <div className="table-responsive custom-table-container custom-table-container__fixed-row">
                                         <table className="table table-bordered table-sm table-hover text-nowrap" id="poLineHeatNrs">
@@ -639,7 +639,7 @@ class HeatLocation extends Component {
                         </div>
                         <div className="col full-height">
                             <div className="form-group full-height">
-                                <label htmlFor="locationHeatNrs" style={{height: '18px'}}>Location</label>
+                                <label htmlFor="locationHeatNrs" style={{height: '18px'}}>Location:</label>
                                 <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: 'calc(100% - 18px)'}}>
                                     <div className="table-responsive custom-table-container custom-table-container__fixed-row">
                                         <table className="table table-bordered table-sm table-hover text-nowrap" id="locationHeatNrs">

@@ -9,6 +9,7 @@ export * from './doctype.service';
 export * from './erp.service';
 export * from './field.service';
 export * from './fieldname.service';
+export * from './heatloc.service';
 export * from './locale.service';
 export * from './opco.service';
 export * from './po.service';

@@ -10,6 +10,7 @@ export * from './doctype.actions';
 export * from './erp.actions';
 export * from './field.actions';
 export * from './fieldname.actions';
+export * from './heatloc.actions';
 export * from './locale.actions';
 export * from './opco.actions';
 export * from './po.actions';
