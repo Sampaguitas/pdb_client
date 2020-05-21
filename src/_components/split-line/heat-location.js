@@ -192,9 +192,10 @@ function doesMatch(search, value, type, isEqual) {
     }
 }
 
-function getPoCertificates(certificates, poId) {
+function getPoCertificates(certificates, heatlocs, poId, locationId, projectId) {
     if (certificates.hasOwnProperty('items') && !_.isEmpty(certificates.items)) {
-        return certificates.items.reduce(function (acc, cur) {
+        let tempArray = [];
+        tempArray = certificates.items.reduce(function (acc, cur) {
             cur.heats.forEach(heat => {
                 if (heat.poId === poId) {
                     let found = acc.find(element => element.cif === cur.cif && element.heatNr === heat.heatNr);
@@ -203,13 +204,46 @@ function getPoCertificates(certificates, poId) {
                             _id: cur._id,
                             cif: cur.cif,
                             heatNr: heat.heatNr,
-                            inspQty: heat.inspQty
+                            inspQty: heat.inspQty,
+                            poId: poId,
+                            locationId: locationId,
+                            projectId: projectId
                         });
                     } else {
                         found.inspQty += heat.inspQty;
                     }
                 }
             });
+            return acc;
+        }, []);
+        if (heatlocs.hasOwnProperty('items') && !_.isEmpty(heatlocs.items)) {
+            tempArray.forEach(temp => {
+                let found = heatlocs.items.find(function (element) {
+                    return element.poId === temp.poId && element.locationId === temp.locationId && element.cif === temp.cif && element.heatNr === temp.heatNr;
+                });
+                if (!_.isUndefined(found)) {
+                    let qty = found.inspQty || 0;
+                    temp.inspQty -= qty;
+                }
+            });
+        }
+        return tempArray;
+    } else {
+        return [];
+    }
+}
+
+function getLocCertificates(heatlocs, poId, locationId) {
+    if (heatlocs.hasOwnProperty('items') && !_.isEmpty(heatlocs.items)) {
+        return heatlocs.items.reduce(function (acc, cur) {
+            if (cur.poId === poId && cur.locationId === locationId) {
+                acc.push({
+                    _id: cur._id,
+                    cif: cur.cif,
+                    heatNr: cur.heatNr,
+                    inspQty: cur.inspQty 
+                });
+            }
             return acc;
         }, []);
     } else {
@@ -244,7 +278,9 @@ class HeatLocation extends Component {
             alert: {
                 type:'',
                 message:''
-            }
+            },
+            isDeleting: false,
+            isCreating: false,
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.poToggleSort = this.poToggleSort.bind(this);
@@ -255,23 +291,93 @@ class HeatLocation extends Component {
         this.locToggleSelectAllRow = this.locToggleSelectAllRow.bind(this);
         this.updatePoSelectedIds = this.updatePoSelectedIds.bind(this);
         this.updateLocSelectedIds = this.updateLocSelectedIds.bind(this);
+        this.removeCertificates = this.removeCertificates.bind(this);
+        this.AssignCertificates = this.AssignCertificates.bind(this);
         this.pofilterName = this.pofilterName.bind(this);
         this.locfilterName = this.locfilterName.bind(this);
     }
 
     componentDidMount() {
-        const { certificates, poId } = this.props;
+        
+        const { certificates, heatlocs, poId, locationId, projectId } = this.props;
+        const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
+        const nodes = ["INPUT", "SELECT", "SPAN"];
+        
+        const poTable = document.getElementById('potable');
+        const locTable = document.getElementById('loctable');
+        
+        poTable.addEventListener('keydown', (e) => { 
+            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
+                return this.keyHandler(e);
+            }
+        });
+
+        locTable.addEventListener('keydown', (e) => { 
+            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
+                return this.keyHandler(e);
+            }
+        });
+
         this.setState({
-            poCertificates: getPoCertificates(certificates, poId)
+            locCertificates: getLocCertificates(heatlocs, poId, locationId),
+            poCertificates: getPoCertificates(certificates, heatlocs, poId, locationId, projectId)
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { certificates, poId } = this.props;
-        if (certificates != prevProps.certificates || poId != prevProps.poId) {
+        // const { locCertificates } = this.state;
+        const { certificates, heatlocs, poId, locationId, projectId } = this.props;
+        if (heatlocs != prevProps.heatlocs) {
             this.setState({
-                poCertificates: getPoCertificates(certificates, poId)
+                locCertificates: getLocCertificates(heatlocs, poId, locationId)
             });
+        }
+
+        if (certificates != prevProps.certificates || heatlocs != prevProps.heatlocs) {
+            this.setState({
+                poCertificates: getPoCertificates(certificates, heatlocs, poId, locationId, projectId)
+            });
+        }
+    }
+
+    keyHandler(e) {
+
+        let target = e.target;
+        let colIndex = target.parentElement.cellIndex;               
+        let rowIndex = target.parentElement.parentElement.rowIndex;
+        var nRows = target.parentElement.parentElement.parentElement.childNodes.length;
+        
+        switch(e.keyCode) {
+            case 9:// tab
+                if(target.parentElement.nextSibling) {
+                    target.parentElement.nextSibling.click();
+                }
+                break;
+            case 13: //enter
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
+            case 37: //left
+                if(colIndex > 1 && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.previousSibling.click();
+                } 
+                break;
+            case 38: //up
+                if(rowIndex > 1) {
+                    target.parentElement.parentElement.previousSibling.childNodes[colIndex].click();
+                }
+                break;
+            case 39: //right
+                if(target.parentElement.nextSibling && !target.parentElement.classList.contains('isEditing')) {
+                    target.parentElement.nextSibling.click();
+                }
+                break;
+            case 40: //down
+                if(rowIndex < nRows) {
+                    target.parentElement.parentElement.nextSibling.childNodes[colIndex].click();
+                }
+                break;
         }
     }
 
@@ -454,9 +560,9 @@ class HeatLocation extends Component {
         const { poSelectAllRows, poCertificates } = this.state;
         let tempRows = [];
         if (poCertificates) {
-            this.pofilterName(poCertificates).map(certificate => {
+            this.pofilterName(poCertificates).map( (certificate, index) => {
                 tempRows.push(
-                    <tr key={certificate._id}>
+                    <tr key={index}>
                         <TableSelectionRow
                             id={certificate._id}
                             selectAllRows={poSelectAllRows}
@@ -472,7 +578,7 @@ class HeatLocation extends Component {
                             align="left"
                             fieldType="text"
                             textNoWrap={true}
-                            key={certificate._id}
+                            // key={certificate._id}
                             refreshStore={refreshCifs}
                         />
                         <TableInput
@@ -485,7 +591,7 @@ class HeatLocation extends Component {
                             align="left"
                             fieldType="text"
                             textNoWrap={true}
-                            key={certificate._id}
+                            // key={certificate._id}
                             refreshStore={refreshCifs}
                         />
                         <TableInput
@@ -498,7 +604,7 @@ class HeatLocation extends Component {
                             align="left"
                             fieldType="number"
                             textNoWrap={true}
-                            key={certificate._id}
+                            // key={certificate._id}
                             refreshStore={refreshCifs}
                         />
                     </tr>
@@ -547,6 +653,151 @@ class HeatLocation extends Component {
         );
     }
 
+    generateLocBody() {
+        const { refresHatLocs } = this.props;
+        const { locSelectAllRows, locCertificates } = this.state;
+        let tempRows = [];
+        if (locCertificates) {
+            this.locfilterName(locCertificates).map( (certificate, index) => {
+                tempRows.push(
+                    <tr key={index}>
+                        <TableSelectionRow
+                            id={certificate._id}
+                            selectAllRows={locSelectAllRows}
+                            callback={this.updateLocSelectedIds}
+                        />
+                        <TableInput
+                            collection="virtual"
+                            objectId={certificate._id}
+                            fieldName="cif"
+                            fieldValue={certificate.cif}
+                            disabled={true}
+                            unlocked={false}
+                            align="left"
+                            fieldType="text"
+                            textNoWrap={true}
+                            // key={certificate._id}
+                            refreshStore={refresHatLocs}
+                        />
+                        <TableInput
+                            collection="virtual"
+                            objectId={certificate._id}
+                            fieldName="heatNr"
+                            fieldValue={certificate.heatNr}
+                            disabled={true}
+                            unlocked={false}
+                            align="left"
+                            fieldType="text"
+                            textNoWrap={true}
+                            // key={certificate._id}
+                            refreshStore={refresHatLocs}
+                        />
+                        <TableInput
+                            collection="heatloc"
+                            objectId={certificate._id}
+                            fieldName="inspQty"
+                            fieldValue={certificate.inspQty}
+                            disabled={false}
+                            unlocked={true}
+                            align="left"
+                            fieldType="number"
+                            textNoWrap={true}
+                            // key={certificate._id}
+                            refreshStore={refresHatLocs}
+                        />
+                    </tr>
+                );
+            });
+        }
+        return tempRows;
+    }
+
+    removeCertificates(event) {
+        event.preventDefault();
+        const { refresHatLocs } = this.props;
+        const { locSelectedIds } = this.state;
+        if (_.isEmpty(locSelectedIds)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select HeatNr(s) to be removed.'
+                }
+            })
+        } else {
+            this.setState({
+                isDeleting: true,
+            }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ selectedIds: locSelectedIds })
+                }
+
+                return fetch(`${config.apiUrl}/heatloc/delete`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            isDeleting: false,
+                            locSelectAllRows: false,
+                            locSelectedIds: [],
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, refresHatLocs());
+                    }
+                }));
+            })
+        }
+    }
+
+    AssignCertificates(event) {
+        event.preventDefault();
+        const { refresHatLocs } = this.props;
+        const { poSelectedIds, poCertificates } = this.state;
+        if (_.isEmpty(poSelectedIds)) {
+            this.setState({
+                alert: {
+                    type:'alert-danger',
+                    message:'Select HeatNr(s) to be alocated.' 
+                }
+            });
+        } else {
+            this.setState({
+                isCreating: true, 
+            }, () => {
+                let documents = poCertificates.filter(element => poSelectedIds.includes(element._id));
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({documents: documents})
+                }
+                return fetch(`${config.apiUrl}/heatloc/create`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            isCreating: false,
+                            poSelectAllRows: false,
+                            poSelectedIds: [],
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, refresHatLocs());
+                    }
+                }));
+            })
+        }
+    }
+
     
 
     pofilterName(array){
@@ -593,7 +844,9 @@ class HeatLocation extends Component {
     
 
     render() {
+
         const { toggleHeat } = this.props;
+        const { isDeleting, isCreating } = this.state;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
         return (
             <div>
@@ -611,7 +864,7 @@ class HeatLocation extends Component {
                                 <label htmlFor="poLineHeatNrs" style={{height: '18px'}}>Order Line:</label>
                                 <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: 'calc(100% - 18px)'}}>
                                     <div className="table-responsive custom-table-container custom-table-container__fixed-row">
-                                        <table className="table table-bordered table-sm table-hover text-nowrap" id="poLineHeatNrs">
+                                        <table className="table table-bordered table-sm table-hover text-nowrap" id="potable">
                                             <thead>
                                                 {this.generatePoHeader()}
                                             </thead>
@@ -626,13 +879,13 @@ class HeatLocation extends Component {
                         <div className="col-md-auto align-items-center full-height">
                             <div style={{position: 'relative', top: '50%', transform: 'translate(-50%,-50%)'}}>
                                 <div className="row mb-3">
-                                    <button title="Remove from location" className="btn btn-leeuwen-blue btn-lg">
-                                        <span><FontAwesomeIcon icon="chevron-left" className="fa-lg"/></span>
+                                    <button title="Remove from location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.removeCertificates(event)}>
+                                        <span><FontAwesomeIcon icon={isDeleting ? "spinner" : "chevron-left"} className={isDeleting ? "fa-pulse fa-lg fa-fw" : "fa-lg"}/></span>
                                     </button>
                                 </div>
                                 <div className="row">
-                                    <button title="Add to location" className="btn btn-leeuwen-blue btn-lg">
-                                        <span><FontAwesomeIcon icon="chevron-right" className="fa-lg"/></span>
+                                    <button title="Add to location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.AssignCertificates(event)}>
+                                        <span><FontAwesomeIcon icon={isCreating ? "spinner" : "chevron-right"} className={isCreating ? "fa-pulse fa-lg fa-fw" : "fa-lg"}/></span>
                                     </button>
                                 </div>
                             </div>
@@ -642,12 +895,12 @@ class HeatLocation extends Component {
                                 <label htmlFor="locationHeatNrs" style={{height: '18px'}}>Location:</label>
                                 <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: 'calc(100% - 18px)'}}>
                                     <div className="table-responsive custom-table-container custom-table-container__fixed-row">
-                                        <table className="table table-bordered table-sm table-hover text-nowrap" id="locationHeatNrs">
+                                        <table className="table table-bordered table-sm table-hover text-nowrap" id="loctable">
                                             <thead>
                                                 {this.generateLocHeader()}
                                             </thead>
                                             <tbody>
-                                                
+                                                {this.generateLocBody()}
                                             </tbody>
                                         </table>
                                     </div>

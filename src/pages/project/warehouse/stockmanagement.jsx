@@ -13,6 +13,7 @@ import {
     docdefActions, 
     fieldnameActions,
     fieldActions,
+    heatlocActions,
     poActions, 
     projectActions,
     settingActions,
@@ -962,6 +963,7 @@ class StockManagement extends React.Component {
 
         this.refreshStore = this.refreshStore.bind(this);
         this.refreshCifs = this.refreshCifs.bind(this);
+        this.refresHatLocs = this.refresHatLocs.bind(this);
         this.refreshTransactions = this.refreshTransactions.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.updateSelectedIdsGr = this.updateSelectedIdsGr.bind(this);
@@ -992,8 +994,9 @@ class StockManagement extends React.Component {
             loadingAccesses,
             loadingCertificates,
             loadingDocdefs,
-            loadingFieldnames,
             loadingFields,
+            loadingFieldnames,
+            loadingHeatlocs,
             loadingPos,
             loadingSelection,
             loadingSettings,
@@ -1040,11 +1043,14 @@ class StockManagement extends React.Component {
             if (!loadingDocdefs) {
                 dispatch(docdefActions.getAll(qs.id));
             }
+            if (!loadingFields) {
+                dispatch(fieldActions.getAll(qs.id));
+            }
             if (!loadingFieldnames) {
                 dispatch(fieldnameActions.getAll(qs.id));
             }
-            if (!loadingFields) {
-                dispatch(fieldActions.getAll(qs.id));
+            if (!loadingHeatlocs) {
+                dispatch(heatlocActions.getAll(qs.id));
             }
             if (!loadingPos) {
                 dispatch(poActions.getAll(qs.id));
@@ -1365,6 +1371,14 @@ class StockManagement extends React.Component {
         const { projectId } = this.state;
         if (projectId) {
             dispatch(certificateActions.getAll(projectId));
+        }
+    }
+
+    refresHatLocs() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+        if (projectId) {
+            dispatch(heatlocActions.getAll(projectId));
         }
     }
 
@@ -1830,7 +1844,7 @@ class StockManagement extends React.Component {
             locList,
         } = this.state;
 
-        const { accesses, certificates, fieldnames, fields, pos, selection, warehouses } = this.props;
+        const { accesses, certificates, fields, fieldnames, heatlocs, pos, selection, warehouses } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         class goodsReceiptObject {
@@ -2137,8 +2151,12 @@ class StockManagement extends React.Component {
                         handleClearAlert={this.handleClearAlert}
                         toggleHeat={this.toggleHeat}
                         poId={!_.isEmpty(selectedIds) ? selectedIds[0].poId : ''}
+                        locationId={!_.isEmpty(selectedIds) ? selectedIds[0].locationId : ''}
+                        projectId={projectId}
                         refreshCifs={this.refreshCifs}
+                        refresHatLocs={this.refresHatLocs}
                         certificates={certificates}
+                        heatlocs={heatlocs}
                     />
                 </Modal>
                 <Modal
@@ -2235,12 +2253,13 @@ class StockManagement extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, certificates, docdefs, fieldnames, fields, pos, selection, settings, transactions, warehouses } = state;
+    const { accesses, alert, certificates, docdefs, fields, fieldnames, heatlocs, pos, selection, settings, transactions, warehouses } = state;
     const { loadingAccesses } = accesses;
     const { loadingCertificates } = accesses;
     const { loadingDocdefs } = docdefs;
-    const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
+    const { loadingFieldnames } = fieldnames;
+    const { loadingHeatlocs } = heatlocs;
     const { loadingPos } = pos;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
@@ -2252,13 +2271,15 @@ function mapStateToProps(state) {
         certificates,
         alert,
         docdefs,
-        fieldnames,
         fields,
+        fieldnames,
+        heatlocs,
         loadingAccesses,
         loadingCertificates,
         loadingDocdefs,
         loadingFieldnames,
         loadingFields,
+        loadingHeatlocs,
         loadingPos,
         loadingSelection,
         loadingSettings,
