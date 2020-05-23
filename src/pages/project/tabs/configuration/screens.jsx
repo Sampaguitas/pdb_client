@@ -246,6 +246,11 @@ function doesMatch(search, value, type, isEqual) {
     }
 }
 
+function generateFromTbls(screens, selectedScreen) {
+    const found = screens.find(element => element._id === selectedScreen);
+    return !_.isUndefined(found) ? found.fromTbls : [];
+}
+
 class Screens extends React.Component {
     constructor(props) {
         super(props);
@@ -288,7 +293,7 @@ class Screens extends React.Component {
         this.handleChangeScreen = this.handleChangeScreen.bind(this);
         this.filterName = this.filterName.bind(this);
         this.generateScreensOptions = this.generateScreensOptions.bind(this);
-        this.generateFromTbls = this.generateFromTbls.bind(this);
+        // this.generateFromTbls = this.generateFromTbls.bind(this);
     }
 
     componentDidMount() {
@@ -609,11 +614,6 @@ class Screens extends React.Component {
         return tempArray;
     }
 
-    generateFromTbls(screens, selectedScreen) {
-        const found = screens.find(element => element._id === selectedScreen);
-        return !_.isUndefined(found) ? found.fromTbls : [];
-    }
-
     render() {
         const {
             fieldnames,
@@ -771,7 +771,7 @@ class Screens extends React.Component {
                                             fieldValue={fieldName.fieldId}
                                             options={fields.items}
                                             optionText="custom"
-                                            fromTbls={this.generateFromTbls(screens, selectedScreen)}
+                                            fromTbls={generateFromTbls(screens, selectedScreen)}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
                                         />
@@ -821,7 +821,7 @@ class Screens extends React.Component {
                                             fieldValue={s.fieldId}
                                             options={fields.items}
                                             optionText="custom"
-                                            fromTbls={this.generateFromTbls(screens, selectedScreen)}
+                                            fromTbls={generateFromTbls(screens, selectedScreen)}
                                             refreshStore={refreshFieldnames}
                                         />
                                         <TableInput 

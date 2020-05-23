@@ -13,11 +13,11 @@ function arraySorted(array, field, fromTbls) {
     if (array) {
         let newArray = [];
         if (!_.isEmpty(fromTbls)) {
-            newArray = array.reduce(function (accumulator, currentValue) {
-                if (fromTbls.indexOf(currentValue.fromTbl) != -1){
-                    accumulator.push(currentValue)
+            newArray = array.reduce(function (acc, cur) {
+                if (fromTbls.indexOf(cur.fromTbl) != -1){
+                    acc.push(cur)
                 }
-                return accumulator
+                return acc
             },[]);
         } else {
             newArray = array;

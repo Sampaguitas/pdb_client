@@ -277,6 +277,11 @@ function findCustomField(fields, fieldId){
     }
 }
 
+function generateFromTbls(ArrType, doctypeId) {
+    const found = ArrType.find(element => element._id === doctypeId);
+    return !_.isUndefined(found) ? found.fromTbls : [];
+}
+
 class Documents extends React.Component {
     constructor(props) {
         super(props);
@@ -293,6 +298,7 @@ class Documents extends React.Component {
             },
             description:'',
             selectedTemplate:'0',
+            doctypeId: '',
             fileName:'',
             inputKey: Date.now(),
             multi: false,
@@ -305,6 +311,9 @@ class Documents extends React.Component {
             deletingDocDef: false,
             updatingDocDef: false,
             creatingDocDef: false,
+            isUploadingFile: false,
+            isDownloadingFile: false,
+            isDownloadingPreview: false,
             //create new row
             docDef:{},
             newRow: false,
@@ -316,8 +325,8 @@ class Documents extends React.Component {
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
-        this.onFocusRow = this.onFocusRow.bind(this);
-        this.onBlurRow = this.onBlurRow.bind(this);
+        // this.onFocusRow = this.onFocusRow.bind(this);
+        // this.onBlurRow = this.onBlurRow.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
@@ -336,6 +345,7 @@ class Documents extends React.Component {
         this.fileInput = React.createRef();
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
+        // this.generateFromTbls = this.generateFromTbls.bind(this);
     }
 
     componentDidMount() {
@@ -424,6 +434,7 @@ class Documents extends React.Component {
                     if (obj) {
                         this.setState({
                             ...this.state,
+                            doctypeId: obj.doctypeId,
                             fileName: obj.field
                         }, () => {
                             if (!!obj.row2){
@@ -524,23 +535,23 @@ class Documents extends React.Component {
         }
     }
 
-    onFocusRow(event) {
-        event.preventDefault();
-        const { selectedTemplate, newRowFocus } = this.state;
-        if (selectedTemplate !='0' && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-            this.cerateNewRow(event);
-        }
-    }
+    // onFocusRow(event) {
+    //     event.preventDefault();
+    //     const { selectedTemplate, newRowFocus } = this.state;
+    //     if (selectedTemplate !='0' && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+    //         this.cerateNewRow(event);
+    //     }
+    // }
 
-    onBlurRow(event){
-        event.preventDefault()
-        if (event.currentTarget.dataset['type'] == 'newrow'){
-            this.setState({
-                ...this.state,
-                newRowFocus: true
-            });
-        }
-    }
+    // onBlurRow(event){
+    //     event.preventDefault()
+    //     if (event.currentTarget.dataset['type'] == 'newrow'){
+    //         this.setState({
+    //             ...this.state,
+    //             newRowFocus: true
+    //         });
+    //     }
+    // }
 
     toggleNewRow(event) {
         event.preventDefault()
@@ -826,19 +837,33 @@ class Documents extends React.Component {
     handleUploadFile(event){
         event.preventDefault();
         const { selectedTemplate, fileName } = this.state;
-        const { selection, refreshDocdefs } = this.props
+        const { selection, refreshDocdefs, handleSetAlert } = this.props
         if(this.fileInput.current.files[0] && selectedTemplate != '0' && selection.project && fileName) {
-            var data = new FormData()
-            data.append('file', this.fileInput.current.files[0])
-            data.append('documentId', selectedTemplate)
-            data.append('project', selection.project.number)
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
-                body: data
-            }
-            return fetch(`${config.apiUrl}/template/upload`, requestOptions)
-            .then(refreshDocdefs);            
+            this.setState({
+                isUploadingFile: true
+            }, () => {
+                var data = new FormData()
+                data.append('file', this.fileInput.current.files[0])
+                data.append('documentId', selectedTemplate)
+                data.append('project', selection.project.number)
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
+                    body: data
+                }
+                return fetch(`${config.apiUrl}/template/upload`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            isUploadingFile: false,
+                        }, handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs));
+                    }
+                }));
+            });           
         }        
     }
 
@@ -847,32 +872,74 @@ class Documents extends React.Component {
         const { selection, docdefs } = this.props;
         const { selectedTemplate, fileName } = this.state;
         if (selection.project && docdefs.items && selectedTemplate != "0" && fileName) {
-            let obj = findObj(docdefs.items, selectedTemplate);
-            if (obj) {
-            const requestOptions = {
-                method: 'GET',
-                headers: { ...authHeader(), 'Content-Type': 'application/json'},
-            };
-            return fetch(`${config.apiUrl}/template/download?project=${selection.project.number}&file=${obj.field}`, requestOptions)
-                .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
-            }
+            this.setState({
+                isDownloadingFile: true
+            }, () => {
+                let obj = findObj(docdefs.items, selectedTemplate);
+                if (obj) {
+                    const requestOptions = {
+                        method: 'GET',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    };
+                    return fetch(`${config.apiUrl}/template/download?project=${selection.project.number}&file=${obj.field}`, requestOptions)
+                    .then(responce => {
+                        this.setState({ isDownloadingFile: false });
+                        if (!responce.ok) {
+                            if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
+                            } else {
+                                responce.text().then(text => {
+                                const data = text && JSON.parse(text);
+                                handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs);
+                                });
+                            }
+                        } else {
+                            responce.blob().then(blob => saveAs(blob, obj.field));
+                        }
+                    });
+                } else {
+                    this.setState({ isDownloadingFile: false });
+                }
+            });
         }
     }
 
     handlePreviewFile(event) {
         event.preventDefault();
-        const { selection, docdefs } = this.props;
+        const { selection, docdefs, handleSetAlert, refreshDocdefs } = this.props;
         const { selectedTemplate, fileName } = this.state;
         if (selection.project && docdefs.items && selectedTemplate != "0" && fileName) {
-            let obj = findObj(docdefs.items, selectedTemplate);
-             if (obj) {
-                const requestOptions = {
-                    method: 'GET',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                };
-                return fetch(`${config.apiUrl}/template/preview?docDef=${selectedTemplate}`, requestOptions) //project=${selection.project.number}&
-                    .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
-             }
+            this.setState({
+                isDownloadingPreview: true
+            }, () => {
+                let obj = findObj(docdefs.items, selectedTemplate);
+                if (obj) {
+                   const requestOptions = {
+                       method: 'GET',
+                       headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                   };
+                   return fetch(`${config.apiUrl}/template/preview?docDef=${selectedTemplate}`, requestOptions)
+                   .then(responce => {
+                        this.setState({ isDownloadingPreview: false });
+                        if (!responce.ok) {
+                            if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
+                            } else {
+                                responce.text().then(text => {
+                                const data = text && JSON.parse(text);
+                                handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs);
+                                });
+                            }
+                        } else {
+                            responce.blob().then(blob => saveAs(blob, obj.field));
+                        }
+                    });
+                } else {
+                    this.setState({ isDownloadingPreview: false });
+                }
+            });
         }
     }
 
@@ -990,6 +1057,7 @@ class Documents extends React.Component {
             sort,
             description,
             selectedTemplate,
+            doctypeId,
             selectedRows,
             selectAllRows,
             fileName,
@@ -999,6 +1067,9 @@ class Documents extends React.Component {
             updatingDocDef,
             creatingDocDef,
             deletingDocDef,
+            isUploadingFile,
+            isDownloadingFile,
+            isDownloadingPreview,
             docDef,
             newRow,
             docField,
@@ -1016,12 +1087,13 @@ class Documents extends React.Component {
         ]
 
         const ArrType = [
-            {_id: '5d1927121424114e3884ac7e', code: 'ESR01' , name: 'Expediting status report'},
-            {_id: '5d1927131424114e3884ac80', code: 'PL01' , name: 'Packing List'},
-            {_id: '5d1927141424114e3884ac84', code: 'SM01' , name: 'Shipping Mark'},
-            {_id: '5d1927131424114e3884ac81', code: 'PN01' , name: 'Packing Note'},
-            {_id: '5d1927141424114e3884ac83', code: 'SI01' , name: 'Shipping Invoice'},
-            {_id: '5eacef91e7179a42f172feea', code: 'SH01', name: 'Stock History Report'}
+            {_id: '5d1927121424114e3884ac7e', code: 'ESR01' , name: 'Expediting status report', fromTbls: ['po', 'sub', 'packitem', 'certificate']},
+            {_id: '5d1927131424114e3884ac80', code: 'PL01' , name: 'Packing List', fromTbls: ['article', 'po', 'sub', 'collipack', 'packitem', 'certificate']},
+            {_id: '5d1927141424114e3884ac84', code: 'SM01' , name: 'Shipping Mark', fromTbls: ['po', 'sub', 'collipack', 'packitem', 'certificate']},
+            {_id: '5d1927131424114e3884ac81', code: 'PN01' , name: 'Packing Note', fromTbls: ['article', 'po', 'sub', 'collipack', 'packitem', 'certificate']},
+            {_id: '5d1927141424114e3884ac83', code: 'SI01' , name: 'Shipping Invoice', fromTbls: ['storedproc', 'article', 'po', 'sub', 'collipack', 'packitem', 'certificate']},
+            {_id: '5d1927131424114e3884ac7f', code: 'NFI01', name: 'Notification for inspection', fromTbls: ['po', 'sub', 'packitem', 'certificate']},
+            {_id: '5eacef91e7179a42f172feea', code: 'SH01', name: 'Stock History Report', fromTbls: ['storedproc', 'po', 'location', 'transaction']},
         ]
 
         return (
@@ -1082,13 +1154,13 @@ class Documents extends React.Component {
                             <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
                             <div className="input-group-append mr-2">
                                 <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
-                                    <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>Upload</span>
+                                    <span><FontAwesomeIcon icon={isUploadingFile ? "spinner" : "upload"} className={isUploadingFile ? "fa-pulse fa-fw fa-lg mr-2" :"fa-lg mr-2"}/>Upload</span>
                                 </button>
                                 <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleDownloadFile(event)}>
-                                    <span><FontAwesomeIcon icon="download" className="fa-lg mr-2"/>Download</span>
+                                    <span><FontAwesomeIcon icon={isDownloadingFile ? "spinner" : "download"} className={isDownloadingFile ? "fa-pulse fa-fw fa-lg mr-2" :"fa-lg mr-2"}/>Download</span>
                                 </button>
                                 <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handlePreviewFile(event)}>
-                                    <span><FontAwesomeIcon icon="eye" className="fa-lg mr-2"/>Preview</span>
+                                    <span><FontAwesomeIcon icon={isDownloadingPreview ? "spinner" : "eye"} className={isDownloadingPreview ? "fa-pulse fa-fw fa-lg mr-2" :"fa-lg mr-2"}/>Preview</span>
                                 </button>   
                             </div>
                             <div className="pull-right">
@@ -1180,7 +1252,8 @@ class Documents extends React.Component {
                                 </thead>
                                 <tbody>
                                     {newRow &&
-                                        <tr onBlur={this.onBlurRow} onFocus={this.onFocusRow} data-type="newrow">
+                                    // onBlur={this.onBlurRow} onFocus={this.onFocusRow}
+                                        <tr data-type="newrow"> 
                                             <NewRowCreate
                                                 onClick={ event => this.cerateNewRow(event)}
                                             />
@@ -1223,7 +1296,8 @@ class Documents extends React.Component {
                                                 fieldValue={docField.fieldId}
                                                 options={fields.items}
                                                 optionText="custom"
-                                                fromTbls={[]}
+                                                fromTbls={generateFromTbls(ArrType, doctypeId)}
+                                                isFieldName={true}
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
                                             />                                        
@@ -1237,7 +1311,8 @@ class Documents extends React.Component {
                                         </tr>                                
                                     }
                                     {docfields.items && fields.items && this.filterName(docfields.items).map((s) =>
-                                        <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>                                  
+                                        <tr key={s._id}>
+                                            {/* onBlur={this.onBlurRow} onFocus={this.onFocusRow} */}
                                             <TableSelectionRow
                                                 id={s._id}
                                                 selectAllRows={this.state.selectAllRows}
@@ -1288,7 +1363,8 @@ class Documents extends React.Component {
                                                 fieldValue={s.fieldId}
                                                 options={fields.items}
                                                 optionText="custom"
-                                                fromTbls={[]}
+                                                fromTbls={generateFromTbls(ArrType, doctypeId)}
+                                                isFieldName={true}
                                                 refreshStore={refreshDocfields}
                                             />
                                             <TableInput 

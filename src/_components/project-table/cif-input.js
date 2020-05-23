@@ -466,6 +466,7 @@ class CifInput extends Component{
                         </button>
                         <label
                             type="button"
+                            title="Upload File"
                             className="btn btn-leeuwen-blue btn-lg"
                             htmlFor={`fileInput_${objectId}`}
                         >

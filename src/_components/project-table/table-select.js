@@ -15,11 +15,11 @@ function arraySorted(array, field, fromTbls) {
     if (array) {
         let newArray = [];
         if (!_.isEmpty(fromTbls)) {
-            newArray = array.reduce(function (accumulator, currentValue) {
-                if (fromTbls.indexOf(currentValue.fromTbl) != -1){
-                    accumulator.push(currentValue)
+            newArray = array.reduce(function (acc, cur) {
+                if (fromTbls.indexOf(cur.fromTbl) != -1){
+                    acc.push(cur)
                 }
-                return accumulator
+                return acc
             },[]);
         } else {
             newArray = array;
@@ -50,7 +50,7 @@ class TableSelect extends Component{
             isSelected: false,
             options:[],
             optionText: '',
-            fromTbls: ''
+            // fromTbls: ''
         }
         this.onChange = this.onChange.bind(this);
         this.onFocus = this.onFocus.bind(this);
@@ -67,7 +67,7 @@ class TableSelect extends Component{
             fieldValue: this.props.fieldValue ? this.props.fieldValue: '',
             options: this.props.options,
             optionText: this.props.optionText,
-            fromTbls: this.props.fromTbls
+            // fromTbls: this.props.fromTbls
         });
     }
 
@@ -79,7 +79,7 @@ class TableSelect extends Component{
             fieldValue, 
             options, 
             optionText, 
-            fromTbls 
+            // fromTbls 
         } = this.props;
 
         if (fieldValue != prevProps.fieldValue) {
@@ -90,7 +90,7 @@ class TableSelect extends Component{
                 fieldValue: fieldValue ? fieldValue: '',
                 options: options,
                 optionText: optionText,
-                fromTbls: fromTbls,
+                // fromTbls: fromTbls,
                 isSelected: false,
                 color: 'green',
             }, () => {
@@ -207,7 +207,8 @@ class TableSelect extends Component{
             disabled,
             textNoWrap,
             unlocked,
-            width
+            width,
+            fromTbls,
         } = this.props;
 
         const {
@@ -216,7 +217,6 @@ class TableSelect extends Component{
             fieldValue,
             options,
             optionText,
-            fromTbls
         } = this.state;
 
         const tdClasses = classNames(

@@ -1577,17 +1577,43 @@ class StockManagement extends React.Component {
         event.preventDefault();
         const { docdefs } = this.props;
         const { selectedTemplate, selectedIds } = this.state;
-        if (docdefs && selectedTemplate) {
-            let obj = findObj(docdefs.items, selectedTemplate);
-            if (obj) {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIds: selectedIds})
-                };
-            return fetch(`${config.apiUrl}/template/generateStockHistory?id=${selectedTemplate}&locale=${locale}`, requestOptions)
-                .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
-            }
+        if (docdefs && selectedTemplate && selectedIds) {
+            this.setState({
+                isDownloadingFile: true
+            }, () => {
+                let obj = findObj(docdefs.items, selectedTemplate);
+                if (obj) {
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                        body: JSON.stringify({selectedIds: selectedIds})
+                    };
+                    return fetch(`${config.apiUrl}/template/generateSh?id=${selectedTemplate}&locale=${locale}`, requestOptions)
+                    .then(responce => {
+                        this.setState({ isDownloadingFile: false });
+                        if (!responce.ok) {
+                            if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
+                            } else {
+                                responce.text().then(text => {
+                                const data = text && JSON.parse(text);
+                                    this.setState({
+                                        alert: {
+                                            type: 'alert-danger',
+                                            message: data.message
+                                        }
+                                    });
+                                });
+                            }
+                        } else {
+                            responce.blob().then(blob => saveAs(blob, obj.field));
+                        }
+                    });
+                } else {
+                    this.setState({ isDownloadingFile: false });
+                }
+            });
         }
     }
 
@@ -1761,11 +1787,11 @@ class StockManagement extends React.Component {
     toggleGenerate(event) {
         event.preventDefault();
         const { showGenerate, docList, selectedIds } = this.state;
-        if (!showGenerate && selectedIds.length != 1) {
+        if (!showGenerate && _.isEmpty(selectedIds)) {
             this.setState({
                 alert: {
                     type:'alert-danger',
-                    message:'Select one line to display the stock history.'
+                    message:'Select line(s) to generate the stock history.'
                 }
             });
         } else {
