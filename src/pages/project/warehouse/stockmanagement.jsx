@@ -941,6 +941,7 @@ class StockManagement extends React.Component {
             whList: [],
             areaList: [],
             locList: [],
+            isDownloadingFile: false,
             alert: {
                 type:'',
                 message:''
@@ -1868,6 +1869,8 @@ class StockManagement extends React.Component {
             whList,
             areaList,
             locList,
+            //--------------------
+            isDownloadingFile
         } = this.state;
 
         const { accesses, certificates, fields, fieldnames, heatlocs, pos, selection, warehouses } = this.props;
@@ -2208,7 +2211,7 @@ class StockManagement extends React.Component {
                             </div>
                             <div className="text-right">
                                 <button type="submit" className="btn btn-success btn-lg">
-                                    <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
+                                    <span><FontAwesomeIcon icon={isDownloadingFile ? "spinner" : "file-excel"} className={isDownloadingFile ? "fa-pulse fa-fw fa-lg mr-2"  : "fa-lg mr-2"}/>Generate</span>
                                 </button>
                             </div>
                         </form>                  

@@ -1252,8 +1252,11 @@ class Documents extends React.Component {
                                 </thead>
                                 <tbody>
                                     {newRow &&
-                                    // onBlur={this.onBlurRow} onFocus={this.onFocusRow}
-                                        <tr data-type="newrow"> 
+                                        <tr
+                                            data-type="newrow"
+                                            // onBlur={this.onBlurRow}
+                                            // onFocus={this.onFocusRow}
+                                        > 
                                             <NewRowCreate
                                                 onClick={ event => this.cerateNewRow(event)}
                                             />
@@ -1311,8 +1314,11 @@ class Documents extends React.Component {
                                         </tr>                                
                                     }
                                     {docfields.items && fields.items && this.filterName(docfields.items).map((s) =>
-                                        <tr key={s._id}>
-                                            {/* onBlur={this.onBlurRow} onFocus={this.onFocusRow} */}
+                                        <tr
+                                            key={s._id}
+                                            // onBlur={this.onBlurRow}
+                                            // onFocus={this.onFocusRow}
+                                        >
                                             <TableSelectionRow
                                                 id={s._id}
                                                 selectAllRows={this.state.selectAllRows}

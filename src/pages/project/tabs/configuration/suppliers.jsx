@@ -323,8 +323,8 @@ class Suppliers extends React.Component {
         this.generateBody = this.generateBody.bind(this);
 
         this.cerateNewRow = this.cerateNewRow.bind(this);
-        this.onFocusRow = this.onFocusRow.bind(this);
-        this.onBlurRow = this.onBlurRow.bind(this);
+        // this.onFocusRow = this.onFocusRow.bind(this);
+        // this.onBlurRow = this.onBlurRow.bind(this);
         
         this.toggleNewRow = this.toggleNewRow.bind(this);
         
@@ -604,8 +604,8 @@ class Suppliers extends React.Component {
             });
             return (
                 <tr
-                    onBlur={this.onBlurRow}
-                    onFocus={this.onFocusRow}
+                    // onBlur={this.onBlurRow}
+                    // onFocus={this.onFocusRow}
                     data-type="newrow"
                 >
                     <NewRowCreate
@@ -686,23 +686,23 @@ class Suppliers extends React.Component {
         }          
     }
 
-    onFocusRow(event) {
-        event.preventDefault();
-        const { newRowFocus } = this.state;
-        if (event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-            this.cerateNewRow(event);
-        }
-    }
+    // onFocusRow(event) {
+    //     event.preventDefault();
+    //     const { newRowFocus } = this.state;
+    //     if (event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+    //         this.cerateNewRow(event);
+    //     }
+    // }
 
-    onBlurRow(event){
-        event.preventDefault()
-        if (event.currentTarget.dataset['type'] == 'newrow'){
-            this.setState({
-                ...this.state,
-                newRowFocus: true
-            });
-        }
-    }
+    // onBlurRow(event){
+    //     event.preventDefault()
+    //     if (event.currentTarget.dataset['type'] == 'newrow'){
+    //         this.setState({
+    //             ...this.state,
+    //             newRowFocus: true
+    //         });
+    //     }
+    // }
 
 
 
@@ -743,8 +743,8 @@ class Suppliers extends React.Component {
                 tempRows.push(
                     <tr
                         key={screenBody._id}
-                        onBlur={this.onBlurRow}
-                        onFocus={this.onFocusRow}
+                        // onBlur={this.onBlurRow}
+                        // onFocus={this.onFocusRow}
                     >
                         <TableSelectionRow
                             id={screenBody._id}

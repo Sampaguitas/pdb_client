@@ -209,8 +209,8 @@ class ColliType extends Component {
         this.handleDelete = this.handleDelete.bind(this);
 
         this.cerateNewRow = this.cerateNewRow.bind(this);
-        this.onFocusRow = this.onFocusRow.bind(this);
-        this.onBlurRow = this.onBlurRow.bind(this);
+        // this.onFocusRow = this.onFocusRow.bind(this);
+        // this.onBlurRow = this.onBlurRow.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
 
         this.generateHeader = this.generateHeader.bind(this);
@@ -470,20 +470,20 @@ class ColliType extends Component {
         });
     }
 
-    onFocusRow(event) {
-        event.preventDefault();
-        const { newRowFocus } = this.state;
-        if (event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-            this.cerateNewRow(event);
-        }
-    }
+    // onFocusRow(event) {
+    //     event.preventDefault();
+    //     const { newRowFocus } = this.state;
+    //     if (event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+    //         this.cerateNewRow(event);
+    //     }
+    // }
 
-    onBlurRow(event){
-        event.preventDefault()
-        if (event.currentTarget.dataset['type'] == 'newrow'){
-            this.setState({ newRowFocus: true });
-        }
-    }
+    // onBlurRow(event){
+    //     event.preventDefault()
+    //     if (event.currentTarget.dataset['type'] == 'newrow'){
+    //         this.setState({ newRowFocus: true });
+    //     }
+    // }
 
     updateSelectedRows(id) {
         const { selectedRows } = this.state;
@@ -566,8 +566,8 @@ class ColliType extends Component {
         if (newRow) {
             tempRows.push(
                 <tr
-                    onBlur={this.onBlurRow}
-                    onFocus={this.onFocusRow}
+                    // onBlur={this.onBlurRow}
+                    // onFocus={this.onFocusRow}
                     data-type="newrow"
                 >
                     <NewRowCreate

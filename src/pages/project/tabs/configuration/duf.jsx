@@ -269,8 +269,8 @@ class Duf extends React.Component {
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
-        this.onFocusRow = this.onFocusRow.bind(this);
-        this.onBlurRow = this.onBlurRow.bind(this);
+        // this.onFocusRow = this.onFocusRow.bind(this);
+        // this.onBlurRow = this.onBlurRow.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
@@ -414,23 +414,23 @@ class Duf extends React.Component {
         });        
     }
 
-    onFocusRow(event) {
-        event.preventDefault();
-        const { selectedScreen, newRowFocus } = this.state;
-        if (selectedScreen && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-            this.cerateNewRow(event);
-        }
-    }
+    // onFocusRow(event) {
+    //     event.preventDefault();
+    //     const { selectedScreen, newRowFocus } = this.state;
+    //     if (selectedScreen && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
+    //         this.cerateNewRow(event);
+    //     }
+    // }
 
-    onBlurRow(event){
-        event.preventDefault()
-        if (event.currentTarget.dataset['type'] == 'newrow'){
-            this.setState({
-                ...this.state,
-                newRowFocus: true
-            });
-        }
-    }
+    // onBlurRow(event){
+    //     event.preventDefault()
+    //     if (event.currentTarget.dataset['type'] == 'newrow'){
+    //         this.setState({
+    //             ...this.state,
+    //             newRowFocus: true
+    //         });
+    //     }
+    // }
 
     handleChangeNewRow(event){
         const { projectId } = this.props;
@@ -635,8 +635,8 @@ class Duf extends React.Component {
                             <tbody>
                                 {newRow && 
                                     <tr
-                                        onBlur={this.onBlurRow}
-                                        onFocus={this.onFocusRow}
+                                        // onBlur={this.onBlurRow}
+                                        // onFocus={this.onFocusRow}
                                         data-type="newrow"
                                     >
                                         <NewRowCreate
@@ -661,7 +661,11 @@ class Duf extends React.Component {
                                     </tr>                            
                                 }
                                 {fieldnames.items && fields.items && this.filterName(fieldnames.items).map((s) =>
-                                    <tr key={s._id} onBlur={this.onBlurRow} onFocus={this.onFocusRow}>
+                                    <tr
+                                    key={s._id}
+                                    // onBlur={this.onBlurRow}
+                                    // onFocus={this.onFocusRow}
+                                    >
                                         <TableSelectionRow
                                             id={s._id}
                                             selectAllRows={this.state.selectAllRows}
