@@ -400,9 +400,11 @@ class ColliType extends Component {
             }, () => {
                 const requestOptions = {
                     method: 'DELETE',
-                    headers: { ...authHeader()},
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedRows})
                 };
-                return fetch(`${config.apiUrl}/collitype/delete?id=${JSON.stringify(selectedRows)}`, requestOptions)
+                // return fetch(`${config.apiUrl}/collitype/delete?id=${JSON.stringify(selectedRows)}`, requestOptions)
+                return fetch(`${config.apiUrl}/collitype/delete`, requestOptions)
                 .then( () => {
                     this.setState({
                         // ...this.state,

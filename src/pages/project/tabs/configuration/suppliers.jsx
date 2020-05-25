@@ -505,19 +505,20 @@ class Suppliers extends React.Component {
         }
     }
 
-    handleDelete(event, id) {
+    handleDelete(event, selectedRows) {
         event.preventDefault();
         const { refreshSuppliers } = this.props;
-        if(id) {
+        if(selectedRows) {
             this.setState({
                 ...this.state,
                 deleting: true 
             }, () => {
                 const requestOptions = {
                     method: 'DELETE',
-                    headers: { ...authHeader()},
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedRows})
                 };
-                return fetch(`${config.apiUrl}/supplier/delete?id=${JSON.stringify(id)}`, requestOptions)
+                return fetch(`${config.apiUrl}/supplier/delete`, requestOptions)
                 .then( () => {
                     this.setState({deleting: false}, refreshSuppliers);
                 })
@@ -527,8 +528,6 @@ class Suppliers extends React.Component {
             });
         }
     }
-
-    
 
     filterName(array){
         const {header, isEqual, headersForShow, sort} = this.state;

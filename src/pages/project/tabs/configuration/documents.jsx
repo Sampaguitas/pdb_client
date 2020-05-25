@@ -673,19 +673,20 @@ class Documents extends React.Component {
       }
 
 
-    handleDeleteDocFields(event, id) {
+    handleDeleteDocFields(event, selectedRows) {
         event.preventDefault();
         const { refreshDocfields } = this.props;
-        if(id) {
+        if(!_.isEmpty(selectedRows)) {
             this.setState({
                 ...this.state,
                 deletingFields: true 
             }, () => {
                 const requestOptions = {
                     method: 'DELETE',
-                    headers: { ...authHeader()},
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedRows})
                 };
-                return fetch(`${config.apiUrl}/docField/delete?id=${JSON.stringify(id)}`, requestOptions)
+                return fetch(`${config.apiUrl}/docField/delete`, requestOptions)
                 .then( () => {
                     this.setState({deletingFields: false}, refreshDocfields);
                 })

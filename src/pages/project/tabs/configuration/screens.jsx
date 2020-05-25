@@ -485,19 +485,20 @@ class Screens extends React.Component {
         } 
     }
 
-    handleDelete(event, id) {
+    handleDelete(event, selectedRows) {
         event.preventDefault();
         const { refreshFieldnames } = this.props;
-        if(id) {
+        if(_.isEmpty(selectedRows)) {
             this.setState({
                 ...this.state,
-                deleting: true
+                deleting: true 
             }, () => {
                 const requestOptions = {
                     method: 'DELETE',
-                    headers: { ...authHeader()},
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedRows})
                 };
-                return fetch(`${config.apiUrl}/fieldName/delete?id=${JSON.stringify(id)}`, requestOptions)
+                return fetch(`${config.apiUrl}/fieldName/delete`, requestOptions)
                 .then( () => {
                     this.setState({
                         ...this.state,
