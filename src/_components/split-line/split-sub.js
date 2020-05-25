@@ -570,7 +570,7 @@ class SplitLine extends Component {
     }
 
     componentDidMount() {
-        const { selectedPo, headersForSelect, selection } = this.props;
+        const { headersForSelect, selection, selectedPo } = this.props;
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
         const tableForShow = document.getElementById('forShow');

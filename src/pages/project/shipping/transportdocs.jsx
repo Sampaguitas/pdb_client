@@ -732,8 +732,8 @@ class TransportDocuments extends React.Component {
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
-            splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
-            splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
+            splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
+            splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
         });
@@ -756,26 +756,29 @@ class TransportDocuments extends React.Component {
             }
         }
 
-        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames  || splitScreenId != prevState.splitScreenId){
+        if (fieldnames != prevProps.fieldnames  || settings != prevProps.settings){
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-                splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
-                splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
             }); 
         }
 
-        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow) {
+        if (settingsDisplay != prevState.settingsDisplay || fieldnames != prevProps.fieldnames) {
             this.setState({
-                bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             });
         }
 
-        if (settings != prevProps.settings) {
+        if (fieldnames != prevProps.fieldnames) {
             this.setState({
-                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
+                splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
+            })
+        }
+
+        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow) {
+            this.setState({
+                bodysForShow: getBodys(fieldnames, selection, pos, headersForShow),
             });
         }
     }
