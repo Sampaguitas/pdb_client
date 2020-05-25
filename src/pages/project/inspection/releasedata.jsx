@@ -1011,13 +1011,6 @@ class ReleaseData extends React.Component {
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
         }
-
-        // if (settings != prevProps.settings) {
-        //     this.setState({
-        //         settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-        //         settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
-        //     });
-        // }
     }
 
     handleClearAlert(event){
