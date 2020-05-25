@@ -850,8 +850,8 @@ class Overview extends React.Component {
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(fieldnames, selection, pos, headersForShow, screenId),
-            splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
-            splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
+            splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
+            splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
             docList: arraySorted(docConf(docdefs.items), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
@@ -874,14 +874,24 @@ class Overview extends React.Component {
             }
         }
 
-        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames || splitScreenId != prevState.splitScreenId){
+        if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-                splitHeadersForShow: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forShow'),
-                splitHeadersForSelect: getHeaders(settingsDisplay, fieldnames, splitScreenId, 'forSelect'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
             }); 
+        }
+
+        if (settingsDisplay != prevState.settingsDisplay || fieldnames != prevProps.fieldnames) {
+            this.setState({
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')
+            });
+        }
+
+        if (fieldnames != prevProps.fieldnames) {
+            this.setState({
+                splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
+                splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
+            });
         }
 
         if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow) {
@@ -892,17 +902,6 @@ class Overview extends React.Component {
         
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
-        }
-
-        if (settingsDisplay != prevState.settingsDisplay) {
-            this.setState({headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')});
-        }
-
-        if (settings != prevProps.settings) {
-            this.setState({
-                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
-            });
         }
 
     }
