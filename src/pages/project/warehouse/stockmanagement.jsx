@@ -1665,51 +1665,58 @@ class StockManagement extends React.Component {
 
     handleDeleteRows(event) {
         event.preventDefault();
+        const { transactions } = this.props;
         const { selectedIds } = this.state;
-        if (_.isEmpty(selectedIds)) {
+        if (_.isEmpty(selectedIds) || selectedIds.length != 1) {
             this.setState({
                 alert: {
                     type:'alert-danger',
-                    message:'Select line(s) to delete stock movements.'
+                    message:'Select one line to delete transactions.'
                 }
             });
-        } else if (confirm('For the Selected line(s) all stock movements shall be deleted. Are you sure you want to proceed?')){
-            const requestOptions = {
-                method: 'DELETE',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify({ selectedIds: selectedIds })
-            };
-            return fetch(`${config.apiUrl}/transaction/delete`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (!responce.ok) {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    }
-                    this.setState({
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
-                } else {
-                    this.setState({
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
+        } else if (!transactions.hasOwnProperty('items') || _.isEmpty(transactions.items)){
+            this.setState({
+                alert: {
+                    type:'alert-danger',
+                    message:'Could not retrive transactions, please refresh the page and try again.'
                 }
-            })
-            .catch( () => {
+            });
+        } else {
+            let tranSelection = transactions.items.filter(element => {
+                return _.isEqual(element.poId, selectedIds[0].poId) && _.isEqual(element.locationId, selectedIds[0].locationId)
+            });
+            if (_.isEmpty(tranSelection)) {
                 this.setState({
                     alert: {
-                        type: 'alert-danger',
-                        message: 'Line(s) could not be deleted.'
+                        type:'alert-danger',
+                        message: 'Could not retrive transactions, please refresh the page and try again.'
                     }
-                }, this.refreshStore);
-            }));
+                });
+            } else {
+                let lastTransaction = tranSelection[tranSelection.length - 1];
+                console.log('lastTransaction:', lastTransaction);
+                if (confirm(`You are about to delete the last transaction: "${lastTransaction.transComment}" dated ${DateToString(lastTransaction.transDate, 'date', getDateFormat(myLocale))}. Are you sure you would like to preceed?`)) {
+                    const requestOptions = {
+                        method: 'DELETE',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    };
+                    return fetch(`${config.apiUrl}/transaction/delete?id=${lastTransaction._id}`, requestOptions)
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
+                        if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
+                        } else {
+                            this.setState({
+                                alert: {
+                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                    message: data.message
+                                }
+                            }, this.refreshStore);
+                        }
+                    }));
+                }
+            }
         }
     }
 
