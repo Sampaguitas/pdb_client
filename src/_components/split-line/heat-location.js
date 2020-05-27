@@ -879,13 +879,14 @@ class HeatLocation extends Component {
                         <div className="col-md-auto align-items-center full-height">
                             <div style={{position: 'relative', top: '50%', transform: 'translate(-50%,-50%)'}}>
                                 <div className="row mb-3">
-                                    <button title="Remove from location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.removeCertificates(event)}>
-                                        <span><FontAwesomeIcon icon={isDeleting ? "spinner" : "chevron-left"} className={isDeleting ? "fa-pulse fa-lg fa-fw" : "fa-lg"}/></span>
+                                    <button title="Add to location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.AssignCertificates(event)}>
+                                        <span><FontAwesomeIcon icon={isCreating ? "spinner" : "chevron-right"} className={isCreating ? "fa-pulse fa-lg fa-fw" : "fa-lg"}/></span>
                                     </button>
                                 </div>
                                 <div className="row">
-                                    <button title="Add to location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.AssignCertificates(event)}>
-                                        <span><FontAwesomeIcon icon={isCreating ? "spinner" : "chevron-right"} className={isCreating ? "fa-pulse fa-lg fa-fw" : "fa-lg"}/></span>
+                                    
+                                    <button title="Remove from location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.removeCertificates(event)}>
+                                        <span><FontAwesomeIcon icon={isDeleting ? "spinner" : "chevron-left"} className={isDeleting ? "fa-pulse fa-lg fa-fw" : "fa-lg"}/></span>
                                     </button>
                                 </div>
                             </div>

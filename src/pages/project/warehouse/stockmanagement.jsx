@@ -1591,7 +1591,10 @@ class StockManagement extends React.Component {
                     };
                     return fetch(`${config.apiUrl}/template/generateSh?id=${selectedTemplate}&locale=${locale}`, requestOptions)
                     .then(responce => {
-                        this.setState({ isDownloadingFile: false });
+                        this.setState({
+                            showGenerate: false,
+                            isDownloadingFile: false 
+                        });
                         if (!responce.ok) {
                             if (responce.status === 401) {
                                 localStorage.removeItem('user');
