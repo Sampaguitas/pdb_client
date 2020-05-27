@@ -1062,6 +1062,7 @@ class Documents extends React.Component {
             selectedRows,
             selectAllRows,
             fileName,
+            inputKey,
             multi,
             show,
             submitted,
@@ -1149,7 +1150,7 @@ class Documents extends React.Component {
                                     className="custom-file-input"
                                     style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
                                     onChange={this.handleFileChange}
-                                    key={this.state.inputKey}
+                                    key={inputKey}
                                 />
                             </div>
                             <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
@@ -1322,7 +1323,8 @@ class Documents extends React.Component {
                                         >
                                             <TableSelectionRow
                                                 id={s._id}
-                                                selectAllRows={this.state.selectAllRows}
+                                                selectAllRows={selectAllRows}
+                                                selectedRows={selectedRows}
                                                 callback={this.updateSelectedRows}
                                             />
                                             {multi &&

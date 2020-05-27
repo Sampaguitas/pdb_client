@@ -564,7 +564,7 @@ class Heat extends Component {
 
     generateBody(heats) {
         const { refreshPos, certificates } = this.props;
-        const { selectAllRows, newRow, newHeat, newRowColor } = this.state;
+        const { selectedIds, selectAllRows, newRow, newHeat, newRowColor } = this.state;
         let tempRows = [];
         
         if (newRow) {
@@ -611,6 +611,7 @@ class Heat extends Component {
                         <TableSelectionRow
                             id={heat._id}
                             selectAllRows={selectAllRows}
+                            selectedRows={selectedIds}
                             callback={this.updateSelectedIds}
                         />
                         <TableSelect

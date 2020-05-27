@@ -816,7 +816,8 @@ class Screens extends React.Component {
                                     >
                                         <TableSelectionRow
                                             id={s._id}
-                                            selectAllRows={this.state.selectAllRows}
+                                            selectAllRows={selectAllRows}
+                                            selectedRows={selectedRows}
                                             callback={this.updateSelectedRows}
                                         />
                                         <TableSelect 

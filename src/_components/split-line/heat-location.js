@@ -557,7 +557,7 @@ class HeatLocation extends Component {
 
     generatePoBody() {
         const { refreshCifs } = this.props;
-        const { poSelectAllRows, poCertificates } = this.state;
+        const { poSelectedIds, poSelectAllRows, poCertificates } = this.state;
         let tempRows = [];
         if (poCertificates) {
             this.pofilterName(poCertificates).map( (certificate, index) => {
@@ -566,6 +566,7 @@ class HeatLocation extends Component {
                         <TableSelectionRow
                             id={certificate._id}
                             selectAllRows={poSelectAllRows}
+                            selectedRows={poSelectedIds}
                             callback={this.updatePoSelectedIds}
                         />
                         <TableInput
@@ -655,7 +656,7 @@ class HeatLocation extends Component {
 
     generateLocBody() {
         const { refresHatLocs } = this.props;
-        const { locSelectAllRows, locCertificates } = this.state;
+        const { locSelectedIds, locSelectAllRows, locCertificates } = this.state;
         let tempRows = [];
         if (locCertificates) {
             this.locfilterName(locCertificates).map( (certificate, index) => {
@@ -664,6 +665,7 @@ class HeatLocation extends Component {
                         <TableSelectionRow
                             id={certificate._id}
                             selectAllRows={locSelectAllRows}
+                            selectedRows={locSelectedIds}
                             callback={this.updateLocSelectedIds}
                         />
                         <TableInput

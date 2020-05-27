@@ -713,7 +713,7 @@ class Suppliers extends React.Component {
 
     generateBody(screenBodys) {
         const { refreshSuppliers } = this.props;
-        const { selectAllRows, unlocked, headersForShow } = this.state;
+        const { selectedRows, selectAllRows, unlocked, headersForShow } = this.state;
         if (!_.isEmpty(screenBodys) && !_.isEmpty(headersForShow)) {
             let tempRows = [];
             this.filterName(screenBodys).map(screenBody => {
@@ -748,6 +748,7 @@ class Suppliers extends React.Component {
                         <TableSelectionRow
                             id={screenBody._id}
                             selectAllRows={selectAllRows}
+                            selectedRows={selectedRows}
                             callback={this.updateSelectedRows}
                         />
                         {tempCol}

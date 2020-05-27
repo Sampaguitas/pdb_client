@@ -20,10 +20,23 @@ class TableSelectionRow extends Component {
     }
 
     componentDidUpdate(prevProps) {
-        if(prevProps.selectAllRows !== this.props.selectAllRows) {
+        const { selectAllRows, selectedRows, id } = this.props;
+        if(selectAllRows != prevProps.selectAllRows) {
             this.setState({
-                fieldValue: this.props.selectAllRows
+                fieldValue: selectAllRows
             });
+        }
+
+        if (selectedRows != prevProps.selectedRows) {
+            if (selectedRows.includes(id)) {
+                this.setState({
+                    fieldValue: true
+                });
+            } else {
+                this.setState({
+                    fieldValue: false
+                });
+            }
         }
     }
 

@@ -284,7 +284,8 @@ class GoodsReceipt extends Component {
     componentDidUpdate(prevProps, prevState) {
         const { selectedRows } = this.state;
         const { screenBodys, updateSelectedIds } = this.props;
-        if (selectedRows !== prevState.selectedRows) {
+
+        if (selectedRows != prevState.selectedRows || screenBodys != prevProps.screenBodys) {
             updateSelectedIds(getTableIds(selectedRows, screenBodys));
         }
     }
@@ -475,7 +476,7 @@ class GoodsReceipt extends Component {
 
     generateBody(screenBodys) {
         const { unlocked, refreshStore } = this.props;
-        const { selectAllRows } = this.state;
+        const { selectedRows, selectAllRows } = this.state;
         let tempRows = [];
 
         this.filterName(screenBodys).map(screenBody => {
@@ -507,6 +508,7 @@ class GoodsReceipt extends Component {
                     <TableSelectionRow
                         id={screenBody._id}
                         selectAllRows={selectAllRows}
+                        selectedRows={selectedRows}
                         callback={this.updateSelectedRows}
                     />
                     {tempCol}

@@ -562,7 +562,7 @@ class ColliType extends Component {
 
     generateBody(collitypes) {
         const { refreshColliTypes } = this.props;
-        const { selectAllRows, newRow, fieldName, newRowColor } = this.state;
+        const { selectedRows, selectAllRows, newRow, fieldName, newRowColor } = this.state;
         let tempRows = [];
         
         if (newRow) {
@@ -622,6 +622,7 @@ class ColliType extends Component {
                         <TableSelectionRow
                             id={collitype._id}
                             selectAllRows={selectAllRows}
+                            selectedRows={selectedRows}
                             callback={this.updateSelectedRows}
                         />
                         <TableInput

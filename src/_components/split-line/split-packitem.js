@@ -374,7 +374,7 @@ function generateBodyForSelect(screenBodys, selectedLine, selectedIds, handleCli
     }
 }
 
-function generateHeaderForShow(screenHeaders, IsAll, toggleAllRow) {
+function generateHeaderForShow(screenHeaders, selectAllRows, toggleAllRow) {
     let tempArray = [];
     if (!_.isEmpty(screenHeaders)) { 
         screenHeaders.map(function (screenHeader, index) {
@@ -390,7 +390,7 @@ function generateHeaderForShow(screenHeaders, IsAll, toggleAllRow) {
             return (
                 <tr>
                     < TableSelectionAllRow
-                        checked={IsAll}
+                        checked={selectAllRows}
                         onChange={toggleAllRow}
                     />
                     {tempArray}
@@ -400,7 +400,7 @@ function generateHeaderForShow(screenHeaders, IsAll, toggleAllRow) {
     }
 }
 
-function generateBodyForShow(virtuals, headersForShow, IsAll, toggleRow, handleChangeVirtuals) {
+function generateBodyForShow(virtuals, headersForShow, selectedRows, selectAllRows, toggleRow, handleChangeVirtuals) {
     let tempRows = [];
     if (!_.isEmpty(virtuals)) {
         virtuals.map(function (screenBody, indexBody) {
@@ -421,7 +421,8 @@ function generateBodyForShow(virtuals, headersForShow, IsAll, toggleRow, handleC
                 <tr key={indexBody}>
                     < TableSelectionRow
                         id={indexBody}
-                        selectAllRows={IsAll}
+                        selectAllRows={selectAllRows}
+                        selectedRows={selectedRows}
                         callback={toggleRow}
                     />
                     {tempCol}
@@ -951,7 +952,7 @@ class SplitLine extends Component {
     render() {
 
         const { headersForShow, headersForSelect, selectedIds, selectedPo } = this.props;
-        const { bodysForSelect, virtuals, forShowIsAll, selectedLine } =this.state;
+        const { bodysForSelect, virtuals, forShowSelectedRows, forShowIsAll, selectedLine } =this.state;
 
         let remainingQty = getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals);
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
@@ -1014,7 +1015,7 @@ class SplitLine extends Component {
                                     {generateHeaderForShow(headersForShow, forShowIsAll, this.toggleForShowAllRows)}
                                 </thead>
                                 <tbody>
-                                    {generateBodyForShow(virtuals, headersForShow, forShowIsAll, this.toggleForShowRow, this.handleChangeVirtuals)}
+                                    {generateBodyForShow(virtuals, headersForShow, forShowSelectedRows, forShowIsAll, this.toggleForShowRow, this.handleChangeVirtuals)}
                                 </tbody>
                             </table>
                         </div>

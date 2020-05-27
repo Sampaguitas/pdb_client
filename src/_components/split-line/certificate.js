@@ -493,7 +493,7 @@ class Certificate extends Component {
 
     generateBody(certificates) {
         const { refreshCifs } = this.props;
-        const { selectAllRows, newRow, newCif, newRowColor } = this.state;
+        const { selectedIds, selectAllRows, newRow, newCif, newRowColor } = this.state;
         let tempRows = [];
         
         if (newRow) {
@@ -525,6 +525,7 @@ class Certificate extends Component {
                         <TableSelectionRow
                             id={certificate._id}
                             selectAllRows={selectAllRows}
+                            selectedRows={selectedIds}
                             callback={this.updateSelectedIds}
                         />
                         <CifInput

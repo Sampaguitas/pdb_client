@@ -786,8 +786,11 @@ class Warehouse extends Component {
     render() {
 
         const { toggleWarehouse, warehouses, refreshStore } = this.props;
+        
         const { 
+            selectedWh,
             selectAllWh,
+            selectedAreas,
             selectAllAreas,
             header,
             // warehouse,
@@ -807,6 +810,7 @@ class Warehouse extends Component {
             creatingNewArea,
             creatingNewWh
         } = this.state;
+
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
 
         return (
@@ -880,6 +884,7 @@ class Warehouse extends Component {
                                             <TableSelectionRow
                                                 id={w._id}
                                                 selectAllRows={selectAllWh}
+                                                selectedRows={selectedWh}
                                                 callback={this.updateSelectedWh}
                                             />
                                             <TableInput 
@@ -990,6 +995,7 @@ class Warehouse extends Component {
                                             <TableSelectionRow
                                                 id={a._id}
                                                 selectAllRows={selectAllAreas}
+                                                selectedRows={selectedAreas}
                                                 callback={this.updateSelectedArea}
                                             />
                                             <TableInput 

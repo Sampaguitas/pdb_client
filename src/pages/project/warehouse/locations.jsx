@@ -888,6 +888,7 @@ class Locations extends React.Component {
                                                 <TableSelectionRow
                                                     id={l._id}
                                                     selectAllRows={selectAllRows}
+                                                    selectedRows={selectedRows}
                                                     callback={this.updateSelectedRows}
                                                 />
                                                 <TableInput 
