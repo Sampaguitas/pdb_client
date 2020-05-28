@@ -1694,7 +1694,7 @@ class StockManagement extends React.Component {
                 });
             } else {
                 let lastTransaction = tranSelection[tranSelection.length - 1];
-                if (confirm(`You are about to delete the last transaction: "${lastTransaction.transComment}" dated ${DateToString(lastTransaction.transDate, 'date', getDateFormat(myLocale))}. Are you sure you would like to preceed?`)) {
+                if (confirm(`You are about to undo the last transaction: "${lastTransaction.transComment}" dated ${DateToString(lastTransaction.transDate, 'date', getDateFormat(myLocale))}. Are you sure you would like to preceed?`)) {
                     const requestOptions = {
                         method: 'DELETE',
                         headers: { ...authHeader(), 'Content-Type': 'application/json' },
