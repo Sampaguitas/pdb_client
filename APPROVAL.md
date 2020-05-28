@@ -8,4 +8,8 @@
 * [Approval - Phase XV](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XV.pdf)
 * [Approval - Phase XVI](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XVI.pdf)
 * [Approval - Phase XVII](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XVII.pdf)
+* [Approval - Phase XIX](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XIX.pdf)
 * [Approval - Phase XX](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XX.pdf)
+* [Approval - Phase XXI](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XXI.pdf)
+* [Approval - Phase XXII](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XXII.pdf)
+* [Approval - Phase XXIII](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XXIII.pdf)

@@ -8,7 +8,7 @@ Van Leeuwen PDB is a project management platform disigned for the execution of l
 * [proposal](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Proposal.pdf)
 * [mock-up](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Mock-up.pdf)
 * [er-diagram](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/entity+relationship+diagram.svg)
-* [planning](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Planning+Rev12.xlsx)
+* [planning](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Planning+Rev14.xlsx)
 * [approvals](APPROVAL.md)
 * [todo list](TODO.md)
 
