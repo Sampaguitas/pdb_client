@@ -1723,6 +1723,10 @@ class StockManagement extends React.Component {
         event.preventDefault();
         const { showGoodsReceipt, whList } = this.state;
         this.setState({
+            alert: {
+                type:'',
+                message:''
+            },
             showGoodsReceipt: !showGoodsReceipt,
             transQty: '',
             toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
@@ -1742,6 +1746,10 @@ class StockManagement extends React.Component {
             });
         } else {
             this.setState({
+                alert: {
+                    type:'',
+                    message:''
+                },
                 showTransfer: !showTransfer,
                 transQty: '',
                 toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
@@ -1820,6 +1828,10 @@ class StockManagement extends React.Component {
         event.preventDefault();
         const { showSettings } = this.state;
         this.setState({
+            alert: {
+                type:'',
+                message:''
+            },
             showSettings: !showSettings
         });
     }

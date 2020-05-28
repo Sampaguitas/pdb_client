@@ -672,6 +672,7 @@ class ProjectTable extends Component {
             handleDeleteRows,
             toggleUnlock,
             downloadTable,
+            screenId,
             screenHeaders, 
             screenBodys, 
             unlocked,
@@ -717,7 +718,7 @@ class ProjectTable extends Component {
                     <button className="btn btn-outline-leeuwen-blue" title="Upload" onClick={event => this.toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" title="Delete Line(s)" onClick={handleDeleteRows} style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" title={screenId == '5ea8eefb7c213e2096462a2c' ? "Undo Transaction": "Delete Line(s)"} onClick={handleDeleteRows} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="trash-alt" className="fas fa-2x"/></span>
                     </button>
                 </div>
