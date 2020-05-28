@@ -1741,7 +1741,7 @@ class StockManagement extends React.Component {
             this.setState({
                 alert: {
                     type:'alert-danger',
-                    message:'Select one line to transfer units another location.'
+                    message:'Select one line to transfer units to another location.'
                 }
             });
         } else {
