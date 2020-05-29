@@ -12,6 +12,7 @@ export * from './field.constants';
 export * from './fieldname.constants';
 export * from './heatloc.constants';
 export * from './locale.constants';
+export * from './mir.constants';
 export * from './opco.constants';
 export * from './po.constants';
 export * from './project.constants';

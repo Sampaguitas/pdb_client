@@ -11,6 +11,7 @@ export * from './field.service';
 export * from './fieldname.service';
 export * from './heatloc.service';
 export * from './locale.service';
+export * from './mir.service';
 export * from './opco.service';
 export * from './po.service';
 export * from './project.service';

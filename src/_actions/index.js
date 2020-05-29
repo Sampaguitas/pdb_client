@@ -12,6 +12,7 @@ export * from './field.actions';
 export * from './fieldname.actions';
 export * from './heatloc.actions';
 export * from './locale.actions';
+export * from './mir.actions';
 export * from './opco.actions';
 export * from './po.actions';
 export * from './project.actions';
