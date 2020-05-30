@@ -1022,18 +1022,9 @@ class Overview extends React.Component {
             return fetch(`${config.apiUrl}/setting/upsert`, requestOptions)
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
-                if (!responce.ok) {
-                    if (responce.status === 401) {
+                if (responce.status === 401) {
                         localStorage.removeItem('user');
                         location.reload(true);
-                    }
-                    this.setState({
-                        settingSaving: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
                 } else {
                     this.setState({
                         settingSaving: false,

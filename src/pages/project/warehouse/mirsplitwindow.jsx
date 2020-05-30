@@ -3,13 +3,14 @@ import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
-    alertActions,
-    certificateActions,
+    alertActions,  
     fieldnameActions,
     fieldActions,
+    mirActions,
     poActions,
     projectActions,
     settingActions
@@ -19,10 +20,10 @@ import ProjectTable from '../../../_components/project-table/project-table';
 import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
 import Modal from '../../../_components/modal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Certificate from '../../../_components/split-line/certificate';
-import Heat from '../../../_components/split-line/heat';
 
+import moment from 'moment';
+import _ from 'lodash';
+import { __promisify__ } from 'glob';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
@@ -49,8 +50,24 @@ function getDateFormat(myLocale) {
     return tempDateFormat;
 }
 
+function passSelectedIds(selectedIds) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1) {
+        return {};
+    } else {
+        return selectedIds[0];
+    }
+}
 
-function TypeToString (fieldValue, fieldType, myDateFormat) {
+function passSelectedMir(selectedIds, mirs) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(mirs.items)){
+        return {};
+    } else {
+        return mirs.items.find(mir => mir._id === selectedIds[0].mirId);
+    }
+}
+
+
+function TypeToString(fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'Date': return String(moment(fieldValue).format(myDateFormat));
@@ -62,8 +79,7 @@ function TypeToString (fieldValue, fieldType, myDateFormat) {
     }
 }
 
-
-function DateToString (fieldValue, fieldType, myDateFormat) {
+function DateToString(fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'date': return String(moment(fieldValue).format(myDateFormat)); 
@@ -94,9 +110,7 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
     } else {
         return true;
     }
-    
 }
-
 
 function baseTen(number) {
     return number.toString().length > 2 ? number : '0' + number;
@@ -132,10 +146,34 @@ function arraySorted(array, fieldOne, fieldTwo, fieldThree) {
     }
 }
 
-function getScreenTbls (fieldnames) {
+function findObj(array, search) {
+    if (!_.isEmpty(array) && search) {
+        return array.find((function(element) {
+            return _.isEqual(element._id, search);
+        }));
+    } else {
+        return {};
+    }
+}
+
+// function getScreenTbls (fieldnames) {
+//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+//         return fieldnames.items.reduce(function (accumulator, currentValue) {
+//             if(!accumulator.includes(currentValue.fields.fromTbl)) {
+//                 accumulator.push(currentValue.fields.fromTbl)
+//             }
+//             return accumulator;
+//         },[]);
+//     } else {
+//         return [];
+//     }
+    
+// }
+
+function getScreenTbls (fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         return fieldnames.items.reduce(function (accumulator, currentValue) {
-            if(!accumulator.includes(currentValue.fields.fromTbl)) {
+            if(!accumulator.includes(currentValue.fields.fromTbl) && currentValue.screenId === screenId) {
                 accumulator.push(currentValue.fields.fromTbl)
             }
             return accumulator;
@@ -204,36 +242,7 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     return [];
 }
 
-function virtuals(heats) {
-    let tempVirtuals = [];
-    
-    if (!_.isEmpty(heats)) {
-        tempVirtuals = heats.reduce(function(acc, cur) {
-            acc.push({
-                cif: cur.certificate.cif,
-                heatNr: cur.heatNr,
-                heatId: cur._id,
-                certificateId: cur.certificateId
-            });
-            return acc;
-        }, []);
-    }
-
-    if (!_.isEmpty(tempVirtuals)) {
-        return tempVirtuals;
-    } else {
-        return ([
-            {
-                cif: '',
-                heatNr: '',
-                heatId: '',
-                certificateId: '',
-            }
-        ]);
-    }
-}
-
-function getBodys(selection, pos, headersForShow){
+function getBodysForShow(mirs, selection, headersForShow) {
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
@@ -241,97 +250,106 @@ function getBodys(selection, pos, headersForShow){
     let project = selection.project || { _id: '0', name: '', number: '' };
     let i = 1;
 
-    if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
-        pos.items.map(po => {
-            if (po.subs) {
-                po.subs.map(sub => {
-                    virtuals(sub.heats).map(function(virtual){
-                        arrayRow = [];
-                        screenHeaders.map(screenHeader => {
-                            switch(screenHeader.fields.fromTbl) {
-                                case 'po':
-                                    if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: project._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'po',
-                                            objectId: po._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: po[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    }
-                                    break;
-                                case 'sub': 
-                                    if (screenHeader.fields.name === 'heatNr') {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: virtual._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: virtual[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'sub',
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    }
-                                    break;
-                                case 'certificate':
+    if (!_.isUndefined(mirs) && mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
+        mirs.items.map(mir => {
+            let itemCount = !_.isEmpty(mir.itemCount) ? mir.itemCount.length : '';
+            let mirWeight = 0;
+            if (!_.isEmpty(mir.miritems)) {
+                mirWeight = mir.miritems.reduce(function (acc, cur) {
+                    if (!!cur.totWeight) {
+                        acc += totWeight;
+                    }
+                    return acc;
+                }, 0);
+            }
+            if (mir.hasOwnProperty('miritems') && !_.isEmpty(mirs.miritems)) {
+                mir.miritems.map(miritem => {
+                    arrayRow = [];
+                    screenHeaders.map(screenHeader => {
+                        switch(screenHeader.fields.fromTbl) {
+                            case 'mir':
+                                if (['itemCount', 'mirWeight'].includes(screenHeader.fields.name)) {
                                     arrayRow.push({
                                         collection: 'virtual',
-                                        objectId: virtual._id,
+                                        objectId: mir._id,
                                         fieldName: screenHeader.fields.name,
-                                        fieldValue: virtual[screenHeader.fields.name],
+                                        fieldValue: screenHeader.fields.name === 'itemCount' ? itemCount : mirWeight,
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
                                     });
-                                    break;
-                                default: arrayRow.push({
-                                    collection: 'virtual',
-                                    objectId: '0',
+                                } else {
+                                    arrayRow.push({
+                                        collection: 'mir',
+                                        objectId: mir._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: mir[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                }
+                                break;
+                            case 'miritem':
+                                arrayRow.push({
+                                    collection: 'miritem',
+                                    objectId: miritem._id,
                                     fieldName: screenHeader.fields.name,
-                                    fieldValue: '',
+                                    fieldValue: miritem[screenHeader.fields.name],
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
                                 });
-                            }
-                        });
-                        objectRow  = {
-                            _id: i, 
-                            tablesId: { 
-                                poId: po._id,
-                                subId: sub._id,
-                                packitemId: '',
-                                collipackId: '',
-                                certificateId: virtual.certificateId,
-                                heatId: virtual.heatId
-                            },
-                            fields: arrayRow
-                        };
-                        arrayBody.push(objectRow);
-                        i++;
+                                break;
+                            case 'po':
+                                if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: project._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else {
+                                    arrayRow.push({
+                                        collection: 'po',
+                                        objectId: miritem.po._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: miritem.po[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                }
+                                break;
+                            default: arrayRow.push({
+                                collection: 'virtual',
+                                objectId: '0',
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: '',
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            }); 
+                        }
                     });
+                    objectRow  = {
+                        _id: i,
+                        tablesId: {
+                            poId: miritem.po._id,
+                            subId: '',
+                            certificateId: '',
+                            packitemId: '',
+                            collipackId: '',
+                            mirId: mir._id,
+                            miritemId: miritem._id
+                        },
+                        fields: arrayRow
+                    };
+                    arrayBody.push(objectRow);
+                    i++;
                 });
             }
         });
@@ -341,18 +359,75 @@ function getBodys(selection, pos, headersForShow){
     }
 }
 
-function getHeats(selectedIds, pos) {
-    if (selectedIds.length === 1 && !_.isEmpty(pos.items)) {
-        let selectedPo = pos.items.find(po => po._id === selectedIds[0].poId);
-        if (!_.isUndefined(selectedPo)) {
-            let selectedSub = selectedPo.subs.find(sub => sub._id === selectedIds[0].subId);
-            if (!_.isUndefined(selectedSub)) {
-                return selectedSub.heats;
-            }
-        }
+function getBodysForSelect(pos, selection, headersForSelect) {
+    let arrayBody = [];
+    let arrayRow = [];
+    let objectRow = {};
+    let screenHeaders = headersForSelect;
+    let project = selection.project || { _id: '0', name: '', number: '' };
+    let i = 1;
+
+    if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
+        pos.items.map(po => {
+            arrayRow = [];
+            screenHeaders.map(screenHeader => {
+                switch(screenHeader.fields.fromTbl) {
+                    case 'po':
+                        if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                            arrayRow.push({
+                                collection: 'virtual',
+                                objectId: project._id,
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            });
+                        } else {
+                            arrayRow.push({
+                                collection: 'po',
+                                objectId: po._id,
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: po[screenHeader.fields.name],
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            });
+                        }
+                        break;
+                    default: arrayRow.push({
+                        collection: 'virtual',
+                        objectId: '0',
+                        fieldName: screenHeader.fields.name,
+                        fieldValue: '',
+                        disabled: screenHeader.edit,
+                        align: screenHeader.align,
+                        fieldType: getInputType(screenHeader.fields.type),
+                    }); 
+                }
+            });
+            objectRow  = {
+                _id: i,
+                tablesId: {
+                    poId: po._id,
+                    subId: '',
+                    certificateId: '',
+                    packitemId: '',
+                    collipackId: '',
+                    mirId: '',
+                    miritemId: '',
+                },
+                fields: arrayRow
+            };
+            arrayBody.push(objectRow);
+            i++;
+        });
+        return arrayBody;
+    } else {
+        return [];
     }
-    return [];
 }
+
 
 function initSettingsFilter(fieldnames, settings, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
@@ -438,15 +513,16 @@ function initSettingsDisplay(fieldnames, settings, screenId) {
     }
 }
 
-
-
-class WhCertificates extends React.Component {
+class MirSplitwindow extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             headersForShow: [],
             bodysForShow: [],
-            heats: [],
+            headerForSelect: [],
+            bodyForSelect: [],
+            // splitHeadersForShow: [],
+            // splitHeadersForSelect:[],
             settingsFilter: [],
             settingsDisplay: [],
             tabs: [
@@ -461,44 +537,42 @@ class WhCertificates extends React.Component {
                 {
                     index: 1, 
                     id: 'display',
-                    label: 'Display', 
+                    label: 'Display',
                     component: TabDisplay, 
                     active: false, 
                     isLoaded: false
                 }
             ],
             projectId:'',
-            screenId: '5cd2b642fd333616dc360b65', //Certificates
+            screenId: '5ed1e7a67c213e044cc01888',
             unlocked: false,
-            screen: 'certificates',
+            screen: 'Material Issue Record',
             selectedIds: [],
             alert: {
                 type:'',
                 message:''
             },
-            //-----modals-----
-            showCif: false,
-            showHeat: false,
+            // showSplitLine: false,
             showSettings: false,
-
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
-        // this.handleUpdateValue = this.handleUpdateValue.bind(this);
+        this.handleChange = this.handleChange.bind(this);
+        this.handleChangeNewMir = this.handleChangeNewMir.bind(this);
+        // this.handleSplitLine = this.handleSplitLine.bind(this);
+        
+
         this.refreshStore = this.refreshStore.bind(this);
-        this.refreshCifs = this.refreshCifs.bind(this);
-        this.refreshPos = this.refreshPos.bind(this);
+        this.refreshMir = this.refreshMir.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
+        this.createNewMir = this.createNewMir.bind(this);
+        this.handleEditClick = this.handleEditClick.bind(this);
         //Toggle Modals
-        this.toggleCif = this.toggleCif.bind(this);
-        this.toggleHeat = this.toggleHeat.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
-        // this.downloadCif = this.downloadCif.bind(this);
-        this.handleDownloadCif = this.handleDownloadCif.bind(this);
-        //settings
+        //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
         this.handleClearInputSettings = this.handleClearInputSettings.bind(this);
@@ -506,39 +580,37 @@ class WhCertificates extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
+        
     }
 
     componentDidMount() {
         const { 
             dispatch,
             loadingAccesses,
-            loadingCertificates,
             loadingFieldnames,
             loadingFields,
+            loadingMirs,
             loadingPos,
             loadingSelection,
             loadingSettings,
             location,
             //---------
             fieldnames,
+            mirs,
             pos,
-            docdefs,
             selection,
-            settings
+            settings 
         } = this.props;
 
-        const { screenId, headersForShow, settingsDisplay } = this.state;
+        const { screenId, headersForShow, headersForSelect, settingsDisplay } = this.state; //splitScreenId
+
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
         if (qs.id) {
-            //State items with projectId
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
-            }
-            if (!loadingCertificates) {
-                dispatch(certificateActions.getAll(qs.id));
             }
             if (!loadingFieldnames) {
                 dispatch(fieldnameActions.getAll(qs.id));
@@ -546,11 +618,14 @@ class WhCertificates extends React.Component {
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
             }
-            if (!loadingPos) {
-                dispatch(poActions.getAll(qs.id));
+            if (!loadingMirs) {
+                dispatch(mirActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
+            }
+            if (!loadingPos) {
+                dispatch(poActions.getById(qs.id));
             }
             if (!loadingSettings) {
                 dispatch(settingActions.getAll(qs.id, userId));
@@ -559,65 +634,48 @@ class WhCertificates extends React.Component {
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-            bodysForShow: getBodys(selection, pos, headersForShow),
+            headersForSelect: getHeaders([], fieldnames, screenId, 'forSelect'),
+            bodysForShow: getBodysForShow(mirs, selection, headersForShow),
+            bodysForSelect: getBodysForSelect(pos, selection, headersForSelect),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, screenId, selectedField, settingsDisplay, selectedIds } = this.state;
-        const { fields, fieldnames, selection, settings, pos } = this.props;
-        if (selectedField != prevState.selectedField && selectedField != '0') {
-            let found = fields.items.find(function (f) {
-                return f._id === selectedField;
+        const { headersForShow, headersForSelect, screenId, settingsDisplay } = this.state; //splitScreenId,
+        const { fieldnames, mirs, pos, selection, settings} = this.props;
+
+        if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
+            this.setState({
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
             });
-            if (found) {
-                this.setState({
-                    ...this.state,
-                    updateValue: '',
-                    selectedType: getInputType(found.type),
-                });
-            }
         }
 
-        if (fieldnames != prevProps.fieldnames) {
+        if (settingsDisplay != prevState.settingsDisplay || fieldnames != prevProps.fieldnames) {
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                headersForSelect: getHeaders([], fieldnames, screenId, 'forSelect')
             });
         }
 
-        if (fieldnames != prevProps.fieldnames || selection != prevProps.selection || pos != prevProps.pos || headersForShow != prevState.headersForShow) {
+        if (mirs != prevProps.mirs || selection != prevProps.selection || headersForShow != prevState.headersForShow) {
             this.setState({
-                bodysForShow: getBodys(selection, pos, headersForShow),
+                bodysForShow: getBodysForShow(mirs, selection, headersForShow)
             });
         }
 
-        if (settingsDisplay != prevState.settingsDisplay) {
+        if (pos != prevProps.pos || selection != prevProps.selection || headersForSelect != prevState.headersForSelect) {
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')
-            });
-        }
-
-        if (settings != prevProps.settings) {
-            this.setState({
-                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
-            });
-        }
-        
-        if (selectedIds != prevState.selectedIds || pos != prevProps.pos) {
-            this.setState({
-                heats: getHeats(selectedIds, pos)
+                bodysForSelect: getBodysForSelect(pos, selection, headersForSelect)
             });
         }
 
     }
 
     handleClearAlert(event){
-        event.preventDefault;
+        event.preventDefault();
         const { dispatch } = this.props;
         this.setState({ 
             alert: {
@@ -752,26 +810,17 @@ class WhCertificates extends React.Component {
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
         if (projectId) {
-            dispatch(poActions.getAll(projectId));
+            dispatch(mirActions.getAll(projectId));
             dispatch(settingActions.getAll(projectId, userId));
         }
     }
 
-    refreshCifs() {
-        const { dispatch } = this.props;
-        const { projectId } = this.state;
-        if (projectId) {
-            dispatch(certificateActions.getAll(projectId));
-            dispatch(poActions.getAll(projectId));
-        }
-    }
-
-    refreshPos() {
+    refreshMir() {
         const { dispatch } = this.props;
         const { projectId } = this.state;
 
         if (projectId) {
-            dispatch(poActions.getAll(projectId));
+            dispatch(mirActions.getAll(projectId));
         }
     }
 
@@ -818,76 +867,97 @@ class WhCertificates extends React.Component {
         });
     }
 
-    selectedFieldOptions(fieldnames, fields) {
-
-        const { headersForShow } = this.state;
-
-        if (fieldnames.items && fields.items) {
-            let screenHeaders = headersForShow;
-            let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
-                if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
-                    accumulator.push(currentValue.fieldId);
-                }
-                return accumulator;
-            }, []);
-            let fieldsFromHeader = fields.items.reduce(function (accumulator, currentValue) {
-                if (fieldIds.indexOf(currentValue._id) !== -1) {
-                    accumulator.push({ 
-                        value: currentValue._id,
-                        name: currentValue.custom
-                    });
-                }
-                return accumulator;
-            }, []);
-            return arraySorted(fieldsFromHeader, 'name').map(field => {
-                return (
-                    <option 
-                        key={field.value}
-                        value={field.value}>{field.name}
-                    </option>                
-                );
-            });
-        }
+    handleChangeNewMir(event) {
+        event.preventDefault();
+        const { projectId, newMir } = this.state;
+        const name =  event.target.name;
+        const value =  event.target.value;
+        this.setState({
+            newMir: {
+                ...newMir,
+                [name]: value,
+                projectId
+            }
+        });
     }
+
+    // handleSplitLine(event, subId, virtuals) {
+    //     event.preventDefault();
+    //     const requestOptions = {
+    //         method: 'PUT',
+    //         headers: { ...authHeader(), 'Content-Type': 'application/json'},
+    //         body: JSON.stringify({virtuals: virtuals})
+    //     }
+    //     return fetch(`${config.apiUrl}/split/sub?subId=${subId}`, requestOptions)
+    //     .then(responce => responce.text().then(text => {
+    //         const data = text && JSON.parse(text);
+    //         if (!responce.ok) {
+    //             if (responce.status === 401) {
+    //                 localStorage.removeItem('user');
+    //                 location.reload(true);
+    //             }
+    //             this.setState({
+    //                 // showSplitLine: false,
+    //                 alert: {
+    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                     message: data.message
+    //                 }
+    //             }, this.refreshStore);
+    //         } else {
+    //             this.setState({
+    //                 // showSplitLine: false,
+    //                 alert: {
+    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                     message: data.message
+    //                 }
+    //             }, this.refreshStore);
+    //         }
+    //     }));
+    // }
 
     updateSelectedIds(selectedIds) {
         this.setState({
-            ...this.state,
             selectedIds: selectedIds
         });
     }
 
     handleDeleteRows(event) {
-        event.preventDefault;
-        this.setState({
-            alert: {
-                type:'alert-danger',
-                message:'Certificates cannot be deleted at the moment.'
-            }
-        });
-    }
-
-    toggleCif(event) {
         event.preventDefault();
-        const { showCif } = this.state;
-        this.setState({
-            showCif: !showCif
-        });
-    }
-
-    toggleHeat(event) {
-        event.preventDefault();
-        const { showHeat, selectedIds } = this.state;
-        if (!showHeat && selectedIds.length != 1) {
+        // const { dispatch } = this.props;
+        const { selectedIds } = this.state;
+        if (_.isEmpty(selectedIds)) {
             this.setState({
                 alert: {
-                    type: 'alert-danger',
-                    message: 'Select one line to assign Heat Numbers.'
+                    type:'alert-danger',
+                    message:'Select line(s) to be deleted.'
                 }
             });
-        } else {
+        } else if (confirm('For the Selected line(s) all MIR details, MIR Items and picking lists shall be deleted. Are you sure you want to proceed?')){
             this.setState({
-                showHeat: !showHeat
+                ...this.state,
+                deleting: true
+            }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ selectedIds: selectedIds })
+                };
+                return fetch(`${config.apiUrl}/mir/delete`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            deleting: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshMir);
+                    }
+                }));
             });
         }
     }
@@ -896,97 +966,104 @@ class WhCertificates extends React.Component {
         event.preventDefault();
         const { showSettings } = this.state;
         this.setState({
+            alert: {
+                type: '',
+                message: ''
+            },
             showSettings: !showSettings
         });
     }
 
-    handleDownloadCif(event) {
+    toggleCreate(event) {
         event.preventDefault();
-        
-        const { selectedIds } = this.state;
-        const { certificates } = this.props;
-        const myPromises = [];
+        const { showCreate } = this.state;
+        this.setState({
+            alert: {
+                type: '',
+                message: ''
+            },
+            newMir: {},
+            showCreate: !showCreate
+        });
+    }
 
-        function hasFile(heatId) {
-            if (certificates.hasOwnProperty('items') && !_.isEmpty(certificates.items)) {
-                return certificates.items.reduce(function(cur, acc) {
-                    if (!acc && !!cur.hasFile && !_.isUndefined(cur.heats.find(element => element._id === heatId))) {
-                        acc === true;
-                    }
-                    return acc;
-                }, false)
-            } else {
-                return false;
-            }
-        }
-
-        function downloadPromise(heatId) {
-            return new Promise (function (resolve) {
-                const requestOptions = {
-                    method: 'GET',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                }
-                return fetch(`${config.apiUrl}/certificate/downloadHeat?heatId=${encodeURI(heatId)}`, requestOptions)
-                .then(res => {
-                    if (!res.ok) {
-                        resolve({ isRejected: true });
-                    } else {
-                        let fileName = res.headers.get('Content-Disposition').split("filename=")[1];
-                        res.blob().then(blob => {
-                            saveAs(blob, fileName);
-                            resolve({ isRejected: false });
-                        });
-                    }
-                });
-            });
-        }
-
-        if (selectedIds.length === 0) {
+    createNewMir(event) {
+        event.preventDefault();
+        const { newMir } = this.state;
+        const { mir, dateReceived, dateExpected, projectId } = newMir;
+        if (!mir && !dateReceived && !dateExpected && !projectId ) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
-                    message: 'Select lines to download Certificate.'
+                    message: 'All fields are required.'
+                }
+            });
+        } else if (!isValidFormat(dateReceived, 'date', getDateFormat(myLocale))) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Date Received: Not a valid date format.'
+                }
+            });
+        } else if (!isValidFormat(dateExpected, 'date', getDateFormat(myLocale))) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Date Expected: Not a valid date format.'
                 }
             });
         } else {
-            let heatIds = selectedIds.reduce(function(acc, cur) {
-                acc.push(cur.heatId);
-                return acc;
-            }, []);
-            if (_.isEmpty(heatIds)) {
-                this.setState({
-                    alert: {
-                        type: 'alert-danger',
-                        message: 'No certificates have been uploaded for the selected lines yet...'
-                    }
-                });
-            } else {
-                this.setState({
-                    isDownloading: true
-                }, () => {
-                    heatIds.forEach(heatId => {
-                        myPromises.push(downloadPromise(heatId));
-                    });
-                    Promise.all(myPromises).then( (results) => {
-                        let nRejected = 0;
-                        let nDownloaded = 0;
-                        results.map(result => {
-                            if (result.isRejected) {
-                                nRejected++;
-                            } else {
-                                nDownloaded++;
-                            }
-                        });
+            this.setState({
+                ...this.state,
+                creating: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newMir)
+                };
+                return fetch(`${config.apiUrl}/mir/create`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);;
+                    } else {
                         this.setState({
-                            isDownloading: false,
+                            creating: false,
+                            showCreate: false,
+                            newMir: {},
                             alert: {
-                                type: !!nRejected ? 'alert-danger' : 'alert-success',
-                                message: `${nDownloaded} Files Downloaded, ${nRejected} Files Rejected${!!nRejected ? '... Ensure that all lines selected have a heatNr and that a document has well been uploaded for each certificates.' : '.'}`
+                                type: responce.status === 200 ? '' : 'alert-danger',
+                                message: responce.status === 200 ? '' : data.message
                             }
-                        });
-                    });
-                });
-            }
+                        }, this.refreshMir);
+                    }
+                }));
+            });
+        }
+    }
+
+    handleEditClick(event) {
+        event.preventDefault();
+        const { selectedIds, projectId } = this.state;
+        if (projectId === '') {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Could not retreive project ID.'
+                }
+            });
+        } else if (selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one line to Add/Edit MIR items.'
+                }
+            });
+        } else {
+            console.log('mirId:', selectedIds[0].mirId);
+            console.log('projectId:', projectId);
         }
     }
 
@@ -1003,34 +1080,37 @@ class WhCertificates extends React.Component {
     }
 
     render() {
+
         const { 
             projectId, 
             screen, 
             screenId,
-            selectedIds,
-            unlocked,
-            selectedField,
-            selectedType, 
-            updateValue,
-            showCif,
-            showHeat,
+            selectedIds, 
+            unlocked, 
+            //show modals
+            // showSplitLine,
             showSettings,
-            isDownloading,
             //--------
             headersForShow,
             bodysForShow,
-            heats,
+            //---------------
+            newMir,
+            showCreate,
+            creating,
+            // splitHeadersForShow,
+            // splitHeadersForSelect,
             //'-------------------'
             tabs,
             settingsFilter,
             settingsDisplay
-        }= this.state;
-        
-        const { accesses, certificates, fieldnames, fields, pos, selection } = this.props;
+        } = this.state;
+
+        const { accesses, fieldnames, fields, mirs, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
+
         return (
-            <Layout alert={showSettings || showCif ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
-                {alert.message && !showSettings && !showCif &&
+            <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+                {alert.message && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1045,25 +1125,24 @@ class WhCertificates extends React.Component {
                         <li className="breadcrumb-item">
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
-                        <li className="breadcrumb-item active" aria-current="page">Certificates:</li>
+                        <li className="breadcrumb-item active" aria-current="page">
+                            <NavLink to={{ pathname: '/materialissuerecord', search: '?id=' + projectId }} tag="a">Material Issue Record:</NavLink>
+                        </li>
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
                     </ol>
                 </nav>
                 <hr />
-                <div id="certificates" className="full-height">
+                <div id="calloff" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button title="Add/Edit Certificates" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleCif} style={{height: '34px'}}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Certificates</span>
+                        {/* <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create MIR" onClick={this.toggleCreate}>
+                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
                         </button>
-                        <button title="Add/Edit Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleHeat} style={{height: '34px'}}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Heat Numbers</span>
-                        </button>
-                        <button title="Download Certificate" className="btn btn-success btn-lg mr-2" onClick={this.handleDownloadCif} style={{height: '34px'}}>
-                            <span><FontAwesomeIcon icon={isDownloading ? "spinner" : "file-pdf"} className={isDownloading ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Download CIF(s)</span>
-                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add/Edit Items" onClick={this.handleEditClick}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Add/Edit</span>
+                        </button> */}
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
-                        {selection && selection.project && 
+                        {fieldnames.items && 
                             <ProjectTable
                                 screenHeaders={headersForShow}
                                 screenBodys={bodysForShow}
@@ -1085,42 +1164,6 @@ class WhCertificates extends React.Component {
                         }
                     </div>
                 </div>
-
-                <Modal
-                    show={showCif}
-                    hideModal={this.toggleCif}
-                    title="Add/Edit Certificates"
-                    size="modal-lg"
-                >
-                    <Certificate 
-                        alert={alert}
-                        handleClearAlert={this.handleClearAlert}
-                        certificates={certificates}
-                        projectId={projectId}
-                        refreshCifs={this.refreshCifs}
-                        toggleCif={this.toggleCif}
-                    />
-                </Modal>
-
-                <Modal
-                    show={showHeat}
-                    hideModal={this.toggleHeat}
-                    title="Add/Edit Heat Numbers"
-                    size="modal-lg"
-                >
-                    <Heat
-                        alert={alert}
-                        handleClearAlert={this.handleClearAlert}
-                        refreshPos={this.refreshPos}
-                        toggleHeat={this.toggleHeat}
-                        certificates={certificates}
-                        heats={heats}
-                        poId={selectedIds.length === 1 ? selectedIds[0].poId : ''}
-                        subId={selectedIds.length === 1 ? selectedIds[0].subId : ''}
-                        projectId={projectId}
-                    />
-                </Modal>
-
                 <Modal
                     show={showSettings}
                     hideModal={this.toggleSettings}
@@ -1140,7 +1183,7 @@ class WhCertificates extends React.Component {
                         <div className="tab-content" id="modal-nav-tabContent">
                             {alert.message &&
                                 <div className={`alert ${alert.type}`}>{alert.message}
-                                    <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                    <button className="close" onClick={this.handleClearAlert}>
                                         <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
                                     </button>
                                 </div>
@@ -1167,8 +1210,8 @@ class WhCertificates extends React.Component {
                             )}
                         </div>
                     </div>
-                    <div className="text-right mt-3">
-                    <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
+                    <div className="text-right mt-3"> 
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
                             <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg mr-2" onClick={this.handleSaveSettings}>
@@ -1179,40 +1222,37 @@ class WhCertificates extends React.Component {
                         </button>
                     </div>
                 </Modal>
-
             </Layout>
         );
     }
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, certificates, fieldnames, fields, pos, selection, settings } = state;
+    const { accesses, alert, fieldnames, fields, mirs, selection, settings } = state;
     const { loadingAccesses } = accesses;
-    const { loadingCertificates } = certificates;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
-    const { loadingPos } = pos;
+    const { loadingMirs } = mirs;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
 
+    
     return {
         accesses,
         alert,
-        certificates,
         fieldnames,
         fields,
         loadingAccesses,
-        loadingCertificates,
         loadingFieldnames,
         loadingFields,
-        loadingPos,
+        loadingMirs,
         loadingSelection,
         loadingSettings,
-        pos,
+        mirs,
         selection,
         settings
     };
 }
 
-const connectedWhCertificates = connect(mapStateToProps)(WhCertificates);
-export { connectedWhCertificates as WhCertificates };
+const connectedMirSplitwindow = connect(mapStateToProps)(MirSplitwindow);
+export { connectedMirSplitwindow as MirSplitwindow };

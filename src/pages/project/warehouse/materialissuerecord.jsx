@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import config from 'config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../_helpers';
+import { history } from '../../../_helpers';
 import { 
     accessActions, 
     alertActions,  
@@ -436,26 +437,34 @@ class MaterialIssueRecord extends React.Component {
             unlocked: false,
             screen: 'Material Issue Record',
             selectedIds: [],
+            newMir: {},
+            creating: false,
             alert: {
                 type:'',
                 message:''
             },
-            showSplitLine: false,
+            // showSplitLine: false,
             showSettings: false,
+            showCreate: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.handleChangeNewMir = this.handleChangeNewMir.bind(this);
         // this.handleSplitLine = this.handleSplitLine.bind(this);
         
 
         this.refreshStore = this.refreshStore.bind(this);
+        this.refreshMir = this.refreshMir.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
+        this.createNewMir = this.createNewMir.bind(this);
+        this.handleEditClick = this.handleEditClick.bind(this);
         //Toggle Modals
         this.toggleSettings = this.toggleSettings.bind(this);
+        this.toggleCreate = this.toggleCreate.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -522,20 +531,8 @@ class MaterialIssueRecord extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, screenId, selectedField, settingsDisplay } = this.state; //splitScreenId,
+        const { headersForShow, screenId, settingsDisplay } = this.state; //splitScreenId,
         const { fields, fieldnames, selection, settings, mirs } = this.props;
-        
-        if (selectedField != prevState.selectedField && selectedField != '0') {
-            let found = fields.items.find(function (f) {
-                return f._id === selectedField;
-            });
-            if (found) {
-                this.setState({
-                    updateValue: '',
-                    selectedType: getInputType(found.type),
-                });
-            }
-        }
 
         if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
             this.setState({
@@ -679,18 +676,9 @@ class MaterialIssueRecord extends React.Component {
             return fetch(`${config.apiUrl}/setting/upsert`, requestOptions)
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
-                if (!responce.ok) {
-                    if (responce.status === 401) {
+                if (responce.status === 401) {
                         localStorage.removeItem('user');
                         location.reload(true);
-                    }
-                    this.setState({
-                        settingSaving: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
                 } else {
                     this.setState({
                         settingSaving: false,
@@ -710,8 +698,17 @@ class MaterialIssueRecord extends React.Component {
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
         if (projectId) {
-            dispatch(poActions.getAll(projectId));
+            dispatch(mirActions.getAll(projectId));
             dispatch(settingActions.getAll(projectId, userId));
+        }
+    }
+
+    refreshMir() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+
+        if (projectId) {
+            dispatch(mirActions.getAll(projectId));
         }
     }
 
@@ -755,6 +752,20 @@ class MaterialIssueRecord extends React.Component {
         const value =  event.target.value;
         this.setState({
             [name]: value
+        });
+    }
+
+    handleChangeNewMir(event) {
+        event.preventDefault();
+        const { projectId, newMir } = this.state;
+        const name =  event.target.name;
+        const value =  event.target.value;
+        this.setState({
+            newMir: {
+                ...newMir,
+                [name]: value,
+                projectId
+            }
         });
     }
 
@@ -809,43 +820,33 @@ class MaterialIssueRecord extends React.Component {
                     message:'Select line(s) to be deleted.'
                 }
             });
-        } else if (confirm('For the Selected line(s) all sub details, certificates and packing details shall be deleted. Are you sure you want to proceed?')){
-            const requestOptions = {
-                method: 'DELETE',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify({ selectedIds: selectedIds })
-            };
-            return fetch(`${config.apiUrl}/mir/delete`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (!responce.ok) {
+        } else if (confirm('For the Selected line(s) all MIR details, MIR Items and picking lists shall be deleted. Are you sure you want to proceed?')){
+            this.setState({
+                ...this.state,
+                deleting: true
+            }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ selectedIds: selectedIds })
+                };
+                return fetch(`${config.apiUrl}/mir/delete`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
                     if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            deleting: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshMir);
                     }
-                    this.setState({
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
-                } else {
-                    this.setState({
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
-                }
-            })
-            .catch( () => {
-                this.setState({
-                    alert: {
-                        type: 'alert-danger',
-                        message: 'Line(s) could not be deleted.'
-                    }
-                }, this.refreshStore);
-            }));
+                }));
+            });
         }
     }
 
@@ -853,8 +854,116 @@ class MaterialIssueRecord extends React.Component {
         event.preventDefault();
         const { showSettings } = this.state;
         this.setState({
+            alert: {
+                type: '',
+                message: ''
+            },
             showSettings: !showSettings
         });
+    }
+
+    toggleCreate(event) {
+        event.preventDefault();
+        const { showCreate } = this.state;
+        this.setState({
+            alert: {
+                type: '',
+                message: ''
+            },
+            newMir: {},
+            showCreate: !showCreate
+        });
+    }
+
+    createNewMir(event) {
+        event.preventDefault();
+        const { newMir } = this.state;
+        const { mir, dateReceived, dateExpected, projectId } = newMir;
+        if (!mir && !dateReceived && !dateExpected && !projectId ) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'All fields are required.'
+                }
+            });
+        } else if (!isValidFormat(dateReceived, 'date', getDateFormat(myLocale))) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Date Received: Not a valid date format.'
+                }
+            });
+        } else if (!isValidFormat(dateExpected, 'date', getDateFormat(myLocale))) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Date Expected: Not a valid date format.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                creating: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newMir)
+                };
+                return fetch(`${config.apiUrl}/mir/create`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);;
+                    } else {
+                        this.setState({
+                            creating: false,
+                            showCreate: false,
+                            newMir: {},
+                            alert: {
+                                type: responce.status === 200 ? '' : 'alert-danger',
+                                message: responce.status === 200 ? '' : data.message
+                            }
+                        }, this.refreshMir);
+                    }
+                }));
+            });
+        }
+    }
+
+    handleEditClick(event) {
+        event.preventDefault();
+        const { selectedIds, projectId } = this.state;
+        if (projectId === '') {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Could not retreive project ID.'
+                }
+            });
+        } else if (selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one line to Add/Edit MIR items.'
+                }
+            });
+        } else if (!selectedIds[0].hasOwnProperty('mirId')) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Could not retreive MIR ID.'
+                }
+            });
+        } else {
+            history.push({
+                pathname:'/mirsplitwindow',
+                search: '?id=' + projectId + '&mirid=' + selectedIds[0].mirId
+            });
+            // console.log('mirId:', selectedIds[0].mirId);
+            // console.log('projectId:', projectId);
+        }
     }
 
     handleModalTabClick(event, tab){
@@ -883,6 +992,10 @@ class MaterialIssueRecord extends React.Component {
             //--------
             headersForShow,
             bodysForShow,
+            //---------------
+            newMir,
+            showCreate,
+            creating,
             // splitHeadersForShow,
             // splitHeadersForSelect,
             //'-------------------'
@@ -918,8 +1031,11 @@ class MaterialIssueRecord extends React.Component {
                 <hr />
                 <div id="calloff" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create MIR">
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create MIR" onClick={this.toggleCreate}>
                             <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add/Edit Items" onClick={this.handleEditClick}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Add/Edit</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
@@ -964,7 +1080,7 @@ class MaterialIssueRecord extends React.Component {
                         <div className="tab-content" id="modal-nav-tabContent">
                             {alert.message &&
                                 <div className={`alert ${alert.type}`}>{alert.message}
-                                    <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                    <button className="close" onClick={this.handleClearAlert}>
                                         <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
                                     </button>
                                 </div>
@@ -1001,6 +1117,58 @@ class MaterialIssueRecord extends React.Component {
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
                             <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
                         </button>
+                    </div>
+                </Modal>
+                <Modal
+                    show={showCreate}
+                    hideModal={this.toggleCreate}
+                    title="Create Material Issue Record"
+                    
+                >
+                    <div className="col-12">
+                        <form onSubmit={this.createNewMir}>
+                            <div className="form-group">
+                                <label htmlFor="mir">MIR No.</label>
+                                <input
+                                    className="form-control"
+                                    type='text'
+                                    name="mir"
+                                    value={newMir.mir}
+                                    onChange={this.handleChangeNewMir}
+                                    placeholder=""
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="dateReceived">Date received</label>
+                                <input
+                                    className="form-control"
+                                    type='text'
+                                    name="dateReceived"
+                                    value={newMir.dateReceived}
+                                    onChange={this.handleChangeNewMir}
+                                    placeholder={getDateFormat(myLocale)}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="dateExpected">Date expected</label>
+                                <input
+                                    className="form-control"
+                                    type='text'
+                                    name="dateExpected"
+                                    value={newMir.dateExpected}
+                                    onChange={this.handleChangeNewMir}
+                                    placeholder={getDateFormat(myLocale)}
+                                    required
+                                />
+                            </div>
+                            <div className="text-right">
+                                <button type="submit" className="btn btn-leeuwen-blue btn-lg mt-2">
+                                    <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
+                                </button>
+                            </div>
+                        </form>                  
                     </div>
                 </Modal>
             </Layout>
