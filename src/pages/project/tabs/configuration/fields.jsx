@@ -293,7 +293,7 @@ class Fields extends React.Component {
 
         if (array) {
         return fieldSorted(array, sort).filter(function (element) {
-            return (['article', 'certificate', 'collipack', 'packitem', 'po', 'sub','supplier', 'storedproc', 'location', 'transaction'].includes(element.fromTbl)
+            return (['article', 'certificate', 'collipack', 'mir', 'packitem', 'po', 'sub','supplier', 'storedproc', 'location', 'transaction'].includes(element.fromTbl)
             && doesMatch(name, element.name, 'String', false)
             && doesMatch(custom, element.custom, 'String', false)
             && doesMatch(fromTbl, element.fromTbl, 'String', false) 

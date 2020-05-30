@@ -663,6 +663,8 @@ class Screens extends React.Component {
             {_id: '5eb0f60ce7179a42f173de47', name: 'Goods Receipt with PO', fromTbls: ['po', 'location']},
             {_id: '5ea911747c213e2096462d79', name: 'Goods Receipt with NFI', fromTbls: ['po', 'sub', 'location']},
             {_id: '5ea919727c213e2096462e3f', name: 'Goods Receipt with PL', fromTbls: ['po', 'sub', 'packitem', 'location']},
+            {_id: '5ed1e76e7c213e044cc01884', name: 'Material Issue Record', fromTbls: ['mir']},
+            {_id: '5ed1e7a67c213e044cc01888', name: 'Material Issue Record Splitwindow', fromTbls: ['miritem', 'po']},
             // {_id: '5cd2b643fd333616dc360b68', name: 'Data Upload File', fromTbls: ['packitem', 'collipack']}, //what is this screen Dave?
             // {_id: '5cd2b644fd333616dc360b6a', name: 'Delete Items', fromTbls: []}, //what is this screen Dave?
             // {_id: '5cd2b644fd333616dc360b6b', name: 'Projects', fromTbls: []}, //main screen no need to customise

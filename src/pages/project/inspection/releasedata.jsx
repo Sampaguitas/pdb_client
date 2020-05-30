@@ -361,6 +361,8 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
         '5eb0f60ce7179a42f173de47', //Goods Receipt with PO
         '5ea911747c213e2096462d79', //Goods Receipt with NFI
         '5ea919727c213e2096462e3f', //Goods Receipt with PL
+        '5ed1e76e7c213e044cc01884', //Material Issue Record
+        '5ed1e7a67c213e044cc01888', //Material Issue Record Splitwindow
     ];
 
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        

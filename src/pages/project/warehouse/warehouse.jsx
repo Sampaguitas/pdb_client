@@ -99,7 +99,7 @@ class Warehouse extends React.Component {
                         </div>
                     </NavLink>
                     <NavLink to={{ 
-                            pathname: "/callofforder",
+                            pathname: "/materialissuerecord",
                             search: '?id=' + projectId
                         }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
                     >
@@ -110,7 +110,7 @@ class Warehouse extends React.Component {
                                     className="fa-5x mb-3" 
                                     name="phone-square"
                                 />
-                                <h3>Call-off order</h3>
+                                <h3>Material Issue Record</h3>
                             </div>
                         </div>
                     </NavLink>
