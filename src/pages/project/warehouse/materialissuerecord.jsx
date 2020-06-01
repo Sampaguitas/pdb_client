@@ -1032,10 +1032,10 @@ class MaterialIssueRecord extends React.Component {
                 <div id="calloff" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create MIR" onClick={this.toggleCreate}>
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
+                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create MIR</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add/Edit Items" onClick={this.handleEditClick}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Add/Edit</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add/Edit Lines" onClick={this.handleEditClick}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Add Lines</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>

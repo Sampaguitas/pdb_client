@@ -19,6 +19,7 @@ import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
+import SplitLine from '../../../_components/split-line/split-mir';
 import Modal from '../../../_components/modal';
 
 import moment from 'moment';
@@ -242,7 +243,7 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     return [];
 }
 
-function getBodysForShow(mirs, selection, headersForShow) {
+function getBodysForShow(mirs, mirId, selection, headersForShow) {
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
@@ -252,105 +253,107 @@ function getBodysForShow(mirs, selection, headersForShow) {
 
     if (!_.isUndefined(mirs) && mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
         mirs.items.map(mir => {
-            let itemCount = !_.isEmpty(mir.itemCount) ? mir.itemCount.length : '';
-            let mirWeight = 0;
-            if (!_.isEmpty(mir.miritems)) {
-                mirWeight = mir.miritems.reduce(function (acc, cur) {
-                    if (!!cur.totWeight) {
-                        acc += totWeight;
-                    }
-                    return acc;
-                }, 0);
-            }
-            if (mir.hasOwnProperty('miritems') && !_.isEmpty(mirs.miritems)) {
-                mir.miritems.map(miritem => {
-                    arrayRow = [];
-                    screenHeaders.map(screenHeader => {
-                        switch(screenHeader.fields.fromTbl) {
-                            case 'mir':
-                                if (['itemCount', 'mirWeight'].includes(screenHeader.fields.name)) {
+            if (_.isEqual(mir._id, mirId)) {
+                let itemCount = !_.isEmpty(mir.items) ? mir.items.length : '';
+                let mirWeight = 0;
+                if (!_.isEmpty(mir.miritems)) {
+                    mirWeight = mir.miritems.reduce(function (acc, cur) {
+                        if (!!cur.totWeight) {
+                            acc += totWeight;
+                        }
+                        return acc;
+                    }, 0);
+                }
+                if (mir.hasOwnProperty('miritems') && !_.isEmpty(mirs.miritems)) {
+                    mir.miritems.map(miritem => {
+                        arrayRow = [];
+                        screenHeaders.map(screenHeader => {
+                            switch(screenHeader.fields.fromTbl) {
+                                case 'mir':
+                                    if (['itemCount', 'mirWeight'].includes(screenHeader.fields.name)) {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: mir._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: screenHeader.fields.name === 'itemCount' ? itemCount : mirWeight,
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'mir',
+                                            objectId: mir._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: mir[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    break;
+                                case 'miritem':
                                     arrayRow.push({
-                                        collection: 'virtual',
-                                        objectId: mir._id,
+                                        collection: 'miritem',
+                                        objectId: miritem._id,
                                         fieldName: screenHeader.fields.name,
-                                        fieldValue: screenHeader.fields.name === 'itemCount' ? itemCount : mirWeight,
+                                        fieldValue: miritem[screenHeader.fields.name],
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
                                     });
-                                } else {
-                                    arrayRow.push({
-                                        collection: 'mir',
-                                        objectId: mir._id,
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: mir[screenHeader.fields.name],
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
-                                }
-                                break;
-                            case 'miritem':
-                                arrayRow.push({
-                                    collection: 'miritem',
-                                    objectId: miritem._id,
+                                    break;
+                                case 'po':
+                                    if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: project._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'po',
+                                            objectId: miritem.po._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: miritem.po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    break;
+                                default: arrayRow.push({
+                                    collection: 'virtual',
+                                    objectId: '0',
                                     fieldName: screenHeader.fields.name,
-                                    fieldValue: miritem[screenHeader.fields.name],
+                                    fieldValue: '',
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
-                                });
-                                break;
-                            case 'po':
-                                if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
-                                    arrayRow.push({
-                                        collection: 'virtual',
-                                        objectId: project._id,
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
-                                } else {
-                                    arrayRow.push({
-                                        collection: 'po',
-                                        objectId: miritem.po._id,
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: miritem.po[screenHeader.fields.name],
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
-                                }
-                                break;
-                            default: arrayRow.push({
-                                collection: 'virtual',
-                                objectId: '0',
-                                fieldName: screenHeader.fields.name,
-                                fieldValue: '',
-                                disabled: screenHeader.edit,
-                                align: screenHeader.align,
-                                fieldType: getInputType(screenHeader.fields.type),
-                            }); 
-                        }
+                                }); 
+                            }
+                        });
+                        objectRow  = {
+                            _id: i,
+                            tablesId: {
+                                poId: miritem.po._id,
+                                subId: '',
+                                certificateId: '',
+                                packitemId: '',
+                                collipackId: '',
+                                mirId: mir._id,
+                                miritemId: miritem._id
+                            },
+                            fields: arrayRow
+                        };
+                        arrayBody.push(objectRow);
+                        i++;
                     });
-                    objectRow  = {
-                        _id: i,
-                        tablesId: {
-                            poId: miritem.po._id,
-                            subId: '',
-                            certificateId: '',
-                            packitemId: '',
-                            collipackId: '',
-                            mirId: mir._id,
-                            miritemId: miritem._id
-                        },
-                        fields: arrayRow
-                    };
-                    arrayBody.push(objectRow);
-                    i++;
-                });
+                }
             }
         });
         return arrayBody;
@@ -519,8 +522,8 @@ class MirSplitwindow extends React.Component {
         this.state = {
             headersForShow: [],
             bodysForShow: [],
-            headerForSelect: [],
-            bodyForSelect: [],
+            headersForSelect: [],
+            bodysForSelect: [],
             // splitHeadersForShow: [],
             // splitHeadersForSelect:[],
             settingsFilter: [],
@@ -544,6 +547,12 @@ class MirSplitwindow extends React.Component {
                 }
             ],
             projectId:'',
+            mirId: '',
+            mir: {
+                mir: '',
+                dateReceived: '',
+                dateExpected: '',
+            },
             screenId: '5ed1e7a67c213e044cc01888',
             unlocked: false,
             screen: 'Material Issue Record',
@@ -552,14 +561,14 @@ class MirSplitwindow extends React.Component {
                 type:'',
                 message:''
             },
-            // showSplitLine: false,
+            showSplitLine: false,
             showSettings: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleChangeNewMir = this.handleChangeNewMir.bind(this);
+        // this.handleChangeNewMir = this.handleChangeNewMir.bind(this);
         // this.handleSplitLine = this.handleSplitLine.bind(this);
         
 
@@ -568,9 +577,10 @@ class MirSplitwindow extends React.Component {
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
-        this.createNewMir = this.createNewMir.bind(this);
+        // this.createNewMir = this.createNewMir.bind(this);
         this.handleEditClick = this.handleEditClick.bind(this);
         //Toggle Modals
+        this.toggleSplitLine = this.toggleSplitLine.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
@@ -607,43 +617,63 @@ class MirSplitwindow extends React.Component {
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
+        let projectId = qs.id;
+        let mirId = qs.mirid;
+
         if (qs.id) {
-            this.setState({projectId: qs.id});
+            this.setState({
+                projectId: projectId,
+                mirId: mirId
+            });
             if (!loadingAccesses) {
-                dispatch(accessActions.getAll(qs.id));
+                dispatch(accessActions.getAll(projectId));
             }
             if (!loadingFieldnames) {
-                dispatch(fieldnameActions.getAll(qs.id));
+                dispatch(fieldnameActions.getAll(projectId));
             }
             if (!loadingFields) {
-                dispatch(fieldActions.getAll(qs.id));
+                dispatch(fieldActions.getAll(projectId));
             }
             if (!loadingMirs) {
-                dispatch(mirActions.getAll(qs.id));
+                dispatch(mirActions.getAll(projectId));
             }
             if (!loadingSelection) {
-                dispatch(projectActions.getById(qs.id));
+                dispatch(projectActions.getById(projectId));
             }
             if (!loadingPos) {
-                dispatch(poActions.getById(qs.id));
+                dispatch(poActions.getAll(projectId));
             }
             if (!loadingSettings) {
-                dispatch(settingActions.getAll(qs.id, userId));
+                dispatch(settingActions.getAll(projectId, userId));
             }
         }
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             headersForSelect: getHeaders([], fieldnames, screenId, 'forSelect'),
-            bodysForShow: getBodysForShow(mirs, selection, headersForShow),
+            bodysForShow: getBodysForShow(mirs, mirId, selection, headersForShow),
             bodysForSelect: getBodysForSelect(pos, selection, headersForSelect),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+        }, () => {
+            if (mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
+                let found = mirs.items.find(element => _.isEqual(element._id, mirId));
+                if (!_.isUndefined(found)) {
+                    this.setState({
+                        mir: {
+                            mir: found.mir,
+                            dateReceived: found.dateReceived,
+                            dateExpected: found.dateExpected,
+                        }
+                    });
+                }
+                
+            }
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, headersForSelect, screenId, settingsDisplay } = this.state; //splitScreenId,
+        const { bodysForSelect, headersForShow, headersForSelect, mirId, screenId, settingsDisplay } = this.state; //splitScreenId,
         const { fieldnames, mirs, pos, selection, settings} = this.props;
 
         if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
@@ -662,7 +692,7 @@ class MirSplitwindow extends React.Component {
 
         if (mirs != prevProps.mirs || selection != prevProps.selection || headersForShow != prevState.headersForShow) {
             this.setState({
-                bodysForShow: getBodysForShow(mirs, selection, headersForShow)
+                bodysForShow: getBodysForShow(mirs, mirId, selection, headersForShow)
             });
         }
 
@@ -672,6 +702,22 @@ class MirSplitwindow extends React.Component {
             });
         }
 
+        if ((mirId != prevState.mirId || mirs != prevProps.mirs) && mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
+            let found = mirs.items.find(element => _.isEqual(element._id, mirId));
+            if (!_.isUndefined(found)) {
+                this.setState({
+                    mir: {
+                        mir: found.mir,
+                        dateReceived: found.dateReceived,
+                        dateExpected: found.dateExpected,
+                    }
+                });
+            }
+        }
+
+        if (bodysForSelect != prevState.bodysForSelect) {
+            console.log('bodysForSelect:', bodysForSelect);
+        }
     }
 
     handleClearAlert(event){
@@ -867,19 +913,19 @@ class MirSplitwindow extends React.Component {
         });
     }
 
-    handleChangeNewMir(event) {
-        event.preventDefault();
-        const { projectId, newMir } = this.state;
-        const name =  event.target.name;
-        const value =  event.target.value;
-        this.setState({
-            newMir: {
-                ...newMir,
-                [name]: value,
-                projectId
-            }
-        });
-    }
+    // handleChangeNewMir(event) {
+    //     event.preventDefault();
+    //     const { projectId, newMir } = this.state;
+    //     const name =  event.target.name;
+    //     const value =  event.target.value;
+    //     this.setState({
+    //         newMir: {
+    //             ...newMir,
+    //             [name]: value,
+    //             projectId
+    //         }
+    //     });
+    // }
 
     // handleSplitLine(event, subId, virtuals) {
     //     event.preventDefault();
@@ -974,75 +1020,87 @@ class MirSplitwindow extends React.Component {
         });
     }
 
-    toggleCreate(event) {
+    toggleSplitLine(event) {
         event.preventDefault();
-        const { showCreate } = this.state;
+        const { showSplitLine } = this.state;
         this.setState({
             alert: {
                 type: '',
                 message: ''
             },
-            newMir: {},
-            showCreate: !showCreate
+            showSplitLine: !showSplitLine
         });
     }
 
-    createNewMir(event) {
-        event.preventDefault();
-        const { newMir } = this.state;
-        const { mir, dateReceived, dateExpected, projectId } = newMir;
-        if (!mir && !dateReceived && !dateExpected && !projectId ) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'All fields are required.'
-                }
-            });
-        } else if (!isValidFormat(dateReceived, 'date', getDateFormat(myLocale))) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Date Received: Not a valid date format.'
-                }
-            });
-        } else if (!isValidFormat(dateExpected, 'date', getDateFormat(myLocale))) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Date Expected: Not a valid date format.'
-                }
-            });
-        } else {
-            this.setState({
-                ...this.state,
-                creating: true
-            }, () => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newMir)
-                };
-                return fetch(`${config.apiUrl}/mir/create`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (responce.status === 401) {
-                            localStorage.removeItem('user');
-                            location.reload(true);;
-                    } else {
-                        this.setState({
-                            creating: false,
-                            showCreate: false,
-                            newMir: {},
-                            alert: {
-                                type: responce.status === 200 ? '' : 'alert-danger',
-                                message: responce.status === 200 ? '' : data.message
-                            }
-                        }, this.refreshMir);
-                    }
-                }));
-            });
-        }
-    }
+    // toggleCreate(event) {
+    //     event.preventDefault();
+    //     const { showCreate } = this.state;
+    //     this.setState({
+    //         alert: {
+    //             type: '',
+    //             message: ''
+    //         },
+    //         newMir: {},
+    //         showCreate: !showCreate
+    //     });
+    // }
+
+    // createNewMir(event) {
+    //     event.preventDefault();
+    //     const { newMir } = this.state;
+    //     const { mir, dateReceived, dateExpected, projectId } = newMir;
+    //     if (!mir && !dateReceived && !dateExpected && !projectId ) {
+    //         this.setState({
+    //             alert: {
+    //                 type: 'alert-danger',
+    //                 message: 'All fields are required.'
+    //             }
+    //         });
+    //     } else if (!isValidFormat(dateReceived, 'date', getDateFormat(myLocale))) {
+    //         this.setState({
+    //             alert: {
+    //                 type: 'alert-danger',
+    //                 message: 'Date Received: Not a valid date format.'
+    //             }
+    //         });
+    //     } else if (!isValidFormat(dateExpected, 'date', getDateFormat(myLocale))) {
+    //         this.setState({
+    //             alert: {
+    //                 type: 'alert-danger',
+    //                 message: 'Date Expected: Not a valid date format.'
+    //             }
+    //         });
+    //     } else {
+    //         this.setState({
+    //             ...this.state,
+    //             creating: true
+    //         }, () => {
+    //             const requestOptions = {
+    //                 method: 'POST',
+    //                 headers: { ...authHeader(), 'Content-Type': 'application/json' },
+    //                 body: JSON.stringify(newMir)
+    //             };
+    //             return fetch(`${config.apiUrl}/mir/create`, requestOptions)
+    //             .then(responce => responce.text().then(text => {
+    //                 const data = text && JSON.parse(text);
+    //                 if (responce.status === 401) {
+    //                         localStorage.removeItem('user');
+    //                         location.reload(true);;
+    //                 } else {
+    //                     this.setState({
+    //                         creating: false,
+    //                         showCreate: false,
+    //                         newMir: {},
+    //                         alert: {
+    //                             type: responce.status === 200 ? '' : 'alert-danger',
+    //                             message: responce.status === 200 ? '' : data.message
+    //                         }
+    //                     }, this.refreshMir);
+    //                 }
+    //             }));
+    //         });
+    //     }
+    // }
 
     handleEditClick(event) {
         event.preventDefault();
@@ -1062,8 +1120,7 @@ class MirSplitwindow extends React.Component {
                 }
             });
         } else {
-            console.log('mirId:', selectedIds[0].mirId);
-            console.log('projectId:', projectId);
+
         }
     }
 
@@ -1088,17 +1145,19 @@ class MirSplitwindow extends React.Component {
             selectedIds, 
             unlocked, 
             //show modals
-            // showSplitLine,
+            showSplitLine,
             showSettings,
             //--------
             headersForShow,
             bodysForShow,
+            headersForSelect,
+            bodysForSelect,
             //---------------
-            newMir,
-            showCreate,
+            mir,
+            // newMir,
+            // showCreate,
             creating,
-            // splitHeadersForShow,
-            // splitHeadersForSelect,
+            
             //'-------------------'
             tabs,
             settingsFilter,
@@ -1128,16 +1187,22 @@ class MirSplitwindow extends React.Component {
                         <li className="breadcrumb-item active" aria-current="page">
                             <NavLink to={{ pathname: '/materialissuerecord', search: '?id=' + projectId }} tag="a">Material Issue Record:</NavLink>
                         </li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">
+                            {selection.project ?
+                                `${selection.project.name} - MIR: ${mir.mir} - Received: ${DateToString(mir.dateReceived, 'date', getDateFormat(myLocale))} / Expected: ${DateToString(mir.dateExpected, 'date', getDateFormat(myLocale))}`
+                            :
+                                <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw"/>
+                            }
+                        </span>
                     </ol>
                 </nav>
                 <hr />
                 <div id="calloff" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        {/* <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create MIR" onClick={this.toggleCreate}>
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create MIR" onClick={this.toggleSplitLine}>
+                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Line</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add/Edit Items" onClick={this.handleEditClick}>
+                        {/* <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add/Edit Items" onClick={this.handleEditClick}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Add/Edit</span>
                         </button> */}
                     </div>
@@ -1164,6 +1229,20 @@ class MirSplitwindow extends React.Component {
                         }
                     </div>
                 </div>
+                <Modal
+                    show={showSplitLine}
+                    hideModal={this.toggleSplitLine}
+                    title="Select PO Line"
+                    size="modal-xl"
+                >
+                    <SplitLine 
+                        screenHeaders={headersForSelect}
+                        screenBodys={bodysForSelect}
+                        alert={alert}
+                        handleClearAlert={this.handleClearAlert}
+                        // handleSplitLine={this.handleSplitLine}
+                    />
+                </Modal>
                 <Modal
                     show={showSettings}
                     hideModal={this.toggleSettings}
