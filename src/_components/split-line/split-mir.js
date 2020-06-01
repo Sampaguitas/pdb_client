@@ -325,18 +325,13 @@ class SplitLine extends Component {
 
     filterName(screenBodys){
         const {header, isEqual, sort} = this.state;
-        const { screenHeaders, settingsFilter } = this.props
+        const { screenHeaders } = this.props
         if (screenBodys) {
             return sortCustom(screenBodys, screenHeaders, sort).filter(function (element) {
                 return screenHeaders.reduce(function(acc, cur){
                     if (!!acc) {
                         let matchingCol = element.fields.find(e => _.isEqual(e.fieldName, cur.fields.name));
-                        let matchingFilter = settingsFilter.find(e => _.isEqual(e.name, cur.fields.name));
                         if (!_.isUndefined(matchingCol) && !doesMatch(header[cur._id], matchingCol.fieldValue, cur.fields.type, isEqual)) {
-                            acc = false;
-                        }
-
-                        if (!_.isUndefined(matchingCol) && !_.isUndefined(matchingFilter) && !doesMatch(matchingFilter.value, matchingCol.fieldValue, matchingFilter.type, matchingFilter.isEqual)) {
                             acc = false;
                         }
                     }
@@ -404,7 +399,7 @@ class SplitLine extends Component {
 
         return (
             <div id='splitLine'>
-                <div className="ml-2 mr-2">
+                <div className="ml-2 mt-2 mr-2">
                     {alert.message && 
                         <div className={`alert ${alert.type} mt-3`}>{alert.message}
                             <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -426,8 +421,8 @@ class SplitLine extends Component {
                     </div>
                     
                     <div className="text-right mt-2">
-                        <button className="btn btn-leeuwen-blue btn-lg">
-                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Add Line</span>
+                        <button className="btn btn-leeuwen-blue btn-lg" title="Add Line to MIR">
+                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Line</span>
                         </button>
                     </div>
                 </div>

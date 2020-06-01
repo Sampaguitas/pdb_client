@@ -369,8 +369,8 @@ function getBodysForSelect(pos, selection, headersForSelect) {
     let screenHeaders = headersForSelect;
     let project = selection.project || { _id: '0', name: '', number: '' };
     let i = 1;
-
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
+        
         pos.items.map(po => {
             arrayRow = [];
             screenHeaders.map(screenHeader => {
@@ -713,10 +713,6 @@ class MirSplitwindow extends React.Component {
                     }
                 });
             }
-        }
-
-        if (bodysForSelect != prevState.bodysForSelect) {
-            console.log('bodysForSelect:', bodysForSelect);
         }
     }
 
@@ -1199,12 +1195,9 @@ class MirSplitwindow extends React.Component {
                 <hr />
                 <div id="calloff" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create MIR" onClick={this.toggleSplitLine}>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add Line to MIR" onClick={this.toggleSplitLine}>
                             <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Line</span>
                         </button>
-                        {/* <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add/Edit Items" onClick={this.handleEditClick}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Add/Edit</span>
-                        </button> */}
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {fieldnames.items && 
@@ -1232,7 +1225,7 @@ class MirSplitwindow extends React.Component {
                 <Modal
                     show={showSplitLine}
                     hideModal={this.toggleSplitLine}
-                    title="Select PO Line"
+                    title="Order Lines"
                     size="modal-xl"
                 >
                     <SplitLine 
@@ -1307,11 +1300,12 @@ class MirSplitwindow extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, mirs, selection, settings } = state;
+    const { accesses, alert, fieldnames, fields, mirs, pos, selection, settings } = state;
     const { loadingAccesses } = accesses;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingMirs } = mirs;
+    const { loadingPos } = pos;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
 
@@ -1325,9 +1319,11 @@ function mapStateToProps(state) {
         loadingFieldnames,
         loadingFields,
         loadingMirs,
+        loadingPos,
         loadingSelection,
         loadingSettings,
         mirs,
+        pos,
         selection,
         settings
     };
