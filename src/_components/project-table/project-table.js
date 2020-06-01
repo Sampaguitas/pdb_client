@@ -156,6 +156,32 @@ function sortCustom(array, headersForShow, sort) {
                         }
                     });
                 }
+            case 'Date':
+                if (sort.isAscending) {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let dateA = new Date(fieldA.fieldValue || 0);
+                            let dateB = new Date(fieldB.fieldValue || 0);
+                            return dateA - dateB;
+                        }
+                    });
+                } else {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let dateA = new Date(fieldA.fieldValue || 0);
+                            let dateB = new Date(fieldB.fieldValue || 0);
+                            return dateB - dateA;
+                        }
+                    });
+                }
             default: return array;
         }
     }   
