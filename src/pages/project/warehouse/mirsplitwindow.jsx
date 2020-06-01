@@ -569,7 +569,6 @@ class MirSplitwindow extends React.Component {
         this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
         // this.handleChangeNewMir = this.handleChangeNewMir.bind(this);
-        // this.handleSplitLine = this.handleSplitLine.bind(this);
         
 
         this.refreshStore = this.refreshStore.bind(this);
@@ -577,7 +576,7 @@ class MirSplitwindow extends React.Component {
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
-        // this.createNewMir = this.createNewMir.bind(this);
+        this.handleSplitLine = this.handleSplitLine.bind(this);
         this.handleEditClick = this.handleEditClick.bind(this);
         //Toggle Modals
         this.toggleSplitLine = this.toggleSplitLine.bind(this);
@@ -923,40 +922,6 @@ class MirSplitwindow extends React.Component {
     //     });
     // }
 
-    // handleSplitLine(event, subId, virtuals) {
-    //     event.preventDefault();
-    //     const requestOptions = {
-    //         method: 'PUT',
-    //         headers: { ...authHeader(), 'Content-Type': 'application/json'},
-    //         body: JSON.stringify({virtuals: virtuals})
-    //     }
-    //     return fetch(`${config.apiUrl}/split/sub?subId=${subId}`, requestOptions)
-    //     .then(responce => responce.text().then(text => {
-    //         const data = text && JSON.parse(text);
-    //         if (!responce.ok) {
-    //             if (responce.status === 401) {
-    //                 localStorage.removeItem('user');
-    //                 location.reload(true);
-    //             }
-    //             this.setState({
-    //                 // showSplitLine: false,
-    //                 alert: {
-    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                     message: data.message
-    //                 }
-    //             }, this.refreshStore);
-    //         } else {
-    //             this.setState({
-    //                 // showSplitLine: false,
-    //                 alert: {
-    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                     message: data.message
-    //                 }
-    //             }, this.refreshStore);
-    //         }
-    //     }));
-    // }
-
     updateSelectedIds(selectedIds) {
         this.setState({
             selectedIds: selectedIds
@@ -1028,75 +993,64 @@ class MirSplitwindow extends React.Component {
         });
     }
 
-    // toggleCreate(event) {
-    //     event.preventDefault();
-    //     const { showCreate } = this.state;
-    //     this.setState({
-    //         alert: {
-    //             type: '',
-    //             message: ''
-    //         },
-    //         newMir: {},
-    //         showCreate: !showCreate
-    //     });
-    // }
-
-    // createNewMir(event) {
-    //     event.preventDefault();
-    //     const { newMir } = this.state;
-    //     const { mir, dateReceived, dateExpected, projectId } = newMir;
-    //     if (!mir && !dateReceived && !dateExpected && !projectId ) {
-    //         this.setState({
-    //             alert: {
-    //                 type: 'alert-danger',
-    //                 message: 'All fields are required.'
-    //             }
-    //         });
-    //     } else if (!isValidFormat(dateReceived, 'date', getDateFormat(myLocale))) {
-    //         this.setState({
-    //             alert: {
-    //                 type: 'alert-danger',
-    //                 message: 'Date Received: Not a valid date format.'
-    //             }
-    //         });
-    //     } else if (!isValidFormat(dateExpected, 'date', getDateFormat(myLocale))) {
-    //         this.setState({
-    //             alert: {
-    //                 type: 'alert-danger',
-    //                 message: 'Date Expected: Not a valid date format.'
-    //             }
-    //         });
-    //     } else {
-    //         this.setState({
-    //             ...this.state,
-    //             creating: true
-    //         }, () => {
-    //             const requestOptions = {
-    //                 method: 'POST',
-    //                 headers: { ...authHeader(), 'Content-Type': 'application/json' },
-    //                 body: JSON.stringify(newMir)
-    //             };
-    //             return fetch(`${config.apiUrl}/mir/create`, requestOptions)
-    //             .then(responce => responce.text().then(text => {
-    //                 const data = text && JSON.parse(text);
-    //                 if (responce.status === 401) {
-    //                         localStorage.removeItem('user');
-    //                         location.reload(true);;
-    //                 } else {
-    //                     this.setState({
-    //                         creating: false,
-    //                         showCreate: false,
-    //                         newMir: {},
-    //                         alert: {
-    //                             type: responce.status === 200 ? '' : 'alert-danger',
-    //                             message: responce.status === 200 ? '' : data.message
-    //                         }
-    //                     }, this.refreshMir);
-    //                 }
-    //             }));
-    //         });
-    //     }
-    // }
+    handleSplitLine(event, poId) {
+        event.preventDefault();
+        const { projectId, mirId } = this.state;
+        console.log('poId:', poId);
+        console.log('projectId:', projectId);
+        console.log('mirId:', mirId);
+        // if (!mir && !dateReceived && !dateExpected && !projectId ) {
+        //     this.setState({
+        //         alert: {
+        //             type: 'alert-danger',
+        //             message: 'All fields are required.'
+        //         }
+        //     });
+        // } else if (!isValidFormat(dateReceived, 'date', getDateFormat(myLocale))) {
+        //     this.setState({
+        //         alert: {
+        //             type: 'alert-danger',
+        //             message: 'Date Received: Not a valid date format.'
+        //         }
+        //     });
+        // } else if (!isValidFormat(dateExpected, 'date', getDateFormat(myLocale))) {
+        //     this.setState({
+        //         alert: {
+        //             type: 'alert-danger',
+        //             message: 'Date Expected: Not a valid date format.'
+        //         }
+        //     });
+        // } else {
+        //     this.setState({
+        //         ...this.state,
+        //         creating: true
+        //     }, () => {
+        //         const requestOptions = {
+        //             method: 'POST',
+        //             headers: { ...authHeader(), 'Content-Type': 'application/json' },
+        //             body: JSON.stringify(newMir)
+        //         };
+        //         return fetch(`${config.apiUrl}/mir/create`, requestOptions)
+        //         .then(responce => responce.text().then(text => {
+        //             const data = text && JSON.parse(text);
+        //             if (responce.status === 401) {
+        //                     localStorage.removeItem('user');
+        //                     location.reload(true);;
+        //             } else {
+        //                 this.setState({
+        //                     creating: false,
+        //                     showCreate: false,
+        //                     newMir: {},
+        //                     alert: {
+        //                         type: responce.status === 200 ? '' : 'alert-danger',
+        //                         message: responce.status === 200 ? '' : data.message
+        //                     }
+        //                 }, this.refreshMir);
+        //             }
+        //         }));
+        //     });
+        // }
+    }
 
     handleEditClick(event) {
         event.preventDefault();
@@ -1233,7 +1187,7 @@ class MirSplitwindow extends React.Component {
                         screenBodys={bodysForSelect}
                         alert={alert}
                         handleClearAlert={this.handleClearAlert}
-                        // handleSplitLine={this.handleSplitLine}
+                        handleSplitLine={this.handleSplitLine}
                     />
                 </Modal>
                 <Modal

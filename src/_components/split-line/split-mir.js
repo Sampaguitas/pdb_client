@@ -254,7 +254,7 @@ class SplitLine extends Component {
                 isAscending: true,
             },
             isEqual: false,
-            // selectedLine: '',
+            selectedLine: '',
             alert: {
                 type: '',
                 message: ''
@@ -266,7 +266,7 @@ class SplitLine extends Component {
         this.filterName = this.filterName.bind(this);
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
-        // this.handleClickLine = this.handleClickLine.bind(this);
+        this.handleClickLine = this.handleClickLine.bind(this);
     }
 
 
@@ -366,8 +366,7 @@ class SplitLine extends Component {
         }
     }
 
-    generateBody(screenBodys) {
-        console.log('screenBodys:', screenBodys);
+    generateBody(screenBodys, selectedLine, handleClickLine) {
         let tempRows = [];
         if (!_.isEmpty(screenBodys)) {
             this.filterName(screenBodys).map(screenBody => {
@@ -386,15 +385,40 @@ class SplitLine extends Component {
                     }
                 });
     
-                tempRows.push(<tr key={screenBody._id}>{tempCol}</tr>);
+                tempRows.push(
+                    <tr 
+                        key={screenBody._id}
+                        style={selectedLine === screenBody.tablesId.poId ? {backgroundColor: '#A7A9AC', color: 'white', cursor: 'pointer'} : {cursor: 'pointer'}} 
+                        onClick={event => handleClickLine(event, screenBody)}
+                    >
+                        {tempCol}
+                    </tr>
+                );
             });
             return tempRows;
         }
     }
 
+    handleClickLine(event, screenBody) {
+        event.preventDefault();
+        // console.log('screenBody:', screenBody);
+        const { selectedLine } = this.state;
+        
+        if (selectedLine === screenBody.tablesId.poId) {
+            this.setState({
+                selectedLine: '',
+            });
+        } else {
+            this.setState({
+                selectedLine: screenBody.tablesId.poId,
+            });
+        }
+    }
+
     render() {
 
-        const { screenHeaders, screenBodys } = this.props;
+        const { screenHeaders, screenBodys, handleSplitLine } = this.props;
+        const { selectedLine } = this.state;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
 
         return (
@@ -414,14 +438,14 @@ class SplitLine extends Component {
                                     {this.generateHeader(screenHeaders)}
                                 </thead>
                                 <tbody>
-                                    {this.generateBody(screenBodys)}
+                                    {this.generateBody(screenBodys, selectedLine, this.handleClickLine)}
                                 </tbody>
                             </table>
                         </div>
                     </div>
                     
                     <div className="text-right mt-2">
-                        <button className="btn btn-leeuwen-blue btn-lg" title="Add Line to MIR">
+                        <button className="btn btn-leeuwen-blue btn-lg" title="Add Line to MIR" onClick={event => handleSplitLine(event, selectedLine)}>
                             <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Line</span>
                         </button>
                     </div>

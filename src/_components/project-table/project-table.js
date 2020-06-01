@@ -326,7 +326,11 @@ class ProjectTable extends Component {
         const { screenBodys, updateSelectedIds } = this.props;
 
         if (selectedRows != prevState.selectedRows || screenBodys != prevProps.screenBodys) {
-            updateSelectedIds(getTableIds(selectedRows, screenBodys));
+            let tableIds = getTableIds(selectedRows, screenBodys);
+            if (_.isEmpty(tableIds)) {
+                this.setState({ selectAllRows: false });
+            }
+            updateSelectedIds(tableIds);
         }
     }
 
