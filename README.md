@@ -47,7 +47,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them:
+You will need to install nodejs and gitbash:
 
 nodejs:
 
@@ -61,7 +61,7 @@ gitbash:
 https://git-scm.com/downloads
 ```
 
-Make sure you have already cloned the back end of this app:
+Make sure that you have already cloned the back end of this app:
 
 ```
 https://github.com/Sampaguitas/pdb_server
@@ -69,13 +69,13 @@ https://github.com/Sampaguitas/pdb_server
 
 ### Installing
 
-Clone repository:
+Clone this repository:
 
 ```
 $ git clone https://github.com/Sampaguitas/pdb_client.git
 ```
 
-Install dependencies:
+Install all dependencies:
 
 ```
 $ npm install
@@ -89,7 +89,7 @@ $ npm run dev
 
 ## Deployment
 
-For Deploying with Git to Heroku, click on the following link and follow the instructions: 
+To deploy your Git repository on Heroku, click on the following link and follow the instructions: 
 
 [https://devcenter.heroku.com/articles/git](https://devcenter.heroku.com/articles/git)
 
