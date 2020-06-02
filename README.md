@@ -1,5 +1,7 @@
 # [PROJECT DATABASE (PDB)](https://pdb-client.herokuapp.com/)
 
+![alt text](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/pdb.svg "Project Database (PDB)")
+
 ## About:
 
 The Project Database (PDB) is a project management platform. It has been designed to support bulk piping distribuitors from the Energy Industry in the execution of complex projects such as long term agrements, CAPEX and MRO's.
