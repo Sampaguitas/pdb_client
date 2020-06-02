@@ -18,8 +18,8 @@ The Project Database (PDB) is devided into 4 interconected modules: Expediting, 
 2. Grant users access to project modules based on their designated roles.
 3. Have access and update information in real time, (no more spreadsheets shared by email between departement).
 4. Mass upload / update information from your ERP system, spread sheets.
-5. Allow employees to fully configure the screens as per their requirement.
-6. Upload client templates and generate custom reports as per client requirements.
+5. Allow employees to fully configure their screens, as per their requirement.
+6. Upload client templates and generate custom reports as per the client requirements.
 7. Upload / Download Material Test Certificates (assign heatNrs to: NFI, location, picking list, colli).
 8. Keep track of stock movement / Generate History reports showing all transactions between warehouse locations.
 
