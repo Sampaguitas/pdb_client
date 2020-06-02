@@ -22,7 +22,7 @@ The Project Database (PDB) is devided into 4 interconected modules: Expediting, 
 
    The screen tables have been designed to be has convinient as an excel file: User can fully customise them, decide which fields should be displayed, rename them or create new ones. They can apply filters, sort the table and navigate between cells using their keyboard or mouse just as they would in excel. The data can be updated directly from the cells, However it is also possible to download are raw extract of selected rows and preform a bulk update after modifying the data in excel. Reports can also be fully customised as per client or project requirements. 
 
-3. Time Efficient:
+3. Time Efficiency:
 
    When a project is created, the expediting departement can quickly load the information in the database via excel files. Based on your ERP system, a number of fields can be direclty extracted and do not need to be inserted manually such as the article wheights and HS codes. Each departement can also imediately generate reports when asked by their client, or download MTC's for client approvals.
 
