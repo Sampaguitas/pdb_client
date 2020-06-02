@@ -6,17 +6,17 @@ The Project Database (PDB) is a project management platform. It has been designe
 
 ### Scope:
 
-Typicaly projects having multiple MTO's, a large number of items, multiple inspection locations, multiple deliveries happening over a long period of time, multiple stock locations and frabrication shops. 
+Typically, projects having multiple MTO's, a large number of items, multiple inspection locations, multiple deliveries happening over a long period of time, multiple stock locations and frabrication shops. 
 
 ### How does it work:
 
-The Project Database (PDB) is devided into 4 interconected modules: Expediting, Inspection, Shipping and Warehouse. It allows employees from these various departement perform their daily task while keeping all the information in a central spot.
+The Project Database (PDB) is devided into 4 interconected modules: Expediting, Inspection, Shipping and Warehouse. It allows employees from these various departement to perform their daily task while keeping all the information in a central spot.
 
 ### What are the advantages:
 
 1. Allow employees from different branches (and sitting in different regions) to work on the same project.
 2. Grant users access to project modules based on their designated roles.
-3. Have access and update the project information in real time.
+3. Have access and update information in real time, (no more spreadsheets shared by email between departement).
 4. Mass upload / update information from your ERP system, spread sheets.
 5. Allow employees to fully configure the screens as per their requirement.
 6. Upload client templates and generate custom reports as per client requirements.
