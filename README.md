@@ -28,7 +28,7 @@ The Project Database (PDB) is divided into 4 interconected modules: Expediting, 
 
 4. Designed for the industry:
 
-   ERP systems are great tools but have their limitations. it is sometime not possible to differenciate the company's general stocks from dedicated stocks, generate an history report of all stock movements from time goods have been received till the time goods are packed (stock transfers, stock corrections/reevaluation). Retreive the list of Heat Numbers per NFI, Location, Picking List, Colli. In some projects, the material is not even stored in the companies premises and the warehouse locations are not referenced in the system. This web application has been designed to fill this gap. 
+   ERP systems are great tools but have their limitations. it is sometime not possible to differenciate general stocks from dedicated stocks, generate an history report of all stock movements from time goods have been received till the time goods are packed (stock transfers, stock corrections/reevaluation). Retreive the list of Heat Numbers per NFI, Location, Picking List, Colli. In some projects, the material is not even stored in the companies premises and the warehouse locations are not referenced in the system. This web application has been designed to fill this gap. 
 
 ### What type of reports can be generated:
 
