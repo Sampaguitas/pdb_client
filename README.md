@@ -20,11 +20,15 @@ The Project Database (PDB) is devided into 4 interconected modules: Expediting, 
 
 2. Flexibility:
 
-   The screen tables have been designed to be has convinient as excel files: User can fully customise them, decide which fields should be displayed, rename them or create new ones. We can apply filters, sort the table and navigate between cells using the keyboard or mouse just as we would in excel. The data can also be updated directly from the cell. However it is also possible to download are raw extract and preform a bulk update after modifying the data in excel. Reports can also be fully customised as per client or project requirements. 
+   The screen tables have been designed to be has convinient as an excel file: User can fully customise them, decide which fields should be displayed, rename them or create new ones. They can apply filters, sort the table and navigate between cells using their keyboard or mouse just as they would in excel. The data can be updated directly from the cells, However it is also possible to download are raw extract of selected rows and preform a bulk update after modifying the data in excel. Reports can also be fully customised as per client or project requirements. 
 
 3. Timesaving:
 
-   When a project is created, the expediting departement can quickly load the information in the database via excel files. Each departement can also imediately generate reports when ask by the client, or download MTC's for client approvals. 
+   When a project is created, the expediting departement can quickly load the information in the database via excel files. Based on your ERP system, a number of fields can be direclty extracted and do not need to be inserted manually such as the article wheights and HS codes. Each departement can also imediately generate reports when ask by the client, or download MTC's for client approvals.
+
+4. Designed for the industry requirements:
+
+   ERP systems are great tools but have their limitations. it is sometime not possible to differenciate the company's general stocks from dedicated stocks, generate an history report of all stock movements from time goods have been receipt till the goods are packed (stock transfers, stock corrections/reevaluation). Retrive the list of Heat Numbers per NFI, Location, Picking List, Colli. In some projects, the material is not even stored in the companies premises and the warehouse locations are not referenced in the system. This web application has been designed to fill this gap. 
 
 ### What type of reports can be generated:
 
