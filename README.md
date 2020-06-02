@@ -6,7 +6,7 @@ The Project Database (PDB) is a project management platform. It has been designe
 
 ### Type of Projects:
 
-Typically, projects having multiple MTO's, a large number of items, multiple inspection locations, multiple deliveries happening over a long period of time, multiple stock locations and frabrication shops. 
+Typically, projects having: multiple MTO's, a large number of items, multiple inspection locations, multiple deliveries happening over a long period of time, multiple stock locations or frabricators to deliver the material to. 
 
 ### How does it work:
 
