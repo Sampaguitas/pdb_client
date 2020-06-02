@@ -16,7 +16,7 @@ The Project Database (PDB) is devided into 4 interconected modules: Expediting, 
 
 1. Accessibility:
 
-   Having the information stored in one database and accessible via internet has a huge advantage: Employees from different branches (located in different regions) can work on the same project, access and update information in real time. Each project is unique, but the procedure remains the same and colleages can quickly take over if an employee is out of the office. 
+   Having the information stored in one database and accessible via internet has a huge advantage: Employees from different branches (located in different regions) can work on the same project, access and update information in real time. Each project is unique, but the procedure remains the same so colleages can quickly take over if an employee is out of the office. 
 
 2. Flexibility:
 
