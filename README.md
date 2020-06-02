@@ -16,11 +16,11 @@ The Project Database (PDB) is divided into 4 interconected modules: Expediting, 
 
 1. Accessibility:
 
-   Having the information stored in one database and accessible via internet has a huge advantage: Employees from different branches (located in different regions) can work on the same project, access and update information in real time. Each project is unique, but the procedure remains the same so colleages can quickly take over if an employee is on leave. 
+   Having the information stored in one database and accessible via internet has a huge advantage: Employees from different operating companies (and located in different regions) can work on the same project, access and update information in real time. Each project is unique, but the procedure remains the same so colleages can quickly take over if an employee is on leave. there is no need to worry about dates and number formats as the data is displayed as per your computer locales.
 
 2. Flexibility:
 
-   The screen tables have been designed to be has convinient as an excel file: User can fully customise them, decide which fields should be displayed, rename them or create new ones. They can apply filters, sort the table and navigate between cells using their keyboard or mouse just as they would in excel. The data can be updated directly from the cells, However it is also possible to download are raw extract of selected rows and preform a bulk update after modifying the data in excel. Reports can also be fully customised as per client or project requirements. 
+   The screen tables have been designed to be has convinient as an excel file: User can fully customise them, decide which fields should be displayed, rename them or create new ones. They can apply filters, sort the table and navigate between cells using their keyboard or mouse just as they would in excel. The data can be updated directly in the table cells, However it is also possible to download a raw extract of and preform a bulk update after modifying the data in excel. Reports can also be fully customised as per client or project requirements. 
 
 3. Time Efficiency:
 
@@ -35,9 +35,9 @@ The Project Database (PDB) is divided into 4 interconected modules: Expediting, 
 Module | Reports
 --- | ---
 Expediting | Expediting Status Report, Performance Report.
-Inspection | Notification for Inspection.
+Inspection | Notification for Inspection, Material Test Certificates.
 Shipping | Packing List, Shipping Marks, Shipping Invoice.
-Warehouse | Stock History.
+Warehouse | Stock History, picking ticket.
 
 
 ## External links
