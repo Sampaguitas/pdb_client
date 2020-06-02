@@ -42,7 +42,7 @@ Warehouse | Stock History.
 
 ## External links
 
-This web application has been developed for Van Leeuwen Pipe and Tube Group; here are some external links to the proposal, mock-up, plannig and approvals.
+This web application has been developed for [Van Leeuwen Pipe and Tube Group](https://www.vanleeuwen.com/en/); here are some external links to the proposal, mock-up, plannig and approvals.
 
 * [proposal](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Proposal.pdf)
 * [mock-up](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Mock-up.pdf)
