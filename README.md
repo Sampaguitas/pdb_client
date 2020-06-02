@@ -14,7 +14,7 @@ The Project Database (PDB) is devided into 4 interconected modules: Expediting, 
 
 ### What are the advantages:
 
-1. Allow employees from different branches (and sitting in different regions) to work on the same project.
+1. Allow employees from different branches (sitting in different regions) to work on the same project.
 2. Grant users access to project modules based on their designated roles.
 3. Have access and update information in real time, (no more spreadsheets shared by email between departement).
 4. Mass upload / update information from your ERP system, spread sheets.
