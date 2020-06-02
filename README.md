@@ -24,7 +24,7 @@ The Project Database (PDB) is devided into 4 interconected modules: Expediting, 
 
 3. Time Efficient:
 
-   When a project is created, the expediting departement can quickly load the information in the database via excel files. Based on your ERP system, a number of fields can be direclty extracted and do not need to be inserted manually such as the article wheights and HS codes. Each departement can also imediately generate reports when ask by the client, or download MTC's for client approvals.
+   When a project is created, the expediting departement can quickly load the information in the database via excel files. Based on your ERP system, a number of fields can be direclty extracted and do not need to be inserted manually such as the article wheights and HS codes. Each departement can also imediately generate reports when asked by their client, or download MTC's for client approvals.
 
 4. Designed for the industry:
 
