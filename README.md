@@ -1,8 +1,37 @@
 # [PROJECT DATABASE (PDB)](https://pdb-client.herokuapp.com/)
 
-## About
+## About:
 
-Van Leeuwen PDB is a project management platform disigned for the execution of large scale projects (LTA/CAPEX).
+The Project Database (PDB) is a project management platform. It has been designed to support Piping distribuitors from the Energy Industry in the execution of complex projects such as long term agrements or CAPEX and MRO's.
+
+### Scope:
+
+Typicaly projects having multiple MTO's, a large number of items, multiple inspection locations, multiple deliveries happening over a long period of time, multiple stock locations and frabrication shops. 
+
+### How does it work:
+
+The Project Database (PDB) is devided into 4 interconected modules: Expediting, Inspection, Shipping and Warehouse. It allows employees from these various departement perform their daily task while keeping all the information in a central spot.
+
+### What are the advantages:
+
+1. Allow employees from different branches (and sitting in different regions) to work on the same project.
+2. Grant users access to project modules based on their designated roles.
+3. Have access and update the project information in real time.
+4. Mass upload / update information from your ERP system, spread sheets.
+5. Allow employees to fully configure the screens as per their requirement.
+6. Upload client templates and generate custom reports as per client requirements.
+7. Upload / Download Material Test Certificates (assign heatNrs to: NFI, location, picking list, colli).
+8. Keep track of stock movement / Generate History reports showing all transactions between warehouse locations.
+
+### What type of reports can be generated:
+
+Module | Reports
+--- | ---
+Expediting | Expediting Status Report, Performance Report.
+Inspection | Notification for Inspection.
+Shipping | Packing List, Shipping Marks, Shipping Invoice.
+Warehouse | Stock History.
+
 
 ## External links
 * [proposal](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Proposal.pdf)
