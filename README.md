@@ -35,7 +35,7 @@ Warehouse | Stock History.
 
 ## External links
 
-This web application has originaly been developped for van Leeuwen, here are some external links to the conceptual desin plannig and approvals.
+This web application has originaly been developped for van Leeuwen; here are some external links to the conceptual desin, plannig and approvals.
 
 * [access the app](https://pdb-client.herokuapp.com/)
 * [proposal](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Proposal.pdf)
