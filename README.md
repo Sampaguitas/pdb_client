@@ -35,7 +35,7 @@ Warehouse | Stock History.
 
 ## External links
 
-This web application has originaly been developped for van Leeuwen; here are some external links to the proposal, mock-up, plannig and approvals. the application can be access via the following link: [https://pdb-client.herokuapp.com/](https://pdb-client.herokuapp.com/)
+This web application has been developped for van Leeuwen; here are some external links to the proposal, mock-up, plannig and approvals. the application can be access via the following link: [https://pdb-client.herokuapp.com/](https://pdb-client.herokuapp.com/)
 
 * [proposal](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Proposal.pdf)
 * [mock-up](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Mock-up.pdf)
