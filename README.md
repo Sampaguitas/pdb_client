@@ -2,9 +2,9 @@
 
 ## About:
 
-The Project Database (PDB) is a project management platform. It has been designed to support Piping distribuitors from the Energy Industry in the execution of complex projects such as long term agrements or CAPEX and MRO's.
+The Project Database (PDB) is a project management platform. It has been designed to support bulk piping distribuitors from the Energy Industry in the execution of complex projects such as long term agrements or CAPEX and MRO's.
 
-### Scope:
+### Type of Projects:
 
 Typically, projects having multiple MTO's, a large number of items, multiple inspection locations, multiple deliveries happening over a long period of time, multiple stock locations and frabrication shops. 
 
