@@ -26,7 +26,7 @@ The Project Database (PDB) is devided into 4 interconected modules: Expediting, 
 
    When a project is created, the expediting departement can quickly load the information in the database via excel files. Based on your ERP system, a number of fields can be direclty extracted and do not need to be inserted manually such as the article wheights and HS codes. Each departement can also imediately generate reports when ask by the client, or download MTC's for client approvals.
 
-4. Designed for the industry requirements:
+4. Designed for the industry:
 
    ERP systems are great tools but have their limitations. it is sometime not possible to differenciate the company's general stocks from dedicated stocks, generate an history report of all stock movements from time goods have been receipt till the goods are packed (stock transfers, stock corrections/reevaluation). Retrive the list of Heat Numbers per NFI, Location, Picking List, Colli. In some projects, the material is not even stored in the companies premises and the warehouse locations are not referenced in the system. This web application has been designed to fill this gap. 
 
