@@ -16,7 +16,7 @@ The Project Database (PDB) is devided into 4 interconected modules: Expediting, 
 
 1. Allow employees from different branches (sitting in different regions) to work on the same project.
 2. Grant users access to project modules based on their designated roles.
-3. Have access and update information in real time, (no more spreadsheets shared by email between departement).
+3. Have access and update information in real time, (no more spreadsheets shared by email between departements).
 4. Mass upload / update information from your ERP system, spread sheets.
 5. Allow employees to fully configure their screens, as per their requirement.
 6. Upload client templates and generate custom reports as per the client requirements.
@@ -35,14 +35,14 @@ Warehouse | Stock History.
 
 ## External links
 
-This web application has been developped for van Leeuwen; here are some external links to the proposal, mock-up, plannig and approvals. the application can be access via the following link: [https://pdb-client.herokuapp.com/](https://pdb-client.herokuapp.com/)
+This web application has been developed for Van Leeuwen Pipe and Tube Group; here are some external links to the proposal, mock-up, plannig and approvals. The application can be access via the following link: [https://pdb-client.herokuapp.com/](https://pdb-client.herokuapp.com/)
 
 * [proposal](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Proposal.pdf)
 * [mock-up](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Mock-up.pdf)
 * [er-diagram](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/entity+relationship+diagram.svg)
 * [planning](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Planning+Rev14.xlsx)
 * [approvals](APPROVAL.md)
-* [todo list](TODO.md)
+* [to do list](TODO.md)
 
 ## Getting Started
 
