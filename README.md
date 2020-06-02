@@ -14,14 +14,12 @@ The Project Database (PDB) is devided into 4 interconected modules: Expediting, 
 
 ### What are the advantages:
 
-1. Allow employees from different branches (sitting in different regions) to work on the same project.
-2. Grant users access to project modules based on their designated roles.
-3. Have access and update information in real time, (no more spreadsheets shared by email between departements).
-4. Mass upload / update information from your ERP system, spread sheets.
-5. Allow employees to fully configure their screens, as per their requirement.
-6. Upload client templates and generate custom reports as per the client requirements.
-7. Upload / Download Material Test Certificates (assign heatNrs to: NFI, location, picking list, colli).
-8. Keep track of stock movement / Generate History reports showing all transactions between warehouse locations.
+1. Accessibility:
+⋅⋅⋅Having the information stored in one database and accessible via internet has a huge advantage: Employees from different branches (located in different regions) can work on the same project, access and update information in real time. Each project is unique, but the procedure remains the same and colleages can quickly take over if an employee is out of the office. 
+2. Flexibility:
+...The screen tables have been designed to be has convinient as excel files: User can fully customise them, decide which fields should be displayed, rename them or create new ones. We can apply filters, sort the table and navigate between cells using the keyboard or mouse just as we would in excel. The data can also be updated directly from the cell. However it is also possible to download are raw extract and preform a bulk update after modifying the data in excel. Reports can also be fully customised as per client or project requirements.
+3. Timesaving:
+...When a project is created, the expediting departement can quickly load the information in the database via excel files. Each departement can also imediately generate reports when ask by the client, or download MTC's for client approvals.
 
 ### What type of reports can be generated:
 
