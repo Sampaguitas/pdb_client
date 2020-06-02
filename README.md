@@ -35,9 +35,9 @@ The Project Database (PDB) is divided into 4 interconected modules: Expediting, 
 Module | Reports
 --- | ---
 Expediting | Expediting Status Report, Performance Report.
-Inspection | Notification for Inspection, Material Test Certificates.
-Shipping | Packing List, Shipping Marks, Shipping Invoice.
-Warehouse | Stock History, picking ticket.
+Inspection | Notification for Inspection, Material Test Certificate.
+Shipping | Packing List, Shipping Mark, Shipping Invoice.
+Warehouse | Stock History, Picking Ticket.
 
 
 ## External links
