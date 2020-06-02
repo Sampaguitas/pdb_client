@@ -1,5 +1,3 @@
-# [PROJECT DATABASE (PDB)](https://pdb-client.herokuapp.com/)
-
 ![alt text](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/pdb.svg "Project Database (PDB)")
 
 ## About:
