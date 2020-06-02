@@ -10,7 +10,7 @@ Typically, projects having: multiple material take off, a large number of items,
 
 ### How does it work:
 
-The Project Database (PDB) is divided into 4 interconected modules: Expediting, Inspection, Shipping and Warehouse. It allows employees from these various departement to perform their daily task while keeping all the information in a central spot.
+The Project Database (PDB) is divided into 4 interconected modules: Expediting, Inspection, Shipping and Warehouse. It allows employees from these various departement to perform their daily tasks while keeping all the information in a central spot.
 
 ### What are the advantages:
 
