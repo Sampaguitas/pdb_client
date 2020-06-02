@@ -254,6 +254,7 @@ class SplitLine extends Component {
                 isAscending: true,
             },
             isEqual: false,
+            qtyRequired: '',
             selectedLine: '',
             alert: {
                 type: '',
@@ -262,11 +263,48 @@ class SplitLine extends Component {
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
+        this.handleChange = this.handleChange.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
         this.handleClickLine = this.handleClickLine.bind(this);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        let { mir, pos } = this.props;
+        let { selectedLine } = this.state;
+
+        if (selectedLine != prevState.selectedLine || mir != prevProps.mir) {
+            if (!!selectedLine && mir.miritems.some(element => element.poId === selectedLine)) {
+                this.setState({
+                    alert: {
+                        type: 'alert-warning',
+                        message: 'This line has already been added, MIR cannot contain twice the same item!'
+                    }
+                });
+            } else {
+                this.setState({
+                    alert: {
+                        type: '',
+                        message: ''
+                    }
+                });
+            }
+        }
+
+        if (selectedLine != prevState.selectedLine || pos != prevProps.pos) {
+            let selectedPo = pos.items.find(element => element._id === selectedLine);
+            if (!_.isUndefined(selectedPo)) {
+                this.setState({
+                    qtyRequired: selectedPo.qty
+                });
+            } else {
+                this.setState({
+                    qtyRequired: ''
+                });
+            }
+        }
     }
 
 
@@ -306,6 +344,13 @@ class SplitLine extends Component {
                 }
             });
         }
+    }
+
+    handleChange(event) {
+        const target = event.target;
+        const name = target.name;
+        const value = target.type === 'checkbox' ? target.checked : target.value;
+        this.setState({ [name]: value });
     }
 
     handleChangeHeader(event) {
@@ -401,24 +446,18 @@ class SplitLine extends Component {
 
     handleClickLine(event, screenBody) {
         event.preventDefault();
-        // console.log('screenBody:', screenBody);
         const { selectedLine } = this.state;
-        
         if (selectedLine === screenBody.tablesId.poId) {
-            this.setState({
-                selectedLine: '',
-            });
+            this.setState({ selectedLine: '' });
         } else {
-            this.setState({
-                selectedLine: screenBody.tablesId.poId,
-            });
+            this.setState({ selectedLine: screenBody.tablesId.poId });
         }
     }
 
     render() {
 
-        const { screenHeaders, screenBodys, handleSplitLine } = this.props;
-        const { selectedLine } = this.state;
+        const { creating, screenHeaders, screenBodys, handleSplitLine } = this.props;
+        const { selectedLine, qtyRequired } = this.state;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
 
         return (
@@ -443,11 +482,30 @@ class SplitLine extends Component {
                             </table>
                         </div>
                     </div>
-                    
-                    <div className="text-right mt-2">
-                        <button className="btn btn-leeuwen-blue btn-lg" title="Add Line to MIR" onClick={event => handleSplitLine(event, selectedLine)}>
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Line</span>
-                        </button>
+                    <div className="mt-4">
+                        <form onSubmit={event => handleSplitLine(event, selectedLine, qtyRequired)}>
+                            <div className="form-group">
+                                <div className="input-group">
+                                    <div className="input-group-prepend">
+                                        <label className="input-group-text">Qty Required:</label>
+                                    </div>
+                                    <input
+                                        className="form-control"
+                                        type="number"
+                                        name="qtyRequired"
+                                        value={qtyRequired}
+                                        onChange={this.handleChange}
+                                        placeholder=""
+                                        required
+                                    />
+                                </div>
+                            </div>
+                            <div className="text-right mt-2">
+                                <button type="submit" className="btn btn-leeuwen-blue btn-lg" title="Add Line to MIR">
+                                    <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>Add Line</span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>

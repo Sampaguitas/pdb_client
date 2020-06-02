@@ -250,21 +250,20 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
     let screenHeaders = headersForShow;
     let project = selection.project || { _id: '0', name: '', number: '' };
     let i = 1;
-
     if (!_.isUndefined(mirs) && mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
         mirs.items.map(mir => {
             if (_.isEqual(mir._id, mirId)) {
-                let itemCount = !_.isEmpty(mir.items) ? mir.items.length : '';
+                let itemCount = !_.isEmpty(mir.miritems) ? mir.miritems.length : '';
                 let mirWeight = 0;
                 if (!_.isEmpty(mir.miritems)) {
                     mirWeight = mir.miritems.reduce(function (acc, cur) {
                         if (!!cur.totWeight) {
-                            acc += totWeight;
+                            acc += cur.totWeight;
                         }
                         return acc;
                     }, 0);
                 }
-                if (mir.hasOwnProperty('miritems') && !_.isEmpty(mirs.miritems)) {
+                if (!_.isEmpty(mir.miritems)) {
                     mir.miritems.map(miritem => {
                         arrayRow = [];
                         screenHeaders.map(screenHeader => {
@@ -356,6 +355,7 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
                 }
             }
         });
+        
         return arrayBody;
     } else {
         return [];
@@ -430,7 +430,6 @@ function getBodysForSelect(pos, selection, headersForSelect) {
         return [];
     }
 }
-
 
 function initSettingsFilter(fieldnames, settings, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
@@ -552,6 +551,7 @@ class MirSplitwindow extends React.Component {
                 mir: '',
                 dateReceived: '',
                 dateExpected: '',
+                miritems: '',
             },
             screenId: '5ed1e7a67c213e044cc01888',
             unlocked: false,
@@ -563,6 +563,7 @@ class MirSplitwindow extends React.Component {
             },
             showSplitLine: false,
             showSettings: false,
+            creating: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -663,6 +664,7 @@ class MirSplitwindow extends React.Component {
                             mir: found.mir,
                             dateReceived: found.dateReceived,
                             dateExpected: found.dateExpected,
+                            miritems: found.miritems
                         }
                     });
                 }
@@ -709,6 +711,7 @@ class MirSplitwindow extends React.Component {
                         mir: found.mir,
                         dateReceived: found.dateReceived,
                         dateExpected: found.dateExpected,
+                        miritems: found.miritems
                     }
                 });
             }
@@ -939,7 +942,7 @@ class MirSplitwindow extends React.Component {
                     message:'Select line(s) to be deleted.'
                 }
             });
-        } else if (confirm('For the Selected line(s) all MIR details, MIR Items and picking lists shall be deleted. Are you sure you want to proceed?')){
+        } else if (confirm('For the Selected line(s) all items details and picking lists shall be deleted. Are you sure you want to proceed?')){
             this.setState({
                 ...this.state,
                 deleting: true
@@ -949,7 +952,7 @@ class MirSplitwindow extends React.Component {
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
                     body: JSON.stringify({ selectedIds: selectedIds })
                 };
-                return fetch(`${config.apiUrl}/mir/delete`, requestOptions)
+                return fetch(`${config.apiUrl}/miritem/delete`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
                     if (responce.status === 401) {
@@ -993,63 +996,39 @@ class MirSplitwindow extends React.Component {
         });
     }
 
-    handleSplitLine(event, poId) {
+    handleSplitLine(event, poId, qtyRequired) {
         event.preventDefault();
         const { projectId, mirId } = this.state;
-        console.log('poId:', poId);
-        console.log('projectId:', projectId);
-        console.log('mirId:', mirId);
-        // if (!mir && !dateReceived && !dateExpected && !projectId ) {
-        //     this.setState({
-        //         alert: {
-        //             type: 'alert-danger',
-        //             message: 'All fields are required.'
-        //         }
-        //     });
-        // } else if (!isValidFormat(dateReceived, 'date', getDateFormat(myLocale))) {
-        //     this.setState({
-        //         alert: {
-        //             type: 'alert-danger',
-        //             message: 'Date Received: Not a valid date format.'
-        //         }
-        //     });
-        // } else if (!isValidFormat(dateExpected, 'date', getDateFormat(myLocale))) {
-        //     this.setState({
-        //         alert: {
-        //             type: 'alert-danger',
-        //             message: 'Date Expected: Not a valid date format.'
-        //         }
-        //     });
-        // } else {
-        //     this.setState({
-        //         ...this.state,
-        //         creating: true
-        //     }, () => {
-        //         const requestOptions = {
-        //             method: 'POST',
-        //             headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        //             body: JSON.stringify(newMir)
-        //         };
-        //         return fetch(`${config.apiUrl}/mir/create`, requestOptions)
-        //         .then(responce => responce.text().then(text => {
-        //             const data = text && JSON.parse(text);
-        //             if (responce.status === 401) {
-        //                     localStorage.removeItem('user');
-        //                     location.reload(true);;
-        //             } else {
-        //                 this.setState({
-        //                     creating: false,
-        //                     showCreate: false,
-        //                     newMir: {},
-        //                     alert: {
-        //                         type: responce.status === 200 ? '' : 'alert-danger',
-        //                         message: responce.status === 200 ? '' : data.message
-        //                     }
-        //                 }, this.refreshMir);
-        //             }
-        //         }));
-        //     });
-        // }
+        this.setState({
+            creating: true
+        }, () => {
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    qtyRequired: qtyRequired,
+                    poId: poId,
+                    mirId: mirId,
+                    projectId: projectId
+                })
+            };
+            return fetch(`${config.apiUrl}/miritem/create`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);;
+                } else {
+                    this.setState({
+                        creating: false,
+                        alert: {
+                            type: responce.status === 200 ? '' : 'alert-danger',
+                            message: responce.status === 200 ? '' : data.message
+                        }
+                    }, this.refreshMir);
+                }
+            }));
+        });
     }
 
     handleEditClick(event) {
@@ -1114,7 +1093,7 @@ class MirSplitwindow extends React.Component {
             settingsDisplay
         } = this.state;
 
-        const { accesses, fieldnames, fields, mirs, selection } = this.props;
+        const { accesses, fieldnames, fields, pos, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
@@ -1185,7 +1164,10 @@ class MirSplitwindow extends React.Component {
                     <SplitLine 
                         screenHeaders={headersForSelect}
                         screenBodys={bodysForSelect}
+                        mir={mir}
+                        pos={pos}
                         alert={alert}
+                        creating={creating}
                         handleClearAlert={this.handleClearAlert}
                         handleSplitLine={this.handleSplitLine}
                     />

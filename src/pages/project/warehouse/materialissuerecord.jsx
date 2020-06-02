@@ -250,12 +250,12 @@ function getBodys(mirs, headersForShow) {
     let i = 1;
     if (!_.isUndefined(mirs) && mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
         mirs.items.map(mir => {
-            let itemCount = !_.isEmpty(mir.itemCount) ? mir.itemCount.length : '';
+            let itemCount = !_.isEmpty(mir.miritems) ? mir.miritems.length : '';
             let mirWeight = 0;
             if (!_.isEmpty(mir.miritems)) {
                 mirWeight = mir.miritems.reduce(function (acc, cur) {
                     if (!!cur.totWeight) {
-                        acc += totWeight;
+                        acc += cur.totWeight;
                     }
                     return acc;
                 }, 0);
@@ -961,8 +961,6 @@ class MaterialIssueRecord extends React.Component {
                 pathname:'/mirsplitwindow',
                 search: '?id=' + projectId + '&mirid=' + selectedIds[0].mirId
             });
-            // console.log('mirId:', selectedIds[0].mirId);
-            // console.log('projectId:', projectId);
         }
     }
 
