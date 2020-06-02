@@ -35,7 +35,7 @@ Warehouse | Stock History.
 
 ## External links
 
-This web application has been developed for Van Leeuwen Pipe and Tube Group; here are some external links to the proposal, mock-up, plannig and approvals. The application can be access via the following link: [https://pdb-client.herokuapp.com/](https://pdb-client.herokuapp.com/)
+This web application has been developed for Van Leeuwen Pipe and Tube Group; here are some external links to the proposal, mock-up, plannig and approvals.
 
 * [proposal](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Proposal.pdf)
 * [mock-up](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Mock-up.pdf)
@@ -43,6 +43,8 @@ This web application has been developed for Van Leeuwen Pipe and Tube Group; her
 * [planning](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Planning+Rev14.xlsx)
 * [approvals](APPROVAL.md)
 * [to do list](TODO.md)
+
+The application can be access via the following link: [https://pdb-client.herokuapp.com/](https://pdb-client.herokuapp.com/)
 
 ## Getting Started
 
