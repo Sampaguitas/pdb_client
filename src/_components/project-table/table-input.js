@@ -214,7 +214,6 @@ class TableInput extends Component{
                 this.setState({ ...this.state, isEditing: false, isSelected: false, color: '#0070C0' });
 
             } else {
-
                 const requestOptions = {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -222,16 +221,36 @@ class TableInput extends Component{
                 };
 
                 return fetch(`${config.apiUrl}/${collection}/update?id=${encodeURI(objectId)}&parentId=${encodeURI(parentId)}`, requestOptions)
-                .then( () => this.setState({ ...this.state, isEditing: false, isSelected: false }, refreshStore))
+                // .then(
+                //     () => {
+                //     this.setState({ ...this.state, isEditing: false, isSelected: false }, refreshStore)
+                // })
+                .then( responce => responce.text().then(text => {
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else if (responce.status === 400) {
+                        this.setState({
+                            ...this.state, 
+                            isEditing: false,
+                            isSelected: false,
+                            color: _.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
+                            fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
+                        }, () => setTimeout( () => this.setState({ ...this.state, color: '#0070C0', }), 1000));
+                    } else {
+                        this.setState({ ...this.state, isEditing: false, isSelected: false }, refreshStore)
+                    }
+                }))
                 //goes red for one second and inherit
-                .catch( () => this.setState({
+                .catch( () => {
+                    this.setState({
                         ...this.state, 
                         isEditing: false,
                         isSelected: false,
                         color: 'red',
                         fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
                     }, () => setTimeout( () => this.setState({ ...this.state, color: '#0070C0' }), 1000))
-                );
+                });
             }
 
         } else {

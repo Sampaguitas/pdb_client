@@ -547,43 +547,44 @@ class ProjectTable extends Component {
         const { unlocked, refreshStore } = this.props;
         const { selectAllRows, selectedRows } = this.state;
         let tempRows = [];
-
-        this.filterName(screenBodys).map(screenBody => {
-            let tempCol = [];
-            screenBody.fields.map(function (field, index) {
-                // if (field.objectId || field.parentId) {
-                    tempCol.push(
-                        <TableInput
-                            collection={field.collection}
-                            objectId={field.objectId}
-                            parentId={field.parentId}
-                            fieldName={field.fieldName}
-                            fieldValue={field.fieldValue}
-                            disabled={field.disabled}
-                            unlocked={unlocked}
-                            align={field.align}
-                            fieldType={field.fieldType}
-                            textNoWrap={true}
-                            key={index}
-                            refreshStore={refreshStore}
+        if (screenBodys) {
+            this.filterName(screenBodys).map(screenBody => {
+                let tempCol = [];
+                screenBody.fields.map(function (field, index) {
+                    // if (field.objectId || field.parentId) {
+                        tempCol.push(
+                            <TableInput
+                                collection={field.collection}
+                                objectId={field.objectId}
+                                parentId={field.parentId}
+                                fieldName={field.fieldName}
+                                fieldValue={field.fieldValue}
+                                disabled={field.disabled}
+                                unlocked={unlocked}
+                                align={field.align}
+                                fieldType={field.fieldType}
+                                textNoWrap={true}
+                                key={index}
+                                refreshStore={refreshStore}
+                            />
+                        );                        
+                    // } else {
+                    //     tempCol.push(<td key={index}></td>) 
+                    // }
+                });
+                tempRows.push(
+                    <tr key={screenBody._id}>
+                        <TableSelectionRow
+                            id={screenBody._id}
+                            selectAllRows={selectAllRows}
+                            selectedRows={selectedRows}
+                            callback={this.updateSelectedRows}
                         />
-                    );                        
-                // } else {
-                //     tempCol.push(<td key={index}></td>) 
-                // }
+                        {tempCol}
+                    </tr>
+                );
             });
-            tempRows.push(
-                <tr key={screenBody._id}>
-                    <TableSelectionRow
-                        id={screenBody._id}
-                        selectAllRows={selectAllRows}
-                        selectedRows={selectedRows}
-                        callback={this.updateSelectedRows}
-                    />
-                    {tempCol}
-                </tr>
-            );
-        });
+        }
         return tempRows;
     }
 
@@ -760,7 +761,7 @@ class ProjectTable extends Component {
                                 {screenHeaders && this.generateHeader(screenHeaders)}
                             </thead>                                
                             <tbody className="full-height">
-                                {screenBodys && this.generateBody(screenBodys)}
+                                {this.generateBody(screenBodys)}
                             </tbody>
                         </table>
                     </div>

@@ -998,8 +998,8 @@ class MirSplitwindow extends React.Component {
 
     handleSplitLine(event, containsPo, qtyRequired, poId) {
         event.preventDefault();
-        const { projectId, mirId } = this.state;
-        if (!containsPo) {
+        const { creating, projectId, mirId } = this.state;
+        if (!containsPo && !creating) {
             this.setState({
                 creating: true
             }, () => {
