@@ -256,6 +256,7 @@ class SplitLine extends Component {
             isEqual: false,
             qtyRequired: '',
             selectedLine: '',
+            containsPo: false,
             alert: {
                 type: '',
                 message: ''
@@ -273,10 +274,18 @@ class SplitLine extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         let { mir, pos } = this.props;
-        let { selectedLine } = this.state;
+        let { selectedLine, containsPo } = this.state;
 
         if (selectedLine != prevState.selectedLine || mir != prevProps.mir) {
             if (!!selectedLine && mir.miritems.some(element => element.poId === selectedLine)) {
+                this.setState({ containsPo: true });
+            } else {
+                this.setState({ containsPo: false });
+            }
+        }
+
+        if (containsPo != prevState.containsPo) {
+            if (containsPo) {
                 this.setState({
                     alert: {
                         type: 'alert-warning',
@@ -292,6 +301,7 @@ class SplitLine extends Component {
                 });
             }
         }
+
 
         if (selectedLine != prevState.selectedLine || pos != prevProps.pos) {
             let selectedPo = pos.items.find(element => element._id === selectedLine);
@@ -457,7 +467,7 @@ class SplitLine extends Component {
     render() {
 
         const { creating, screenHeaders, screenBodys, handleSplitLine } = this.props;
-        const { selectedLine, qtyRequired } = this.state;
+        const { containsPo, qtyRequired, selectedLine } = this.state;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
 
         return (
@@ -483,7 +493,7 @@ class SplitLine extends Component {
                         </div>
                     </div>
                     <div className="mt-4">
-                        <form onSubmit={event => handleSplitLine(event, selectedLine, qtyRequired)}>
+                        <form onSubmit={event => handleSplitLine(event, containsPo, qtyRequired, selectedLine )}>
                             <div className="form-group">
                                 <div className="input-group">
                                     <div className="input-group-prepend">

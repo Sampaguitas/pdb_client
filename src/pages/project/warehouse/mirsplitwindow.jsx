@@ -996,39 +996,42 @@ class MirSplitwindow extends React.Component {
         });
     }
 
-    handleSplitLine(event, poId, qtyRequired) {
+    handleSplitLine(event, containsPo, qtyRequired, poId) {
         event.preventDefault();
         const { projectId, mirId } = this.state;
-        this.setState({
-            creating: true
-        }, () => {
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    qtyRequired: qtyRequired,
-                    poId: poId,
-                    mirId: mirId,
-                    projectId: projectId
-                })
-            };
-            return fetch(`${config.apiUrl}/miritem/create`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);;
-                } else {
-                    this.setState({
-                        creating: false,
-                        alert: {
-                            type: responce.status === 200 ? '' : 'alert-danger',
-                            message: responce.status === 200 ? '' : data.message
-                        }
-                    }, this.refreshMir);
-                }
-            }));
-        });
+        if (!containsPo) {
+            this.setState({
+                creating: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        qtyRequired: qtyRequired,
+                        poId: poId,
+                        mirId: mirId,
+                        projectId: projectId
+                    })
+                };
+                return fetch(`${config.apiUrl}/miritem/create`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);;
+                    } else {
+                        this.setState({
+                            creating: false,
+                            showSplitLine: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshMir);
+                    }
+                }));
+            });
+        }
     }
 
     handleEditClick(event) {
@@ -1097,8 +1100,8 @@ class MirSplitwindow extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
-                {alert.message && !showSettings &&
+            <Layout alert={showSettings || showSplitLine ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+                {alert.message && !showSettings && !showSplitLine &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
