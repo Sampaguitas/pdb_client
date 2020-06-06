@@ -456,14 +456,14 @@ class Duf extends React.Component {
         const { newRow, selectedScreen } = this.state;
         if (!selectedScreen) {
             this.setState({
-                ...this.state,
-                newRow: false
-            })
+                newRow: false,
+                fieldName:{}
+            });
         } else {
             this.setState({
-                ...this.state,
-                newRow: !newRow
-            })
+                newRow: !newRow,
+                fieldName:{}
+            });
         }
     }
 

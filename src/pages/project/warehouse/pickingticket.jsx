@@ -5,15 +5,13 @@ import queryString from 'query-string';
 import config from 'config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../_helpers';
+import { history } from '../../../_helpers';
 import { 
     accessActions, 
-    alertActions,
-    docdefActions,
-    collipackActions,
-    collitypeActions,
+    alertActions,  
     fieldnameActions,
     fieldActions,
-    poActions,
+    mirActions, 
     projectActions,
     settingActions
 } from '../../../_actions';
@@ -22,20 +20,14 @@ import ProjectTable from '../../../_components/project-table/project-table';
 import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
 import Modal from '../../../_components/modal';
-import ColliType from '../../../_components/split-line/collitype';
 
+import moment from 'moment';
+import _ from 'lodash';
+import { __promisify__ } from 'glob';
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
 const myLocale = Intl.DateTimeFormat(locale, options);
-
-function leadingChar(string, char, length) {
-    return string.toString().length > length ? string : char.repeat(length - string.toString().length) + string;
-}
-
-function baseTen(number) {
-    return number.toString().length > 2 ? number : '0' + number;
-}
 
 function getDateFormat(myLocale) {
     let tempDateFormat = ''
@@ -58,8 +50,24 @@ function getDateFormat(myLocale) {
     return tempDateFormat;
 }
 
+function passSelectedIds(selectedIds) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1) {
+        return {};
+    } else {
+        return selectedIds[0];
+    }
+}
 
-function TypeToString (fieldValue, fieldType, myDateFormat) {
+function passSelectedMir(selectedIds, mirs) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(mirs.items)){
+        return {};
+    } else {
+        return mirs.items.find(mir => mir._id === selectedIds[0].mirId);
+    }
+}
+
+
+function TypeToString(fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'Date': return String(moment(fieldValue).format(myDateFormat));
@@ -71,8 +79,7 @@ function TypeToString (fieldValue, fieldType, myDateFormat) {
     }
 }
 
-
-function DateToString (fieldValue, fieldType, myDateFormat) {
+function DateToString(fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'date': return String(moment(fieldValue).format(myDateFormat)); 
@@ -103,7 +110,10 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
     } else {
         return true;
     }
-    
+}
+
+function baseTen(number) {
+    return number.toString().length > 2 ? number : '0' + number;
 }
 
 function resolve(path, obj) {
@@ -136,24 +146,6 @@ function arraySorted(array, fieldOne, fieldTwo, fieldThree) {
     }
 }
 
-function docConf(array) {
-    const tpeOf = [
-        //'5d1927121424114e3884ac7e', //ESR01 Expediting status report
-        '5d1927131424114e3884ac80', //PL01 Packing List
-        '5d1927141424114e3884ac84', //SM01 Shipping Mark
-        '5d1927131424114e3884ac81', //PN01 Packing Note
-        '5d1927141424114e3884ac83' //SI01 Shipping Invoice
-        // '5d1927131424114e3884ac7f', //NFI1 Notification for Inspection
-        // '5eacef91e7179a42f172feea', //SH01 Stock History Report
-        //'5edb2317e7179a6b6367d786' //PT01 Picking Ticket
-    ];
-    if (array) {
-        return array.filter(function (element) {
-            return tpeOf.includes(element.doctypeId);
-        });
-    }
-}
-
 function findObj(array, search) {
     if (!_.isEmpty(array) && search) {
         return array.find((function(element) {
@@ -164,10 +156,24 @@ function findObj(array, search) {
     }
 }
 
-function getScreenTbls (fieldnames) {
+// function getScreenTbls (fieldnames) {
+//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+//         return fieldnames.items.reduce(function (accumulator, currentValue) {
+//             if(!accumulator.includes(currentValue.fields.fromTbl)) {
+//                 accumulator.push(currentValue.fields.fromTbl)
+//             }
+//             return accumulator;
+//         },[]);
+//     } else {
+//         return [];
+//     }
+    
+// }
+
+function getScreenTbls (fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         return fieldnames.items.reduce(function (accumulator, currentValue) {
-            if(!accumulator.includes(currentValue.fields.fromTbl)) {
+            if(!accumulator.includes(currentValue.fields.fromTbl) && currentValue.screenId === screenId) {
                 accumulator.push(currentValue.fields.fromTbl)
             }
             return accumulator;
@@ -236,35 +242,44 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     return [];
 }
 
-function getBodys(collipacks, headersForShow){
+function getBodys(mirs, headersForShow) {
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
     let screenHeaders = headersForShow;
-
     let i = 1;
-    if (!_.isUndefined(collipacks) && collipacks.hasOwnProperty('items') && !_.isEmpty(collipacks.items)) {
-        collipacks.items.map(collipack => {
+    if (!_.isUndefined(mirs) && mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
+        mirs.items.map(mir => {
+            let itemCount = !_.isEmpty(mir.miritems) ? mir.miritems.length : '';
+            let mirWeight = 0;
+            if (!_.isEmpty(mir.miritems)) {
+                mirWeight = mir.miritems.reduce(function (acc, cur) {
+                    if (!!cur.totWeight) {
+                        acc += cur.totWeight;
+                    }
+                    return acc;
+                }, 0);
+            }
             arrayRow = [];
             screenHeaders.map(screenHeader => {
                 switch(screenHeader.fields.fromTbl) {
-                    case 'collipack':
-                        if (screenHeader.fields.name === 'plNr' || screenHeader.fields.name === 'colliNr') {
+                    case 'mir':
+                        if (['itemCount', 'mirWeight'].includes(screenHeader.fields.name)) {
                             arrayRow.push({
                                 collection: 'virtual',
-                                objectId: collipack._id,
+                                objectId: mir._id,
                                 fieldName: screenHeader.fields.name,
-                                fieldValue: collipack[screenHeader.fields.name],
+                                fieldValue: screenHeader.fields.name === 'itemCount' ? itemCount : mirWeight,
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
                             });
                         } else {
                             arrayRow.push({
-                                collection: 'collipack',
-                                objectId: collipack._id,
+                                collection: 'mir',
+                                objectId: mir._id,
                                 fieldName: screenHeader.fields.name,
-                                fieldValue: collipack[screenHeader.fields.name],
+                                fieldValue: mir[screenHeader.fields.name],
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
@@ -289,10 +304,11 @@ function getBodys(collipacks, headersForShow){
                     subId: '',
                     certificateId: '',
                     packitemId: '',
-                    collipackId: collipack._id
+                    collipackId: '',
+                    mirId: mir._id,
                 },
                 fields: arrayRow
-            }
+            };
             arrayBody.push(objectRow);
             i++;
         });
@@ -300,59 +316,8 @@ function getBodys(collipacks, headersForShow){
     } else {
         return [];
     }
-
-
 }
 
-function getPlList(collipacks) {
-    if (collipacks.hasOwnProperty('items') && !_.isUndefined(collipacks.items)){
-        let tempPl = collipacks.items.reduce(function (acc, cur) {
-                if(!!cur.plNr && !acc.includes(cur.plNr)) {
-                    acc.push(cur.plNr);
-                }
-                return acc;
-        }, []);
-        tempPl.sort((a, b) => Number(b) - Number(a));
-        return tempPl.reduce(function(acc, cur) {
-            acc.push({_id: cur, name: cur});
-            return acc;
-        }, []);
-    }
-}
-
-function generateOptions(list) {
-    if (list) {
-        return list.map((element, index) => <option key={index} value={element._id}>{element.name}</option>);
-    }
-}
-
-
-function getClPo(pos, selectedPl) {
-    let badChars = /[^a-zA-Z0-9_()]/mg;
-    // let tempClPo = '';
-    if (!!pos.items) {
-        return pos.items.reduce(function(accPo, curPo){
-            if (!accPo) {
-                let tempSub = curPo.subs.reduce(function(accSub, curSub) {
-                    if (!accSub) {
-                        let tempPack = curSub.packitems.reduce(function(accPack, curPack) {
-                            if(!accPack && curPack.plNr == selectedPl) {
-                                accPack = curPo.clPo.replace(badChars, '_');
-                            }
-                            return accPack;
-                        }, '');
-                        accSub = tempPack;
-                    }
-                    return accSub;
-                }, '');
-                accPo = tempSub;
-            }
-            return accPo;
-        }, '');
-    } else {
-        return '';
-    }
-}
 
 function initSettingsFilter(fieldnames, settings, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
@@ -438,19 +403,21 @@ function initSettingsDisplay(fieldnames, settings, screenId) {
     }
 }
 
-class PackingDetails extends React.Component {
+class PickingTicket extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             headersForShow: [],
             bodysForShow: [],
+            // splitHeadersForShow: [],
+            // splitHeadersForSelect:[],
             settingsFilter: [],
             settingsDisplay: [],
             tabs: [
                 {
                     index: 0, 
                     id: 'filter',
-                    label: 'Filter', 
+                    label: 'Filter',
                     component: TabFilter, 
                     active: true, 
                     isLoaded: false
@@ -465,47 +432,38 @@ class PackingDetails extends React.Component {
                 }
             ],
             projectId:'',
-            screenId: '5cd2b643fd333616dc360b67', //packing details
+            screenId: '5ed8f4ce7c213e044cc1c1a9', //Picking ticket
             unlocked: false,
-            screen: 'packingdetails',
+            screen: 'Picking ticket',
             selectedIds: [],
-            selectedPl: '',
-            selectedTemplate: '',
-            selectedField: '',
-            selectedType: 'text',
-            updateValue:'',
-            plList: [],
-            docList: [],
+            newMir: {},
+            creating: false,
             alert: {
                 type:'',
                 message:''
             },
-            //-----modals-----
-            showEditValues: false,
-            showColliTypes: false,
             // showSplitLine: false,
-            showGenerate: false,
             showSettings: false,
+            showCreate: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        this.handleGenerateFile = this.handleGenerateFile.bind(this);
-        this.handleUpdateValue = this.handleUpdateValue.bind(this);
-        this.handleUpdateWeight = this.handleUpdateWeight.bind(this);
-        this.assignColliType = this.assignColliType.bind(this);
+        this.handleChangeNewMir = this.handleChangeNewMir.bind(this);
         // this.handleSplitLine = this.handleSplitLine.bind(this);
+        
+
         this.refreshStore = this.refreshStore.bind(this);
-        this.refreshColliTypes = this.refreshColliTypes.bind(this);
+        this.refreshMir = this.refreshMir.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
+        this.createNewMir = this.createNewMir.bind(this);
+        this.handlePrepare = this.handlePrepare.bind(this);
         //Toggle Modals
-        this.toggleEditValues = this.toggleEditValues.bind(this);
-        this.toggleColliTypes = this.toggleColliTypes.bind(this);
-        this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
+        this.toggleCreate = this.toggleCreate.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -514,29 +472,28 @@ class PackingDetails extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
+        
     }
 
     componentDidMount() {
         const { 
             dispatch,
             loadingAccesses,
-            loadingDocdefs,
-            loadingCollipacks,
-            loadingCollitypes,
             loadingFieldnames,
             loadingFields,
-            loadingPos,
+            loadingMirs,
             loadingSelection,
             loadingSettings,
             location,
-            //-----
+            //---------
             fieldnames,
-            docdefs,
-            collipacks,
-            settings
+            mirs,
+            selection,
+            settings 
         } = this.props;
 
-        const { screenId, headersForShow, settingsDisplay } = this.state;
+        const { screenId, headersForShow, settingsDisplay } = this.state; //splitScreenId
+
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
@@ -545,23 +502,14 @@ class PackingDetails extends React.Component {
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
             }
-            if (!loadingDocdefs) {
-                dispatch(docdefActions.getAll(qs.id));
-            }
-            if (!loadingCollipacks) {
-                dispatch(collipackActions.getAll(qs.id));
-            }
-            if (!loadingCollitypes) {
-                dispatch(collitypeActions.getAll(qs.id));
-            }
             if (!loadingFieldnames) {
                 dispatch(fieldnameActions.getAll(qs.id));
             }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
             }
-            if (!loadingPos) {
-                dispatch(poActions.getAll(qs.id));
+            if (!loadingMirs) {
+                dispatch(mirActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -573,65 +521,46 @@ class PackingDetails extends React.Component {
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-            bodysForShow: getBodys(collipacks, headersForShow),
-            plList: getPlList(collipacks),
-            docList: arraySorted(docConf(docdefs.items), "name"),
+            bodysForShow: getBodys(mirs, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, screenId, selectedField, settingsDisplay } = this.state;
-        const { fields, fieldnames, docdefs, collipacks, settings } = this.props;
-        if (selectedField != prevState.selectedField && selectedField != '0') {
-            let found = fields.items.find(function (f) {
-                return f._id === selectedField;
-            });
-            if (found) {
-                this.setState({
-                    ...this.state,
-                    updateValue: '',
-                    selectedType: getInputType(found.type),
-                });
-            }
-        }
+        const { headersForShow, screenId, settingsDisplay } = this.state; //splitScreenId,
+        const { fields, fieldnames, selection, settings, mirs } = this.props;
 
-        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames){
+        if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
             });
         }
 
-        if (collipacks != prevProps.collipacks || headersForShow != prevState.headersForShow) {
-            this.setState({bodysForShow: getBodys(collipacks, headersForShow)});
-        }
-
-        if (collipacks != prevProps.collipacks) {
-            this.setState({plList: getPlList(collipacks)});
-        }
-
-        if (docdefs != prevProps.docdefs) {
-            this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
-        }
-
-        if (settingsDisplay != prevState.settingsDisplay) {
-            this.setState({headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')});
-        }
-
-        if (settings != prevProps.settings) {
+        if (settingsDisplay != prevState.settingsDisplay || fieldnames != prevProps.fieldnames) {
             this.setState({
-                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')
+            });
+        }
+
+        // if (fieldnames != prevProps.fieldnames) {
+        //     this.setState({
+        //         splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
+        //         splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
+        //     });
+        // }
+
+        if (mirs != prevProps.mirs || headersForShow != prevState.headersForShow) {
+            this.setState({
+                bodysForShow: getBodys(mirs, headersForShow)
             });
         }
 
     }
 
     handleClearAlert(event){
-        event.preventDefault;
+        event.preventDefault();
         const { dispatch } = this.props;
         this.setState({ 
             alert: {
@@ -766,16 +695,17 @@ class PackingDetails extends React.Component {
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
         if (projectId) {
-            dispatch(collipackActions.getAll(projectId));
+            dispatch(mirActions.getAll(projectId));
             dispatch(settingActions.getAll(projectId, userId));
         }
     }
 
-    refreshColliTypes() {
+    refreshMir() {
         const { dispatch } = this.props;
         const { projectId } = this.state;
+
         if (projectId) {
-            dispatch(collitypeActions.getAll(projectId));
+            dispatch(mirActions.getAll(projectId));
         }
     }
 
@@ -809,7 +739,7 @@ class PackingDetails extends React.Component {
                 body: JSON.stringify({selectedIds: selectedIds})
             };
             return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
-            .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${leadingChar(month+1, '0', 2)}_${date}.xlsx`));
+            .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
         }
     }
 
@@ -822,429 +752,213 @@ class PackingDetails extends React.Component {
         });
     }
 
-    handleGenerateFile(event) {
+    handleChangeNewMir(event) {
         event.preventDefault();
-        const { docdefs, pos } = this.props;
-        const { selectedTemplate, selectedPl } = this.state;
-
-        function getProp(doctypeId) {
-            switch(doctypeId) {
-                case '5d1927131424114e3884ac80': return {route: 'generatePl', doc: 'PL'};//PL01 Packing List
-                case '5d1927141424114e3884ac84': return {route: 'generateSm', doc: 'SM'};//SM01 Shipping Mark
-                case '5d1927131424114e3884ac81': return {route: 'generatePn', doc: 'PN'};//PN01 Packing Note
-                case '5d1927141424114e3884ac83': return {route: 'generateSi', doc: 'SI'};//SI01 Shipping Invoice
-                default: return {route: 'generatePl', doc: 'PL'}; //default packing list
+        const { projectId, newMir } = this.state;
+        const name =  event.target.name;
+        const value =  event.target.value;
+        this.setState({
+            newMir: {
+                ...newMir,
+                [name]: value,
+                projectId
             }
-        }
-
-        if (!!selectedTemplate && !!selectedPl) {
-            let obj = findObj(docdefs.items, selectedTemplate);
-            if (!!obj) {
-                const requestOptions = {
-                    method: 'GET',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                };
-                return fetch(`${config.apiUrl}/template/${getProp(obj.doctypeId).route}?docDefId=${selectedTemplate}&locale=${locale}&selectedPl=${selectedPl}`, requestOptions)
-                    .then(res => res.blob()).then(blob => saveAs(blob, `${getClPo(pos, selectedPl)}_${getProp(obj.doctypeId).doc}_${leadingChar(selectedPl, '0', 3)}.xlsx`)); //obj.field
-            }
-        }
+        });
     }
 
-    selectedFieldOptions(fieldnames, fields, screenId) {
-
-        const { headersForShow } = this.state;
-
-        if (fieldnames.items && fields.items) {
-            let screenHeaders = headersForShow;
-            let fieldIds = screenHeaders.reduce(function (accumulator, currentValue) {
-                if (accumulator.indexOf(currentValue.fieldId) === -1 ) {
-                    accumulator.push(currentValue.fieldId);
-                }
-                return accumulator;
-            }, []);
-            let fieldsFromHeader = fields.items.reduce(function (accumulator, currentValue) {
-                if (fieldIds.indexOf(currentValue._id) !== -1) {
-                    accumulator.push({ 
-                        value: currentValue._id,
-                        name: currentValue.custom
-                    });
-                }
-                return accumulator;
-            }, []);
-            return arraySorted(fieldsFromHeader, 'name').map(field => {
-                return (
-                    <option 
-                        key={field.value}
-                        value={field.value}>{field.name}
-                    </option>                
-                );
-            });
-        }
-    }
+    // handleSplitLine(event, subId, virtuals) {
+    //     event.preventDefault();
+    //     const requestOptions = {
+    //         method: 'PUT',
+    //         headers: { ...authHeader(), 'Content-Type': 'application/json'},
+    //         body: JSON.stringify({virtuals: virtuals})
+    //     }
+    //     return fetch(`${config.apiUrl}/split/sub?subId=${subId}`, requestOptions)
+    //     .then(responce => responce.text().then(text => {
+    //         const data = text && JSON.parse(text);
+    //         if (!responce.ok) {
+    //             if (responce.status === 401) {
+    //                 localStorage.removeItem('user');
+    //                 location.reload(true);
+    //             }
+    //             this.setState({
+    //                 // showSplitLine: false,
+    //                 alert: {
+    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                     message: data.message
+    //                 }
+    //             }, this.refreshStore);
+    //         } else {
+    //             this.setState({
+    //                 // showSplitLine: false,
+    //                 alert: {
+    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                     message: data.message
+    //                 }
+    //             }, this.refreshStore);
+    //         }
+    //     }));
+    // }
 
     updateSelectedIds(selectedIds) {
         this.setState({
-            ...this.state,
             selectedIds: selectedIds
         });
     }
 
-    handleUpdateValue(event, isErase) {
+    handleDeleteRows(event) {
         event.preventDefault();
-        const { dispatch, fieldnames } = this.props;
-        const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue} = this.state;
-        if (!selectedField) {
-            this.setState({
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'You have not selected the field to be updated.'
-                }
-            });
-        } else if (_.isEmpty(selectedIds)) {
-            this.setState({
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be updated.'
-                }
-            });
-        } else if (_.isEmpty(fieldnames)){
-            this.setState({
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'An error occured, line(s) where not updated.'
-                }
-            });
-            if (projectId) {
-                dispatch(fieldActions.getAll(projectId));
-            }
-        } else {
-            let found = fieldnames.items.find( function (f) {
-                return f.fields._id === selectedField;
-            });
-            if (found.edit && !unlocked) {
-                this.setState({
-                    showEditValues: false,
-                    alert: {
-                        type:'alert-danger',
-                        message:'Selected  field is disabled, please unlock table and try again.'
-                    }
-                });
-            } else {
-                let collection = found.fields.fromTbl;
-                let fieldName = found.fields.name;
-                let fieldValue = isErase ? '' : updateValue;
-                let fieldType = selectedType;
-
-                if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
-                    this.setState({
-                        ...this.state,
-                        showEditValues: false,
-                        alert: {
-                            type:'alert-danger',
-                            message:'Wrong Date Format.'
-                        }
-                    });
-                } else {
-                    const requestOptions = {
-                        method: 'PUT',
-                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            collection: collection,
-                            fieldName: fieldName,
-                            fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
-                            selectedIds: selectedIds
-                        })
-                    };
-                    return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                    .then(responce => responce.text().then(text => {
-                        const data = text && JSON.parse(text);
-                        if (!responce.ok) {
-                            if (responce.status === 401) {
-                                localStorage.removeItem('user');
-                                location.reload(true);
-                            }
-                            this.setState({
-                                showEditValues: false,
-                                alert: {
-                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                    message: data.message
-                                }
-                            }, this.refreshStore);
-                        } else {
-                            this.setState({
-                                showEditValues: false,
-                                alert: {
-                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                    message: data.message
-                                }
-                            }, this.refreshStore);
-                        }
-                    })
-                    .catch( () => {
-                        this.setState({
-                            showEditValues: false,
-                            alert: {
-                                type: 'alert-danger',
-                                message: 'Field could not be updated.'
-                            }
-                        }, this.refreshStore);
-                    }));
-                }
-            }  
-        }
-    }
-
-    handleUpdateWeight(event) {
-        event.preventDefault();
-        const { selection } = this.props;
-        const { projectId, selectedIds } = this.state;
-
+        // const { dispatch } = this.props;
+        const { selectedIds } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
-                showEditValues: false,
                 alert: {
                     type:'alert-danger',
-                    message:'Select line(s) to get weight.'
+                    message:'Select line(s) to be deleted.'
                 }
             });
-        } else if (!selection.hasOwnProperty('project') || _.isEmpty(selection.project.erp)) {
+        } else if (confirm('For the Selected line(s) all MIR details, MIR Items and picking lists shall be deleted. Are you sure you want to proceed?')){
             this.setState({
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'An error occured, line(s) where not updated.'
-                }
-            });
-            
-            if (projectId) {
-                dispatch(projectActions.getById(projectId));
-            }
-        } else {
-            const requestOptions = {
-                method: 'PUT',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    erp: selection.project.erp.name,
-                    selectedIds: selectedIds
-                })
-            };
-            return fetch(`${config.apiUrl}/extract/setWeight`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (!responce.ok) {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    }
-                    this.setState({
-                        showEditValues: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
-                } else {
-                    this.setState({
-                        showEditValues: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
-                }
-            })
-            .catch( () => {
-                this.setState({
-                    showEditValues: false,
-                    alert: {
-                        type: 'alert-danger',
-                        message: 'Field could not be updated.'
-                    }
-                }, this.refreshStore);
-            }));
-        }
-    }
-
-    assignColliType(collitypeId) {
-        const { selection, collitypes } = this.props;
-        const { projectId, selectedIds } = this.state;
-        if (!collitypeId) {
-            this.setState({
-                showColliTypes: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'collitypeId is missing.'
-                }
-            });
-        } else if (_.isEmpty(selectedIds)) {
-            this.setState({
-                showColliTypes: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to assign Colli Type.'
-                }
-            });
-        } else if (!selection.hasOwnProperty('project') || _.isEmpty(selection.project.erp)) {
-            this.setState({
-                showColliTypes: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'An error occured, line(s) where not updated.'
-                }
-            });
-            
-            if (projectId) {
-                dispatch(projectActions.getById(projectId));
-            }
-        } else if (!collitypes.hasOwnProperty('items') || _.isEmpty(collitypes.items)) {
-            this.setState({
-                showColliTypes: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'An error occured, line(s) where not updated.'
-                }
-            });
-        } else {
-            let colliType = collitypes.items.find(element => element._id === collitypeId);
-            if (_.isUndefined(colliType)) {
-                this.setState({
-                    showColliTypes: false,
-                    alert: {
-                        type:'alert-danger',
-                        message:'An error occured, line(s) where not updated.'
-                    }
-                });
-            } else {
+                ...this.state,
+                deleting: true
+            }, () => {
                 const requestOptions = {
-                    method: 'PUT',
+                    method: 'DELETE',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        colliType: colliType,
-                        erp: selection.project.erp.name,
-                        selectedIds: selectedIds
-                    })
+                    body: JSON.stringify({ selectedIds: selectedIds })
                 };
-                return fetch(`${config.apiUrl}/extract/setCollitype`, requestOptions)
+                return fetch(`${config.apiUrl}/mir/delete`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
-                    if (!responce.ok) {
-                        if (responce.status === 401) {
+                    if (responce.status === 401) {
                             localStorage.removeItem('user');
                             location.reload(true);
-                        }
-                        this.setState({
-                            showColliTypes: false,
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, this.refreshStore);
                     } else {
                         this.setState({
-                            showColliTypes: false,
+                            deleting: false,
                             alert: {
                                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                 message: data.message
                             }
-                        }, this.refreshStore);
+                        }, this.refreshMir);
                     }
-                })
-                .catch( () => {
-                    this.setState({
-                        showColliTypes: false,
-                        alert: {
-                            type: 'alert-danger',
-                            message: 'Colli Type could not be assigned.'
-                        }
-                    }, this.refreshStore);
                 }));
-            }
-        }
-    }
-
-    handleDeleteRows(event) {
-        event.preventDefault;
-        this.setState({
-            alert: {
-                type:'alert-danger',
-                message:'For the Selected line(s) all packing details shall be deleted. Are you sure you want to proceed?'
-            }
-        });
-    }
-
-    toggleEditValues(event) {
-        event.preventDefault();
-        const { showEditValues, selectedIds } = this.state;
-        if (!showEditValues && _.isEmpty(selectedIds)) {
-            this.setState({
-                ...this.state,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be updated.'
-                }
-            });
-        } else {
-            this.setState({
-                ...this.state,
-                selectedTemplate: '',
-                selectedField: '',
-                selectedType: 'text',
-                updateValue:'',
-                alert: {
-                    type:'',
-                    message:''
-                },
-                showEditValues: !showEditValues,
             });
         }
-    }
-
-    toggleColliTypes(event) {
-        event.preventDefault();
-        const { showColliTypes, selectedIds } = this.state;
-        if (!showColliTypes && _.isEmpty(selectedIds)) {
-            this.setState({
-                ...this.state,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be updated.'
-                }
-            }); 
-        } else {
-            this.setState({
-                alert: {
-                    type:'',
-                    message:''
-                },
-                showColliTypes: !showColliTypes,
-            });
-        }
-    }
-
-    toggleGenerate(event) {
-        event.preventDefault();
-        const { showGenerate, plList, docList } = this.state;
-        this.setState({
-            ...this.state,
-            selectedPl: (!showGenerate  && plList) ? plList[0]._id : '',
-            selectedTemplate: (!showGenerate  && docList) ? docList[0]._id : '',
-            alert: {
-                type:'',
-                message:''
-            },
-            showGenerate: !showGenerate,
-        });
     }
 
     toggleSettings(event) {
         event.preventDefault();
         const { showSettings } = this.state;
         this.setState({
+            alert: {
+                type: '',
+                message: ''
+            },
             showSettings: !showSettings
         });
+    }
+
+    toggleCreate(event) {
+        event.preventDefault();
+        const { showCreate } = this.state;
+        this.setState({
+            alert: {
+                type: '',
+                message: ''
+            },
+            newMir: {},
+            showCreate: !showCreate
+        });
+    }
+
+    createNewMir(event) {
+        event.preventDefault();
+        const { newMir } = this.state;
+        const { mir, dateReceived, dateExpected, projectId } = newMir;
+        if (!mir && !dateReceived && !dateExpected && !projectId ) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'All fields are required.'
+                }
+            });
+        } else if (!isValidFormat(dateReceived, 'date', getDateFormat(myLocale))) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Date Received: Not a valid date format.'
+                }
+            });
+        } else if (!isValidFormat(dateExpected, 'date', getDateFormat(myLocale))) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Date Expected: Not a valid date format.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                creating: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newMir)
+                };
+                return fetch(`${config.apiUrl}/mir/create`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);;
+                    } else {
+                        this.setState({
+                            creating: false,
+                            showCreate: false,
+                            newMir: {},
+                            alert: {
+                                type: responce.status === 200 ? '' : 'alert-danger',
+                                message: responce.status === 200 ? '' : data.message
+                            }
+                        }, this.refreshMir);
+                    }
+                }));
+            });
+        }
+    }
+
+    handlePrepare(event) {
+        event.preventDefault();
+        const { selectedIds, projectId } = this.state;
+        if (projectId === '') {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Could not retreive project ID.'
+                }
+            });
+        } else if (selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one line to prepare the Pick Ticket.'
+                }
+            });
+        } else if (!selectedIds[0].hasOwnProperty('mirId')) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Could not retreive pickticketId.'
+                }
+            });
+        } else {
+            history.push({
+                pathname:'/ptsplitwindow',
+                search: '?id=' + projectId + '&mirid=' + selectedIds[0].pickticketId
+            });
+        }
     }
 
     handleModalTabClick(event, tab){
@@ -1260,39 +974,37 @@ class PackingDetails extends React.Component {
     }
 
     render() {
+
         const { 
             projectId, 
             screen, 
             screenId,
-            selectedIds,
-            unlocked,
-            selectedPl,
-            selectedTemplate,
-            selectedField,
-            selectedType,
-            updateValue,
-            plList,
-            docList,
+            selectedIds, 
+            unlocked, 
             //show modals
-            showEditValues,
-            showColliTypes,
             // showSplitLine,
-            showGenerate,
             showSettings,
-            //---------
+            //--------
             headersForShow,
             bodysForShow,
+            //---------------
+            newMir,
+            showCreate,
+            creating,
+            // splitHeadersForShow,
+            // splitHeadersForSelect,
             //'-------------------'
             tabs,
             settingsFilter,
             settingsDisplay
-        }= this.state;
+        } = this.state;
 
-        const { accesses, docdefs, fieldnames, fields, collipacks, collitypes, selection } = this.props;
+        const { accesses, fieldnames, fields, mirs, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
+
         return (
-            <Layout alert={showSettings || showColliTypes ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
-                {alert.message && !showSettings && !showColliTypes &&
+            <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+                {alert.message && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1305,30 +1017,24 @@ class PackingDetails extends React.Component {
                             <NavLink to={{ pathname: '/dashboard', search: '?id=' + projectId }} tag="a">Dashboard</NavLink>
                         </li>
                         <li className="breadcrumb-item">
-                            <NavLink to={{ pathname: '/shipping', search: '?id=' + projectId }} tag="a">Shipping</NavLink>
+                            <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
-                        <li className="breadcrumb-item active" aria-current="page">Complete packing details:</li>
+                        <li className="breadcrumb-item active" aria-current="page">Picking ticket:</li>
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
                     </ol>
                 </nav>
                 <hr />
-                <div id="packingdetails" className="full-height">
+                <div id="calloff" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Edit Values" onClick={event => this.toggleEditValues(event)}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create picking ticket" onClick={this.toggleCreate}>
+                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Assign Colli Type" onClick={event => this.toggleColliTypes(event)}>
-                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Colli Type</span>
-                        </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Calculate Net Weight" onClick={event => this.handleUpdateWeight(event)}>
-                            <span><FontAwesomeIcon icon="balance-scale-left" className="fa-lg mr-2"/>Net Weight</span>
-                        </button>
-                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Generate Shipping Docs" onClick={event => this.toggleGenerate(event)}>
-                            <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Shipping Docs</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Prepare picking ticket" onClick={this.handlePrepare}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Prepare</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
-                        {selection && selection.project && 
+                        {fieldnames.items && 
                             <ProjectTable
                                 screenHeaders={headersForShow}
                                 screenBodys={bodysForShow}
@@ -1350,109 +1056,6 @@ class PackingDetails extends React.Component {
                         }
                     </div>
                 </div>
-
-                <Modal
-                    show={showEditValues}
-                    hideModal={this.toggleEditValues}
-                    title="Edit Values"
-                >
-                    <div className="col-12">
-                        <div className="form-group">
-                            <label htmlFor="selectedField">Select Field</label>
-                            <select
-                                className="form-control"
-                                name="selectedField"
-                                value={selectedField}
-                                placeholder="Select field..."
-                                onChange={this.handleChange}
-                            >
-                                <option key="0" value="0">Select field...</option>
-                                {this.selectedFieldOptions(fieldnames, fields, screenId)}
-                            </select>
-                        </div>
-                        <div className="form-group">
-                            <label htmlFor="updateValue">Value</label>
-                            <input
-                                className="form-control"
-                                type={selectedType === 'number' ? 'number' : 'text'}
-                                name="updateValue"
-                                value={updateValue}
-                                onChange={this.handleChange}
-                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
-                            />
-                        </div>
-                        <div className="text-right">
-                            <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.handleUpdateValue(event, false)}>
-                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
-                            </button>
-                            <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleUpdateValue(event, true)}>
-                                <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
-                            </button>
-                        </div>                   
-                    </div>
-                </Modal>
-
-                <Modal
-                    show={showColliTypes}
-                    hideModal={this.toggleColliTypes}
-                    title="Assign Colli Type"
-                    size="modal-xl"
-                >
-                    <ColliType 
-                    collitypes={collitypes}
-                    refreshColliTypes={this.refreshColliTypes}
-                    projectId={projectId}
-                    alert={alert}
-                    handleClearAlert={this.handleClearAlert}
-                    assignColliType={this.assignColliType}
-                    />
-                </Modal>
-
-                <Modal
-                    show={showGenerate}
-                    hideModal={this.toggleGenerate}
-                    title="Generate Document"
-                >
-                    <div className="col-12">
-                        <form onSubmit={event => this.handleGenerateFile(event)}>
-                            <div className="form-group">
-                                <label htmlFor="selectedPl">Select PL No</label>
-                                <select
-                                    className="form-control"
-                                    name="selectedPl"
-                                    value={selectedPl}
-                                    placeholder="Select document..."
-                                    onChange={this.handleChange}
-                                    required
-                                >
-                                    <option key="0" value="">Select PL No...</option>
-                                    {generateOptions(plList)}
-                                </select>
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="selectedTemplate">Select Document</label>
-                                <select
-                                    className="form-control"
-                                    name="selectedTemplate"
-                                    value={selectedTemplate}
-                                    placeholder="Select document..."
-                                    onChange={this.handleChange}
-                                    required
-                                >
-                                    <option key="0" value="">Select document...</option>
-                                    {generateOptions(docList)}
-                                </select>
-                            </div>
-                            <div className="text-right">
-                                <button className="btn btn-success btn-lg" type="submit">
-                                    <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
-                                </button>
-                            </div>
-                        </form>         
-                    </div>
-                </Modal>
-
-
                 <Modal
                     show={showSettings}
                     hideModal={this.toggleSettings}
@@ -1472,7 +1075,7 @@ class PackingDetails extends React.Component {
                         <div className="tab-content" id="modal-nav-tabContent">
                             {alert.message &&
                                 <div className={`alert ${alert.type}`}>{alert.message}
-                                    <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                    <button className="close" onClick={this.handleClearAlert}>
                                         <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
                                     </button>
                                 </div>
@@ -1499,7 +1102,7 @@ class PackingDetails extends React.Component {
                             )}
                         </div>
                     </div>
-                    <div className="text-right mt-3">
+                    <div className="text-right mt-3"> 
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
                             <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
                         </button>
@@ -1511,46 +1114,89 @@ class PackingDetails extends React.Component {
                         </button>
                     </div>
                 </Modal>
-
+                <Modal
+                    show={showCreate}
+                    hideModal={this.toggleCreate}
+                    title="Create material issue record"
+                    
+                >
+                    <div className="col-12">
+                        <form onSubmit={this.createNewMir}>
+                            <div className="form-group">
+                                <label htmlFor="mir">MIR No.</label>
+                                <input
+                                    className="form-control"
+                                    type='text'
+                                    name="mir"
+                                    value={newMir.mir}
+                                    onChange={this.handleChangeNewMir}
+                                    placeholder=""
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="dateReceived">Date received</label>
+                                <input
+                                    className="form-control"
+                                    type='text'
+                                    name="dateReceived"
+                                    value={newMir.dateReceived}
+                                    onChange={this.handleChangeNewMir}
+                                    placeholder={getDateFormat(myLocale)}
+                                    required
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="dateExpected">Date expected</label>
+                                <input
+                                    className="form-control"
+                                    type='text'
+                                    name="dateExpected"
+                                    value={newMir.dateExpected}
+                                    onChange={this.handleChangeNewMir}
+                                    placeholder={getDateFormat(myLocale)}
+                                    required
+                                />
+                            </div>
+                            <div className="text-right">
+                                <button type="submit" className="btn btn-leeuwen-blue btn-lg mt-2">
+                                    <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
+                                </button>
+                            </div>
+                        </form>                  
+                    </div>
+                </Modal>
             </Layout>
         );
     }
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, collipacks, collitypes, docdefs, fieldnames, fields, pos, selection, settings } = state;
+    const { accesses, alert, fieldnames, fields, mirs, selection, settings } = state;
     const { loadingAccesses } = accesses;
-    const { loadingDocdefs } = docdefs;
-    const { loadingCollipacks } = collipacks;
-    const { loadingCollitypes } = collitypes;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
-    const { loadingPos } = pos;
+    const { loadingMirs } = mirs;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
 
+    
     return {
         accesses,
         alert,
-        collipacks,
-        collitypes,
-        docdefs,
         fieldnames,
         fields,
         loadingAccesses,
-        loadingDocdefs,
-        loadingCollipacks,
-        loadingCollitypes,
         loadingFieldnames,
         loadingFields,
-        loadingPos,
+        loadingMirs,
         loadingSelection,
         loadingSettings,
-        pos,
+        mirs,
         selection,
         settings
     };
 }
 
-const connectedPackingDetails = connect(mapStateToProps)(PackingDetails);
-export { connectedPackingDetails as PackingDetails };
+const connectedPickingTicket = connect(mapStateToProps)(PickingTicket);
+export { connectedPickingTicket as PickingTicket };

@@ -435,7 +435,7 @@ class MaterialIssueRecord extends React.Component {
             screenId: '5ed1e76e7c213e044cc01884', //Material Issue Record
             // splitScreenId: '5ed1e7a67c213e044cc01888', //Material Issue Record Splitwindow
             unlocked: false,
-            screen: 'Material Issue Record',
+            screen: 'Material issue record',
             selectedIds: [],
             newMir: {},
             creating: false,
@@ -461,7 +461,7 @@ class MaterialIssueRecord extends React.Component {
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         this.createNewMir = this.createNewMir.bind(this);
-        this.handleEditClick = this.handleEditClick.bind(this);
+        this.handlePrepare = this.handlePrepare.bind(this);
         //Toggle Modals
         this.toggleSettings = this.toggleSettings.bind(this);
         this.toggleCreate = this.toggleCreate.bind(this);
@@ -932,7 +932,7 @@ class MaterialIssueRecord extends React.Component {
         }
     }
 
-    handleEditClick(event) {
+    handlePrepare(event) {
         event.preventDefault();
         const { selectedIds, projectId } = this.state;
         if (projectId === '') {
@@ -1022,18 +1022,18 @@ class MaterialIssueRecord extends React.Component {
                         <li className="breadcrumb-item">
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
-                        <li className="breadcrumb-item active" aria-current="page">Material Issue Record:</li>
+                        <li className="breadcrumb-item active" aria-current="page">Material issue record:</li>
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
                     </ol>
                 </nav>
                 <hr />
                 <div id="calloff" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create MIR" onClick={this.toggleCreate}>
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create MIR</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create material issue record" onClick={this.toggleCreate}>
+                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add/Edit Lines" onClick={this.handleEditClick}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Add Lines</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Prepare material issue record" onClick={this.handlePrepare}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Prepare</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
@@ -1120,7 +1120,7 @@ class MaterialIssueRecord extends React.Component {
                 <Modal
                     show={showCreate}
                     hideModal={this.toggleCreate}
-                    title="Create Material Issue Record"
+                    title="Create material issue record"
                     
                 >
                     <div className="col-12">

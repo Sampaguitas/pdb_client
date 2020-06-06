@@ -184,7 +184,8 @@ function docConf(array) {
         '5d1927131424114e3884ac81', //PN01 Packing Note
         '5d1927141424114e3884ac83', //SI01 Shipping Invoice
         '5d1927131424114e3884ac7f', //NFI01 Notification for inspection,
-        '5eacef91e7179a42f172feea' //SH01 Stock History Report
+        '5eacef91e7179a42f172feea', //SH01 Stock History Report
+        '5edb2317e7179a6b6367d786' //PT01 Picking Ticket
     ];
     return array.filter(function (element) {
         return tpeOf.includes(element.doctypeId);
@@ -558,14 +559,14 @@ class Documents extends React.Component {
         const { newRow, selectedTemplate } = this.state;
         if (selectedTemplate == '0') {
             this.setState({
-                ...this.state,
-                newRow: false}
-                )
+                newRow: false,
+                docField:{}
+            });
         } else {
             this.setState({
-                ...this.state,
-                newRow: !newRow
-            })
+                newRow: !newRow,
+                docField:{}
+            });
         }
     }
 
@@ -1096,6 +1097,7 @@ class Documents extends React.Component {
             {_id: '5d1927141424114e3884ac83', code: 'SI01' , name: 'Shipping Invoice', fromTbls: ['storedproc', 'article', 'po', 'sub', 'collipack', 'packitem', 'certificate']},
             {_id: '5d1927131424114e3884ac7f', code: 'NFI01', name: 'Notification for inspection', fromTbls: ['po', 'sub', 'packitem', 'certificate']},
             {_id: '5eacef91e7179a42f172feea', code: 'SH01', name: 'Stock History Report', fromTbls: ['storedproc', 'po', 'location', 'transaction']},
+            {_id: '5edb2317e7179a6b6367d786', code: 'PT01', name: 'Picking Ticket', fromTbls: ['mir', 'po', 'location', 'heatloc', 'pickticket', 'pickitem']},
         ]
 
         return (
@@ -1479,7 +1481,7 @@ class Documents extends React.Component {
                                             <button type="submit" className="btn btn-leeuwen-blue btn-lg btn-full">
                                                 <span>
                                                     <FontAwesomeIcon
-                                                        icon={updatingDocDef ? "spinner" : docDef.id ? "edit" : "plus"}
+                                                        icon={updatingDocDef || creatingDocDef ? "spinner" : docDef.id ? "edit" : "plus"}
                                                         className={updatingDocDef ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}
                                                     />
                                                     {docDef.id ? "Update" : "Create"}

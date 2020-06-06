@@ -515,7 +515,7 @@ function initSettingsDisplay(fieldnames, settings, screenId) {
     }
 }
 
-class MirSplitwindow extends React.Component {
+class PtSplitwindow extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -553,9 +553,9 @@ class MirSplitwindow extends React.Component {
                 dateExpected: '',
                 miritems: '',
             },
-            screenId: '5ed1e7a67c213e044cc01888',
+            screenId: '5ed8f4f37c213e044cc1c1af', //Picking Ticket Splitwindow
             unlocked: false,
-            screen: 'Material issue record',
+            screen: 'Picking Ticket Splitwindow',
             selectedIds: [],
             alert: {
                 type:'',
@@ -1117,7 +1117,7 @@ class MirSplitwindow extends React.Component {
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">
-                            <NavLink to={{ pathname: '/materialissuerecord', search: '?id=' + projectId }} tag="a">Material issue record:</NavLink>
+                            <NavLink to={{ pathname: '/materialissuerecord', search: '?id=' + projectId }} tag="a">Picking ticket:</NavLink>
                         </li>
                         <span className="ml-3 project-title">
                             {selection.project ?
@@ -1268,5 +1268,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedMirSplitwindow = connect(mapStateToProps)(MirSplitwindow);
-export { connectedMirSplitwindow as MirSplitwindow };
+const connectedPtSplitwindow = connect(mapStateToProps)(PtSplitwindow);
+export { connectedPtSplitwindow as PtSplitwindow };

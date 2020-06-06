@@ -33,7 +33,8 @@ import { WhCertificates } from '../pages/project/warehouse/whcertificates.jsx';
 import { StockManagement } from '../pages/project/warehouse/stockmanagement.jsx';
 import { MaterialIssueRecord } from '../pages/project/warehouse/materialissuerecord.jsx';
 import { MirSplitwindow } from '../pages/project/warehouse/mirsplitwindow.jsx';
-import { PickingLists } from '../pages/project/warehouse/pickinglists.jsx';
+import { PickingTicket } from '../pages/project/warehouse/pickingticket.jsx';
+import { PtSplitwindow } from '../pages/project/warehouse/ptsplitwindow.jsx';
 import { OutgoingShipments } from '../pages/project/warehouse/outgoingshipments.jsx';
 import { Locations } from '../pages/project/warehouse/locations.jsx';
 import { Configuration } from '../pages/project/configuration.jsx';
@@ -93,7 +94,8 @@ class App extends React.Component {
                         <PrivateRoute path="/stockmanagement" component={StockManagement} user={user}/>
                         <PrivateRoute path="/materialissuerecord" component={MaterialIssueRecord} user={user}/>
                         <PrivateRoute path="/mirsplitwindow" component={MirSplitwindow} user={user}/>
-                        <PrivateRoute path="/pickinglists" component={PickingLists} user={user}/>
+                        <PrivateRoute path="/pickingticket" component={PickingTicket} user={user}/>
+                        <PrivateRoute path="/ptsplitwindow" component={PtSplitwindow} user={user}/>
                         <PrivateRoute path="/outgoingshipments" component={OutgoingShipments} user={user}/>
                         <PrivateRoute path="/locations" component={Locations} user={user}/>
                         <PrivateRoute path="/configuration" component={Configuration} user={user}/>
