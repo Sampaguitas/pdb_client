@@ -14,6 +14,7 @@ export * from './heatloc.actions';
 export * from './locale.actions';
 export * from './mir.actions';
 export * from './opco.actions';
+export * from './pickticket.actions';
 export * from './po.actions';
 export * from './project.actions';
 export * from './region.actions';

@@ -17,6 +17,7 @@ import { heatlocs } from './heatlocs.reducer';
 import { locales } from './locales.reducer';
 import { mirs } from './mirs.reducer';
 import { opcos } from './opcos.reducer';
+import { picktickets } from './picktickets.reducer';
 import { pos } from './pos.reducer';
 import { projects } from './projects.reducer';
 import { regions } from './regions.reducer';
@@ -49,6 +50,7 @@ const rootReducer = combineReducers({
   locales,
   mirs,
   opcos,
+  picktickets,
   pos,
   projects,
   regions,

@@ -14,6 +14,7 @@ export * from './heatloc.constants';
 export * from './locale.constants';
 export * from './mir.constants';
 export * from './opco.constants';
+export * from './pickticket.constants';
 export * from './po.constants';
 export * from './project.constants';
 export * from './region.constants';
