@@ -13,12 +13,14 @@ import {
     fieldActions,
     mirActions, 
     projectActions,
-    settingActions
+    settingActions,
+    warehouseActions,
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
+import WarehouseCheck from '../../../_components/warehouse-check';
 import Modal from '../../../_components/modal';
 
 import moment from 'moment';
@@ -114,6 +116,14 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
 
 function baseTen(number) {
     return number.toString().length > 2 ? number : '0' + number;
+}
+
+function arrayRemove(arr, value) {
+
+    return arr.filter(function(ele){
+        return ele != value;
+    });
+ 
 }
 
 function resolve(path, obj) {
@@ -403,6 +413,31 @@ function initSettingsDisplay(fieldnames, settings, screenId) {
     }
 }
 
+function generateWarehouseLayout(warehouses, selectedWarehouses, handleCheckWarehouse) {
+    let tempArray = [];
+    if (warehouses.hasOwnProperty('items') && !_.isEmpty(warehouses.items)) {
+        warehouses.items.map(function (element, index){
+            tempArray.push(
+                <WarehouseCheck
+                    key={index}
+                    id={element._id}
+                    title={element.warehouse}
+                    isChecked={selectedWarehouses.includes(element._id)}
+                    handleCheck={handleCheckWarehouse}
+                />
+            );
+        });
+    }
+    return (
+        <div style={{borderStyle: 'none', borderWidth: '1px', borderColor: '#ddd', maxHeight: '60px', overflowY: 'auto'}}>
+            <div className="row ml-2 mr-2 mt-2">
+                
+                {tempArray}
+            </div>
+        </div>
+    );
+}
+
 class MaterialIssueRecord extends React.Component {
     constructor(props) {
         super(props);
@@ -437,23 +472,25 @@ class MaterialIssueRecord extends React.Component {
             unlocked: false,
             screen: 'Material issue record',
             selectedIds: [],
+            selectedWarehouses: [],
             newMir: {},
-            creating: false,
+            creatingMir: false,
+            creatingPt: false,
             alert: {
                 type:'',
                 message:''
             },
             // showSplitLine: false,
             showSettings: false,
-            showCreate: false,
+            showCreateMir: false,
+            showCreatePt: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleChangeNewMir = this.handleChangeNewMir.bind(this);
-        // this.handleSplitLine = this.handleSplitLine.bind(this);
-        
+        this.handleCheckWarehouse = this.handleCheckWarehouse.bind(this);
 
         this.refreshStore = this.refreshStore.bind(this);
         this.refreshMir = this.refreshMir.bind(this);
@@ -462,9 +499,11 @@ class MaterialIssueRecord extends React.Component {
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         this.createNewMir = this.createNewMir.bind(this);
         this.handlePrepare = this.handlePrepare.bind(this);
+        this.handleCreatePT = this.handleCreatePT.bind(this);
         //Toggle Modals
         this.toggleSettings = this.toggleSettings.bind(this);
-        this.toggleCreate = this.toggleCreate.bind(this);
+        this.toggleCreateMir = this.toggleCreateMir.bind(this);
+        this.toggleCreatePt = this.toggleCreatePt.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -485,6 +524,7 @@ class MaterialIssueRecord extends React.Component {
             loadingMirs,
             loadingSelection,
             loadingSettings,
+            loadingWarehouses,
             location,
             //---------
             fieldnames,
@@ -517,6 +557,9 @@ class MaterialIssueRecord extends React.Component {
             }
             if (!loadingSettings) {
                 dispatch(settingActions.getAll(qs.id, userId));
+            }
+            if (!loadingWarehouses) {
+                dispatch(warehouseActions.getAll(qs.id));
             }
         }
 
@@ -769,6 +812,19 @@ class MaterialIssueRecord extends React.Component {
         });
     }
 
+    handleCheckWarehouse(id) {
+        const { selectedWarehouses } = this.state;
+        if (selectedWarehouses.includes(id)) {
+            this.setState({
+                selectedWarehouses: arrayRemove(selectedWarehouses, id)
+            });
+        } else {
+            this.setState({
+                selectedWarehouses: [...selectedWarehouses, id]
+            });
+        }
+    }
+
     // handleSplitLine(event, subId, virtuals) {
     //     event.preventDefault();
     //     const requestOptions = {
@@ -862,17 +918,44 @@ class MaterialIssueRecord extends React.Component {
         });
     }
 
-    toggleCreate(event) {
+    toggleCreateMir(event) {
         event.preventDefault();
-        const { showCreate } = this.state;
+        const { showCreateMir } = this.state;
         this.setState({
             alert: {
                 type: '',
                 message: ''
             },
             newMir: {},
-            showCreate: !showCreate
+            showCreateMir: !showCreateMir
         });
+    }
+
+    toggleCreatePt(event) {
+        event.preventDefault();
+        const { warehouses } = this.props;
+        const { showCreatePt, selectedIds } = this.state;
+        if (_.isEmpty(selectedIds) || selectedIds.length > 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one line to generate picking tickets'
+                }
+            });
+        } else if (warehouses.hasOwnProperty('items') && !_.isEmpty(warehouses.items)) {
+            let warehousesIds = warehouses.items.reduce(function (acc, cur) {
+                acc.push(cur._id)
+                return acc;
+            }, []);
+            this.setState({
+                alert: {
+                    type: '',
+                    message: ''
+                },
+                selectedWarehouses: warehousesIds,
+                showCreatePt: !showCreatePt
+            });
+        }
     }
 
     createNewMir(event) {
@@ -903,7 +986,7 @@ class MaterialIssueRecord extends React.Component {
         } else {
             this.setState({
                 ...this.state,
-                creating: true
+                creatingMir: true
             }, () => {
                 const requestOptions = {
                     method: 'POST',
@@ -918,8 +1001,8 @@ class MaterialIssueRecord extends React.Component {
                             location.reload(true);;
                     } else {
                         this.setState({
-                            creating: false,
-                            showCreate: false,
+                            creatingMir: false,
+                            showCreateMir: false,
                             newMir: {},
                             alert: {
                                 type: responce.status === 200 ? '' : 'alert-danger',
@@ -939,7 +1022,7 @@ class MaterialIssueRecord extends React.Component {
             this.setState({
                 alert: {
                     type: 'alert-danger',
-                    message: 'Could not retreive project ID.'
+                    message: 'Could not retreive projectId.'
                 }
             });
         } else if (selectedIds.length != 1) {
@@ -953,7 +1036,7 @@ class MaterialIssueRecord extends React.Component {
             this.setState({
                 alert: {
                     type: 'alert-danger',
-                    message: 'Could not retreive MIR ID.'
+                    message: 'Could not retreive mirId.'
                 }
             });
         } else {
@@ -961,6 +1044,45 @@ class MaterialIssueRecord extends React.Component {
                 pathname:'/mirsplitwindow',
                 search: '?id=' + projectId + '&mirid=' + selectedIds[0].mirId
             });
+        }
+    }
+
+    handleCreatePT(event) {
+        event.preventDefault();
+        const { selectedIds, selectedWarehouses, projectId } = this.state;
+        if (projectId === '') {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Could not retreive projectId.'
+                }
+            });
+        } else if (selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one line to generate picking tickets.'
+                }
+            });
+        } else if (!selectedIds[0].hasOwnProperty('mirId')) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Could not retreive mirId.'
+                }
+            });
+        } else if (selectedWarehouses.length == 0) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'You need to select at least one warehouse.'
+                }
+            });
+        } else {
+
+            console.log('projectId:', projectId);
+            console.log('selectedIds:', selectedIds);
+            console.log('selectedWarehouses:', selectedWarehouses);
         }
     }
 
@@ -982,7 +1104,8 @@ class MaterialIssueRecord extends React.Component {
             projectId, 
             screen, 
             screenId,
-            selectedIds, 
+            selectedIds,
+            selectedWarehouses,
             unlocked, 
             //show modals
             // showSplitLine,
@@ -992,8 +1115,10 @@ class MaterialIssueRecord extends React.Component {
             bodysForShow,
             //---------------
             newMir,
-            showCreate,
-            creating,
+            showCreateMir,
+            showCreatePt,
+            creatingMir,
+            creatingPt,
             // splitHeadersForShow,
             // splitHeadersForSelect,
             //'-------------------'
@@ -1002,12 +1127,12 @@ class MaterialIssueRecord extends React.Component {
             settingsDisplay
         } = this.state;
 
-        const { accesses, fieldnames, fields, mirs, selection } = this.props;
+        const { accesses, fieldnames, fields, warehouses, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
-                {alert.message && !showSettings &&
+            <Layout alert={showSettings || showCreatePt ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+                {alert.message && !showSettings && !showCreatePt &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1029,11 +1154,14 @@ class MaterialIssueRecord extends React.Component {
                 <hr />
                 <div id="calloff" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create material issue record" onClick={this.toggleCreate}>
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create Material Issue Record" onClick={this.toggleCreateMir}>
+                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create MIR</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Prepare material issue record" onClick={this.handlePrepare}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Prepare</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Prepare Material Issue Record" onClick={this.handlePrepare}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Prepare MIR</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create Picking Tickets" onClick={this.toggleCreatePt}>
+                            <span><FontAwesomeIcon icon="clipboard-list" className="fa-lg mr-2"/>Create Tickets</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
@@ -1118,8 +1246,8 @@ class MaterialIssueRecord extends React.Component {
                     </div>
                 </Modal>
                 <Modal
-                    show={showCreate}
-                    hideModal={this.toggleCreate}
+                    show={showCreateMir}
+                    hideModal={this.toggleCreateMir}
                     title="Create material issue record"
                     
                 >
@@ -1163,11 +1291,67 @@ class MaterialIssueRecord extends React.Component {
                             </div>
                             <div className="text-right">
                                 <button type="submit" className="btn btn-leeuwen-blue btn-lg mt-2">
-                                    <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
+                                    <span><FontAwesomeIcon icon={creatingMir ? "spinner" : "plus"} className={creatingMir ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
                                 </button>
                             </div>
                         </form>                  
                     </div>
+                </Modal>
+                <Modal
+                    show={showCreatePt}
+                    hideModal={this.toggleCreatePt}
+                    title="Create Picking Tickets:" 
+                    size="modal-xl"
+                >
+                        <div className="ml-1 mr-1 mt-2">
+                            {alert.message && 
+                                <div className={`alert ${alert.type} mt-3`}>{alert.message}
+                                    <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                        <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                                    </button>
+                                </div>
+                            }
+                            <div className="mt-2">
+                                <label>Pick from warehouse:</label>
+                                {generateWarehouseLayout(warehouses, selectedWarehouses, this.handleCheckWarehouse)}
+                            </div>
+                            <div className="text-right mt-2">
+                                <button className="btn btn-leeuwen-blue btn-lg" title="Generate Picking Tickets" onClick={this.handleCreatePT}>
+                                    <span><FontAwesomeIcon icon={creatingPt ? "spinner" : "plus"} className={creatingPt ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
+                                </button>
+                            </div>
+                            {/* {!_.isEmpty(responce) &&
+                                <div className="ml-1 mr-1" style={{height: 'calc(100% - 44px)'}}>
+                                    <div className="form-group table-resonsive" style={{height: '83px'}}>
+                                        <strong>Total Processed:</strong> {responce.nProcessed}<br />
+                                        <strong>Total records Added:</strong> {responce.nAdded}<br />
+                                        <strong>Total Records Edited:</strong> {responce.nEdited}<br />
+                                        <strong>Total Records Rejected:</strong> {responce.nRejected}<br />
+                                        <hr />
+                                    </div>
+                                    {!_.isEmpty(responce.rejections) &&
+                                        <div className="rejections" style={{height: 'calc(100% - 93px)'}}>
+                                            <h3>Rejections</h3>
+                                            <div className="" style={{height: 'calc(100% - 29px)'}}>
+                                                <div className="table-responcive custom-table-container">
+                                                    <table className="table table-sm">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style={{width: '10%'}}>Row</th>
+                                                                <th style={{width: '90%'}}>Reason</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            {this.generateRejectionRows(responce)}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            } */}
+                        </div>              
                 </Modal>
             </Layout>
         );
@@ -1175,13 +1359,14 @@ class MaterialIssueRecord extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, mirs, selection, settings } = state;
+    const { accesses, alert, fieldnames, fields, mirs, selection, settings, warehouses } = state;
     const { loadingAccesses } = accesses;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingMirs } = mirs;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
+    const { loadingWarehouses } = warehouses
 
     
     return {
@@ -1195,9 +1380,11 @@ function mapStateToProps(state) {
         loadingMirs,
         loadingSelection,
         loadingSettings,
+        loadingWarehouses,
         mirs,
         selection,
-        settings
+        settings,
+        warehouses
     };
 }
 

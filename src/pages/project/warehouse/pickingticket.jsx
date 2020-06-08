@@ -11,7 +11,8 @@ import {
     alertActions,  
     fieldnameActions,
     fieldActions,
-    mirActions, 
+    mirActions,
+    pickticketActions,
     projectActions,
     settingActions
 } from '../../../_actions';
@@ -58,13 +59,13 @@ function passSelectedIds(selectedIds) {
     }
 }
 
-function passSelectedMir(selectedIds, mirs) {
-    if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(mirs.items)){
-        return {};
-    } else {
-        return mirs.items.find(mir => mir._id === selectedIds[0].mirId);
-    }
-}
+// function passSelectedMir(selectedIds, mirs) {
+//     if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(mirs.items)){
+//         return {};
+//     } else {
+//         return mirs.items.find(mir => mir._id === selectedIds[0].mirId);
+//     }
+// }
 
 
 function TypeToString(fieldValue, fieldType, myDateFormat) {
@@ -156,20 +157,6 @@ function findObj(array, search) {
     }
 }
 
-// function getScreenTbls (fieldnames) {
-//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-//         return fieldnames.items.reduce(function (accumulator, currentValue) {
-//             if(!accumulator.includes(currentValue.fields.fromTbl)) {
-//                 accumulator.push(currentValue.fields.fromTbl)
-//             }
-//             return accumulator;
-//         },[]);
-//     } else {
-//         return [];
-//     }
-    
-// }
-
 function getScreenTbls (fieldnames, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         return fieldnames.items.reduce(function (accumulator, currentValue) {
@@ -242,20 +229,20 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     return [];
 }
 
-function getBodys(mirs, headersForShow) {
+function getBodys(picktickets, headersForShow) {
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
     let screenHeaders = headersForShow;
     let i = 1;
-    if (!_.isUndefined(mirs) && mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
-        mirs.items.map(mir => {
-            let itemCount = !_.isEmpty(mir.miritems) ? mir.miritems.length : '';
+    if (!_.isUndefined(picktickets) && picktickets.hasOwnProperty('items') && !_.isEmpty(picktickets.items)) {
+        picktickets.items.map(pickticket => {
+            let itemCount = !_.isEmpty(pickticket.pickitems) ? pickticket.pickitems.length : '';
             let mirWeight = 0;
-            if (!_.isEmpty(mir.miritems)) {
-                mirWeight = mir.miritems.reduce(function (acc, cur) {
-                    if (!!cur.totWeight) {
-                        acc += cur.totWeight;
+            if (!_.isEmpty(pickticket.pickitems)) {
+                mirWeight = pickticket.pickitems.reduce(function (acc, cur) {
+                    if (!!cur.miritem.totWeight) {
+                        acc += cur.miritem.totWeight;
                     }
                     return acc;
                 }, 0);
@@ -263,6 +250,16 @@ function getBodys(mirs, headersForShow) {
             arrayRow = [];
             screenHeaders.map(screenHeader => {
                 switch(screenHeader.fields.fromTbl) {
+                    case 'pickticket':
+                        arrayRow.push({
+                            collection: 'pickticket',
+                            objectId: pickticket._id,
+                            fieldName: screenHeader.fields.name,
+                            fieldValue: pickticket[screenHeader.fields.name],
+                            disabled: screenHeader.edit,
+                            align: screenHeader.align,
+                            fieldType: getInputType(screenHeader.fields.type),
+                        });
                     case 'mir':
                         if (['itemCount', 'mirWeight'].includes(screenHeader.fields.name)) {
                             arrayRow.push({
@@ -277,9 +274,9 @@ function getBodys(mirs, headersForShow) {
                         } else {
                             arrayRow.push({
                                 collection: 'mir',
-                                objectId: mir._id,
+                                objectId: pickticket.mir._id,
                                 fieldName: screenHeader.fields.name,
-                                fieldValue: mir[screenHeader.fields.name],
+                                fieldValue: pickticket.mir[screenHeader.fields.name],
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
@@ -305,7 +302,8 @@ function getBodys(mirs, headersForShow) {
                     certificateId: '',
                     packitemId: '',
                     collipackId: '',
-                    mirId: mir._id,
+                    mirId: pickticket.mir._id,
+                    pickticketId: pickticket._id,
                 },
                 fields: arrayRow
             };
@@ -409,8 +407,6 @@ class PickingTicket extends React.Component {
         this.state = {
             headersForShow: [],
             bodysForShow: [],
-            // splitHeadersForShow: [],
-            // splitHeadersForSelect:[],
             settingsFilter: [],
             settingsDisplay: [],
             tabs: [
@@ -436,34 +432,26 @@ class PickingTicket extends React.Component {
             unlocked: false,
             screen: 'Picking ticket',
             selectedIds: [],
-            newMir: {},
             creating: false,
             alert: {
                 type:'',
                 message:''
             },
-            // showSplitLine: false,
             showSettings: false,
-            showCreate: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        this.handleChangeNewMir = this.handleChangeNewMir.bind(this);
-        // this.handleSplitLine = this.handleSplitLine.bind(this);
-        
+        this.handleChange = this.handleChange.bind(this);   
 
         this.refreshStore = this.refreshStore.bind(this);
-        this.refreshMir = this.refreshMir.bind(this);
+        this.refreshPickticket = this.refreshPickticket.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
-        this.createNewMir = this.createNewMir.bind(this);
         this.handlePrepare = this.handlePrepare.bind(this);
         //Toggle Modals
         this.toggleSettings = this.toggleSettings.bind(this);
-        this.toggleCreate = this.toggleCreate.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
@@ -481,14 +469,15 @@ class PickingTicket extends React.Component {
             loadingAccesses,
             loadingFieldnames,
             loadingFields,
-            loadingMirs,
+            // loadingMirs,
+            loadingPicktickets,
             loadingSelection,
             loadingSettings,
             location,
             //---------
             fieldnames,
-            mirs,
-            selection,
+            // mirs,
+            picktickets,
             settings 
         } = this.props;
 
@@ -508,8 +497,8 @@ class PickingTicket extends React.Component {
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
             }
-            if (!loadingMirs) {
-                dispatch(mirActions.getAll(qs.id));
+            if (!loadingPicktickets) {
+                dispatch(pickticketActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -521,7 +510,7 @@ class PickingTicket extends React.Component {
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-            bodysForShow: getBodys(mirs, headersForShow),
+            bodysForShow: getBodys(picktickets, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
         });
@@ -529,7 +518,7 @@ class PickingTicket extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { headersForShow, screenId, settingsDisplay } = this.state; //splitScreenId,
-        const { fields, fieldnames, selection, settings, mirs } = this.props;
+        const { fields, fieldnames, selection, settings, picktickets } = this.props;
 
         if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
             this.setState({
@@ -544,16 +533,9 @@ class PickingTicket extends React.Component {
             });
         }
 
-        // if (fieldnames != prevProps.fieldnames) {
-        //     this.setState({
-        //         splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
-        //         splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
-        //     });
-        // }
-
-        if (mirs != prevProps.mirs || headersForShow != prevState.headersForShow) {
+        if (picktickets != prevProps.picktickets || headersForShow != prevState.headersForShow) {
             this.setState({
-                bodysForShow: getBodys(mirs, headersForShow)
+                bodysForShow: getBodys(picktickets, headersForShow)
             });
         }
 
@@ -695,17 +677,17 @@ class PickingTicket extends React.Component {
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
         if (projectId) {
-            dispatch(mirActions.getAll(projectId));
+            dispatch(pickticketActions.getAll(projectId));
             dispatch(settingActions.getAll(projectId, userId));
         }
     }
 
-    refreshMir() {
+    refreshPickticket() {
         const { dispatch } = this.props;
         const { projectId } = this.state;
 
         if (projectId) {
-            dispatch(mirActions.getAll(projectId));
+            dispatch(pickticketActions.getAll(projectId));
         }
     }
 
@@ -752,54 +734,6 @@ class PickingTicket extends React.Component {
         });
     }
 
-    handleChangeNewMir(event) {
-        event.preventDefault();
-        const { projectId, newMir } = this.state;
-        const name =  event.target.name;
-        const value =  event.target.value;
-        this.setState({
-            newMir: {
-                ...newMir,
-                [name]: value,
-                projectId
-            }
-        });
-    }
-
-    // handleSplitLine(event, subId, virtuals) {
-    //     event.preventDefault();
-    //     const requestOptions = {
-    //         method: 'PUT',
-    //         headers: { ...authHeader(), 'Content-Type': 'application/json'},
-    //         body: JSON.stringify({virtuals: virtuals})
-    //     }
-    //     return fetch(`${config.apiUrl}/split/sub?subId=${subId}`, requestOptions)
-    //     .then(responce => responce.text().then(text => {
-    //         const data = text && JSON.parse(text);
-    //         if (!responce.ok) {
-    //             if (responce.status === 401) {
-    //                 localStorage.removeItem('user');
-    //                 location.reload(true);
-    //             }
-    //             this.setState({
-    //                 // showSplitLine: false,
-    //                 alert: {
-    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                     message: data.message
-    //                 }
-    //             }, this.refreshStore);
-    //         } else {
-    //             this.setState({
-    //                 // showSplitLine: false,
-    //                 alert: {
-    //                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-    //                     message: data.message
-    //                 }
-    //             }, this.refreshStore);
-    //         }
-    //     }));
-    // }
-
     updateSelectedIds(selectedIds) {
         this.setState({
             selectedIds: selectedIds
@@ -808,7 +742,6 @@ class PickingTicket extends React.Component {
 
     handleDeleteRows(event) {
         event.preventDefault();
-        // const { dispatch } = this.props;
         const { selectedIds } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
@@ -817,7 +750,7 @@ class PickingTicket extends React.Component {
                     message:'Select line(s) to be deleted.'
                 }
             });
-        } else if (confirm('For the Selected line(s) all MIR details, MIR Items and picking lists shall be deleted. Are you sure you want to proceed?')){
+        } else if (confirm('For the Selected picking ticket(s) all details, and picking items shall be deleted. Are you sure you want to proceed?')){
             this.setState({
                 ...this.state,
                 deleting: true
@@ -827,7 +760,7 @@ class PickingTicket extends React.Component {
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
                     body: JSON.stringify({ selectedIds: selectedIds })
                 };
-                return fetch(`${config.apiUrl}/mir/delete`, requestOptions)
+                return fetch(`${config.apiUrl}/pickticket/delete`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
                     if (responce.status === 401) {
@@ -840,7 +773,7 @@ class PickingTicket extends React.Component {
                                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                 message: data.message
                             }
-                        }, this.refreshMir);
+                        }, this.refreshPickticket);
                     }
                 }));
             });
@@ -859,76 +792,6 @@ class PickingTicket extends React.Component {
         });
     }
 
-    toggleCreate(event) {
-        event.preventDefault();
-        const { showCreate } = this.state;
-        this.setState({
-            alert: {
-                type: '',
-                message: ''
-            },
-            newMir: {},
-            showCreate: !showCreate
-        });
-    }
-
-    createNewMir(event) {
-        event.preventDefault();
-        const { newMir } = this.state;
-        const { mir, dateReceived, dateExpected, projectId } = newMir;
-        if (!mir && !dateReceived && !dateExpected && !projectId ) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'All fields are required.'
-                }
-            });
-        } else if (!isValidFormat(dateReceived, 'date', getDateFormat(myLocale))) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Date Received: Not a valid date format.'
-                }
-            });
-        } else if (!isValidFormat(dateExpected, 'date', getDateFormat(myLocale))) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Date Expected: Not a valid date format.'
-                }
-            });
-        } else {
-            this.setState({
-                ...this.state,
-                creating: true
-            }, () => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newMir)
-                };
-                return fetch(`${config.apiUrl}/mir/create`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (responce.status === 401) {
-                            localStorage.removeItem('user');
-                            location.reload(true);;
-                    } else {
-                        this.setState({
-                            creating: false,
-                            showCreate: false,
-                            newMir: {},
-                            alert: {
-                                type: responce.status === 200 ? '' : 'alert-danger',
-                                message: responce.status === 200 ? '' : data.message
-                            }
-                        }, this.refreshMir);
-                    }
-                }));
-            });
-        }
-    }
-
     handlePrepare(event) {
         event.preventDefault();
         const { selectedIds, projectId } = this.state;
@@ -936,7 +799,7 @@ class PickingTicket extends React.Component {
             this.setState({
                 alert: {
                     type: 'alert-danger',
-                    message: 'Could not retreive project ID.'
+                    message: 'Could not retreive projectId.'
                 }
             });
         } else if (selectedIds.length != 1) {
@@ -946,7 +809,7 @@ class PickingTicket extends React.Component {
                     message: 'Select one line to prepare the Pick Ticket.'
                 }
             });
-        } else if (!selectedIds[0].hasOwnProperty('mirId')) {
+        } else if (!selectedIds[0].hasOwnProperty('pickticketId')) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
@@ -956,7 +819,7 @@ class PickingTicket extends React.Component {
         } else {
             history.push({
                 pathname:'/ptsplitwindow',
-                search: '?id=' + projectId + '&mirid=' + selectedIds[0].pickticketId
+                search: '?id=' + projectId + '&pickticketid=' + selectedIds[0].pickticketId
             });
         }
     }
@@ -982,24 +845,20 @@ class PickingTicket extends React.Component {
             selectedIds, 
             unlocked, 
             //show modals
-            // showSplitLine,
             showSettings,
             //--------
             headersForShow,
             bodysForShow,
             //---------------
-            newMir,
             showCreate,
             creating,
-            // splitHeadersForShow,
-            // splitHeadersForSelect,
             //'-------------------'
             tabs,
             settingsFilter,
             settingsDisplay
         } = this.state;
 
-        const { accesses, fieldnames, fields, mirs, selection } = this.props;
+        const { accesses, fieldnames, fields, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
@@ -1026,11 +885,11 @@ class PickingTicket extends React.Component {
                 <hr />
                 <div id="calloff" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create picking ticket" onClick={this.toggleCreate}>
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Prepare Picking Ticket" onClick={this.handlePrepare}>
+                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Prepare Ticket</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Prepare picking ticket" onClick={this.handlePrepare}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Prepare</span>
+                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Generate Picking Ticket">
+                            <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate Ticket</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
@@ -1114,69 +973,17 @@ class PickingTicket extends React.Component {
                         </button>
                     </div>
                 </Modal>
-                <Modal
-                    show={showCreate}
-                    hideModal={this.toggleCreate}
-                    title="Create material issue record"
-                    
-                >
-                    <div className="col-12">
-                        <form onSubmit={this.createNewMir}>
-                            <div className="form-group">
-                                <label htmlFor="mir">MIR No.</label>
-                                <input
-                                    className="form-control"
-                                    type='text'
-                                    name="mir"
-                                    value={newMir.mir}
-                                    onChange={this.handleChangeNewMir}
-                                    placeholder=""
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="dateReceived">Date received</label>
-                                <input
-                                    className="form-control"
-                                    type='text'
-                                    name="dateReceived"
-                                    value={newMir.dateReceived}
-                                    onChange={this.handleChangeNewMir}
-                                    placeholder={getDateFormat(myLocale)}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label htmlFor="dateExpected">Date expected</label>
-                                <input
-                                    className="form-control"
-                                    type='text'
-                                    name="dateExpected"
-                                    value={newMir.dateExpected}
-                                    onChange={this.handleChangeNewMir}
-                                    placeholder={getDateFormat(myLocale)}
-                                    required
-                                />
-                            </div>
-                            <div className="text-right">
-                                <button type="submit" className="btn btn-leeuwen-blue btn-lg mt-2">
-                                    <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
-                                </button>
-                            </div>
-                        </form>                  
-                    </div>
-                </Modal>
             </Layout>
         );
     }
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, mirs, selection, settings } = state;
+    const { accesses, alert, fieldnames, fields, picktickets, selection, settings } = state;
     const { loadingAccesses } = accesses;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
-    const { loadingMirs } = mirs;
+    const { loadingPicktickets } =picktickets;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
 
@@ -1189,10 +996,10 @@ function mapStateToProps(state) {
         loadingAccesses,
         loadingFieldnames,
         loadingFields,
-        loadingMirs,
+        loadingPicktickets,
         loadingSelection,
         loadingSettings,
-        mirs,
+        picktickets,
         selection,
         settings
     };

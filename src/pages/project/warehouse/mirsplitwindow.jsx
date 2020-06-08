@@ -1041,7 +1041,7 @@ class MirSplitwindow extends React.Component {
             this.setState({
                 alert: {
                     type: 'alert-danger',
-                    message: 'Could not retreive project ID.'
+                    message: 'Could not retreive projectId.'
                 }
             });
         } else if (selectedIds.length != 1) {
