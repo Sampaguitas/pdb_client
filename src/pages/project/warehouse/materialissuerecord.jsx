@@ -413,7 +413,7 @@ function initSettingsDisplay(fieldnames, settings, screenId) {
     }
 }
 
-function generateWarehouseLayout(warehouses, selectedWarehouses, handleCheckWarehouse) {
+function generateWarehouseLayout(warehouses, warehouseIds, handleCheckWarehouse) {
     let tempArray = [];
     if (warehouses.hasOwnProperty('items') && !_.isEmpty(warehouses.items)) {
         warehouses.items.map(function (element, index){
@@ -422,7 +422,7 @@ function generateWarehouseLayout(warehouses, selectedWarehouses, handleCheckWare
                     key={index}
                     id={element._id}
                     title={element.warehouse}
-                    isChecked={selectedWarehouses.includes(element._id)}
+                    isChecked={warehouseIds.includes(element._id)}
                     handleCheck={handleCheckWarehouse}
                 />
             );
@@ -472,10 +472,11 @@ class MaterialIssueRecord extends React.Component {
             unlocked: false,
             screen: 'Material issue record',
             selectedIds: [],
-            selectedWarehouses: [],
+            warehouseIds: [],
             newMir: {},
             creatingMir: false,
             creatingPt: false,
+            logs: [],
             alert: {
                 type:'',
                 message:''
@@ -813,14 +814,14 @@ class MaterialIssueRecord extends React.Component {
     }
 
     handleCheckWarehouse(id) {
-        const { selectedWarehouses } = this.state;
-        if (selectedWarehouses.includes(id)) {
+        const { warehouseIds } = this.state;
+        if (warehouseIds.includes(id)) {
             this.setState({
-                selectedWarehouses: arrayRemove(selectedWarehouses, id)
+                warehouseIds: arrayRemove(warehouseIds, id)
             });
         } else {
             this.setState({
-                selectedWarehouses: [...selectedWarehouses, id]
+                warehouseIds: [...warehouseIds, id]
             });
         }
     }
@@ -952,7 +953,8 @@ class MaterialIssueRecord extends React.Component {
                     type: '',
                     message: ''
                 },
-                selectedWarehouses: warehousesIds,
+                logs: [],
+                warehouseIds: warehousesIds,
                 showCreatePt: !showCreatePt
             });
         }
@@ -1049,7 +1051,7 @@ class MaterialIssueRecord extends React.Component {
 
     handleCreatePT(event) {
         event.preventDefault();
-        const { selectedIds, selectedWarehouses, projectId } = this.state;
+        const { selectedIds, warehouseIds, projectId } = this.state;
         if (projectId === '') {
             this.setState({
                 alert: {
@@ -1071,7 +1073,7 @@ class MaterialIssueRecord extends React.Component {
                     message: 'Could not retreive mirId.'
                 }
             });
-        } else if (selectedWarehouses.length == 0) {
+        } else if (warehouseIds.length == 0) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
@@ -1079,10 +1081,37 @@ class MaterialIssueRecord extends React.Component {
                 }
             });
         } else {
-
-            console.log('projectId:', projectId);
-            console.log('selectedIds:', selectedIds);
-            console.log('selectedWarehouses:', selectedWarehouses);
+            this.setState({
+                ...this.state,
+                creatingPt: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        projectId: projectId,
+                        mirId: selectedIds[0].mirId,
+                        warehouseIds: warehouseIds
+                    })
+                };
+                return fetch(`${config.apiUrl}/pickticket/create`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);;
+                    } else {
+                        this.setState({
+                            creatingPt: false,
+                            logs: data.logs,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshMir);
+                    }
+                }));
+            });
         }
     }
 
@@ -1105,7 +1134,7 @@ class MaterialIssueRecord extends React.Component {
             screen, 
             screenId,
             selectedIds,
-            selectedWarehouses,
+            warehouseIds,
             unlocked, 
             //show modals
             // showSplitLine,
@@ -1313,7 +1342,7 @@ class MaterialIssueRecord extends React.Component {
                             }
                             <div className="mt-2">
                                 <label>Pick from warehouse:</label>
-                                {generateWarehouseLayout(warehouses, selectedWarehouses, this.handleCheckWarehouse)}
+                                {generateWarehouseLayout(warehouses, warehouseIds, this.handleCheckWarehouse)}
                             </div>
                             <div className="text-right mt-2">
                                 <button className="btn btn-leeuwen-blue btn-lg" title="Generate Picking Tickets" onClick={this.handleCreatePT}>
