@@ -260,6 +260,7 @@ function getBodys(picktickets, headersForShow) {
                             align: screenHeader.align,
                             fieldType: getInputType(screenHeader.fields.type),
                         });
+                        break;
                     case 'mir':
                         if (['itemCount', 'mirWeight'].includes(screenHeader.fields.name)) {
                             arrayRow.push({

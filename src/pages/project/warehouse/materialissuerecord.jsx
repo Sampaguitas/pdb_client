@@ -513,6 +513,7 @@ class MaterialIssueRecord extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
+        this.generateLogRows = this.generateLogRows.bind(this);
         
     }
 
@@ -1103,9 +1104,16 @@ class MaterialIssueRecord extends React.Component {
                     } else {
                         this.setState({
                             creatingPt: false,
-                            logs: data.logs,
+                            logs: data.logs || [],
+                            // responce: {
+                            //     nAdded: data.nAdded || '',
+                            //     nRejected: data.nRejected || '',
+                            //     nItemAdded: data.nItemAdded || '',
+                            //     nItemRejected: data.nItemRejected || '',
+                            //     logs: data.logs || '',
+                            // },
                             alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                type: responce.status === 400 ? 'alert-danger' : 'alert-success',
                                 message: data.message
                             }
                         }, this.refreshMir);
@@ -1125,6 +1133,25 @@ class MaterialIssueRecord extends React.Component {
             ...this.state,
             tabs // 4. update state
         })
+    }
+
+    generateLogRows(logs){
+        let temp =[]
+        if (!_.isEmpty(logs)) {
+            logs.map(function(r, index) {
+                temp.push(
+                <tr key={index}>
+                    <td>{r.lineNr}</td>
+                    <td>{r.qtyRequired}</td>
+                    <td>{r.qtyAlPicked}</td>
+                    <td>{r.qtyTbPicked}</td>
+                    <td>{r.qtyPrepared}</td>
+                    <td>{r.qtyRemaining}</td>
+                </tr>   
+                );
+            });
+            return (temp);
+        }
     }
 
     render() {
@@ -1148,6 +1175,7 @@ class MaterialIssueRecord extends React.Component {
             showCreatePt,
             creatingMir,
             creatingPt,
+            logs,
             // splitHeadersForShow,
             // splitHeadersForSelect,
             //'-------------------'
@@ -1330,9 +1358,9 @@ class MaterialIssueRecord extends React.Component {
                     show={showCreatePt}
                     hideModal={this.toggleCreatePt}
                     title="Create Picking Tickets:" 
-                    size="modal-xl"
+                    size="modal-lg"
                 >
-                        <div className="ml-1 mr-1 mt-2">
+                        <div className="ml-1 mr-1">
                             {alert.message && 
                                 <div className={`alert ${alert.type} mt-3`}>{alert.message}
                                     <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1340,46 +1368,36 @@ class MaterialIssueRecord extends React.Component {
                                     </button>
                                 </div>
                             }
-                            <div className="mt-2">
+                            <div className="mt-4">
                                 <label>Pick from warehouse:</label>
                                 {generateWarehouseLayout(warehouses, warehouseIds, this.handleCheckWarehouse)}
                             </div>
-                            <div className="text-right mt-2">
+                            <div className="text-right mt-2 mb-4">
                                 <button className="btn btn-leeuwen-blue btn-lg" title="Generate Picking Tickets" onClick={this.handleCreatePT}>
                                     <span><FontAwesomeIcon icon={creatingPt ? "spinner" : "plus"} className={creatingPt ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
                                 </button>
                             </div>
-                            {/* {!_.isEmpty(responce) &&
-                                <div className="ml-1 mr-1" style={{height: 'calc(100% - 44px)'}}>
-                                    <div className="form-group table-resonsive" style={{height: '83px'}}>
-                                        <strong>Total Processed:</strong> {responce.nProcessed}<br />
-                                        <strong>Total records Added:</strong> {responce.nAdded}<br />
-                                        <strong>Total Records Edited:</strong> {responce.nEdited}<br />
-                                        <strong>Total Records Rejected:</strong> {responce.nRejected}<br />
-                                        <hr />
+                            {!_.isEmpty(logs) &&
+                                <div className="rejections" style={{height: '200px'}}>
+                                    <div className="table-responcive custom-table-container">
+                                        <table className="table table-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>Line</th>
+                                                    <th>Required</th>
+                                                    <th>Already picked</th>
+                                                    <th>To be picked</th>
+                                                    <th>Prepared</th>
+                                                    <th>Remaining</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {this.generateLogRows(logs)}
+                                            </tbody>
+                                        </table>
                                     </div>
-                                    {!_.isEmpty(responce.rejections) &&
-                                        <div className="rejections" style={{height: 'calc(100% - 93px)'}}>
-                                            <h3>Rejections</h3>
-                                            <div className="" style={{height: 'calc(100% - 29px)'}}>
-                                                <div className="table-responcive custom-table-container">
-                                                    <table className="table table-sm">
-                                                        <thead>
-                                                            <tr>
-                                                                <th style={{width: '10%'}}>Row</th>
-                                                                <th style={{width: '90%'}}>Reason</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {this.generateRejectionRows(responce)}
-                                                        </tbody>
-                                                    </table>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    }
                                 </div>
-                            } */}
+                            }
                         </div>              
                 </Modal>
             </Layout>
