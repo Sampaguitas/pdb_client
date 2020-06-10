@@ -11,7 +11,6 @@ import {
     alertActions,  
     fieldnameActions,
     fieldActions,
-    mirActions,
     pickticketActions,
     projectActions,
     settingActions
@@ -1007,7 +1006,7 @@ function mapStateToProps(state) {
     const { loadingAccesses } = accesses;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
-    const { loadingPicktickets } =picktickets;
+    const { loadingPicktickets } = picktickets;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
 
