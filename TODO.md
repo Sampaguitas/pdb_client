@@ -8,6 +8,7 @@
 - [ ] Configure & documents
 - [X] Enter picked quantity
 - [X] Delete button
+- [ ] HeatPick collection
 - [ ] HeatNr & heatQty
 - [ ] Update stock
 ### Shipping Screen
