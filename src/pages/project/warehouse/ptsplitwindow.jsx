@@ -10,8 +10,7 @@ import {
     alertActions,  
     fieldnameActions,
     fieldActions,
-    mirActions,
-    poActions,
+    pickticketActions,
     projectActions,
     settingActions
 } from '../../../_actions';
@@ -243,60 +242,67 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     return [];
 }
 
-function getBodysForShow(mirs, mirId, selection, headersForShow) {
+function getLocName(location, area) {
+    return `${area.areaNr}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`;
+}
+
+function leadingChar(string, char, length) {
+    return string.toString().length > length ? string : char.repeat(length - string.toString().length) + string;
+}
+
+function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
     let screenHeaders = headersForShow;
     let project = selection.project || { _id: '0', name: '', number: '' };
     let i = 1;
-    if (!_.isUndefined(mirs) && mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
-        mirs.items.map(mir => {
-            if (_.isEqual(mir._id, mirId)) {
-                let itemCount = !_.isEmpty(mir.miritems) ? mir.miritems.length : '';
+    if (!_.isUndefined(picktickets) && picktickets.hasOwnProperty('items') && !_.isEmpty(picktickets.items)) {
+        picktickets.items.map(pickticket => {
+            if (_.isEqual(pickticket._id, pickticketId)) {
+                let itemCount = !_.isEmpty(pickticket.pickitems) ? pickticket.pickitems.length : '';
                 let mirWeight = 0;
-                if (!_.isEmpty(mir.miritems)) {
-                    mirWeight = mir.miritems.reduce(function (acc, cur) {
-                        if (!!cur.totWeight) {
-                            acc += cur.totWeight;
+                if (!_.isEmpty(pickticket.pickitems)) {
+                    mirWeight = pickticket.pickitems.reduce(function (acc, cur) {
+                        if (!!cur.miritem.totWeight) {
+                            acc += cur.miritem.totWeight;
                         }
                         return acc;
                     }, 0);
                 }
-                if (!_.isEmpty(mir.miritems)) {
-                    mir.miritems.map(miritem => {
+                if (!_.isEmpty(pickticket.pickitems)) {
+                    pickticket.pickitems.map(pickitem => {
                         arrayRow = [];
                         screenHeaders.map(screenHeader => {
                             switch(screenHeader.fields.fromTbl) {
-                                case 'mir':
-                                    if (['itemCount', 'mirWeight'].includes(screenHeader.fields.name)) {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: mir._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: screenHeader.fields.name === 'itemCount' ? itemCount : mirWeight,
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'mir',
-                                            objectId: mir._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: mir[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    }
+                                case 'pickticket':
+                                    arrayRow.push({
+                                        collection: 'pickticket',
+                                        objectId: pickticket._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: pickticket[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                    break;
+                                case 'pickitem':
+                                    arrayRow.push({
+                                        collection: 'pickitem',
+                                        objectId: pickitem._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: pickitem[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
                                     break;
                                 case 'miritem':
                                     arrayRow.push({
                                         collection: 'miritem',
-                                        objectId: miritem._id,
+                                        objectId: pickitem.miritem._id,
                                         fieldName: screenHeader.fields.name,
-                                        fieldValue: miritem[screenHeader.fields.name],
+                                        fieldValue: pickitem.miritem[screenHeader.fields.name],
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
@@ -316,9 +322,75 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
                                     } else {
                                         arrayRow.push({
                                             collection: 'po',
-                                            objectId: miritem.po._id,
+                                            objectId: pickitem.miritem.po._id,
                                             fieldName: screenHeader.fields.name,
-                                            fieldValue: miritem.po[screenHeader.fields.name],
+                                            fieldValue:pickitem.miritem.po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    break;
+                                case 'location':
+                                    if (screenHeader.fields.name === 'area') {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: pickitem.location.area._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: pickitem.location.area.area,
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else if (screenHeader.fields.name === 'warehouse') {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: pickticket.warehouse._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: pickticket.warehouse.warehouse,
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else if (screenHeader.fields.name === 'location') {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: pickitem.location._id,
+                                            fieldName: getLocName(pickitem.location, pickitem.location.area),
+                                            fieldValue: '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        }); 
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: '0',
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        }); 
+                                    }
+                                    break;
+                                case 'mir':
+                                    if (['itemCount', 'mirWeight'].includes(screenHeader.fields.name)) {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: mir._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: screenHeader.fields.name === 'itemCount' ? itemCount : mirWeight,
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'mir',
+                                            objectId: pickticket.mir._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: pickticket.mir[screenHeader.fields.name],
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
@@ -339,13 +411,14 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
                         objectRow  = {
                             _id: i,
                             tablesId: {
-                                poId: miritem.po._id,
+                                poId: pickitem.miritem.po._id,
                                 subId: '',
                                 certificateId: '',
                                 packitemId: '',
                                 collipackId: '',
-                                mirId: mir._id,
-                                miritemId: miritem._id
+                                mirId: pickticket.mir._id,
+                                miritemId: pickitem.miritem._id,
+                                pickticketId: pickticket._id
                             },
                             fields: arrayRow
                         };
@@ -356,75 +429,6 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
             }
         });
         
-        return arrayBody;
-    } else {
-        return [];
-    }
-}
-
-function getBodysForSelect(pos, selection, headersForSelect) {
-    let arrayBody = [];
-    let arrayRow = [];
-    let objectRow = {};
-    let screenHeaders = headersForSelect;
-    let project = selection.project || { _id: '0', name: '', number: '' };
-    let i = 1;
-    if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
-        
-        pos.items.map(po => {
-            arrayRow = [];
-            screenHeaders.map(screenHeader => {
-                switch(screenHeader.fields.fromTbl) {
-                    case 'po':
-                        if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
-                            arrayRow.push({
-                                collection: 'virtual',
-                                objectId: project._id,
-                                fieldName: screenHeader.fields.name,
-                                fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
-                                disabled: screenHeader.edit,
-                                align: screenHeader.align,
-                                fieldType: getInputType(screenHeader.fields.type),
-                            });
-                        } else {
-                            arrayRow.push({
-                                collection: 'po',
-                                objectId: po._id,
-                                fieldName: screenHeader.fields.name,
-                                fieldValue: po[screenHeader.fields.name],
-                                disabled: screenHeader.edit,
-                                align: screenHeader.align,
-                                fieldType: getInputType(screenHeader.fields.type),
-                            });
-                        }
-                        break;
-                    default: arrayRow.push({
-                        collection: 'virtual',
-                        objectId: '0',
-                        fieldName: screenHeader.fields.name,
-                        fieldValue: '',
-                        disabled: screenHeader.edit,
-                        align: screenHeader.align,
-                        fieldType: getInputType(screenHeader.fields.type),
-                    }); 
-                }
-            });
-            objectRow  = {
-                _id: i,
-                tablesId: {
-                    poId: po._id,
-                    subId: '',
-                    certificateId: '',
-                    packitemId: '',
-                    collipackId: '',
-                    mirId: '',
-                    miritemId: '',
-                },
-                fields: arrayRow
-            };
-            arrayBody.push(objectRow);
-            i++;
-        });
         return arrayBody;
     } else {
         return [];
@@ -521,10 +525,6 @@ class PtSplitwindow extends React.Component {
         this.state = {
             headersForShow: [],
             bodysForShow: [],
-            headersForSelect: [],
-            bodysForSelect: [],
-            // splitHeadersForShow: [],
-            // splitHeadersForSelect:[],
             settingsFilter: [],
             settingsDisplay: [],
             tabs: [
@@ -546,12 +546,14 @@ class PtSplitwindow extends React.Component {
                 }
             ],
             projectId:'',
-            mirId: '',
-            mir: {
-                mir: '',
-                dateReceived: '',
-                dateExpected: '',
-                miritems: '',
+            pickticketId: '',
+            pickticket: {
+                pickNr: '',
+                isProcessed: '',
+                mirId: '',
+                warehouseId: '',
+                warehouse: '',
+                projectId: ''
             },
             screenId: '5ed8f4f37c213e044cc1c1af', //Picking Ticket Splitwindow
             unlocked: false,
@@ -561,7 +563,7 @@ class PtSplitwindow extends React.Component {
                 type:'',
                 message:''
             },
-            showSplitLine: false,
+            // showSplitLine: false,
             showSettings: false,
             creating: false,
         };
@@ -577,10 +579,8 @@ class PtSplitwindow extends React.Component {
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
-        this.handleSplitLine = this.handleSplitLine.bind(this);
         this.handleEditClick = this.handleEditClick.bind(this);
         //Toggle Modals
-        this.toggleSplitLine = this.toggleSplitLine.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
@@ -599,31 +599,30 @@ class PtSplitwindow extends React.Component {
             loadingAccesses,
             loadingFieldnames,
             loadingFields,
-            loadingMirs,
-            loadingPos,
+            loadingPicktickets,
             loadingSelection,
             loadingSettings,
             location,
             //---------
             fieldnames,
-            mirs,
+            picktickets,
             pos,
             selection,
             settings 
         } = this.props;
 
-        const { screenId, headersForShow, headersForSelect, settingsDisplay } = this.state; //splitScreenId
+        const { screenId, headersForShow, settingsDisplay } = this.state; //splitScreenId
 
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
         let projectId = qs.id;
-        let mirId = qs.mirid;
+        let pickticketId = qs.pickticketid;
 
         if (qs.id) {
             this.setState({
                 projectId: projectId,
-                mirId: mirId
+                pickticketId: pickticketId
             });
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(projectId));
@@ -634,14 +633,11 @@ class PtSplitwindow extends React.Component {
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(projectId));
             }
-            if (!loadingMirs) {
-                dispatch(mirActions.getAll(projectId));
+            if (!loadingPicktickets) {
+                dispatch(pickticketActions.getAll(projectId));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(projectId));
-            }
-            if (!loadingPos) {
-                dispatch(poActions.getAll(projectId));
             }
             if (!loadingSettings) {
                 dispatch(settingActions.getAll(projectId, userId));
@@ -650,21 +646,21 @@ class PtSplitwindow extends React.Component {
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-            headersForSelect: getHeaders([], fieldnames, screenId, 'forSelect'),
-            bodysForShow: getBodysForShow(mirs, mirId, selection, headersForShow),
-            bodysForSelect: getBodysForSelect(pos, selection, headersForSelect),
+            bodysForShow: getBodysForShow(picktickets, pickticketId, selection, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
         }, () => {
-            if (mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
-                let found = mirs.items.find(element => _.isEqual(element._id, mirId));
+            if (picktickets.hasOwnProperty('items') && !_.isEmpty(picktickets.items)) {
+                let found = picktickets.items.find(element => _.isEqual(element._id, pickticketId));
                 if (!_.isUndefined(found)) {
                     this.setState({
-                        mir: {
-                            mir: found.mir,
-                            dateReceived: found.dateReceived,
-                            dateExpected: found.dateExpected,
-                            miritems: found.miritems
+                        pickticket: {
+                            pickNr: found.pickNr || '',
+                            isProcessed: found.isProcessed || '',
+                            mirId: found.mirId || '',
+                            warehouseId: found.warehouseId || '',
+                            warehouse: found.warehouse.warehouse || '',
+                            projectId: found.projectId || ''
                         }
                     });
                 }
@@ -674,8 +670,8 @@ class PtSplitwindow extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { bodysForSelect, headersForShow, headersForSelect, mirId, screenId, settingsDisplay } = this.state; //splitScreenId,
-        const { fieldnames, mirs, pos, selection, settings} = this.props;
+        const { headersForShow, pickticketId, screenId, settingsDisplay } = this.state; //splitScreenId,
+        const { fieldnames, picktickets, selection, settings} = this.props;
 
         if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
             this.setState({
@@ -687,35 +683,32 @@ class PtSplitwindow extends React.Component {
         if (settingsDisplay != prevState.settingsDisplay || fieldnames != prevProps.fieldnames) {
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-                headersForSelect: getHeaders([], fieldnames, screenId, 'forSelect')
             });
         }
 
-        if (mirs != prevProps.mirs || selection != prevProps.selection || headersForShow != prevState.headersForShow) {
+        if (picktickets != prevProps.picktickets || selection != prevProps.selection || headersForShow != prevState.headersForShow) {
             this.setState({
-                bodysForShow: getBodysForShow(mirs, mirId, selection, headersForShow)
+                bodysForShow: getBodysForShow(picktickets, pickticketId, selection, headersForShow)
             });
         }
 
-        if (pos != prevProps.pos || selection != prevProps.selection || headersForSelect != prevState.headersForSelect) {
-            this.setState({
-                bodysForSelect: getBodysForSelect(pos, selection, headersForSelect)
-            });
-        }
-
-        if ((mirId != prevState.mirId || mirs != prevProps.mirs) && mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
-            let found = mirs.items.find(element => _.isEqual(element._id, mirId));
+        if ((pickticketId != prevState.pickticketId || picktickets != prevProps.picktickets) && picktickets.hasOwnProperty('items') && !_.isEmpty(picktickets.items)) {
+            let found = picktickets.items.find(element => _.isEqual(element._id, pickticketId));
             if (!_.isUndefined(found)) {
                 this.setState({
-                    mir: {
-                        mir: found.mir,
-                        dateReceived: found.dateReceived,
-                        dateExpected: found.dateExpected,
-                        miritems: found.miritems
+                    pickticket: {
+                        pickNr: found.pickNr || '',
+                        isProcessed: found.isProcessed || '',
+                        mirId: found.mirId || '',
+                        warehouseId: found.warehouseId || '',
+                        warehouse: found.warehouse.warehouse || '',
+                        projectId: found.projectId || ''
                     }
                 });
             }
+            
         }
+
     }
 
     handleClearAlert(event){
@@ -984,56 +977,6 @@ class PtSplitwindow extends React.Component {
         });
     }
 
-    toggleSplitLine(event) {
-        event.preventDefault();
-        const { showSplitLine } = this.state;
-        this.setState({
-            alert: {
-                type: '',
-                message: ''
-            },
-            showSplitLine: !showSplitLine
-        });
-    }
-
-    handleSplitLine(event, containsPo, qtyRequired, poId) {
-        event.preventDefault();
-        const { creating, projectId, mirId } = this.state;
-        if (!containsPo && !creating) {
-            this.setState({
-                creating: true
-            }, () => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        qtyRequired: qtyRequired,
-                        poId: poId,
-                        mirId: mirId,
-                        projectId: projectId
-                    })
-                };
-                return fetch(`${config.apiUrl}/miritem/create`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (responce.status === 401) {
-                            localStorage.removeItem('user');
-                            location.reload(true);;
-                    } else {
-                        this.setState({
-                            creating: false,
-                            showSplitLine: false,
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, this.refreshMir);
-                    }
-                }));
-            });
-        }
-    }
-
     handleEditClick(event) {
         event.preventDefault();
         const { selectedIds, projectId } = this.state;
@@ -1077,15 +1020,13 @@ class PtSplitwindow extends React.Component {
             selectedIds, 
             unlocked, 
             //show modals
-            showSplitLine,
+            // showSplitLine,
             showSettings,
             //--------
             headersForShow,
             bodysForShow,
-            headersForSelect,
-            bodysForSelect,
             //---------------
-            mir,
+            pickticket,
             // newMir,
             // showCreate,
             creating,
@@ -1100,8 +1041,8 @@ class PtSplitwindow extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout alert={showSettings || showSplitLine ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
-                {alert.message && !showSettings && !showSplitLine &&
+            <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+                {alert.message && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1117,11 +1058,11 @@ class PtSplitwindow extends React.Component {
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">
-                            <NavLink to={{ pathname: '/materialissuerecord', search: '?id=' + projectId }} tag="a">Picking ticket:</NavLink>
+                            <NavLink to={{ pathname: '/pickingticket', search: '?id=' + projectId }} tag="a">Picking ticket:</NavLink>
                         </li>
                         <span className="ml-3 project-title">
                             {selection.project ?
-                                `${selection.project.name} - MIR: ${mir.mir} - Received: ${DateToString(mir.dateReceived, 'date', getDateFormat(myLocale))} / Expected: ${DateToString(mir.dateExpected, 'date', getDateFormat(myLocale))}`
+                                `${selection.project.name} - Picking Tciket: ${pickticket.pickNr} - Warehouse: ${pickticket.warehouse}`
                             :
                                 <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw"/>
                             }
@@ -1131,9 +1072,9 @@ class PtSplitwindow extends React.Component {
                 <hr />
                 <div id="calloff" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add Line to MIR" onClick={this.toggleSplitLine}>
+                        {/* <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add Line to MIR" onClick={this.toggleSplitLine}>
                             <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Line</span>
-                        </button>
+                        </button> */}
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {fieldnames.items && 
@@ -1158,23 +1099,6 @@ class PtSplitwindow extends React.Component {
                         }
                     </div>
                 </div>
-                <Modal
-                    show={showSplitLine}
-                    hideModal={this.toggleSplitLine}
-                    title="Order Lines"
-                    size="modal-xl"
-                >
-                    <SplitLine 
-                        screenHeaders={headersForSelect}
-                        screenBodys={bodysForSelect}
-                        mir={mir}
-                        pos={pos}
-                        alert={alert}
-                        creating={creating}
-                        handleClearAlert={this.handleClearAlert}
-                        handleSplitLine={this.handleSplitLine}
-                    />
-                </Modal>
                 <Modal
                     show={showSettings}
                     hideModal={this.toggleSettings}
@@ -1239,12 +1163,11 @@ class PtSplitwindow extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, mirs, pos, selection, settings } = state;
+    const { accesses, alert, fieldnames, fields, picktickets, selection, settings } = state;
     const { loadingAccesses } = accesses;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
-    const { loadingMirs } = mirs;
-    const { loadingPos } = pos;
+    const { loadingPicktickets } = picktickets;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
 
@@ -1257,12 +1180,10 @@ function mapStateToProps(state) {
         loadingAccesses,
         loadingFieldnames,
         loadingFields,
-        loadingMirs,
-        loadingPos,
+        loadingPicktickets,
         loadingSelection,
         loadingSettings,
-        mirs,
-        pos,
+        picktickets,
         selection,
         settings
     };
