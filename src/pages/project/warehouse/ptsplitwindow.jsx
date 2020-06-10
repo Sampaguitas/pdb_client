@@ -18,7 +18,6 @@ import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
-import SplitLine from '../../../_components/split-line/split-mir';
 import Modal from '../../../_components/modal';
 
 import moment from 'moment';
@@ -58,13 +57,13 @@ function passSelectedIds(selectedIds) {
     }
 }
 
-function passSelectedMir(selectedIds, mirs) {
-    if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(mirs.items)){
-        return {};
-    } else {
-        return mirs.items.find(mir => mir._id === selectedIds[0].mirId);
-    }
-}
+// function passSelectedMir(selectedIds, mirs) {
+//     if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(mirs.items)){
+//         return {};
+//     } else {
+//         return mirs.items.find(mir => mir._id === selectedIds[0].mirId);
+//     }
+// }
 
 
 function TypeToString(fieldValue, fieldType, myDateFormat) {
@@ -566,6 +565,7 @@ class PtSplitwindow extends React.Component {
             },
             // showSplitLine: false,
             showSettings: false,
+            showHeat: false,
             creating: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -576,12 +576,13 @@ class PtSplitwindow extends React.Component {
         
 
         this.refreshStore = this.refreshStore.bind(this);
-        this.refreshMir = this.refreshMir.bind(this);
+        this.refreshPickTicket = this.refreshPickTicket.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         this.handleEditClick = this.handleEditClick.bind(this);
         //Toggle Modals
+        this.toggleHeat = this.toggleHeat.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
@@ -853,7 +854,7 @@ class PtSplitwindow extends React.Component {
         }
     }
 
-    refreshMir() {
+    refreshPickTicket() {
         const { dispatch } = this.props;
         const { projectId } = this.state;
 
@@ -905,20 +906,6 @@ class PtSplitwindow extends React.Component {
         });
     }
 
-    // handleChangeNewMir(event) {
-    //     event.preventDefault();
-    //     const { projectId, newMir } = this.state;
-    //     const name =  event.target.name;
-    //     const value =  event.target.value;
-    //     this.setState({
-    //         newMir: {
-    //             ...newMir,
-    //             [name]: value,
-    //             projectId
-    //         }
-    //     });
-    // }
-
     updateSelectedIds(selectedIds) {
         this.setState({
             selectedIds: selectedIds
@@ -927,41 +914,31 @@ class PtSplitwindow extends React.Component {
 
     handleDeleteRows(event) {
         event.preventDefault();
-        // const { dispatch } = this.props;
-        const { selectedIds } = this.state;
-        if (_.isEmpty(selectedIds)) {
+        this.setState({
+            alert: {
+                type: 'alert-danger',
+                message: 'Picking Items cannot be deleted individually (You can however delete the entire Picking Ticket from the main screen).'
+            }
+        });
+    }
+
+    toggleHeat(event) {
+        event.preventDefault();
+        const { showHeat, selectedIds } = this.state;
+        if (!showHeat && selectedIds.length != 1) {
             this.setState({
                 alert: {
                     type:'alert-danger',
-                    message:'Select line(s) to be deleted.'
+                    message:'Select one line to change/add heat numbers.'
                 }
             });
-        } else if (confirm('For the Selected line(s) all items details and picking lists shall be deleted. Are you sure you want to proceed?')){
+        } else {
             this.setState({
-                ...this.state,
-                deleting: true
-            }, () => {
-                const requestOptions = {
-                    method: 'DELETE',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ selectedIds: selectedIds })
-                };
-                return fetch(`${config.apiUrl}/miritem/delete`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (responce.status === 401) {
-                            localStorage.removeItem('user');
-                            location.reload(true);
-                    } else {
-                        this.setState({
-                            deleting: false,
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, this.refreshMir);
-                    }
-                }));
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showHeat: !showHeat
             });
         }
     }
@@ -1073,9 +1050,9 @@ class PtSplitwindow extends React.Component {
                 <hr />
                 <div id="calloff" className="full-height">
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        {/* <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add Line to MIR" onClick={this.toggleSplitLine}>
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Line</span>
-                        </button> */}
+                        <button title="Change/Add Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleHeat}>
+                            <span><FontAwesomeIcon icon="file-certificate" className="fa-lg mr-2"/>Heat Numbers</span>
+                        </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
                         {fieldnames.items && 
