@@ -284,6 +284,29 @@ function getBodys(picktickets, headersForShow) {
                             });
                         }
                         break;
+                    case 'location':
+                        if (screenHeader.fields.name === 'warehouse') {
+                            arrayRow.push({
+                                collection: 'virtual',
+                                objectId: pickticket.warehouse._id,
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: pickticket.warehouse[screenHeader.fields.name],
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            });
+                        } else {
+                            arrayRow.push({
+                                collection: 'virtual',
+                                objectId: '0',
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: '',
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            });
+                        }
+                        break;
                     default: arrayRow.push({
                         collection: 'virtual',
                         objectId: '0',
