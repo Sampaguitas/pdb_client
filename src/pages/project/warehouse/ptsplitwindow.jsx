@@ -243,6 +243,7 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
 }
 
 function getLocName(location, area) {
+    console.log('LocName:', `${area.areaNr}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`);
     return `${area.areaNr}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`;
 }
 
@@ -356,8 +357,8 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                         arrayRow.push({
                                             collection: 'virtual',
                                             objectId: pickitem.location._id,
-                                            fieldName: getLocName(pickitem.location, pickitem.location.area),
-                                            fieldValue: '',
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: getLocName(pickitem.location, pickitem.location.area),
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
@@ -847,7 +848,7 @@ class PtSplitwindow extends React.Component {
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
         if (projectId) {
-            dispatch(mirActions.getAll(projectId));
+            dispatch(pickticketActions.getAll(projectId));
             dispatch(settingActions.getAll(projectId, userId));
         }
     }
@@ -857,7 +858,7 @@ class PtSplitwindow extends React.Component {
         const { projectId } = this.state;
 
         if (projectId) {
-            dispatch(mirActions.getAll(projectId));
+            dispatch(pickticketActions.getAll(projectId));
         }
     }
 
