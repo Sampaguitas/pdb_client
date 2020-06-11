@@ -229,13 +229,6 @@ function getPoCertificates(certificates, heatlocs, poId, locationId, projectId) 
                     return accLoc;
                 }, 0);
                 temp.inspQty -= locQty;
-                // let found = heatlocs.items.find(function (element) {
-                //     return element.poId === temp.poId && element.locationId === temp.locationId && element.cif === temp.cif && element.heatNr === temp.heatNr;
-                // });
-                // if (!_.isUndefined(found)) {
-                //     let qty = found.inspQty || 0;
-                //     temp.inspQty -= qty;
-                // }
             });
         }
         return tempArray;
