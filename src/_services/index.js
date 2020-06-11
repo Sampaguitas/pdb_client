@@ -10,6 +10,7 @@ export * from './erp.service';
 export * from './field.service';
 export * from './fieldname.service';
 export * from './heatloc.service';
+export * from './heatpick.service';
 export * from './locale.service';
 export * from './mir.service';
 export * from './opco.service';

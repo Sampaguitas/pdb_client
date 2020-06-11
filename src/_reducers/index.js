@@ -14,6 +14,7 @@ import { erps } from './erps.reducer';
 import { fieldnames } from './fieldnames.reducer';
 import { fields } from './fields.reducer';
 import { heatlocs } from './heatlocs.reducer';
+import { heatpicks } from './heatpicks.reducer';
 import { locales } from './locales.reducer';
 import { mirs } from './mirs.reducer';
 import { opcos } from './opcos.reducer';
@@ -47,6 +48,7 @@ const rootReducer = combineReducers({
   fieldnames,
   fields,
   heatlocs,
+  heatpicks,
   locales,
   mirs,
   opcos,

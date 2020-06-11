@@ -19,7 +19,7 @@ import ProjectTable from '../../../_components/project-table/project-table';
 import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
 import Modal from '../../../_components/modal';
-
+import HeatPick from '../../../_components/split-line/heat-pick';
 import moment from 'moment';
 import _ from 'lodash';
 import { __promisify__ } from 'glob';
@@ -999,6 +999,7 @@ class PtSplitwindow extends React.Component {
             unlocked, 
             //show modals
             // showSplitLine,
+            showHeat,
             showSettings,
             //--------
             headersForShow,
@@ -1077,6 +1078,25 @@ class PtSplitwindow extends React.Component {
                         }
                     </div>
                 </div>
+                <Modal
+                    show={showHeat}
+                    hideModal={this.toggleHeat}
+                    title="Change/Add Heat numbers"
+                    size="modal-xl"
+                >
+                    {/* <HeatPick
+                        alert={alert}
+                        handleClearAlert={this.handleClearAlert}
+                        toggleHeat={this.toggleHeat}
+                        poId={!_.isEmpty(selectedIds) ? selectedIds[0].poId : ''}
+                        locationId={!_.isEmpty(selectedIds) ? selectedIds[0].locationId : ''}
+                        projectId={projectId}
+                        refreshCifs={this.refreshCifs}
+                        refresHatLocs={this.refresHatLocs}
+                        certificates={certificates}
+                        heatlocs={heatlocs}
+                    /> */}
+                </Modal>
                 <Modal
                     show={showSettings}
                     hideModal={this.toggleSettings}
