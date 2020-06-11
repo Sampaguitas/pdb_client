@@ -880,6 +880,7 @@ class PtSplitwindow extends React.Component {
         const { projectId } = this.state;
         if (projectId) {
             dispatch(heatpickActions.getAll(projectId));
+            dispatch(heatlocActions.getAll(projectId));
         }
     }
 

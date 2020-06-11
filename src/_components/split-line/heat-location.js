@@ -218,13 +218,24 @@ function getPoCertificates(certificates, heatlocs, poId, locationId, projectId) 
         }, []);
         if (heatlocs.hasOwnProperty('items') && !_.isEmpty(heatlocs.items)) {
             tempArray.forEach(temp => {
-                let found = heatlocs.items.find(function (element) {
-                    return element.poId === temp.poId && element.locationId === temp.locationId && element.cif === temp.cif && element.heatNr === temp.heatNr;
-                });
-                if (!_.isUndefined(found)) {
-                    let qty = found.inspQty || 0;
-                    temp.inspQty -= qty;
-                }
+                let locs = heatlocs.items.filter(element => _.isEqual(element.poId, temp.poId) && _.isEqual(element.cif, temp.cif) && _.isEqual(element.heatNr, temp.heatNr));
+                let locQty = locs.reduce(function(accLoc, curLoc) {
+                    let inspQty = curLoc.inspQty || 0;
+                    // let pickQty = curLoc.heatpicks.reduce(function (accPick, curPick) {
+                    //     accPick = accPick + (curPick.inspQty || 0);
+                    //     return accPick;
+                    // }, 0);
+                    accLoc = accLoc + inspQty; // - pickQty;
+                    return accLoc;
+                }, 0);
+                temp.inspQty -= locQty;
+                // let found = heatlocs.items.find(function (element) {
+                //     return element.poId === temp.poId && element.locationId === temp.locationId && element.cif === temp.cif && element.heatNr === temp.heatNr;
+                // });
+                // if (!_.isUndefined(found)) {
+                //     let qty = found.inspQty || 0;
+                //     temp.inspQty -= qty;
+                // }
             });
         }
         return tempArray;
@@ -237,11 +248,15 @@ function getLocCertificates(heatlocs, poId, locationId) {
     if (heatlocs.hasOwnProperty('items') && !_.isEmpty(heatlocs.items)) {
         return heatlocs.items.reduce(function (acc, cur) {
             if (cur.poId === poId && cur.locationId === locationId) {
+                let pickQty = cur.heatpicks.reduce(function (accPick, curPick) {
+                    accPick = accPick + (curPick.inspQty || 0)
+                    return accPick;
+                }, 0)
                 acc.push({
                     _id: cur._id,
                     cif: cur.cif,
                     heatNr: cur.heatNr,
-                    inspQty: cur.inspQty 
+                    inspQty: (cur.inspQty || 0) - pickQty,
                 });
             }
             return acc;

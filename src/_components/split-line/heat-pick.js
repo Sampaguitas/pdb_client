@@ -196,12 +196,15 @@ function getLocCertificates(heatlocs, heatpicks, locationId, pickitemId, poId) {
     if (heatlocs.hasOwnProperty('items') && heatpicks.hasOwnProperty('items') && !_.isEmpty(heatlocs.items)) {
         return heatlocs.items.reduce(function (acc, cur) {
             if (_.isEqual(cur.poId, poId) && _.isEqual(cur.locationId, locationId)) {
-                let found = heatpicks.items.find(element => _.isEqual(element.pickitemId, pickitemId) && _.isEqual(element.heatlocId, cur._id));
+                let pickQty = cur.heatpicks.reduce(function (accPick, curPick) {
+                    accPick = accPick + (curPick.inspQty || 0)
+                    return accPick;
+                }, 0);
                 acc.push({
                     _id: cur._id,
                     cif: cur.cif,
                     heatNr: cur.heatNr,
-                    inspQty: _.isUndefined(found) ? (cur.inspQty || 0) : (cur.inspQty || 0) - (found.inspQty || 0),
+                    inspQty: (cur.inspQty || 0) - pickQty,
                     heatlocId: cur._id, //
                     pickitemId: pickitemId, //
                     locationId: locationId, //
