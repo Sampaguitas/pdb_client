@@ -10,6 +10,8 @@ import {
     alertActions,  
     fieldnameActions,
     fieldActions,
+    heatlocActions,
+    heatpickActions,
     pickticketActions,
     projectActions,
     settingActions
@@ -242,7 +244,6 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
 }
 
 function getLocName(location, area) {
-    console.log('LocName:', `${area.areaNr}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`);
     return `${area.areaNr}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`;
 }
 
@@ -416,9 +417,11 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                 certificateId: '',
                                 packitemId: '',
                                 collipackId: '',
+                                locationId: pickitem.location._id,
                                 mirId: pickticket.mir._id,
                                 miritemId: pickitem.miritem._id,
-                                pickticketId: pickticket._id
+                                pickticketId: pickticket._id,
+                                pickitemId: pickitem._id
                             },
                             fields: arrayRow
                         };
@@ -576,6 +579,8 @@ class PtSplitwindow extends React.Component {
         
 
         this.refreshStore = this.refreshStore.bind(this);
+        this.refresHeatLocs = this.refresHeatLocs.bind(this);
+        this.refreshHeatPicks = this.refreshHeatPicks.bind(this);
         this.refreshPickTicket = this.refreshPickTicket.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
@@ -601,6 +606,8 @@ class PtSplitwindow extends React.Component {
             loadingAccesses,
             loadingFieldnames,
             loadingFields,
+            loadingHeatlocs,
+            loadingHeatpicks,
             loadingPicktickets,
             loadingSelection,
             loadingSettings,
@@ -634,6 +641,12 @@ class PtSplitwindow extends React.Component {
             }
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(projectId));
+            }
+            if (!loadingHeatlocs) {
+                dispatch(heatlocActions.getAll(projectId));
+            }
+            if (!loadingHeatpicks) {
+                dispatch(heatpickActions.getAll(projectId));
             }
             if (!loadingPicktickets) {
                 dispatch(pickticketActions.getAll(projectId));
@@ -854,6 +867,22 @@ class PtSplitwindow extends React.Component {
         }
     }
 
+    refresHeatLocs() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+        if (projectId) {
+            dispatch(heatlocActions.getAll(projectId));
+        }
+    }
+
+    refreshHeatPicks() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+        if (projectId) {
+            dispatch(heatpickActions.getAll(projectId));
+        }
+    }
+
     refreshPickTicket() {
         const { dispatch } = this.props;
         const { projectId } = this.state;
@@ -1016,7 +1045,7 @@ class PtSplitwindow extends React.Component {
             settingsDisplay
         } = this.state;
 
-        const { accesses, fieldnames, fields, pos, selection } = this.props;
+        const { accesses, fieldnames, fields, heatlocs, heatpicks, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
@@ -1084,18 +1113,22 @@ class PtSplitwindow extends React.Component {
                     title="Change/Add Heat numbers"
                     size="modal-xl"
                 >
-                    {/* <HeatPick
+                    <HeatPick
                         alert={alert}
                         handleClearAlert={this.handleClearAlert}
                         toggleHeat={this.toggleHeat}
                         poId={!_.isEmpty(selectedIds) ? selectedIds[0].poId : ''}
                         locationId={!_.isEmpty(selectedIds) ? selectedIds[0].locationId : ''}
+                        pickitemId={!_.isEmpty(selectedIds) ? selectedIds[0].pickitemId : ''}
                         projectId={projectId}
-                        refreshCifs={this.refreshCifs}
-                        refresHatLocs={this.refresHatLocs}
-                        certificates={certificates}
+                        // refreshCifs={this.refreshCifs}
+                        refresHeatLocs={this.refresHeatLocs}
+                        refreshHeatPicks={this.refreshHeatPicks}
                         heatlocs={heatlocs}
-                    /> */}
+                        heatpicks={heatpicks}
+                        // certificates={certificates}
+                        
+                    />
                 </Modal>
                 <Modal
                     show={showSettings}
@@ -1161,10 +1194,12 @@ class PtSplitwindow extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, picktickets, selection, settings } = state;
+    const { accesses, alert, fieldnames, fields, heatlocs, heatpicks, picktickets, selection, settings } = state;
     const { loadingAccesses } = accesses;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
+    const { loadingHeatlocs } = heatlocs;
+    const { loadingHeatpicks } = heatpicks;
     const { loadingPicktickets } = picktickets;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
@@ -1175,9 +1210,13 @@ function mapStateToProps(state) {
         alert,
         fieldnames,
         fields,
+        heatlocs,
+        heatpicks,
         loadingAccesses,
         loadingFieldnames,
         loadingFields,
+        loadingHeatlocs,
+        loadingHeatpicks,
         loadingPicktickets,
         loadingSelection,
         loadingSettings,

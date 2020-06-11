@@ -967,7 +967,7 @@ class StockManagement extends React.Component {
 
         this.refreshStore = this.refreshStore.bind(this);
         this.refreshCifs = this.refreshCifs.bind(this);
-        this.refresHatLocs = this.refresHatLocs.bind(this);
+        this.refresHeatLocs = this.refresHeatLocs.bind(this);
         this.refreshTransactions = this.refreshTransactions.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.updateSelectedIdsGr = this.updateSelectedIdsGr.bind(this);
@@ -1369,7 +1369,7 @@ class StockManagement extends React.Component {
         }
     }
 
-    refresHatLocs() {
+    refresHeatLocs() {
         const { dispatch } = this.props;
         const { projectId } = this.state;
         if (projectId) {
@@ -2198,7 +2198,7 @@ class StockManagement extends React.Component {
                         locationId={!_.isEmpty(selectedIds) ? selectedIds[0].locationId : ''}
                         projectId={projectId}
                         refreshCifs={this.refreshCifs}
-                        refresHatLocs={this.refresHatLocs}
+                        refresHeatLocs={this.refresHeatLocs}
                         certificates={certificates}
                         heatlocs={heatlocs}
                     />

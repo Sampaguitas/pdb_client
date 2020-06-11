@@ -58,7 +58,7 @@ function arrayRemove(arr, value) {
 function arraySorted(array, sort) {
     let tempArray = array.slice(0);
     switch(sort.name) {
-        case 'poCif':
+        case 'pickCif':
         case 'locCif':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
@@ -85,7 +85,7 @@ function arraySorted(array, sort) {
                     }
                 });
             }
-        case 'poHeatNr':
+        case 'pickHeatNr':
         case 'locHeatNr':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
@@ -112,7 +112,7 @@ function arraySorted(array, sort) {
                     }
                 });
             }
-        case 'poInspQty':
+        case 'pickInspQty':
         case 'locInspQty':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
@@ -192,56 +192,21 @@ function doesMatch(search, value, type, isEqual) {
     }
 }
 
-function getPoCertificates(certificates, heatlocs, poId, locationId, projectId) {
-    if (certificates.hasOwnProperty('items') && !_.isEmpty(certificates.items)) {
-        let tempArray = [];
-        tempArray = certificates.items.reduce(function (acc, cur) {
-            cur.heats.forEach(heat => {
-                if (heat.poId === poId) {
-                    let found = acc.find(element => element.cif === cur.cif && element.heatNr === heat.heatNr);
-                    if (_.isUndefined(found)) {
-                        acc.push({
-                            _id: cur._id,
-                            cif: cur.cif,
-                            heatNr: heat.heatNr,
-                            inspQty: heat.inspQty,
-                            poId: poId,
-                            locationId: locationId,
-                            projectId: projectId
-                        });
-                    } else {
-                        found.inspQty += heat.inspQty;
-                    }
-                }
-            });
-            return acc;
-        }, []);
-        if (heatlocs.hasOwnProperty('items') && !_.isEmpty(heatlocs.items)) {
-            tempArray.forEach(temp => {
-                let found = heatlocs.items.find(function (element) {
-                    return element.poId === temp.poId && element.locationId === temp.locationId && element.cif === temp.cif && element.heatNr === temp.heatNr;
-                });
-                if (!_.isUndefined(found)) {
-                    let qty = found.inspQty || 0;
-                    temp.inspQty -= qty;
-                }
-            });
-        }
-        return tempArray;
-    } else {
-        return [];
-    }
-}
-
-function getLocCertificates(heatlocs, poId, locationId) {
-    if (heatlocs.hasOwnProperty('items') && !_.isEmpty(heatlocs.items)) {
+function getLocCertificates(heatlocs, heatpicks, locationId, pickitemId, poId) {
+    if (heatlocs.hasOwnProperty('items') && heatpicks.hasOwnProperty('items') && !_.isEmpty(heatlocs.items)) {
         return heatlocs.items.reduce(function (acc, cur) {
-            if (cur.poId === poId && cur.locationId === locationId) {
+            if (_.isEqual(cur.poId, poId) && _.isEqual(cur.locationId, locationId)) {
+                let found = heatpicks.items.find(element => _.isEqual(element.pickitemId, pickitemId) && _.isEqual(element.heatlocId, cur._id));
                 acc.push({
                     _id: cur._id,
                     cif: cur.cif,
                     heatNr: cur.heatNr,
-                    inspQty: cur.inspQty 
+                    inspQty: _.isUndefined(found) ? (cur.inspQty || 0) : (cur.inspQty || 0) - (found.inspQty || 0),
+                    heatlocId: cur._id, //
+                    pickitemId: pickitemId, //
+                    locationId: locationId, //
+                    poId: poId,
+                    projectId: cur.projectId
                 });
             }
             return acc;
@@ -251,27 +216,105 @@ function getLocCertificates(heatlocs, poId, locationId) {
     }
 }
 
+function getPickCertificates(heatpicks, pickitemId) {
+    if (heatpicks.hasOwnProperty('items') && !_.isEmpty(heatpicks.items)) {
+        return heatpicks.items.reduce(function (acc, cur) {
+            if (_.isEqual(cur.pickitemId, pickitemId)) {
+                acc.push({
+                    _id: cur._id,
+                    cif: cur.heatloc.cif,
+                    heatNr: cur.heatloc.heatNr,
+                    inspQty: cur.inspQty,
+                    heatlocId: cur.heatlocId,
+                    pickitemId: cur.pickitemId,
+                    projectId: cur.projectId,
+                });
+            }
+            return acc;
+        }, [])
+    }
+}
+
+// function getPoCertificates(certificates, heatlocs, poId, locationId, projectId) {
+//     if (certificates.hasOwnProperty('items') && !_.isEmpty(certificates.items)) {
+//         let tempArray = [];
+//         tempArray = certificates.items.reduce(function (acc, cur) {
+//             cur.heats.forEach(heat => {
+//                 if (heat.poId === poId) {
+//                     let found = acc.find(element => element.cif === cur.cif && element.heatNr === heat.heatNr);
+//                     if (_.isUndefined(found)) {
+//                         acc.push({
+//                             _id: cur._id,
+//                             cif: cur.cif,
+//                             heatNr: heat.heatNr,
+//                             inspQty: heat.inspQty,
+//                             poId: poId,
+//                             locationId: locationId,
+//                             projectId: projectId
+//                         });
+//                     } else {
+//                         found.inspQty += heat.inspQty;
+//                     }
+//                 }
+//             });
+//             return acc;
+//         }, []);
+//         if (heatlocs.hasOwnProperty('items') && !_.isEmpty(heatlocs.items)) {
+//             tempArray.forEach(temp => {
+//                 let found = heatlocs.items.find(function (element) {
+//                     return element.poId === temp.poId && element.locationId === temp.locationId && element.cif === temp.cif && element.heatNr === temp.heatNr;
+//                 });
+//                 if (!_.isUndefined(found)) {
+//                     let qty = found.inspQty || 0;
+//                     temp.inspQty -= qty;
+//                 }
+//             });
+//         }
+//         return tempArray;
+//     } else {
+//         return [];
+//     }
+// }
+
+// function getLocCertificates(heatlocs, poId, locationId) {
+//     if (heatlocs.hasOwnProperty('items') && !_.isEmpty(heatlocs.items)) {
+//         return heatlocs.items.reduce(function (acc, cur) {
+//             if (cur.poId === poId && cur.locationId === locationId) {
+//                 acc.push({
+//                     _id: cur._id,
+//                     cif: cur.cif,
+//                     heatNr: cur.heatNr,
+//                     inspQty: cur.inspQty 
+//                 });
+//             }
+//             return acc;
+//         }, []);
+//     } else {
+//         return [];
+//     }
+// }
+
 class HeatPick extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            poCif: '',
-            poHeatNr: '',
-            poInspQty: '',
+            pickCif: '',
+            pickHeatNr: '',
+            pickInspQty: '',
             locCif: '',
             locHeatNr: '',
             locInspQty: '', 
-            poSelectAllRows: '',
+            pickSelectAllRows: '',
             locSelectAllRows: '',
-            poSelectedIds: [],
+            pickSelectedIds: [],
             locSelectedIds: [],
-            poCertificates: [],
+            pickCertificates: [],
             locCertificates: [],
-            poSort: {
+            locSort: {
                 name: '',
                 isAscending: true, 
             },
-            locSort: {
+            pickSort: {
                 name: '',
                 isAscending: true, 
             },
@@ -283,34 +326,28 @@ class HeatPick extends Component {
             isCreating: false,
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
-        this.poToggleSort = this.poToggleSort.bind(this);
+        this.pickToggleSort = this.pickToggleSort.bind(this);
         this.locToggleSort = this.locToggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         
-        this.poToggleSelectAllRow = this.poToggleSelectAllRow.bind(this);
+        this.pickToggleSelectAllRow = this.pickToggleSelectAllRow.bind(this);
         this.locToggleSelectAllRow = this.locToggleSelectAllRow.bind(this);
-        this.updatePoSelectedIds = this.updatePoSelectedIds.bind(this);
+        this.updatePickSelectedIds = this.updatePickSelectedIds.bind(this);
         this.updateLocSelectedIds = this.updateLocSelectedIds.bind(this);
         this.removeCertificates = this.removeCertificates.bind(this);
         this.AssignCertificates = this.AssignCertificates.bind(this);
-        this.pofilterName = this.pofilterName.bind(this);
+        this.pickfilterName = this.pickfilterName.bind(this);
         this.locfilterName = this.locfilterName.bind(this);
     }
 
     componentDidMount() {
         
-        const { certificates, heatlocs, poId, locationId, projectId } = this.props;
+        const { heatlocs, heatpicks, locationId, pickitemId, poId } = this.props;
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
         
-        const poTable = document.getElementById('potable');
         const locTable = document.getElementById('loctable');
-        
-        poTable.addEventListener('keydown', (e) => { 
-            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
-                return this.keyHandler(e);
-            }
-        });
+        const pickTable = document.getElementById('picktable');
 
         locTable.addEventListener('keydown', (e) => { 
             if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
@@ -318,24 +355,28 @@ class HeatPick extends Component {
             }
         });
 
+        pickTable.addEventListener('keydown', (e) => { 
+            if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
+                return this.keyHandler(e);
+            }
+        });
         this.setState({
-            locCertificates: getLocCertificates(heatlocs, poId, locationId),
-            poCertificates: getPoCertificates(certificates, heatlocs, poId, locationId, projectId)
+            locCertificates: getLocCertificates(heatlocs, heatpicks, locationId, pickitemId, poId),
+            pickCertificates: getPickCertificates(heatpicks, pickitemId)
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // const { locCertificates } = this.state;
-        const { certificates, heatlocs, poId, locationId, projectId } = this.props;
-        if (heatlocs != prevProps.heatlocs) {
+        const { heatlocs, heatpicks, locationId, pickitemId, poId } = this.props;
+        if (heatlocs != prevProps.heatlocs || heatpicks != prevProps.heatpicks) {
             this.setState({
-                locCertificates: getLocCertificates(heatlocs, poId, locationId)
+                locCertificates: getLocCertificates(heatlocs, heatpicks, locationId, pickitemId, poId),
             });
         }
 
-        if (certificates != prevProps.certificates || heatlocs != prevProps.heatlocs) {
+        if (heatpicks != prevProps.heatpicks) {
             this.setState({
-                poCertificates: getPoCertificates(certificates, heatlocs, poId, locationId, projectId)
+                pickCertificates: getPickCertificates(heatpicks, pickitemId)
             });
         }
     }
@@ -392,26 +433,26 @@ class HeatPick extends Component {
         }, handleClearAlert(event));
     }
 
-    poToggleSort(event, name) {
+    pickToggleSort(event, name) {
         event.preventDefault();
-        const { poSort } = this.state;
-        if (poSort.name != name) {
+        const { pickSort } = this.state;
+        if (pickSort.name != name) {
             this.setState({
-                poSort: {
+                pickSort: {
                     name: name,
                     isAscending: true
                 }
             });
-        } else if (!!poSort.isAscending) {
+        } else if (!!pickSort.isAscending) {
             this.setState({
-                poSort: {
+                pickSort: {
                     name: name,
                     isAscending: false
                 }
             });
         } else {
             this.setState({
-                poSort: {
+                pickSort: {
                     name: '',
                     isAscending: true
                 }
@@ -446,18 +487,18 @@ class HeatPick extends Component {
         }
     }
 
-    poToggleSelectAllRow() {
-        const { poSelectAllRows, poCertificates } = this.state;
-        if (poCertificates) {
-            if (poSelectAllRows) {
+    pickToggleSelectAllRow() {
+        const { pickSelectAllRows, pickCertificates } = this.state;
+        if (pickCertificates) {
+            if (pickSelectAllRows) {
                 this.setState({
-                    poSelectedIds: [],
-                    poSelectAllRows: false
+                    pickSelectedIds: [],
+                    pickSelectAllRows: false
                 });
             } else {
                 this.setState({
-                    poSelectedIds: this.pofilterName(poCertificates).map(s => s._id),
-                    poSelectAllRows: true
+                    pickSelectedIds: this.pickfilterName(pickCertificates).map(s => s._id),
+                    pickSelectAllRows: true
                 });
             }         
         }
@@ -473,22 +514,22 @@ class HeatPick extends Component {
                 });
             } else {
                 this.setState({
-                    locSelectedIds: this.pofilterName(locCertificates).map(s => s._id),
+                    locSelectedIds: this.pickfilterName(locCertificates).map(s => s._id),
                     locSelectAllRows: true
                 });
             }         
         }
     }
 
-    updatePoSelectedIds(id) {
-        const { poSelectedIds } = this.state;
-        if (poSelectedIds.includes(id)) {
+    updatePickSelectedIds(id) {
+        const { pickSelectedIds } = this.state;
+        if (pickSelectedIds.includes(id)) {
             this.setState({
-                poSelectedIds: arrayRemove(poSelectedIds, id)
+                pickSelectedIds: arrayRemove(pickSelectedIds, id)
             });
         } else {
             this.setState({
-                poSelectedIds: [...poSelectedIds, id]
+                pickSelectedIds: [...pickSelectedIds, id]
             });
         }       
     }
@@ -514,105 +555,6 @@ class HeatPick extends Component {
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({ [name]: value });
-    }
-
-    generatePoHeader() {
-        const { poCif, poHeatNr, poInspQty, poSelectAllRows, poSort } = this.state;
-        return (
-            <tr>
-                <TableSelectionAllRow
-                    checked={poSelectAllRows}
-                    onChange={this.poToggleSelectAllRow}
-                />
-                <HeaderInput
-                    type="text"
-                    title="CIF"
-                    name="poCif"
-                    value={poCif}
-                    onChange={this.handleChangeHeader}
-                    sort={poSort}
-                    toggleSort={this.poToggleSort}
-                />
-                <HeaderInput
-                    type="text"
-                    title="HeatNr"
-                    name="poHeatNr"
-                    value={poHeatNr}
-                    onChange={this.handleChangeHeader}
-                    sort={poSort}
-                    toggleSort={this.poToggleSort}
-                />
-                <HeaderInput
-                    type="number"
-                    title="Qty"
-                    name="poInspQty"
-                    value={poInspQty}
-                    onChange={this.handleChangeHeader}
-                    sort={poSort}
-                    toggleSort={this.poToggleSort}
-                />                       
-            </tr>
-        );
-    }
-
-    generatePoBody() {
-        const { refreshCifs } = this.props;
-        const { poSelectedIds, poSelectAllRows, poCertificates } = this.state;
-        let tempRows = [];
-        if (poCertificates) {
-            this.pofilterName(poCertificates).map( (certificate, index) => {
-                tempRows.push(
-                    <tr key={index}>
-                        <TableSelectionRow
-                            id={certificate._id}
-                            selectAllRows={poSelectAllRows}
-                            selectedRows={poSelectedIds}
-                            callback={this.updatePoSelectedIds}
-                        />
-                        <TableInput
-                            collection="virtual"
-                            objectId={certificate._id}
-                            fieldName="cif"
-                            fieldValue={certificate.cif}
-                            disabled={true}
-                            unlocked={false}
-                            align="left"
-                            fieldType="text"
-                            textNoWrap={true}
-                            // key={certificate._id}
-                            refreshStore={refreshCifs}
-                        />
-                        <TableInput
-                            collection="virtual"
-                            objectId={certificate._id}
-                            fieldName="heatNr"
-                            fieldValue={certificate.heatNr}
-                            disabled={true}
-                            unlocked={false}
-                            align="left"
-                            fieldType="text"
-                            textNoWrap={true}
-                            // key={certificate._id}
-                            refreshStore={refreshCifs}
-                        />
-                        <TableInput
-                            collection="virtual"
-                            objectId={certificate._id}
-                            fieldName="inspQty"
-                            fieldValue={certificate.inspQty}
-                            disabled={true}
-                            unlocked={false}
-                            align="left"
-                            fieldType="number"
-                            textNoWrap={true}
-                            // key={certificate._id}
-                            refreshStore={refreshCifs}
-                        />
-                    </tr>
-                );
-            });
-        }
-        return tempRows;
     }
 
     generateLocHeader() {
@@ -655,7 +597,7 @@ class HeatPick extends Component {
     }
 
     generateLocBody() {
-        const { refresHatLocs } = this.props;
+        const { refresHeatLocs } = this.props;
         const { locSelectedIds, locSelectAllRows, locCertificates } = this.state;
         let tempRows = [];
         if (locCertificates) {
@@ -679,7 +621,7 @@ class HeatPick extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             // key={certificate._id}
-                            refreshStore={refresHatLocs}
+                            refreshStore={refresHeatLocs}
                         />
                         <TableInput
                             collection="virtual"
@@ -692,10 +634,109 @@ class HeatPick extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             // key={certificate._id}
-                            refreshStore={refresHatLocs}
+                            refreshStore={refresHeatLocs}
                         />
                         <TableInput
-                            collection="heatloc"
+                            collection="virtual"
+                            objectId={certificate._id}
+                            fieldName="inspQty"
+                            fieldValue={certificate.inspQty}
+                            disabled={true}
+                            unlocked={false}
+                            align="left"
+                            fieldType="number"
+                            textNoWrap={true}
+                            // key={certificate._id}
+                            refreshStore={refresHeatLocs}
+                        />
+                    </tr>
+                );
+            });
+        }
+        return tempRows;
+    }
+
+    generatePickHeader() {
+        const { pickCif, pickHeatNr, pickInspQty, pickSelectAllRows, pickSort } = this.state;
+        return (
+            <tr>
+                <TableSelectionAllRow
+                    checked={pickSelectAllRows}
+                    onChange={this.pickToggleSelectAllRow}
+                />
+                <HeaderInput
+                    type="text"
+                    title="CIF"
+                    name="pickCif"
+                    value={pickCif}
+                    onChange={this.handleChangeHeader}
+                    sort={pickSort}
+                    toggleSort={this.pickToggleSort}
+                />
+                <HeaderInput
+                    type="text"
+                    title="HeatNr"
+                    name="pickHeatNr"
+                    value={pickHeatNr}
+                    onChange={this.handleChangeHeader}
+                    sort={pickSort}
+                    toggleSort={this.pickToggleSort}
+                />
+                <HeaderInput
+                    type="number"
+                    title="Qty"
+                    name="pickInspQty"
+                    value={pickInspQty}
+                    onChange={this.handleChangeHeader}
+                    sort={pickSort}
+                    toggleSort={this.pickToggleSort}
+                />                       
+            </tr>
+        );
+    }
+
+    generatePickBody() {
+        const { refreshHeatPicks } = this.props;
+        const { pickSelectedIds, pickSelectAllRows, pickCertificates } = this.state;
+        let tempRows = [];
+        if (pickCertificates) {
+            this.pickfilterName(pickCertificates).map( (certificate, index) => {
+                tempRows.push(
+                    <tr key={index}>
+                        <TableSelectionRow
+                            id={certificate._id}
+                            selectAllRows={pickSelectAllRows}
+                            selectedRows={pickSelectedIds}
+                            callback={this.updatePickSelectedIds}
+                        />
+                        <TableInput
+                            collection="virtual"
+                            objectId={certificate._id}
+                            fieldName="cif"
+                            fieldValue={certificate.cif}
+                            disabled={true}
+                            unlocked={false}
+                            align="left"
+                            fieldType="text"
+                            textNoWrap={true}
+                            // key={certificate._id}
+                            refreshStore={refreshHeatPicks}
+                        />
+                        <TableInput
+                            collection="virtual"
+                            objectId={certificate._id}
+                            fieldName="heatNr"
+                            fieldValue={certificate.heatNr}
+                            disabled={true}
+                            unlocked={false}
+                            align="left"
+                            fieldType="text"
+                            textNoWrap={true}
+                            // key={certificate._id}
+                            refreshStore={refreshHeatPicks}
+                        />
+                        <TableInput
+                            collection="heatpick"
                             objectId={certificate._id}
                             fieldName="inspQty"
                             fieldValue={certificate.inspQty}
@@ -705,7 +746,7 @@ class HeatPick extends Component {
                             fieldType="number"
                             textNoWrap={true}
                             // key={certificate._id}
-                            refreshStore={refresHatLocs}
+                            refreshStore={refreshHeatPicks}
                         />
                     </tr>
                 );
@@ -716,9 +757,9 @@ class HeatPick extends Component {
 
     removeCertificates(event) {
         event.preventDefault();
-        const { refresHatLocs } = this.props;
-        const { locSelectedIds } = this.state;
-        if (_.isEmpty(locSelectedIds)) {
+        const { refreshHeatPicks } = this.props;
+        const { pickSelectedIds } = this.state;
+        if (_.isEmpty(pickSelectedIds)) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
@@ -732,10 +773,10 @@ class HeatPick extends Component {
                 const requestOptions = {
                     method: 'DELETE',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ selectedIds: locSelectedIds })
+                    body: JSON.stringify({ selectedIds: pickSelectedIds })
                 }
 
-                return fetch(`${config.apiUrl}/heatloc/delete`, requestOptions)
+                return fetch(`${config.apiUrl}/heatpick/delete`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
                     if (responce.status === 401) {
@@ -744,13 +785,13 @@ class HeatPick extends Component {
                     } else {
                         this.setState({
                             isDeleting: false,
-                            locSelectAllRows: false,
-                            locSelectedIds: [],
+                            pickSelectAllRows: false,
+                            pickSelectedIds: [],
                             alert: {
                                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                 message: data.message
                             }
-                        }, refresHatLocs());
+                        }, refreshHeatPicks());
                     }
                 }));
             })
@@ -759,9 +800,9 @@ class HeatPick extends Component {
 
     AssignCertificates(event) {
         event.preventDefault();
-        const { refresHatLocs } = this.props;
-        const { poSelectedIds, poCertificates } = this.state;
-        if (_.isEmpty(poSelectedIds)) {
+        const { refreshHeatPicks } = this.props;
+        const { locSelectedIds, locCertificates } = this.state;
+        if (_.isEmpty(locSelectedIds)) {
             this.setState({
                 alert: {
                     type:'alert-danger',
@@ -772,13 +813,16 @@ class HeatPick extends Component {
             this.setState({
                 isCreating: true, 
             }, () => {
-                let documents = poCertificates.filter(element => poSelectedIds.includes(element._id));
+                let documents = locCertificates.filter(element => locSelectedIds.includes(element._id));
                 const requestOptions = {
                     method: 'POST',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify({documents: documents})
+                    body: JSON.stringify({
+                        documents: documents
+                        
+                    })
                 }
-                return fetch(`${config.apiUrl}/heatloc/create`, requestOptions)
+                return fetch(`${config.apiUrl}/heatpick/create`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
                     if (responce.status === 401) {
@@ -787,13 +831,13 @@ class HeatPick extends Component {
                     } else {
                         this.setState({
                             isCreating: false,
-                            poSelectAllRows: false,
-                            poSelectedIds: [],
+                            locSelectAllRows: false,
+                            locSelectedIds: [],
                             alert: {
                                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                 message: data.message
                             }
-                        }, refresHatLocs());
+                        }, refreshHeatPicks());
                     }
                 }));
             })
@@ -802,20 +846,20 @@ class HeatPick extends Component {
 
     
 
-    pofilterName(array){
+    pickfilterName(array){
         const { 
-            poCif,
-            poHeatNr,
-            poInspQty,
-            poSort
+            pickCif,
+            pickHeatNr,
+            pickInspQty,
+            pickSort
         } = this.state;
 
         if (array) {
-            return arraySorted(array, poSort).filter(function (element) {
+            return arraySorted(array, pickSort).filter(function (element) {
                 return (
-                    doesMatch(poCif, element.cif, 'String', false)
-                    && doesMatch(poHeatNr, element.heatNr, 'String', false)
-                    && doesMatch(poInspQty, element.inspQty, 'String', false)
+                    doesMatch(pickCif, element.cif, 'String', false)
+                    && doesMatch(pickHeatNr, element.heatNr, 'String', false)
+                    && doesMatch(pickInspQty, element.inspQty, 'String', false)
                 );
             });
         } else {
@@ -863,15 +907,15 @@ class HeatPick extends Component {
                     <div className="row" style={{height: "400px"}}>
                         <div className="col full-height">
                             <div className="form-group full-height">
-                                <label htmlFor="poLineHeatNrs" style={{height: '18px'}}>Order Line:</label>
+                                <label htmlFor="poLineHeatNrs" style={{height: '18px'}}>Location:</label>
                                 <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: 'calc(100% - 18px)'}}>
                                     <div className="table-responsive custom-table-container custom-table-container__fixed-row">
-                                        <table className="table table-bordered table-sm table-hover text-nowrap" id="potable">
+                                        <table className="table table-bordered table-sm table-hover text-nowrap" id="loctable">
                                             <thead>
-                                                {this.generatePoHeader()}
+                                                {this.generateLocHeader()}
                                             </thead>
                                             <tbody>
-                                                {this.generatePoBody()}
+                                            {this.generateLocBody()}
                                             </tbody>
                                         </table>
                                     </div>
@@ -895,15 +939,15 @@ class HeatPick extends Component {
                         </div>
                         <div className="col full-height">
                             <div className="form-group full-height">
-                                <label htmlFor="locationHeatNrs" style={{height: '18px'}}>Location:</label>
+                                <label htmlFor="locationHeatNrs" style={{height: '18px'}}>Picking Line:</label>
                                 <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: 'calc(100% - 18px)'}}>
                                     <div className="table-responsive custom-table-container custom-table-container__fixed-row">
-                                        <table className="table table-bordered table-sm table-hover text-nowrap" id="loctable">
+                                        <table className="table table-bordered table-sm table-hover text-nowrap" id="picktable">
                                             <thead>
-                                                {this.generateLocHeader()}
+                                            {this.generatePickHeader()}
                                             </thead>
                                             <tbody>
-                                                {this.generateLocBody()}
+                                                {this.generatePickBody()}
                                             </tbody>
                                         </table>
                                     </div>

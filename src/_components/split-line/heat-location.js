@@ -655,7 +655,7 @@ class HeatLocation extends Component {
     }
 
     generateLocBody() {
-        const { refresHatLocs } = this.props;
+        const { refresHeatLocs } = this.props;
         const { locSelectedIds, locSelectAllRows, locCertificates } = this.state;
         let tempRows = [];
         if (locCertificates) {
@@ -679,7 +679,7 @@ class HeatLocation extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             // key={certificate._id}
-                            refreshStore={refresHatLocs}
+                            refreshStore={refresHeatLocs}
                         />
                         <TableInput
                             collection="virtual"
@@ -692,7 +692,7 @@ class HeatLocation extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             // key={certificate._id}
-                            refreshStore={refresHatLocs}
+                            refreshStore={refresHeatLocs}
                         />
                         <TableInput
                             collection="heatloc"
@@ -705,7 +705,7 @@ class HeatLocation extends Component {
                             fieldType="number"
                             textNoWrap={true}
                             // key={certificate._id}
-                            refreshStore={refresHatLocs}
+                            refreshStore={refresHeatLocs}
                         />
                     </tr>
                 );
@@ -716,7 +716,7 @@ class HeatLocation extends Component {
 
     removeCertificates(event) {
         event.preventDefault();
-        const { refresHatLocs } = this.props;
+        const { refresHeatLocs } = this.props;
         const { locSelectedIds } = this.state;
         if (_.isEmpty(locSelectedIds)) {
             this.setState({
@@ -750,7 +750,7 @@ class HeatLocation extends Component {
                                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                 message: data.message
                             }
-                        }, refresHatLocs());
+                        }, refresHeatLocs());
                     }
                 }));
             })
@@ -759,7 +759,7 @@ class HeatLocation extends Component {
 
     AssignCertificates(event) {
         event.preventDefault();
-        const { refresHatLocs } = this.props;
+        const { refresHeatLocs } = this.props;
         const { poSelectedIds, poCertificates } = this.state;
         if (_.isEmpty(poSelectedIds)) {
             this.setState({
@@ -793,7 +793,7 @@ class HeatLocation extends Component {
                                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                 message: data.message
                             }
-                        }, refresHatLocs());
+                        }, refresHeatLocs());
                     }
                 }));
             })
