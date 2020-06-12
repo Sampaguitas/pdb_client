@@ -259,179 +259,177 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
     let project = selection.project || { _id: '0', name: '', number: '' };
     let i = 1;
     if (!_.isUndefined(picktickets) && picktickets.hasOwnProperty('items') && !_.isEmpty(picktickets.items)) {
-        picktickets.items.map(pickticket => {
-            if (_.isEqual(pickticket._id, pickticketId)) {
-                let itemCount = !_.isEmpty(pickticket.pickitems) ? pickticket.pickitems.length : '';
-                let mirWeight = 0;
-                if (!_.isEmpty(pickticket.pickitems)) {
-                    mirWeight = pickticket.pickitems.reduce(function (acc, cur) {
-                        if (!!cur.miritem.totWeight) {
-                            acc += cur.miritem.totWeight;
-                        }
-                        return acc;
-                    }, 0);
-                }
-                if (!_.isEmpty(pickticket.pickitems)) {
-                    pickticket.pickitems.map(pickitem => {
-                        arrayRow = [];
-                        screenHeaders.map(screenHeader => {
-                            switch(screenHeader.fields.fromTbl) {
-                                case 'pickticket':
-                                    arrayRow.push({
-                                        collection: 'pickticket',
-                                        objectId: pickticket._id,
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: pickticket[screenHeader.fields.name],
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
-                                    break;
-                                case 'pickitem':
-                                    arrayRow.push({
-                                        collection: 'pickitem',
-                                        objectId: pickitem._id,
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: pickitem[screenHeader.fields.name],
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
-                                    break;
-                                case 'miritem':
-                                    arrayRow.push({
-                                        collection: 'miritem',
-                                        objectId: pickitem.miritem._id,
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: pickitem.miritem[screenHeader.fields.name],
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
-                                    break;
-                                case 'po':
-                                    if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: project._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'po',
-                                            objectId: pickitem.miritem.po._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue:pickitem.miritem.po[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    }
-                                    break;
-                                case 'location':
-                                    if (screenHeader.fields.name === 'area') {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: pickitem.location.area._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: pickitem.location.area.area,
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else if (screenHeader.fields.name === 'warehouse') {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: pickticket.warehouse._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: pickticket.warehouse.warehouse,
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else if (screenHeader.fields.name === 'location') {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: pickitem.location._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: getLocName(pickitem.location, pickitem.location.area),
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        }); 
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: '0',
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: '',
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        }); 
-                                    }
-                                    break;
-                                case 'mir':
-                                    if (['itemCount', 'mirWeight'].includes(screenHeader.fields.name)) {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: mir._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: screenHeader.fields.name === 'itemCount' ? itemCount : mirWeight,
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'mir',
-                                            objectId: pickticket.mir._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: pickticket.mir[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    }
-                                    break;
-                                default: arrayRow.push({
-                                    collection: 'virtual',
-                                    objectId: '0',
+        let pickticket = picktickets.items.find(element => _.isEqual(element._id, pickticketId));
+        if (!_.isUndefined(pickticket)){
+            let itemCount = !_.isEmpty(pickticket.pickitems) ? pickticket.pickitems.length : '';
+            let mirWeight = 0;
+            if (!_.isEmpty(pickticket.pickitems)) {
+                mirWeight = pickticket.pickitems.reduce(function (acc, cur) {
+                    if (!!cur.miritem.totWeight) {
+                        acc += cur.miritem.totWeight;
+                    }
+                    return acc;
+                }, 0);
+            }
+            if (!_.isEmpty(pickticket.pickitems)) {
+                pickticket.pickitems.map(pickitem => {
+                    arrayRow = [];
+                    screenHeaders.map(screenHeader => {
+                        switch(screenHeader.fields.fromTbl) {
+                            case 'pickticket':
+                                arrayRow.push({
+                                    collection: pickticket.isProcessed ? 'virtual' : 'pickticket',
+                                    objectId: pickticket._id,
                                     fieldName: screenHeader.fields.name,
-                                    fieldValue: '',
-                                    disabled: screenHeader.edit,
+                                    fieldValue: pickticket[screenHeader.fields.name],
+                                    disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
-                                }); 
-                            }
-                        });
-                        objectRow  = {
-                            _id: i,
-                            tablesId: {
-                                poId: pickitem.miritem.po._id,
-                                subId: '',
-                                certificateId: '',
-                                packitemId: '',
-                                collipackId: '',
-                                locationId: pickitem.location._id,
-                                mirId: pickticket.mir._id,
-                                miritemId: pickitem.miritem._id,
-                                pickticketId: pickticket._id,
-                                pickitemId: pickitem._id
-                            },
-                            fields: arrayRow
-                        };
-                        arrayBody.push(objectRow);
-                        i++;
+                                });
+                                break;
+                            case 'pickitem':
+                                arrayRow.push({
+                                    collection: pickticket.isProcessed ? 'virtual' : 'pickitem',
+                                    objectId: pickitem._id,
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: pickitem[screenHeader.fields.name],
+                                    disabled: pickticket.isProcessed ? true : screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                                break;
+                            case 'miritem':
+                                arrayRow.push({
+                                    collection: pickticket.isProcessed ? 'virtual' : 'miritem',
+                                    objectId: pickitem.miritem._id,
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: pickitem.miritem[screenHeader.fields.name],
+                                    disabled: pickticket.isProcessed ? true : screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                                break;
+                            case 'po':
+                                if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: project._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                        disabled: pickticket.isProcessed ? true : screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else {
+                                    arrayRow.push({
+                                        collection: pickticket.isProcessed ? 'virtual' : 'po',
+                                        objectId: pickitem.miritem.po._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue:pickitem.miritem.po[screenHeader.fields.name],
+                                        disabled: pickticket.isProcessed ? true : screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                }
+                                break;
+                            case 'location':
+                                if (screenHeader.fields.name === 'area') {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: pickitem.location.area._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: pickitem.location.area.area,
+                                        disabled: pickticket.isProcessed ? true : screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else if (screenHeader.fields.name === 'warehouse') {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: pickticket.warehouse._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: pickticket.warehouse.warehouse,
+                                        disabled: pickticket.isProcessed ? true : screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else if (screenHeader.fields.name === 'location') {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: pickitem.location._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: getLocName(pickitem.location, pickitem.location.area),
+                                        disabled: pickticket.isProcessed ? true : screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    }); 
+                                } else {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: '0',
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: '',
+                                        disabled: pickticket.isProcessed ? true : screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    }); 
+                                }
+                                break;
+                            case 'mir':
+                                if (['itemCount', 'mirWeight'].includes(screenHeader.fields.name)) {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: mir._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: screenHeader.fields.name === 'itemCount' ? itemCount : mirWeight,
+                                        disabled: pickticket.isProcessed ? true : screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else {
+                                    arrayRow.push({
+                                        collection: pickticket.isProcessed ? 'virtual' : 'mir',
+                                        objectId: pickticket.mir._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: pickticket.mir[screenHeader.fields.name],
+                                        disabled: pickticket.isProcessed ? true : screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                }
+                                break;
+                            default: arrayRow.push({
+                                collection: 'virtual',
+                                objectId: '0',
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: '',
+                                disabled: pickticket.isProcessed ? true : screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            }); 
+                        }
                     });
-                }
+                    objectRow  = {
+                        _id: i,
+                        tablesId: {
+                            poId: pickitem.miritem.po._id,
+                            subId: '',
+                            certificateId: '',
+                            packitemId: '',
+                            collipackId: '',
+                            locationId: pickitem.location._id,
+                            mirId: pickticket.mir._id,
+                            miritemId: pickitem.miritem._id,
+                            pickticketId: pickticket._id,
+                            pickitemId: pickitem._id
+                        },
+                        fields: arrayRow
+                    };
+                    arrayBody.push(objectRow);
+                    i++;
+                });
             }
-        });
-        
+        }
         return arrayBody;
     } else {
         return [];
@@ -552,7 +550,7 @@ class PtSplitwindow extends React.Component {
             pickticketId: '',
             pickticket: {
                 pickNr: '',
-                isProcessed: '',
+                isProcessed: false,
                 mirId: '',
                 warehouseId: '',
                 warehouse: '',
@@ -569,7 +567,7 @@ class PtSplitwindow extends React.Component {
             // showSplitLine: false,
             showSettings: false,
             showHeat: false,
-            creating: false,
+            processing: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -585,7 +583,8 @@ class PtSplitwindow extends React.Component {
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
-        this.handleEditClick = this.handleEditClick.bind(this);
+        this.handleClosePickTicket = this.handleClosePickTicket.bind(this);
+        this.handleOpenPickTicket = this.handleOpenPickTicket.bind(this);
         //Toggle Modals
         this.toggleHeat = this.toggleHeat.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
@@ -671,7 +670,7 @@ class PtSplitwindow extends React.Component {
                     this.setState({
                         pickticket: {
                             pickNr: found.pickNr || '',
-                            isProcessed: found.isProcessed || '',
+                            isProcessed: found.isProcessed || false,
                             mirId: found.mirId || '',
                             warehouseId: found.warehouseId || '',
                             warehouse: found.warehouse.warehouse || '',
@@ -713,7 +712,7 @@ class PtSplitwindow extends React.Component {
                 this.setState({
                     pickticket: {
                         pickNr: found.pickNr || '',
-                        isProcessed: found.isProcessed || '',
+                        isProcessed: found.isProcessed || false,
                         mirId: found.mirId || '',
                         warehouseId: found.warehouseId || '',
                         warehouse: found.warehouse.warehouse || '',
@@ -985,28 +984,6 @@ class PtSplitwindow extends React.Component {
         });
     }
 
-    handleEditClick(event) {
-        event.preventDefault();
-        const { selectedIds, projectId } = this.state;
-        if (projectId === '') {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Could not retreive projectId.'
-                }
-            });
-        } else if (selectedIds.length != 1) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select one line to Add/Edit MIR items.'
-                }
-            });
-        } else {
-
-        }
-    }
-
     handleModalTabClick(event, tab){
         event.preventDefault();
         const { tabs } = this.state; // 1. Get tabs from state
@@ -1017,6 +994,86 @@ class PtSplitwindow extends React.Component {
             ...this.state,
             tabs // 4. update state
         })
+    }
+
+    handleClosePickTicket(event) {
+        event.preventDefault();
+        const { pickticketId } = this.state
+        const alertMessage = [
+            'Do you whant to update the stock with the quantities of this Picking Ticket?',
+            '',
+            'In doing so:',
+            '- the picked quantities of this picking ticket cannot be changed anymore',
+            '- the stock will be updated with this picking ticket\'s quantities',
+            '- stock history will be created.',
+            '',
+            'Make sure that the picked quantities for this picking ticket are complete. Otherwise click on "Cancel".'
+        ];
+        if (confirm(alertMessage.join('\r\n'))) {
+            this.setState({processing: true}, () => {
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({ pickticketId: pickticketId })
+                };
+                return fetch(`${config.apiUrl}/pickticket/close`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            processing: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshPickTicket);
+                    }
+                }));
+            });
+        }
+    }
+
+    handleOpenPickTicket(event) {
+        event.preventDefault();
+        const { pickticketId } = this.state
+        const alertMessage = [
+            'Would you like to reopen this Picking Ticket?',
+            '',
+            'In doing so:',
+            '- the picked quantities of this picking ticket will be editable',
+            '- the stock will be updated with this picking ticket\'s quantities',
+            '- stock history will be removed.',
+            '',
+            'Make sure that the picked quantities need to be edited. Otherwise click on "Cancel".'
+        ];
+        if (confirm(alertMessage.join('\r\n'))) {
+            this.setState({processing: true}, () => {
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({ pickticketId: pickticketId })
+                };
+                return fetch(`${config.apiUrl}/pickticket/open`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            processing: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshPickTicket);
+                    }
+                }));
+            });
+        }
     }
 
     render() {
@@ -1038,8 +1095,7 @@ class PtSplitwindow extends React.Component {
             pickticket,
             // newMir,
             // showCreate,
-            creating,
-            
+            processing,
             //'-------------------'
             tabs,
             settingsFilter,
@@ -1083,6 +1139,9 @@ class PtSplitwindow extends React.Component {
                     <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
                         <button title="Change/Add Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleHeat}>
                             <span><FontAwesomeIcon icon="file-certificate" className="fa-lg mr-2"/>Heat Numbers</span>
+                        </button>
+                        <button title="PickTicket" className="btn btn-leeuwen btn-lg mr-2" style={{height: '34px'}} onClick={pickticket.isProcessed ? this.handleOpenPickTicket : this.handleClosePickTicket}> {/* onClick={this.toggleHeat} */}
+                            <span><FontAwesomeIcon icon={processing ? "spinner" : "exclamation-triangle"} className={processing ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>{pickticket.isProcessed ? 'Open PickTicket' : 'Close PickTicket'}</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>
