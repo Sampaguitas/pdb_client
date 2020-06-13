@@ -250,15 +250,27 @@ function getBodys(picktickets, headersForShow) {
             screenHeaders.map(screenHeader => {
                 switch(screenHeader.fields.fromTbl) {
                     case 'pickticket':
-                        arrayRow.push({
-                            collection: 'pickticket',
-                            objectId: pickticket._id,
-                            fieldName: screenHeader.fields.name,
-                            fieldValue: pickticket[screenHeader.fields.name],
-                            disabled: screenHeader.edit,
-                            align: screenHeader.align,
-                            fieldType: getInputType(screenHeader.fields.type),
-                        });
+                        if (_.isEqual(screenHeader.fields.name, 'pickStatus')) {
+                            arrayRow.push({
+                                collection: 'virtual',
+                                objectId: pickticket._id,
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: pickticket.isProcessed ? 'Closed' : 'Open',
+                                disabled: true,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            });
+                        } else {
+                            arrayRow.push({
+                                collection: 'pickticket',
+                                objectId: pickticket._id,
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: pickticket[screenHeader.fields.name],
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            });
+                        }
                         break;
                     case 'mir':
                         if (['itemCount', 'mirWeight'].includes(screenHeader.fields.name)) {
