@@ -2,11 +2,11 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { accessActions, alertActions, projectActions } from '../../../_actions';
-import Layout from '../../../_components/layout';
+import { accessActions, alertActions, projectActions } from '../../../../_actions';
+import Layout from '../../../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-class OutgoingShipments extends React.Component {
+class WhShipping extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -62,11 +62,47 @@ class OutgoingShipments extends React.Component {
                         <li className="breadcrumb-item">
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
-                        <li className="breadcrumb-item active" aria-current="page">Outgoing shipments:</li>
+                        <li className="breadcrumb-item active" aria-current="page">Shipping:</li>
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
                     </ol>
                 </nav>
                 <hr />
+                <div id="whshipping">
+                    <div className="row justify-content-center">
+                    <NavLink to={{ 
+                            pathname: "/whtransportdocs",
+                            search: '?id=' + projectId
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                    >
+                        <div className="card-body">
+                            <div className="text-center">
+                                <FontAwesomeIcon 
+                                    icon="passport" 
+                                    className="fa-5x mb-3" 
+                                    name="passport"
+                                />
+                                <h3>Prepare transport docs</h3>
+                            </div>
+                        </div>
+                    </NavLink>
+                    <NavLink to={{ 
+                            pathname: "/whpackingdetails",
+                            search: '?id=' + projectId
+                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                    >
+                        <div className="card-body">
+                            <div className="text-center">
+                                <FontAwesomeIcon 
+                                    icon="box-open" 
+                                    className="fa-5x mb-3" 
+                                    name="box-open"
+                                />
+                                <h3>Complete packing details</h3>
+                            </div>
+                        </div>
+                    </NavLink>
+                    </div>
+                </div>
             </Layout>
         );
     }
@@ -85,5 +121,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedOutgoingShipments = connect(mapStateToProps)(OutgoingShipments);
-export { connectedOutgoingShipments as OutgoingShipments };
+const connectedWhShipping = connect(mapStateToProps)(WhShipping);
+export { connectedWhShipping as WhShipping };

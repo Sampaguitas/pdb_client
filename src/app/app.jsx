@@ -35,7 +35,9 @@ import { MaterialIssueRecord } from '../pages/project/warehouse/materialissuerec
 import { MirSplitwindow } from '../pages/project/warehouse/mirsplitwindow.jsx';
 import { PickingTicket } from '../pages/project/warehouse/pickingticket.jsx';
 import { PtSplitwindow } from '../pages/project/warehouse/ptsplitwindow.jsx';
-import { OutgoingShipments } from '../pages/project/warehouse/outgoingshipments.jsx';
+import { WhShipping } from '../pages/project/warehouse/shipping/whshipping.jsx';
+import { WhTransportDocuments } from '../pages/project/warehouse/shipping/whtransportdocs.jsx';
+import { WhPackingDetails } from '../pages/project/warehouse/shipping/whpackingdetails.jsx';
 import { Locations } from '../pages/project/warehouse/locations.jsx';
 import { Configuration } from '../pages/project/configuration.jsx';
 
@@ -96,7 +98,9 @@ class App extends React.Component {
                         <PrivateRoute path="/mirsplitwindow" component={MirSplitwindow} user={user}/>
                         <PrivateRoute path="/pickingticket" component={PickingTicket} user={user}/>
                         <PrivateRoute path="/ptsplitwindow" component={PtSplitwindow} user={user}/>
-                        <PrivateRoute path="/outgoingshipments" component={OutgoingShipments} user={user}/>
+                        <PrivateRoute path="/whshipping" component={WhShipping} user={user}/>
+                        <PrivateRoute path="/whtransportdocs" component={WhTransportDocuments} user={user}/>
+                        <PrivateRoute path="/whpackingdetails" component={WhPackingDetails} user={user}/>
                         <PrivateRoute path="/locations" component={Locations} user={user}/>
                         <PrivateRoute path="/configuration" component={Configuration} user={user}/>
                         <Route component={NotFound} user={user}/>

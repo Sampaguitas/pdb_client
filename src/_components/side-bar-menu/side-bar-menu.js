@@ -51,7 +51,7 @@ const project_menu = [
             { id: 1, title: 'Stock management', href: '/stockmanagement', icon: 'forklift', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] },
             { id: 2, title: 'Material issue record', href: '/materialissuerecord', icon: 'phone-square', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
             { id: 3, title: 'Picking ticket', href: '/pickingticket', icon: 'clipboard-list', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] },
-            { id: 4, title: 'Outgoing shipments', href: '/outgoingshipments', icon: 'ship', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
+            { id: 4, title: 'Shipping', href: '/whshipping', icon: 'ship', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] }, 
             { id: 5, title: 'Locations', href: '/locations', icon: 'map-marked-alt', roles: ['isAdmin', 'isSuperAdmin', 'isWarehouse'] } 
         ] 
     },
@@ -119,7 +119,7 @@ class SideBarMenu extends Component {
             case '/stockmanagement':
             case '/materialissuerecord':
             case '/pickingticket':
-            case '/outgoingshipments':
+            case '/whshipping':
             case '/locations':
             case '/configuration': 
                 return false;
