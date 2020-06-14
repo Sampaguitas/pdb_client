@@ -678,7 +678,7 @@ function getBodysForShow (selection, pos, transactions, headersForShow) {
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
             virtuals(transactions, po._id, 'poId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
-                if (!!virtual._id && !!virtual.stockQty) {
+                if (!!virtual._id) { //&& !!virtual.stockQty
                     arrayRow = [];
                     screenHeaders.map(screenHeader => {
                         switch(screenHeader.fields.fromTbl) {
