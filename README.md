@@ -113,7 +113,7 @@ To deploy your Git repository on Heroku, click on the following link and follow 
 
 ## Contributing
 
-Please read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE OF CONDUCT](CODE_OF_CONDUCT.md) for details on how to submit pull requests to us, and the process for submitting pull requests to us.
 
 ## Versioning
 
