@@ -7,8 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../_helpers';
 import { history } from '../../../_helpers';
 import { 
-    accessActions, 
-    alertActions,  
+    accessActions,
+    alertActions,
+    docdefActions, 
     fieldnameActions,
     fieldActions,
     pickticketActions,
@@ -143,6 +144,24 @@ function arraySorted(array, fieldOne, fieldTwo, fieldThree) {
             }
         });
         return newArray;             
+    }
+}
+
+function docConf(array) {
+    const tpeOf = [
+        //'5d1927121424114e3884ac7e', //ESR01 Expediting status report
+        // '5d1927131424114e3884ac80', //PL01 Packing List
+        // '5d1927141424114e3884ac84', //SM01 Shipping Mark
+        // '5d1927131424114e3884ac81', //PN01 Packing Note
+        // '5d1927141424114e3884ac83', //SI01 Shipping Invoice
+        // '5d1927131424114e3884ac7f', //NFI1 Notification for Inspection
+        //'5eacef91e7179a42f172feea', //SH01 Stock History Report
+        '5edb2317e7179a6b6367d786' //PT01 Picking Ticket
+    ];
+    if (array) {
+        return array.filter(function (element) {
+            return tpeOf.includes(element.doctypeId);
+        });
     }
 }
 
@@ -351,6 +370,11 @@ function getBodys(picktickets, headersForShow) {
     }
 }
 
+function generateOptions(list) {
+    if (list) {
+        return list.map((element, index) => <option key={index} value={element._id}>{element.name}</option>);
+    }
+}
 
 function initSettingsFilter(fieldnames, settings, screenId) {
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
@@ -466,13 +490,16 @@ class PickingTicket extends React.Component {
             screenId: '5ed8f4ce7c213e044cc1c1a9', //Picking ticket
             unlocked: false,
             screen: 'Picking ticket',
+            selectedTemplate: '',
+            docList: [],
             selectedIds: [],
-            creating: false,
+            isDownloadingFile: false,
             alert: {
                 type:'',
                 message:''
             },
             showSettings: false,
+            showGenerate: false,
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -485,7 +512,9 @@ class PickingTicket extends React.Component {
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         this.handlePrepare = this.handlePrepare.bind(this);
+        this.handleGenerateFile = this.handleGenerateFile.bind(this);
         //Toggle Modals
+        this.toggleGenerate = this.toggleGenerate.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
@@ -501,7 +530,9 @@ class PickingTicket extends React.Component {
     componentDidMount() {
         const { 
             dispatch,
+            docdefs,
             loadingAccesses,
+            loadingDocdefs,
             loadingFieldnames,
             loadingFields,
             // loadingMirs,
@@ -516,7 +547,7 @@ class PickingTicket extends React.Component {
             settings 
         } = this.props;
 
-        const { screenId, headersForShow, settingsDisplay } = this.state; //splitScreenId
+        const { headersForShow, settingsDisplay, screenId } = this.state; //splitScreenId
 
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
@@ -525,6 +556,9 @@ class PickingTicket extends React.Component {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
+            }
+            if (!loadingDocdefs) {
+                dispatch(docdefActions.getAll(qs.id));
             }
             if (!loadingFieldnames) {
                 dispatch(fieldnameActions.getAll(qs.id));
@@ -547,13 +581,14 @@ class PickingTicket extends React.Component {
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(picktickets, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            docList: arraySorted(docConf(docdefs.items), "name")
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
         const { headersForShow, screenId, settingsDisplay } = this.state; //splitScreenId,
-        const { fields, fieldnames, selection, settings, picktickets } = this.props;
+        const { docdefs, fields, fieldnames, selection, settings, picktickets } = this.props;
 
         if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
             this.setState({
@@ -572,6 +607,10 @@ class PickingTicket extends React.Component {
             this.setState({
                 bodysForShow: getBodys(picktickets, headersForShow)
             });
+        }
+
+        if (docdefs != prevProps.docdefs) {
+            this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
         }
 
     }
@@ -827,6 +866,28 @@ class PickingTicket extends React.Component {
         });
     }
 
+    toggleGenerate(event) {
+        event.preventDefault();
+        const { showGenerate, docList, selectedIds } = this.state;
+        if (!showGenerate && selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type:'alert-danger',
+                    message:'Select one line to generate the picking ticket.'
+                }
+            });
+        } else {
+            this.setState({
+                selectedTemplate: (!showGenerate  && !_.isEmpty(docList)) ? docList[0]._id : '',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showGenerate: !showGenerate,
+            });
+        }
+    }
+
     handlePrepare(event) {
         event.preventDefault();
         const { selectedIds, projectId } = this.state;
@@ -859,6 +920,62 @@ class PickingTicket extends React.Component {
         }
     }
 
+    handleGenerateFile(event) {
+        event.preventDefault();
+        const { selectedIds, screenId } = this.state;
+        if (!screenId) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Could not retreive the screenId'
+                }
+            });
+        } else if (selectedIds.length != 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one line to generate the Pick Ticket.'
+                }
+            });
+        } else {
+            this.setState({
+                ...this.state,
+                isDownloadingFile: true
+            }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pickticketId: selectedIds[0].pickticketId })
+                };
+                return fetch(`${config.apiUrl}/template/generatePt?id=${selectedTemplate}&locale=${locale}`, requestOptions)
+                .then(responce => {
+                    this.setState({
+                        showGenerate: false,
+                        isDownloadingFile: false 
+                    });
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        } else {
+                            responce.text().then(text => {
+                            const data = text && JSON.parse(text);
+                                this.setState({
+                                    alert: {
+                                        type: 'alert-danger',
+                                        message: data.message
+                                    }
+                                });
+                            });
+                        }
+                    } else {
+                        responce.blob().then(blob => saveAs(blob, obj.field));
+                    }
+                });
+            });
+        }
+    }
+
     handleModalTabClick(event, tab){
         event.preventDefault();
         const { tabs } = this.state; // 1. Get tabs from state
@@ -878,15 +995,17 @@ class PickingTicket extends React.Component {
             screen, 
             screenId,
             selectedIds, 
+            selectedTemplate,
+            docList,
             unlocked, 
             //show modals
+            showGenerate,
             showSettings,
             //--------
             headersForShow,
             bodysForShow,
             //---------------
-            showCreate,
-            creating,
+            isDownloadingFile,
             //'-------------------'
             tabs,
             settingsFilter,
@@ -923,7 +1042,7 @@ class PickingTicket extends React.Component {
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Prepare Picking Ticket" onClick={this.handlePrepare}>
                             <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Prepare Ticket</span>
                         </button>
-                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Generate Picking Ticket">
+                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Generate Picking Ticket" onClick={this.toggleGenerate}>
                             <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate Ticket</span>
                         </button>
                     </div>
@@ -950,6 +1069,35 @@ class PickingTicket extends React.Component {
                         }
                     </div>
                 </div>
+                <Modal
+                    show={showGenerate}
+                    hideModal={this.toggleGenerate}
+                    title="Generate Picking Ticket"
+                >
+                    <div className="col-12">
+                        <form onSubmit={event => this.handleGenerateFile(event)}>
+                            <div className="form-group">
+                                <label htmlFor="selectedTemplate">Select Document</label>
+                                <select
+                                    className="form-control"
+                                    name="selectedTemplate"
+                                    value={selectedTemplate}
+                                    placeholder="Select document..."
+                                    onChange={this.handleChange}
+                                    required
+                                >
+                                    <option key="0" value="">Select document...</option>
+                                    {generateOptions(docList)}
+                                </select>
+                            </div>
+                            <div className="text-right">
+                                <button type="submit" className="btn btn-success btn-lg">
+                                    <span><FontAwesomeIcon icon={isDownloadingFile ? "spinner" : "file-excel"} className={isDownloadingFile ? "fa-pulse fa-fw fa-lg mr-2"  : "fa-lg mr-2"}/>Generate</span>
+                                </button>
+                            </div>
+                        </form>                  
+                    </div>
+                </Modal>
                 <Modal
                     show={showSettings}
                     hideModal={this.toggleSettings}
@@ -1014,8 +1162,9 @@ class PickingTicket extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, picktickets, selection, settings } = state;
+    const { accesses, alert, docdefs, fieldnames, fields, picktickets, selection, settings } = state;
     const { loadingAccesses } = accesses;
+    const { loadingDocdefs } = docdefs;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingPicktickets } = picktickets;
@@ -1026,6 +1175,8 @@ function mapStateToProps(state) {
     return {
         accesses,
         alert,
+        loadingDocdefs,
+        docdefs,
         fieldnames,
         fields,
         loadingAccesses,
