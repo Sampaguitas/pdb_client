@@ -212,6 +212,7 @@ function virtuals(heats) {
             acc.push({
                 cif: cur.certificate.cif,
                 heatNr: cur.heatNr,
+                inspQty: cur.inspQty,
                 heatId: cur._id,
                 certificateId: cur.certificateId
             });
@@ -226,6 +227,7 @@ function virtuals(heats) {
             {
                 cif: '',
                 heatNr: '',
+                inspQty: '',
                 heatId: '',
                 certificateId: '',
             }

@@ -1097,7 +1097,7 @@ class Documents extends React.Component {
             {_id: '5d1927141424114e3884ac83', code: 'SI01' , name: 'Shipping Invoice', fromTbls: ['storedproc', 'article', 'po', 'sub', 'collipack', 'packitem', 'certificate']},
             {_id: '5d1927131424114e3884ac7f', code: 'NFI01', name: 'Notification for inspection', fromTbls: ['po', 'sub', 'packitem', 'certificate']},
             {_id: '5eacef91e7179a42f172feea', code: 'SH01', name: 'Stock History Report', fromTbls: ['storedproc', 'po', 'location', 'transaction']},
-            {_id: '5edb2317e7179a6b6367d786', code: 'PT01', name: 'Picking Ticket', fromTbls: ['mir', 'po', 'location', 'heatloc', 'pickticket', 'pickitem']},
+            {_id: '5edb2317e7179a6b6367d786', code: 'PT01', name: 'Picking Ticket', fromTbls: ['certificate', 'location', 'mir', 'miritem', 'po', 'pickticket', 'pickitem']}, //'heatloc'
         ]
 
         return (
