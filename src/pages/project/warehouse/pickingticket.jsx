@@ -922,12 +922,12 @@ class PickingTicket extends React.Component {
 
     handleGenerateFile(event) {
         event.preventDefault();
-        const { selectedIds, screenId } = this.state;
-        if (!screenId) {
+        const { selectedIds, selectedTemplate } = this.state;
+        if (!selectedTemplate) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
-                    message: 'Could not retreive the screenId'
+                    message: 'Could not retreive the Template.'
                 }
             });
         } else if (selectedIds.length != 1) {
@@ -943,7 +943,7 @@ class PickingTicket extends React.Component {
                 isDownloadingFile: true
             }, () => {
                 const requestOptions = {
-                    method: 'DELETE',
+                    method: 'POST',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
                     body: JSON.stringify({ pickticketId: selectedIds[0].pickticketId })
                 };
@@ -969,7 +969,7 @@ class PickingTicket extends React.Component {
                             });
                         }
                     } else {
-                        responce.blob().then(blob => saveAs(blob, obj.field));
+                        responce.blob().then(blob => saveAs(blob, 'PT01.xlsx')); //obj.field
                     }
                 });
             });
