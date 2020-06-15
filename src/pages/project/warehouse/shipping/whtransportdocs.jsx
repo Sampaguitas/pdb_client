@@ -228,6 +228,9 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
         '5ed1e7a67c213e044cc01888', //Material Issue Record Splitwindow
         '5ed1e76e7c213e044cc01884', //Material Issue Record
         '5ed1e7a67c213e044cc01888', //Material Issue Record Splitwindow
+        '5ee60fbb7c213e044cc480e4', //'WH Assign Transport'
+        '5ee60fd27c213e044cc480e7', //'WH Assign Transport SplitWindow'
+        '5ee60fe87c213e044cc480ea', //'WH Print Transportdocuments'
     ];
 
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        
@@ -642,8 +645,8 @@ class WhTransportDocuments extends React.Component {
                 }
             ],
             projectId:'',
-            screenId: '5cd2b643fd333616dc360b66',
-            splitScreenId: '5cd2b647fd333616dc360b72', //Assign Transport SplitWindow
+            screenId: '5ee60fbb7c213e044cc480e4',
+            splitScreenId: '5ee60fd27c213e044cc480e7', //Assign Transport SplitWindow
             unlocked: false,
             screen: 'transportdocs',
             selectedIds: [],
