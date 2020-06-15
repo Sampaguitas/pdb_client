@@ -196,7 +196,7 @@ function resetPwd(user) {
             .then(
                 response => {
                     dispatch(success(response)),
-                    dispatch(alertActions.success('Your Passowrd has been changed'));
+                    dispatch(alertActions.success('Your Password has been changed'));
                 },
                 error => {
                     dispatch(failure(error.toString()))
