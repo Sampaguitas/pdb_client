@@ -23,7 +23,6 @@ import pdb from "../../_assets/pdb.svg";
 class ResetPwd extends React.Component {
   constructor(props) {
     super(props);
-    this.props.dispatch(userActions.logout());
     this.state = {
         user: {
             userId: '',
@@ -39,7 +38,7 @@ class ResetPwd extends React.Component {
   }
 
   componentDidMount() {
-    const { location } = this.props;
+    const { location, dispatch } = this.props;
     const { user } = this.state;
     var qs = queryString.parse(location.search);
     if (qs.id && qs.token) {
@@ -52,6 +51,7 @@ class ResetPwd extends React.Component {
         });
     }
     //Clear Selection
+    dispatch(userActions.logout());
     dispatch(accessActions.clear());
     dispatch(collitypeActions.clear());
     dispatch(docdefActions.clear());
