@@ -967,22 +967,22 @@ class MaterialIssueRecord extends React.Component {
     createNewMir(event) {
         event.preventDefault();
         const { newMir } = this.state;
-        const { mir, dateReceived, dateExpected, projectId } = newMir;
-        if (!mir && !dateReceived && !dateExpected && !projectId ) {
+        // const { mir, dateReceived, dateExpected, projectId } = newMir;
+        if (!newMir.mir && !newMir.dateReceived && !newMir.dateExpected && !newMir.projectId ) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
                     message: 'All fields are required.'
                 }
             });
-        } else if (!isValidFormat(dateReceived, 'date', getDateFormat(myLocale))) {
+        } else if (!isValidFormat(newMir.dateReceived, 'date', getDateFormat(myLocale))) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
                     message: 'Date Received: Not a valid date format.'
                 }
             });
-        } else if (!isValidFormat(dateExpected, 'date', getDateFormat(myLocale))) {
+        } else if (!isValidFormat(newMir.dateExpected, 'date', getDateFormat(myLocale))) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
@@ -990,6 +990,10 @@ class MaterialIssueRecord extends React.Component {
                 }
             });
         } else {
+            //fix on date format
+            let dateReceived = StringToDate(newMir.dateReceived, 'date', getDateFormat(myLocale));
+            let dateExpected = StringToDate(newMir.dateExpected, 'date', getDateFormat(myLocale));
+            
             this.setState({
                 ...this.state,
                 creatingMir: true
@@ -997,7 +1001,12 @@ class MaterialIssueRecord extends React.Component {
                 const requestOptions = {
                     method: 'POST',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newMir)
+                    body: JSON.stringify({
+                        mir: newMir.mir,
+                        dateReceived: dateReceived,
+                        dateExpected: dateExpected,
+                        projectId: newMir.projectId
+                    })
                 };
                 return fetch(`${config.apiUrl}/mir/create`, requestOptions)
                 .then(responce => responce.text().then(text => {
