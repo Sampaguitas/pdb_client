@@ -13,3 +13,4 @@
 * [Approval - Phase XXI](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XXI.pdf)
 * [Approval - Phase XXII](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XXII.pdf)
 * [Approval - Phase XXIII](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XXIII.pdf)
+* [Approval - Phase XXIII](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Approval+-+Phase+XXIV.docx)
