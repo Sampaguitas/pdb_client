@@ -25,3 +25,4 @@ export * from './supplier.actions';
 export * from './transaction.actions';
 export * from './user.actions';
 export * from './warehouse.actions';
+export * from './whcollipack.actions';

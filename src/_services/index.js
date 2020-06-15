@@ -24,3 +24,4 @@ export * from './supplier.service';
 export * from './transaction.service';
 export * from './user.service';
 export * from './warehouse.service';
+export * from './whcollipack.service';

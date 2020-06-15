@@ -25,3 +25,4 @@ export * from './supplier.constants';
 export * from './transaction.constants';
 export * from './user.constants';
 export * from './warehouse.constants';
+export * from './whcollipack.constants';

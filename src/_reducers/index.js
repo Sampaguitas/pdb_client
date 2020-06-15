@@ -32,6 +32,7 @@ import { suppliers } from './suppliers.reducer';
 import { transactions } from './transactions.reducer';
 import { users } from './users.reducer';
 import { warehouses } from './warehouses.reducer';
+import { whcollipacks } from './whcollipacks.reducer';
 
 const rootReducer = combineReducers({
   accesses,
@@ -65,7 +66,8 @@ const rootReducer = combineReducers({
   suppliers,
   transactions,
   users,
-  warehouses
+  warehouses,
+  whcollipacks
 });
 
 export default rootReducer;
