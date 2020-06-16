@@ -1,6 +1,6 @@
 ### Warehouse Shipping Screens
 - [ ] Assign PL & Colli to pickitems (transport document)
-- [ ] Assign Colli types (packing details)
+- [ ] Assign Colli types & dimentions (packing details)
 - [ ] Print Shipping Documents (packing details)
 ### Minutes of Meeting
 - [ ] Goods receipt: alert-message if no remaining Qty.
