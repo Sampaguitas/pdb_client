@@ -1,17 +1,13 @@
-### MIR screen
-- [X] Create Material Issue Records
-### MIR splitwindow
-- [X] Add MIR Items / Qty required
-- [X] Gen. Picking tickets / Qty to be prepared
-### Picking Screens
-- [X] Configure & screens
-- [ ] Configure & documents
-- [X] Enter picked quantity
-- [X] Delete button
-- [ ] HeatPick collection
-- [ ] HeatNr & heatQty
-- [ ] Update stock
-### Shipping Screen
-- [ ] Assign Picked items to Colli / HeatNr & heatQty
-- [ ] Assign Collis to Packing List
-- [ ] Print Packing List
+### Warehouse Shipping Screen
+- [ ] Assign PL & Colli to pickitems (transport document)
+- [ ] Assign Colli types (packing details)
+- [ ] Print Shipping Documents (packing details)
+### Minutes of Meeting
+- [ ] Goods receipt: alert-message if no remaining Qty.
+- [ ] Goods receipt: Qty field disabled if multiple line selected.
+- [ ] Goods receipt: correct remaining Qty, no transaction if equal to 0.
+- [ ] Authentication: Change validity of the  token to one day.
+- [ ] Inputs type date: validation formats (autofill year, allow single digit day/month)
+- [ ] Qty Picked: calculated from heats quantities.
+- [X] Typos: Tcicket, whant.
+- [ ] Mir: isProcessed = true when all picktickets are closed and qtyPicked = qtyRequired  

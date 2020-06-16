@@ -1015,7 +1015,7 @@ class PtSplitwindow extends React.Component {
         event.preventDefault();
         const { pickticketId } = this.state
         const alertMessage = [
-            'Do you whant to update the stock with the quantities of this Picking Ticket?',
+            'Do you want to update the stock with the quantities of this Picking Ticket?',
             '',
             'In doing so:',
             '- the picked quantities of this picking ticket cannot be changed anymore',
@@ -1142,7 +1142,7 @@ class PtSplitwindow extends React.Component {
                         </li>
                         <span className="ml-3 project-title">
                             {selection.project ?
-                                `${selection.project.name} - Picking Tciket: ${pickticket.pickNr} - Warehouse: ${pickticket.warehouse}`
+                                `${selection.project.name} - Picking Ticket: ${pickticket.pickNr} - Warehouse: ${pickticket.warehouse}`
                             :
                                 <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw"/>
                             }
