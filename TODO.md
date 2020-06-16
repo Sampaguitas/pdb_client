@@ -1,4 +1,4 @@
-### Warehouse Shipping Screen
+### Warehouse Shipping Screens
 - [ ] Assign PL & Colli to pickitems (transport document)
 - [ ] Assign Colli types (packing details)
 - [ ] Print Shipping Documents (packing details)
