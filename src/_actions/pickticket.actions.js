@@ -1,7 +1,5 @@
 import { pickticketConstants } from '../_constants';
 import { pickticketService } from '../_services';
-import { alertActions } from './';
-import { history } from '../_helpers';
 
 export const pickticketActions = {
     getAll,
