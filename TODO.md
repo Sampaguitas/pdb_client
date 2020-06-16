@@ -8,6 +8,6 @@
 - [ ] Goods receipt: correct remaining Qty, no transaction if equal to 0.
 - [X] Authentication: Change validity of the  token to one day.
 - [ ] Inputs type date: validation formats (autofill year, allow single digit day/month)
-- [ ] Qty Picked: calculated from heats quantities.
+- [ ] Qty picked: calculated from heats quantities.
 - [X] Typos: Tcicket, whant.
 - [ ] Mir: isProcessed = true when all picktickets are closed and qtyPicked = qtyRequired  
