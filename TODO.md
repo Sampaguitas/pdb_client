@@ -6,7 +6,7 @@
 - [ ] Goods receipt: alert-message if no remaining Qty.
 - [ ] Goods receipt: Qty field disabled if multiple line selected.
 - [ ] Goods receipt: correct remaining Qty, no transaction if equal to 0.
-- [ ] Authentication: Change validity of the  token to one day.
+- [X] Authentication: Change validity of the  token to one day.
 - [ ] Inputs type date: validation formats (autofill year, allow single digit day/month)
 - [ ] Qty Picked: calculated from heats quantities.
 - [X] Typos: Tcicket, whant.
