@@ -3,9 +3,9 @@
 - [ ] Assign Colli types & dimentions (packing details)
 - [ ] Print Shipping Documents (packing details)
 ### Minutes of Meeting
-- [ ] Goods receipt: alert-message if no remaining Qty.
-- [ ] Goods receipt: Qty field disabled if multiple line selected.
-- [ ] Goods receipt: correct remaining Qty, no transaction if equal to 0.
+- [ ] Goods receipt: alert-message if no remaining qty.
+- [ ] Goods receipt: qty field disabled if multiple line selected.
+- [ ] Goods receipt: correct remaining qty, no transaction if equal to 0.
 - [X] Authentication: Change validity of the  token to one day.
 - [ ] Inputs type date: validation formats (autofill year, allow single digit day/month)
 - [ ] Qty picked: calculated from heats quantities.
