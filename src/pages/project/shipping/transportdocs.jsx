@@ -1352,7 +1352,7 @@ class TransportDocuments extends React.Component {
                     }
                 });
             } else {
-                let collection = found.fields.fromTbl;
+                let collection = _.isEqual(found.fields.fromTbl, 'packitem') ? 'whpackitem' : found.fields.fromTbl;
                 let fieldName = found.fields.name;
                 let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
@@ -1435,7 +1435,7 @@ class TransportDocuments extends React.Component {
                 headers: { ...authHeader(), 'Content-Type': 'application/json' },
                 body: JSON.stringify({ selectedIds: selectedIds })
             };
-            return fetch(`${config.apiUrl}/packitem/delete`, requestOptions)
+            return fetch(`${config.apiUrl}/whpackitem/delete`, requestOptions)
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
                 if (!responce.ok) {

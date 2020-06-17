@@ -207,7 +207,7 @@ class General extends React.Component {
                 projectUsers: [],
                 enableInspection: false,
                 enableShipping: false,
-                enableWarehouse: false
+                enableWarehouse: false,
             },
             userName: '',
             name: '',
@@ -333,7 +333,6 @@ class General extends React.Component {
                     }
                 });
             };
-
         }
     }
 

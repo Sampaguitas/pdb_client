@@ -10,7 +10,7 @@ export function selection(state = {}, action) {
       };
     case projectConstants.GET_SUCCESS:
       return {
-        project: action.project
+        project: action.project //project
       };
     case projectConstants.GET_FAILURE:
       return {};
