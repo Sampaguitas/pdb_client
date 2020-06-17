@@ -1,7 +1,14 @@
-### Warehouse Shipping Screens
-- [ ] Assign PL & Colli to pickitems (transport document)
-- [ ] Assign Colli types & dimentions (packing details)
-- [ ] Print Shipping Documents (packing details)
+### Warehouse Transport Docs
+- [X] TableInput: upsert whPackitem
+- [X] Edit Values
+- [X] Delete Rows
+- [X] Get last PL / new PL number
+- [X] Assing PL
+- [ ] Assign Colli
+- [ ] Split line
+### Warehouse Packing Details
+- [ ] Assign Colli types & dimentions
+- [ ] Print Shipping Documents
 ### Minutes of Meeting
 - [ ] Goods receipt: alert-message if no remaining qty.
 - [ ] Goods receipt: qty field disabled if multiple line selected.

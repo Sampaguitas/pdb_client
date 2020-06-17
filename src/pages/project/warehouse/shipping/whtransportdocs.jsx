@@ -11,7 +11,6 @@ import {
     alertActions,
     fieldnameActions,
     fieldActions,
-    // poActions,
     pickticketActions,
     projectActions,
     settingActions
@@ -117,36 +116,70 @@ function isValidFormat (fieldValue, fieldType, myDateFormat) {
     }
 }
 
+// pickticketId: pickticket._id,
+// pickitemId: pickitem._id,
+// miritemId: pickitem.miritem._id,
+// projectId: project._id,
+// poId: pickitem.miritem.po._id,
+// areaId: pickitem.location.area._id,
+// warehouseId: pickticket.warehouse._id,
+// locationId: pickitem.location._id,
+// whpackitem: ''
+
 function getObjectIds(collection, selectedIds) {
     if (!_.isEmpty(selectedIds)) {
         switch(collection) {
+            case 'pickticket' : return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.pickticketId)) {
+                    acc.push(curr.pickticketId);
+                }
+                return acc;
+            }, []);
+            case 'pickitem' : return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.pickitemId)) {
+                    acc.push(curr.pickitemId);
+                }
+                return acc;
+            }, []);
+            case 'miritem' : return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.miritemId)) {
+                    acc.push(curr.miritemId);
+                }
+                return acc;
+            }, []);
+            case 'project' : return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.projectId)) {
+                    acc.push(curr.projectId);
+                }
+                return acc;
+            }, []);
             case 'po': return selectedIds.reduce(function(acc, curr) {
                 if(!acc.includes(curr.poId)) {
                     acc.push(curr.poId);
                 }
                 return acc;
             }, []);
-            case 'sub': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.subId)) {
-                    acc.push(curr.subId);
+            case 'area': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.areaId)) {
+                    acc.push(curr.areaId);
                 }
                 return acc;
             }, []);
-            case 'certificate': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.certificateId)) {
-                    acc.push(curr.certificateId);
+            case 'warehouse': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.warehouseId)) {
+                    acc.push(curr.warehouseId);
                 }
                 return acc;
             }, []);
-            case 'packitem': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.packitemId)) {
-                    acc.push(curr.packitemId);
+            case 'location': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.locationId)) {
+                    acc.push(curr.locationId);
                 }
                 return acc;
             }, []);
-            case 'collipack': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.collipackId)) {
-                    acc.push(curr.collipackId);
+            case 'whpackitem': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.whpackitemId)) {
+                    acc.push(curr.whpackitemId);
                 }
                 return acc;
             }, []);
@@ -395,7 +428,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                         break;
                                     case 'packitem':
                                         arrayRow.push({
-                                            collection: 'packitem',
+                                            collection: 'whpackitem',
                                             objectId: whpackitem._id,
                                             parentId: pickitem._id,
                                             fieldName: screenHeader.fields.name,
@@ -450,7 +483,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                     areaId: pickitem.location.area._id,
                                     warehouseId: pickticket.warehouse._id,
                                     locationId: pickitem.location._id,
-                                    whpackitem: whpackitem._id
+                                    whpackitemId: whpackitem._id
                                 },
                                 isPacked: true,
                                 fields: arrayRow
@@ -474,7 +507,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                         fieldType: getInputType(screenHeader.fields.type),
                                     });
                                     break;
-                                case 'miritem':
+                                case 'pickitem':
                                     arrayRow.push({
                                         collection: 'pickitem',
                                         objectId: pickitem._id,
@@ -485,9 +518,9 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                         fieldType: getInputType(screenHeader.fields.type),
                                     });
                                     break;
-                                case 'pickitem':
+                                case 'miritem':
                                     arrayRow.push({
-                                        collection: 'pickitem',
+                                        collection: 'miritem',
                                         objectId: pickitem.miritem._id,
                                         fieldName: screenHeader.fields.name,
                                         fieldValue: pickitem.miritem[screenHeader.fields.name],
@@ -564,7 +597,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                     break;
                                 case 'packitem':
                                     arrayRow.push({
-                                        collection: 'packitem',
+                                        collection: 'whpackitem',
                                         objectId: '',
                                         parentId: pickitem._id,
                                         fieldName: screenHeader.fields.name,
@@ -619,7 +652,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                 areaId: pickitem.location.area._id,
                                 warehouseId: pickticket.warehouse._id,
                                 locationId: pickitem.location._id,
-                                whpackitem: ''
+                                whpackitemId: ''
                             },
                             isPacked: true,
                             fields: arrayRow
@@ -636,35 +669,27 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
     } 
 }
 
-function selectionHasData (selectedIds, pos, field) {
-    let selectedPackItemIds = getObjectIds('packitem', selectedIds)
-    if (!_.isEmpty(selectedPackItemIds) && pos.hasOwnProperty('items')) {
-        return pos.items.reduce(function (accPo, currPo) {
-
-            let currPoHasData = currPo.subs.reduce(function (accSub, currSub){
-
-                let currSubHasData = currSub.packitems.reduce(function (accPackitem, currPackitem) {
-
-                if(selectedPackItemIds.includes(currPackitem._id) && currPackitem.hasOwnProperty(field) && !!currPackitem[field]) {
-                    accPackitem = true
-                }
-                return accPackitem;
+function selectionHasData (selectedIds, picktickets, field) {
+    let selectedPackitemIds = getObjectIds('whpackitem', selectedIds)
+    if (!_.isEmpty(selectedPackitemIds) && picktickets.hasOwnProperty('items')) {
+        return picktickets.items.reduce(function (accPickticket, curPickticket) {
+            let curPickticketHasData =  curPickticket.pickitems.reduce(function(accPickitem, curPickitem) {
+                let curPickitemHasData = curPickitem.whpackitems.reduce(function (accWhPackitem, curWhpackitem){
+                        if(selectedPackitemIds.includes(curWhpackitem._id) && curWhpackitem.hasOwnProperty(field) && !!curWhpackitem[field]) {
+                            accWhPackitem = true
+                        } 
+                    return accWhPackitem;
                 }, false);
-
-                if (currSubHasData === true) {
-                    accSub = true;
+                if (curPickitemHasData) {
+                    accPickitem = true;
                 }
-
-                return accSub;
+                return accPickitem
             }, false);
-    
-            if (currPoHasData === true) {
-                accPo = true;
+            if (curPickticketHasData) {
+                accPickticket = true;
             }
-
-            return accPo;
+            return accPickticket;
         }, false);
-
     } else {
         return false;
     }
@@ -1073,7 +1098,7 @@ class WhTransportDocuments extends React.Component {
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
         if (projectId) {
-            dispatch(poActions.getAll(projectId));
+            dispatch(pickticketActions.getAll(projectId));
             dispatch(settingActions.getAll(projectId, userId));
         }
     }
@@ -1195,31 +1220,26 @@ class WhTransportDocuments extends React.Component {
     }
 
     getPl(event, topUp) {
-        const { pos } = this.props;
+        const { picktickets } = this.props;
         event.preventDefault();
-        if (pos.hasOwnProperty('items') && !_.isUndefined(pos.items)){
-            
-            let tempPl = pos.items.reduce(function (accPo , currPo) {
-                
-                let currPoPl = currPo.subs.reduce(function (accSub, currSub) {
-
-                    let currSubPl = currSub.packitems.reduce(function (accPackitem, currPackitem) {
-                        if (currPackitem.hasOwnProperty('plNr') && currPackitem.plNr > accPackitem) {
-                            accPackitem =  currPackitem.plNr
+        if (picktickets.hasOwnProperty('items') && !_.isUndefined(picktickets.items)){
+            let tempPl = picktickets.items.reduce(function (accPickticket , curPickticket) {
+                let curPickticketPl = curPickticket.pickitems.reduce(function (accPickitem, curPickitem) {
+                    let curPickitemPl = curPickitem.whpackitems.reduce(function (accWhpackitem, curWhpackitem) {
+                        if (curWhpackitem.hasOwnProperty('plNr') && curWhpackitem.plNr > accWhpackitem) {
+                            accWhpackitem =  curWhpackitem.plNr
                         }
-                        return accPackitem;
+                        return accWhpackitem;
                     }, 0);
-
-                    if (currSubPl > accSub) {
-                        accSub =  currSubPl;
+                    if (curPickitemPl > accPickitem) {
+                        accPickitem = curPickitemPl;
                     }
-                    return accSub;
+                    return accPickitem;
                 }, 0);
-
-                if (currPoPl > accPo) {
-                    accPo = currPoPl;
+                if (curPickticketPl > accPickticket) {
+                    accPickticket = curPickticketPl;
                 }
-                return accPo;
+                return accPickticket;
             }, 0);
 
             if (tempPl === 0) {
@@ -1232,7 +1252,7 @@ class WhTransportDocuments extends React.Component {
 
     handleUpdatePL(event) {
         event.preventDefault();
-        const { dispatch, fieldnames, pos } = this.props;
+        const { dispatch, fieldnames, picktickets } = this.props;
         const { projectId, selectedIds, inputPl, unlocked } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
@@ -1278,12 +1298,12 @@ class WhTransportDocuments extends React.Component {
                         message:'Selected  field is disabled, please unlock the table and try again.'
                     }
                 });
-            } else if (!selectionHasData(selectedIds, pos, 'plNr') || confirm('Existing PL number(s) found! Do you want to replace them?')) {
+            } else if (!selectionHasData(selectedIds, picktickets, 'plNr') || confirm('Existing PL number(s) found! Do you want to replace them?')) {
                 const requestOptions = {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        collection: found.fields.fromTbl,
+                        collection: 'whpackitem',
                         fieldName: found.fields.name,
                         fieldValue: encodeURI(inputPl),
                         selectedIds: selectedIds
@@ -1342,7 +1362,7 @@ class WhTransportDocuments extends React.Component {
 
     handleUpdateColli(event) {
         event.preventDefault();
-        const { dispatch, fieldnames, pos } = this.props;
+        const { dispatch, fieldnames, picktickets } = this.props;
         const { projectId, selectedIds, inputColli, unlocked } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
@@ -1388,12 +1408,12 @@ class WhTransportDocuments extends React.Component {
                         message:'Selected  field is disabled, please unlock the table and try again.'
                     }
                 });
-            } else if (!selectionHasData(selectedIds, pos, 'colliNr') || confirm('Existing Colli(s) found! Do you want to replace them?')) {
+            } else if (!selectionHasData(selectedIds, picktickets, 'colliNr') || confirm('Existing Colli(s) found! Do you want to replace them?')) {
                 const requestOptions = {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        collection: found.fields.fromTbl,
+                        collection: 'whpackitem',
                         fieldName: found.fields.name,
                         fieldValue: encodeURI(inputColli),
                         selectedIds: selectedIds
@@ -1497,7 +1517,7 @@ class WhTransportDocuments extends React.Component {
                     }
                 });
             } else {
-                let collection = found.fields.fromTbl;
+                let collection = _.isEqual(found.fields.fromTbl, 'packitem') ? 'whpackitem' : found.fields.fromTbl;
                 let fieldName = found.fields.name;
                 let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
@@ -1580,7 +1600,7 @@ class WhTransportDocuments extends React.Component {
                 headers: { ...authHeader(), 'Content-Type': 'application/json' },
                 body: JSON.stringify({ selectedIds: selectedIds })
             };
-            return fetch(`${config.apiUrl}/packitem/delete`, requestOptions)
+            return fetch(`${config.apiUrl}/whpackitem/delete`, requestOptions)
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
                 if (!responce.ok) {
