@@ -1,4 +1,5 @@
 ### Warehouse Transport Docs
+- [X] User Settings: Filter / Display
 - [X] TableInput: upsert whPackitem
 - [X] Edit Values
 - [X] Delete Rows

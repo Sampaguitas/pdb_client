@@ -20,7 +20,7 @@ import ProjectTable from '../../../../_components/project-table/project-table';
 import TabFilter from '../../../../_components/setting/tab-filter';
 import TabDisplay from '../../../../_components/setting/tab-display';
 import Modal from '../../../../_components/modal';
-import SplitLine from '../../../../_components/split-line/split-packitem';
+import SplitLine from '../../../../_components/split-line/split-whpackitem';
 
 import moment from 'moment';
 import _ from 'lodash';
@@ -58,16 +58,11 @@ function passSelectedIds(selectedIds) {
     }
 }
 
-function passSelectedPickItem(selectedIds, picktickets) {
+function passSelectedPickticket(selectedIds, picktickets) {
     if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(picktickets.items)){
         return {};
     } else {
-        let foundPickTicket = picktickets.items.find(pickticket => pickticket._id === selectedIds[0].pickticketId);
-        if (_.isUndefined(foundPickTicket)) {
-            return {};
-        } else {
-            return foundPickTicket.pickitems.find(pickitem => pickitem._id === selectedIds[0].pickitemId);
-        }
+        return picktickets.items.find(pickticket => pickticket._id === selectedIds[0].pickticketId);
     }
 }
 
@@ -1865,7 +1860,7 @@ class WhTransportDocuments extends React.Component {
                         headersForShow={splitHeadersForShow}
                         selection={selection}
                         selectedIds={passSelectedIds(selectedIds)}
-                        selectedPo={passSelectedPickItem(selectedIds, picktickets)}
+                        selectedPickticket={passSelectedPickticket(selectedIds, picktickets)}
                         alert={alert}
                         handleClearAlert={this.handleClearAlert}
                         handleSplitLine={this.handleSplitLine}
