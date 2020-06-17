@@ -1289,7 +1289,7 @@ class WhTransportDocuments extends React.Component {
                 return f.fields.name === 'plNr';
             });
 
-            if (found.edit && !unlocked){
+            if (!found.edit && !unlocked){
                 this.setState({
                     inputPl: '',
                     showAssignPl: false,
@@ -1399,7 +1399,7 @@ class WhTransportDocuments extends React.Component {
                 return f.fields.name === 'colliNr';
             });
 
-            if (found.edit && !unlocked){
+            if (!found.edit && !unlocked){
                 this.setState({
                     inputColli: '',
                     showAssignColli: false,
@@ -1507,7 +1507,7 @@ class WhTransportDocuments extends React.Component {
             let found = fieldnames.items.find( function (f) {
                 return f.fields._id === selectedField;
             });
-            if (found.edit && !unlocked) {
+            if (!found.edit && !unlocked) {
                 this.setState({
                     updateValue: '',
                     showEditValues: false,

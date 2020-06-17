@@ -4,7 +4,7 @@
 - [X] Delete Rows
 - [X] Get last PL / new PL number
 - [X] Assing PL
-- [ ] Assign Colli
+- [X] Assign Colli
 - [ ] Split line
 ### Warehouse Packing Details
 - [ ] Assign Colli types & dimentions
