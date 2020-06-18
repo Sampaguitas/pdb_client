@@ -669,7 +669,7 @@ class Screens extends React.Component {
             {_id: '5ed8f4f37c213e044cc1c1af', name: 'Picking Ticket Splitwindow', fromTbls: ['area', 'location', 'mir', 'miritem', 'pickitem', 'po']},
 
             {_id: '5ee60fbb7c213e044cc480e4', name: 'WH Assign Transport', fromTbls: ['article', 'location', 'mir', 'miritem', 'po', 'packitem', 'pickitem', 'pickticket', 'certificate']},
-            {_id: '5ee60fd27c213e044cc480e7', name: 'WH Assign Transport SplitWindow', fromTbls: ['po', 'mir', 'miritem', 'pickitem', 'pickticket', 'article', 'packitem']},
+            {_id: '5ee60fd27c213e044cc480e7', name: 'WH Assign Transport SplitWindow', fromTbls: ['article', 'location', 'mir', 'miritem', 'po', 'packitem', 'pickitem', 'pickticket']},
             {_id: '5ee60fe87c213e044cc480ea', name: 'WH Print Transportdocuments', fromTbls: ['collipack']},
             // {_id: '5cd2b643fd333616dc360b68', name: 'Data Upload File', fromTbls: ['packitem', 'collipack']}, //what is this screen Dave?
             // {_id: '5cd2b644fd333616dc360b6a', name: 'Delete Items', fromTbls: []}, //what is this screen Dave?
