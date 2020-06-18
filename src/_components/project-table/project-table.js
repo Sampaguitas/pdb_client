@@ -781,38 +781,38 @@ class ProjectTable extends Component {
                                     </button>
                                 </div>
                             }
-                        <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
-                            <form
-                                className="col-12"
-                                encType="multipart/form-data"
-                                onSubmit={this.handleUploadFile}
-                                onKeyPress={this.onKeyPress}
-                                style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
-                            >
+                            <div className="action-row row ml-1 mb-3 mr-1" > {/* style={{height: '34px'}} */}
+                                <form
+                                    className="col-12"
+                                    encType="multipart/form-data"
+                                    onSubmit={this.handleUploadFile}
+                                    onKeyPress={this.onKeyPress}
+                                    style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
+                                >
 
-                                <div className="input-group">
-                                    <div className="input-group-prepend">
-                                        <span className="input-group-text" style={{width: '95px'}}>Select File</span>
-                                        <input
-                                            type="file"
-                                            name="fileInput"
-                                            id="fileInput"
-                                            ref={this.fileInput}
-                                            className="custom-file-input"
-                                            style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
-                                            onChange={this.handleFileChange}
-                                            key={this.state.inputKey}
-                                        />
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text">Select File:</span> {/*  style={{width: '95px'}} */}
+                                            <input
+                                                type="file"
+                                                name="fileInput"
+                                                id="fileInput"
+                                                ref={this.fileInput}
+                                                className="custom-file-input"
+                                                style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
+                                                onChange={this.handleFileChange}
+                                                key={this.state.inputKey}
+                                            />
+                                        </div>
+                                        <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
+                                        <div className="input-group-append">
+                                            <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
+                                                <span><FontAwesomeIcon icon={uploading ? 'spinner' : 'upload'} className={uploading ? 'fa-pulse fa-lg fa-fw' : 'fa-lg mr-2'}/>Upload</span>
+                                            </button> 
+                                        </div>       
                                     </div>
-                                    <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
-                                    <div className="input-group-append">
-                                        <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
-                                            <span><FontAwesomeIcon icon={uploading ? 'spinner' : 'upload'} className={uploading ? 'fa-pulse fa-lg fa-fw' : 'fa-lg mr-2'}/>Upload</span>
-                                        </button> 
-                                    </div>       
-                                </div>
-                            </form>
-                        </div>
+                                </form>
+                            </div>
                         {!_.isEmpty(responce) &&
                             <div className="ml-1 mr-1">
                                 <div className="form-group table-resonsive">

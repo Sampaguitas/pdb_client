@@ -767,28 +767,28 @@ class Locations extends React.Component {
                 </nav>
                 <hr />
                 <div id="locations" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Show WH / Areas" onClick={this.toggleWarehouse}>
-                            <span><FontAwesomeIcon icon="warehouse" className="fa-lg mr-2"/>WH / Areas</span>
+                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Show WH / Areas" onClick={this.toggleWarehouse}>
+                            <span><FontAwesomeIcon icon="warehouse" className="fa mr-2"/>WH / Areas</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="DUF File" onClick={this.toggleDuf}> {/* onClick={event => this.toggleWarhouses(event)} */}
-                            <span><FontAwesomeIcon icon="upload" className="fa-lg mr-2"/>DUF File</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="DUF File" onClick={this.toggleDuf}> {/* onClick={event => this.toggleWarhouses(event)} */}
+                            <span><FontAwesomeIcon icon="upload" className="fa mr-2"/>DUF File</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add Location" onClick={this.toggleLocation}>
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Location</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Add Location" onClick={this.toggleLocation}>
+                            <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Add Location</span>
                         </button>
-                        <button className="btn btn-leeuwen btn-lg mr-2" style={{height: '34px'}} title="Delete Location(s)" onClick={this.handleDeleteLocations}>
+                        <button className="btn btn-leeuwen btn-lg mr-2" title="Delete Location(s)" onClick={this.handleDeleteLocations}>
                             <span>
                                 {deletingLocations ?
-                                    <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                    <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw mr-2"/>
                                 :
-                                    <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
+                                    <FontAwesomeIcon icon="trash-alt" className="fa mr-2"/>
                                 }
                                 Delete Location(s)
                             </span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                    <div className="" style={{height: 'calc(100% - 41px)'}}>
                         <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                             <div className="table-responsive custom-table-container custom-table-container__fixed-row">
                                 <table className="table table-bordered table-sm text-nowrap table-striped" id="locationTable">

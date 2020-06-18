@@ -1948,24 +1948,24 @@ class StockManagement extends React.Component {
                 </nav>
                 <hr />
                 <div id="stockManagement" className="full-height">
-                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button title={myGoodsReceipt.title} className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleGoodsReceipt}>
-                            <span><FontAwesomeIcon icon="cubes" className="fa-lg mr-2"/>Goods Receipt</span>
+                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                        <button title={myGoodsReceipt.title} className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleGoodsReceipt}>
+                            <span><FontAwesomeIcon icon="cubes" className="fa mr-2"/>Goods Receipt</span>
                         </button>
-                        <button title="Stock Transfer" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleTransfer}>
-                            <span><FontAwesomeIcon icon="exchange" className="fa-lg mr-2"/>Stock Transfer</span>
+                        <button title="Stock Transfer" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleTransfer}>
+                            <span><FontAwesomeIcon icon="exchange" className="fa mr-2"/>Stock Transfer</span>
                         </button>
-                        <button title="Stock Correction" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleCorrection}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Stock Correction</span>
+                        <button title="Stock Correction" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleCorrection}>
+                            <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Stock Correction</span>
                         </button>
-                        <button title="Change/Add Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleHeat}>
-                            <span><FontAwesomeIcon icon="file-certificate" className="fa-lg mr-2"/>Heat Numbers</span>
+                        <button title="Change/Add Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleHeat}>
+                            <span><FontAwesomeIcon icon="file-certificate" className="fa mr-2"/>Heat Numbers</span>
                         </button>
-                        <button title="Stock History" className="btn btn-success btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleGenerate}>
-                            <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Stock History</span>
+                        <button title="Stock History" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleGenerate}>
+                            <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Stock History</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                    <div className="" style={{height: 'calc(100% - 41px)'}}>
                         {fieldnames.items &&
                             <ProjectTable
                                 screenHeaders={headersForShow}

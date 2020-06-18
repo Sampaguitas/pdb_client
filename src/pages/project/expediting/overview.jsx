@@ -1519,18 +1519,18 @@ class Overview extends React.Component {
                 </nav>
                 <hr />
                 <div id="overview" className="full-height">
-                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-warning btn-lg mr-2" style={{height: '34px'}} title="Split line" onClick={event => this.toggleSplitLine(event)}>
-                            <span><FontAwesomeIcon icon="page-break" className="fa-lg mr-2"/>Split line</span>
+            <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Split Line" onClick={event => this.toggleSplitLine(event)}>
+                            <span><FontAwesomeIcon icon="page-break" className="fa mr-2"/>Split Line</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Edit Values" onClick={event => this.toggleEditValues(event)}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Edit Values" onClick={event => this.toggleEditValues(event)}>
+                            <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Edit Values</span>
                         </button>
-                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Generate Expediting Status Report" onClick={event => this.toggleGenerate(event)}>
-                            <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate ESR</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Generate Expediting Status Report" onClick={event => this.toggleGenerate(event)}>
+                            <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate ESR</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                    <div className="" style={{height: 'calc(100% - 41px)'}}>
                         {fieldnames.items && 
                             <ProjectTable
                                 screenHeaders={headersForShow}

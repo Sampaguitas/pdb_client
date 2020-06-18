@@ -685,25 +685,25 @@ class Screens extends React.Component {
         return (
             
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
-                <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
                     <div className="input-group">
                         <div className="input-group-prepend">
-                            <span className="input-group-text">Select Screen</span>
+                            <span className="input-group-text">Select Screen:</span>
                         </div>
-                        <select className="form-control mr-2" name="selectedScreen" value={selectedScreen} onChange={this.handleChangeScreen}>
+                        <select className="form-control mr-2" name="selectedScreen" value={selectedScreen} onChange={this.handleChangeScreen} style={{display:'inline-block', height: '30px', padding: '5px'}}>
                             {this.generateScreensOptions(screens)}
                         </select>
                         <div className="pull-right"> {/* col-12 text-right */}
-                            <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Add Field" onClick={event => this.toggleNewRow(event)} style={{height: '34px'}}>
-                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add</span>
+                            <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Add Field" onClick={event => this.toggleNewRow(event)}> {/* style={{height: '34px'}} */}
+                                <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Add</span>
                             </button>
-                            <button className="btn btn-leeuwen btn-lg" title="Delete Field(s)" onClick={event => this.handleDelete(event, selectedRows)} style={{height: '34px'}}>
-                                <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Delete</span>
+                            <button className="btn btn-leeuwen btn-lg" title="Delete Field(s)" onClick={event => this.handleDelete(event, selectedRows)}> {/* style={{height: '34px'}} */}
+                                <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Delete</span>
                             </button>                                     
                         </div>
                     </div>
                 </div>
-            <div className="" style={{height: 'calc(100% - 44px)'}}>
+            <div className="" style={{height: 'calc(100% - 41px)'}}>
                 <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                     <div className="table-responsive custom-table-container custom-table-container__fixed-row">
                         <table className="table table-bordered table-sm text-nowrap table-striped" id="screensTable">

@@ -1823,18 +1823,18 @@ class ReleaseData extends React.Component {
                 </nav>
                 <hr />
                 <div id="inspection" className="full-height">
-                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}> {/*, marginBottom: '10px' */}
-                        <button title="Split line" className="btn btn-warning btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleSplitLine(event)}>
-                            <span><FontAwesomeIcon icon="page-break" className="fa-lg mr-2"/>Split line</span>
+                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                        <button title="Split Line" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleSplitLine(event)}>
+                            <span><FontAwesomeIcon icon="page-break" className="fa mr-2"/>Split Line</span>
                         </button>
-                        <button title="Edit Values" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleEditValues(event)}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Edit Values</span>
+                        <button title="Edit Values" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleEditValues(event)}>
+                            <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Edit Values</span>
                         </button>
-                        <button title="Assign NFI" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleAssignNfi(event)}>
-                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign NFI</span>
+                        <button title="Assign NFI" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleAssignNfi(event)}>
+                            <span><FontAwesomeIcon icon="hand-point-right" className="fa mr-2"/>Assign NFI</span>
                         </button>
-                        <button title="Generate NFI" className="btn btn-success btn-lg mr-2" style={{height: '34px'}} onClick={event => this.toggleGenerate(event)}>
-                            <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate NFI</span>
+                        <button title="Generate NFI" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleGenerate(event)}>
+                            <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate NFI</span>
                         </button>
                     </div>
                     <div className="" style={{height: 'calc(100% - 44px)'}}>

@@ -1132,13 +1132,13 @@ class MirSplitwindow extends React.Component {
                     </ol>
                 </nav>
                 <hr />
-                <div id="calloff" className="full-height">
-                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Add Line to MIR" onClick={this.toggleSplitLine}>
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Line</span>
+                <div id="mirsplitwindow" className="full-height">
+                        <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Add Line to MIR" onClick={this.toggleSplitLine}>
+                            <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Add Line</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                    <div className="" style={{height: 'calc(100% - 41px)'}}>
                         {fieldnames.items && 
                             <ProjectTable
                                 screenHeaders={headersForShow}

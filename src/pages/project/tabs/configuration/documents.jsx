@@ -1102,12 +1102,12 @@ class Documents extends React.Component {
 
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
-                <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                <div className="action-row row ml-1 mb-2 mr-1"> {/* style={{height: '34px'}} */}
                     <div className="input-group">
                         <div className="input-group-prepend">
-                            <span className="input-group-text" style={{width: '95px'}}>Select Document</span>
+                            <span className="input-group-text" style={{width: '95px'}}>Select Document:</span>
                         </div>
-                        <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select Template..." onChange={this.handleChangeTemplate}>
+                        <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select Template..." onChange={this.handleChangeTemplate} style={{display:'inline-block', height: '30px', padding: '5px'}}>
                             <option key="0" value="0">Select document...</option>
                         {
                             docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
@@ -1122,18 +1122,18 @@ class Documents extends React.Component {
                         </select>
                         <div className="input-group-append">
                             <button className="btn btn-dark btn-lg" onClick={this.showModal} title="Create">
-                                <span><FontAwesomeIcon icon="plus" className="fa-lg"/></span>
+                                <span><FontAwesomeIcon icon="plus" className="fa"/></span>
                             </button>
                             <button className="btn btn-leeuwen-blue btn-lg" onClick={(event) => this.handleOnclick(event, selectedTemplate)} title="Update">
-                                <span><FontAwesomeIcon icon="edit" className="fa-lg"/></span>
+                                <span><FontAwesomeIcon icon="edit" className="fa"/></span>
                             </button>
                             <button className="btn btn-leeuwen btn-lg" onClick={ (event) => this.handleDeleteDocDef(event, selectedTemplate)} title="Delete">
-                                <span><FontAwesomeIcon icon={deletingDocDef ? "spinner" : "trash-alt"} className={deletingDocDef ? "fa-pulse fa-lg fa-fw" : "fa-lg"}/></span>
+                                <span><FontAwesomeIcon icon={deletingDocDef ? "spinner" : "trash-alt"} className={deletingDocDef ? "fa-pulse fa fa-fw" : "fa"}/></span>
                             </button>  
                         </div>
                     </div>
                 </div>
-                <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
                     <form
                         className="col-12"
                         encType="multipart/form-data"
@@ -1143,7 +1143,7 @@ class Documents extends React.Component {
                     >
                         <div className="input-group">
                             <div className="input-group-prepend">
-                                <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
+                                <span className="input-group-text" style={{width: '95px'}}>Select Template:</span>
                                 <input
                                     type="file"
                                     name="fileInput"
@@ -1155,30 +1155,30 @@ class Documents extends React.Component {
                                     key={inputKey}
                                 />
                             </div>
-                            <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
+                            <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', height: '30px', padding: '5px'}}>{fileName ? fileName : 'Choose file...'}</label>
                             <div className="input-group-append mr-2">
                                 <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
-                                    <span><FontAwesomeIcon icon={isUploadingFile ? "spinner" : "upload"} className={isUploadingFile ? "fa-pulse fa-fw fa-lg mr-2" :"fa-lg mr-2"}/>Upload</span>
+                                    <span><FontAwesomeIcon icon={isUploadingFile ? "spinner" : "upload"} className={isUploadingFile ? "fa-pulse fa-fw fa mr-2" :"fa mr-2"}/>Upload</span>
                                 </button>
                                 <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleDownloadFile(event)}>
-                                    <span><FontAwesomeIcon icon={isDownloadingFile ? "spinner" : "download"} className={isDownloadingFile ? "fa-pulse fa-fw fa-lg mr-2" :"fa-lg mr-2"}/>Download</span>
+                                    <span><FontAwesomeIcon icon={isDownloadingFile ? "spinner" : "download"} className={isDownloadingFile ? "fa-pulse fa-fw fa mr-2" :"fa mr-2"}/>Download</span>
                                 </button>
                                 <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handlePreviewFile(event)}>
-                                    <span><FontAwesomeIcon icon={isDownloadingPreview ? "spinner" : "eye"} className={isDownloadingPreview ? "fa-pulse fa-fw fa-lg mr-2" :"fa-lg mr-2"}/>Preview</span>
+                                    <span><FontAwesomeIcon icon={isDownloadingPreview ? "spinner" : "eye"} className={isDownloadingPreview ? "fa-pulse fa-fw fa mr-2" :"fa mr-2"}/>Preview</span>
                                 </button>   
                             </div>
                             <div className="pull-right">
-                                <button title="Add Field" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleNewRow(event)} style={{height: '34px'}}>
-                                    <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add</span>
+                                <button title="Add Field" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleNewRow(event)}> {/* style={{height: '34px'}} */}
+                                    <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Add</span>
                                 </button>                                               
-                                <button title="Delete Field(s)" className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteDocFields(event, selectedRows)} style={{height: '34px'}}>
-                                    <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete</span>
+                                <button title="Delete Field(s)" className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteDocFields(event, selectedRows)}> {/* style={{height: '34px'}} */}
+                                    <span><FontAwesomeIcon icon="trash-alt" className="fa mr-2"/>Delete</span>
                                 </button> 
                             </div>        
                         </div>
                     </form>
                 </div>
-                <div className="" style={{height: 'calc(100% - 88px)'}}>
+                <div className="" style={{height: 'calc(100% - 76px)'}}>
                     <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row">
                             <table className="table table-bordered table-sm text-nowrap table-striped" id="documentsTable">

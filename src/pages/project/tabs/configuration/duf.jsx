@@ -591,17 +591,17 @@ class Duf extends React.Component {
 
         return ( 
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
-                <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
-                    <div className="ml-auto pull-right">
-                        <button title="Add Field"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleNewRow(event)} style={{height: '34px'}}>
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add</span>
+                <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                    {/* <div className="ml-auto pull-right"> */}
+                        <button title="Add Field"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleNewRow(event)}> {/* style={{height: '34px'}} */}
+                            <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Add</span>
                         </button>
-                        <button title="Delete Field(s)"className="btn btn-leeuwen btn-lg" onClick={ (event) => this.handleDelete(event, selectedRows)} style={{height: '34px'}}>
-                            <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete</span>
+                        <button title="Delete Field(s)"className="btn btn-leeuwen btn-lg" onClick={ (event) => this.handleDelete(event, selectedRows)}> {/* style={{height: '34px'}} */}
+                            <span><FontAwesomeIcon icon="trash-alt" className="fa mr-2"/>Delete</span>
                         </button>
-                    </div>
+                    {/* </div> */}
                 </div>
-            <div className="" style={{height: 'calc(100% - 44px)'}}>
+            <div className="" style={{height: 'calc(100% - 41px)'}}>
                 <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                     <div className="table-responsive custom-table-container custom-table-container__fixed-row">
                         <table className="table table-bordered table-sm text-nowrap table-striped" id="dufTable" >

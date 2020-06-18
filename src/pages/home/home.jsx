@@ -345,14 +345,14 @@ class Home extends React.Component {
                 </nav>
                 <hr />
                 <div id="overview" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
-                        <div className="ml-auto pull-right">
-                            <button title="Create Project" className="btn btn-leeuwen-blue btn-lg" onClick={this.gotoProject} style={{height: '34px'}}>
-                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create</span>
+                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                        {/* <div className="ml-auto pull-right"> */}
+                            <button title="Create Project" className="btn btn-leeuwen-blue btn-lg" onClick={this.gotoProject}> {/* style={{height: '34px'}} */}
+                                <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Create Project</span>
                             </button>
-                        </div>
+                        {/* </div> */}
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>   
+                    <div className="" style={{height: 'calc(100% - 41px)'}}>   
                         <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                             <div className="table-responsive custom-table-container" >
                                 <table className="table table-hover table-bordered table-sm">

@@ -1041,15 +1041,15 @@ class PickingTicket extends React.Component {
                 </nav>
                 <hr />
                 <div id="calloff" className="full-height">
-                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Prepare Picking Ticket" onClick={this.handlePrepare}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Prepare Ticket</span>
+                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Generate Picking Ticket" onClick={this.toggleGenerate}>
+                            <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate Ticket</span>
                         </button>
-                        <button className="btn btn-success btn-lg mr-2" style={{height: '34px'}} title="Generate Picking Ticket" onClick={this.toggleGenerate}>
-                            <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate Ticket</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Prepare Picking Ticket" onClick={this.handlePrepare}>
+                            <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Prepare Ticket</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                    <div className="" style={{height: 'calc(100% - 41px)'}}>
                         {fieldnames.items && 
                             <ProjectTable
                                 screenHeaders={headersForShow}

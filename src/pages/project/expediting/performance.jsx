@@ -30,6 +30,7 @@ class Performance extends React.Component {
             clPoRev: '',
             lines: ['contract', 'rfiExp', 'rfiAct', 'released', 'shipExp', 'shipAct', 'delExp', 'delAct'],
             data: {},
+            showParams: false,
             loadingChart: false,
             loadingProject: false,
             alert: {
@@ -40,6 +41,7 @@ class Performance extends React.Component {
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.fetchData = this.fetchData.bind(this);
+        this.toggleParams = this.toggleParams.bind(this);
         this.downloadLineChart = this.downloadLineChart.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.generateOptionClPo = this.generateOptionClPo.bind(this);
@@ -120,6 +122,13 @@ class Performance extends React.Component {
                 });
             }
         }));
+    }
+
+    toggleParams(event) {
+        const { showParams } = this.state;
+        this.setState({
+            showParams: !showParams
+        });
     }
 
     downloadLineChart(event) {
@@ -271,10 +280,16 @@ class Performance extends React.Component {
                 </nav>
                 <hr />
                 <div id="performance" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
-                        <div className="input-group">
+                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Edit Params" onClick={event => this.toggleParams(event)}>
+                            <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Edit Params</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Generate Performance Report" onClick={event => this.downloadLineChart(event)}>
+                            <span><FontAwesomeIcon icon={loadingChart ? "spinner" : "file-chart-line"} className={loadingChart ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Generate PR</span>
+                        </button>
+                        {/* <div className="input-group">
                             <div className="input-group-prepend">
-                                <span className="input-group-text" style={{width: '95px'}}>Select Params</span>
+                            <span className="input-group-text">Select Params</span>
                             </div>
                             <select className="form-control" name="clPo" value={clPo} onChange={this.handleChange}>
                                 <option key="0" value="">Select Po...</option>
@@ -299,16 +314,21 @@ class Performance extends React.Component {
                             </select>
                             <div className="input-group-append">
                                 <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.downloadLineChart(event)}>
-                                    <span><FontAwesomeIcon icon={loadingChart ? "spinner" : "file-chart-line"} className={loadingChart ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Generate</span>
+                                    <span><FontAwesomeIcon icon={loadingChart ? "spinner" : "file-chart-line"} className={loadingChart ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Generate</span>
                                 </button>
                             </div>
-                        </div>
+                        </div> */}
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                    <div className="" style={{height: 'calc(100% - 41px)'}}>
                         <Line
                             data={data}
+                            width={100}
                             height={100}
                             onLegendClick={this.onLegendClick}
+                            clPo={clPo}
+                            clPoRev={clPoRev}
+                            unit={unit}
+                            period={period}
                         />
                     </div>
                 </div> 

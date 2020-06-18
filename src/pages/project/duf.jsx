@@ -225,7 +225,7 @@ class Duf extends React.Component {
                 </nav>
                 <hr />
                 <div id="duf" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+            <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
                         <form
                             className="col-12"
                             encType="multipart/form-data"
@@ -235,7 +235,7 @@ class Duf extends React.Component {
                         >
                             <div className="input-group">
                                 <div className="input-group-prepend">
-                                    <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
+                                    <span className="input-group-text">Select Template:</span>
                                     <input
                                         type="file"
                                         name="dufInput"
@@ -250,17 +250,17 @@ class Duf extends React.Component {
                                 <label type="text" className="form-control text-left" htmlFor="dufInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
                                 <div className="input-group-append">
                                     <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
-                                        <span><FontAwesomeIcon icon={uploading ? "spinner" : "upload"} className={uploading ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Upload</span>
+                                        <span><FontAwesomeIcon icon={uploading ? "spinner" : "upload"} className={uploading ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Upload</span>
                                     </button>
                                     <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.handleDownloadFile(event)}>
-                                        <span><FontAwesomeIcon icon={downloading ? "spinner" : "download"} className={downloading ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Download</span>
+                                        <span><FontAwesomeIcon icon={downloading ? "spinner" : "download"} className={downloading ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Download</span>
                                     </button> 
                                 </div>       
                             </div>
                         </form>                    
                     </div>
                     {!_.isEmpty(responce) &&
-                        <div className="ml-1 mr-1" style={{height: 'calc(100% - 44px)'}}>
+                        <div className="ml-1 mr-1" style={{height: 'calc(100% - 41px)'}}>
                             <div className="form-group table-resonsive" style={{height: '83px'}}>
                                 <strong>Total Processed:</strong> {responce.nProcessed}<br />
                                 <strong>Total records Added:</strong> {responce.nAdded}<br />

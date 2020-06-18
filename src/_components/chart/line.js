@@ -5,12 +5,23 @@ class LineChart extends Component {
 
     render() {
 
-        const {onLegendClick} = this.props;
-
+        const {onLegendClick, data, width, height, clPo, clPoRev, unit, period} = this.props; //onElementsClick, getElementsAtEvent, getDatasetAtEvent 
+        const fontFamily = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';"
         const options = {
+            maintainAspectRatio: false,
+            title: {
+                display: true,
+                position: 'top',
+                text: `Client Po: "${clPo}"   |   Revision: "${clPoRev}"`,
+                fontSize: 14,
+                fontFamily: fontFamily
+            },
             legend: {
                 display: true,
                 position: 'right',
+                labels: {
+                    fontFamily: fontFamily
+                },
                 onClick: function(e, legendItem) {
                     onLegendClick(legendItem);
                     var index = legendItem.datasetIndex;
@@ -18,7 +29,6 @@ class LineChart extends Component {
                     var meta = ci.getDatasetMeta(index);
                     meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
                     ci.update();
-                    
                 }
             },
             tooltips: {
@@ -32,6 +42,12 @@ class LineChart extends Component {
             },
             scales: {
                 yAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: `${unit}`,
+                        fontSize: 12,
+                        fontFamily: fontFamily
+                    },
                     ticks: {
                         callback: function(label, index, labels) {
                             return Intl.NumberFormat().format(label); 
@@ -44,6 +60,12 @@ class LineChart extends Component {
                     },
                 }],
                 xAxes: [{
+                    scaleLabel: {
+                        display: true,
+                        labelString: `${period}`,
+                        fontSize: 12,
+                        fontFamily: fontFamily
+                    },
                     ticks: {
                         beginAtZero: true,
                         fontSize: 10
@@ -51,24 +73,16 @@ class LineChart extends Component {
                     gridLines: {
                         display:true
                     },
-                    scaleLabel: {
-                        display: true,
-                        fontSize: 10,
-                   }
                 }]
             }
         }
 
-        const {data, height} = this.props; //onElementsClick, getElementsAtEvent, getDatasetAtEvent 
-
         return <Line
             data={data} 
-            options={options} 
+            options={options}
+            width={width}
             height={height}
             responsive={true}
-            // onElementsClick={onElementsClick}
-            // getElementsAtEvent={getElementsAtEvent}
-            // getDatasetAtEvent={getDatasetAtEvent}
         />;
     }
 }

@@ -1056,18 +1056,18 @@ class WhCertificates extends React.Component {
                 </nav>
                 <hr />
                 <div id="certificates" className="full-height">
-                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button title="Add/Edit Certificates" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleCif} style={{height: '34px'}}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Certificates</span>
+                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                        <button title="Add/Edit Certificates" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleCif}>
+                            <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Certificates</span>
                         </button>
-                        <button title="Add/Edit Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleHeat} style={{height: '34px'}}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Heat Numbers</span>
+                        <button title="Add/Edit Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleHeat}>
+                            <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Heat Numbers</span>
                         </button>
-                        <button title="Download Certificate" className="btn btn-success btn-lg mr-2" onClick={this.handleDownloadCif} style={{height: '34px'}}>
-                            <span><FontAwesomeIcon icon={isDownloading ? "spinner" : "file-pdf"} className={isDownloading ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Download CIF(s)</span>
+                        <button title="Download Certificate" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleDownloadCif}>
+                            <span><FontAwesomeIcon icon={isDownloading ? "spinner" : "file-pdf"} className={isDownloading ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Download CIF(s)</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                    <div className="" style={{height: 'calc(100% - 41px)'}}>
                         {selection && selection.project && 
                             <ProjectTable
                                 screenHeaders={headersForShow}

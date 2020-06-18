@@ -1222,18 +1222,18 @@ class MaterialIssueRecord extends React.Component {
                 </nav>
                 <hr />
                 <div id="calloff" className="full-height">
-                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create Material Issue Record" onClick={this.toggleCreateMir}>
-                            <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Create MIR</span>
+                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Create Material Issue Record" onClick={this.toggleCreateMir}>
+                            <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Create MIR</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Prepare Material Issue Record" onClick={this.handlePrepare}>
-                            <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Prepare MIR</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Prepare Material Issue Record" onClick={this.handlePrepare}>
+                            <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Prepare MIR</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} title="Create Picking Tickets" onClick={this.toggleCreatePt}>
-                            <span><FontAwesomeIcon icon="clipboard-list" className="fa-lg mr-2"/>Create Tickets</span>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Create Picking Tickets" onClick={this.toggleCreatePt}>
+                            <span><FontAwesomeIcon icon="clipboard-list" className="fa mr-2"/>Create Tickets</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                    <div className="" style={{height: 'calc(100% - 41px)'}}>
                         {fieldnames.items && 
                             <ProjectTable
                                 screenHeaders={headersForShow}

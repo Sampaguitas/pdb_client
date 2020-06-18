@@ -1151,15 +1151,15 @@ class PtSplitwindow extends React.Component {
                 </nav>
                 <hr />
                 <div id="calloff" className="full-height">
-                    <div className="action-row row ml-1 mb-2 mr-1" style={{height: '34px'}}>
-                        <button title="Change/Add Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" style={{height: '34px'}} onClick={this.toggleHeat}>
-                            <span><FontAwesomeIcon icon="file-certificate" className="fa-lg mr-2"/>Heat Numbers</span>
+                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                        <button title="Change/Add Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleHeat}>
+                            <span><FontAwesomeIcon icon="file-certificate" className="fa mr-2"/>Heat Numbers</span>
                         </button>
-                        <button title="PickTicket" className="btn btn-leeuwen btn-lg mr-2" style={{height: '34px'}} onClick={pickticket.isProcessed ? this.handleOpenPickTicket : this.handleClosePickTicket}> {/* onClick={this.toggleHeat} */}
-                            <span><FontAwesomeIcon icon={processing ? "spinner" : "exclamation-triangle"} className={processing ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>{pickticket.isProcessed ? 'Open PickTicket' : 'Close PickTicket'}</span>
+                        <button title="PickTicket" className="btn btn-leeuwen btn-lg mr-2" onClick={pickticket.isProcessed ? this.handleOpenPickTicket : this.handleClosePickTicket}> {/* onClick={this.toggleHeat} */}
+                            <span><FontAwesomeIcon icon={processing ? "spinner" : "exclamation-triangle"} className={processing ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>{pickticket.isProcessed ? 'Open PickTicket' : 'Close PickTicket'}</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                    <div className="" style={{height: 'calc(100% - 41px)'}}>
                         {fieldnames.items && 
                             <ProjectTable
                                 screenHeaders={headersForShow}
