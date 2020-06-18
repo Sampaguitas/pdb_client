@@ -288,37 +288,6 @@ class Performance extends React.Component {
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Generate Performance Report" onClick={event => this.downloadLineChart(event)}>
                             <span><FontAwesomeIcon icon={loadingChart ? "spinner" : "file-chart-line"} className={loadingChart ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Generate PR</span>
                         </button>
-                        {/* <div className="input-group">
-                            <div className="input-group-prepend">
-                            <span className="input-group-text">Select Params</span>
-                            </div>
-                            <select className="form-control" name="clPo" value={clPo} onChange={this.handleChange}>
-                                <option key="0" value="">Select Po...</option>
-                                {this.generateOptionClPo(pos)}
-                            </select>
-                            <select className="form-control" name="clPoRev" value={clPoRev} onChange={this.handleChange}>
-                                <option key="0" value="">Select Revision...</option>
-                                {this.generateOptionclPoRev(pos, clPo)}
-                            </select>
-                            <select className="form-control" name="unit" value={unit} onChange={this.handleChange}>
-                                <option key="0" value="value">Value</option>
-                                <option key="1" value="pcs">Qty (Pcs)</option>
-                                <option key="2" value="mtr">Qty (Mtr/Ft)</option>
-                                <option key="3" value="weight">Weight (Kgs/Lbs)</option>
-                            </select>
-                            <select className="form-control" name="period" value={period} onChange={this.handleChange}>
-                                <option key="0" value="day">Days</option>
-                                <option key="1" value="week">Weeks</option>
-                                <option key="2" value="fortnight">Fortnights</option>
-                                <option key="3" value="month">Months</option>
-                                <option key="4" value="quarter">Quarters</option>
-                            </select>
-                            <div className="input-group-append">
-                                <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={event => this.downloadLineChart(event)}>
-                                    <span><FontAwesomeIcon icon={loadingChart ? "spinner" : "file-chart-line"} className={loadingChart ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Generate</span>
-                                </button>
-                            </div>
-                        </div> */}
                     </div>
                     <div className="" style={{height: 'calc(100% - 41px)'}}>
                         <Line
