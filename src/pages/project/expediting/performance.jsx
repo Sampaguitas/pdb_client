@@ -12,6 +12,7 @@ import {
     projectActions 
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
+import Modal from '../../../_components/modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Line from '../../../_components/chart/line';
 
@@ -253,7 +254,7 @@ class Performance extends React.Component {
     }
 
     render() {
-        const { unit, period, clPo, clPoRev, data, loadingChart, projectId } = this.state;
+        const { unit, period, clPo, clPoRev, data, loadingChart, projectId, showParams } = this.state;
         const { accesses, pos, selection } = this.props;
         const alert = this.props.alert ? this.props.alert : this.state.alert;
 
@@ -331,7 +332,80 @@ class Performance extends React.Component {
                             period={period}
                         />
                     </div>
-                </div> 
+                </div>
+                <Modal
+                    show={showParams}
+                    hideModal={this.toggleParams}
+                    title="Parameters"
+                    // size="modal-xl"
+                >
+                    <div className="col-12">
+                        <div className="form-group">
+                            <label htmlFor="clPo">Client Po</label>
+                            <select
+                                className="form-control"
+                                id="clPo"
+                                name="clPo"
+                                value={clPo}
+                                placeholder="Select field..."
+                                onChange={this.handleChange}
+                            >
+                                <option key="0" value="">Select Po...</option>
+                                {this.generateOptionClPo(pos)}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="clPoRev">Revision</label>
+                            <select
+                                className="form-control"
+                                id="clPoRev"
+                                name="clPoRev"
+                                value={clPoRev}
+                                placeholder="Select revision..."
+                                onChange={this.handleChange}
+                            >
+                                <option key="0" value="">Select Revision...</option>
+                                {this.generateOptionclPoRev(pos, clPo)}
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="unit">Unit</label>
+                            <select
+                                className="form-control"
+                                id="unit"
+                                name="unit"
+                                value={unit}
+                                onChange={this.handleChange}
+                            >
+                                <option key="0" value="value">Value</option>
+                                <option key="1" value="pcs">Qty (Pcs)</option>
+                                <option key="2" value="mtr">Qty (Mtr/Ft)</option>
+                                <option key="3" value="weight">Weight (Kgs/Lbs)</option>
+                            </select>
+                        </div>
+                        <div className="form-group">
+                            <label htmlFor="period">Period</label>
+                            <select
+                                className="form-control"
+                                id="period"
+                                name="period"
+                                value={period}
+                                onChange={this.handleChange}
+                            >
+                                <option key="0" value="day">Days</option>
+                                <option key="1" value="week">Weeks</option>
+                                <option key="2" value="fortnight">Fortnights</option>
+                                <option key="3" value="month">Months</option>
+                                <option key="4" value="quarter">Quarters</option>
+                            </select>
+                        </div>
+                        <div className="text-right">
+                            <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleParams}>
+                                <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
+                            </button>
+                        </div>                   
+                    </div>
+                </Modal>
             </Layout>
         );
     }
