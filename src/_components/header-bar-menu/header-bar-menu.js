@@ -21,9 +21,9 @@ class HeaderBarMenu extends Component {
                         <nav className={this.props.collapsed ? "navbar navbar-expand-lg navbar-light bg-light sticky-top collapsed" : "navbar navbar-expand-lg navbar-light bg-light sticky-top"} >
                             {/* <div className="collapse navbar-collapse" id="navbarSupportedContent"> */}
                                 <span className={this.props.collapsed ? 'navbars collapsed' : 'navbars'} onClick={this.props.toggleCollapse} >
-                                    <span><FontAwesomeIcon icon="bars" className="fa-2x" /></span>
+                                    <span><FontAwesomeIcon icon="bars" className="fa-2x"/></span>
                                 </span>
-                                <form className="form-inline ml-auto pull-right"> {/* "" */}
+                                <form className="form-inline ml-auto pull-right">
                                     <NavLink to="/user">
                                         <button className="btn btn-outline-leeuwen-blue btn-round header-button" title="User-Page">
                                             <span><FontAwesomeIcon icon="user" className="fa-2x"/></span>

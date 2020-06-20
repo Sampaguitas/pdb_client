@@ -821,9 +821,9 @@ class Warehouse extends Component {
                             <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewWh}>
                                 <span>
                                     {creatingNewWh ?
-                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw mr-2"/>
                                     :
-                                        <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
+                                        <FontAwesomeIcon icon="plus" className="fa mr-2"/>
                                     }
                                     Add
                                 </span>
@@ -831,9 +831,9 @@ class Warehouse extends Component {
                             <button className="btn btn-leeuwen btn-lg" onClick={this.handleDeleteWh}>
                                 <span>
                                     {deletingWh ?
-                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw mr-2"/>
                                     :
-                                        <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
+                                        <FontAwesomeIcon icon="trash-alt" className="fa mr-2"/>
                                     }
                                     Delete
                                 </span>
@@ -913,9 +913,9 @@ class Warehouse extends Component {
                             <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewArea}>
                                 <span>
                                     {creatingNewArea ?
-                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw mr-2"/>
                                     :
-                                        <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
+                                        <FontAwesomeIcon icon="plus" className="fa mr-2"/>
                                     }
                                     Add
                                 </span>
@@ -923,9 +923,9 @@ class Warehouse extends Component {
                             <button className="btn btn-leeuwen btn-lg" onClick={this.handleDeleteAreas}>
                                 <span>
                                     {deletingAreas ?
-                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                        <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw mr-2"/>
                                     :
-                                        <FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>
+                                        <FontAwesomeIcon icon="trash-alt" className="fa mr-2"/>
                                     }
                                     Delete
                                 </span>
@@ -1022,7 +1022,7 @@ class Warehouse extends Component {
                     </div>
                     <div className="text-right mt-2">
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={toggleWarehouse}>
-                            <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
+                            <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
                         </button>
                     </div>
                 </div>

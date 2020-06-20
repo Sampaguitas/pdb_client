@@ -1200,7 +1200,7 @@ class MaterialIssueRecord extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout alert={showSettings || showCreatePt ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && !showSettings && !showCreatePt &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1217,12 +1217,11 @@ class MaterialIssueRecord extends React.Component {
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Material issue record:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="calloff" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                <div id="materialissuerecord" className={ (alert.message && !showSettings && !showCreatePt) ? "main-section-alert" : "main-section"}>
+                    <div className="action-row row">
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Create Material Issue Record" onClick={this.toggleCreateMir}>
                             <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Create MIR</span>
                         </button>
@@ -1233,7 +1232,7 @@ class MaterialIssueRecord extends React.Component {
                             <span><FontAwesomeIcon icon="clipboard-list" className="fa mr-2"/>Create Tickets</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 41px)'}}>
+                    <div className="body-section">
                         {fieldnames.items && 
                             <ProjectTable
                                 screenHeaders={headersForShow}
@@ -1304,13 +1303,13 @@ class MaterialIssueRecord extends React.Component {
                     </div>
                     <div className="text-right mt-3"> 
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
-                            <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
+                            <span><FontAwesomeIcon icon="undo-alt" className="fa mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg mr-2" onClick={this.handleSaveSettings}>
-                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
-                            <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
+                            <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
                         </button>
                     </div>
                 </Modal>
@@ -1360,7 +1359,7 @@ class MaterialIssueRecord extends React.Component {
                             </div>
                             <div className="text-right">
                                 <button type="submit" className="btn btn-leeuwen-blue btn-lg mt-2">
-                                    <span><FontAwesomeIcon icon={creatingMir ? "spinner" : "plus"} className={creatingMir ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
+                                    <span><FontAwesomeIcon icon={creatingMir ? "spinner" : "plus"} className={creatingMir ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Create</span>
                                 </button>
                             </div>
                         </form>                  
@@ -1386,7 +1385,7 @@ class MaterialIssueRecord extends React.Component {
                             </div>
                             <div className="text-right mt-2 mb-4">
                                 <button className="btn btn-leeuwen-blue btn-lg" title="Generate Picking Tickets" onClick={this.handleCreatePT}>
-                                    <span><FontAwesomeIcon icon={creatingPt ? "spinner" : "plus"} className={creatingPt ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
+                                    <span><FontAwesomeIcon icon={creatingPt ? "spinner" : "plus"} className={creatingPt ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Create</span>
                                 </button>
                             </div>
                             {!_.isEmpty(logs) &&

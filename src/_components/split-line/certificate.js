@@ -580,10 +580,10 @@ class Certificate extends Component {
                     <div className={`row ${alert.message ? "mt-1" : "mt-2"} mb-2`}>
                         <div className="col text-right">
                             <button title="Add Certificate"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewRow}>
-                                <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>Add</span>
+                                <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Add</span>
                             </button>
                             <button title="Delete Certificate(s)"className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedIds)}>
-                                <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>Delete</span>
+                                <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Delete</span>
                             </button>
                         </div>
                     </div>
@@ -602,7 +602,7 @@ class Certificate extends Component {
 
                     <div className="text-right mt-2">
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={event => toggleCif(event)}>
-                            <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
+                            <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
                         </button>
                     </div>
                 </div>

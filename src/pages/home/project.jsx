@@ -441,7 +441,7 @@ class Project extends React.Component {
         const { project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, sort, submitted } = this.state; //loaded
         const { projectUsers } = this.state.project;
         return (
-            <Layout alert={alert}>
+            <Layout>
                {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -457,8 +457,7 @@ class Project extends React.Component {
                         <li className="breadcrumb-item active" aria-current="page">Add project</li>
                     </ol>
                 </nav>
-                <hr />
-                <div id="project" className="full-height">
+                <div id="project" className={alert.message ? "main-section-alert" : "main-section"}>
                     <div className="col-md-8 mb-md-0 col-sm-12 mb-sm-3 full-height">
                         <div className="row full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                             <div className="table-responsive custom-table-container">
@@ -576,13 +575,13 @@ class Project extends React.Component {
                         </div>
                     </div>
                     <div className="col-md-4 col-sm-12 pl-md-3 p-sm-0 full-height">
-                        <div className="card full-height">
+                        <div className="card" style={{maxHeight: '100%'}}>
                             <div className="card-header">
                                 <h5>General information</h5>
                             </div>
-                            <div className="card-body" style={{height: 'calc(100% - 20px)', overflowY: 'auto'}}>
+                            <div className="card-body" style={{maxHeight: 'calc(100% - 20px)', overflowY: 'auto'}}>
                                 <form
-                                    className="row full-height m-0"
+                                    className="row m-0"
                                     onKeyPress={this.onKeyPress}
                                     onSubmit={this.handleSubmit}
                                 >
@@ -660,11 +659,9 @@ class Project extends React.Component {
                                             onChange={this.handleChange}
                                         />
                                     </div>
-                                    <div className="col-12 text-right align-self-end p-0">
-                                        <button type="submit" className="btn btn-leeuwen-blue btn-full btn-lg mb-3">
-                                            <span><FontAwesomeIcon icon={projectCreating ? "spinner" : "plus"} className={projectCreating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
-                                        </button>
-                                    </div>
+                                    <button type="submit" className="btn btn-leeuwen-blue btn-full btn-lg">
+                                        <span><FontAwesomeIcon icon={projectCreating ? "spinner" : "plus"} className={projectCreating ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Create</span>
+                                    </button>
                                 </form>                                
                             </div>
                         </div>

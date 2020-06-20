@@ -330,11 +330,10 @@ class Configuration extends React.Component {
                             <NavLink to={{ pathname: '/dashboard', search: '?id=' + projectId }} tag="a">Dashboard</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Configuration:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="configuration" className="full-height">
+                <div id="configuration" className={ (alert.message && !showSplitLine && !showSettings) ? "main-section-alert" : "main-section"}>
                     <Tabs
                         tabs={tabs}
                         //Functions

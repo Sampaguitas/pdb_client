@@ -1034,7 +1034,7 @@ class WhCertificates extends React.Component {
         const { accesses, certificates, fieldnames, fields, pos, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout alert={showSettings || showCif ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && !showSettings && !showCif &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1051,12 +1051,11 @@ class WhCertificates extends React.Component {
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Certificates:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="certificates" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                <div id="certificates" className={ (alert.message && !showSettings && !showCif) ? "main-section-alert" : "main-section"}>
+                    <div className="action-row row">
                         <button title="Add/Edit Certificates" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleCif}>
                             <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Certificates</span>
                         </button>
@@ -1067,7 +1066,7 @@ class WhCertificates extends React.Component {
                             <span><FontAwesomeIcon icon={isDownloading ? "spinner" : "file-pdf"} className={isDownloading ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Download CIF(s)</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 41px)'}}>
+                    <div className="body-section">
                         {selection && selection.project && 
                             <ProjectTable
                                 screenHeaders={headersForShow}
@@ -1174,13 +1173,13 @@ class WhCertificates extends React.Component {
                     </div>
                     <div className="text-right mt-3">
                     <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
-                            <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
+                            <span><FontAwesomeIcon icon="undo-alt" className="fa mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg mr-2" onClick={this.handleSaveSettings}>
-                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
-                            <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
+                            <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
                         </button>
                     </div>
                 </Modal>

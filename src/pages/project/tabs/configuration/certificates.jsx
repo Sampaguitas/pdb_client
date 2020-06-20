@@ -98,7 +98,7 @@ class Certificates extends React.Component {
 
         return ( 
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
-                <div className="col-12 p-2">
+                <div className="col-12 p-0">
                     <div className="card">
                         <div className="card-header">
                             <h5>Custom File Name</h5>
@@ -142,7 +142,7 @@ class Certificates extends React.Component {
                             <span className="badge badge-secondary" onClick={event => this.handlePushField(event, '[inspQty]')}>inspQty</span>
                             <div className="text-right">
                                 <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={(event) => this.handleUpdate(event)}>
-                                        <span><FontAwesomeIcon icon={updating ? "spinner" : "edit"} className={updating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Update</span>
+                                    <span><FontAwesomeIcon icon={updating ? "spinner" : "edit"} className={updating ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Update</span>
                                 </button>
                             </div>   
                         </div>

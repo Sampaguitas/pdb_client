@@ -82,6 +82,7 @@ class LineChart extends Component {
             options={options}
             width={width}
             height={height}
+            width={width}
             responsive={true}
         />;
     }

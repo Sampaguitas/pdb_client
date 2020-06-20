@@ -1926,7 +1926,7 @@ class StockManagement extends React.Component {
         var myGoodsReceipt = new goodsReceiptObject();
         
         return (
-            <Layout alert={showGoodsReceipt || showTransfer  || showCorrection ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && !showGoodsReceipt && !showTransfer && !showCorrection &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1943,12 +1943,11 @@ class StockManagement extends React.Component {
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Stock management:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="stockManagement" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                <div id="stockManagement" className={ (alert.message && !showGoodsReceipt && !showTransfer && !showCorrection) ? "main-section-alert" : "main-section"}>
+                    <div className="action-row row">
                         <button title={myGoodsReceipt.title} className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleGoodsReceipt}>
                             <span><FontAwesomeIcon icon="cubes" className="fa mr-2"/>Goods Receipt</span>
                         </button>
@@ -1965,7 +1964,7 @@ class StockManagement extends React.Component {
                             <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Stock History</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 41px)'}}>
+                    <div className="body-section">
                         {fieldnames.items &&
                             <ProjectTable
                                 screenHeaders={headersForShow}
@@ -2123,7 +2122,7 @@ class StockManagement extends React.Component {
                                 </div>
                                 <div className="text-right mt-2">
                                     <button type="submit" className="btn btn-leeuwen-blue btn-lg">
-                                        <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Transfer</span>
+                                        <span><FontAwesomeIcon icon="hand-point-right" className="fa mr-2"/>Transfer</span>
                                     </button>
                                 </div>
                             </form>
@@ -2180,7 +2179,7 @@ class StockManagement extends React.Component {
                                 </div>
                                 <div className="text-right mt-2">
                                     <button type="submit" className="btn btn-leeuwen-blue btn-lg">
-                                        <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Reevaluate</span>
+                                        <span><FontAwesomeIcon icon="hand-point-right" className="fa mr-2"/>Reevaluate</span>
                                     </button>
                                 </div>
                             </form>
@@ -2229,7 +2228,7 @@ class StockManagement extends React.Component {
                             </div>
                             <div className="text-right">
                                 <button type="submit" className="btn btn-success btn-lg">
-                                    <span><FontAwesomeIcon icon={isDownloadingFile ? "spinner" : "file-excel"} className={isDownloadingFile ? "fa-pulse fa-fw fa-lg mr-2"  : "fa-lg mr-2"}/>Generate</span>
+                                    <span><FontAwesomeIcon icon={isDownloadingFile ? "spinner" : "file-excel"} className={isDownloadingFile ? "fa-pulse fa-fw fa mr-2"  : "fa mr-2"}/>Generate</span>
                                 </button>
                             </div>
                         </form>                  
@@ -2283,13 +2282,13 @@ class StockManagement extends React.Component {
                     </div>
                     <div className="text-right mt-3"> 
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
-                            <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
+                            <span><FontAwesomeIcon icon="undo-alt" className="fa mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg mr-2" onClick={this.handleSaveSettings}>
-                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
-                            <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
+                            <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
                         </button>
                     </div>
                 </Modal>

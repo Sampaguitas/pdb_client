@@ -652,7 +652,7 @@ class GoodsReceipt extends Component {
                             </div>
                             <div className="text-right mt-2">
                                 <button type="submit" className="btn btn-leeuwen-blue btn-lg">
-                                    <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Add to Stock</span>
+                                    <span><FontAwesomeIcon icon="hand-point-right" className="fa mr-2"/>Add to Stock</span>
                                 </button>
                             </div>
                         </form>

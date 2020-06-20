@@ -206,7 +206,7 @@ class Duf extends React.Component {
 
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout alert={alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -220,12 +220,11 @@ class Duf extends React.Component {
                             <NavLink to={{ pathname: '/dashboard', search: '?id=' + projectId }} tag="a">Dashboard</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Data Upload File (DUF):</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="duf" className="full-height">
-            <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                <div id="duf" className={alert.message ? "main-section-alert" : "main-section"}>
+                    <div className="action-row row">
                         <form
                             className="col-12"
                             encType="multipart/form-data"
@@ -260,7 +259,7 @@ class Duf extends React.Component {
                         </form>                    
                     </div>
                     {!_.isEmpty(responce) &&
-                        <div className="ml-1 mr-1" style={{height: 'calc(100% - 41px)'}}>
+                        <div className="body-section">
                             <div className="form-group table-resonsive" style={{height: '83px'}}>
                                 <strong>Total Processed:</strong> {responce.nProcessed}<br />
                                 <strong>Total records Added:</strong> {responce.nAdded}<br />

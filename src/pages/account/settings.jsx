@@ -504,7 +504,7 @@ class Settings extends React.Component {
     const { users, registering, userUpdating, userDeleting, alert, opcos } = this.props;
 
     return (
-      <Layout alert={alert}>
+      <Layout>
         {alert.message && 
           <div className={`alert ${alert.type}`}>{alert.message}
             <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -520,213 +520,206 @@ class Settings extends React.Component {
                 <li className="breadcrumb-item active" aria-current="page">Settings</li>
             </ol>
         </nav>
-          <hr />
-          <div id="setting" className="full-height">
-      <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
-              {/* <div className="ml-auto pull-right"> */}
-                  <button title="Create User" className="btn btn-leeuwen-blue btn-lg" onClick={this.showModal}> {/* style={{height: '34px'}} */}
-                      <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Create User</span>
-                  </button>
-              {/* </div> */}
-            </div>
-            <div className="" style={{height: 'calc(100% - 41px)'}}>
-              <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
-                <div className="table-responsive custom-table-container" >
-                  <table className="table table-hover table-bordered table-sm">
-                    <thead>
-                      <tr>
-                        <HeaderInput
-                            type="text"
-                            title="Initials"
-                            name="userName"
-                            value={userName}
-                            onChange={this.handleChangeHeader}
-                            width="10%"
-                            sort={sort}
-                            toggleSort={this.toggleSort} 
-                        />
-                        <HeaderInput
-                            type="text"
-                            title="Name"
-                            name="name"
-                            value={name}
-                            onChange={this.handleChangeHeader}
-                            width="30%"
-                            sort={sort}
-                            toggleSort={this.toggleSort} 
-                        />
-                        <HeaderInput
-                            type="text"
-                            title="Operating Company"
-                            name="opco"
-                            value={opco}
-                            onChange={this.handleChangeHeader}
-                            width="30%"
-                            sort={sort}
-                            toggleSort={this.toggleSort} 
-                        />
-                        <HeaderInput
-                            type="text"
-                            title="Region"
-                            name="region"
-                            value={region}
-                            onChange={this.handleChangeHeader}
-                            width="10%"
-                            sort={sort}
-                            toggleSort={this.toggleSort} 
-                        />
-                        <HeaderCheckBox
-                            title="Admin"
-                            name="isAdmin"
-                            value={isAdmin}
-                            onChange={this.handleChangeHeader}
-                            width="10%"
-                            sort={sort}
-                            toggleSort={this.toggleSort} 
-                        />
-                        <HeaderCheckBox
-                            title="SpAdmin"
-                            name="isSuperAdmin"
-                            value={isSuperAdmin}
-                            onChange={this.handleChangeHeader}
-                            width="10%"
-                            sort={sort}
-                            toggleSort={this.toggleSort} 
-                        />
-                      </tr>
-                    </thead>
-                    <tbody className="full-height">
-                      {users.items && this.filterName(users.items).map((u) =>
-                        <tr key={u._id}>
-                          <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.userName}</td>
-                          <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.name}</td>
-                          <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.name}</td>
-                          <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.region.name}</td>
-                          <td data-type="checkbox">
-                              <TableCheckBoxAdmin
-                                  id={u._id}
-                                  checked={u.isAdmin}
-                                  onChange={this.handleInputChange}
-                                  disabled={this.checkBoxDisabled(u,'isAdmin')}
-                                  data-type="checkbox"
-                              />
-                          </td>
-                          <td data-type="checkbox">
-                              <TableCheckBoxSuperAdmin
-                                  id={u._id}
-                                  checked={u.isSuperAdmin}
-                                  onChange={this.handleInputChange}
-                                  disabled={this.checkBoxDisabled(u,'isSuperAdmin')}
-                                  data-type="checkbox"
-                              />
-                          </td>
-                        </tr>                      
-                      )}
-                    </tbody>
-                  </table>
-                </div>
+        <div id="setting" className={alert.message ? "main-section-alert" : "main-section"}>
+        <div className="action-row row">
+                <button title="Create User" className="btn btn-leeuwen-blue btn-lg" onClick={this.showModal}> {/* style={{height: '34px'}} */}
+                    <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Create User</span>
+                </button>
+          </div>
+          <div className="body-section">
+            <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
+              <div className="table-responsive custom-table-container" >
+                <table className="table table-hover table-bordered table-sm">
+                  <thead>
+                    <tr>
+                      <HeaderInput
+                          type="text"
+                          title="Initials"
+                          name="userName"
+                          value={userName}
+                          onChange={this.handleChangeHeader}
+                          width="10%"
+                          sort={sort}
+                          toggleSort={this.toggleSort} 
+                      />
+                      <HeaderInput
+                          type="text"
+                          title="Name"
+                          name="name"
+                          value={name}
+                          onChange={this.handleChangeHeader}
+                          width="30%"
+                          sort={sort}
+                          toggleSort={this.toggleSort} 
+                      />
+                      <HeaderInput
+                          type="text"
+                          title="Operating Company"
+                          name="opco"
+                          value={opco}
+                          onChange={this.handleChangeHeader}
+                          width="30%"
+                          sort={sort}
+                          toggleSort={this.toggleSort} 
+                      />
+                      <HeaderInput
+                          type="text"
+                          title="Region"
+                          name="region"
+                          value={region}
+                          onChange={this.handleChangeHeader}
+                          width="10%"
+                          sort={sort}
+                          toggleSort={this.toggleSort} 
+                      />
+                      <HeaderCheckBox
+                          title="Admin"
+                          name="isAdmin"
+                          value={isAdmin}
+                          onChange={this.handleChangeHeader}
+                          width="10%"
+                          sort={sort}
+                          toggleSort={this.toggleSort} 
+                      />
+                      <HeaderCheckBox
+                          title="SpAdmin"
+                          name="isSuperAdmin"
+                          value={isSuperAdmin}
+                          onChange={this.handleChangeHeader}
+                          width="10%"
+                          sort={sort}
+                          toggleSort={this.toggleSort} 
+                      />
+                    </tr>
+                  </thead>
+                  <tbody className="full-height">
+                    {users.items && this.filterName(users.items).map((u) =>
+                      <tr key={u._id}>
+                        <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.userName}</td>
+                        <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.name}</td>
+                        <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.name}</td>
+                        <td className="no-select" onClick={(event) => this.handleOnclick(event, u._id)}>{u.opco.region.name}</td>
+                        <td data-type="checkbox">
+                            <TableCheckBoxAdmin
+                                id={u._id}
+                                checked={u.isAdmin}
+                                onChange={this.handleInputChange}
+                                disabled={this.checkBoxDisabled(u,'isAdmin')}
+                                data-type="checkbox"
+                            />
+                        </td>
+                        <td data-type="checkbox">
+                            <TableCheckBoxSuperAdmin
+                                id={u._id}
+                                checked={u.isSuperAdmin}
+                                onChange={this.handleInputChange}
+                                disabled={this.checkBoxDisabled(u,'isSuperAdmin')}
+                                data-type="checkbox"
+                            />
+                        </td>
+                      </tr>                      
+                    )}
+                  </tbody>
+                </table>
               </div>
             </div>
+          </div>
 
-            <Modal
-              show={this.state.show}
-              hideModal={this.hideModal}
-              title={this.state.user.id ? 'Update user' : 'Add user'}
-            >
-              <div className="col-12">
-                    <form
-                      name="form"
-                      onKeyPress={this.onKeyPress}
-                      onSubmit={this.handleSubmit}
-                    >
+          <Modal
+            show={this.state.show}
+            hideModal={this.hideModal}
+            title={this.state.user.id ? 'Update user' : 'Add user'}
+          >
+            <div className="col-12">
+                  <form
+                    name="form"
+                    onKeyPress={this.onKeyPress}
+                    onSubmit={this.handleSubmit}
+                  >
+                    <Input
+                      title="Initials"
+                      name="userName"
+                      type="text"
+                      value={user.userName}
+                      onChange={this.handleChangeUser}
+                      submitted={submitted}
+                      inline={false}
+                      required={true}
+                    />
+                    <Input
+                      title="Full Name"
+                      name="name"
+                      type="text"
+                      value={user.name}
+                      onChange={this.handleChangeUser}
+                      submitted={submitted}
+                      inline={false}
+                      required={true}
+                    />
+                    <Select
+                        title="OPCO"
+                        name="opcoId"
+                        options={this.accessibleArray(opcos.items, 'name')}
+                        value={user.opcoId}
+                        onChange={this.handleChangeUser}
+                        placeholder=""
+                        submitted={submitted}
+                        inline={false}
+                        required={true}
+                    />
+                    <Input
+                      title="Email"
+                      name="email"
+                      type="email"
+                      value={user.email}
+                      onChange={this.handleChangeUser}
+                      submitted={submitted}
+                      inline={false}
+                      required={true}
+                    />
+                    {!this.state.user.id &&
+                    <div>
                       <Input
-                        title="Initials"
-                        name="userName"
-                        type="text"
-                        value={user.userName}
+                        title="Password"
+                        name="password"
+                        type="password"
+                        value={user.password}
                         onChange={this.handleChangeUser}
                         submitted={submitted}
                         inline={false}
                         required={true}
                       />
                       <Input
-                        title="Full Name"
-                        name="name"
-                        type="text"
-                        value={user.name}
+                        title="Confirm Password"
+                        name="confirmPassword"
+                        type="password"
+                        value={user.confirmPassword}
                         onChange={this.handleChangeUser}
                         submitted={submitted}
                         inline={false}
                         required={true}
                       />
-                      <Select
-                          title="OPCO"
-                          name="opcoId"
-                          options={this.accessibleArray(opcos.items, 'name')}
-                          value={user.opcoId}
-                          onChange={this.handleChangeUser}
-                          placeholder=""
-                          submitted={submitted}
-                          inline={false}
-                          required={true}
-                      />
-                      <Input
-                        title="Email"
-                        name="email"
-                        type="email"
-                        value={user.email}
-                        onChange={this.handleChangeUser}
-                        submitted={submitted}
-                        inline={false}
-                        required={true}
-                      />
-                      {!this.state.user.id &&
-                      <div>
-                        <Input
-                          title="Password"
-                          name="password"
-                          type="password"
-                          value={user.password}
-                          onChange={this.handleChangeUser}
-                          submitted={submitted}
-                          inline={false}
-                          required={true}
-                        />
-                        <Input
-                          title="Confirm Password"
-                          name="confirmPassword"
-                          type="password"
-                          value={user.confirmPassword}
-                          onChange={this.handleChangeUser}
-                          submitted={submitted}
-                          inline={false}
-                          required={true}
-                        />
-                      </div>
+                    </div>
+                    }
+                      <div className="modal-footer">
+                      {this.state.user.id ?
+                          <div className="row">
+                              <button className="btn btn-leeuwen btn-lg" onClick={(event) => {this.handleDeletUser(event, this.state.user.id)}}>
+                                <span><FontAwesomeIcon icon={userDeleting ? "spinner" : "trash-alt"} className={userDeleting ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Delete</span>
+                              </button>
+                              <button type="submit" className="btn btn-leeuwen-blue btn-lg">
+                                <span><FontAwesomeIcon icon={userUpdating ? "spinner" : "edit"} className={userUpdating ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Update</span>
+                              </button>
+                          </div>
+                      :
+                          <button type="submit" className="btn btn-leeuwen-blue btn-lg btn-full">
+                            <span><FontAwesomeIcon icon={registering ? "spinner" : "plus"} className={registering ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Create</span>
+                          </button>
                       }
-                        <div className="modal-footer">
-                        {this.state.user.id ?
-                            <div className="row">
-                                <div className="col-6">
-                                    <button className="btn btn-leeuwen btn-lg" onClick={(event) => {this.handleDeletUser(event, this.state.user.id)}}>
-                                      <span><FontAwesomeIcon icon={userDeleting ? "spinner" : "trash-alt"} className={userDeleting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Delete</span>
-                                    </button>
-                                </div>
-                                <div className="col-6">
-                                    <button type="submit" className="btn btn-leeuwen-blue btn-lg">
-                                      <span><FontAwesomeIcon icon={userUpdating ? "spinner" : "edit"} className={userUpdating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Update</span>
-                                    </button>
-                                </div>
-                            </div>
-                        :
-                            <button type="submit" className="btn btn-leeuwen-blue btn-lg btn-full">
-                              <span><FontAwesomeIcon icon={registering ? "spinner" : "plus"} className={registering ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
-                            </button>
-                        }
-                        </div>
-                    </form>
-              </div>
-            </Modal>
+                      </div>
+                  </form>
+            </div>
+          </Modal>
         </div>
       </Layout>
     );

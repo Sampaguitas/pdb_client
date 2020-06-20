@@ -726,10 +726,10 @@ class ColliType extends Component {
                         </div>
                         <div className="col text-right">
                             <button title="Add Collitype"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewRow}>
-                                <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>Add</span>
+                                <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Add</span>
                             </button>
                             <button title="Delete Collitype(s)"className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedRows)}>
-                                <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>Delete</span>
+                                <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Delete</span>
                             </button>
                         </div>
                     </div>
@@ -747,7 +747,7 @@ class ColliType extends Component {
                     </div>
                     <div className="text-right mt-2">
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleAssign(event)}>
-                            <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign</span>
+                            <span><FontAwesomeIcon icon="hand-point-right" className="fa mr-2"/>Assign</span>
                         </button>
                     </div>
                 </div>

@@ -141,7 +141,7 @@ class ResetPwd extends React.Component {
                         />
                         <hr />
                         <button type="submit" className="btn btn-leeuwen btn-full btn-lg">
-                          <span><FontAwesomeIcon icon={reseting ? "spinner" : "hand-point-right"} className={reseting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Reset</span>
+                          <span><FontAwesomeIcon icon={reseting ? "spinner" : "hand-point-right"} className={reseting ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Reset</span>
                         </button>
                         <NavLink to={{ pathname: "/login" }} className="btn btn-link" tag="a">Go back to login page</NavLink>
                         <br />

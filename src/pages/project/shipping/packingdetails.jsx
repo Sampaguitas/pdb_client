@@ -1294,7 +1294,7 @@ class PackingDetails extends React.Component {
         const { accesses, docdefs, fieldnames, fields, collipacks, collitypes, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout alert={showSettings || showColliTypes ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && !showSettings && !showColliTypes &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1311,12 +1311,11 @@ class PackingDetails extends React.Component {
                             <NavLink to={{ pathname: '/shipping', search: '?id=' + projectId }} tag="a">Shipping</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Complete packing details:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="packingdetails" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                <div id="packingdetails" className={ (alert.message && !showSettings && !showColliTypes) ? "main-section-alert" : "main-section"}>
+                    <div className="action-row row">
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Edit Values" onClick={event => this.toggleEditValues(event)}>
                             <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Edit Values</span>
                         </button>
@@ -1330,7 +1329,7 @@ class PackingDetails extends React.Component {
                             <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Shipping Docs</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                    <div className="body-section">
                         {selection && selection.project && 
                             <ProjectTable
                                 screenHeaders={headersForShow}
@@ -1386,10 +1385,10 @@ class PackingDetails extends React.Component {
                         </div>
                         <div className="text-right">
                             <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.handleUpdateValue(event, false)}>
-                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
+                                <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Update</span>
                             </button>
                             <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleUpdateValue(event, true)}>
-                                <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
+                                <span><FontAwesomeIcon icon="eraser" className="fa mr-2"/>Erase</span>
                             </button>
                         </div>                   
                     </div>
@@ -1448,7 +1447,7 @@ class PackingDetails extends React.Component {
                             </div>
                             <div className="text-right">
                                 <button className="btn btn-success btn-lg" type="submit">
-                                    <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
+                                    <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate</span>
                                 </button>
                             </div>
                         </form>         
@@ -1504,13 +1503,13 @@ class PackingDetails extends React.Component {
                     </div>
                     <div className="text-right mt-3">
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
-                            <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
+                            <span><FontAwesomeIcon icon="undo-alt" className="fa mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg mr-2" onClick={this.handleSaveSettings}>
-                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
-                            <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
+                            <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
                         </button>
                     </div>
                 </Modal>

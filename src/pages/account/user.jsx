@@ -114,8 +114,7 @@ class User extends React.Component {
                         <li className="breadcrumb-item active" aria-current="page">User Page</li>
                     </ol>
                 </nav>
-                <hr />
-                <div id="user" className="full-height">
+                <div id="user" className={alert.message ? "main-section-alert" : "main-section"}>
                     <div className="row">
                         <div className="col-md-8 col-sm-12 mb-sm-3 pr-md-0">
                             <div className="card mb-3">
@@ -182,8 +181,8 @@ class User extends React.Component {
                                             required={true}
                                             autocomplete="new-password"
                                         />
-                                        <button type="submit" className="btn btn-leeuwen-blue btn-full btn-lg mb-3">
-                                            <span><FontAwesomeIcon icon={userUpdating ? "spinner" : "hand-point-right"} className={userUpdating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"} />Submit</span>
+                                        <button type="submit" className="btn btn-leeuwen-blue btn-full btn-lg">
+                                            <span><FontAwesomeIcon icon={userUpdating ? "spinner" : "hand-point-right"} className={userUpdating ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"} />Submit</span>
                                         </button>
                                     </form>
                                 </div>

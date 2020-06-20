@@ -425,7 +425,7 @@ class Opco extends React.Component {
         const { alert, opcoCreating, opcoUpdating, opcoDeleting, locales, regions, opcos } = this.props;
         const { opco, show, code, name, city, country, region, sort, submitted } = this.state;
         return (
-            <Layout alert={alert}>
+            <Layout>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -441,16 +441,13 @@ class Opco extends React.Component {
                         <li className="breadcrumb-item active" aria-current="page">Add operation company</li>
                     </ol>
                 </nav>
-                <hr />
-                <div id="opco" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
-                        {/* <div className="ml-auto pull-right"> */}
+                <div id="opco" className={alert.message ? "main-section-alert" : "main-section"}>
+                    <div className="action-row row">
                             <button title="Create Opco" className="btn btn-leeuwen-blue btn-lg" onClick={this.showModal}> {/* style={{height: '34px'}} */}
                                 <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Create Opco</span>
                             </button>
-                        {/* </div> */}
                     </div>
-                    <div className="" style={{height: 'calc(100% - 41px)'}}>
+                    <div className="body-section">
                         <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                             <div className="table-responsive custom-table-container" >
                                 <table className="table table-hover table-bordered table-sm">
@@ -622,20 +619,16 @@ class Opco extends React.Component {
                                     <div className="modal-footer">
                                     {opco.id ?
                                         <div className="row">
-                                            <div className="col-6">
-                                                <button className="btn btn-leeuwen btn-lg" onClick={(event) => {this.handleDeletOpco(event, opco.id)}}>
-                                                    <span><FontAwesomeIcon icon={opcoDeleting ? "spinner" : "trash-alt"} className={opcoDeleting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Delete</span>
-                                                </button>
-                                            </div>
-                                            <div className="col-6">
-                                                <button type="submit" className="btn btn-leeuwen-blue btn-lg" >
-                                                    <span><FontAwesomeIcon icon={opcoUpdating ? "spinner" : "edit"} className={opcoUpdating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Update</span>
-                                                </button>
-                                            </div>
+                                            <button className="btn btn-leeuwen btn-lg" onClick={(event) => {this.handleDeletOpco(event, opco.id)}}>
+                                                <span><FontAwesomeIcon icon={opcoDeleting ? "spinner" : "trash-alt"} className={opcoDeleting ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Delete</span>
+                                            </button>
+                                            <button type="submit" className="btn btn-leeuwen-blue btn-lg" >
+                                                <span><FontAwesomeIcon icon={opcoUpdating ? "spinner" : "edit"} className={opcoUpdating ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Update</span>
+                                            </button>
                                         </div>
                                     :
                                         <button type="submit" className="btn btn-leeuwen-blue btn-lg btn-full" >
-                                            <span><FontAwesomeIcon icon={opcoCreating ? "spinner" : "plus"} className={opcoCreating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Create</span>
+                                            <span><FontAwesomeIcon icon={opcoCreating ? "spinner" : "plus"} className={opcoCreating ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Create</span>
                                         </button>
                                     }
                                     </div>

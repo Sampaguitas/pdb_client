@@ -745,7 +745,7 @@ class Locations extends React.Component {
         ]
 
         return (
-            <Layout alert={showWarehouse || showDuf || showLocation ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && !showWarehouse && !showDuf && !showLocation &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -762,16 +762,15 @@ class Locations extends React.Component {
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Locations:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="locations" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                <div id="locations" className={ (alert.message && !showWarehouse && !showDuf && !showLocation) ? "main-section-alert" : "main-section"}>
+                    <div className="action-row row">
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Show WH / Areas" onClick={this.toggleWarehouse}>
                             <span><FontAwesomeIcon icon="warehouse" className="fa mr-2"/>WH / Areas</span>
                         </button>
-                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="DUF File" onClick={this.toggleDuf}> {/* onClick={event => this.toggleWarhouses(event)} */}
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="DUF File" onClick={this.toggleDuf}>
                             <span><FontAwesomeIcon icon="upload" className="fa mr-2"/>DUF File</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Add Location" onClick={this.toggleLocation}>
@@ -788,7 +787,7 @@ class Locations extends React.Component {
                             </span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 41px)'}}>
+                    <div className="body-section">
                         <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                             <div className="table-responsive custom-table-container custom-table-container__fixed-row">
                                 <table className="table table-bordered table-sm text-nowrap table-striped" id="locationTable">
@@ -1045,10 +1044,10 @@ class Locations extends React.Component {
                                     <label type="text" className="form-control text-left" htmlFor="dufInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
                                     <div className="input-group-append">
                                         <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
-                                            <span><FontAwesomeIcon icon={uploading ? "spinner" : "upload"} className={uploading ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Upload</span>
+                                            <span><FontAwesomeIcon icon={uploading ? "spinner" : "upload"} className={uploading ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Upload</span>
                                         </button>
                                         <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={this.handleDownloadFile}>
-                                            <span><FontAwesomeIcon icon={downloading ? "spinner" : "download"} className={downloading ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Download</span>
+                                            <span><FontAwesomeIcon icon={downloading ? "spinner" : "download"} className={downloading ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Download</span>
                                         </button> 
                                     </div>       
                                 </div>
@@ -1209,9 +1208,9 @@ class Locations extends React.Component {
                                 <button type="submit" className="btn btn-leeuwen-blue btn-lg mr-2">
                                     <span>
                                         {creatingLocation ?
-                                            <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw mr-2"/>
+                                            <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw mr-2"/>
                                             :
-                                            <FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>
+                                            <FontAwesomeIcon icon="plus" className="fa mr-2"/>
                                         }
                                         Create
                                     </span>

@@ -512,7 +512,7 @@ class SplitLine extends Component {
                             </div>
                             <div className="text-right mt-2">
                                 <button type="submit" className="btn btn-leeuwen-blue btn-lg" title="Add Line to MIR">
-                                    <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}/>Add Line</span>
+                                    <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Add Line</span>
                                 </button>
                             </div>
                         </form>

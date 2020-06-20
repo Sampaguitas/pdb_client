@@ -929,13 +929,13 @@ class HeatPick extends Component {
                             <div style={{position: 'relative', top: '50%', transform: 'translate(-50%,-50%)'}}>
                                 <div className="row mb-3">
                                     <button title="Add to location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.AssignCertificates(event)}>
-                                        <span><FontAwesomeIcon icon={isCreating ? "spinner" : "chevron-right"} className={isCreating ? "fa-pulse fa-lg fa-fw" : "fa-lg"}/></span>
+                                        <span><FontAwesomeIcon icon={isCreating ? "spinner" : "chevron-right"} className={isCreating ? "fa-pulse fa fa-fw" : "fa"}/></span>
                                     </button>
                                 </div>
                                 <div className="row">
                                     
                                     <button title="Remove from location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.removeCertificates(event)}>
-                                        <span><FontAwesomeIcon icon={isDeleting ? "spinner" : "chevron-left"} className={isDeleting ? "fa-pulse fa-lg fa-fw" : "fa-lg"}/></span>
+                                        <span><FontAwesomeIcon icon={isDeleting ? "spinner" : "chevron-left"} className={isDeleting ? "fa-pulse fa fa-fw" : "fa"}/></span>
                                     </button>
                                 </div>
                             </div>
@@ -960,7 +960,7 @@ class HeatPick extends Component {
                     </div>
                     <div className="text-right mt-4">
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={event => toggleHeat(event)}>
-                            <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
+                            <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
                         </button>
                     </div>
                 </div>

@@ -590,13 +590,13 @@ class General extends React.Component {
                     </div>
                 </div>
                 <div className="col-md-4 col-sm-12 pl-md-3 p-sm-0 full-height">
-                    <div className="card full-height">
+                    <div className="card" style={{maxHeight: '100%'}}>
                         <div className="card-header">
                             <h5>General information</h5>
                         </div>
-                        <div className="card-body" style={{height: 'calc(100% - 20px)', overflowY: 'auto'}}>
+                        <div className="card-body" style={{maxHeight: 'calc(100% - 20px)', overflowY: 'auto'}}>
                             <form
-                                className="row full-height m-0"
+                                className="row m-0"
                                 onKeyPress={this.onKeyPress}
                                 onSubmit={event => handleSubmitProject(event, project)}
                             >
@@ -662,16 +662,16 @@ class General extends React.Component {
                                         checked={project.enableWarehouse}
                                         onChange={this.handleChange}
                                     />
-                                </div>
-                                <div className="col-12 text-right align-self-end p-0">
                                     {project.id &&
-                                        <div>
-                                            <button className="btn btn-leeuwen btn-lg mr-2" onClick={event => handleDeleteProject(event, project.id)}>
-                                                <span><FontAwesomeIcon icon={projectDeleting ? "spinner" : "trash-alt"} className={projectDeleting ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Delete</span>
-                                            </button>
-                                            <button type="submit" className="btn btn-leeuwen-blue btn-lg">
-                                                <span><FontAwesomeIcon icon={projectUpdating ? "spinner" : "edit"} className={projectUpdating ? "fa-pulse fa-fw fa-lg mr-2" : "fa-lg mr-2"}/>Update</span>
-                                            </button>
+                                        <div className="col-12 text-right p-0">
+                                            <div>
+                                                <button className="btn btn-leeuwen btn-lg mr-2" onClick={event => handleDeleteProject(event, project.id)}>
+                                                    <span><FontAwesomeIcon icon={projectDeleting ? "spinner" : "trash-alt"} className={projectDeleting ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Delete</span>
+                                                </button>
+                                                <button type="submit" className="btn btn-leeuwen-blue btn-lg">
+                                                    <span><FontAwesomeIcon icon={projectUpdating ? "spinner" : "edit"} className={projectUpdating ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Update</span>
+                                                </button>
+                                            </div>
                                         </div>
                                     }
                                 </div>

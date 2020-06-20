@@ -259,7 +259,7 @@ class Performance extends React.Component {
         const alert = this.props.alert ? this.props.alert : this.state.alert;
 
         return (
-            <Layout alert={alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -276,12 +276,11 @@ class Performance extends React.Component {
                             <NavLink to={{ pathname: '/expediting', search: '?id=' + projectId }} tag="a">Expediting</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Performance Reports:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="performance" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                <div id="performance" className={alert.message ? "main-section-alert" : "main-section"}>
+                    <div className="action-row row">
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Edit Params" onClick={event => this.toggleParams(event)}>
                             <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Edit Params</span>
                         </button>
@@ -289,7 +288,7 @@ class Performance extends React.Component {
                             <span><FontAwesomeIcon icon={loadingChart ? "spinner" : "file-chart-line"} className={loadingChart ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Generate PR</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 41px)'}}>
+                    <div className="body-section">
                         <Line
                             data={data}
                             width={100}

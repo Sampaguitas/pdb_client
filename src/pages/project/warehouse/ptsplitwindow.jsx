@@ -1121,7 +1121,7 @@ class PtSplitwindow extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1144,14 +1144,13 @@ class PtSplitwindow extends React.Component {
                             {selection.project ?
                                 `${selection.project.name} - Picking Ticket: ${pickticket.pickNr} - Warehouse: ${pickticket.warehouse}`
                             :
-                                <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw"/>
+                                <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw"/>
                             }
                         </span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="calloff" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                <div id="calloff" className={ (alert.message && !showSettings) ? "main-section-alert" : "main-section"}>
+                    <div className="action-row row">
                         <button title="Change/Add Heat Numbers" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleHeat}>
                             <span><FontAwesomeIcon icon="file-certificate" className="fa mr-2"/>Heat Numbers</span>
                         </button>
@@ -1159,7 +1158,7 @@ class PtSplitwindow extends React.Component {
                             <span><FontAwesomeIcon icon={processing ? "spinner" : "exclamation-triangle"} className={processing ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>{pickticket.isProcessed ? 'Open PickTicket' : 'Close PickTicket'}</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 41px)'}}>
+                    <div className="body-section">
                         {fieldnames.items && 
                             <ProjectTable
                                 screenHeaders={headersForShow}
@@ -1253,13 +1252,13 @@ class PtSplitwindow extends React.Component {
                     </div>
                     <div className="text-right mt-3"> 
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
-                            <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
+                            <span><FontAwesomeIcon icon="undo-alt" className="fa mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg mr-2" onClick={this.handleSaveSettings}>
-                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
-                            <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
+                            <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
                         </button>
                     </div>
                 </Modal>

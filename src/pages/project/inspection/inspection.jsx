@@ -46,7 +46,7 @@ class Inspection extends React.Component {
         const { projectId } = this.state
         const { accesses, alert, selection } = this.props;
         return (
-            <Layout alert={alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -60,44 +60,43 @@ class Inspection extends React.Component {
                             <NavLink to={{ pathname: '/dashboard', search: '?id=' + projectId }} tag="a">Dashboard</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Inspection:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="inspection">
-                    <div className="row justify-content-center">
-                    <NavLink to={{ 
-                            pathname: "/releasedata",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="clipboard-check" 
-                                    className="fa-5x mb-3" 
-                                    name="clipboard-check"
-                                />
-                                <h3>Inspection & Release data</h3>
+                <div id="inspection" className={alert.message ? "main-section-alert" : "main-section"}>
+                    <div className="row justify-content-center" style={{maxHeight: '100%', overflowY: 'auto'}}>
+                        <NavLink to={{ 
+                                pathname: "/releasedata",
+                                search: '?id=' + projectId
+                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                        >
+                            <div className="card-body">
+                                <div className="text-center">
+                                    <FontAwesomeIcon 
+                                        icon="clipboard-check" 
+                                        className="fa-5x mb-3" 
+                                        name="clipboard-check"
+                                    />
+                                    <h3>Inspection & Release data</h3>
+                                </div>
                             </div>
-                        </div>
-                    </NavLink>
-                    <NavLink to={{ 
-                            pathname: "/certificates",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="file-certificate" 
-                                    className="fa-5x mb-3" 
-                                    name="file-certificate"
-                                />
-                                <h3>Certificates</h3>
+                        </NavLink>
+                        <NavLink to={{ 
+                                pathname: "/certificates",
+                                search: '?id=' + projectId
+                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                        >
+                            <div className="card-body">
+                                <div className="text-center">
+                                    <FontAwesomeIcon 
+                                        icon="file-certificate" 
+                                        className="fa-5x mb-3" 
+                                        name="file-certificate"
+                                    />
+                                    <h3>Certificates</h3>
+                                </div>
                             </div>
-                        </div>
-                    </NavLink>
+                        </NavLink>
                     </div>
                 </div>
             </Layout>

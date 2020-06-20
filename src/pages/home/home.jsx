@@ -328,9 +328,9 @@ class Home extends React.Component {
 
     render() {
         const { number, name, opco, erp, sort } = this.state;
-        const { alert, projects } = this.props;
+        const { projects, alert } = this.props;
         return (
-            <Layout alert={alert}>
+            <Layout>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -343,16 +343,13 @@ class Home extends React.Component {
                         <li className="breadcrumb-item active" aria-current="page">Home</li>
                     </ol>
                 </nav>
-                <hr />
-                <div id="overview" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
-                        {/* <div className="ml-auto pull-right"> */}
-                            <button title="Create Project" className="btn btn-leeuwen-blue btn-lg" onClick={this.gotoProject}> {/* style={{height: '34px'}} */}
+                <div id="overview" className={alert.message ? "main-section-alert" : "main-section"}> 
+                    <div className="action-row row"> 
+                            <button title="Create Project" className="btn btn-leeuwen-blue btn-lg" onClick={this.gotoProject}> {/* action: 30px, */}
                                 <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Create Project</span>
                             </button>
-                        {/* </div> */}
                     </div>
-                    <div className="" style={{height: 'calc(100% - 41px)'}}>   
+                    <div className="body-section">   
                         <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                             <div className="table-responsive custom-table-container" >
                                 <table className="table table-hover table-bordered table-sm">
@@ -411,7 +408,6 @@ class Home extends React.Component {
                                             </tr>
                                         )}
                                     </tbody>
-                                    
                                 </table>
                             </div>
                         </div>

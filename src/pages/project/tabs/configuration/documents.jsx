@@ -1102,7 +1102,7 @@ class Documents extends React.Component {
 
         return (
             <div className="tab-pane fade show full-height" id={tab.id} role="tabpanel">
-                <div className="action-row row ml-1 mb-2 mr-1"> {/* style={{height: '34px'}} */}
+                <div className="action-row row">
                     <div className="input-group">
                         <div className="input-group-prepend">
                             <span className="input-group-text" style={{width: '95px'}}>Select Document:</span>
@@ -1133,7 +1133,7 @@ class Documents extends React.Component {
                         </div>
                     </div>
                 </div>
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                <div className="action-row row">
                     <form
                         className="col-12"
                         encType="multipart/form-data"
@@ -1178,7 +1178,7 @@ class Documents extends React.Component {
                         </div>
                     </form>
                 </div>
-                <div className="" style={{height: 'calc(100% - 76px)'}}>
+                <div className="" style={{height: 'calc(100% - 70px)'}}>
                     <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row">
                             <table className="table table-bordered table-sm text-nowrap table-striped" id="documentsTable">
@@ -1477,12 +1477,12 @@ class Documents extends React.Component {
                                             </div>
                                         }
 
-                                        <div className="modal-footer">
+                                        <div className="modal-footer pl-0 pr-0">
                                             <button type="submit" className="btn btn-leeuwen-blue btn-lg btn-full">
                                                 <span>
                                                     <FontAwesomeIcon
                                                         icon={updatingDocDef || creatingDocDef ? "spinner" : docDef.id ? "edit" : "plus"}
-                                                        className={updatingDocDef ? "fa-pulse fa-lg fa-fw mr-2" : "fa-lg mr-2"}
+                                                        className={updatingDocDef ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}
                                                     />
                                                     {docDef.id ? "Update" : "Create"}
                                                 </span>

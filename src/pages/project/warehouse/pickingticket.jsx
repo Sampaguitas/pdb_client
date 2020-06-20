@@ -1019,7 +1019,7 @@ class PickingTicket extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout alert={showSettings ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1036,12 +1036,11 @@ class PickingTicket extends React.Component {
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Picking ticket:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="calloff" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                <div id="calloff" className={ (alert.message && !showSettings) ? "main-section-alert" : "main-section"}>
+                    <div className="action-row row">
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Generate Picking Ticket" onClick={this.toggleGenerate}>
                             <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate Ticket</span>
                         </button>
@@ -1049,7 +1048,7 @@ class PickingTicket extends React.Component {
                             <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Prepare Ticket</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 41px)'}}>
+                    <div className="body-section">
                         {fieldnames.items && 
                             <ProjectTable
                                 screenHeaders={headersForShow}
@@ -1095,7 +1094,7 @@ class PickingTicket extends React.Component {
                             </div>
                             <div className="text-right">
                                 <button type="submit" className="btn btn-success btn-lg">
-                                    <span><FontAwesomeIcon icon={isDownloadingFile ? "spinner" : "file-excel"} className={isDownloadingFile ? "fa-pulse fa-fw fa-lg mr-2"  : "fa-lg mr-2"}/>Generate</span>
+                                    <span><FontAwesomeIcon icon={isDownloadingFile ? "spinner" : "file-excel"} className={isDownloadingFile ? "fa-pulse fa-fw fa mr-2"  : "fa mr-2"}/>Generate</span>
                                 </button>
                             </div>
                         </form>                  
@@ -1149,13 +1148,13 @@ class PickingTicket extends React.Component {
                     </div>
                     <div className="text-right mt-3"> 
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
-                            <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
+                            <span><FontAwesomeIcon icon="undo-alt" className="fa mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg mr-2" onClick={this.handleSaveSettings}>
-                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
-                            <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
+                            <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
                         </button>
                     </div>
                 </Modal>

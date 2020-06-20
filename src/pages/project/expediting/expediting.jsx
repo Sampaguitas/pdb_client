@@ -46,7 +46,7 @@ class Expediting extends React.Component {
         const { projectId } = this.state
         const { accesses, alert, selection } = this.props;
         return (
-            <Layout alert={alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -60,44 +60,43 @@ class Expediting extends React.Component {
                             <NavLink to={{ pathname: '/dashboard', search: '?id=' + projectId }} tag="a">Dashboard</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Expediting:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="expediting">
-                    <div className="row justify-content-center">
-                    <NavLink to={{ 
-                            pathname: "/overview",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="table" 
-                                    className="fa-5x mb-3" 
-                                    name="table"
-                                />
-                                <h3>Total Client PO Overview</h3>
+                <div id="expediting" className={alert.message ? "main-section-alert" : "main-section"}>
+                    <div className="row justify-content-center" style={{maxHeight: '100%', overflowY: 'auto'}}>
+                        <NavLink to={{ 
+                                pathname: "/overview",
+                                search: '?id=' + projectId
+                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                        >
+                            <div className="card-body">
+                                <div className="text-center">
+                                    <FontAwesomeIcon 
+                                        icon="table" 
+                                        className="fa-5x mb-3" 
+                                        name="table"
+                                    />
+                                    <h3>Total Client PO Overview</h3>
+                                </div>
                             </div>
-                        </div>
-                    </NavLink>
-                    <NavLink to={{ 
-                            pathname: "/performance",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="chart-line" 
-                                    className="fa-5x mb-3" 
-                                    name="chart-line"
-                                />
-                                <h3>Performance Reports</h3>
+                        </NavLink>
+                        <NavLink to={{ 
+                                pathname: "/performance",
+                                search: '?id=' + projectId
+                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                        >
+                            <div className="card-body">
+                                <div className="text-center">
+                                    <FontAwesomeIcon 
+                                        icon="chart-line" 
+                                        className="fa-5x mb-3" 
+                                        name="chart-line"
+                                    />
+                                    <h3>Performance Reports</h3>
+                                </div>
                             </div>
-                        </div>
-                    </NavLink>
+                        </NavLink>
                     </div>
                 </div>
             </Layout>

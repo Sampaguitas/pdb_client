@@ -985,10 +985,10 @@ class SplitLine extends Component {
                         </div>
                         <div className="col text-right">
                             <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.handleNewSubLine(event)}>
-                                <span><FontAwesomeIcon icon="plus" className="fa-lg mr-2"/>Add Sub Line</span>
+                                <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Add Sub Line</span>
                             </button>
                             <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteSubLine(event)}>
-                                <span><FontAwesomeIcon icon="trash-alt" className="fa-lg mr-2"/>Delete Sub Line(s)</span>
+                                <span><FontAwesomeIcon icon="trash-alt" className="fa mr-2"/>Delete Sub Line(s)</span>
                             </button>
                         </div>
                     </div>
@@ -1006,7 +1006,7 @@ class SplitLine extends Component {
                     </div>
                     <div className="text-right mt-2">
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleSave(event)}>
-                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save Changes</span>
+                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save Changes</span>
                         </button>
                     </div>
                 </div>

@@ -233,7 +233,7 @@ class Dashboard extends React.Component {
         const { accesses, alert, selection } = this.props;
 
         return (
-            <Layout alert={alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -244,12 +244,11 @@ class Dashboard extends React.Component {
                 <nav aria-label="breadcrumb">
                     <ol className="breadcrumb">
                         <li className="breadcrumb-item active" aria-current="page">Dashboard:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="dashboard">
-                    <div className="row justify-content-center">
+                <div id="dashboard" className={alert.message ? "main-section-alert" : "main-section"}>
+                    <div className="row justify-content-center" style={{maxHeight: '100%', overflowY: 'auto'}}>
                         {generateMenu(menuList(menu, accesses, selection), projectId, accesses, selection)}
                     </div>
                 </div>

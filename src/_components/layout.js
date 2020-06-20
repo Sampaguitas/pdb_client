@@ -27,14 +27,14 @@ class Layout extends Component {
     }
 
     render() {
-        const { accesses, alert, selection } = this.props;
+        const { accesses, selection } = this.props;
         const { collapsed } = this.state;
         return (
             <div className="full-height">
                 <div className="full-height">
                     <HeaderBarMenu id="headerbar" className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={this.toggleCollapse}/>
                     <SideBarMenu className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={this.toggleCollapse} accesses={accesses} selection={selection}/>
-                    <div id="content" className={collapsed ? "collapsed" : ''} style={{height: `calc(100% - ${alert.message ? '190px' : '145px'})`}}>
+                    <div id="content" className={collapsed ? "collapsed" : ''} style={{height: `calc(100% - 100px)`}}>
                         {this.props.children}
                     </div>
                     <Footer />

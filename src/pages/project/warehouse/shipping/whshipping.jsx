@@ -63,44 +63,43 @@ class WhShipping extends React.Component {
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Shipping:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="whshipping">
-                    <div className="row justify-content-center">
-                    <NavLink to={{ 
-                            pathname: "/whtransportdocs",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="passport" 
-                                    className="fa-5x mb-3" 
-                                    name="passport"
-                                />
-                                <h3>Prepare transport docs</h3>
+                <div id="whshipping" className={alert.message ? "main-section-alert" : "main-section"}>
+                    <div className="row justify-content-center" style={{maxHeight: '100%', overflowY: 'auto'}}>
+                        <NavLink to={{ 
+                                pathname: "/whtransportdocs",
+                                search: '?id=' + projectId
+                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                        >
+                            <div className="card-body">
+                                <div className="text-center">
+                                    <FontAwesomeIcon 
+                                        icon="passport" 
+                                        className="fa-5x mb-3" 
+                                        name="passport"
+                                    />
+                                    <h3>Prepare transport docs</h3>
+                                </div>
                             </div>
-                        </div>
-                    </NavLink>
-                    <NavLink to={{ 
-                            pathname: "/whpackingdetails",
-                            search: '?id=' + projectId
-                        }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
-                    >
-                        <div className="card-body">
-                            <div className="text-center">
-                                <FontAwesomeIcon 
-                                    icon="box-open" 
-                                    className="fa-5x mb-3" 
-                                    name="box-open"
-                                />
-                                <h3>Complete packing details</h3>
+                        </NavLink>
+                        <NavLink to={{ 
+                                pathname: "/whpackingdetails",
+                                search: '?id=' + projectId
+                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                        >
+                            <div className="card-body">
+                                <div className="text-center">
+                                    <FontAwesomeIcon 
+                                        icon="box-open" 
+                                        className="fa-5x mb-3" 
+                                        name="box-open"
+                                    />
+                                    <h3>Complete packing details</h3>
+                                </div>
                             </div>
-                        </div>
-                    </NavLink>
+                        </NavLink>
                     </div>
                 </div>
             </Layout>

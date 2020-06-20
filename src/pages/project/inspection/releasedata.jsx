@@ -1801,7 +1801,7 @@ class ReleaseData extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         
         return (
-            <Layout alert={showSplitLine || showSettings ? {type:'', message:''} : alert} accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection}>
                 {alert.message && !showSplitLine && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1818,12 +1818,11 @@ class ReleaseData extends React.Component {
                             <NavLink to={{ pathname: '/inspection', search: '?id=' + projectId }} tag="a">Inspection</NavLink>
                         </li>
                         <li className="breadcrumb-item active" aria-current="page">Inspection & Release data:</li>
-                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa-lg fa-fw" />}</span>
+                        <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <hr />
-                <div id="inspection" className="full-height">
-                    <div className="action-row row ml-1 mb-3 mr-1"> {/* style={{height: '34px'}} */}
+                <div id="releasedata" className={ (alert.message && !showSplitLine && !showSettings) ? "main-section-alert" : "main-section"}>
+                    <div className="action-row row">
                         <button title="Split Line" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleSplitLine(event)}>
                             <span><FontAwesomeIcon icon="page-break" className="fa mr-2"/>Split Line</span>
                         </button>
@@ -1837,7 +1836,7 @@ class ReleaseData extends React.Component {
                             <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate NFI</span>
                         </button>
                     </div>
-                    <div className="" style={{height: 'calc(100% - 44px)'}}>
+                    <div className="body-section">
                         {selection && selection.project && 
                             <ProjectTable
                                 // screenHeaders={arraySorted(generateScreenHeader(fieldnames, screenId), "forShow")}
@@ -1914,10 +1913,10 @@ class ReleaseData extends React.Component {
                         </div>
                         <div className="text-right">
                             <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.handleUpdateValue(event, false)}>
-                                <span><FontAwesomeIcon icon="edit" className="fa-lg mr-2"/>Update</span>
+                                <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Update</span>
                             </button>
                             <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleUpdateValue(event, true)}>
-                                <span><FontAwesomeIcon icon="eraser" className="fa-lg mr-2"/>Erase</span>
+                                <span><FontAwesomeIcon icon="eraser" className="fa mr-2"/>Erase</span>
                             </button>
                         </div>                   
                     </div>
@@ -1948,14 +1947,14 @@ class ReleaseData extends React.Component {
                                                 title="Get Latest NFI"
                                                 onClick={event => this.getNfi(event, 0)}
                                             >
-                                            <span><FontAwesomeIcon icon="arrow-to-bottom" className="fa-lg"/> </span>
+                                            <span><FontAwesomeIcon icon="arrow-to-bottom" className="fa"/> </span>
                                         </button>
                                         <button
                                             className="btn btn-success btn-lg"
                                             title="Get New NFI"
                                             onClick={event => this.getNfi(event, 1)}
                                         >
-                                            <span><FontAwesomeIcon icon="sync-alt" className="fa-lg"/> </span>
+                                            <span><FontAwesomeIcon icon="sync-alt" className="fa"/> </span>
                                         </button>
                                     </div>
                                 </div>
@@ -1973,7 +1972,7 @@ class ReleaseData extends React.Component {
                             </div>
                             <div className="text-right">
                                 <button type="submit" className="btn btn-leeuwen-blue btn-lg">
-                                    <span><FontAwesomeIcon icon="hand-point-right" className="fa-lg mr-2"/>Assign</span>
+                                    <span><FontAwesomeIcon icon="hand-point-right" className="fa mr-2"/>Assign</span>
                                 </button>
                             </div>
                         </form>                 
@@ -2038,7 +2037,7 @@ class ReleaseData extends React.Component {
                             }
                             <div className="text-right">
                                 <button type="submit" className="btn btn-success btn-lg">
-                                    <span><FontAwesomeIcon icon="file-excel" className="fa-lg mr-2"/>Generate</span>
+                                    <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate</span>
                                 </button>
                             </div>
                         </form>                   
@@ -2093,13 +2092,13 @@ class ReleaseData extends React.Component {
                     </div>
                     <div className="text-right mt-3">
                     <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleRestoreSettings}>
-                            <span><FontAwesomeIcon icon="undo-alt" className="fa-lg mr-2"/>Restore</span>
+                            <span><FontAwesomeIcon icon="undo-alt" className="fa mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg mr-2" onClick={this.handleSaveSettings}>
-                            <span><FontAwesomeIcon icon="save" className="fa-lg mr-2"/>Save</span>
+                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
-                            <span><FontAwesomeIcon icon="times" className="fa-lg mr-2"/>Close</span>
+                            <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
                         </button>
                     </div>
                 </Modal>
