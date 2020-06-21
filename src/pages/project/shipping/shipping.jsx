@@ -68,7 +68,7 @@ class Shipping extends React.Component {
                         <NavLink to={{ 
                                 pathname: "/transportdocs",
                                 search: '?id=' + projectId
-                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                            }} className="card col-lg-5 m-lg-4 col-md-12 m-md-0 p-5" tag="a"
                         >
                             <div className="card-body">
                                 <div className="text-center">
@@ -84,7 +84,7 @@ class Shipping extends React.Component {
                         <NavLink to={{ 
                                 pathname: "/packingdetails",
                                 search: '?id=' + projectId
-                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                            }} className="card col-lg-5 m-lg-4 col-md-12 m-md-0 p-5" tag="a"
                         >
                             <div className="card-body">
                                 <div className="text-center">

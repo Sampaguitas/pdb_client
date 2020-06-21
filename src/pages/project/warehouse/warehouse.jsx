@@ -68,7 +68,7 @@ class Warehouse extends React.Component {
                         <NavLink to={{ 
                                 pathname: "/whcertificates",
                                 search: '?id=' + projectId
-                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                            }} className="card col-lg-5 m-lg-4 col-md-12 m-md-0 p-5" tag="a"
                         >
                             <div className="card-body">
                                 <div className="text-center">
@@ -84,7 +84,7 @@ class Warehouse extends React.Component {
                         <NavLink to={{ 
                                 pathname: "/stockmanagement",
                                 search: '?id=' + projectId
-                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                            }} className="card col-lg-5 m-lg-4 col-md-12 m-md-0 p-5" tag="a"
                         >
                             <div className="card-body">
                                 <div className="text-center">
@@ -100,7 +100,7 @@ class Warehouse extends React.Component {
                         <NavLink to={{ 
                                 pathname: "/materialissuerecord",
                                 search: '?id=' + projectId
-                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                            }} className="card col-lg-5 m-lg-4 col-md-12 m-md-0 p-5" tag="a"
                         >
                             <div className="card-body">
                                 <div className="text-center">
@@ -116,7 +116,7 @@ class Warehouse extends React.Component {
                         <NavLink to={{ 
                                 pathname: "/pickingticket",
                                 search: '?id=' + projectId
-                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                            }} className="card col-lg-5 m-lg-4 col-md-12 m-md-0 p-5" tag="a"
                         >
                             <div className="card-body">
                                 <div className="text-center">
@@ -132,7 +132,7 @@ class Warehouse extends React.Component {
                         <NavLink to={{ 
                                 pathname: "/whshipping",
                                 search: '?id=' + projectId
-                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                            }} className="card col-lg-5 m-lg-4 col-md-12 m-md-0 p-5" tag="a"
                         >
                             <div className="card-body">
                                 <div className="text-center">
@@ -148,7 +148,7 @@ class Warehouse extends React.Component {
                         <NavLink to={{ 
                                 pathname: "/locations",
                                 search: '?id=' + projectId
-                            }} className="card col-lg-4 m-lg-5 col-md-12 m-md-0 p-5" tag="a"
+                            }} className="card col-lg-5 m-lg-4 col-md-12 m-md-0 p-5" tag="a"
                         >
                             <div className="card-body">
                                 <div className="text-center">

@@ -1178,7 +1178,7 @@ class Documents extends React.Component {
                         </div>
                     </form>
                 </div>
-                <div className="" style={{height: 'calc(100% - 70px)'}}>
+                <div className="" style={{height: 'calc(100% - 80px)'}}>
                     <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row">
                             <table className="table table-bordered table-sm text-nowrap table-striped" id="documentsTable">
