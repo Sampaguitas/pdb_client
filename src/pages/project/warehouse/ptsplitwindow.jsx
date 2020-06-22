@@ -895,6 +895,7 @@ class PtSplitwindow extends React.Component {
         if (projectId) {
             dispatch(heatpickActions.getAll(projectId));
             dispatch(heatlocActions.getAll(projectId));
+            dispatch(pickticketActions.getAll(projectId));
         }
     }
 
@@ -1195,13 +1196,11 @@ class PtSplitwindow extends React.Component {
                         locationId={!_.isEmpty(selectedIds) ? selectedIds[0].locationId : ''}
                         pickitemId={!_.isEmpty(selectedIds) ? selectedIds[0].pickitemId : ''}
                         projectId={projectId}
-                        // refreshCifs={this.refreshCifs}
                         refresHeatLocs={this.refresHeatLocs}
                         refreshHeatPicks={this.refreshHeatPicks}
                         heatlocs={heatlocs}
                         heatpicks={heatpicks}
-                        // certificates={certificates}
-                        
+                        isProcessed={pickticket.isProcessed}
                     />
                 </Modal>
                 <Modal

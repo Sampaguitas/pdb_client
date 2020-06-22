@@ -23,4 +23,4 @@
 - [ ] Qty picked: calculated from heats quantities.
 - [X] Typos: Tcicket, whant.
 - [ ] Mir: isProcessed = true when all picktickets are closed and qtyPicked = qtyRequired.
-- [ ] Prevent users from create two items if double click on the add button.  
+- [ ] Prevent users from creating two items if double click on the add button.  

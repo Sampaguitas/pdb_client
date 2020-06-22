@@ -345,7 +345,7 @@ class HeatPick extends Component {
 
     componentDidMount() {
         
-        const { heatlocs, heatpicks, locationId, pickitemId, poId } = this.props;
+        const { heatlocs, heatpicks, locationId, pickitemId, poId, isProcessed } = this.props;
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
         
@@ -363,14 +363,16 @@ class HeatPick extends Component {
                 return this.keyHandler(e);
             }
         });
+
         this.setState({
             locCertificates: getLocCertificates(heatlocs, heatpicks, locationId, pickitemId, poId),
-            pickCertificates: getPickCertificates(heatpicks, pickitemId)
+            pickCertificates: getPickCertificates(heatpicks, pickitemId),
+            alert: isProcessed ? { type:'alert-warning', message:'This picking ticket has been closed! Re-open it to add/remove HeatNrs and edit quantities'} : { type:'', message:''}
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { heatlocs, heatpicks, locationId, pickitemId, poId } = this.props;
+        const { heatlocs, heatpicks, locationId, pickitemId, poId, isProcessed } = this.props;
         if (heatlocs != prevProps.heatlocs || heatpicks != prevProps.heatpicks) {
             this.setState({
                 locCertificates: getLocCertificates(heatlocs, heatpicks, locationId, pickitemId, poId),
@@ -380,6 +382,12 @@ class HeatPick extends Component {
         if (heatpicks != prevProps.heatpicks) {
             this.setState({
                 pickCertificates: getPickCertificates(heatpicks, pickitemId)
+            });
+        }
+
+        if (isProcessed != prevProps.isProcessed) {
+            this.setState({
+                alert: isProcessed ? { type:'alert-warning', message:'This picking ticket has been closed! Re-open it to add/remove HeatNrs and edit quantities'} : { type:'', message:''}
             });
         }
     }
@@ -699,7 +707,7 @@ class HeatPick extends Component {
     }
 
     generatePickBody() {
-        const { refreshHeatPicks } = this.props;
+        const { refreshHeatPicks, isProcessed } = this.props;
         const { pickSelectedIds, pickSelectAllRows, pickCertificates } = this.state;
         let tempRows = [];
         if (pickCertificates) {
@@ -743,8 +751,8 @@ class HeatPick extends Component {
                             objectId={certificate._id}
                             fieldName="inspQty"
                             fieldValue={certificate.inspQty}
-                            disabled={false}
-                            unlocked={true}
+                            disabled={isProcessed ? true : false}
+                            unlocked={isProcessed ? false : true}
                             align="left"
                             fieldType="number"
                             textNoWrap={true}
@@ -894,7 +902,7 @@ class HeatPick extends Component {
 
     render() {
 
-        const { toggleHeat } = this.props;
+        const { toggleHeat, isProcessed } = this.props;
         const { isDeleting, isCreating } = this.state;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
         return (
@@ -928,13 +936,13 @@ class HeatPick extends Component {
                         <div className="col-md-auto align-items-center full-height">
                             <div style={{position: 'relative', top: '50%', transform: 'translate(-50%,-50%)'}}>
                                 <div className="row mb-3">
-                                    <button title="Add to location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.AssignCertificates(event)}>
+                                    <button title="Add to location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.AssignCertificates(event)} disabled={isProcessed ? true : false}>
                                         <span><FontAwesomeIcon icon={isCreating ? "spinner" : "chevron-right"} className={isCreating ? "fa-pulse fa fa-fw" : "fa"}/></span>
                                     </button>
                                 </div>
                                 <div className="row">
                                     
-                                    <button title="Remove from location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.removeCertificates(event)}>
+                                    <button title="Remove from location" className="btn btn-leeuwen-blue btn-lg" onClick={event => this.removeCertificates(event)} disabled={isProcessed ? true : false}>
                                         <span><FontAwesomeIcon icon={isDeleting ? "spinner" : "chevron-left"} className={isDeleting ? "fa-pulse fa fa-fw" : "fa"}/></span>
                                     </button>
                                 </div>
