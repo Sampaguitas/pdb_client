@@ -6,7 +6,8 @@
 - [X] Get last PL / new PL number
 - [X] Assing PL
 - [X] Assign Colli
-- [ ] Split line
+- [X] Split line
+- [ ] MiddleWare pre/post hooks
 ### Warehouse Packing Details
 - [ ] Assign Colli types & dimentions
 - [ ] Print Shipping Documents

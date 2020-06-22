@@ -1148,7 +1148,7 @@ class WhTransportDocuments extends React.Component {
             headers: { ...authHeader(), 'Content-Type': 'application/json'},
             body: JSON.stringify({virtuals: virtuals})
         }
-        return fetch(`${config.apiUrl}/split/packitem?subId=${selectionIds.subId}&packitemId=${selectionIds.packitemId}`, requestOptions)
+        return fetch(`${config.apiUrl}/split/whpackitem?pickitemId=${selectionIds.pickitemId}&whpackitemId=${selectionIds.whpackitemId}`, requestOptions)
         .then(responce => responce.text().then(text => {
             const data = text && JSON.parse(text);
             if (!responce.ok) {
