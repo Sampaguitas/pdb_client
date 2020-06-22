@@ -680,7 +680,7 @@ function getPickQty(selectedPickticket, selectedIds) {
     if (selectedPickticket.hasOwnProperty('pickitems') && !_.isEmpty(selectedPickticket.pickitems)) {
         let selectedPickitem = selectedPickticket.pickitems.find(pickitem => pickitem._id === selectedIds.pickitemId);
         if (!_.isUndefined(selectedPickitem)) {
-            return Number(selectedPickitem.pickQty) || 0;
+            return Number(selectedPickitem.qtyPicked) || 0;
         }
     }
     return 0;
