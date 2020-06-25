@@ -25,7 +25,7 @@ import ProjectTable from '../../../../_components/project-table/project-table';
 import TabFilter from '../../../../_components/setting/tab-filter';
 import TabDisplay from '../../../../_components/setting/tab-display';
 import Modal from '../../../../_components/modal';
-import ColliType from '../../../../_components/split-line/collitype';
+import ColliType from '../../../../_components/split-line/wh-collitype';
 
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
@@ -1075,21 +1075,12 @@ class WhPackingDetails extends React.Component {
                     selectedIds: selectedIds
                 })
             };
-            return fetch(`${config.apiUrl}/extract/setWeight`, requestOptions)
+            return fetch(`${config.apiUrl}/extract/setWhWeight`, requestOptions)
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
-                if (!responce.ok) {
-                    if (responce.status === 401) {
+                if (responce.status === 401) {
                         localStorage.removeItem('user');
                         location.reload(true);
-                    }
-                    this.setState({
-                        showEditValues: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
                 } else {
                     this.setState({
                         showEditValues: false,
@@ -1171,21 +1162,12 @@ class WhPackingDetails extends React.Component {
                         selectedIds: selectedIds
                     })
                 };
-                return fetch(`${config.apiUrl}/extract/setCollitype`, requestOptions)
+                return fetch(`${config.apiUrl}/extract/setWhCollitype`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
-                    if (!responce.ok) {
-                        if (responce.status === 401) {
+                    if (responce.status === 401) {
                             localStorage.removeItem('user');
                             location.reload(true);
-                        }
-                        this.setState({
-                            showColliTypes: false,
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, this.refreshStore);
                     } else {
                         this.setState({
                             showColliTypes: false,

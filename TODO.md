@@ -13,8 +13,8 @@
 - [X] Custom Table.
 - [X] Delete Rows (disabled).
 - [X] Edit Values modal.
-- [ ] Net Weight modal.
-- [ ] Assign Colli types & dimentions.
+- [X] Net Weight modal.
+- [X] Assign Colli types & dimentions.
 - [ ] Print Shipping Documents.
 ### Stock Management
 - [ ] Goods returned modal.
