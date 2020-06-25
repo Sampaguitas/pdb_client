@@ -8,7 +8,7 @@
 - [X] Assign Colli.
 - [X] remaining Qty (split line modal).
 - [X] Split line (split line modal).
-- [X] MiddleWare pre/post hooks (first fix the ones in the shipping module).
+- [X] MiddleWare pre/post hooks.
 ### Warehouse Packing Details
 - [X] Custom Table.
 - [X] Delete Rows (disabled).
