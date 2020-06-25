@@ -483,6 +483,7 @@ class PackingDetails extends React.Component {
                 type:'',
                 message:''
             },
+            assigning: false,
             //-----modals-----
             showEditValues: false,
             showColliTypes: false,
@@ -1073,7 +1074,7 @@ class PackingDetails extends React.Component {
 
     assignColliType(collitypeId) {
         const { selection, collitypes } = this.props;
-        const { projectId, selectedIds } = this.state;
+        const { projectId, selectedIds, assigning } = this.state;
         if (!collitypeId) {
             this.setState({
                 showColliTypes: false,
@@ -1121,49 +1122,46 @@ class PackingDetails extends React.Component {
                     }
                 });
             } else {
-                const requestOptions = {
-                    method: 'PUT',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        colliType: colliType,
-                        erp: selection.project.erp.name,
-                        selectedIds: selectedIds
-                    })
-                };
-                return fetch(`${config.apiUrl}/extract/setCollitype`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (!responce.ok) {
+                this.setState({
+                    assigning: true
+                }, () => {
+                    const requestOptions = {
+                        method: 'PUT',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            colliType: colliType,
+                            erp: selection.project.erp.name,
+                            selectedIds: selectedIds
+                        })
+                    };
+                    return fetch(`${config.apiUrl}/extract/setCollitype`, requestOptions)
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
                         if (responce.status === 401) {
-                            localStorage.removeItem('user');
-                            location.reload(true);
+                                localStorage.removeItem('user');
+                                location.reload(true);
+                        } else {
+                            this.setState({
+                                showColliTypes: false,
+                                assigning: false,
+                                alert: {
+                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                    message: data.message
+                                }
+                            }, this.refreshStore);
                         }
+                    })
+                    .catch( () => {
                         this.setState({
                             showColliTypes: false,
+                            assigning: false,
                             alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
+                                type: 'alert-danger',
+                                message: 'Colli Type could not be assigned.'
                             }
                         }, this.refreshStore);
-                    } else {
-                        this.setState({
-                            showColliTypes: false,
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, this.refreshStore);
-                    }
-                })
-                .catch( () => {
-                    this.setState({
-                        showColliTypes: false,
-                        alert: {
-                            type: 'alert-danger',
-                            message: 'Colli Type could not be assigned.'
-                        }
-                    }, this.refreshStore);
-                }));
+                    }));
+                });
             }
         }
     }
@@ -1276,6 +1274,7 @@ class PackingDetails extends React.Component {
             updateValue,
             plList,
             docList,
+            assigning,
             //show modals
             showEditValues,
             showColliTypes,
@@ -1407,6 +1406,7 @@ class PackingDetails extends React.Component {
                     alert={alert}
                     handleClearAlert={this.handleClearAlert}
                     assignColliType={this.assignColliType}
+                    assigning={assigning}
                     />
                 </Modal>
 

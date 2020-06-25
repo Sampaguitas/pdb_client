@@ -708,7 +708,7 @@ class ColliType extends Component {
 
     render() {
         const { selectedRows, deleting, creating } = this.state;
-        const { collitypes } = this.props;
+        const { collitypes, assigning } = this.props;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
         return (
             <div>
@@ -747,7 +747,7 @@ class ColliType extends Component {
                     </div>
                     <div className="text-right mt-2">
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleAssign(event)}>
-                            <span><FontAwesomeIcon icon="hand-point-right" className="fa mr-2"/>Assign</span>
+                            <span><FontAwesomeIcon icon={assigning ? "spinner" : "hand-point-right"} className={assigning ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Assign</span>
                         </button>
                     </div>
                 </div>

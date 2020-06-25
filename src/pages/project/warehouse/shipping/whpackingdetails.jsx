@@ -510,6 +510,7 @@ class WhPackingDetails extends React.Component {
                 type:'',
                 message:''
             },
+            assigning: false,
             //-----modals-----
             showEditValues: false,
             showColliTypes: false,
@@ -979,41 +980,47 @@ class WhPackingDetails extends React.Component {
                         }
                     });
                 } else {
-                    const requestOptions = {
-                        method: 'PUT',
-                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            collection: collection,
-                            fieldName: fieldName,
-                            fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
-                            selectedIds: selectedIds
+                    this.setState({
+                        assigning: true
+                    }, () => {
+                        const requestOptions = {
+                            method: 'PUT',
+                            headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                collection: collection,
+                                fieldName: fieldName,
+                                fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                                selectedIds: selectedIds
+                            })
+                        };
+                        return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+                        .then(responce => responce.text().then(text => {
+                            const data = text && JSON.parse(text);
+                            if (responce.status === 401) {
+                                    localStorage.removeItem('user');
+                                    location.reload(true);
+                            } else {
+                                this.setState({
+                                    showEditValues: false,
+                                    assigning: false,
+                                    alert: {
+                                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                        message: data.message
+                                    }
+                                }, this.refreshStore);
+                            }
                         })
-                    };
-                    return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                    .then(responce => responce.text().then(text => {
-                        const data = text && JSON.parse(text);
-                        if (responce.status === 401) {
-                                localStorage.removeItem('user');
-                                location.reload(true);
-                        } else {
+                        .catch( () => {
                             this.setState({
                                 showEditValues: false,
+                                assigning: false,
                                 alert: {
-                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                    message: data.message
+                                    type: 'alert-danger',
+                                    message: 'Field could not be updated.'
                                 }
                             }, this.refreshStore);
-                        }
-                    })
-                    .catch( () => {
-                        this.setState({
-                            showEditValues: false,
-                            alert: {
-                                type: 'alert-danger',
-                                message: 'Field could not be updated.'
-                            }
-                        }, this.refreshStore);
-                    }));
+                        }));
+                    });
                 }
             }  
         }
@@ -1277,6 +1284,7 @@ class WhPackingDetails extends React.Component {
             updateValue,
             plList,
             docList,
+            assigning,
             //show modals
             showEditValues,
             showColliTypes,
@@ -1405,12 +1413,13 @@ class WhPackingDetails extends React.Component {
                     size="modal-xl"
                 >
                     <ColliType 
-                    collitypes={collitypes}
-                    refreshColliTypes={this.refreshColliTypes}
-                    projectId={projectId}
-                    alert={alert}
-                    handleClearAlert={this.handleClearAlert}
-                    assignColliType={this.assignColliType}
+                        collitypes={collitypes}
+                        refreshColliTypes={this.refreshColliTypes}
+                        projectId={projectId}
+                        alert={alert}
+                        handleClearAlert={this.handleClearAlert}
+                        assignColliType={this.assignColliType}
+                        assigning={assigning}
                     />
                 </Modal>
 
