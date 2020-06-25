@@ -12,7 +12,7 @@
 ### Warehouse Packing Details
 - [X] Custom Table.
 - [X] Delete Rows (disabled).
-- [ ] Edit Values modal.
+- [X] Edit Values modal.
 - [ ] Net Weight modal.
 - [ ] Assign Colli types & dimentions.
 - [ ] Print Shipping Documents.
