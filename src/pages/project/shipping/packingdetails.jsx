@@ -1173,7 +1173,7 @@ class PackingDetails extends React.Component {
         this.setState({
             alert: {
                 type:'alert-danger',
-                message:'For the Selected line(s) all packing details shall be deleted. Are you sure you want to proceed?'
+                message:'Collis cannot be deleted from this screen, go to transport documents and remove colli Nrs from packitems.'
             }
         });
     }

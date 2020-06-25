@@ -10,12 +10,15 @@ import {
     alertActions,
     docdefActions,
     collipackActions,
+    whcollipackActions,
     collitypeActions,
     fieldnameActions,
     fieldActions,
-    poActions,
+    pickticketActions,
+    // poActions,
     projectActions,
-    settingActions
+    settingActions,
+    // pickticketActions
 } from '../../../../_actions';
 import Layout from '../../../../_components/layout';
 import ProjectTable from '../../../../_components/project-table/project-table';
@@ -239,15 +242,15 @@ function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     return [];
 }
 
-function getBodys(collipacks, headersForShow){
+function getBodys(whcollipacks, headersForShow){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
     let screenHeaders = headersForShow;
 
     let i = 1;
-    if (!_.isUndefined(collipacks) && collipacks.hasOwnProperty('items') && !_.isEmpty(collipacks.items)) {
-        collipacks.items.map(collipack => {
+    if (!_.isUndefined(whcollipacks) && whcollipacks.hasOwnProperty('items') && !_.isEmpty(whcollipacks.items)) {
+        whcollipacks.items.map(whcollipack => {
             arrayRow = [];
             screenHeaders.map(screenHeader => {
                 switch(screenHeader.fields.fromTbl) {
@@ -255,19 +258,19 @@ function getBodys(collipacks, headersForShow){
                         if (screenHeader.fields.name === 'plNr' || screenHeader.fields.name === 'colliNr') {
                             arrayRow.push({
                                 collection: 'virtual',
-                                objectId: collipack._id,
+                                objectId: whcollipack._id,
                                 fieldName: screenHeader.fields.name,
-                                fieldValue: collipack[screenHeader.fields.name],
+                                fieldValue: whcollipack[screenHeader.fields.name],
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
                             });
                         } else {
                             arrayRow.push({
-                                collection: 'collipack',
-                                objectId: collipack._id,
+                                collection: 'whcollipack',
+                                objectId: whcollipack._id,
                                 fieldName: screenHeader.fields.name,
-                                fieldValue: collipack[screenHeader.fields.name],
+                                fieldValue: whcollipack[screenHeader.fields.name],
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
@@ -292,7 +295,7 @@ function getBodys(collipacks, headersForShow){
                     subId: '',
                     certificateId: '',
                     packitemId: '',
-                    collipackId: collipack._id
+                    whcollipackId: whcollipack._id
                 },
                 fields: arrayRow
             }
@@ -307,9 +310,9 @@ function getBodys(collipacks, headersForShow){
 
 }
 
-function getPlList(collipacks) {
-    if (collipacks.hasOwnProperty('items') && !_.isUndefined(collipacks.items)){
-        let tempPl = collipacks.items.reduce(function (acc, cur) {
+function getPlList(whcollipacks) {
+    if (whcollipacks.hasOwnProperty('items') && !_.isUndefined(whcollipacks.items)){
+        let tempPl = whcollipacks.items.reduce(function (acc, cur) {
                 if(!!cur.plNr && !acc.includes(cur.plNr)) {
                     acc.push(cur.plNr);
                 }
@@ -330,27 +333,54 @@ function generateOptions(list) {
 }
 
 
-function getClPo(pos, selectedPl) {
+// function getClPo(pos, selectedPl) {
+//     let badChars = /[^a-zA-Z0-9_()]/mg;
+//     // let tempClPo = '';
+//     if (!!pos.items) {
+//         return pos.items.reduce(function(accPo, curPo){
+//             if (!accPo) {
+//                 let tempSub = curPo.subs.reduce(function(accSub, curSub) {
+//                     if (!accSub) {
+//                         let tempPack = curSub.packitems.reduce(function(accPack, curPack) {
+//                             if(!accPack && curPack.plNr == selectedPl) {
+//                                 accPack = curPo.clPo.replace(badChars, '_');
+//                             }
+//                             return accPack;
+//                         }, '');
+//                         accSub = tempPack;
+//                     }
+//                     return accSub;
+//                 }, '');
+//                 accPo = tempSub;
+//             }
+//             return accPo;
+//         }, '');
+//     } else {
+//         return '';
+//     }
+// }
+
+function getMir(picktickets, selectedPl) {
     let badChars = /[^a-zA-Z0-9_()]/mg;
     // let tempClPo = '';
-    if (!!pos.items) {
-        return pos.items.reduce(function(accPo, curPo){
-            if (!accPo) {
-                let tempSub = curPo.subs.reduce(function(accSub, curSub) {
-                    if (!accSub) {
-                        let tempPack = curSub.packitems.reduce(function(accPack, curPack) {
-                            if(!accPack && curPack.plNr == selectedPl) {
-                                accPack = curPo.clPo.replace(badChars, '_');
+    if (!!picktickets.items) {
+        return picktickets.items.reduce(function(accPickticket, curPickticket){
+            if (!accPickticket) {
+                let tempPickitem = curPickticket.pickitems.reduce(function(accPickitem, curPickitem) {
+                    if (!accPickitem) {
+                        let tempWhpackitem = curPickitem.whpackitems.reduce(function(accWhpackitem, curWhPackitem) {
+                            if (!accWhpackitem && curWhPackitem.plNr == selectedPl) {
+                                accWhpackitem = curPickticket.mir.mir.replace(badChars, '_');
                             }
-                            return accPack;
+                            return accWhpackitem;
                         }, '');
-                        accSub = tempPack;
+                        accPickitem = tempWhpackitem;
                     }
-                    return accSub;
+                    return accPickitem;
                 }, '');
-                accPo = tempSub;
+                accPickticket = tempPickitem;
             }
-            return accPo;
+            return accPickticket;
         }, '');
     } else {
         return '';
@@ -525,10 +555,12 @@ class WhPackingDetails extends React.Component {
             loadingAccesses,
             loadingDocdefs,
             loadingCollipacks,
+            loadingWhcollipacks,
             loadingCollitypes,
             loadingFieldnames,
             loadingFields,
-            loadingPos,
+            loadingPicktickets,
+            // loadingPos,
             loadingSelection,
             loadingSettings,
             location,
@@ -536,6 +568,7 @@ class WhPackingDetails extends React.Component {
             fieldnames,
             docdefs,
             collipacks,
+            whcollipacks,
             settings
         } = this.props;
 
@@ -554,6 +587,9 @@ class WhPackingDetails extends React.Component {
             if (!loadingCollipacks) {
                 dispatch(collipackActions.getAll(qs.id));
             }
+            if (!loadingWhcollipacks) {
+                dispatch(whcollipackActions.getAll(qs.id));
+            }
             if (!loadingCollitypes) {
                 dispatch(collitypeActions.getAll(qs.id));
             }
@@ -563,8 +599,11 @@ class WhPackingDetails extends React.Component {
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
             }
-            if (!loadingPos) {
-                dispatch(poActions.getAll(qs.id));
+            // if (!loadingPos) {
+            //     dispatch(poActions.getAll(qs.id));
+            // }
+            if (!loadingPicktickets) {
+                dispatch(pickticketActions.getAll(qs.id));
             }
             if (!loadingSelection) {
                 dispatch(projectActions.getById(qs.id));
@@ -576,8 +615,10 @@ class WhPackingDetails extends React.Component {
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-            bodysForShow: getBodys(collipacks, headersForShow),
-            plList: getPlList(collipacks),
+            // bodysForShow: getBodys(collipacks, headersForShow),
+            bodysForShow: getBodys(whcollipacks, headersForShow),
+            // plList: getPlList(collipacks),
+            plList: getPlList(whcollipacks),
             docList: arraySorted(docConf(docdefs.items), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
@@ -586,7 +627,7 @@ class WhPackingDetails extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { headersForShow, screenId, selectedField, settingsDisplay } = this.state;
-        const { fields, fieldnames, docdefs, collipacks, settings } = this.props;
+        const { fields, fieldnames, docdefs, collipacks, whcollipacks, settings } = this.props;
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
                 return f._id === selectedField;
@@ -608,12 +649,20 @@ class WhPackingDetails extends React.Component {
             });
         }
 
-        if (collipacks != prevProps.collipacks || headersForShow != prevState.headersForShow) {
-            this.setState({bodysForShow: getBodys(collipacks, headersForShow)});
+        // if (collipacks != prevProps.collipacks || headersForShow != prevState.headersForShow) {
+        //     this.setState({bodysForShow: getBodys(collipacks, headersForShow)});
+        // }
+
+        if (whcollipacks != prevProps.whcollipacks || headersForShow != prevState.headersForShow) {
+            this.setState({bodysForShow: getBodys(whcollipacks, headersForShow)});
         }
 
-        if (collipacks != prevProps.collipacks) {
-            this.setState({plList: getPlList(collipacks)});
+        // if (collipacks != prevProps.collipacks) {
+        //     this.setState({plList: getPlList(collipacks)});
+        // }
+
+        if (whcollipacks != prevProps.whcollipacks) {
+            this.setState({plList: getPlList(whcollipacks)});
         }
 
         if (docdefs != prevProps.docdefs) {
@@ -769,7 +818,8 @@ class WhPackingDetails extends React.Component {
         let userId = JSON.parse(localStorage.getItem('user')).id;
 
         if (projectId) {
-            dispatch(collipackActions.getAll(projectId));
+            // dispatch(collipackActions.getAll(projectId));
+            dispatch(whcollipackActions.getAll(projectId));
             dispatch(settingActions.getAll(projectId, userId));
         }
     }
@@ -827,7 +877,7 @@ class WhPackingDetails extends React.Component {
 
     handleGenerateFile(event) {
         event.preventDefault();
-        const { docdefs, pos } = this.props;
+        const { docdefs, picktickets } = this.props;
         const { selectedTemplate, selectedPl } = this.state;
 
         function getProp(doctypeId) {
@@ -848,7 +898,7 @@ class WhPackingDetails extends React.Component {
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 };
                 return fetch(`${config.apiUrl}/template/${getProp(obj.doctypeId).route}?docDefId=${selectedTemplate}&locale=${locale}&selectedPl=${selectedPl}`, requestOptions)
-                    .then(res => res.blob()).then(blob => saveAs(blob, `${getClPo(pos, selectedPl)}_${getProp(obj.doctypeId).doc}_${leadingChar(selectedPl, '0', 3)}.xlsx`)); //obj.field
+                    .then(res => res.blob()).then(blob => saveAs(blob, `${getMir(picktickets, selectedPl)}_${getProp(obj.doctypeId).doc}_${leadingChar(selectedPl, '0', 3)}.xlsx`)); //obj.field
             }
         }
     }
@@ -1173,7 +1223,7 @@ class WhPackingDetails extends React.Component {
         this.setState({
             alert: {
                 type:'alert-danger',
-                message:'For the Selected line(s) all packing details shall be deleted. Are you sure you want to proceed?'
+                message:'Collis cannot be deleted from this screen, go to transport documents and remove colli Nrs from packitems.'
             }
         });
     }
@@ -1291,7 +1341,7 @@ class WhPackingDetails extends React.Component {
             settingsDisplay
         }= this.state;
 
-        const { accesses, docdefs, fieldnames, fields, collipacks, collitypes, selection } = this.props;
+        const { accesses, docdefs, fieldnames, fields, collipacks, whcollipacks, collitypes, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
             <Layout accesses={accesses} selection={selection}>
@@ -1523,14 +1573,16 @@ class WhPackingDetails extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, collipacks, collitypes, docdefs, fieldnames, fields, pos, selection, settings } = state;
+    const { accesses, alert, collipacks, whcollipacks, collitypes, docdefs, fieldnames, fields, picktickets, selection, settings } = state; //pos, 
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
     const { loadingCollipacks } = collipacks;
+    const { loadingWhcollipacks } = whcollipacks;
     const { loadingCollitypes } = collitypes;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
-    const { loadingPos } = pos;
+    const { loadingPicktickets } = picktickets;
+    // const { loadingPos } = pos;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
 
@@ -1538,6 +1590,7 @@ function mapStateToProps(state) {
         accesses,
         alert,
         collipacks,
+        whcollipacks,
         collitypes,
         docdefs,
         fieldnames,
@@ -1545,13 +1598,16 @@ function mapStateToProps(state) {
         loadingAccesses,
         loadingDocdefs,
         loadingCollipacks,
+        loadingWhcollipacks,
         loadingCollitypes,
         loadingFieldnames,
         loadingFields,
-        loadingPos,
+        loadingPicktickets,
+        // loadingPos,
         loadingSelection,
         loadingSettings,
-        pos,
+        picktickets,
+        // pos,
         selection,
         settings
     };
