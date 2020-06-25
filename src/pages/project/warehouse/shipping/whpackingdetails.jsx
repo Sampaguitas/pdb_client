@@ -986,7 +986,7 @@ class WhPackingDetails extends React.Component {
                     }
                 });
             } else {
-                let collection = found.fields.fromTbl;
+                let collection = found.fields.fromTbl = 'collipack' ? 'whcollipack' : found.fields.fromTbl;
                 let fieldName = found.fields.name;
                 let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
@@ -1014,18 +1014,9 @@ class WhPackingDetails extends React.Component {
                     return fetch(`${config.apiUrl}/extract/update`, requestOptions)
                     .then(responce => responce.text().then(text => {
                         const data = text && JSON.parse(text);
-                        if (!responce.ok) {
-                            if (responce.status === 401) {
+                        if (responce.status === 401) {
                                 localStorage.removeItem('user');
                                 location.reload(true);
-                            }
-                            this.setState({
-                                showEditValues: false,
-                                alert: {
-                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                    message: data.message
-                                }
-                            }, this.refreshStore);
                         } else {
                             this.setState({
                                 showEditValues: false,
