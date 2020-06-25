@@ -9,16 +9,13 @@ import {
     accessActions, 
     alertActions,
     docdefActions,
-    collipackActions,
     whcollipackActions,
     collitypeActions,
     fieldnameActions,
     fieldActions,
     pickticketActions,
-    // poActions,
     projectActions,
     settingActions,
-    // pickticketActions
 } from '../../../../_actions';
 import Layout from '../../../../_components/layout';
 import ProjectTable from '../../../../_components/project-table/project-table';
@@ -554,20 +551,17 @@ class WhPackingDetails extends React.Component {
             dispatch,
             loadingAccesses,
             loadingDocdefs,
-            loadingCollipacks,
             loadingWhcollipacks,
             loadingCollitypes,
             loadingFieldnames,
             loadingFields,
             loadingPicktickets,
-            // loadingPos,
             loadingSelection,
             loadingSettings,
             location,
             //-----
             fieldnames,
             docdefs,
-            collipacks,
             whcollipacks,
             settings
         } = this.props;
@@ -584,9 +578,6 @@ class WhPackingDetails extends React.Component {
             if (!loadingDocdefs) {
                 dispatch(docdefActions.getAll(qs.id));
             }
-            if (!loadingCollipacks) {
-                dispatch(collipackActions.getAll(qs.id));
-            }
             if (!loadingWhcollipacks) {
                 dispatch(whcollipackActions.getAll(qs.id));
             }
@@ -599,9 +590,6 @@ class WhPackingDetails extends React.Component {
             if (!loadingFields) {
                 dispatch(fieldActions.getAll(qs.id));
             }
-            // if (!loadingPos) {
-            //     dispatch(poActions.getAll(qs.id));
-            // }
             if (!loadingPicktickets) {
                 dispatch(pickticketActions.getAll(qs.id));
             }
@@ -615,9 +603,7 @@ class WhPackingDetails extends React.Component {
 
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-            // bodysForShow: getBodys(collipacks, headersForShow),
             bodysForShow: getBodys(whcollipacks, headersForShow),
-            // plList: getPlList(collipacks),
             plList: getPlList(whcollipacks),
             docList: arraySorted(docConf(docdefs.items), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
@@ -627,7 +613,7 @@ class WhPackingDetails extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { headersForShow, screenId, selectedField, settingsDisplay } = this.state;
-        const { fields, fieldnames, docdefs, collipacks, whcollipacks, settings } = this.props;
+        const { fields, fieldnames, docdefs, whcollipacks, settings } = this.props;
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
                 return f._id === selectedField;
@@ -641,7 +627,7 @@ class WhPackingDetails extends React.Component {
             }
         }
 
-        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames){
+        if (fieldnames != prevProps.fieldnames){
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
@@ -649,17 +635,9 @@ class WhPackingDetails extends React.Component {
             });
         }
 
-        // if (collipacks != prevProps.collipacks || headersForShow != prevState.headersForShow) {
-        //     this.setState({bodysForShow: getBodys(collipacks, headersForShow)});
-        // }
-
         if (whcollipacks != prevProps.whcollipacks || headersForShow != prevState.headersForShow) {
             this.setState({bodysForShow: getBodys(whcollipacks, headersForShow)});
         }
-
-        // if (collipacks != prevProps.collipacks) {
-        //     this.setState({plList: getPlList(collipacks)});
-        // }
 
         if (whcollipacks != prevProps.whcollipacks) {
             this.setState({plList: getPlList(whcollipacks)});
@@ -977,7 +955,7 @@ class WhPackingDetails extends React.Component {
             let found = fieldnames.items.find( function (f) {
                 return f.fields._id === selectedField;
             });
-            if (!found.edit && !unlocked) {
+            if (found.edit && !unlocked) {
                 this.setState({
                     showEditValues: false,
                     alert: {
@@ -1314,7 +1292,7 @@ class WhPackingDetails extends React.Component {
             settingsDisplay
         }= this.state;
 
-        const { accesses, docdefs, fieldnames, fields, collipacks, whcollipacks, collitypes, selection } = this.props;
+        const { accesses, docdefs, fieldnames, fields, whcollipacks, collitypes, selection } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
             <Layout accesses={accesses} selection={selection}>
@@ -1546,23 +1524,20 @@ class WhPackingDetails extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, collipacks, whcollipacks, collitypes, docdefs, fieldnames, fields, picktickets, selection, settings } = state; //pos, 
+    const { accesses, alert, whcollipacks, collitypes, docdefs, fieldnames, fields, picktickets, selection, settings } = state; //pos, 
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
-    const { loadingCollipacks } = collipacks;
     const { loadingWhcollipacks } = whcollipacks;
     const { loadingCollitypes } = collitypes;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingPicktickets } = picktickets;
-    // const { loadingPos } = pos;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
 
     return {
         accesses,
         alert,
-        collipacks,
         whcollipacks,
         collitypes,
         docdefs,
@@ -1570,17 +1545,14 @@ function mapStateToProps(state) {
         fields,
         loadingAccesses,
         loadingDocdefs,
-        loadingCollipacks,
         loadingWhcollipacks,
         loadingCollitypes,
         loadingFieldnames,
         loadingFields,
         loadingPicktickets,
-        // loadingPos,
         loadingSelection,
         loadingSettings,
         picktickets,
-        // pos,
         selection,
         settings
     };
