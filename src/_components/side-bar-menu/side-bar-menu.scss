@@ -42,27 +42,39 @@ $textColor: #fff;
   list-style: none;
 }
 
-#sidebar-menu .sidebar-logo {
-  background-color: $logoBg;
+.sidebar-logo {
+  background-color: #f8f9fa!important;
   padding: 20px 0px 20px 0px;
-  line-height: calc(1.5rem + 2px);
   text-align: center;
   cursor: pointer;
 }
-#sidebar-menu.collapsed .sidebar-logo
-{
+
+
+#sidebar-menu .sidebar-logo {
+  background-color: #f8f9fa!important;
   padding: 20px 0px 20px 0px;
+  text-align: center;
+  cursor: pointer;
+  max-width: 350px;
 }
+
+#sidebar-menu.collapsed .sidebar-logo {
+  background-color: #f8f9fa!important;
+  padding: 20px 0px 20px 0px;
+  text-align: center;
+  cursor: pointer;
+  max-width: 50px;
+}
+
 #sidebar-menu .sidebar-logo img {
   transition: 0.3s max-height;
   transition: 0.3s max-width;
-  max-width: 100%;
-  //max-height: 40px;
+  max-height: 50%;
+  max-width: 350px;
 }
 #sidebar-menu.collapsed .sidebar-logo img {
-  //max-width: 40px;
-  max-width: 100%;
-  //max-height: 50px;
+  max-width: 50px;
+  
 }
 
 .menu-list li {
