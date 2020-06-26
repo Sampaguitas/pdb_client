@@ -185,7 +185,11 @@ function docConf(array) {
         '5d1927141424114e3884ac83', //SI01 Shipping Invoice
         '5d1927131424114e3884ac7f', //NFI01 Notification for inspection,
         '5eacef91e7179a42f172feea', //SH01 Stock History Report
-        '5edb2317e7179a6b6367d786' //PT01 Picking Ticket
+        '5edb2317e7179a6b6367d786', //PT01 Picking Ticket
+        '5ef4e9a67c213e6263a723f0', //WHPL01 WH Packing List
+        '5ef4e9d67c213e6263a7240e', //WHPN01 WH Packing Note
+        '5ef4ea197c213e6263a7241b', //WHSI01 WH Shipping Invoice
+        '5ef4ea597c213e6263a72425', //WHSM01 WH Shipping Mark
     ];
     return array.filter(function (element) {
         return tpeOf.includes(element.doctypeId);
@@ -1097,7 +1101,11 @@ class Documents extends React.Component {
             {_id: '5d1927141424114e3884ac83', code: 'SI01' , name: 'Shipping Invoice', fromTbls: ['storedproc', 'article', 'po', 'sub', 'collipack', 'packitem', 'certificate']},
             {_id: '5d1927131424114e3884ac7f', code: 'NFI01', name: 'Notification for inspection', fromTbls: ['po', 'sub', 'packitem', 'certificate']},
             {_id: '5eacef91e7179a42f172feea', code: 'SH01', name: 'Stock History Report', fromTbls: ['storedproc', 'po', 'location', 'transaction']},
-            {_id: '5edb2317e7179a6b6367d786', code: 'PT01', name: 'Picking Ticket', fromTbls: ['certificate', 'location', 'mir', 'miritem', 'po', 'pickticket', 'pickitem']}, //'heatloc'
+            {_id: '5edb2317e7179a6b6367d786', code: 'PT01', name: 'Picking Ticket', fromTbls: ['certificate', 'location', 'mir', 'miritem', 'po', 'pickticket', 'pickitem']},
+            {_id: '5ef4e9a67c213e6263a723f0', code: 'WHPL01', name: 'WH Packing List', fromTbls:['article', 'po', 'sub', 'collipack', 'packitem', 'certificate']},
+            {_id: '5ef4e9d67c213e6263a7240e', code: 'WHPN01', name: 'WH Packing Note', fromTbls:['article', 'po', 'sub', 'collipack', 'packitem', 'certificate']},
+            {_id: '5ef4ea197c213e6263a7241b', code: 'WHSI01', name: 'WH Shipping Invoice', fromTbls:['storedproc', 'article', 'po', 'sub', 'collipack', 'packitem', 'certificate']},
+            {_id: '5ef4ea597c213e6263a72425', code: 'WHSM01', name: 'WH Shipping Mark', fromTbls:['po', 'sub', 'collipack', 'packitem', 'certificate']},
         ]
 
         return (
