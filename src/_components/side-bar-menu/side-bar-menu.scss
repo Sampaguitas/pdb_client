@@ -42,20 +42,13 @@ $textColor: #fff;
   list-style: none;
 }
 
-.sidebar-logo {
-  background-color: #f8f9fa!important;
-  padding: 20px 0px 20px 0px;
-  text-align: center;
-  cursor: pointer;
-}
-
-
 #sidebar-menu .sidebar-logo {
   background-color: #f8f9fa!important;
   padding: 20px 0px 20px 0px;
   text-align: center;
   cursor: pointer;
-  max-width: 350px;
+  height: 50px;
+  width: 350px;
 }
 
 #sidebar-menu.collapsed .sidebar-logo {
@@ -63,18 +56,17 @@ $textColor: #fff;
   padding: 20px 0px 20px 0px;
   text-align: center;
   cursor: pointer;
-  max-width: 50px;
+  height: 50px;
+  width: 50px;
 }
 
 #sidebar-menu .sidebar-logo img {
   transition: 0.3s max-height;
   transition: 0.3s max-width;
-  max-height: 50%;
   max-width: 350px;
 }
 #sidebar-menu.collapsed .sidebar-logo img {
   max-width: 50px;
-  
 }
 
 .menu-list li {
