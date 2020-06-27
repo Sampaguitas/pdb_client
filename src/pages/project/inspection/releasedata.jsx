@@ -15,7 +15,8 @@ import {
     poActions, 
     projectActions,
     settingActions,
-    supplierActions
+    supplierActions,
+    sidemenuActions
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
@@ -900,6 +901,7 @@ class ReleaseData extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
@@ -1766,6 +1768,11 @@ class ReleaseData extends React.Component {
         })
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
         const { 
             projectId, 
@@ -1801,11 +1808,11 @@ class ReleaseData extends React.Component {
             settingsDisplay
         }= this.state;
 
-        const { accesses, fieldnames, fields, pos, selection, suppliers } = this.props;
+        const { accesses, fieldnames, fields, pos, selection, suppliers, sidemenu } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         
         return (
-            <Layout accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && !showSplitLine && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -2113,7 +2120,7 @@ class ReleaseData extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, docdefs, fieldnames, fields, pos, selection, settings, suppliers } = state;
+    const { accesses, alert, docdefs, fieldnames, fields, pos, selection, settings, suppliers, sidemenu } = state;
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
     const { loadingFieldnames } = fieldnames;
@@ -2138,8 +2145,9 @@ function mapStateToProps(state) {
         loadingSuppliers,
         pos,
         selection,
+        settings,
         suppliers,
-        settings
+        sidemenu
     };
 }
 

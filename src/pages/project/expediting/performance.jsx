@@ -9,7 +9,8 @@ import {
     accessActions, 
     alertActions,
     poActions,
-    projectActions 
+    projectActions,
+    sidemenuActions
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import Modal from '../../../_components/modal';
@@ -48,6 +49,7 @@ class Performance extends React.Component {
         this.generateOptionClPo = this.generateOptionClPo.bind(this);
         this.generateOptionclPoRev = this.generateOptionclPoRev.bind(this);
         this.onLegendClick = this.onLegendClick.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
@@ -253,13 +255,18 @@ class Performance extends React.Component {
         }
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
         const { unit, period, clPo, clPoRev, data, loadingChart, projectId, showParams } = this.state;
-        const { accesses, pos, selection } = this.props;
+        const { accesses, pos, selection, sidemenu } = this.props;
         const alert = this.props.alert ? this.props.alert : this.state.alert;
 
         return (
-            <Layout accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -380,7 +387,7 @@ class Performance extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, pos, selection } = state;
+    const { accesses, alert, pos, selection, sidemenu } = state;
     const { loadingAccesses } = accesses;
     const { loadingPos } = pos;
     const { loadingSelection } = selection;
@@ -391,7 +398,8 @@ function mapStateToProps(state) {
         loadingPos,
         loadingSelection,
         pos,
-        selection
+        selection,
+        sidemenu
     };
 }
 

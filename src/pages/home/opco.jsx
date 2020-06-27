@@ -14,7 +14,8 @@ import {
     opcoActions,
     poActions,
     projectActions,
-    regionActions, 
+    regionActions,
+    sidemenuActions,
     supplierActions,
 } from '../../_actions';
 import Modal from "../../_components/modal";
@@ -229,6 +230,7 @@ class Opco extends React.Component {
         this.handleOnclick = this.handleOnclick.bind(this);
         this.handleDeletOpco = this.handleDeletOpco.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
@@ -421,11 +423,16 @@ class Opco extends React.Component {
         }
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
-        const { alert, opcoCreating, opcoUpdating, opcoDeleting, locales, regions, opcos } = this.props;
+        const { alert, locales, opcoCreating, opcoUpdating, opcoDeleting, opcos , regions, sidemenu } = this.props;
         const { opco, show, code, name, city, country, region, sort, submitted } = this.state;
         return (
-            <Layout>
+            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -643,16 +650,17 @@ class Opco extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { opcos, alert, regions, locales } = state;
+    const { alert, locales, opcos, regions, sidemenu } = state;
     const { opcoCreating, opcoUpdating, opcoDeleting } = state.opcos;
     return {
         alert,
+        locales,
+        opcos,
         opcoCreating,
         opcoUpdating,
         opcoDeleting,
         regions,
-        locales,
-        opcos
+        sidemenu
     };
 }
 

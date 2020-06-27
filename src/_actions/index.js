@@ -21,6 +21,7 @@ export * from './project.actions';
 export * from './region.actions';
 export * from './screen.actions';
 export * from './setting.actions';
+export * from './sidemenu.actions';
 export * from './supplier.actions';
 export * from './transaction.actions';
 export * from './user.actions';

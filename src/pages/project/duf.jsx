@@ -3,7 +3,7 @@ import config from 'config';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { accessActions, alertActions, projectActions } from '../../_actions';
+import { accessActions, alertActions, projectActions, sidemenuActions } from '../../_actions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../_helpers';
@@ -32,6 +32,7 @@ class Duf extends React.Component {
         this.dufInput = React.createRef();
         this.handleChange = this.handleChange.bind(this);
         this.generateRejectionRows = this.generateRejectionRows.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     handleClearAlert(event){
@@ -193,8 +194,13 @@ class Duf extends React.Component {
         }
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
-        const { accesses, selection } = this.props;
+        const { accesses, selection, sidemenu } = this.props;
         
         const { 
             fileName,
@@ -206,7 +212,7 @@ class Duf extends React.Component {
 
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -296,7 +302,7 @@ class Duf extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, selection } = state;
+    const { accesses, alert, selection, sidemenu } = state;
     const { loadingAccesses } = accesses;
     const { loadingSelection } = selection;
     return {
@@ -304,7 +310,8 @@ function mapStateToProps(state) {
         alert,
         loadingAccesses,
         loadingSelection,
-        selection
+        selection,
+        sidemenu
     };
 }
 

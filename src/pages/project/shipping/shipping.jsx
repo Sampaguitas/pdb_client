@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { accessActions, alertActions, projectActions } from '../../../_actions';
+import { accessActions, alertActions, projectActions, sidemenuActions } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -13,6 +13,7 @@ class Shipping extends React.Component {
             projectId:''
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
@@ -42,11 +43,16 @@ class Shipping extends React.Component {
         dispatch(alertActions.clear());
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
         const { projectId } = this.state
-        const { accesses, alert, selection } = this.props;
+        const { accesses, alert, selection, sidemenu } = this.props;
         return (
-            <Layout accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -105,7 +111,7 @@ class Shipping extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, selection } = state;
+    const { accesses, alert, selection, sidemenu } = state;
     const { loadingAccesses } = accesses;
     const { loadingSelection } = selection;
     return {
@@ -113,7 +119,8 @@ function mapStateToProps(state) {
         alert,
         loadingAccesses,
         loadingSelection,
-        selection
+        selection,
+        sidemenu
     };
 }
 

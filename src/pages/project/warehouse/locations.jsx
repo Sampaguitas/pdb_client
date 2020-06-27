@@ -9,7 +9,8 @@ import {
     accessActions,
     alertActions,
     projectActions,
-    warehouseActions
+    sidemenuActions,
+    warehouseActions,
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import HeaderInput from '../../../_components/project-table/header-input';
@@ -243,9 +244,7 @@ class Locations extends React.Component {
         this.handleFileChange = this.handleFileChange.bind(this);
         this.generateRejectionRows = this.generateRejectionRows.bind(this);
         this.handleDownloadFile = this.handleDownloadFile.bind(this);
-
-
-        
+        this.toggleCollapse = this.toggleCollapse.bind(this);
         this.dufInput = React.createRef();
     }
 
@@ -712,8 +711,13 @@ class Locations extends React.Component {
         }
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
-        const { accesses, selection, warehouses } = this.props;
+        const { accesses, selection, warehouses, sidemenu } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         const {
@@ -745,7 +749,7 @@ class Locations extends React.Component {
         ]
 
         return (
-            <Layout accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && !showWarehouse && !showDuf && !showLocation &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1226,7 +1230,7 @@ class Locations extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, selection, warehouses } = state;
+    const { accesses, alert, selection, sidemenu, warehouses } = state;
     const { loadingAccesses } = accesses;
     const { loadingSelection } = selection;
     const { loadingWarehouses } = warehouses;
@@ -1238,6 +1242,7 @@ function mapStateToProps(state) {
         loadingSelection,
         loadingWarehouses,
         selection,
+        sidemenu,
         warehouses
     };
 }

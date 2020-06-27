@@ -11,7 +11,8 @@ import {
   fieldnameActions,
   poActions,
   projectActions, 
-  supplierActions, 
+  supplierActions,
+  sidemenuActions,
   userActions 
 } from "../../_actions";
 import Layout from "../../_components/layout";
@@ -46,6 +47,7 @@ class Login extends React.Component {
     dispatch(poActions.clear());
     dispatch(projectActions.clearSelection());
     dispatch(supplierActions.clear());
+    dispatch(sidemenuActions.restore());
   }
 
   handleChange(e) {
@@ -70,10 +72,10 @@ class Login extends React.Component {
   }
 
   render() {
-    const { alert, loggingIn } = this.props;
+    const { alert, loggingIn, sidemenu  } = this.props;
     const { email, password, submitted } = this.state;
     return (
-      <Layout alert={alert} background={true}>
+      <Layout sidemenu={sidemenu}>
         <div
           id="login-card"
           className="row justify-content-center align-self-center"
@@ -141,11 +143,12 @@ class Login extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const { alert } = state;
+  const { alert, sidemenu } = state;
   const { loggingIn } = state.authentication;
   return {
     alert,
-    loggingIn
+    sidemenu,
+    loggingIn,
   };
 }
 

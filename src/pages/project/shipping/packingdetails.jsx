@@ -15,7 +15,8 @@ import {
     fieldActions,
     poActions,
     projectActions,
-    settingActions
+    settingActions,
+    sidemenuActions
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
@@ -522,6 +523,7 @@ class PackingDetails extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
@@ -1264,6 +1266,11 @@ class PackingDetails extends React.Component {
         })
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
         const { 
             projectId, 
@@ -1294,10 +1301,10 @@ class PackingDetails extends React.Component {
             settingsDisplay
         }= this.state;
 
-        const { accesses, docdefs, fieldnames, fields, collipacks, collitypes, selection } = this.props;
+        const { accesses, docdefs, fieldnames, fields, collipacks, collitypes, selection, sidemenu } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && !showSettings && !showColliTypes &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1524,7 +1531,7 @@ class PackingDetails extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, collipacks, collitypes, docdefs, fieldnames, fields, pos, selection, settings } = state;
+    const { accesses, alert, collipacks, collitypes, docdefs, fieldnames, fields, pos, selection, settings, sidemenu } = state;
     const { loadingAccesses } = accesses;
     const { loadingDocdefs } = docdefs;
     const { loadingCollipacks } = collipacks;
@@ -1554,7 +1561,8 @@ function mapStateToProps(state) {
         loadingSettings,
         pos,
         selection,
-        settings
+        settings,
+        sidemenu
     };
 }
 

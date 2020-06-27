@@ -10,7 +10,8 @@ import {
   poActions,
   projectActions, 
   supplierActions, 
-  userActions 
+  userActions, 
+  sidemenuActions
 } from "../../_actions";
 import Layout from '../../_components/layout';
 import logo from "../../_assets/logo.svg";
@@ -36,6 +37,7 @@ class NotFound extends React.Component {
     dispatch(poActions.clear());
     dispatch(projectActions.clearSelection());
     dispatch(supplierActions.clear());
+    dispatch(sidemenuActions.restore())
   }
 
   handleSubmit(event){
@@ -44,9 +46,9 @@ class NotFound extends React.Component {
   }
 
   render() {
-    const { alert } = this.props;
+    const { sidemenu } = this.props;
     return (
-      <Layout alert={alert} background={true}>
+      <Layout sidemenu={sidemenu}>
         <div
           id="notfound-card"
           className="row justify-content-center align-self-center"
@@ -81,10 +83,11 @@ class NotFound extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const { alert } = state;
+  const { alert, sidemenu } = state;
   const { loggingIn } = state.authentication;
   return {
     alert,
+    sidemenu,
     loggingIn
   };
 }

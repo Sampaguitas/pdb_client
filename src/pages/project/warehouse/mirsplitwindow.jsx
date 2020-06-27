@@ -13,7 +13,8 @@ import {
     mirActions,
     poActions,
     projectActions,
-    settingActions
+    settingActions,
+    sidemenuActions
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
@@ -593,6 +594,7 @@ class MirSplitwindow extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
         
     }
 
@@ -1071,6 +1073,11 @@ class MirSplitwindow extends React.Component {
         })
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
 
         const { 
@@ -1099,11 +1106,11 @@ class MirSplitwindow extends React.Component {
             settingsDisplay
         } = this.state;
 
-        const { accesses, fieldnames, fields, pos, selection } = this.props;
+        const { accesses, fieldnames, fields, pos, selection, sidemenu } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && !showSettings && !showSplitLine &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1241,7 +1248,7 @@ class MirSplitwindow extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, mirs, pos, selection, settings } = state;
+    const { accesses, alert, fieldnames, fields, mirs, pos, selection, settings, sidemenu } = state;
     const { loadingAccesses } = accesses;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
@@ -1266,7 +1273,8 @@ function mapStateToProps(state) {
         mirs,
         pos,
         selection,
-        settings
+        settings,
+        sidemenu
     };
 }
 

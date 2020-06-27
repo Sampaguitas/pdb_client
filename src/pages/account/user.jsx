@@ -9,7 +9,8 @@ import {
     fieldActions,
     fieldnameActions,
     poActions,
-    projectActions, 
+    projectActions,
+    sidemenuActions,
     supplierActions,
     userActions 
 } from '../../_actions';
@@ -37,6 +38,7 @@ class User extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
@@ -93,12 +95,17 @@ class User extends React.Component {
           event.preventDefault();
         }
     }
+    
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
 
     render() {
-        const { user, alert, userUpdating } = this.props;
+        const { alert, sidemenu, user, userUpdating } = this.props;
         const { submitted, stateUser } = this.state
         return (
-            <Layout alert={alert}>
+            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -196,13 +203,14 @@ class User extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert } = state;
+    const { alert, sidemenu } = state;
     const { userUpdating } = state.users;
     const { user } = state.authentication;
     return {
+        alert,
+        sidemenu,
         user,
         userUpdating,
-        alert
     };
 }
 

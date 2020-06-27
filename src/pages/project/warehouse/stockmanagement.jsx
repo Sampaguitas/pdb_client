@@ -18,6 +18,7 @@ import {
     projectActions,
     settingActions,
     transactionActions,
+    sidemenuActions,
     warehouseActions
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
@@ -997,6 +998,7 @@ class StockManagement extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
@@ -1849,6 +1851,11 @@ class StockManagement extends React.Component {
         })
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
         const { 
             projectId, 
@@ -1895,7 +1902,7 @@ class StockManagement extends React.Component {
             isDownloadingFile
         } = this.state;
 
-        const { accesses, certificates, fields, fieldnames, heatlocs, pos, selection, warehouses } = this.props;
+        const { accesses, certificates, fields, fieldnames, heatlocs, pos, selection, sidemenu, warehouses } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         class goodsReceiptObject {
@@ -1930,7 +1937,7 @@ class StockManagement extends React.Component {
         var myGoodsReceipt = new goodsReceiptObject();
         
         return (
-            <Layout accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && !showGoodsReceipt && !showTransfer && !showCorrection &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -2303,7 +2310,7 @@ class StockManagement extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, certificates, docdefs, fields, fieldnames, heatlocs, pos, selection, settings, transactions, warehouses } = state;
+    const { accesses, alert, certificates, docdefs, fields, fieldnames, heatlocs, pos, selection, settings, sidemenu, transactions, warehouses } = state;
     const { loadingAccesses } = accesses;
     const { loadingCertificates } = accesses;
     const { loadingDocdefs } = docdefs;
@@ -2338,6 +2345,7 @@ function mapStateToProps(state) {
         pos,
         selection,
         settings,
+        sidemenu,
         transactions,
         warehouses
     };

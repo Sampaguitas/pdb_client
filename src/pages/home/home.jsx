@@ -9,7 +9,8 @@ import {
     fieldActions,
     fieldnameActions,
     poActions,
-    projectActions, 
+    projectActions,
+    sidemenuActions,
     supplierActions,
     screenActions,
 } from '../../_actions';
@@ -237,6 +238,7 @@ class Home extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.gotoProject = this.gotoProject.bind(this);
         this.withoutProjectMaster = this.withoutProjectMaster.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
@@ -326,11 +328,16 @@ class Home extends React.Component {
         });
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
         const { number, name, opco, erp, sort } = this.state;
-        const { projects, alert } = this.props;
+        const { alert, projects, sidemenu } = this.props;
         return (
-            <Layout>
+            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -419,11 +426,12 @@ class Home extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, projects } = state;
+    const { alert, projects, sidemenu } = state;
     const { projectLoading } = state.projects;
     return {
         alert,
         projects,
+        sidemenu,
         projectLoading,
     };
 }

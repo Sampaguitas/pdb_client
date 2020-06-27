@@ -14,6 +14,7 @@ import {
     mirActions, 
     projectActions,
     settingActions,
+    sidemenuActions,
     warehouseActions,
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
@@ -517,6 +518,7 @@ class MaterialIssueRecord extends React.Component {
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
         this.generateLogRows = this.generateLogRows.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
         
     }
 
@@ -1166,6 +1168,11 @@ class MaterialIssueRecord extends React.Component {
         }
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
 
         const { 
@@ -1196,11 +1203,11 @@ class MaterialIssueRecord extends React.Component {
             settingsDisplay
         } = this.state;
 
-        const { accesses, fieldnames, fields, warehouses, selection } = this.props;
+        const { accesses, fieldnames, fields, warehouses, selection, sidemenu } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && !showSettings && !showCreatePt &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1417,7 +1424,7 @@ class MaterialIssueRecord extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, mirs, selection, settings, warehouses } = state;
+    const { accesses, alert, fieldnames, fields, mirs, selection, settings, sidemenu, warehouses } = state;
     const { loadingAccesses } = accesses;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
@@ -1442,6 +1449,7 @@ function mapStateToProps(state) {
         mirs,
         selection,
         settings,
+        sidemenu,
         warehouses
     };
 }

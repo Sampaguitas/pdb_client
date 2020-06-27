@@ -28,6 +28,7 @@ import { resetpwd } from './resetpwd.reducer';
 import { screens } from './screens.reducer';
 import { selection } from './selection.reducer';
 import { settings } from './settings.reducer';
+import { sidemenu } from './sidemenu.reducer';
 import { suppliers } from './suppliers.reducer';
 import { transactions } from './transactions.reducer';
 import { users } from './users.reducer';
@@ -39,6 +40,7 @@ const rootReducer = combineReducers({
   alert,
   authentication,
   certificates,
+  sidemenu,
   collitypes,
   collipacks,
   currencies,

@@ -13,6 +13,7 @@ import {
   poActions,
   projectActions, 
   supplierActions,
+  sidemenuActions,
   userActions 
 } from "../../_actions";
 import Layout from "../../_components/layout";
@@ -61,6 +62,7 @@ class ResetPwd extends React.Component {
     dispatch(poActions.clear());
     dispatch(projectActions.clearSelection());
     dispatch(supplierActions.clear());
+    dispatch(sidemenuActions.restore());
   }
 
   handleChange(e) {
@@ -94,10 +96,10 @@ class ResetPwd extends React.Component {
   }
 
   render() {
-    const { alert, reseting } = this.props;
+    const { alert, sidemenu, reseting } = this.props;
     const { user, submitted } = this.state;
     return (
-      <Layout alert={alert} background={true}>
+      <Layout sidemenu={sidemenu}>
             <div
               id="resetpwd-card"
               className="row justify-content-center align-self-center"
@@ -156,10 +158,11 @@ class ResetPwd extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const { alert } = state;
+  const { alert, sidemenu } = state;
   const { reseting } = state.resetpwd;
   return {
     alert,
+    sidemenu,
     reseting
   };
 }

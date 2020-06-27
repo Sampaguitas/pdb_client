@@ -14,7 +14,8 @@ import {
     heatpickActions,
     pickticketActions,
     projectActions,
-    settingActions
+    settingActions,
+    sidemenuActions
 } from '../../../_actions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
@@ -611,6 +612,7 @@ class PtSplitwindow extends React.Component {
         this.handleCheckSettingsAll = this.handleCheckSettingsAll.bind(this);
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
         
     }
 
@@ -1092,6 +1094,11 @@ class PtSplitwindow extends React.Component {
         }
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
 
         const { 
@@ -1118,11 +1125,11 @@ class PtSplitwindow extends React.Component {
             settingsDisplay
         } = this.state;
 
-        const { accesses, fieldnames, fields, heatlocs, heatpicks, selection } = this.props;
+        const { accesses, fieldnames, fields, heatlocs, heatpicks, selection, sidemenu } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -1267,7 +1274,7 @@ class PtSplitwindow extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, heatlocs, heatpicks, picktickets, selection, settings } = state;
+    const { accesses, alert, fieldnames, fields, heatlocs, heatpicks, picktickets, selection, settings, sidemenu } = state;
     const { loadingAccesses } = accesses;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
@@ -1295,7 +1302,8 @@ function mapStateToProps(state) {
         loadingSettings,
         picktickets,
         selection,
-        settings
+        settings,
+        sidemenu
     };
 }
 

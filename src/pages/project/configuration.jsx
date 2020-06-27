@@ -14,8 +14,9 @@ import {
     fieldActions, 
     opcoActions, 
     projectActions, 
+    screenActions,
+    sidemenuActions,
     supplierActions, 
-    screenActions, 
     userActions  
 } from '../../_actions';
 import { authHeader, history } from '../../_helpers';
@@ -65,6 +66,7 @@ class Configuration extends React.Component {
         this.refreshFieldnames = this.refreshFieldnames.bind(this);
         this.refreshFields = this.refreshFields.bind(this);
         this.refreshSuppliers = this.refreshSuppliers.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount(){
@@ -288,6 +290,11 @@ class Configuration extends React.Component {
         }
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
         const {
                 accesses, 
@@ -301,6 +308,7 @@ class Configuration extends React.Component {
                 opcos,
                 screens,
                 selection,
+                sidemenu,
                 suppliers,
                 users,
             } = this.props;
@@ -316,7 +324,7 @@ class Configuration extends React.Component {
             const alert = this.state.alert.message ? this.state.alert : this.props.alert;    
 
         return (
-            <Layout alert={alert} accesses={accesses} selection={selection}>
+            <Layout alert={alert} accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -389,7 +397,8 @@ function mapStateToProps(state) {
         fields, 
         opcos, 
         screens, 
-        selection, 
+        selection,
+        sidemenu,
         suppliers, 
         users 
     } = state;
@@ -420,6 +429,7 @@ function mapStateToProps(state) {
         opcos,
         screens,
         selection,
+        sidemenu,
         suppliers,
         users,
     };

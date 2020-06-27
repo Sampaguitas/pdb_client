@@ -21,6 +21,7 @@ export * from './project.constants';
 export * from './region.constants';
 export * from './screen.constants';
 export * from './setting.constants';
+export * from './sidemenu.constants';
 export * from './supplier.constants';
 export * from './transaction.constants';
 export * from './user.constants';

@@ -12,8 +12,9 @@ import {
     fieldnameActions,
     opcoActions,
     poActions,
-    projectActions, 
-    supplierActions, 
+    projectActions,
+    sidemenuActions,
+    supplierActions,
     userActions 
 } from '../../_actions';
 import { history } from '../../_helpers';
@@ -243,6 +244,7 @@ class Project extends React.Component {
         this.accessibleArray = this.accessibleArray.bind(this);
         this.gotoPage = this.gotoPage.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
     componentDidMount() {
         const { dispatch, users } = this.props;
@@ -436,12 +438,17 @@ class Project extends React.Component {
         }
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
     render() {
-        const { alert, currencies, erps, projectCreating, opcos, projects, users } = this.props;
+        const { alert, currencies, erps, projectCreating, opcos, projects, sidemenu, users } = this.props;
         const { project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, sort, submitted } = this.state; //loaded
         const { projectUsers } = this.state.project;
         return (
-            <Layout>
+            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -673,7 +680,7 @@ class Project extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { alert, currencies, erps, opcos, projects, users } = state;
+    const { alert, currencies, erps, opcos, projects, sidemenu, users } = state;
     const { projectCreating } = state.projects;
     return {
         alert,
@@ -682,6 +689,7 @@ function mapStateToProps(state) {
         projectCreating,
         opcos,
         projects,
+        sidemenu,
         users
     };
 }

@@ -11,7 +11,8 @@ import {
   opcoActions,
   poActions,
   projectActions, 
-  supplierActions, 
+  supplierActions,
+  sidemenuActions,
   userActions 
 } from "../../_actions";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -295,6 +296,7 @@ class Settings extends React.Component {
     this.accessibleArray = this.accessibleArray.bind(this);
     this.checkBoxDisabled = this.checkBoxDisabled.bind(this);
     this.onKeyPress = this.onKeyPress.bind(this);
+    this.toggleCollapse = this.toggleCollapse.bind(this);
   }
 
   componentDidMount() {
@@ -499,12 +501,17 @@ class Settings extends React.Component {
     }
   }
 
+  toggleCollapse() {
+    const { dispatch } = this.props;
+    dispatch(sidemenuActions.toggle());
+  }
+
   render() {
     const { user, userName, name, opco, region, isAdmin, isSuperAdmin, sort, submitted } = this.state;
-    const { users, registering, userUpdating, userDeleting, alert, opcos } = this.props;
+    const { alert, sidemenu, opcos, registering, users, userUpdating, userDeleting } = this.props;
 
     return (
-      <Layout>
+      <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
         {alert.message && 
           <div className={`alert ${alert.type}`}>{alert.message}
             <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -727,17 +734,18 @@ class Settings extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const { users, alert, opcos } = state;
-  const { userUpdating, userDeleting } = state.users;
+  const { alert, opcos, sidemenu, users } = state;
+  const { userDeleting, userUpdating } = state.users;
   const { registering } = state.registration;
   
   return {
     alert,
-    userUpdating,
-    userDeleting,
+    opcos,
     registering,
+    sidemenu,
     users,
-    opcos
+    userDeleting,
+    userUpdating,
   };
 }
 

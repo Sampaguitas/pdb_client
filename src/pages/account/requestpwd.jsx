@@ -12,7 +12,8 @@ import {
   poActions,
   projectActions, 
   supplierActions, 
-  userActions 
+  userActions,
+  sidemenuActions,
 } from "../../_actions";
 import Layout from "../../_components/layout";
 import InputIcon from "../../_components/input-icon";
@@ -44,6 +45,7 @@ class RequestPwd extends React.Component {
     dispatch(poActions.clear());
     dispatch(projectActions.clearSelection());
     dispatch(supplierActions.clear());
+    dispatch(sidemenuActions.restore());
   }
 
   handleChange(e) {
@@ -68,10 +70,10 @@ class RequestPwd extends React.Component {
   }
 
   render() {
-    const { alert, requesting } = this.props;
+    const { alert, requesting, sidemenu } = this.props;
     const { email, submitted } = this.state;
     return (
-      <Layout alert={alert} background={true}>
+      <Layout sidemenu={sidemenu}>
             <div
               id="requestpwd-card"
               className="row justify-content-center align-self-center"
@@ -120,10 +122,11 @@ class RequestPwd extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const { alert } = state;
+  const { alert, sidemenu } = state;
   const { requesting } = state.requestpwd;
   return {
     alert,
+    sidemenu,
     requesting
   };
 }

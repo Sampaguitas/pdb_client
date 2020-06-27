@@ -17,6 +17,7 @@ import {
     supplierActions,
     settingActions,
     screenActions,
+    sidemenuActions,
     userActions,
 } from '../../_actions';
 import Layout from '../../_components/layout';
@@ -137,7 +138,7 @@ class Dashboard extends React.Component {
             projectId:''
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
-        // this.menuList = this.menuList.bind(this);
+        this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
@@ -217,6 +218,11 @@ class Dashboard extends React.Component {
         dispatch(alertActions.clear());
     }
 
+    toggleCollapse() {
+        const { dispatch } = this.props;
+        dispatch(sidemenuActions.toggle());
+    }
+
 
     render() {
 
@@ -230,10 +236,10 @@ class Dashboard extends React.Component {
         ];
 
         const { projectId } = this.state
-        const { accesses, alert, selection } = this.props;
+        const { accesses, alert, selection, sidemenu } = this.props;
 
         return (
-            <Layout accesses={accesses} selection={selection}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
@@ -271,8 +277,9 @@ function mapStateToProps(state) {
         screens,
         pos, 
         selection,
-        suppliers,
         settings,
+        sidemenu,
+        suppliers,
         users
     } = state;
 
@@ -309,6 +316,7 @@ function mapStateToProps(state) {
         screens,
         selection,
         settings,
+        sidemenu,
         suppliers,
         users
     };
