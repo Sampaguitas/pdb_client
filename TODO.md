@@ -29,4 +29,9 @@
 - [X] Qty picked: calculated from heats quantities.
 - [X] Typos: Tcicket, whant.
 - [ ] Mir: isProcessed = true when all picktickets are closed and qtyPicked = qtyRequired.
-- [ ] Prevent users from creating two items if double click on the add button.  
+- [ ] Prevent users from creating two items if double click on the add button. 
+### Styling
+- [X] Reduce layout margins.
+- [X] Pass collapsed state between screens (redux).
+- [X] Logo transition on menu expand/collapse.
+- [ ] Transition on sub menu expand/collapse.
