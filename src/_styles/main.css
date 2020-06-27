@@ -349,6 +349,15 @@ h5 {
 .navbars.collapsed {
     transform: rotate(90deg);
 }
+
+.item-arrow {
+  transition: 0.3s transform;
+}
+
+.item-arrow.expand {
+  transform: rotate(90deg);
+}
+
 .icon svg {
     position: absolute;
     top:0;

@@ -28,7 +28,7 @@ class Item extends Component {
                         {/* {!collapsed && */}
                         <span className="item-text" onMouseEnter={event => handleItemOver(event, item.title)}>{item.title}
                                 {item.child &&
-                                <FontAwesomeIcon icon={show == item.title ? "angle-down" : "angle-right"} className="item-arrow float-right" style={{margin: '0px', verticalAlign: 'middle'}}/>
+                                <FontAwesomeIcon icon="angle-right" className={`item-arrow ${show == item.title && "expand"} float-right`} style={{margin: '0px', verticalAlign: 'middle'}}/>
                                 }
                         </span>
                         {/*}}*/}
@@ -42,7 +42,7 @@ class Item extends Component {
                         {!collapsed &&
                         <span className="item-text">{item.title}
                                 {item.child &&
-                                <FontAwesomeIcon icon={show == item.title ? "angle-down" : "angle-right"} className="item-arrow float-right" style={{margin: '0px', verticalAlign: 'middle'}}/>
+                                <FontAwesomeIcon icon="angle-right" className={`item-arrow ${show == item.title && "expand"} float-right`} style={{margin: '0px', verticalAlign: 'middle'}}/>
                                 }
                         </span>
                         }

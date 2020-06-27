@@ -35,8 +35,8 @@
 - [X] Pass collapsed state between screens (side menu).
 - [X] Logo transition on menu expand/collapse (side menu).
 - [ ] Gray background on Logo backgroud (icon.svg).
-- [ ] Gray background on login modal.
-- [ ] Transition chevron on Item expand/collapse (side menu).
+- [X] Gray background on login modal.
+- [X] Transition chevron on Item expand/collapse (side menu).
 - [ ] Transition sub items on Item expand/collapse (side menu).
 - [ ] Home Icon highlight on "/" (side menu).
 - [ ] Item Icon highligt on sub Items (side menu).
