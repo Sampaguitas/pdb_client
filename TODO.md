@@ -31,7 +31,16 @@
 - [ ] Mir: isProcessed = true when all picktickets are closed and qtyPicked = qtyRequired.
 - [ ] Prevent users from creating two items if double click on the add button. 
 ### Styling
-- [X] Reduce layout margins.
-- [X] Pass collapsed state between screens (redux).
-- [X] Logo transition on menu expand/collapse.
-- [ ] Transition on sub menu expand/collapse.
+- [X] Reduce layout margins (layout).
+- [X] Pass collapsed state between screens (side menu).
+- [X] Logo transition on menu expand/collapse (side menu).
+- [ ] Transition chevron on Item expand/collapse (side menu).
+- [ ] Transition sub items on Item expand/collapse (side menu).
+- [ ] Home Icon highlight on "/" (side menu).
+- [ ] Item Icon highligt on sub Items (side menu).
+### Wrap up
+- [ ] Add new Fields, Screens, Documents to the master template.
+- [ ] Back up database.
+- [ ] Remove all projects eccept master template.
+- [ ] README.md: How to set up pdb_server/database (Github).
+- [ ] Finalise Manual.
