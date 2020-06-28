@@ -30,6 +30,7 @@ class ResetPwd extends React.Component {
             token: '',
             newPassword: '',
             confirmPassword: '',
+            menuItem: ''
         },
         submitted: false,
     };
@@ -97,9 +98,9 @@ class ResetPwd extends React.Component {
 
   render() {
     const { alert, sidemenu, reseting } = this.props;
-    const { user, submitted } = this.state;
+    const { user, menuItem, submitted } = this.state;
     return (
-      <Layout sidemenu={sidemenu}>
+      <Layout sidemenu={sidemenu} menuItem={menuItem}>
             <div
               id="resetpwd-card"
               className="row justify-content-center align-self-center"

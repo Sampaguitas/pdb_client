@@ -38,7 +38,8 @@ class Performance extends React.Component {
             alert: {
                 type:'',
                 message:''
-            }
+            },
+            menuItem: 'Expediting'
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -53,6 +54,7 @@ class Performance extends React.Component {
     }
 
     componentDidMount() {
+        const { menuItem } = this.state;
         const {  
             dispatch,  
             loadingAccesses,
@@ -60,7 +62,7 @@ class Performance extends React.Component {
             loadingSelection,
             location, 
         } = this.props;
-
+        dispatch(sidemenuActions.select(menuItem));
         var qs = queryString.parse(location.search);
         if (qs.id) {
             this.setState({
@@ -261,12 +263,12 @@ class Performance extends React.Component {
     }
 
     render() {
-        const { unit, period, clPo, clPoRev, data, loadingChart, projectId, showParams } = this.state;
+        const { menuItem, unit, period, clPo, clPoRev, data, loadingChart, projectId, showParams } = this.state;
         const { accesses, pos, selection, sidemenu } = this.props;
         const alert = this.props.alert ? this.props.alert : this.state.alert;
 
         return (
-            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

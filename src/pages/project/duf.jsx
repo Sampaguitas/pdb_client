@@ -22,7 +22,8 @@ class Duf extends React.Component {
             alert: {
                 type:'',
                 message:''
-            }
+            },
+            menuItem: 'Data Upload File (DUF)'
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
@@ -48,6 +49,7 @@ class Duf extends React.Component {
     }
 
     componentDidMount() {
+        const { menuItem } = this.state;
         const { 
             dispatch,
             loadingAccesses,
@@ -56,6 +58,7 @@ class Duf extends React.Component {
         } = this.props;
 
         var qs = queryString.parse(location.search);
+        dispatch(sidemenuActions.select(menuItem));
         if (qs.id) {
             this.setState({projectId: qs.id});
             if (!loadingAccesses){
@@ -203,6 +206,7 @@ class Duf extends React.Component {
         const { accesses, selection, sidemenu } = this.props;
         
         const { 
+            menuItem,
             fileName,
             responce,
             downloading,
@@ -212,7 +216,7 @@ class Duf extends React.Component {
 
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

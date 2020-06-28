@@ -963,6 +963,7 @@ class StockManagement extends React.Component {
             showHeat: false,
             showGenerate: false,
             showSettings: false,
+            menuItem: 'Warehouse' 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -1027,6 +1028,7 @@ class StockManagement extends React.Component {
         } = this.props;
 
         const { 
+            menuItem,
             screenId, 
             poScreenId,
             nfiScreenId, 
@@ -1040,7 +1042,7 @@ class StockManagement extends React.Component {
 
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
-
+        dispatch(sidemenuActions.select(menuItem));
         if (qs.id) {
             //State items with projectId
             this.setState({projectId: qs.id});
@@ -1858,6 +1860,7 @@ class StockManagement extends React.Component {
 
     render() {
         const { 
+            menuItem,
             projectId, 
             screen, 
             screenId,
@@ -1937,7 +1940,7 @@ class StockManagement extends React.Component {
         var myGoodsReceipt = new goodsReceiptObject();
         
         return (
-            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && !showGoodsReceipt && !showTransfer && !showCorrection &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

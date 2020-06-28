@@ -32,7 +32,6 @@ const project_menu = [
             { id: 1, title: 'Performance Reports', href: '/performance', icon: 'chart-line', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'] },
         ]
     },
-    // { id: 2, title: 'Expediting', href: '/expediting', icon: 'stopwatch', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'] },
     { id: 3, title: 'Inspection', href: '/inspection', icon: 'search', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'], child:
         [
             { id: 0, title: 'Inspection & Release data', href: '/releasedata', icon: 'clipboard-check', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'] },
@@ -214,24 +213,24 @@ class SideBarMenu extends Component {
     }
 
     render() {
-        const { collapsed, accesses, selection } = this.props;
-        const { projectId, show, mobileItem } = this.state
+        const { projectId, show, mobileItem } = this.state;
+        const { accesses, menuItem, sidemenu, selection } = this.props;
         return (
             <div>
                 {this.isLoggedIn() && 
-                    <div id="sidebar-menu" className={collapsed ? 'collapsed' : undefined} onMouseLeave={this.mouseLeave}>
+                    <div id="sidebar-menu" className={sidemenu.collapsed ? 'collapsed' : undefined} onMouseLeave={this.mouseLeave}>
                         <NavLink to={{ pathname: '/' }} tag="div" className="sidebar-logo">
-                            <img src={collapsed ? icon : logo} />
+                            <img src={sidemenu.collapsed ? icon : logo} />
                         </NavLink>
                         <ul className="default-list menu-list">
                         {
                             this.isHome() ?
                                 this.menuList(home_menu, accesses, selection, true).map((item) => 
-                                    <Item item={item} key={item.id} projectId={projectId} collapsed={collapsed} show={show} handleItemOver={this.handleItemOver}/>
+                                    <Item item={item} key={item.id} projectId={projectId} menuItem={menuItem} sidemenu={sidemenu} show={show} handleItemOver={this.handleItemOver}/>
                                 )
                             :
                                 this.menuList(project_menu, accesses, selection, false).map((item) => 
-                                    <Item item={item} key={item.id} projectId={projectId} collapsed={collapsed} show={show} handleItemOver={this.handleItemOver}/>
+                                    <Item item={item} key={item.id} projectId={projectId} menuItem={menuItem} sidemenu={sidemenu} show={show} handleItemOver={this.handleItemOver}/>
                                 )
                         }
                         </ul>

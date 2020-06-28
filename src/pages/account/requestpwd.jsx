@@ -26,6 +26,7 @@ class RequestPwd extends React.Component {
     this.state = {
       email: "",
       submitted: false,
+      menuItem: ''
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -71,9 +72,9 @@ class RequestPwd extends React.Component {
 
   render() {
     const { alert, requesting, sidemenu } = this.props;
-    const { email, submitted } = this.state;
+    const { email, menuItem, submitted } = this.state;
     return (
-      <Layout sidemenu={sidemenu}>
+      <Layout sidemenu={sidemenu} menuItem={menuItem}>
             <div
               id="requestpwd-card"
               className="row justify-content-center align-self-center"

@@ -218,6 +218,7 @@ class Opco extends React.Component {
             },
             submitted: false,
             show: false,
+            menuItem: 'Add operation company'
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -235,6 +236,7 @@ class Opco extends React.Component {
 
     componentDidMount() {
         const { dispatch } = this.props;
+        const { menuItem } = this.state;
         // Clear Selection
         dispatch(accessActions.clear());
         dispatch(collitypeActions.clear());
@@ -249,6 +251,7 @@ class Opco extends React.Component {
         dispatch(opcoActions.getAll());
         dispatch(localeActions.getAll());
         dispatch(regionActions.getAll());
+        dispatch(sidemenuActions.select(menuItem));
         // var qs = queryString.parse(location.search);
     }
 
@@ -430,9 +433,9 @@ class Opco extends React.Component {
 
     render() {
         const { alert, locales, opcoCreating, opcoUpdating, opcoDeleting, opcos , regions, sidemenu } = this.props;
-        const { opco, show, code, name, city, country, region, sort, submitted } = this.state;
+        const { menuItem, opco, show, code, name, city, country, region, sort, submitted } = this.state;
         return (
-            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

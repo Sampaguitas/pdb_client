@@ -331,10 +331,10 @@ h5 {
     height:50px !important;
     margin-bottom:0px !important;
 }
-.menu-item {
+/* .menu-item {
     margin-left: 15px;
     color: #A8052C;
-}
+} */
 .icon {
     position: relative;
     height: 40px;
@@ -347,14 +347,6 @@ h5 {
 }
 .navbars.collapsed {
     transform: rotate(90deg);
-}
-
-.item-arrow {
-  transition: 0.3s transform;
-}
-
-.item-arrow.expand {
-  transform: rotate(90deg);
 }
 
 .icon svg {

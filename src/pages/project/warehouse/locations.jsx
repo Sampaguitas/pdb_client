@@ -223,7 +223,8 @@ class Locations extends React.Component {
             alert: {
                 type: '',
                 message: ''
-            }
+            },
+            menuItem: 'Warehouse'
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
@@ -249,6 +250,7 @@ class Locations extends React.Component {
     }
 
     componentDidMount() {
+        const { menuItem } = this.state;
         const { 
             dispatch,
             loadingAccesses,
@@ -258,12 +260,10 @@ class Locations extends React.Component {
         } = this.props;
 
         var qs = queryString.parse(location.search);
-
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
         const locationTable = document.getElementById('locationTable');
-        
-
+        dispatch(sidemenuActions.select(menuItem));
         if (qs.id) {
             //State items with projectId
             this.setState({projectId: qs.id});
@@ -721,6 +721,7 @@ class Locations extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         const {
+            menuItem,
             projectId,
             areas,
             selectedRows,
@@ -749,7 +750,7 @@ class Locations extends React.Component {
         ]
 
         return (
-            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && !showWarehouse && !showDuf && !showLocation &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

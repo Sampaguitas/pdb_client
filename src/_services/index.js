@@ -20,6 +20,7 @@ export * from './project.service';
 export * from './region.service';
 export * from './screen.service';
 export * from './setting.service';
+export * from './sidemenu.service';
 export * from './supplier.service';
 export * from './transaction.service';
 export * from './user.service';

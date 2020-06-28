@@ -232,7 +232,8 @@ class Project extends React.Component {
                 name: '',
                 isAscending: true,
             },
-            submitted: false
+            submitted: false,
+            menuItem: 'Add project'
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -248,7 +249,7 @@ class Project extends React.Component {
     }
     componentDidMount() {
         const { dispatch, users } = this.props;
-        const { project } = this.state;
+        const { project, menuItem } = this.state;
         //Clear Selection
         dispatch(accessActions.clear());
         dispatch(collitypeActions.clear());
@@ -265,6 +266,7 @@ class Project extends React.Component {
         dispatch(opcoActions.getAll());
         dispatch(projectActions.getAll());
         dispatch(userActions.getAll());
+        dispatch(sidemenuActions.select(menuItem));
 
         var userArray = []
         if (users.items) {
@@ -445,10 +447,10 @@ class Project extends React.Component {
 
     render() {
         const { alert, currencies, erps, projectCreating, opcos, projects, sidemenu, users } = this.props;
-        const { project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, sort, submitted } = this.state; //loaded
+        const { menuItem, project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, sort, submitted } = this.state; //loaded
         const { projectUsers } = this.state.project;
         return (
-            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

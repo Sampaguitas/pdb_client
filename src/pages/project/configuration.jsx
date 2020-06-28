@@ -55,7 +55,8 @@ class Configuration extends React.Component {
             alert: {
                 type:'',
                 message:''
-            }
+            },
+            menuItem: 'Configuration'
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleSetAlert = this.handleSetAlert.bind(this);
@@ -70,6 +71,7 @@ class Configuration extends React.Component {
     }
 
     componentDidMount(){
+        const { menuItem } = this.state;
         const { 
             currencies,
             erps,
@@ -88,6 +90,7 @@ class Configuration extends React.Component {
         } = this.props;
 
         var qs = queryString.parse(location.search);
+        dispatch(sidemenuActions.select(menuItem));
         if (qs.id) {
             //State items with projectId
             this.setState({projectId: qs.id});
@@ -313,18 +316,12 @@ class Configuration extends React.Component {
                 users,
             } = this.props;
         
-            const {
-                projectId,
-                submittedProject,
-                projectUpdating,
-                projectDeleting,
-                
-            } = this.state
+            const { menuItem, projectId, submittedProject, projectUpdating, projectDeleting } = this.state
 
             const alert = this.state.alert.message ? this.state.alert : this.props.alert;    
 
         return (
-            <Layout alert={alert} accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout alert={alert} accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

@@ -11,20 +11,22 @@ class WhShipping extends React.Component {
         super(props);
         this.state = {
             projectId:'',
+            menuItem: 'Warehouse'
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
+        const { menuItem } = this.state;
         const { 
             dispatch,
             loadingAccesses,
             loadingSelection, 
             location 
         } = this.props;
-
         var qs = queryString.parse(location.search);
+        dispatch(sidemenuActions.select(menuItem));
         if (qs.id) {
             //State items with projectId
             this.setState({projectId: qs.id});
@@ -50,9 +52,9 @@ class WhShipping extends React.Component {
 
     render() {
         const { accesses, alert, selection, sidemenu } = this.props;
-        const { projectId } = this.state;
+        const { projectId, menuItem } = this.state;
         return (
-            <Layout alert={alert} accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout alert={alert} accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

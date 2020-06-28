@@ -32,14 +32,12 @@
 - [ ] Prevent users from creating two items if double click on the add button. 
 ### Styling
 - [X] Reduce layout margins (layout).
-- [X] Pass collapsed state between screens (side menu).
+- [X] Pass Menu collapsed state between screens (side menu).
 - [X] Logo transition on menu expand/collapse (side menu).
-- [ ] Gray background on Logo backgroud (icon.svg).
-- [X] Gray background on login modal.
 - [X] Transition chevron on Item expand/collapse (side menu).
-- [ ] Transition sub items on Item expand/collapse (side menu).
-- [ ] Home Icon highlight on "/" (side menu).
-- [ ] Item Icon highligt on sub Items (side menu).
+- [X] Transition sub items on Item expand/collapse (side menu).
+- [X] Home Icon highlight on "/", main Item highlight on sub (side menu).
+- [ ] Description on collapsed Menu icon hover.
 ### Wrap up
 - [ ] Add new Fields, Screens, Documents to the master template.
 - [ ] Back up database.

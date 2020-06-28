@@ -6,6 +6,8 @@ export function sidemenu(state = { collapsed: true, selected: '' }, action) {
             return { collapsed: !state.collapsed, selected: state.selected }
         case sidemenuConstants.RESTORE: 
             return { collapsed: true, selected: '' }
+        case sidemenuConstants.SELECT:
+            return { collapsed: state.collapsed, selected: action.item }
         default: return state
     }
 }

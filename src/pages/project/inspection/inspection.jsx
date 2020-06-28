@@ -10,20 +10,22 @@ class Inspection extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            projectId:''
+            projectId:'',
+            menuItem: 'Inspection'
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
+        const { menuItem } = this.state;
         const { 
             dispatch,
             loadingAccesses,
             loadingSelection, 
             location 
         } = this.props;
-
+        dispatch(sidemenuActions.select(menuItem));
         var qs = queryString.parse(location.search);
         if (qs.id) {
             //State items with projectId
@@ -49,10 +51,10 @@ class Inspection extends React.Component {
     }
 
     render() {
-        const { projectId } = this.state
+        const { projectId, menuItem } = this.state
         const { accesses, alert, selection, sidemenu } = this.props;
         return (
-            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

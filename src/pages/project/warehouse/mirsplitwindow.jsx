@@ -568,6 +568,7 @@ class MirSplitwindow extends React.Component {
             showSplitLine: false,
             showSettings: false,
             creating: false,
+            menuItem: 'Warehouse'
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -617,11 +618,10 @@ class MirSplitwindow extends React.Component {
             settings 
         } = this.props;
 
-        const { screenId, headersForShow, headersForSelect, settingsDisplay } = this.state; //splitScreenId
-
+        const { menuItem, screenId, headersForShow, headersForSelect, settingsDisplay } = this.state; //splitScreenId
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
-
+        dispatch(sidemenuActions.select(menuItem));
         let projectId = qs.id;
         let mirId = qs.mirid;
 
@@ -1081,6 +1081,7 @@ class MirSplitwindow extends React.Component {
     render() {
 
         const { 
+            menuItem,
             projectId, 
             screen, 
             screenId,
@@ -1110,7 +1111,7 @@ class MirSplitwindow extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
-            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && !showSettings && !showSplitLine &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

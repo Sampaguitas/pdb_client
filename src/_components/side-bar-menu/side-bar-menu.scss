@@ -85,13 +85,36 @@ $textColor: #fff;
   padding: 15px;
   text-decoration: none;
 }
-.menu-list li > a.active,
-.menu-list li > a.router-link-exact-active {
+
+//-------------------red border right---------------------------
+
+// .menu-list li > a.active,
+// .menu-list li > a.router-link-exact-active {
+//   font-weight: 600;
+//   color: $textColor;
+// }
+
+
+// .default-list.menu-list > li > a.active:before,
+// .default-list.menu-list > li > a.router-link-exact-active:before {
+//   content: '';
+//   position: absolute;
+//   left: 0;
+//   top: 0;
+//   bottom: 0;
+//   width: 3px;
+//   background: $primaryColor;
+//   z-index: 22;
+// }
+
+
+
+.menu-item__selected {
   font-weight: 600;
   color: $textColor;
 }
-.default-list.menu-list > li > a.active:before,
-.default-list.menu-list > li > a.router-link-exact-active:before {
+
+.menu-item__selected:before {
   content: '';
   position: absolute;
   left: 0;
@@ -101,6 +124,8 @@ $textColor: #fff;
   background: $primaryColor;
   z-index: 22;
 }
+
+
 
 .menu-list > li > a {
   color: $textColor;
@@ -299,10 +324,10 @@ $textColor: #fff;
   border: none;
   width: 100%;
 }
-#sidebar-menu .collapse-btn:after {
+// #sidebar-menu .collapse-btn:after {
   //content: "\f337";
   //font-family: "Font Awesome 5 Free";
-}
+// }
 
 
 // timothee

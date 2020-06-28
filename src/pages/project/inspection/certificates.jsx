@@ -486,6 +486,7 @@ class Certificates extends React.Component {
             showCif: false,
             showHeat: false,
             showSettings: false,
+            menuItem: 'Inspection'
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -534,10 +535,10 @@ class Certificates extends React.Component {
             settings
         } = this.props;
 
-        const { screenId, headersForShow, settingsDisplay } = this.state;
+        const { menuItem, screenId, headersForShow, settingsDisplay } = this.state;
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
-
+        dispatch(sidemenuActions.select(menuItem));
         if (qs.id) {
             //State items with projectId
             this.setState({projectId: qs.id});
@@ -1016,6 +1017,7 @@ class Certificates extends React.Component {
 
     render() {
         const { 
+            menuItem,
             projectId, 
             screen, 
             screenId,
@@ -1041,7 +1043,7 @@ class Certificates extends React.Component {
         const { accesses, certificates, fieldnames, fields, pos, selection, sidemenu } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
-            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && !showSettings && !showCif &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

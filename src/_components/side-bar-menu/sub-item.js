@@ -10,14 +10,14 @@ import { itemMixin } from './mixin'
 class SubItem extends Component {
 
     render() {
-        const { item, projectId } = this.props
+        const { item, menuItem, projectId } = this.props
         return (
             <li>
                 {projectId ?
-                    <NavLink to={{ 
-                            pathname: item.href,
-                            search: '?id=' + projectId
-                        }} tag="a"
+                    <NavLink 
+                        to={{  pathname: item.href, search: '?id=' + projectId }}
+                        tag="a"
+                        className={`${item.title == menuItem ? "menu-item__selected" : "menu-item"}`}
                     >
                         <FontAwesomeIcon icon={item.icon} className="item-icon" name={item.icon}/>
                         <span className="item-text" style={{marginLeft: 45}}>{item.title}
@@ -27,9 +27,10 @@ class SubItem extends Component {
                         </span>
                     </NavLink>
                 :
-                    <NavLink to={{ 
-                            pathname: item.href
-                        }} tag="a"
+                    <NavLink 
+                        to={{  pathname: item.href }}
+                        tag="a"
+                        className={`${item.title == menuItem ? "menu-item__selected" : "menu-item"}`}
                     >
                         <FontAwesomeIcon icon={item.icon} className="item-icon" name={item.icon}/>
                         <span className="item-text" style={{marginLeft: 45}}>{item.title}
@@ -41,14 +42,12 @@ class SubItem extends Component {
                 }
                 {item.child &&
                     <div className="dropdown">
-                        <div name="show-animation"> {/*transition */}
-                            {this.state.show &&
-                                <ul>
-                                    {item.child.map((subitem) =>
-                                        <Item key={subitem.id} item={subitem} projectId={projectId}/>
-                                    )}
-                                </ul>
-                            }
+                        <div className={`show-animation ${show == item.title && 'active'}`}>
+                            <ul className={`${show == item.title ? "show-animation-enter-active" : "show-animation-leave-active"}`}>
+                                {item.child.map((subitem) =>
+                                    <Item key={subitem.id} item={subitem} projectId={projectId}/>
+                                )}
+                            </ul>
                         </div>
                     </div>
                 }

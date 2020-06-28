@@ -14,13 +14,14 @@ class HeaderBarMenu extends Component {
         try{
             isAdmin = JSON.parse(localStorage.getItem("user")).isAdmin;
         } catch(e){}
+        const { sidemenu } = this.props;
         return (
             <div>
                 {isLoggedIn() ? 
-                    <div className = { this.props.collapsed ? 'header-bar-menu collapsed' : 'header-bar-menu' } >
-                        <nav className={this.props.collapsed ? "navbar navbar-expand-lg navbar-light bg-light sticky-top collapsed" : "navbar navbar-expand-lg navbar-light bg-light sticky-top"} >
+                    <div className = { sidemenu.collapsed ? 'header-bar-menu collapsed' : 'header-bar-menu' } >
+                        <nav className={sidemenu.collapsed ? "navbar navbar-expand-lg navbar-light bg-light sticky-top collapsed" : "navbar navbar-expand-lg navbar-light bg-light sticky-top"} >
                             {/* <div className="collapse navbar-collapse" id="navbarSupportedContent"> */}
-                                <span className={this.props.collapsed ? 'navbars collapsed' : 'navbars'} onClick={this.props.toggleCollapse} >
+                                <span className={sidemenu.collapsed ? 'navbars collapsed' : 'navbars'} onClick={this.props.toggleCollapse} >
                                     <span><FontAwesomeIcon icon="bars" className="fa-2x"/></span>
                                 </span>
                                 <form className="form-inline ml-auto pull-right">

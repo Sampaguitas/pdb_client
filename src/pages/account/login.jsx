@@ -27,7 +27,8 @@ class Login extends React.Component {
     this.state = {
       email: "",
       password: "",
-      submitted: false
+      submitted: false,
+      menuItem: ''
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -73,9 +74,9 @@ class Login extends React.Component {
 
   render() {
     const { alert, loggingIn, sidemenu  } = this.props;
-    const { email, password, submitted } = this.state;
+    const { email, menuItem, password, submitted } = this.state;
     return (
-      <Layout sidemenu={sidemenu}>
+      <Layout sidemenu={sidemenu} menuItem={menuItem}>
         <div
           id="login-card"
           className="row justify-content-center align-self-center"

@@ -868,7 +868,8 @@ class ReleaseData extends React.Component {
             showEditValues: false,
             showAssignNfi: false,
             showGenerate: false,
-            showSettings: false,                      
+            showSettings: false,
+            menuItem: 'Inspection'                    
         };
 
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -925,11 +926,10 @@ class ReleaseData extends React.Component {
             settings
         } = this.props;
 
-        const { screenId, splitScreenId, headersForShow, settingsDisplay } = this.state;
+        const { menuItem, screenId, splitScreenId, headersForShow, settingsDisplay } = this.state;
+        dispatch(sidemenuActions.select(menuItem));
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
-        console.log('userId:', userId);
-
         if (qs.id) {
             //State items with projectId
             this.setState({projectId: qs.id});
@@ -1775,6 +1775,7 @@ class ReleaseData extends React.Component {
 
     render() {
         const { 
+            menuItem,
             projectId, 
             screen, 
             screenId,
@@ -1812,7 +1813,7 @@ class ReleaseData extends React.Component {
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         
         return (
-            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && !showSplitLine && !showSettings &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

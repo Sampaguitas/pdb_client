@@ -281,7 +281,8 @@ class Settings extends React.Component {
       },
       loaded: false,
       submitted: false,
-      show: false
+      show: false,
+      menuItem: '',
       
     };
     this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -397,7 +398,7 @@ class Settings extends React.Component {
   }
 
   filterName(array){
-    const { userName, name, opco, region, isAdmin, isSuperAdmin, sort } = this.state
+    const { isAdmin, isSuperAdmin, name, opco, region, sort, userName } = this.state
     if (array) {
       return settingSorted(array, sort).filter(function (object) {
         return (doesMatch(userName, object.userName, 'String', false) 
@@ -507,11 +508,11 @@ class Settings extends React.Component {
   }
 
   render() {
-    const { user, userName, name, opco, region, isAdmin, isSuperAdmin, sort, submitted } = this.state;
+    const { menuItem, user, userName, name, opco, region, isAdmin, isSuperAdmin, sort, submitted } = this.state;
     const { alert, sidemenu, opcos, registering, users, userUpdating, userDeleting } = this.props;
 
     return (
-      <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+      <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
         {alert.message && 
           <div className={`alert ${alert.type}`}>{alert.message}
             <button className="close" onClick={(event) => this.handleClearAlert(event)}>

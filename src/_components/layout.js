@@ -13,27 +13,17 @@ function isLoggedIn() {
 class Layout extends Component {
     constructor(props) {
         super(props);
-        // this.state = {
-        //     collapsed: true
-        // }
-        // this.toggleCollapse = this.toggleCollapse.bind(this);
     }
-
-    // toggleCollapse() {
-    //     const { dispatch, sidemenuActions } = this.props;
-    //     dispatch(sidemenuActions.toggle());
-    // }
 
     render() {
 
-        const { accesses, selection, sidemenu, toggleCollapse } = this.props;
-        const { collapsed } = sidemenu;
+        const { accesses, menuItem, selection, sidemenu, toggleCollapse } = this.props;
         return (
             <div className="full-height">
                 <div className="full-height">
-                    <HeaderBarMenu id="headerbar" className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={toggleCollapse}/>
-                    <SideBarMenu className={collapsed ? "collapsed" : ''} collapsed={collapsed} toggleCollapse={toggleCollapse} accesses={accesses} selection={selection}/>
-                    <div id="content" className={collapsed ? "collapsed" : ''} style={{height: `calc(100% - 100px)`}}>
+                    <HeaderBarMenu id="headerbar" className={sidemenu.collapsed ? "collapsed" : ''} sidemenu={sidemenu} toggleCollapse={toggleCollapse}/>
+                    <SideBarMenu className={sidemenu.collapsed ? "collapsed" : ''} menuItem={menuItem} sidemenu={sidemenu} toggleCollapse={toggleCollapse} accesses={accesses} selection={selection}/>
+                    <div id="content" className={sidemenu.collapsed ? "collapsed" : ''} style={{height: `calc(100% - 100px)`}}>
                         {this.props.children}
                     </div>
                     <Footer />

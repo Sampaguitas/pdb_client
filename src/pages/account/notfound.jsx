@@ -20,7 +20,9 @@ import pdb from "../../_assets/pdb.svg";
 class NotFound extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      menuItem: ''
+    };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -46,9 +48,10 @@ class NotFound extends React.Component {
   }
 
   render() {
+    const { menuItem } = this.state;
     const { sidemenu } = this.props;
     return (
-      <Layout sidemenu={sidemenu}>
+      <Layout sidemenu={sidemenu} menuItem={menuItem}>
         <div
           id="notfound-card"
           className="row justify-content-center align-self-center"

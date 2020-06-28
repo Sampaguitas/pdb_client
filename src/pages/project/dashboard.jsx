@@ -135,13 +135,15 @@ class Dashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            projectId:''
+            projectId:'',
+            menuItem: 'Dashboard'
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
     }
 
     componentDidMount() {
+        const { menuItem } = this.state;
         const { 
             currencies,
             erps,
@@ -163,7 +165,7 @@ class Dashboard extends React.Component {
 
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
-        
+        dispatch(sidemenuActions.select(menuItem));
         if (qs.id) {
             this.setState({projectId: qs.id});
             if (!loadingAccesses) {
@@ -235,11 +237,11 @@ class Dashboard extends React.Component {
             { id: 6, title: 'Configuration', href: '/configuration', icon: 'cog', roles: ['isAdmin', 'isSuperAdmin', 'isConfiguration']},
         ];
 
-        const { projectId } = this.state
+        const { projectId, menuItem } = this.state
         const { accesses, alert, selection, sidemenu } = this.props;
 
         return (
-            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

@@ -33,6 +33,7 @@ class User extends React.Component {
                 confirmPassword:'',  
             },
             submitted:false,
+            menuItem: ''
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -103,9 +104,9 @@ class User extends React.Component {
 
     render() {
         const { alert, sidemenu, user, userUpdating } = this.props;
-        const { submitted, stateUser } = this.state
+        const { menuItem, submitted, stateUser } = this.state
         return (
-            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>

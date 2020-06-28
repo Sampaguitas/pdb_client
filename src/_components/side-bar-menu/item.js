@@ -15,31 +15,30 @@ class Item extends Component {
         }
     }
     render() {
-        const { item, collapsed, projectId, show, handleItemOver } = this.props
+        const { menuItem, item, sidemenu, projectId, show, handleItemOver } = this.props
         return (
             <li>
                 {projectId ?
-                    <NavLink to={{ 
-                            pathname: item.href,
-                            search: '?id=' + projectId
-                        }} tag="a"
+                    <NavLink 
+                        to={{  pathname: item.href, search: '?id=' + projectId }} 
+                        tag="a"
+                        className={`${item.title == menuItem ? "menu-item__selected" : "menu-item"}`}
                     >
                         <FontAwesomeIcon icon={item.icon} className="item-icon" name={item.icon}/>
-                        {/* {!collapsed && */}
                         <span className="item-text" onMouseEnter={event => handleItemOver(event, item.title)}>{item.title}
                                 {item.child &&
                                 <FontAwesomeIcon icon="angle-right" className={`item-arrow ${show == item.title && "expand"} float-right`} style={{margin: '0px', verticalAlign: 'middle'}}/>
                                 }
                         </span>
-                        {/*}}*/}
                     </NavLink>
                 :
-                    <NavLink to={{ 
-                            pathname: item.href
-                        }} tag="a"
+                    <NavLink
+                        to={{  pathname: item.href }}
+                        tag="a"
+                        className={`${item.title == menuItem ? "menu-item__selected" : "menu-item"}`}
                     >
                         <FontAwesomeIcon icon={item.icon} className="item-icon" name={item.icon}/>
-                        {!collapsed &&
+                        {!sidemenu.collapsed &&
                         <span className="item-text">{item.title}
                                 {item.child &&
                                 <FontAwesomeIcon icon="angle-right" className={`item-arrow ${show == item.title && "expand"} float-right`} style={{margin: '0px', verticalAlign: 'middle'}}/>
@@ -48,16 +47,14 @@ class Item extends Component {
                         }
                     </NavLink>              
                 }
-                {(!collapsed && item.child) &&
+                {(!sidemenu.collapsed && item.child) &&
                     <div className="dropdown">
                         <div className={`show-animation ${show == item.title && 'active'}`}>
-                            {/* {show == item.title && */}
-                                <ul className={`${show == item.title ? "show-animation-enter-active" : "show-animation-leave-active"}`}>
-                                    {item.child.map((subitem)=>
-                                        <SubItem key={subitem.id} item={subitem} projectId={projectId}/>
-                                    )}
-                                </ul>
-                            {/*// */}
+                            <ul className={`${show == item.title ? "show-animation-enter-active" : "show-animation-leave-active"}`}>
+                                {item.child.map((subitem)=>
+                                    <SubItem key={subitem.id} item={subitem} menuItem={menuItem} projectId={projectId}/>
+                                )}
+                            </ul>
                         </div>
                     </div>
                 }

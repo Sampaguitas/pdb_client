@@ -230,6 +230,7 @@ class Home extends React.Component {
                 isAscending: true,
             },
             loaded: false,
+            menuItem: 'Home'
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -243,6 +244,7 @@ class Home extends React.Component {
 
     componentDidMount() {
         const { dispatch } = this.props
+        const { menuItem } = this.state;
         // Clear Selection
         dispatch(accessActions.clear());
         dispatch(collitypeActions.clear());
@@ -255,6 +257,7 @@ class Home extends React.Component {
         dispatch(supplierActions.clear());
         // Get Projects
         dispatch(projectActions.getAll());
+        dispatch(sidemenuActions.select(menuItem));
     }
 
     handleClearAlert(event){
@@ -334,10 +337,10 @@ class Home extends React.Component {
     }
 
     render() {
-        const { number, name, opco, erp, sort } = this.state;
+        const { menuItem, number, name, opco, erp, sort } = this.state;
         const { alert, projects, sidemenu } = this.props;
         return (
-            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse}>
+            <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && 
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
