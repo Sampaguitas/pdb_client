@@ -50,14 +50,14 @@ class Item extends Component {
                 }
                 {(!collapsed && item.child) &&
                     <div className="dropdown">
-                    <div name="show-animation">
-                        {show == item.title &&
-                        <ul>
-                            {item.child.map((subitem)=>
-                                <SubItem key={subitem.id} item={subitem} projectId={projectId}/>
-                            )}
-                        </ul>
-                        }
+                        <div className={`show-animation ${show == item.title && 'active'}`}>
+                            {/* {show == item.title && */}
+                                <ul className={`${show == item.title ? "show-animation-enter-active" : "show-animation-leave-active"}`}>
+                                    {item.child.map((subitem)=>
+                                        <SubItem key={subitem.id} item={subitem} projectId={projectId}/>
+                                    )}
+                                </ul>
+                            {/*// */}
                         </div>
                     </div>
                 }
