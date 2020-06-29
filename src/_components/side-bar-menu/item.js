@@ -26,9 +26,9 @@ class Item extends Component {
                     >
                         <FontAwesomeIcon icon={item.icon} className="item-icon" name={item.icon}/>
                         <span className="item-text" onMouseEnter={event => handleItemOver(event, item.title)}>{item.title}
-                                {item.child &&
+                            {item.child &&
                                 <FontAwesomeIcon icon="angle-right" className={`item-arrow ${show == item.title && "expand"} float-right`} style={{margin: '0px', verticalAlign: 'middle'}}/>
-                                }
+                            }
                         </span>
                     </NavLink>
                 :
@@ -38,20 +38,18 @@ class Item extends Component {
                         className={`${item.title == menuItem ? "menu-item__selected" : "menu-item"}`}
                     >
                         <FontAwesomeIcon icon={item.icon} className="item-icon" name={item.icon}/>
-                        {!sidemenu.collapsed &&
                         <span className="item-text">{item.title}
-                                {item.child &&
+                            {item.child &&
                                 <FontAwesomeIcon icon="angle-right" className={`item-arrow ${show == item.title && "expand"} float-right`} style={{margin: '0px', verticalAlign: 'middle'}}/>
-                                }
+                            }
                         </span>
-                        }
                     </NavLink>              
                 }
                 {(!sidemenu.collapsed && item.child) &&
                     <div className="dropdown">
                         <div className={`show-animation ${show == item.title && 'active'}`}>
                             <ul className={`${show == item.title ? "show-animation-enter-active" : "show-animation-leave-active"}`}>
-                                {item.child.map((subitem)=>
+                                {item.child && item.child.map((subitem)=>
                                     <SubItem key={subitem.id} item={subitem} menuItem={menuItem} projectId={projectId}/>
                                 )}
                             </ul>

@@ -868,11 +868,11 @@ class WhPackingDetails extends React.Component {
 
         function getProp(doctypeId) {
             switch(doctypeId) {
-                case '5d1927131424114e3884ac80': return {route: 'generatePl', doc: 'PL'};//PL01 Packing List
-                case '5d1927141424114e3884ac84': return {route: 'generateSm', doc: 'SM'};//SM01 Shipping Mark
-                case '5d1927131424114e3884ac81': return {route: 'generatePn', doc: 'PN'};//PN01 Packing Note
-                case '5d1927141424114e3884ac83': return {route: 'generateSi', doc: 'SI'};//SI01 Shipping Invoice
-                default: return {route: 'generatePl', doc: 'PL'}; //default packing list
+                case '5ef4e9a67c213e6263a723f0': return {route: 'generateWhPl', doc: 'WHPL'};//PL01 Packing List
+                case '5ef4ea597c213e6263a72425': return {route: 'generateWhSm', doc: 'WHSM'};//SM01 Shipping Mark
+                case '5ef4e9d67c213e6263a7240e': return {route: 'generateWhPn', doc: 'WHPN'};//PN01 Packing Note
+                case '5ef4ea197c213e6263a7241b': return {route: 'generateWhSi', doc: 'WHSI'};//SI01 Shipping Invoice
+                default: return {route: 'generateWhPl', doc: 'WHPL'}; //default packing list
             }
         }
 

@@ -140,8 +140,8 @@ $textColor: #fff;
 
 .menu-list li.has-dropdown > a > .item-text {
   padding-right: 50px;
-  
 }
+
 .menu-list > li > a > .item-text {
   display: block;
   padding-left: 50px;
@@ -161,6 +161,7 @@ $textColor: #fff;
 .menu-list > li.has-dropdown.open > a > .item-text:after {
   width: 100%;
 }
+
 .menu-list > li > a > .item-text:before  {
 	content: "";
 	position: absolute;
@@ -174,6 +175,7 @@ $textColor: #fff;
   visibility: hidden;
   transition: 0.3s all;
 }
+
 .menu-list > li > a:hover > .item-text:before {
   opacity: 1;
   visibility: visible;
@@ -342,10 +344,10 @@ $textColor: #fff;
 .show-animation {
   display: none;
   overflow: hidden;
-  background-color: #A8052C;
   height: 0%;
   max-height: 0px;
   transition: 0.3s max-height;
+  background-color: $primaryColor;
 }
 
 .show-animation.active {
@@ -356,6 +358,10 @@ $textColor: #fff;
 
 .show-animation li > a > .item-icon  {
   background: $darkenPc !important;
+}
+
+.show-animation li > a {
+  background-color: $primaryColor;
 }
 
 .show-animation li > a:hover  {
