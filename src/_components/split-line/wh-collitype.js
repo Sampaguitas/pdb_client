@@ -187,7 +187,7 @@ class ColliType extends Component {
                 pkWeight: ''
             },
             newRowFocus:false,
-            creating: false,
+            creatingNewRow: false,
             newRowColor: 'inherit',
             sort: {
                 name: '',
@@ -424,68 +424,55 @@ class ColliType extends Component {
     cerateNewRow(event) {
         event.preventDefault();
         const { refreshColliTypes } = this.props;
-        const { fieldName } = this.state;
-        this.setState({
-            // ...this.state,
-            creating: true
-        }, () => {
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify(fieldName)
-            };
-            return fetch(`${config.apiUrl}/collitype/create`, requestOptions)
-            .then( () => {
-                this.setState({
-                    // ...this.state,
-                    creating: false,
-                    newRowColor: 'green'
-                }, () => {
-                    setTimeout( () => {
-                        this.setState({
-                            // ...this.state,
-                            newRowColor: 'inherit',
-                            newRow:false,
-                            fieldName:{},
-                            newRowFocus: false
-                        }, refreshColliTypes);
-                    }, 1000);                                
-                });
-            })
-            .catch( () => {
-                this.setState({
-                    // ...this.state,
-                    creating: false,
-                    newRowColor: 'red'
-                }, () => {
-                    setTimeout(() => {
-                        this.setState({
-                            // ...this.state,
-                            newRowColor: 'inherit',
-                            newRow:false,
-                            fieldName:{},
-                            newRowFocus: false                                    
-                        }, refreshColliTypes);
-                    }, 1000);                                                      
+        const { creatingNewRow, fieldName } = this.state;
+        if (!creatingNewRow) {
+            this.setState({
+                // ...this.state,
+                creatingNewRow: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(fieldName)
+                };
+                return fetch(`${config.apiUrl}/collitype/create`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        // ...this.state,
+                        creatingNewRow: false,
+                        newRowColor: 'green'
+                    }, () => {
+                        setTimeout( () => {
+                            this.setState({
+                                // ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                fieldName:{},
+                                newRowFocus: false
+                            }, refreshColliTypes);
+                        }, 1000);                                
+                    });
+                })
+                .catch( () => {
+                    this.setState({
+                        // ...this.state,
+                        creatingNewRow: false,
+                        newRowColor: 'red'
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                // ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                fieldName:{},
+                                newRowFocus: false                                    
+                            }, refreshColliTypes);
+                        }, 1000);                                                      
+                    });
                 });
             });
-        });
+        }
     }
-
-    // onFocusRow(event) {
-    //     event.preventDefault();
-    //     const { newRowFocus } = this.state;
-    //     if (event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-    //         this.cerateNewRow(event);
-    //     }
-    // }
-
-    // onBlurRow(event){
-    //     event.preventDefault()
-    //     if (event.currentTarget.dataset['type'] == 'newrow'){
-    //         this.setState({ newRowFocus: true });
-    //     }
-    // }
 
     updateSelectedRows(id) {
         const { selectedRows } = this.state;
@@ -567,13 +554,10 @@ class ColliType extends Component {
         
         if (newRow) {
             tempRows.push(
-                <tr
-                    // onBlur={this.onBlurRow}
-                    // onFocus={this.onFocusRow}
-                    data-type="newrow"
-                >
+                <tr data-type="newrow">
                     <NewRowCreate
                         onClick={event => this.cerateNewRow(event)}
+                        creatingNewRow={creatingNewRow}
                     />
                     <NewRowInput
                         fieldType="text"
@@ -707,7 +691,7 @@ class ColliType extends Component {
     }
 
     render() {
-        const { selectedRows, deleting, creating } = this.state;
+        const { selectedRows, deleting, creatingNewRow } = this.state;
         const { collitypes, assigning } = this.props;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
         return (
@@ -726,7 +710,7 @@ class ColliType extends Component {
                         </div>
                         <div className="col text-right">
                             <button title="Add Collitype"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewRow}>
-                                <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Add</span>
+                                <span><FontAwesomeIcon icon={creatingNewRow ? "spinner" : "plus"} className={creatingNewRow ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Add</span>
                             </button>
                             <button title="Delete Collitype(s)"className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedRows)}>
                                 <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Delete</span>

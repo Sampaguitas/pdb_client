@@ -384,71 +384,55 @@ class Screens extends React.Component {
     createNewRow(event) {
         event.preventDefault();
         const { refreshFields, refreshFieldnames } = this.props;
-        const { fieldName } = this.state;
-        this.setState({
-            ...this.state,
-            creatingNewRow: true
-        }, () => {
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify(fieldName)
-            };
-            return fetch(`${config.apiUrl}/fieldName/create`, requestOptions)
-            .then( () => {
-                this.setState({
-                    ...this.state,
-                    creatingNewRow: false,
-                    newRowColor: 'green'
-                }, () => {
-                    setTimeout( () => {
-                        this.setState({
-                            ...this.state,
-                            newRowColor: 'inherit',
-                            newRow:false,
-                            fieldName:{},
-                            newRowFocus: false
-                        }, refreshFieldnames);
-                    }, 1000);                                
-                });
-            })
-            .catch( () => {
-                this.setState({
-                    ...this.state,
-                    creatingNewRow: false,
-                    newRowColor: 'red'
-                }, () => {
-                    setTimeout(() => {
-                        this.setState({
-                            ...this.state,
-                            newRowColor: 'inherit',
-                            newRow:false,
-                            fieldName:{},
-                            newRowFocus: false                                    
-                        }, refreshFieldnames);
-                    }, 1000);                                                      
+        const { creatingNewRow, fieldName } = this.state;
+        if(!creatingNewRow) {
+            this.setState({
+                ...this.state,
+                creatingNewRow: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(fieldName)
+                };
+                return fetch(`${config.apiUrl}/fieldName/create`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false,
+                        newRowColor: 'green'
+                    }, () => {
+                        setTimeout( () => {
+                            this.setState({
+                                ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                fieldName:{},
+                                newRowFocus: false
+                            }, refreshFieldnames);
+                        }, 1000);                                
+                    });
+                })
+                .catch( () => {
+                    this.setState({
+                        ...this.state,
+                        creatingNewRow: false,
+                        newRowColor: 'red'
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                fieldName:{},
+                                newRowFocus: false                                    
+                            }, refreshFieldnames);
+                        }, 1000);                                                      
+                    });
                 });
             });
-        });
+        }
     }
-
-    // onFocusRow(event) {
-    //     event.preventDefault();
-    //     const { selectedScreen, newRowFocus } = this.state;
-    //     if (selectedScreen && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-    //         this.createNewRow(event);
-    //     }
-    // }
-
-    // onBlurRow(event){
-    //     event.preventDefault()
-    //     if (event.currentTarget.dataset['type'] == 'newrow'){
-    //         this.setState({
-    //             ...this.state,
-    //             newRowFocus: true
-    //         });
-    //     }
-    // }
 
     toggleNewRow(event) {
         event.preventDefault()
@@ -767,13 +751,10 @@ class Screens extends React.Component {
                             </thead>
                             <tbody>
                                 {newRow &&
-                                    <tr
-                                        // onBlur={this.onBlurRow}
-                                        // onFocus={this.onFocusRow}
-                                        data-type="newrow"
-                                    >
+                                    <tr data-type="newrow">
                                         <NewRowCreate
                                             onClick={ event => this.createNewRow(event)}
+                                            creatingNewRow={creatingNewRow}
                                         />
                                         <NewRowSelect 
                                             fieldName="fieldId"
@@ -817,11 +798,7 @@ class Screens extends React.Component {
                                     </tr>                               
                                 }
                                 {fieldnames.items && fields.items && this.filterName(fieldnames.items).map((s) =>
-                                    <tr
-                                        key={s._id}
-                                        // onBlur={this.onBlurRow}
-                                        // onFocus={this.onFocusRow}
-                                    >
+                                    <tr key={s._id}>
                                         <TableSelectionRow
                                             id={s._id}
                                             selectAllRows={selectAllRows}

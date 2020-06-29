@@ -533,6 +533,7 @@ class GoodsReceipt extends Component {
             toLocation,
             transDate,
             handleGoodsReceipt,
+            isReceiving,
             myRoute,
             handleChange,
             whOptions,
@@ -652,7 +653,7 @@ class GoodsReceipt extends Component {
                             </div>
                             <div className="text-right mt-2">
                                 <button type="submit" className="btn btn-leeuwen-blue btn-lg">
-                                    <span><FontAwesomeIcon icon="hand-point-right" className="fa mr-2"/>Add to Stock</span>
+                                    <span><FontAwesomeIcon icon={isReceiving ? "spinner" : "hand-point-right"} className={isReceiving ? "fa-pulse fa-fw mr-2" : "fa mr-2"}/>Add to Stock</span>
                                 </button>
                             </div>
                         </form>

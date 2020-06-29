@@ -490,8 +490,8 @@ class Documents extends React.Component {
     cerateNewRow(event) {
         event.preventDefault()
         const { refreshDocfields } = this.props;
-        const { docField } = this.state;
-        if (docField.location && docField.row && docField.col && docField.fieldId) {
+        const { docField, creatingNewRow } = this.state;
+        if (!creatingNewRow && docField.location && docField.row && docField.col && docField.fieldId) {
             this.setState({
                 ...this.state,
                 creatingNewRow: true
@@ -1074,9 +1074,11 @@ class Documents extends React.Component {
             updatingDocDef,
             creatingDocDef,
             deletingDocDef,
+            creatingNewRow,
             isUploadingFile,
             isDownloadingFile,
             isDownloadingPreview,
+            deletingFields,
             docDef,
             newRow,
             docField,
@@ -1180,7 +1182,7 @@ class Documents extends React.Component {
                                     <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Add</span>
                                 </button>                                               
                                 <button title="Delete Field(s)" className="btn btn-leeuwen btn-lg" onClick={event => this.handleDeleteDocFields(event, selectedRows)}> {/* style={{height: '34px'}} */}
-                                    <span><FontAwesomeIcon icon="trash-alt" className="fa mr-2"/>Delete</span>
+                                    <span><FontAwesomeIcon icon={deletingFields ? "spinner" : "trash-alt"} className={deletingFields ? "fa-pulse fa-fw fa mr-2" :"fa mr-2"}/>Delete</span>
                                 </button> 
                             </div>        
                         </div>
@@ -1264,13 +1266,10 @@ class Documents extends React.Component {
                                 </thead>
                                 <tbody>
                                     {newRow &&
-                                        <tr
-                                            data-type="newrow"
-                                            // onBlur={this.onBlurRow}
-                                            // onFocus={this.onFocusRow}
-                                        > 
+                                        <tr data-type="newrow"> 
                                             <NewRowCreate
                                                 onClick={ event => this.cerateNewRow(event)}
+                                                creatingNewRow={creatingNewRow}
                                             />
                                             {multi &&
                                                 <NewRowSelect 

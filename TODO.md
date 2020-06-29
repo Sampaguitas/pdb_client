@@ -15,7 +15,7 @@
 - [X] Edit Values modal.
 - [X] Net Weight modal.
 - [X] Assign Colli types & dimentions.
-- [ ] Print Shipping Documents.
+- [X] Print Shipping Documents.
 ### Stock Management
 - [ ] Goods returned modal.
 ### Shipping Transport Docs
@@ -29,7 +29,8 @@
 - [X] Qty picked: calculated from heats quantities.
 - [X] Typos: Tcicket, whant.
 - [ ] Mir: isProcessed = true when all picktickets are closed and qtyPicked = qtyRequired.
-- [ ] Prevent users from creating two items if double click on the add button. 
+- [X] Prevent users from creating two items if double click on create new row. 
+- [X] Prevent users from creating two items if double click on the add button. 
 ### Styling
 - [X] Reduce layout margins (layout).
 - [X] Pass Menu collapsed state between screens (side menu).

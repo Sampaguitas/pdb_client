@@ -602,13 +602,10 @@ class Suppliers extends React.Component {
                 );
             });
             return (
-                <tr
-                    // onBlur={this.onBlurRow}
-                    // onFocus={this.onFocusRow}
-                    data-type="newrow"
-                >
+                <tr data-type="newrow">
                     <NewRowCreate
                         onClick={ event => this.cerateNewRow(event)}
+                        creatingNewRow={creatingNewRow}
                     />
                     {tempInputArray}
                 </tr>
@@ -619,8 +616,8 @@ class Suppliers extends React.Component {
     cerateNewRow(event) {
         event.preventDefault();
         const { refreshSuppliers } = this.props;
-        const { supplier } = this.state;
-        if(supplier.hasOwnProperty('projectId')) {
+        const { creatingNewRow, supplier } = this.state;
+        if(!creatingNewRow && supplier.hasOwnProperty('projectId')) {
             this.setState({
                 ...this.state,
                 creatingNewRow: true
@@ -684,26 +681,6 @@ class Suppliers extends React.Component {
             });
         }          
     }
-
-    // onFocusRow(event) {
-    //     event.preventDefault();
-    //     const { newRowFocus } = this.state;
-    //     if (event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-    //         this.cerateNewRow(event);
-    //     }
-    // }
-
-    // onBlurRow(event){
-    //     event.preventDefault()
-    //     if (event.currentTarget.dataset['type'] == 'newrow'){
-    //         this.setState({
-    //             ...this.state,
-    //             newRowFocus: true
-    //         });
-    //     }
-    // }
-
-
 
     toggleNewRow(event) {
         event.preventDefault()
@@ -791,6 +768,7 @@ class Suppliers extends React.Component {
             supplier,
             bodysForShow,
             newRow,
+            creatingNewRow
         } = this.state;
 
         return (

@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class NewRowCreate extends Component {
     render(){
-        const {onClick} = this.props
+        const {onClick, creatingNewRow} = this.props
         return (
             <td
                 style={{
@@ -15,8 +15,8 @@ class NewRowCreate extends Component {
             >
             <div onClick={onClick}>
                 <FontAwesomeIcon
-                    icon="plus"
-                    className="fas fa-lg"
+                    icon={creatingNewRow ? "spinner" :"plus"}
+                    className={creatingNewRow ? "fa-pulse fa-fw fa-lg" : "fas fa-lg"}
                     style={{
                         color: '#adb5bd',
                         padding: 'auto',

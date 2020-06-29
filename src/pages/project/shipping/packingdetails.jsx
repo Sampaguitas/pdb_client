@@ -489,6 +489,7 @@ class PackingDetails extends React.Component {
                 message:''
             },
             assigning: false,
+            generating: false,
             //-----modals-----
             showEditValues: false,
             showColliTypes: false,
@@ -836,7 +837,7 @@ class PackingDetails extends React.Component {
     handleGenerateFile(event) {
         event.preventDefault();
         const { docdefs, pos } = this.props;
-        const { selectedTemplate, selectedPl } = this.state;
+        const { generating, selectedTemplate, selectedPl } = this.state;
 
         function getProp(doctypeId) {
             switch(doctypeId) {
@@ -848,15 +849,39 @@ class PackingDetails extends React.Component {
             }
         }
 
-        if (!!selectedTemplate && !!selectedPl) {
+        if (!generating && !!selectedTemplate && !!selectedPl) {
             let obj = findObj(docdefs.items, selectedTemplate);
             if (!!obj) {
-                const requestOptions = {
-                    method: 'GET',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                };
-                return fetch(`${config.apiUrl}/template/${getProp(obj.doctypeId).route}?docDefId=${selectedTemplate}&locale=${locale}&selectedPl=${selectedPl}`, requestOptions)
-                    .then(res => res.blob()).then(blob => saveAs(blob, `${getClPo(pos, selectedPl)}_${getProp(obj.doctypeId).doc}_${leadingChar(selectedPl, '0', 3)}.xlsx`)); //obj.field
+                this.setState({
+                    generating: true
+                }, () => {
+                    const requestOptions = {
+                        method: 'GET',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    };
+                    return fetch(`${config.apiUrl}/template/${getProp(obj.doctypeId).route}?docDefId=${selectedTemplate}&locale=${locale}&selectedPl=${selectedPl}`, requestOptions)
+                    // .then(res => res.blob()).then(blob => saveAs(blob, `${getClPo(pos, selectedPl)}_${getProp(obj.doctypeId).doc}_${leadingChar(selectedPl, '0', 3)}.xlsx`)); //obj.field
+                    .then(responce => {
+                        if (!responce.ok) {
+                            if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
+                            } else if (responce.status === 400) {
+                                this.setState({
+                                    generating: false,
+                                    alert: {
+                                        type: 'alert-danger',
+                                        message: 'an error has occured'  
+                                    }
+                                });
+                            }
+                        } else {
+                            this.setState({
+                                generating: false
+                            }, () => responce.blob().then(blob => saveAs(blob, `${getClPo(pos, selectedPl)}_${getProp(obj.doctypeId).doc}_${leadingChar(selectedPl, '0', 3)}.xlsx`)));
+                        }
+                    });
+                });
             }
         }
     }
@@ -1288,6 +1313,7 @@ class PackingDetails extends React.Component {
             plList,
             docList,
             assigning,
+            generating,
             //show modals
             showEditValues,
             showColliTypes,
@@ -1460,7 +1486,7 @@ class PackingDetails extends React.Component {
                             </div>
                             <div className="text-right">
                                 <button className="btn btn-success btn-lg" type="submit">
-                                    <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate</span>
+                                    <span><FontAwesomeIcon icon={generating ? "spinner" : "file-excel"} className={generating ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Generate</span>
                                 </button>
                             </div>
                         </form>         

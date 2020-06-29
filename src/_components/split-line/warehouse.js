@@ -448,84 +448,88 @@ class Warehouse extends Component {
     createNewWh(event) {
         event.preventDefault();
         const { refreshStore } = this.props;
-        const { warehouse } = this.state;
-        this.setState({
-            ...this.state,
-            creatingNewWh: true
-        }, () => {
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify(warehouse)
-            };
-            return fetch(`${config.apiUrl}/warehouse/create`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                } else {
-                    this.setState({
-                        creatingNewWh: false,
-                        newWhColor: responce.status === 200 ? 'green' : 'red',
-                        alert: {
-                            type: responce.status === 200 ? '' : 'alert-danger',
-                            message: responce.status === 200 ? '' : data.message
-                        }
-                    }, () => {
-                        setTimeout( () => {
-                            this.setState({
-                                newWhColor: 'inherit',
-                                newWh:false,
-                                warehouse:{},
-                                newWhFocus: false
-                            }, refreshStore);
-                        }, 1000);                                
-                    });
-                }
-            }));
-        });
+        const { creatingNewWh, warehouse } = this.state;
+        if(!creatingNewWh) {
+            this.setState({
+                ...this.state,
+                creatingNewWh: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(warehouse)
+                };
+                return fetch(`${config.apiUrl}/warehouse/create`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            creatingNewWh: false,
+                            newWhColor: responce.status === 200 ? 'green' : 'red',
+                            alert: {
+                                type: responce.status === 200 ? '' : 'alert-danger',
+                                message: responce.status === 200 ? '' : data.message
+                            }
+                        }, () => {
+                            setTimeout( () => {
+                                this.setState({
+                                    newWhColor: 'inherit',
+                                    newWh:false,
+                                    warehouse:{},
+                                    newWhFocus: false
+                                }, refreshStore);
+                            }, 1000);                                
+                        });
+                    }
+                }));
+            });
+        }
     }
 
     createNewArea(event) {
         event.preventDefault();
         const { refreshStore } = this.props;
-        const { area } = this.state;
-        this.setState({
-            creatingNewArea: true
-        }, () => {
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify(area)
-            };
-            return fetch(`${config.apiUrl}/area/create`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                } else {
-                    this.setState({
-                        creatingNewArea: false,
-                        newAreaColor: responce.status === 200 ? 'green' : 'red',
-                        alert: {
-                            type: responce.status === 200 ? '' : 'alert-danger',
-                            message: responce.status === 200 ? '' : data.message
-                        }
-                    }, () => {
-                        setTimeout( () => {
-                            this.setState({
-                                newAreaColor: 'inherit',
-                                newArea:false,
-                                area:{},
-                                newAreaFocus: false
-                            }, refreshStore);
-                        }, 1000);                                
-                    });
-                }
-            }));
-        });
+        const { creatingNewArea, area } = this.state;
+        if (!creatingNewArea) {
+            this.setState({
+                creatingNewArea: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(area)
+                };
+                return fetch(`${config.apiUrl}/area/create`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            creatingNewArea: false,
+                            newAreaColor: responce.status === 200 ? 'green' : 'red',
+                            alert: {
+                                type: responce.status === 200 ? '' : 'alert-danger',
+                                message: responce.status === 200 ? '' : data.message
+                            }
+                        }, () => {
+                            setTimeout( () => {
+                                this.setState({
+                                    newAreaColor: 'inherit',
+                                    newArea:false,
+                                    area:{},
+                                    newAreaFocus: false
+                                }, refreshStore);
+                            }, 1000);                                
+                        });
+                    }
+                }));
+            });
+        }
     }
 
     handleDeleteWh(event) {
@@ -646,35 +650,35 @@ class Warehouse extends Component {
         }
     }
 
-    onFocusWh(event) {
-        event.preventDefault();
-        const { newWhFocus } = this.state;
-        if (event.currentTarget.dataset['type'] == undefined && newWhFocus == true){
-            this.createNewWh(event);
-        }
-    }
+    // onFocusWh(event) {
+    //     event.preventDefault();
+    //     const { newWhFocus } = this.state;
+    //     if (event.currentTarget.dataset['type'] == undefined && newWhFocus == true){
+    //         this.createNewWh(event);
+    //     }
+    // }
 
-    onFocusArea(event) {
-        event.preventDefault();
-        const { newAreaFocus } = this.state;
-        if (event.currentTarget.dataset['type'] == undefined && newAreaFocus == true){
-            this.createNewArea(event);
-        }
-    }
+    // onFocusArea(event) {
+    //     event.preventDefault();
+    //     const { newAreaFocus } = this.state;
+    //     if (event.currentTarget.dataset['type'] == undefined && newAreaFocus == true){
+    //         this.createNewArea(event);
+    //     }
+    // }
 
-    onBlurWh(event){
-        event.preventDefault()
-        if (event.currentTarget.dataset['type'] == 'newWh'){
-            this.setState({ newWhFocus: true });
-        }
-    }
+    // onBlurWh(event){
+    //     event.preventDefault()
+    //     if (event.currentTarget.dataset['type'] == 'newWh'){
+    //         this.setState({ newWhFocus: true });
+    //     }
+    // }
 
-    onBlurArea(event){
-        event.preventDefault()
-        if (event.currentTarget.dataset['type'] == 'newArea'){
-            this.setState({ newAreaFocus: true });
-        }
-    }
+    // onBlurArea(event){
+    //     event.preventDefault()
+    //     if (event.currentTarget.dataset['type'] == 'newArea'){
+    //         this.setState({ newAreaFocus: true });
+    //     }
+    // }
 
     toggleNewWh(event) {
         event.preventDefault()
@@ -863,12 +867,13 @@ class Warehouse extends Component {
                                 <tbody>
                                     {newWh && 
                                         <tr
-                                            onBlur={this.onBlurWh}
-                                            onFocus={this.onFocusWh}
+                                            // onBlur={this.onBlurWh}
+                                            // onFocus={this.onFocusWh}
                                             data-type="newWh"
                                         >
                                             <NewRowCreate
                                                 onClick={ event => this.createNewWh(event)}
+                                                creatingNewRow={creatingNewWh}
                                             />
                                             <NewRowInput
                                                 fieldType="text"
@@ -966,12 +971,13 @@ class Warehouse extends Component {
                                 <tbody>
                                     {newArea && 
                                         <tr
-                                            onBlur={this.onBlurArea}
-                                            onFocus={this.onFocusWh}
+                                            // onBlur={this.onBlurArea}
+                                            // onFocus={this.onFocusWh}
                                             data-type="newArea"
                                         >
                                             <NewRowCreate
                                                 onClick={ event => this.createNewArea(event)}
+                                                creatingNewRow={creatingNewArea}
                                             />
                                             <NewRowInput
                                                 fieldType="text"

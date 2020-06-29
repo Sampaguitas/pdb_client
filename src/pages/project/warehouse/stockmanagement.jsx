@@ -953,6 +953,7 @@ class StockManagement extends React.Component {
             areaList: [],
             locList: [],
             isDownloadingFile: false,
+            isReceiving: false,
             alert: {
                 type:'',
                 message:''
@@ -1439,48 +1440,50 @@ class StockManagement extends React.Component {
 
     handleGoodsReceipt(event, route) {
         event.preventDefault();
-        const { selectedIdsGr, projectId, toLocation, transQty,  transDate } = this.state;
-        if (_.isEmpty(selectedIdsGr)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select line(s) to be received.'
-                }
-            });
-        } else if (!isValidFormat(transDate, 'date', getDateFormat(myLocale))) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Please enter a valid date format.'
-                }
-            });
-        } else {
-            this.setState({ receiving: true});
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    selectedIdsGr: selectedIdsGr,
-                    toLocation: toLocation,
-                    transQty: transQty,
-                    transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat(myLocale))),
-                })
-            };
-            return fetch(`${config.apiUrl}/transaction/${route}?projectId=${projectId}`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (responce.status === 401) {
-                    localStorage.removeItem('user');
-                    location.reload(true);
-                }
+        const { isReceiving, selectedIdsGr, projectId, toLocation, transQty,  transDate } = this.state;
+        if(!isReceiving) {
+            if (_.isEmpty(selectedIdsGr)) {
                 this.setState({
-                    receiving: false,
                     alert: {
-                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                        message: data.message
+                        type: 'alert-danger',
+                        message: 'Select line(s) to be received.'
                     }
-                }, this.refreshTransactions);
-            }));
+                });
+            } else if (!isValidFormat(transDate, 'date', getDateFormat(myLocale))) {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'Please enter a valid date format.'
+                    }
+                });
+            } else {
+                this.setState({ receiving: true});
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        selectedIdsGr: selectedIdsGr,
+                        toLocation: toLocation,
+                        transQty: transQty,
+                        transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat(myLocale))),
+                    })
+                };
+                return fetch(`${config.apiUrl}/transaction/${route}?projectId=${projectId}`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        receiving: false,
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshTransactions);
+                }));
+            }
         }
     }
 
@@ -2020,6 +2023,7 @@ class StockManagement extends React.Component {
                         refreshStore={this.refreshStore}
                         settingsFilter={[]}
                         handleGoodsReceipt={this.handleGoodsReceipt}
+                        isReceiving={isReceiving}
                         myRoute={myGoodsReceipt.myRoute}
                         handleChange={this.handleChange}
                         transQty={transQty}

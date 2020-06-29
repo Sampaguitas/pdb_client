@@ -162,7 +162,7 @@ class Certificate extends Component {
                 cif: ''
             },
             newRowFocus:false,
-            creating: false,
+            creatingNewRow: false,
             newRowColor: 'inherit',
             sort: {
                 name: '',
@@ -392,68 +392,55 @@ class Certificate extends Component {
     cerateNewRow(event) {
         event.preventDefault();
         const { refreshCifs } = this.props;
-        const { newCif } = this.state;
-        this.setState({
-            // ...this.state,
-            creating: true
-        }, () => {
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify(newCif)
-            };
-            return fetch(`${config.apiUrl}/certificate/create`, requestOptions)
-            .then( () => {
-                this.setState({
-                    // ...this.state,
-                    creating: false,
-                    newRowColor: 'green'
-                }, () => {
-                    setTimeout( () => {
-                        this.setState({
-                            // ...this.state,
-                            newRowColor: 'inherit',
-                            newRow:false,
-                            newCif:{},
-                            newRowFocus: false
-                        }, refreshCifs);
-                    }, 1000);                                
-                });
-            })
-            .catch( () => {
-                this.setState({
-                    // ...this.state,
-                    creating: false,
-                    newRowColor: 'red'
-                }, () => {
-                    setTimeout(() => {
-                        this.setState({
-                            // ...this.state,
-                            newRowColor: 'inherit',
-                            newRow:false,
-                            newCif:{},
-                            newRowFocus: false                                    
-                        }, refreshCifs);
-                    }, 1000);                                                      
+        const { creatingNewRow, newCif } = this.state;
+        if (!creatingNewRow) {
+            this.setState({
+                // ...this.state,
+                creatingNewRow: true
+            }, () => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newCif)
+                };
+                return fetch(`${config.apiUrl}/certificate/create`, requestOptions)
+                .then( () => {
+                    this.setState({
+                        // ...this.state,
+                        creatingNewRow: false,
+                        newRowColor: 'green'
+                    }, () => {
+                        setTimeout( () => {
+                            this.setState({
+                                // ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                newCif:{},
+                                newRowFocus: false
+                            }, refreshCifs);
+                        }, 1000);                                
+                    });
+                })
+                .catch( () => {
+                    this.setState({
+                        // ...this.state,
+                        creatingNewRow: false,
+                        newRowColor: 'red'
+                    }, () => {
+                        setTimeout(() => {
+                            this.setState({
+                                // ...this.state,
+                                newRowColor: 'inherit',
+                                newRow:false,
+                                newCif:{},
+                                newRowFocus: false                                    
+                            }, refreshCifs);
+                        }, 1000);                                                      
+                    });
                 });
             });
-        });
+        }
     }
-
-    // onFocusRow(event) {
-    //     event.preventDefault();
-    //     const { newRowFocus } = this.state;
-    //     if (event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-    //         this.cerateNewRow(event);
-    //     }
-    // }
-
-    // onBlurRow(event){
-    //     event.preventDefault()
-    //     if (event.currentTarget.dataset['type'] == 'newrow'){
-    //         this.setState({ newRowFocus: true });
-    //     }
-    // }
 
     updateSelectedIds(id) {
         const { selectedIds } = this.state;
@@ -493,7 +480,7 @@ class Certificate extends Component {
 
     generateBody(certificates) {
         const { refreshCifs } = this.props;
-        const { selectedIds, selectAllRows, newRow, newCif, newRowColor } = this.state;
+        const { creatingNewRow, selectedIds, selectAllRows, newRow, newCif, newRowColor } = this.state;
         let tempRows = [];
         
         if (newRow) {
@@ -505,6 +492,7 @@ class Certificate extends Component {
                 >
                     <NewRowCreate
                         onClick={event => this.cerateNewRow(event)}
+                        creatingNewRow={creatingNewRow}
                     />
                     <CifNewRowInput
                         fieldType="text"
@@ -564,7 +552,7 @@ class Certificate extends Component {
     }
 
     render() {
-        const { selectedIds, deleting, creating } = this.state;
+        const { selectedIds, deleting, creatingNewRow } = this.state;
         const { certificates, toggleCif } = this.props;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
         return (
@@ -580,7 +568,7 @@ class Certificate extends Component {
                     <div className={`row ${alert.message ? "mt-1" : "mt-2"} mb-2`}>
                         <div className="col text-right">
                             <button title="Add Certificate"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewRow}>
-                                <span><FontAwesomeIcon icon={creating ? "spinner" : "plus"} className={creating ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Add</span>
+                                <span><FontAwesomeIcon icon={creatingNewRow ? "spinner" : "plus"} className={creatingNewRow ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Add</span>
                             </button>
                             <button title="Delete Certificate(s)"className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedIds)}>
                                 <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Delete</span>
