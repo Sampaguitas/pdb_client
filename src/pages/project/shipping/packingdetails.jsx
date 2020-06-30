@@ -24,6 +24,7 @@ import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
 import Modal from '../../../_components/modal';
 import ColliType from '../../../_components/split-line/collitype';
+import { assign } from 'lodash';
 
 
 const locale = Intl.DateTimeFormat().resolvedOptions().locale;
@@ -490,6 +491,9 @@ class PackingDetails extends React.Component {
             },
             assigning: false,
             generating: false,
+            editingValue: false,
+            erasingValue: false,
+            updatingWeight: false,
             //-----modals-----
             showEditValues: false,
             showColliTypes: false,
@@ -928,73 +932,160 @@ class PackingDetails extends React.Component {
     handleUpdateValue(event, isErase) {
         event.preventDefault();
         const { dispatch, fieldnames } = this.props;
-        const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue} = this.state;
-        if (!selectedField) {
-            this.setState({
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'You have not selected the field to be updated.'
-                }
-            });
-        } else if (_.isEmpty(selectedIds)) {
-            this.setState({
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be updated.'
-                }
-            });
-        } else if (_.isEmpty(fieldnames)){
-            this.setState({
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'An error occured, line(s) where not updated.'
-                }
-            });
-            if (projectId) {
-                dispatch(fieldActions.getAll(projectId));
-            }
-        } else {
-            let found = fieldnames.items.find( function (f) {
-                return f.fields._id === selectedField;
-            });
-            if (found.edit && !unlocked) {
+        const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue, editingValue, erasingValue} = this.state;
+        if (!editingValue && erasingValue) {
+            if (!selectedField) {
                 this.setState({
                     showEditValues: false,
                     alert: {
                         type:'alert-danger',
-                        message:'Selected  field is disabled, please unlock table and try again.'
+                        message:'You have not selected the field to be updated.'
                     }
                 });
+            } else if (_.isEmpty(selectedIds)) {
+                this.setState({
+                    showEditValues: false,
+                    alert: {
+                        type:'alert-danger',
+                        message:'Select line(s) to be updated.'
+                    }
+                });
+            } else if (_.isEmpty(fieldnames)){
+                this.setState({
+                    showEditValues: false,
+                    alert: {
+                        type:'alert-danger',
+                        message:'An error occured, line(s) where not updated.'
+                    }
+                });
+                if (projectId) {
+                    dispatch(fieldActions.getAll(projectId));
+                }
             } else {
-                let collection = found.fields.fromTbl;
-                let fieldName = found.fields.name;
-                let fieldValue = isErase ? '' : updateValue;
-                let fieldType = selectedType;
-
-                if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+                let found = fieldnames.items.find( function (f) {
+                    return f.fields._id === selectedField;
+                });
+                if (found.edit && !unlocked) {
                     this.setState({
-                        ...this.state,
                         showEditValues: false,
                         alert: {
                             type:'alert-danger',
-                            message:'Wrong Date Format.'
+                            message:'Selected  field is disabled, please unlock table and try again.'
                         }
                     });
                 } else {
+                    let collection = found.fields.fromTbl;
+                    let fieldName = found.fields.name;
+                    let fieldValue = isErase ? '' : updateValue;
+                    let fieldType = selectedType;
+    
+                    if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+                        this.setState({
+                            ...this.state,
+                            showEditValues: false,
+                            alert: {
+                                type:'alert-danger',
+                                message:'Wrong Date Format.'
+                            }
+                        });
+                    } else {
+                        this.setState({
+                            erasingValue: isErase ? true : false,
+                            editingValue: isErase ? false : true,
+                        }, () => {
+                            const requestOptions = {
+                                method: 'PUT',
+                                headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    collection: collection,
+                                    fieldName: fieldName,
+                                    fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                                    selectedIds: selectedIds
+                                })
+                            };
+                            return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+                            .then(responce => responce.text().then(text => {
+                                const data = text && JSON.parse(text);
+                                if (!responce.ok) {
+                                    if (responce.status === 401) {
+                                        localStorage.removeItem('user');
+                                        location.reload(true);
+                                    }
+                                    this.setState({
+                                        showEditValues: false,
+                                        erasingValue: false,
+                                        editingValue: false,
+                                        alert: {
+                                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                            message: data.message
+                                        }
+                                    }, this.refreshStore);
+                                } else {
+                                    this.setState({
+                                        showEditValues: false,
+                                        erasingValue: false,
+                                        editingValue: false,
+                                        alert: {
+                                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                            message: data.message
+                                        }
+                                    }, this.refreshStore);
+                                }
+                            })
+                            .catch( () => {
+                                this.setState({
+                                    showEditValues: false,
+                                    alert: {
+                                        type: 'alert-danger',
+                                        message: 'Field could not be updated.'
+                                    }
+                                }, this.refreshStore);
+                            }));
+                        })
+                    }
+                }  
+            }
+        }
+    }
+
+    handleUpdateWeight(event) {
+        event.preventDefault();
+        const { selection } = this.props;
+        const { projectId, selectedIds, updatingWeight } = this.state;
+        if (!updatingWeight) {
+            if (_.isEmpty(selectedIds)) {
+                this.setState({
+                    showEditValues: false,
+                    alert: {
+                        type:'alert-danger',
+                        message:'Select line(s) to get weight.'
+                    }
+                });
+            } else if (!selection.hasOwnProperty('project') || _.isEmpty(selection.project.erp)) {
+                this.setState({
+                    showEditValues: false,
+                    alert: {
+                        type:'alert-danger',
+                        message:'An error occured, line(s) where not updated.'
+                    }
+                });
+                
+                if (projectId) {
+                    dispatch(projectActions.getById(projectId));
+                }
+            } else {
+                this.setState({
+                    updatingWeight: true
+                }, () => {
                     const requestOptions = {
                         method: 'PUT',
                         headers: { ...authHeader(), 'Content-Type': 'application/json' },
                         body: JSON.stringify({
-                            collection: collection,
-                            fieldName: fieldName,
-                            fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                            erp: selection.project.erp.name,
                             selectedIds: selectedIds
                         })
                     };
-                    return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+                    return fetch(`${config.apiUrl}/extract/setWeight`, requestOptions)
                     .then(responce => responce.text().then(text => {
                         const data = text && JSON.parse(text);
                         if (!responce.ok) {
@@ -1004,6 +1095,7 @@ class PackingDetails extends React.Component {
                             }
                             this.setState({
                                 showEditValues: false,
+                                updatingWeight: false,
                                 alert: {
                                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                     message: data.message
@@ -1012,6 +1104,7 @@ class PackingDetails extends React.Component {
                         } else {
                             this.setState({
                                 showEditValues: false,
+                                updatingWeight: false,
                                 alert: {
                                     type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                     message: data.message
@@ -1028,124 +1121,44 @@ class PackingDetails extends React.Component {
                             }
                         }, this.refreshStore);
                     }));
-                }
-            }  
-        }
-    }
-
-    handleUpdateWeight(event) {
-        event.preventDefault();
-        const { selection } = this.props;
-        const { projectId, selectedIds } = this.state;
-
-        if (_.isEmpty(selectedIds)) {
-            this.setState({
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to get weight.'
-                }
-            });
-        } else if (!selection.hasOwnProperty('project') || _.isEmpty(selection.project.erp)) {
-            this.setState({
-                showEditValues: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'An error occured, line(s) where not updated.'
-                }
-            });
-            
-            if (projectId) {
-                dispatch(projectActions.getById(projectId));
+                });
             }
-        } else {
-            const requestOptions = {
-                method: 'PUT',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    erp: selection.project.erp.name,
-                    selectedIds: selectedIds
-                })
-            };
-            return fetch(`${config.apiUrl}/extract/setWeight`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (!responce.ok) {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    }
-                    this.setState({
-                        showEditValues: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
-                } else {
-                    this.setState({
-                        showEditValues: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
-                }
-            })
-            .catch( () => {
-                this.setState({
-                    showEditValues: false,
-                    alert: {
-                        type: 'alert-danger',
-                        message: 'Field could not be updated.'
-                    }
-                }, this.refreshStore);
-            }));
         }
     }
 
     assignColliType(collitypeId) {
         const { selection, collitypes } = this.props;
         const { projectId, selectedIds, assigning } = this.state;
-        if (!collitypeId) {
-            this.setState({
-                showColliTypes: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'collitypeId is missing.'
+        if (!assigning) {
+            if (!collitypeId) {
+                this.setState({
+                    showColliTypes: false,
+                    alert: {
+                        type:'alert-danger',
+                        message:'collitypeId is missing.'
+                    }
+                });
+            } else if (_.isEmpty(selectedIds)) {
+                this.setState({
+                    showColliTypes: false,
+                    alert: {
+                        type:'alert-danger',
+                        message:'Select line(s) to assign Colli Type.'
+                    }
+                });
+            } else if (!selection.hasOwnProperty('project') || _.isEmpty(selection.project.erp)) {
+                this.setState({
+                    showColliTypes: false,
+                    alert: {
+                        type:'alert-danger',
+                        message:'An error occured, line(s) where not updated.'
+                    }
+                });
+                
+                if (projectId) {
+                    dispatch(projectActions.getById(projectId));
                 }
-            });
-        } else if (_.isEmpty(selectedIds)) {
-            this.setState({
-                showColliTypes: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to assign Colli Type.'
-                }
-            });
-        } else if (!selection.hasOwnProperty('project') || _.isEmpty(selection.project.erp)) {
-            this.setState({
-                showColliTypes: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'An error occured, line(s) where not updated.'
-                }
-            });
-            
-            if (projectId) {
-                dispatch(projectActions.getById(projectId));
-            }
-        } else if (!collitypes.hasOwnProperty('items') || _.isEmpty(collitypes.items)) {
-            this.setState({
-                showColliTypes: false,
-                alert: {
-                    type:'alert-danger',
-                    message:'An error occured, line(s) where not updated.'
-                }
-            });
-        } else {
-            let colliType = collitypes.items.find(element => element._id === collitypeId);
-            if (_.isUndefined(colliType)) {
+            } else if (!collitypes.hasOwnProperty('items') || _.isEmpty(collitypes.items)) {
                 this.setState({
                     showColliTypes: false,
                     alert: {
@@ -1154,46 +1167,57 @@ class PackingDetails extends React.Component {
                     }
                 });
             } else {
-                this.setState({
-                    assigning: true
-                }, () => {
-                    const requestOptions = {
-                        method: 'PUT',
-                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            colliType: colliType,
-                            erp: selection.project.erp.name,
-                            selectedIds: selectedIds
+                let colliType = collitypes.items.find(element => element._id === collitypeId);
+                if (_.isUndefined(colliType)) {
+                    this.setState({
+                        showColliTypes: false,
+                        alert: {
+                            type:'alert-danger',
+                            message:'An error occured, line(s) where not updated.'
+                        }
+                    });
+                } else {
+                    this.setState({
+                        assigning: true
+                    }, () => {
+                        const requestOptions = {
+                            method: 'PUT',
+                            headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                colliType: colliType,
+                                erp: selection.project.erp.name,
+                                selectedIds: selectedIds
+                            })
+                        };
+                        return fetch(`${config.apiUrl}/extract/setCollitype`, requestOptions)
+                        .then(responce => responce.text().then(text => {
+                            const data = text && JSON.parse(text);
+                            if (responce.status === 401) {
+                                    localStorage.removeItem('user');
+                                    location.reload(true);
+                            } else {
+                                this.setState({
+                                    showColliTypes: false,
+                                    assigning: false,
+                                    alert: {
+                                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                        message: data.message
+                                    }
+                                }, this.refreshStore);
+                            }
                         })
-                    };
-                    return fetch(`${config.apiUrl}/extract/setCollitype`, requestOptions)
-                    .then(responce => responce.text().then(text => {
-                        const data = text && JSON.parse(text);
-                        if (responce.status === 401) {
-                                localStorage.removeItem('user');
-                                location.reload(true);
-                        } else {
+                        .catch( () => {
                             this.setState({
                                 showColliTypes: false,
                                 assigning: false,
                                 alert: {
-                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                    message: data.message
+                                    type: 'alert-danger',
+                                    message: 'Colli Type could not be assigned.'
                                 }
                             }, this.refreshStore);
-                        }
-                    })
-                    .catch( () => {
-                        this.setState({
-                            showColliTypes: false,
-                            assigning: false,
-                            alert: {
-                                type: 'alert-danger',
-                                message: 'Colli Type could not be assigned.'
-                            }
-                        }, this.refreshStore);
-                    }));
-                });
+                        }));
+                    });
+                }
             }
         }
     }
@@ -1314,6 +1338,9 @@ class PackingDetails extends React.Component {
             docList,
             assigning,
             generating,
+            editingValue,
+            erasingValue,
+            updatingWeight,
             //show modals
             showEditValues,
             showColliTypes,
@@ -1361,7 +1388,7 @@ class PackingDetails extends React.Component {
                             <span><FontAwesomeIcon icon="hand-point-right" className="fa mr-2"/>Colli Type</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Calculate Net Weight" onClick={event => this.handleUpdateWeight(event)}>
-                            <span><FontAwesomeIcon icon="balance-scale-left" className="fa mr-2"/>Net Weight</span>
+                            <span><FontAwesomeIcon icon={updatingWeight ? "spinner" : "balance-scale-left"} className={updatingWeight ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Net Weight</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Generate Shipping Docs" onClick={event => this.toggleGenerate(event)}>
                             <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Shipping Docs</span>
@@ -1423,10 +1450,10 @@ class PackingDetails extends React.Component {
                         </div>
                         <div className="text-right">
                             <button className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.handleUpdateValue(event, false)}>
-                                <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Update</span>
+                                <span><FontAwesomeIcon icon={editingValue ? "spinner" : "edit"} className={editingValue ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Update</span>
                             </button>
                             <button className="btn btn-leeuwen btn-lg" onClick={event => this.handleUpdateValue(event, true)}>
-                                <span><FontAwesomeIcon icon="eraser" className="fa mr-2"/>Erase</span>
+                                <span><FontAwesomeIcon icon={erasingValue ? "spinner" : "eraser"} className={erasingValue ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Erase</span>
                             </button>
                         </div>                   
                     </div>
