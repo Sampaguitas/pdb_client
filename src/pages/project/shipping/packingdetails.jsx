@@ -933,7 +933,7 @@ class PackingDetails extends React.Component {
         event.preventDefault();
         const { dispatch, fieldnames } = this.props;
         const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue, editingValue, erasingValue} = this.state;
-        if (!editingValue && erasingValue) {
+        if (!editingValue && !erasingValue) {
             if (!selectedField) {
                 this.setState({
                     showEditValues: false,
