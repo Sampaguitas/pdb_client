@@ -586,7 +586,7 @@ class Suppliers extends React.Component {
     }
 
     generateNewRow(screenHeaders) {
-        const { supplier, newRow, newRowColor } = this.state;
+        const { supplier, newRow, newRowColor, creatingNewRow } = this.state;
         if (!_.isEmpty(screenHeaders) && newRow) {
             const tempInputArray = [];
             screenHeaders.map(screenHeader => {
