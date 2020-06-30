@@ -551,7 +551,7 @@ class Heat extends Component {
 
     generateBody(heats) {
         const { refreshPos, certificates } = this.props;
-        const { selectedIds, selectAllRows, newRow, newHeat, newRowColor } = this.state;
+        const { selectedIds, selectAllRows, newRow, newHeat, newRowColor, creatingNewRow } = this.state;
         let tempRows = [];
         
         if (newRow) {
