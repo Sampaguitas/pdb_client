@@ -1123,6 +1123,7 @@ class StockManagement extends React.Component {
             nfiScreenId,
             plScreenId,
             selectedField,
+            selectedIdsGr,
             settingsDisplay,
             toWarehouse,
             toArea,
@@ -1226,6 +1227,12 @@ class StockManagement extends React.Component {
         if (locList != prevState.locList) {
             this.setState({
                 toLocation: !_.isEmpty(locList) ? locList[0]._id : ''
+            });
+        }
+
+        if (selectedIdsGr != prevState.selectedIdsGr && selectedIdsGr.length != 1) {
+            this.setState({
+                transQty: ''
             });
         }
 

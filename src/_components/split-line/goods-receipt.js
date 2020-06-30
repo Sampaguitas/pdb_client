@@ -286,6 +286,7 @@ class GoodsReceipt extends Component {
         const { screenBodys, updateSelectedIds } = this.props;
 
         if (selectedRows != prevState.selectedRows || screenBodys != prevProps.screenBodys) {
+            
             let tableIds = getTableIds(selectedRows, screenBodys);
             if (_.isEmpty(tableIds)) {
                 this.setState({ selectAllRows: false });
@@ -523,6 +524,8 @@ class GoodsReceipt extends Component {
     }
 
     render() {
+        const { selectedRows } = this.state;
+
         const { 
             screenHeaders, 
             screenBodys,
@@ -578,6 +581,7 @@ class GoodsReceipt extends Component {
                                         value={transQty}
                                         onChange={handleChange}
                                         placeholder={qtyPlaceHolder}
+                                        disabled={selectedRows.length != 1 ? true : false}
                                     />
                                 </div>
                             </div>
