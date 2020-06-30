@@ -1905,6 +1905,7 @@ class StockManagement extends React.Component {
             areaList,
             locList,
             //--------------------
+            isReceiving,
             isDownloadingFile
         } = this.state;
 
