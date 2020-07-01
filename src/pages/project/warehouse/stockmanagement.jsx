@@ -458,6 +458,10 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                             });
                                         }
                                     });
+
+                                    let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(po.uom.toUpperCase()) ? 'mtrs' : 'pcs';
+                                    let qtyPacked = packitem[tempUom] || 0; 
+                                    let stockQty = virtual.stockQty || 0;
                                     
                                     objectRow  = {
                                         _id: i, 
@@ -468,7 +472,8 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                             packitemId: packitem._id,
                                             collipackId: '' 
                                         },
-                                        fields: arrayRow
+                                        fields: arrayRow,
+                                        isRemaining: qtyPacked > stockQty,
                                     };
                                     arrayBody.push(objectRow);
                                     i++;
@@ -561,6 +566,9 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                                     });
                                 }
                             });
+
+                            let relQty = sub.relQty || 0;
+                            let stockQty = virtual.stockQty || 0;
                             
                             objectRow  = {
                                 _id: i, 
@@ -571,7 +579,8 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                                     packitemId: '',
                                     collipackId: '' 
                                 },
-                                fields: arrayRow
+                                fields: arrayRow,
+                                isRemaining: relQty > stockQty,
                             };
                             arrayBody.push(objectRow);
                             i++;
@@ -648,6 +657,9 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
                             });
                         }
                     });
+
+                    let qty = po.qty || 0;
+                    let stockQty = virtual.stockQty || 0;
                     
                     objectRow  = {
                         _id: i, 
@@ -659,7 +671,8 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
                             collipackId: '',
                             locationId: virtual.locationId,
                         },
-                        fields: arrayRow
+                        fields: arrayRow,
+                        isRemaining: qty > stockQty,
                     };
                     arrayBody.push(objectRow);
                     i++;
@@ -952,6 +965,7 @@ class StockManagement extends React.Component {
             whList: [],
             areaList: [],
             locList: [],
+            isRemaining: true,
             isDownloadingFile: false,
             isReceiving: false,
             alert: {
@@ -1447,8 +1461,8 @@ class StockManagement extends React.Component {
 
     handleGoodsReceipt(event, route) {
         event.preventDefault();
-        const { isReceiving, selectedIdsGr, projectId, toLocation, transQty,  transDate } = this.state;
-        if(!isReceiving) {
+        const { isReceiving, selectedIdsGr, projectId, toLocation, transQty,  transDate, isRemaining } = this.state;
+        if(!isReceiving && isRemaining) {
             if (_.isEmpty(selectedIdsGr)) {
                 this.setState({
                     alert: {
@@ -1672,9 +1686,10 @@ class StockManagement extends React.Component {
         });
     }
 
-    updateSelectedIdsGr(selectedIds) {
+    updateSelectedIdsGr(selectedIds, isRemaining) {
         this.setState({
-            selectedIdsGr: selectedIds
+            selectedIdsGr: selectedIds,
+            isRemaining: isRemaining
         });
     }
 
@@ -1912,6 +1927,7 @@ class StockManagement extends React.Component {
             areaList,
             locList,
             //--------------------
+            isRemaining,
             isReceiving,
             isDownloadingFile
         } = this.state;
@@ -2026,6 +2042,7 @@ class StockManagement extends React.Component {
                         screenId={myGoodsReceipt.poScreenId}
                         selectedIds={selectedIdsGr}
                         updateSelectedIds={this.updateSelectedIdsGr}
+                        isRemaining={isRemaining}
                         unlocked={false}
                         handleClearAlert={this.handleClearAlert}
                         refreshStore={this.refreshStore}

@@ -21,9 +21,9 @@
 ### Shipping Transport Docs
 - [ ] MiddleWare pre/post hooks (to be fixed).
 ### Minutes of Meeting
-- [ ] Goods receipt: alert-message if no remaining qty.
+- [X] Goods receipt: alert-message if no remaining qty.
 - [X] Goods receipt: qty field disabled if multiple line selected.
-- [ ] Goods receipt: correct remaining qty, no transaction if equal to 0.
+- [X] Goods receipt: correct remaining qty, no transaction if equal to 0.
 - [X] Authentication: Change validity of the  token to one day.
 - [ ] Inputs type date: validation formats (autofill year, allow single digit day/month).
 - [X] Qty picked: calculated from heats quantities.

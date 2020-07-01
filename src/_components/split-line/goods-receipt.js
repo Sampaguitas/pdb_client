@@ -228,12 +228,17 @@ function getTableIds(selectedRows, screenBodys) {
         });
         
         return filtered.reduce(function (acc, cur) {
-            
-            if(!acc.includes(cur.tablesId)) {
-                acc.push(cur.tablesId);
+            if(!acc.tableIds.includes(cur.tablesId)) {
+                acc.tableIds.push(cur.tablesId);
+            }
+            if (acc.isRemaining && !cur.isRemaining) {
+                acc.isRemaining = false;
             }
             return acc;
-        }, []);
+        }, {
+           tableIds: [],
+           isRemaining: true
+        });
 
     } else {
         return [];
@@ -283,15 +288,24 @@ class GoodsReceipt extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { selectedRows } = this.state;
-        const { screenBodys, updateSelectedIds } = this.props;
+        const { isRemaining, screenBodys, updateSelectedIds } = this.props;
 
         if (selectedRows != prevState.selectedRows || screenBodys != prevProps.screenBodys) {
             
             let tableIds = getTableIds(selectedRows, screenBodys);
-            if (_.isEmpty(tableIds)) {
+            if (_.isEmpty(tableIds.tableIds)) {
                 this.setState({ selectAllRows: false });
             }
-            updateSelectedIds(tableIds);
+            updateSelectedIds(tableIds.tableIds, tableIds.isRemaining);
+        }
+
+        if (isRemaining != prevProps.isRemaining) {
+            this.setState({
+                alert: {
+                    type: !isRemaining ? 'alert-warning' : '',
+                    message: !isRemaining ? 'Goods selected have already been received!' : '',
+                }
+            });
         }
     }
 
