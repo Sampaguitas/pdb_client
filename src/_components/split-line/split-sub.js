@@ -473,7 +473,7 @@ function getPoQty(selectedPo) {
 function getSubsQty(selectedPo) {
     if (selectedPo.hasOwnProperty('subs') && !_.isEmpty(selectedPo.subs)) {
         return selectedPo.subs.reduce(function(acc, curr) {
-            if (!curr.isRejected) {
+            if (!curr.isReturned) {
                 return acc += Number(curr.splitQty) || 0;
             }
         }, 0);
