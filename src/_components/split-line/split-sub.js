@@ -147,9 +147,9 @@ function getBodys(selectedPo, selection, headersForSelect){
     let project = selection.project || { _id: '0', name: '', number: '' };
     
     let i = 1;
-
     if (!_.isEmpty(selectedPo) && selectedPo.subs) {
         selectedPo.subs.map(sub => {
+            if(!sub.isReturned) {
                 if (!_.isEmpty(sub.packitems) && hasPackitems) {
                     virtuals(sub.packitems, selectedPo.uom, getPackItemFields(screenHeaders)).map(virtual => {
                         arrayRow = [];
@@ -302,7 +302,8 @@ function getBodys(selectedPo, selection, headersForSelect){
                     arrayBody.push(objectRow);
                     i++;
                 }
-            });
+            }
+        });
         return arrayBody;
     } else {
         return [];
@@ -472,12 +473,13 @@ function getPoQty(selectedPo) {
 function getSubsQty(selectedPo) {
     if (selectedPo.hasOwnProperty('subs') && !_.isEmpty(selectedPo.subs)) {
         return selectedPo.subs.reduce(function(acc, curr) {
-            return acc += Number(curr.splitQty) || 0;
+            if (!curr.isRejected) {
+                return acc += Number(curr.splitQty) || 0;
+            }
         }, 0);
     } else {
         return 0;
     }
-    
 }
 
 function getSelectionQty(selectedPo, subId) {
@@ -815,7 +817,6 @@ class SplitLine extends Component {
         let remainingQty = getRemainingQty(selectedPo, bodysForSelect, selectedLine, virtuals);
         let screenBody = selectedScreenBody(bodysForSelect, selectedLine);
         
-
         if (_.isEmpty(virtuals)) {
             this.setState({
                 alert: {
