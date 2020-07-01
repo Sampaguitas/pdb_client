@@ -474,8 +474,9 @@ function getSubsQty(selectedPo) {
     if (selectedPo.hasOwnProperty('subs') && !_.isEmpty(selectedPo.subs)) {
         return selectedPo.subs.reduce(function(acc, curr) {
             if (!curr.isReturned) {
-                return acc += Number(curr.splitQty) || 0;
+                acc += Number(curr.splitQty) || 0;
             }
+            return acc;
         }, 0);
     } else {
         return 0;

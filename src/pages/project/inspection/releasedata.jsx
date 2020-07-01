@@ -416,24 +416,144 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
         pos.items.map(po => {
             if (po.subs) {
                 po.subs.map(sub => {
-                    let certificate = sub.heats.reduce(function (acc, cur) {
-                        if (!acc.heatNr.split(' | ').includes(cur.heatNr)) {
-                            acc.heatNr = !acc.heatNr ? cur.heatNr : `${acc.heatNr} | ${cur.heatNr}`
-                        }
-                        if (!acc.cif.split(' | ').includes(cur.certificate.cif)) {
-                            acc.cif = !acc.cif ? cur.certificate.cif : `${acc.cif} | ${cur.certificate.cif}`
-                        }
-                        if (!acc.inspQty.split(' | ').includes(String(cur.inspQty))) {
-                            acc.inspQty = !acc.inspQty ? String(cur.inspQty) : `${acc.inspQty} | ${String(cur.inspQty)}`
-                        }
-                        return acc;
-                    }, {
-                        heatNr: '',
-                        cif: '',
-                        inspQty: ''
-                    });
-                    if (!_.isEmpty(sub.packitems) && hasPackitems) {
-                        virtuals(sub.packitems, po.uom, getPackItemFields(screenHeaders)).map(virtual => {
+                    if (!sub.isReturned) {
+                        let certificate = sub.heats.reduce(function (acc, cur) {
+                            if (!acc.heatNr.split(' | ').includes(cur.heatNr)) {
+                                acc.heatNr = !acc.heatNr ? cur.heatNr : `${acc.heatNr} | ${cur.heatNr}`
+                            }
+                            if (!acc.cif.split(' | ').includes(cur.certificate.cif)) {
+                                acc.cif = !acc.cif ? cur.certificate.cif : `${acc.cif} | ${cur.certificate.cif}`
+                            }
+                            if (!acc.inspQty.split(' | ').includes(String(cur.inspQty))) {
+                                acc.inspQty = !acc.inspQty ? String(cur.inspQty) : `${acc.inspQty} | ${String(cur.inspQty)}`
+                            }
+                            return acc;
+                        }, {
+                            heatNr: '',
+                            cif: '',
+                            inspQty: ''
+                        });
+                        if (!_.isEmpty(sub.packitems) && hasPackitems) {
+                            virtuals(sub.packitems, po.uom, getPackItemFields(screenHeaders)).map(virtual => {
+                                arrayRow = [];
+                                screenHeaders.map(screenHeader => {
+                                    switch(screenHeader.fields.fromTbl) {
+                                        case 'po':
+                                            if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                                arrayRow.push({
+                                                    collection: 'virtual',
+                                                    objectId: project._id,
+                                                    fieldName: screenHeader.fields.name,
+                                                    fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                                    disabled: screenHeader.edit,
+                                                    align: screenHeader.align,
+                                                    fieldType: getInputType(screenHeader.fields.type),
+                                                });
+                                            } else {
+                                                arrayRow.push({
+                                                    collection: 'po',
+                                                    objectId: po._id,
+                                                    fieldName: screenHeader.fields.name,
+                                                    fieldValue: po[screenHeader.fields.name],
+                                                    disabled: screenHeader.edit,
+                                                    align: screenHeader.align,
+                                                    fieldType: getInputType(screenHeader.fields.type),
+                                                });
+                                            }
+                                            break;
+                                        case 'sub':
+                                            if (screenHeader.fields.name === 'shippedQty') {
+                                                arrayRow.push({
+                                                    collection: 'virtual',
+                                                    objectId: sub._id,
+                                                    fieldName: 'shippedQty',
+                                                    fieldValue: virtual.shippedQty || '',
+                                                    disabled: screenHeader.edit,
+                                                    align: screenHeader.align,
+                                                    fieldType: getInputType(screenHeader.fields.type),
+                                                });
+                                            } else if (screenHeader.fields.name === 'heatNr') {
+                                                arrayRow.push({
+                                                    collection: 'virtual',
+                                                    objectId: '0',
+                                                    fieldName: screenHeader.fields.name,
+                                                    fieldValue: certificate[screenHeader.fields.name],
+                                                    disabled: screenHeader.edit,
+                                                    align: screenHeader.align,
+                                                    fieldType: getInputType(screenHeader.fields.type),
+                                                });
+                                            } else {
+                                                arrayRow.push({
+                                                    collection: 'sub',
+                                                    objectId: sub._id,
+                                                    fieldName: screenHeader.fields.name,
+                                                    fieldValue: sub[screenHeader.fields.name],
+                                                    disabled: screenHeader.edit,
+                                                    align: screenHeader.align,
+                                                    fieldType: getInputType(screenHeader.fields.type),
+                                                });
+                                            }
+                                            break;
+                                        case 'certificate':
+                                            arrayRow.push({
+                                                collection: 'virtual',
+                                                objectId: '0',
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: certificate[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                            break
+                                        case 'packitem':
+                                            if (screenHeader.fields.name === 'plNr') {
+                                                arrayRow.push({
+                                                    collection: 'virtual',
+                                                    objectId: virtual._id,
+                                                    fieldName: 'plNr',
+                                                    fieldValue: virtual.plNr,
+                                                    disabled: screenHeader.edit,
+                                                    align: screenHeader.align,
+                                                    fieldType: getInputType(screenHeader.fields.type),
+                                                });
+                                            } else {
+                                                arrayRow.push({
+                                                    collection: 'virtual',
+                                                    objectId: virtual._id,
+                                                    fieldName: screenHeader.fields.name,
+                                                    fieldValue: virtual[screenHeader.fields.name].join(' | '),
+                                                    disabled: screenHeader.edit,
+                                                    align: screenHeader.align,
+                                                    fieldType: 'text',
+                                                });
+                                            }
+                                            break;
+                                        default: arrayRow.push({
+                                                collection: 'virtual',
+                                                objectId: '0',
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: '',
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                });
+                                objectRow  = {
+                                    _id: i, 
+                                    tablesId: { 
+                                        poId: po._id,
+                                        subId: sub._id,
+                                        certificateId: '',
+                                        packitemId: '',
+                                        collipackId: '' 
+                                    },
+                                    fields: arrayRow
+                                };
+                                arrayBody.push(objectRow);
+                                i++;
+                            });
+                        } else {
                             arrayRow = [];
                             screenHeaders.map(screenHeader => {
                                 switch(screenHeader.fields.fromTbl) {
@@ -504,38 +624,15 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             fieldType: getInputType(screenHeader.fields.type),
                                         });
                                         break
-                                    case 'packitem':
-                                        if (screenHeader.fields.name === 'plNr') {
-                                            arrayRow.push({
-                                                collection: 'virtual',
-                                                objectId: virtual._id,
-                                                fieldName: 'plNr',
-                                                fieldValue: virtual.plNr,
-                                                disabled: screenHeader.edit,
-                                                align: screenHeader.align,
-                                                fieldType: getInputType(screenHeader.fields.type),
-                                            });
-                                        } else {
-                                            arrayRow.push({
-                                                collection: 'virtual',
-                                                objectId: virtual._id,
-                                                fieldName: screenHeader.fields.name,
-                                                fieldValue: virtual[screenHeader.fields.name].join(' | '),
-                                                disabled: screenHeader.edit,
-                                                align: screenHeader.align,
-                                                fieldType: 'text',
-                                            });
-                                        }
-                                        break;
                                     default: arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: '0',
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: '',
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                    });
+                                        collection: 'virtual',
+                                        objectId: '0',
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: '',
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    }); 
                                 }
                             });
                             objectRow  = {
@@ -551,104 +648,9 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                             };
                             arrayBody.push(objectRow);
                             i++;
-                        });
-                    } else {
-                        arrayRow = [];
-                        screenHeaders.map(screenHeader => {
-                            switch(screenHeader.fields.fromTbl) {
-                                case 'po':
-                                    if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: project._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'po',
-                                            objectId: po._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: po[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    }
-                                    break;
-                                case 'sub':
-                                    if (screenHeader.fields.name === 'shippedQty') {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: sub._id,
-                                            fieldName: 'shippedQty',
-                                            fieldValue: virtual.shippedQty || '',
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else if (screenHeader.fields.name === 'heatNr') {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: '0',
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: certificate[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'sub',
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    }
-                                    break;
-                                case 'certificate':
-                                    arrayRow.push({
-                                        collection: 'virtual',
-                                        objectId: '0',
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: certificate[screenHeader.fields.name],
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
-                                    break
-                                default: arrayRow.push({
-                                    collection: 'virtual',
-                                    objectId: '0',
-                                    fieldName: screenHeader.fields.name,
-                                    fieldValue: '',
-                                    disabled: screenHeader.edit,
-                                    align: screenHeader.align,
-                                    fieldType: getInputType(screenHeader.fields.type),
-                                }); 
-                            }
-                        });
-                        objectRow  = {
-                            _id: i, 
-                            tablesId: { 
-                                poId: po._id,
-                                subId: sub._id,
-                                certificateId: '',
-                                packitemId: '',
-                                collipackId: '' 
-                            },
-                            fields: arrayRow
-                        };
-                        arrayBody.push(objectRow);
-                        i++;
-                    }
-                })
+                        }
+                    } 
+                });
             }
         });
         return arrayBody;
@@ -661,15 +663,15 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
 function selectionHasNfi (selectedIds, pos) {
     let selectedSubIds = getObjectIds('sub', selectedIds)
     if (!_.isEmpty(selectedSubIds) && pos.hasOwnProperty('items')) {
-        return pos.items.reduce(function (accPo, currPo) {
-            let currPoHasNFI = currPo.subs.reduce(function (accSub, currSub){
+        return pos.items.reduce(function (accPo, curPo) {
+            let curPoHasNFI = curPo.subs.reduce(function (accSub, currSub){
                 if(selectedSubIds.includes(currSub._id) && currSub.hasOwnProperty('nfi') && !_.isNull(currSub.nfi)) {
                     accSub = true;
                 }
                 return accSub;
             }, false);
     
-            if (currPoHasNFI === true) {
+            if (curPoHasNFI === true) {
                 accPo = true;
             }
             return accPo;
@@ -682,14 +684,14 @@ function selectionHasNfi (selectedIds, pos) {
 
 function getNfiList(pos) {
     if (pos.hasOwnProperty('items') && !_.isUndefined(pos.items)){
-        let tempNfi = pos.items.reduce(function (accPo, currPo) {
-            let currPoNfi = currPo.subs.reduce(function (accSub, currSub) {
-                if (currSub.nfi) {
-                    accSub.push(currSub.nfi);
+        let tempNfi = pos.items.reduce(function (accPo, curPo) {
+            let curPoNfi = curPo.subs.reduce(function (accSub, curSub) {
+                if (!curSub.isReturned && !!curSub.nfi) {
+                    accSub.push(curSub.nfi);
                 }
                 return accSub;
             }, []);
-            return accPo.concat(currPoNfi);
+            return accPo.concat(curPoNfi);
         }, [])
         let uniqueNfi = [...new Set(tempNfi)];
         uniqueNfi.sort((a, b) => b - a);

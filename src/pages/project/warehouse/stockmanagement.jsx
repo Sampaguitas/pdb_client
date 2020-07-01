@@ -586,7 +586,7 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                             i++;
                         });
                     }
-                })
+                });
             }
         });
         return arrayBody;
@@ -659,6 +659,12 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
                     });
 
                     let qty = po.qty || 0;
+                    let returnedQty = po.subs.reduce(function(acc, cur) {
+                        if (!!cur.isReturned && !!cur.relQty) {
+                            acc += cur.relQty;
+                        }
+                        return acc;
+                    }, 0);
                     let stockQty = virtual.stockQty || 0;
                     
                     objectRow  = {
@@ -672,7 +678,7 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
                             locationId: virtual.locationId,
                         },
                         fields: arrayRow,
-                        isRemaining: qty > stockQty,
+                        isRemaining: (qty + returnedQty) > stockQty,
                     };
                     arrayBody.push(objectRow);
                     i++;
@@ -2125,7 +2131,7 @@ class StockManagement extends React.Component {
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <div id="stockManagement" className={ (alert.message && !showGoodsReceipt && !showTransfer && !showCorrection) ? "main-section-alert" : "main-section"}>
+                <div id="stockManagement" className={ (alert.message && !showGoodsReceipt && !showGoodsReturned && !showTransfer && !showCorrection) ? "main-section-alert" : "main-section"}>
                     <div className="action-row row">
                         <button title={myGoodsReceipt.title} className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleGoodsReceipt}>
                             <span><FontAwesomeIcon icon="cubes" className="fa mr-2"/>Goods Receipt</span>
