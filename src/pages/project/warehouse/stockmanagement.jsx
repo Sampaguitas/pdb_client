@@ -965,6 +965,11 @@ class StockManagement extends React.Component {
             whList: [],
             areaList: [],
             locList: [],
+            fileName: '',
+            inputKey: Date.now(),
+            responce:{},
+            isUploadingGr: false,
+            isDownloadingGr: false,
             isRemaining: true,
             isDownloadingFile: false,
             isReceiving: false,
@@ -973,6 +978,7 @@ class StockManagement extends React.Component {
                 message:''
             },
             showGoodsReceipt: false,
+            showGoodsReturned: false,
             showTransfer: false,
             showCorrection: false,
             showHeat: false,
@@ -1000,6 +1006,7 @@ class StockManagement extends React.Component {
 
         //Toggle Modals
         this.toggleGoodsReceipt = this.toggleGoodsReceipt.bind(this);
+        this.toggleGoodsReturned = this.toggleGoodsReturned.bind(this);
         this.toggleTransfer = this.toggleTransfer.bind(this);
         this.toggleCorrection = this.toggleCorrection.bind(this);
         this.toggleHeat = this.toggleHeat.bind(this);
@@ -1015,6 +1022,13 @@ class StockManagement extends React.Component {
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
+        //GoodsReturned
+        this.onKeyPress = this.onKeyPress.bind(this);
+        this.handleUploadFile = this.handleUploadFile.bind(this);
+        this.handleFileChange = this.handleFileChange.bind(this);
+        this.generateRejectionRows = this.generateRejectionRows.bind(this);
+        this.handleDownloadFile = this.handleDownloadFile.bind(this);
+        this.dufInput = React.createRef();
     }
 
     componentDidMount() {
@@ -1764,6 +1778,17 @@ class StockManagement extends React.Component {
         });
     }
 
+    toggleGoodsReturned(event) {
+        event.preventDefault();
+        const { showGoodsReturned } = this.state;
+        this.setState({
+            showGoodsReturned: !showGoodsReturned,
+            inputKey: Date.now(),
+            fileName: '',
+            responce:{}
+        });
+    }
+
     toggleTransfer(event) {
         event.preventDefault();
         const { showTransfer, selectedIds, whList } = this.state;
@@ -1878,6 +1903,113 @@ class StockManagement extends React.Component {
         })
     }
 
+    onKeyPress(event) {
+        if (event.which === 13 /* prevent form submit on key Enter */) {
+          event.preventDefault();
+        }
+    }
+
+    handleUploadFile(event){
+        event.preventDefault();
+        const { projectId, fileName, isUploadingGr } = this.state
+        if(!isUploadingGr && this.dufInput.current.files[0] && projectId && fileName) {
+            this.setState({isUploadingGr: true});
+            var data = new FormData()
+            data.append('file', this.dufInput.current.files[0]);
+            data.append('projectId', projectId);
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
+                body: data
+            }
+            return fetch(`${config.apiUrl}/duf/uploadGr`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                } else {
+                    this.setState({
+                        isUploadingGr: false,
+                        responce: {
+                            rejections: data.rejections,
+                            nProcessed: data.nProcessed,
+                            nRejected: data.nRejected,
+                            nAdded: data.nAdded,
+                            nEdited: data.nEdited
+                        },
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore);
+                }
+            }));            
+        }       
+    }
+
+    handleDownloadFile(event){
+        event.preventDefault();
+        const { isDownloadingGr } = this.state;
+        if (!isDownloadingGr) {
+            this.setState({isDownloadingGr: true});
+            const requestOptions = {
+                method: 'GET',
+                headers: { ...authHeader(), 'Content-Type': 'application/json'},
+            }
+            return fetch(`${config.apiUrl}/duf/downloadGr`, requestOptions)
+            .then(responce => {
+                if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                } else if (responce.status === 400) {
+                    this.setState({
+                        isDownloadingGr: false,
+                        alert: {
+                            type: 'alert-danger',
+                            message: 'an error has occured'  
+                        }
+                    });
+                } else {
+                    this.setState({
+                        isDownloadingGr: false
+                    }, () => responce.blob().then(blob => saveAs(blob, 'Goods Returned.xlsx')));
+                }
+            });
+        }      
+    }
+
+    handleFileChange(event){
+        if(event.target.files.length > 0) {
+            this.setState({
+                ...this.state,
+                fileName: event.target.files[0].name
+            });
+        }
+    }
+
+    generateRejectionRows(responce){
+        let temp =[]
+        if (!_.isEmpty(responce.rejections)) {
+            responce.rejections.map(function(r, index) {
+                temp.push(
+                    <tr key={index}>
+                        <td>{r.row}</td>
+                        <td>{r.reason}</td>
+                    </tr>
+                );
+            });
+            return (temp);
+        } else {
+            return (
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            );
+        }
+    }
+
     toggleCollapse() {
         const { dispatch } = this.props;
         dispatch(sidemenuActions.toggle());
@@ -1899,6 +2031,7 @@ class StockManagement extends React.Component {
             docList,
             //show modals
             showGoodsReceipt,
+            showGoodsReturned,
             showTransfer,
             showCorrection,
             showHeat,
@@ -1927,6 +2060,11 @@ class StockManagement extends React.Component {
             areaList,
             locList,
             //--------------------
+            fileName,
+            inputKey,
+            responce,
+            isUploadingGr,
+            isDownloadingGr,
             isRemaining,
             isReceiving,
             isDownloadingFile
@@ -1968,7 +2106,7 @@ class StockManagement extends React.Component {
         
         return (
             <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
-                {alert.message && !showGoodsReceipt && !showTransfer && !showCorrection &&
+                {alert.message && !showGoodsReceipt && !showGoodsReturned && !showTransfer && !showCorrection &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1991,6 +2129,9 @@ class StockManagement extends React.Component {
                     <div className="action-row row">
                         <button title={myGoodsReceipt.title} className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleGoodsReceipt}>
                             <span><FontAwesomeIcon icon="cubes" className="fa mr-2"/>Goods Receipt</span>
+                        </button>
+                        <button title={myGoodsReceipt.title} className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleGoodsReturned}>
+                            <span><FontAwesomeIcon icon="undo-alt" className="fa mr-2"/>Goods Returned</span>
                         </button>
                         <button title="Stock Transfer" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleTransfer}>
                             <span><FontAwesomeIcon icon="exchange" className="fa mr-2"/>Stock Transfer</span>
@@ -2061,6 +2202,83 @@ class StockManagement extends React.Component {
                         areaOptions={generateOptions(areaList)}
                         locOptions={generateOptions(locList)}
                     />
+                </Modal>
+                <Modal
+                    show={showGoodsReturned}
+                    hideModal={this.toggleGoodsReturned}
+                    title="Goods Returned"
+                    size="modal-xl"
+                >
+                    <div className="col-12">
+                        {alert.message && 
+                            <div className={`alert ${alert.type} mb-2`}>{alert.message}
+                                <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                    <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                                </button>
+                            </div>
+                        }
+                        <div className="action-row row ml-1 mb-3 mr-1" style={{height: '34px'}}>
+                            <form
+                                className="col-12"
+                                encType="multipart/form-data"
+                                onSubmit={this.handleUploadFile}
+                                onKeyPress={this.onKeyPress}
+                                style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
+                            >
+                                <div className="input-group">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" style={{width: '95px'}}>Select Template</span>
+                                        <input
+                                            type="file"
+                                            name="dufInput"
+                                            id="dufInput"
+                                            ref={this.dufInput}
+                                            className="custom-file-input"
+                                            style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
+                                            onChange={this.handleFileChange}
+                                            key={inputKey}
+                                        />
+                                    </div>
+                                    <label type="text" className="form-control text-left" htmlFor="dufInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
+                                    <div className="input-group-append">
+                                        <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
+                                            <span><FontAwesomeIcon icon={isUploadingGr ? "spinner" : "upload"} className={isUploadingGr ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Upload</span>
+                                        </button>
+                                        <button className="btn btn-outline-leeuwen-blue btn-lg" onClick={this.handleDownloadFile}>
+                                            <span><FontAwesomeIcon icon={isDownloadingGr ? "spinner" : "download"} className={isDownloadingGr ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Download</span>
+                                        </button> 
+                                    </div>       
+                                </div>
+                            </form>                    
+                        </div>
+                            {!_.isEmpty(responce) &&
+                                <div className="ml-1 mr-1">
+                                    <div className="form-group table-resonsive">
+                                        <strong>Total Processed:</strong> {responce.nProcessed}<br />
+                                        <strong>Total Records Added:</strong> {responce.nAdded}<br />
+                                        <strong>Total Records Edited:</strong> {responce.nEdited}<br />
+                                        <strong>Total Records Rejected:</strong> {responce.nRejected}<br />
+                                        <hr />
+                                    </div>
+                                    {!_.isEmpty(responce.rejections) &&
+                                        <div className="rejections">
+                                            <h3>Rejections</h3>
+                                                <table className="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style={{width: '10%'}}>Row</th>
+                                                            <th style={{width: '90%'}}>Reason</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {this.generateRejectionRows(responce)}
+                                                    </tbody>
+                                                </table>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                    </div>
                 </Modal>
                 <Modal
                     show={showTransfer}
