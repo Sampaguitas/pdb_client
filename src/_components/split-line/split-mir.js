@@ -18,6 +18,17 @@ function getInputType(dbFieldType) {
     }
 }
 
+function getLiteral(myLocale) {
+    let firstLiteral = myLocale.formatToParts().find(function (element) {
+      return element.type === 'literal';
+    });
+    if (firstLiteral) {
+      return firstLiteral.value;
+    } else {
+      return '/';
+    }
+};
+
 function getDateFormat(myLocale) {
     let tempDateFormat = ''
     myLocale.formatToParts().map(function (element) {
@@ -39,18 +50,6 @@ function getDateFormat(myLocale) {
     return tempDateFormat;
 }
 
-function isValidFormat (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(fieldValue, myDateFormat, true).isValid();
-            default: return true;
-        }
-    } else {
-        return true;
-    }
-    
-}
-
 function TypeToString (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
@@ -63,10 +62,38 @@ function TypeToString (fieldValue, fieldType, myDateFormat) {
     }
 }
 
-function DateToString (fieldValue, fieldType, myDateFormat) {
+function StirngToCache(fieldValue, myDateFormat) {
+    if (!!fieldValue) {
+        let separator = getLiteral(myLocale);
+        let cache = myDateFormat.replace('DD','00').replace('MM', '00').replace('YYYY', (new Date()).getFullYear()).split(separator);
+        let valueArray = fieldValue.split(separator);
+        return cache.reduce(function(acc, cur, idx) {
+            if (valueArray.length > idx) {
+              let curChars = cur.split("");
+                let valueChars = valueArray[idx].split("");
+              let tempArray = curChars.reduce(function(accChar, curChar, idxChar) {
+                  if (valueChars.length >= (curChars.length - idxChar)) {
+                    accChar += valueChars[valueChars.length - curChars.length + idxChar];
+                  } else {
+                    accChar += curChar;
+                  }
+                return accChar;
+              }, '')
+              acc.push(tempArray);
+            } else {
+              acc.push(cur);
+            }
+            return acc;
+          }, []).join(separator);
+    } else {
+        return fieldValue;
+    } 
+}
+
+function StringToType (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat));
+            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
             default: return fieldValue;
         }
     } else {
@@ -74,15 +101,16 @@ function DateToString (fieldValue, fieldType, myDateFormat) {
     }
 }
 
-function StringToDate (fieldValue, fieldType, myDateFormat) {
+function isValidFormat (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
-            case 'date': return moment(fieldValue, myDateFormat).toDate();
-            default: return fieldValue;
+            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat, true).isValid();
+            default: return true;
         }
     } else {
-        return '';
+        return true;
     }
+    
 }
 //--------------------------------------
 function sortCustom(array, headersForShow, sort) {

@@ -25,7 +25,7 @@
 - [X] Goods receipt: qty field disabled if multiple line selected.
 - [X] Goods receipt: correct remaining qty, no transaction if equal to 0.
 - [X] Authentication: Change validity of the  token to one day.
-- [ ] Inputs type date: validation formats (autofill year, allow single digit day/month).
+- [X] Inputs type date: validation formats (autofill year, allow single digit day/month).
 - [X] Qty picked: calculated from heats quantities.
 - [X] Typos: Tcicket, whant.
 - [ ] Select Order Line: only available in stock (mir);
