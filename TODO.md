@@ -20,6 +20,7 @@
 - [ ] Goods returned modal.
 ### Shipping Transport Docs
 - [ ] MiddleWare pre/post hooks (to be fixed).
+- [ ] If inspection module disabled: relQty = splitQty (virtual); 
 ### Minutes of Meeting
 - [X] Goods receipt: alert-message if no remaining qty.
 - [X] Goods receipt: qty field disabled if multiple line selected.
@@ -30,7 +31,7 @@
 - [X] Typos: Tcicket, whant.
 - [ ] Select Order Line: only available in stock (mir);
 - [ ] Mir: isProcessed = true when all picktickets are closed and qtyPicked = qtyRequired.
-- [X] Prevent users from creating two items if double click on create new row / add button. 
+- [X] Prevent users from creating two items if double click on create new row / add button.
 ### Styling
 - [X] Reduce layout margins (layout).
 - [X] Pass Menu collapsed state between screens (side menu).
