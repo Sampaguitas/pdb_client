@@ -11,7 +11,13 @@ class WarehouseCheck extends Component {
         this.onChange = this.onChange.bind(this);
     }
 
-    componentWillMount() {
+    // componentWillMount() {
+    //     const { isChecked } = this.props;
+    //     this.setState({
+    //         isChecked: isChecked
+    //     });
+    // }
+    componentDidMount() {
         const { isChecked } = this.props;
         this.setState({
             isChecked: isChecked

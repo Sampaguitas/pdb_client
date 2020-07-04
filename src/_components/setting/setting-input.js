@@ -29,11 +29,17 @@ function getDateFormat(myLocale) {
 class SettingInput extends Component {
     constructor(props) {
         super(props);
-        this.state = { value:'' };
+        this.state = { value: '' };
         this.onChange = this.onChange.bind(this);
     }
 
-    componentWillMount() {
+    // componentWillMount() {
+    //     const { value } = this.props;
+    //     this.setState({
+    //         value: value
+    //     });
+    // }
+    componentDidMount() {
         const { value } = this.props;
         this.setState({
             value: value
