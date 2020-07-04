@@ -35,12 +35,10 @@ class Duf extends React.Component {
             loaded: false,
             show: false,
             deleting: false,
-            //create new row
             newRow: false,
             fieldName:{},
             newRowFocus:false,
             creatingNewRow: false,
-            //creating new row
             newRowColor: 'inherit',
         }
         this.toggleSort = this.toggleSort.bind(this);
@@ -227,8 +225,9 @@ class Duf extends React.Component {
 
     handleDelete(event, selectedRows) {
         event.preventDefault();
+        const { deleting } = this.state;
         const { refreshFieldnames } = this.props;
-        if(_.isEmpty(selectedRows)) {
+        if(!deleting && !_.isEmpty(selectedRows)) {
             this.setState({
                 ...this.state,
                 deleting: true 
@@ -271,7 +270,6 @@ class Duf extends React.Component {
     }
     
 	toggleSelectAllRow() {
-        //event.preventDefault();
         const { selectAllRows } = this.state;
         const { fieldnames } = this.props;
         if (fieldnames.items) {
@@ -328,18 +326,15 @@ class Duf extends React.Component {
         const {
             fieldnames,
             fields,
-            selection, 
             tab,
             refreshFieldnames,
         } = this.props;
         
         const {
+            deleting,
             forShow,
-            screenId,
-            fieldId,
             custom,
             sort,
-            selectedScreen,
             selectedRows,
             selectAllRows,
             fieldName,
@@ -354,8 +349,8 @@ class Duf extends React.Component {
                         <button title="Add Field"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={event => this.toggleNewRow(event)}>
                             <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Add</span>
                         </button>
-                        <button title="Delete Field(s)"className="btn btn-leeuwen btn-lg" onClick={ (event) => this.handleDelete(event, selectedRows)}>
-                            <span><FontAwesomeIcon icon="trash-alt" className="fa mr-2"/>Delete</span>
+                        <button title="Delete Field(s)"className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedRows)}>
+                            <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Delete</span>
                         </button>
                 </div>
                 <div className="body-section">

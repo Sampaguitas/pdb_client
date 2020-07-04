@@ -1,272 +1,19 @@
 import React, { Component } from 'react';
 import config from 'config';
-// import { saveAs } from 'file-saver';
 import { authHeader } from '../../_helpers';
+import {
+    arrayRemove,
+    sortCustom,
+    doesMatch,
+    getTableIds
+} from '../../_functions';
 import HeaderInput from '../../_components/project-table/header-input';
 import TableInput from '../../_components/project-table/table-input';
 import Modal from "../../_components/modal";
 import TableSelectionRow from '../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../_components/project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-// import { AST_SwitchBranch } from 'terser';
-// import { isThisISOWeek } from 'date-fns/esm';
-import moment from 'moment';
 import _ from 'lodash';
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
-
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
-
-function TypeToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-
-function baseTen(number) {
-    return number.toString().length > 2 ? number : '0' + number;
-}
-
-function arrayRemove(arr, value) {
-
-    return arr.filter(function(ele){
-        return ele != value;
-    });
- 
-}
-
-function resolve(path, obj) {
-    return path.split('.').reduce(function(prev, curr) {
-        return prev ? prev[curr] : null
-    }, obj || self)
-}
-
-function arraySorted(array, field) {
-    if (array) {
-        const newArray = array
-        newArray.sort(function(a,b){
-            if (resolve(field, a) < resolve(field, b)) {
-                return -1;
-            } else if ((resolve(field, a) > resolve(field, b))) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        return newArray;             
-    }
-}
-
-function sortCustom(array, headersForShow, sort) {
-    let found = headersForShow.find(element => element._id === sort.name);
-    if (!found) {
-        return array;
-    } else {
-        let tempArray = array.slice(0);
-        let fieldName = found.fields.name
-        switch(found.fields.type) {
-            case 'String':
-                if (sort.isAscending) {
-                    return tempArray.sort(function (a, b) {
-                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
-                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
-                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
-                            return 0;
-                        } else {
-                            let valueA = !_.isUndefined(fieldA.fieldValue) && !_.isNull(fieldA.fieldValue) ? String(fieldA.fieldValue).toUpperCase() : '';
-                            let valueB = !_.isUndefined(fieldB.fieldValue) && !_.isNull(fieldB.fieldValue) ?  String(fieldB.fieldValue).toUpperCase() : '';
-                            if (valueA < valueB) {
-                                return -1;
-                            } else if (valueA > valueB) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    });
-                } else {
-                    return tempArray.sort(function (a, b) {
-                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
-                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
-                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
-                            return 0;
-                        } else {
-                            let valueA = !_.isUndefined(fieldA.fieldValue) && !_.isNull(fieldA.fieldValue) ? String(fieldA.fieldValue).toUpperCase() : '';
-                            let valueB = !_.isUndefined(fieldB.fieldValue) && !_.isNull(fieldB.fieldValue) ?  String(fieldB.fieldValue).toUpperCase() : '';
-                            if (valueA > valueB) {
-                                return -1;
-                            } else if (valueA < valueB) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    });
-                }
-            case 'Number':
-                if (sort.isAscending) {
-                    return tempArray.sort(function (a, b) {
-                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
-                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
-                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
-                            return 0;
-                        } else {
-                            let valueA = fieldA.fieldValue || 0;
-                            let valueB = fieldB.fieldValue || 0;
-                            return valueA - valueB;
-                        }
-                    });
-                } else {
-                    return tempArray.sort(function (a, b) {
-                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
-                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
-                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
-                            return 0;
-                        } else {
-                            let valueA = fieldA.fieldValue || 0;
-                            let valueB = fieldB.fieldValue || 0;
-                            return valueB - valueA;
-                        }
-                    });
-                }
-            case 'Date':
-                if (sort.isAscending) {
-                    return tempArray.sort(function (a, b) {
-                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
-                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
-                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
-                            return 0;
-                        } else {
-                            let dateA = new Date(fieldA.fieldValue || 0);
-                            let dateB = new Date(fieldB.fieldValue || 0);
-                            return dateA - dateB;
-                        }
-                    });
-                } else {
-                    return tempArray.sort(function (a, b) {
-                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
-                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
-                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
-                            return 0;
-                        } else {
-                            let dateA = new Date(fieldA.fieldValue || 0);
-                            let dateB = new Date(fieldB.fieldValue || 0);
-                            return dateB - dateA;
-                        }
-                    });
-                }
-            default: return array;
-        }
-    }   
-}
-
-function doesMatch(search, value, type, isEqual) {
-    
-    if (!search) {
-        return true;
-    } else if (!value && search != 'any' && search != 'false' && search != '-1' && String(search).toUpperCase() != '=BLANK') {
-        return false;
-    } else {
-        switch(type) {
-            case 'Id':
-                return _.isEqual(search, value);
-            case 'String':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(String(value).toUpperCase(), String(search).toUpperCase());
-                } else {
-                    return String(value).toUpperCase().includes(String(search).toUpperCase());
-                }
-            case 'Date':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(TypeToString(value, 'date', getDateFormat(myLocale)), search);
-                } else {
-                    return TypeToString(value, 'date', getDateFormat(myLocale)).includes(search);
-                }
-            case 'Number':
-                if (search === '-1') {
-                    return !value;
-                } else if (search === '-2') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual( Intl.NumberFormat().format(value).toString(), Intl.NumberFormat().format(search).toString());
-                } else {
-                    return Intl.NumberFormat().format(value).toString().includes(Intl.NumberFormat().format(search).toString());
-                }
-            case 'Boolean':
-                if(search == 'any') {
-                    return true; //any or equal
-                } else if (search == 'true' && !!value) {
-                    return true; //true
-                } else if (search == 'false' && !value) {
-                    return true; //true
-                }else {
-                    return false;
-                }
-            case 'Select':
-                if(search == 'any' || _.isEqual(search, value)) {
-                    return true; //any or equal
-                } else {
-                    return false;
-                }
-            default: return true;
-        }
-    }
-}
-
-function getTableIds(selectedRows, screenBodys) {
-    if (screenBodys) {
-        
-        let filtered = screenBodys.filter(function (s) {
-            return selectedRows.includes(s._id);
-        });
-        
-        return filtered.reduce(function (acc, cur) {
-            
-            if(!acc.includes(cur.tablesId)) {
-                acc.push(cur.tablesId);
-            }
-            return acc;
-        }, []);
-
-    } else {
-        return [];
-    }
-}
 
 class ProjectTable extends Component {
     constructor(props) {
@@ -327,10 +74,10 @@ class ProjectTable extends Component {
 
         if (selectedRows != prevState.selectedRows || screenBodys != prevProps.screenBodys) {
             let tableIds = getTableIds(selectedRows, screenBodys);
-            if (_.isEmpty(tableIds)) {
+            if (_.isEmpty(tableIds.tableIds)) {
                 this.setState({ selectAllRows: false });
             }
-            updateSelectedIds(tableIds);
+            updateSelectedIds(tableIds.tableIds);
         }
     }
 

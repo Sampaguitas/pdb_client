@@ -1,27 +1,8 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-function resolve(path, obj) {
-    return path.split('.').reduce(function(prev, curr) {
-        return prev ? prev[curr] : null
-    }, obj || self)
-}
-
-function arraySorted(array, field) {
-    if (array) {
-        const newArray = array
-        newArray.sort(function(a,b){
-            if (resolve(field, a) < resolve(field, b)) {
-                return -1;
-            } else if ((resolve(field, a) > resolve(field, b))) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        return newArray;             
-    }
-}
+import {
+    arraySorted,
+} from '../../_functions';
 
 class HeaderSelect extends Component{
 

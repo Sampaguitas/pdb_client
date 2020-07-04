@@ -4,13 +4,7 @@ import { authHeader } from '../../_helpers';
 import propTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './table-check-box.css'
-
 import classNames from 'classnames';
-
-function logout() {
-    // remove user from local storage to log user out
-    localStorage.removeItem('user');
-}
 
 class TableCheckBox extends Component {
     constructor(props) {

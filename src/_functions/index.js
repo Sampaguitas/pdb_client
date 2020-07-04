@@ -778,3 +778,30 @@ export function getPlList(collipacks) {
 export function getLocName(location, area) {
     return `${area.areaNr}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`;
 }
+
+export function getTableIds(selectedRows, screenBodys) {
+    if (screenBodys) {
+        
+        let filtered = screenBodys.filter(function (s) {
+            return selectedRows.includes(s._id);
+        });
+        
+        return filtered.reduce(function (acc, cur) {
+            if(!acc.tableIds.includes(cur.tablesId)) {
+                acc.tableIds.push(cur.tablesId);
+            }
+            if (acc.isRemaining && !cur.isRemaining) {
+                acc.isRemaining = false;
+            }
+            return acc;
+        }, {
+           tableIds: [],
+           isRemaining: true
+        });
+    } else {
+        return {
+            tableIds: [],
+            isRemaining: true
+         };
+    }
+}

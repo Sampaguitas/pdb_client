@@ -4,12 +4,9 @@ import { authHeader } from '../../_helpers';
 import propTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
-
-function resolve(path, obj) {
-    return path.split('.').reduce(function(prev, curr) {
-        return prev ? prev[curr] : null
-    }, obj || self)
-}
+import {
+    resolve
+} from '../../_functions';
 
 function arraySorted(array, field, fromTbls) {
     if (array) {

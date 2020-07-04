@@ -239,9 +239,11 @@ function getTableIds(selectedRows, screenBodys) {
            tableIds: [],
            isRemaining: true
         });
-
     } else {
-        return [];
+        return {
+            tableIds: [],
+            isRemaining: true
+         };
     }
 }
 

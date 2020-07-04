@@ -1,109 +1,15 @@
 import React, { Component } from 'react';
 import config from 'config';
 import { authHeader } from '../../_helpers';
-// import propTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
-import moment from 'moment';
-
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
-
-function getLiteral(myLocale) {
-    let firstLiteral = myLocale.formatToParts().find(function (element) {
-      return element.type === 'literal';
-    });
-    if (firstLiteral) {
-      return firstLiteral.value;
-    } else {
-      return '/';
-    }
-};
-
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
-
-function TypeToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function StirngToCache(fieldValue, myDateFormat) {
-    if (!!fieldValue) {
-        let separator = getLiteral(myLocale);
-        let cache = myDateFormat.replace('DD','00').replace('MM', '00').replace('YYYY', (new Date()).getFullYear()).split(separator);
-        let valueArray = fieldValue.split(separator);
-        return cache.reduce(function(acc, cur, idx) {
-            if (valueArray.length > idx) {
-              let curChars = cur.split("");
-                let valueChars = valueArray[idx].split("");
-              let tempArray = curChars.reduce(function(accChar, curChar, idxChar) {
-                  if (valueChars.length >= (curChars.length - idxChar)) {
-                    accChar += valueChars[valueChars.length - curChars.length + idxChar];
-                  } else {
-                    accChar += curChar;
-                  }
-                return accChar;
-              }, '')
-              acc.push(tempArray);
-            } else {
-              acc.push(cur);
-            }
-            return acc;
-          }, []).join(separator);
-    } else {
-        return fieldValue;
-    } 
-}
-
-function StringToType (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function isValidFormat (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat, true).isValid();
-            default: return true;
-        }
-    } else {
-        return true;
-    }
-    
-}
+import {
+    myLocale,
+    getDateFormat,
+    DateToString,
+    StringToType,
+    isValidFormat,
+} from '../../_functions';
 
 class TableInput extends Component{
     constructor(props) {
@@ -144,7 +50,7 @@ class TableInput extends Component{
             objectId: objectId,
             parentId: parentId, //<--------parentId
             fieldName: fieldName,
-            fieldValue: TypeToString (fieldValue, fieldType, getDateFormat(myLocale)),
+            fieldValue: DateToString (fieldValue, fieldType, getDateFormat(myLocale)),
             fieldType: fieldType,
         });  
     }
@@ -166,7 +72,7 @@ class TableInput extends Component{
                 objectId: objectId,
                 parentId: parentId, //<--------parentId
                 fieldName: fieldName,
-                fieldValue: TypeToString (fieldValue, fieldType, getDateFormat(myLocale)),
+                fieldValue: DateToString (fieldValue, fieldType, getDateFormat(myLocale)),
                 fieldType: fieldType,
                 isEditing: false,
                 isSelected: false,
@@ -233,11 +139,11 @@ class TableInput extends Component{
                     ...this.state, 
                     isEditing: false,
                     isSelected: false,
-                    color: _.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
-                    fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
+                    color: _.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
+                    fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
                 }, () => setTimeout( () => this.setState({ ...this.state, color: '#0070C0', }), 1000));
 
-            } else if (_.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)))){
+            } else if (_.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)))){
                 //inherit
                 this.setState({ ...this.state, isEditing: false, isSelected: false, color: '#0070C0' });
 
@@ -262,8 +168,8 @@ class TableInput extends Component{
                             ...this.state, 
                             isEditing: false,
                             isSelected: false,
-                            color: _.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
-                            fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
+                            color: _.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
+                            fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
                         }, () => setTimeout( () => this.setState({ ...this.state, color: '#0070C0', }), 1000));
                     } else {
                         this.setState({ ...this.state, isEditing: false, isSelected: false }, refreshStore)
@@ -276,7 +182,7 @@ class TableInput extends Component{
                         isEditing: false,
                         isSelected: false,
                         color: 'red',
-                        fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
+                        fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
                     }, () => setTimeout( () => this.setState({ ...this.state, color: '#0070C0' }), 1000))
                 });
             }
@@ -287,8 +193,8 @@ class TableInput extends Component{
                 ...this.state, 
                 isEditing: false,
                 isSelected: false,
-                color: _.isEqual(fieldValue, TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
-                fieldValue: this.props.fieldValue ? TypeToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
+                color: _.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
+                fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
             }, () => setTimeout( () => this.setState({...this.state, color: '#0070C0'}), 1000));
         
         }
@@ -362,15 +268,5 @@ class TableInput extends Component{
         );
     }
 }
-
-// TableInput.propTypes = {
-//     fieldType: propTypes.oneOf(['text', 'number', 'email', 'tel','password', 'date']).isRequired,
-//     fieldName: propTypes.string.isRequired,
-//     fieldValue:propTypes.oneOfType([
-//         propTypes.string,
-//         propTypes.number,
-//         propTypes.instanceOf(Date),
-//     ])
-// };
 
 export default TableInput;

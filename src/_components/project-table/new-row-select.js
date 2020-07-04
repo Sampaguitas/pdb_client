@@ -1,13 +1,9 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-
-function resolve(path, obj) {
-    return path.split('.').reduce(function(prev, curr) {
-        return prev ? prev[curr] : null
-    }, obj || self)
-}
-
+import {
+    resolve,
+} from '../../_functions';
 
 function arraySorted(array, field, fromTbls) {
     if (array) {
@@ -56,14 +52,11 @@ class NewRowSelect extends Component{
     }
 
     onClick() {
-        // const { disabled, unlocked } = this.props;
-        // if(unlocked || !disabled){
         this.setState({isSelected: true }, () => {
             setTimeout(() => {
             this.refs.select.focus();
             }, 1);
         });
-        // }
     }
 
     onFocus() {
@@ -97,7 +90,6 @@ class NewRowSelect extends Component{
         const {
             align,
             color,
-            disabled,
             fieldName,
             onChange,
             options,
@@ -118,15 +110,12 @@ class NewRowSelect extends Component{
         );
 
         return (
-            // isSelected ? (
             <td
                 onClick={() => this.onClick()} /////
                 style={{
-                    // color: isSelected ? 'inherit' : disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color, /////
                     color: isSelected ? 'inherit' : color,
                     width: `${width ? width : 'auto'}`,
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
-                    // padding: '0px'
                     padding: isSelected ? '0px': '5px', /////
                     cursor: isSelected ? 'auto' : 'pointer' /////
                 }}
@@ -141,7 +130,6 @@ class NewRowSelect extends Component{
                         value={fieldValue}
                         onChange={onChange}
                         onBlur={this.onBlur}
-                        // disabled={disabled}
                         onKeyDown={event => this.onKeyDown(event)} 
                     >
                         <option>Select...</option>
@@ -158,21 +146,6 @@ class NewRowSelect extends Component{
                     <span>{this.selectedName(options, fieldValue)}</span>
                 }
             </td>
-        // )
-        // :
-        // (
-        //     <td
-        //         onClick={() => this.onFocus()}
-        //         style={{
-        //             color: disabled ? 'inherit' : color,
-        //             width: `${width ? width : 'auto'}`,
-        //             whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`
-        //         }}
-        //         align={align ? align : 'left'}
-        //     >
-        //         {this.selectedName(options, value)}
-        //     </td>
-        // );
         );
     }
 }

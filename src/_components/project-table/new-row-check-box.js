@@ -18,8 +18,6 @@ class NewRowCheckBox extends Component {
             <td
                 style={{
                     width: `${width ? width : 'auto'}`,
-                    // whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
-                    // padding: '0px'
                 }}
             >
                 <div>
