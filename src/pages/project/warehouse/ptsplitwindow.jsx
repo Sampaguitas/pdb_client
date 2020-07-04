@@ -17,6 +17,14 @@ import {
     settingActions,
     sidemenuActions
 } from '../../../_actions';
+import {
+    baseTen,
+    getInputType,
+    getHeaders,
+    getLocName,
+    initSettingsFilter,
+    initSettingsDisplay
+} from '../../../_functions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import TabFilter from '../../../_components/setting/tab-filter';
@@ -26,285 +34,6 @@ import HeatPick from '../../../_components/split-line/heat-pick';
 import moment from 'moment';
 import _ from 'lodash';
 import { __promisify__ } from 'glob';
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
-
-function getLiteral(myLocale) {
-    let firstLiteral = myLocale.formatToParts().find(function (element) {
-      return element.type === 'literal';
-    });
-    if (firstLiteral) {
-      return firstLiteral.value;
-    } else {
-      return '/';
-    }
-};
-
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
-
-function passSelectedIds(selectedIds) {
-    if (_.isEmpty(selectedIds) || selectedIds.length > 1) {
-        return {};
-    } else {
-        return selectedIds[0];
-    }
-}
-
-// function passSelectedMir(selectedIds, mirs) {
-//     if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(mirs.items)){
-//         return {};
-//     } else {
-//         return mirs.items.find(mir => mir._id === selectedIds[0].mirId);
-//     }
-// }
-
-
-function TypeToString(fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'Date': return String(moment(fieldValue).format(myDateFormat));
-            case 'Number': return String(new Intl.NumberFormat().format(fieldValue)); 
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function DateToString(fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function StirngToCache(fieldValue, myDateFormat) {
-    if (!!fieldValue) {
-        let separator = getLiteral(myLocale);
-        let cache = myDateFormat.replace('DD','00').replace('MM', '00').replace('YYYY', (new Date()).getFullYear()).split(separator);
-        let valueArray = fieldValue.split(separator);
-        return cache.reduce(function(acc, cur, idx) {
-            if (valueArray.length > idx) {
-              let curChars = cur.split("");
-                let valueChars = valueArray[idx].split("");
-              let tempArray = curChars.reduce(function(accChar, curChar, idxChar) {
-                  if (valueChars.length >= (curChars.length - idxChar)) {
-                    accChar += valueChars[valueChars.length - curChars.length + idxChar];
-                  } else {
-                    accChar += curChar;
-                  }
-                return accChar;
-              }, '')
-              acc.push(tempArray);
-            } else {
-              acc.push(cur);
-            }
-            return acc;
-          }, []).join(separator);
-    } else {
-        return fieldValue;
-    } 
-}
-
-function StringToDate (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function StringToType (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function isValidFormat (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat, true).isValid();
-            default: return true;
-        }
-    } else {
-        return true;
-    }
-    
-}
-
-function baseTen(number) {
-    return number.toString().length > 2 ? number : '0' + number;
-}
-
-function resolve(path, obj) {
-    return path.split('.').reduce(function(prev, curr) {
-        return prev ? prev[curr] : null
-    }, obj || self)
-}
-
-function arraySorted(array, fieldOne, fieldTwo, fieldThree) {
-    if (array) {
-        const newArray = array
-        newArray.sort(function(a,b){
-            if (resolve(fieldOne, a) < resolve(fieldOne, b)) {
-                return -1;
-            } else if (resolve(fieldOne, a) > resolve(fieldOne, b)) {
-                return 1;
-            } else if (fieldTwo && resolve(fieldTwo, a) < resolve(fieldTwo, b)) {
-                return -1;
-            } else if (fieldTwo && resolve(fieldTwo, a) > resolve(fieldTwo, b)) {
-                return 1;
-            } else if (fieldThree && resolve(fieldThree, a) < resolve(fieldThree, b)) {
-                return -1;
-            } else if (fieldThree && resolve(fieldThree, a) > resolve(fieldThree, b)) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        return newArray;             
-    }
-}
-
-function findObj(array, search) {
-    if (!_.isEmpty(array) && search) {
-        return array.find((function(element) {
-            return _.isEqual(element._id, search);
-        }));
-    } else {
-        return {};
-    }
-}
-
-// function getScreenTbls (fieldnames) {
-//     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-//         return fieldnames.items.reduce(function (accumulator, currentValue) {
-//             if(!accumulator.includes(currentValue.fields.fromTbl)) {
-//                 accumulator.push(currentValue.fields.fromTbl)
-//             }
-//             return accumulator;
-//         },[]);
-//     } else {
-//         return [];
-//     }
-    
-// }
-
-function getScreenTbls (fieldnames, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        return fieldnames.items.reduce(function (accumulator, currentValue) {
-            if(!accumulator.includes(currentValue.fields.fromTbl) && currentValue.screenId === screenId) {
-                accumulator.push(currentValue.fields.fromTbl)
-            }
-            return accumulator;
-        },[]);
-    } else {
-        return [];
-    }
-    
-}
-
-function getInputType(dbFieldType) {
-    switch(dbFieldType) {
-        case 'Number': return 'number';
-        case 'Date': return 'date';
-        default: return 'text'
-    }
-}
-
-function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
-    
-    let tempArray = [];
-    let screens = [
-        '5cd2b642fd333616dc360b63', //Expediting
-        '5cd2b646fd333616dc360b70', //Expediting Splitwindow
-        '5cd2b642fd333616dc360b64', //Inspection
-        '5cd2b647fd333616dc360b71', //Inspection Splitwindow
-        '5cd2b643fd333616dc360b66', //Assign Transport
-        '5cd2b647fd333616dc360b72', //Assign Transport SplitWindow
-        '5cd2b643fd333616dc360b67', //Print Transportdocuments
-        '5cd2b642fd333616dc360b65', //Certificates
-        '5cd2b644fd333616dc360b69', //Suppliers
-        '5ea8eefb7c213e2096462a2c', //Stock Management
-        '5eb0f60ce7179a42f173de47', //Goods Receipt with PO
-        '5ea911747c213e2096462d79', //Goods Receipt with NFI
-        '5ea919727c213e2096462e3f', //Goods Receipt with PL
-        '5ed1e76e7c213e044cc01884', //Material Issue Record
-        '5ed1e7a67c213e044cc01888', //Material Issue Record Splitwindow
-        '5ee60fbb7c213e044cc480e4', //'WH Assign Transport'
-        '5ee60fd27c213e044cc480e7', //'WH Assign Transport SplitWindow'
-        '5ee60fe87c213e044cc480ea', //'WH Print Transportdocuments'
-    ];
-
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        
-        
-        let displayIds = settingsDisplay.reduce(function(acc, cur) {
-            if (!!cur.isChecked) {
-                acc.push(cur._id);
-            }
-            return acc;
-        }, []);
-
-        if (!_.isEmpty(displayIds) && screens.includes(screenId)) {
-            tempArray = fieldnames.items.filter(function(element) {
-                return (_.isEqual(element.screenId, screenId) && !!element[forWhat] && displayIds.includes(element._id)); 
-            });
-        } else {
-            tempArray = fieldnames.items.filter(function(element) {
-                return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
-            });
-        }
-
-        if (!!tempArray) {
-            return tempArray.sort(function(a,b) {
-                return a[forWhat] - b[forWhat];
-            });
-        } 
-    }
-
-    return [];
-}
-
-function getLocName(location, area) {
-    return `${area.areaNr}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`;
-}
-
-function leadingChar(string, char, length) {
-    return string.toString().length > length ? string : char.repeat(length - string.toString().length) + string;
-}
 
 function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
     let arrayBody = [];
@@ -503,90 +232,6 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
     }
 }
 
-function initSettingsFilter(fieldnames, settings, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow && !!element.forSelect);
-        let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
-
-        if (!tempArray) {
-            return [];
-        } else {
-            tempArray.sort(function(a,b) {
-                return a.forSelect - b.forSelect;
-            });
-            return tempArray.reduce(function(acc, cur) {
-                if (_.isUndefined(screenSettings) || _.isEmpty(screenSettings.params.filter)) {
-                    acc.push({
-                        _id: cur._id,
-                        name: cur.fields.name,
-                        custom: cur.fields.custom,
-                        value: '',
-                        type: cur.fields.type,
-                        isEqual: false
-                    });
-                } else {
-                    let found = screenSettings.params.filter.find(element => element._id === cur._id);
-                    if (_.isUndefined(found)) {
-                        acc.push({
-                            _id: cur._id,
-                            name: cur.fields.name,
-                            custom: cur.fields.custom,
-                            value: '',
-                            type: cur.fields.type,
-                            isEqual: false
-                        });
-                    } else {
-                        acc.push({
-                            _id: cur._id,
-                            name: cur.fields.name,
-                            custom: cur.fields.custom,
-                            value: found.value,
-                            type: cur.fields.type,
-                            isEqual: found.isEqual
-                        });
-                    }
-                }
-                return acc;
-            }, []);
-        }
-    } else {
-        return [];
-    }
-}
-
-function initSettingsDisplay(fieldnames, settings, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow);
-        let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
-
-        if (!tempArray) {
-            return [];
-        } else {
-            tempArray.sort(function(a,b) {
-                return a.forShow - b.forShow;
-            });
-            return tempArray.reduce(function(acc, cur) {
-                if (_.isUndefined(screenSettings) || !screenSettings.params.display.includes(cur._id)) {
-                    acc.push({
-                        _id: cur._id,
-                        custom: cur.fields.custom,
-                        isChecked: true
-                    });
-                } else {
-                    acc.push({
-                        _id: cur._id,
-                        custom: cur.fields.custom,
-                        isChecked: false
-                    });
-                }
-                return acc;
-            }, []);
-        }
-    } else {
-        return [];
-    }
-}
-
 class PtSplitwindow extends React.Component {
     constructor(props) {
         super(props);
@@ -631,7 +276,6 @@ class PtSplitwindow extends React.Component {
                 type:'',
                 message:''
             },
-            // showSplitLine: false,
             showSettings: false,
             showHeat: false,
             processing: false,
@@ -641,9 +285,6 @@ class PtSplitwindow extends React.Component {
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
-        // this.handleChangeNewMir = this.handleChangeNewMir.bind(this);
-        
-
         this.refreshStore = this.refreshStore.bind(this);
         this.refresHeatLocs = this.refresHeatLocs.bind(this);
         this.refreshHeatPicks = this.refreshHeatPicks.bind(this);
@@ -653,10 +294,8 @@ class PtSplitwindow extends React.Component {
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
         this.handleClosePickTicket = this.handleClosePickTicket.bind(this);
         this.handleOpenPickTicket = this.handleOpenPickTicket.bind(this);
-        //Toggle Modals
         this.toggleHeat = this.toggleHeat.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
-        //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
         this.handleIsEqualSettings = this.handleIsEqualSettings.bind(this);
         this.handleClearInputSettings = this.handleClearInputSettings.bind(this);
@@ -665,7 +304,6 @@ class PtSplitwindow extends React.Component {
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
-        
     }
 
     componentDidMount() {
@@ -689,7 +327,6 @@ class PtSplitwindow extends React.Component {
         } = this.props;
 
         const { menuItem, screenId, headersForShow, settingsDisplay } = this.state; //splitScreenId
-
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
         let projectId = qs.id;
@@ -745,8 +382,7 @@ class PtSplitwindow extends React.Component {
                             projectId: found.projectId || ''
                         }
                     });
-                }
-                
+                } 
             }
         });
     }
@@ -787,10 +423,8 @@ class PtSplitwindow extends React.Component {
                         projectId: found.projectId || ''
                     }
                 });
-            }
-            
+            }  
         }
-
     }
 
     handleClearAlert(event){
@@ -1159,19 +793,12 @@ class PtSplitwindow extends React.Component {
             screenId,
             selectedIds, 
             unlocked, 
-            //show modals
-            // showSplitLine,
             showHeat,
             showSettings,
-            //--------
             headersForShow,
             bodysForShow,
-            //---------------
             pickticket,
-            // newMir,
-            // showCreate,
             processing,
-            //'-------------------'
             tabs,
             settingsFilter,
             settingsDisplay

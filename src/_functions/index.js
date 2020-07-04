@@ -69,6 +69,7 @@ export function StirngToCache(fieldValue, myDateFormat) {
 export function StringToDate (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
+            case 'Date':
             case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
             default: return fieldValue;
         }
@@ -80,6 +81,7 @@ export function StringToDate (fieldValue, fieldType, myDateFormat) {
 export function isValidFormat (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
+            case 'Date':
             case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat, true).isValid();
             default: return true;
         }
@@ -92,7 +94,9 @@ export function isValidFormat (fieldValue, fieldType, myDateFormat) {
 export function TypeToString (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
+            case 'Date':
             case 'date': return String(moment(fieldValue).format(myDateFormat));
+            case 'Number':
             case 'number': return String(new Intl.NumberFormat().format(fieldValue));
             default: return fieldValue;
         }
@@ -104,6 +108,7 @@ export function TypeToString (fieldValue, fieldType, myDateFormat) {
 export function DateToString (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
+            case 'Date':
             case 'date': return String(moment(fieldValue).format(myDateFormat)); 
             default: return fieldValue;
         }
@@ -111,8 +116,6 @@ export function DateToString (fieldValue, fieldType, myDateFormat) {
         return '';
     }
 }
-
-
 
 export function doesMatch(search, value, type, isEqual) {
     
@@ -176,8 +179,8 @@ export function doesMatch(search, value, type, isEqual) {
 }
 
 export function resolve(path, obj) {
-    return path.split('.').reduce(function(prev, curr) {
-        return prev ? prev[curr] : null
+    return path.split('.').reduce(function(prev, cur) {
+        return prev ? prev[cur] : null
     }, obj || self)
 }
 
@@ -256,7 +259,6 @@ export function generateOptions(list) {
 }
 
 export function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
-    
     let tempArray = [];
     let screens = [
         '5cd2b642fd333616dc360b63', //Expediting
@@ -278,16 +280,13 @@ export function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
         '5ee60fd27c213e044cc480e7', //'WH Assign Transport SplitWindow'
         '5ee60fe87c213e044cc480ea', //'WH Print Transportdocuments'
     ];
-
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        
-        
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
         let displayIds = settingsDisplay.reduce(function(acc, cur) {
             if (!!cur.isChecked) {
                 acc.push(cur._id);
             }
             return acc;
         }, []);
-
         if (!_.isEmpty(displayIds) && screens.includes(screenId)) {
             tempArray = fieldnames.items.filter(function(element) {
                 return (_.isEqual(element.screenId, screenId) && !!element[forWhat] && displayIds.includes(element._id)); 
@@ -297,14 +296,12 @@ export function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
                 return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
             });
         }
-
         if (!!tempArray) {
             return tempArray.sort(function(a,b) {
                 return a[forWhat] - b[forWhat];
             });
         } 
     }
-
     return [];
 }
 
@@ -422,11 +419,27 @@ export function getScreenTbls (fieldnames, screenId) {
     }
 }
 
-export function getPackItemFields (screenHeaders) {
+// export function getPackItemFields (screenHeaders) {
+//     if (screenHeaders) {
+//         let tempArray = [];
+//         screenHeaders.reduce(function (acc, cur) {
+//             if (cur.fields.fromTbl === 'packitem' && !acc.includes(cur.fields._id)) {
+//                 tempArray.push(cur.fields);
+//                 acc.push(cur.fields._id);
+//             }
+//             return acc;
+//         },[]);
+//         return tempArray;
+//     } else {
+//         return [];
+//     }
+// }
+
+export function getTblFields (screenHeaders, fromTbl) {
     if (screenHeaders) {
         let tempArray = [];
         screenHeaders.reduce(function (acc, cur) {
-            if (cur.fields.fromTbl === 'packitem' && !acc.includes(cur.fields._id)) {
+            if (cur.fields.fromTbl === fromTbl && !acc.includes(cur.fields._id)) {
                 tempArray.push(cur.fields);
                 acc.push(cur.fields._id);
             }
@@ -453,33 +466,81 @@ export function hasPackingList(packItemFields) {
 export function getObjectIds(collection, selectedIds) {
     if (!_.isEmpty(selectedIds)) {
         switch(collection) {
-            case 'po': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.poId)) {
-                    acc.push(curr.poId);
+            case 'area': return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.areaId)) {
+                    acc.push(cur.areaId);
                 }
                 return acc;
             }, []);
-            case 'sub': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.subId)) {
-                    acc.push(curr.subId);
+            case 'certificate': return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.certificateId)) {
+                    acc.push(cur.certificateId);
                 }
                 return acc;
             }, []);
-            case 'certificate': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.certificateId)) {
-                    acc.push(curr.certificateId);
+            case 'collipack': return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.collipackId)) {
+                    acc.push(cur.collipackId);
                 }
                 return acc;
             }, []);
-            case 'packitem': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.packitemId)) {
-                    acc.push(curr.packitemId);
+            case 'location': return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.locationId)) {
+                    acc.push(cur.locationId);
                 }
                 return acc;
             }, []);
-            case 'collipack': return selectedIds.reduce(function(acc, curr) {
-                if(!acc.includes(curr.collipackId)) {
-                    acc.push(curr.collipackId);
+            case 'miritem' : return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.miritemId)) {
+                    acc.push(cur.miritemId);
+                }
+                return acc;
+            }, []);
+            case 'packitem': return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.packitemId)) {
+                    acc.push(cur.packitemId);
+                }
+                return acc;
+            }, []);
+            case 'pickitem' : return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.pickitemId)) {
+                    acc.push(cur.pickitemId);
+                }
+                return acc;
+            }, []);
+            case 'pickticket' : return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.pickticketId)) {
+                    acc.push(cur.pickticketId);
+                }
+                return acc;
+            }, []);
+            case 'po': return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.poId)) {
+                    acc.push(cur.poId);
+                }
+                return acc;
+            }, []);
+            case 'project' : return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.projectId)) {
+                    acc.push(cur.projectId);
+                }
+                return acc;
+            }, []);
+            case 'sub': return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.subId)) {
+                    acc.push(cur.subId);
+                }
+                return acc;
+            }, []);
+            case 'warehouse': return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.warehouseId)) {
+                    acc.push(cur.warehouseId);
+                }
+                return acc;
+            }, []);
+            case 'whpackitem': return selectedIds.reduce(function(acc, cur) {
+                if(!acc.includes(cur.whpackitemId)) {
+                    acc.push(cur.whpackitemId);
                 }
                 return acc;
             }, []);
@@ -696,4 +757,24 @@ export function sortCustom(array, headersForShow, sort) {
             default: return array;
         }
     }   
+}
+
+export function getPlList(collipacks) {
+    if (collipacks.hasOwnProperty('items') && !_.isUndefined(collipacks.items)){
+        let tempPl = collipacks.items.reduce(function (acc, cur) {
+                if(!!cur.plNr && !acc.includes(cur.plNr)) {
+                    acc.push(cur.plNr);
+                }
+                return acc;
+        }, []);
+        tempPl.sort((a, b) => Number(b) - Number(a));
+        return tempPl.reduce(function(acc, cur) {
+            acc.push({_id: cur, name: cur});
+            return acc;
+        }, []);
+    }
+}
+
+export function getLocName(location, area) {
+    return `${area.areaNr}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`;
 }

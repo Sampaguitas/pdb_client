@@ -32,7 +32,8 @@ import {
     getHeaders,
     generateOptions,
     initSettingsFilter,
-    initSettingsDisplay
+    initSettingsDisplay,
+    getPlList
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
@@ -105,24 +106,6 @@ function getBodys(collipacks, headersForShow){
         return arrayBody;
     } else {
         return [];
-    }
-
-
-}
-
-function getPlList(collipacks) {
-    if (collipacks.hasOwnProperty('items') && !_.isUndefined(collipacks.items)){
-        let tempPl = collipacks.items.reduce(function (acc, cur) {
-                if(!!cur.plNr && !acc.includes(cur.plNr)) {
-                    acc.push(cur.plNr);
-                }
-                return acc;
-        }, []);
-        tempPl.sort((a, b) => Number(b) - Number(a));
-        return tempPl.reduce(function(acc, cur) {
-            acc.push({_id: cur, name: cur});
-            return acc;
-        }, []);
     }
 }
 

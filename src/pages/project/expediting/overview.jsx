@@ -36,7 +36,7 @@ import {
     passSelectedIds,
     passSelectedPo,
     getScreenTbls,
-    getPackItemFields,
+    getTblFields,
     hasPackingList
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
@@ -174,7 +174,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                             inspQty: ''
                         });
                         if (!_.isEmpty(sub.packitems) && hasPackitems) {
-                            virtuals(sub.packitems, po.uom, getPackItemFields(screenHeaders)).map(virtual => {
+                            virtuals(sub.packitems, po.uom, getTblFields(screenHeaders, 'packitem')).map(virtual => {
                                 arrayRow = [];
                                 screenHeaders.map(screenHeader => {
                                     switch(screenHeader.fields.fromTbl) {

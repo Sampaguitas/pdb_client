@@ -148,13 +148,13 @@ function getScreenTbls (headersForSelect) {
     }
 }
 
-function getPackItemFields (screenHeaders) {
+function getTblFields (screenHeaders, fromTbl) {
     if (screenHeaders) {
         let tempArray = [];
-        screenHeaders.reduce(function (acc, curr) {
-            if (curr.fields.fromTbl === 'packitem' && !acc.includes(curr.fields._id)) {
-                tempArray.push(curr.fields);
-                acc.push(curr.fields._id);
+        screenHeaders.reduce(function (acc, cur) {
+            if (cur.fields.fromTbl === fromTbl && !acc.includes(cur.fields._id)) {
+                tempArray.push(cur.fields);
+                acc.push(cur.fields._id);
             }
             return acc;
         },[]);
@@ -201,7 +201,7 @@ function getBodys(selectedPo, selection, headersForSelect){
         selectedPo.subs.map(sub => {
             if(!sub.isReturned) {
                 if (!_.isEmpty(sub.packitems) && hasPackitems) {
-                    virtuals(sub.packitems, selectedPo.uom, getPackItemFields(screenHeaders)).map(virtual => {
+                    virtuals(sub.packitems, selectedPo.uom, getTblFields(screenHeaders, 'packitem')).map(virtual => {
                         arrayRow = [];
                         screenHeaders.map(screenHeader => {
                             switch(screenHeader.fields.fromTbl) {

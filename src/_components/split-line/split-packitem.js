@@ -147,22 +147,6 @@ function getScreenTbls (headersForSelect) {
     }
 }
 
-function getPackItemFields (screenHeaders) {
-    if (screenHeaders) {
-        let tempArray = [];
-        screenHeaders.reduce(function (acc, curr) {
-            if (curr.fields.fromTbl === 'packitem' && !acc.includes(curr.fields._id)) {
-                tempArray.push(curr.fields);
-                acc.push(curr.fields._id);
-            }
-            return acc;
-        },[]);
-        return tempArray;
-    } else {
-        return [];
-    }
-}
-
 function virtuals(packitems, uom) {
     let tempVirtuals = [];
     let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(uom.toUpperCase()) ? 'mtrs' : 'pcs';

@@ -12,6 +12,11 @@ import {
     sidemenuActions,
     warehouseActions,
 } from '../../../_actions';
+import {
+    arrayRemove,
+    leadingChar,
+    doesMatch,
+} from '../../../_functions';
 import Layout from '../../../_components/layout';
 import HeaderInput from '../../../_components/project-table/header-input';
 import HeaderSelect from '../../../_components/project-table/header-select';
@@ -20,18 +25,6 @@ import TableSelectionRow from '../../../_components/project-table/table-selectio
 import TableSelectionAllRow from '../../../_components/project-table/table-selection-all-row';
 import Modal from '../../../_components/modal';
 import Warehouse from '../../../_components/split-line/warehouse';
-
-function arrayRemove(arr, value) {
-
-    return arr.filter(function(ele){
-        return ele != value;
-    });
- 
-}
-
-function leadingChar(string, char, length) {
-    return string.toString().length > length ? string : char.repeat(length - string.toString().length) + string;
-}
 
 function locationSorted(array, sort) {
     let tempArray = array.slice(0);
@@ -71,67 +64,6 @@ function locationSorted(array, sort) {
                 });
             }
         default: return array; 
-    }
-}
-
-function doesMatch(search, value, type, isEqual) {
-    
-    if (!search) {
-        return true;
-    } else if (!value && search != 'any' && search != 'false' && search != '-1' && String(search).toUpperCase() != '=BLANK') {
-        return false;
-    } else {
-        switch(type) {
-            case 'Id':
-                return _.isEqual(search, value);
-            case 'String':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(String(value).toUpperCase(), String(search).toUpperCase());
-                } else {
-                    return String(value).toUpperCase().includes(String(search).toUpperCase());
-                }
-            case 'Date':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(TypeToString(value, 'date', getDateFormat(myLocale)), search);
-                } else {
-                    return TypeToString(value, 'date', getDateFormat(myLocale)).includes(search);
-                }
-            case 'Number':
-                if (search === '-1') {
-                    return !value;
-                } else if (search === '-2') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual( Intl.NumberFormat().format(value).toString(), Intl.NumberFormat().format(search).toString());
-                } else {
-                    return Intl.NumberFormat().format(value).toString().includes(Intl.NumberFormat().format(search).toString());
-                }
-            case 'Boolean':
-                if(search == 'any') {
-                    return true; //any or equal
-                } else if (search == 'true' && !!value) {
-                    return true; //true
-                } else if (search == 'false' && !value) {
-                    return true; //true
-                }else {
-                    return false;
-                }
-            case 'Select':
-                if(search == 'any' || _.isEqual(search, value)) {
-                    return true; //any or equal
-                } else {
-                    return false;
-                }
-            default: return true;
-        }
     }
 }
 
