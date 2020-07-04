@@ -38,7 +38,7 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
-    getTblFields
+    getTblFields // -> check this one
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';

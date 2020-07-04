@@ -2,109 +2,118 @@ import React, { Component } from 'react';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../_helpers';
+import {
+    locale,
+    options,
+    myLocale,
+    getLiteral,
+    getDateFormat,
+    TypeToString,
+    StirngToCache,
+    StringToType,
+    isValidFormat
+} from '../../_functions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import classNames from 'classnames';
 import moment from 'moment';
 
+// const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+// const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
+// const myLocale = Intl.DateTimeFormat(locale, options);
 
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
+// function getLiteral(myLocale) {
+//     let firstLiteral = myLocale.formatToParts().find(function (element) {
+//       return element.type === 'literal';
+//     });
+//     if (firstLiteral) {
+//       return firstLiteral.value;
+//     } else {
+//       return '/';
+//     }
+// };
 
-function getLiteral(myLocale) {
-    let firstLiteral = myLocale.formatToParts().find(function (element) {
-      return element.type === 'literal';
-    });
-    if (firstLiteral) {
-      return firstLiteral.value;
-    } else {
-      return '/';
-    }
-};
+// function getDateFormat(myLocale) {
+//     let tempDateFormat = ''
+//     myLocale.formatToParts().map(function (element) {
+//         switch(element.type) {
+//             case 'month': 
+//                 tempDateFormat = tempDateFormat + 'MM';
+//                 break;
+//             case 'literal': 
+//                 tempDateFormat = tempDateFormat + element.value;
+//                 break;
+//             case 'day': 
+//                 tempDateFormat = tempDateFormat + 'DD';
+//                 break;
+//             case 'year': 
+//                 tempDateFormat = tempDateFormat + 'YYYY';
+//                 break;
+//         }
+//     });
+//     return tempDateFormat;
+// }
 
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
+// function TypeToString (fieldValue, fieldType, myDateFormat) {
+//     if (fieldValue) {
+//         switch (fieldType) {
+//             case 'date': return String(moment(fieldValue).format(myDateFormat)); 
+//             default: return fieldValue;
+//         }
+//     } else {
+//         return '';
+//     }
+// }
 
-function TypeToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
+// function StirngToCache(fieldValue, myDateFormat) {
+//     if (!!fieldValue) {
+//         let separator = getLiteral(myLocale);
+//         let cache = myDateFormat.replace('DD','00').replace('MM', '00').replace('YYYY', (new Date()).getFullYear()).split(separator);
+//         let valueArray = fieldValue.split(separator);
+//         return cache.reduce(function(acc, cur, idx) {
+//             if (valueArray.length > idx) {
+//               let curChars = cur.split("");
+//                 let valueChars = valueArray[idx].split("");
+//               let tempArray = curChars.reduce(function(accChar, curChar, idxChar) {
+//                   if (valueChars.length >= (curChars.length - idxChar)) {
+//                     accChar += valueChars[valueChars.length - curChars.length + idxChar];
+//                   } else {
+//                     accChar += curChar;
+//                   }
+//                 return accChar;
+//               }, '')
+//               acc.push(tempArray);
+//             } else {
+//               acc.push(cur);
+//             }
+//             return acc;
+//           }, []).join(separator);
+//     } else {
+//         return fieldValue;
+//     } 
+// }
 
-function StirngToCache(fieldValue, myDateFormat) {
-    if (!!fieldValue) {
-        let separator = getLiteral(myLocale);
-        let cache = myDateFormat.replace('DD','00').replace('MM', '00').replace('YYYY', (new Date()).getFullYear()).split(separator);
-        let valueArray = fieldValue.split(separator);
-        return cache.reduce(function(acc, cur, idx) {
-            if (valueArray.length > idx) {
-              let curChars = cur.split("");
-                let valueChars = valueArray[idx].split("");
-              let tempArray = curChars.reduce(function(accChar, curChar, idxChar) {
-                  if (valueChars.length >= (curChars.length - idxChar)) {
-                    accChar += valueChars[valueChars.length - curChars.length + idxChar];
-                  } else {
-                    accChar += curChar;
-                  }
-                return accChar;
-              }, '')
-              acc.push(tempArray);
-            } else {
-              acc.push(cur);
-            }
-            return acc;
-          }, []).join(separator);
-    } else {
-        return fieldValue;
-    } 
-}
+// function StringToType (fieldValue, fieldType, myDateFormat) {
+//     if (fieldValue) {
+//         switch (fieldType) {
+//             case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
+//             default: return fieldValue;
+//         }
+//     } else {
+//         return '';
+//     }
+// }
 
-function StringToType (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function isValidFormat (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat, true).isValid();
-            default: return true;
-        }
-    } else {
-        return true;
-    }
-    
-}
+// function isValidFormat (fieldValue, fieldType, myDateFormat) {
+//     if (fieldValue) {
+//         switch (fieldType) {
+//             case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat, true).isValid();
+//             default: return true;
+//         }
+//     } else {
+//         return true;
+//     }
+// }
 
 class CifInput extends Component{
     constructor(props) {

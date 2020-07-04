@@ -413,6 +413,7 @@ class Heat extends Component {
                 }
             });
         } else {
+            console.log('selectedIds:', selectedIds);
             this.setState({
                 // ...this.state,
                 deleting: true
