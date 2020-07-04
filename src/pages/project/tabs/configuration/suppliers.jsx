@@ -1,234 +1,21 @@
 import React from 'react';
 import config from 'config';
 import { authHeader } from '../../../../_helpers';
-import Modal from "../../../../_components/modal";
+import {
+    doesMatch,
+    arrayRemove,
+    sortCustom,
+    getInputType,
+    getHeaders
+} from '../../../../_functions';
 import HeaderInput from '../../../../_components/project-table/header-input';
-// import Input from '../../../../_components/input';
 import NewRowCreate from '../../../../_components/project-table/new-row-create';
 import NewRowInput from '../../../../_components/project-table/new-row-input';
-import NewRowSelect from '../../../../_components/project-table/new-row-select';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import moment from 'moment';
 import _ from 'lodash';
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
-
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
-
-function TypeToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function arrayRemove(arr, value) {
-
-    return arr.filter(function(ele){
-        return ele != value;
-    });
- 
-}
-
-function resolve(path, obj) {
-    return path.split('.').reduce(function(prev, curr) {
-        return prev ? prev[curr] : null
-    }, obj || self)
-}
-
-function sortCustom(array, headersForShow, sort) {
-    let found = headersForShow.find(element => element._id === sort.name);
-    if (!found) {
-        return array;
-    } else {
-        let tempArray = array.slice(0);
-        let fieldName = found.fields.name
-        switch(found.fields.type) {
-            case 'String':
-                if (sort.isAscending) {
-                    return tempArray.sort(function (a, b) {
-                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
-                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
-                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
-                            return 0;
-                        } else {
-                            let valueA = !_.isUndefined(fieldA.fieldValue) && !_.isNull(fieldA.fieldValue) ? String(fieldA.fieldValue).toUpperCase() : '';
-                            let valueB = !_.isUndefined(fieldB.fieldValue) && !_.isNull(fieldB.fieldValue) ?  String(fieldB.fieldValue).toUpperCase() : '';
-                            if (valueA < valueB) {
-                                return -1;
-                            } else if (valueA > valueB) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    });
-                } else {
-                    return tempArray.sort(function (a, b) {
-                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
-                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
-                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
-                            return 0;
-                        } else {
-                            let valueA = !_.isUndefined(fieldA.fieldValue) && !_.isNull(fieldA.fieldValue) ? String(fieldA.fieldValue).toUpperCase() : '';
-                            let valueB = !_.isUndefined(fieldB.fieldValue) && !_.isNull(fieldB.fieldValue) ?  String(fieldB.fieldValue).toUpperCase() : '';
-                            if (valueA > valueB) {
-                                return -1;
-                            } else if (valueA < valueB) {
-                                return 1;
-                            } else {
-                                return 0;
-                            }
-                        }
-                    });
-                }
-            case 'Number':
-                if (sort.isAscending) {
-                    return tempArray.sort(function (a, b) {
-                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
-                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
-                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
-                            return 0;
-                        } else {
-                            let valueA = fieldA.fieldValue || 0;
-                            let valueB = fieldB.fieldValue || 0;
-                            return valueA - valueB;
-                        }
-                    });
-                } else {
-                    return tempArray.sort(function (a, b) {
-                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
-                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
-                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
-                            return 0;
-                        } else {
-                            let valueA = fieldA.fieldValue || 0;
-                            let valueB = fieldB.fieldValue || 0;
-                            return valueB - valueA;
-                        }
-                    });
-                }
-            default: return array;
-        }
-    }   
-}
-
-
-
-function doesMatch(search, value, type, isEqual) {
-    
-    if (!search) {
-        return true;
-    } else if (!value && search != 'any' && search != 'false' && search != '-1' && String(search).toUpperCase() != '=BLANK') {
-        return false;
-    } else {
-        switch(type) {
-            case 'Id':
-                return _.isEqual(search, value);
-            case 'String':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(String(value).toUpperCase(), String(search).toUpperCase());
-                } else {
-                    return String(value).toUpperCase().includes(String(search).toUpperCase());
-                }
-            case 'Date':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(TypeToString(value, 'date', getDateFormat(myLocale)), search);
-                } else {
-                    return TypeToString(value, 'date', getDateFormat(myLocale)).includes(search);
-                }
-            case 'Number':
-                if (search === '-1') {
-                    return !value;
-                } else if (search === '-2') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual( Intl.NumberFormat().format(value).toString(), Intl.NumberFormat().format(search).toString());
-                } else {
-                    return Intl.NumberFormat().format(value).toString().includes(Intl.NumberFormat().format(search).toString());
-                }
-            case 'Boolean':
-                if(search == 'any') {
-                    return true; //any or equal
-                } else if (search == 'true' && !!value) {
-                    return true; //true
-                } else if (search == 'false' && !value) {
-                    return true; //true
-                }else {
-                    return false;
-                }
-            case 'Select':
-                if(search == 'any' || _.isEqual(search, value)) {
-                    return true; //any or equal
-                } else {
-                    return false;
-                }
-            default: return true;
-        }
-    }
-}
-
-function getInputType(dbFieldType) {
-    switch(dbFieldType) {
-        case 'Number': return 'number';
-        case 'Date': return 'date';
-        default: return 'text'
-    }
-}
-
-function getHeaders(fieldnames, screenId, forWhat) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(function(element) {
-            return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
-        });
-        if (!tempArray) {
-            return [];
-        } else {
-            return tempArray.sort(function(a,b) {
-                return a[forWhat] - b[forWhat];
-            });
-        }
-    } else {
-        return [];
-    }
-}
-
 
 function getBodys(suppliers, headersForShow){
     let arrayBody = [];
@@ -323,8 +110,6 @@ class Suppliers extends React.Component {
         this.generateBody = this.generateBody.bind(this);
 
         this.cerateNewRow = this.cerateNewRow.bind(this);
-        // this.onFocusRow = this.onFocusRow.bind(this);
-        // this.onBlurRow = this.onBlurRow.bind(this);
         
         this.toggleNewRow = this.toggleNewRow.bind(this);
         
@@ -339,7 +124,7 @@ class Suppliers extends React.Component {
         refreshSuppliers;
 
         this.setState({
-            headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+            headersForShow: getHeaders([], fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(suppliers, headersForShow),
         });
 
@@ -359,7 +144,7 @@ class Suppliers extends React.Component {
 
         if ( fieldnames != prevProps.fieldnames){
             this.setState({
-                headersForShow: getHeaders(fieldnames, screenId, 'forShow'),
+                headersForShow: getHeaders([], fieldnames, screenId, 'forShow'),
             }); 
         }
 
@@ -752,16 +537,6 @@ class Suppliers extends React.Component {
         } = this.props
 
         const { 
-            // supplier, 
-            // name, 
-            // registeredName, 
-            // contact, 
-            // position,
-            // city,
-            // country,
-            // show,
-            // submitted,
-            // loading,
             selectedRows,
             deleting, 
             headersForShow,

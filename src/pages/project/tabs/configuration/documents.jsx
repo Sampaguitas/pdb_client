@@ -3,102 +3,29 @@ import { connect } from 'react-redux';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { authHeader } from '../../../../_helpers';
+import {
+    arrayRemove,
+    arraySorted,
+    docConf,
+    findObj,
+    doesMatch,
+    generateFromTbls,
+} from '../../../../_functions'
 import Modal from "../../../../_components/modal";
 import Input from '../../../../_components/input';
 import CheckBox from '../../../../_components/check-box';
 import Select from '../../../../_components/select';
-import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
 import HeaderInput from '../../../../_components/project-table/header-input';
 import HeaderSelect from '../../../../_components/project-table/header-select';
 import NewRowCreate from '../../../../_components/project-table/new-row-create';
-import NewRowCheckBox from '../../../../_components/project-table/new-row-check-box';
 import NewRowInput from '../../../../_components/project-table/new-row-input';
 import NewRowSelect from '../../../../_components/project-table/new-row-select';
 import TableInput from '../../../../_components/project-table/table-input';
 import TableSelect from '../../../../_components/project-table/table-select';
-import TableCheckBox from '../../../../_components/project-table/table-check-box';
 import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
 import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import moment from 'moment';
 import _ from 'lodash';
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
-
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
-
-function TypeToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-
-function arrayRemove(arr, value) {
-    return arr.filter(function(ele){
-        return ele != value;
-    });
-}
-
-function resolve(path, obj) {
-    return path.split('.').reduce(function(prev, curr) {
-        return prev ? prev[curr] : null
-    }, obj || self)
-}
-
-function arraySorted(array, fieldOne, fieldTwo, fieldThree, fieldFour) {
-    if (array) {
-        const newArray = array
-        newArray.sort(function(a,b){
-            if (resolve(fieldOne, a) < resolve(fieldOne, b)) {
-                return -1;
-            } else if (resolve(fieldOne, a) > resolve(fieldOne, b)) {
-                return 1;
-            } else if (fieldTwo && resolve(fieldTwo, a) < resolve(fieldTwo, b)) {
-                return -1;
-            } else if (fieldTwo && resolve(fieldTwo, a) > resolve(fieldTwo, b)) {
-                return 1;
-            } else if (fieldThree && resolve(fieldThree, a) < resolve(fieldThree, b)) {
-                return -1;
-            } else if (fieldThree && resolve(fieldThree, a) > resolve(fieldThree, b)) {
-                return 1;
-            } else if (fieldFour && resolve(fieldFour, a) < resolve(fieldFour, b)) {
-                return -1;
-            } else if (fieldFour && resolve(fieldFour, a) > resolve(fieldFour, b)) {
-                return 1;
-            } else {
-                return 0;
-            }
-        });
-        return newArray;             
-    }
-}
 
 function docSorted(array, sort) {
     let tempArray = array.slice(0);
@@ -176,116 +103,20 @@ function docSorted(array, sort) {
     }
 }
 
-function docConf(array) {
-    const tpeOf = [
-        '5d1927121424114e3884ac7e', //ESR01 Expediting status report
-        '5d1927131424114e3884ac80', //PL01 Packing List
-        '5d1927141424114e3884ac84', //SM01 Shipping Mark
-        '5d1927131424114e3884ac81', //PN01 Packing Note
-        '5d1927141424114e3884ac83', //SI01 Shipping Invoice
-        '5d1927131424114e3884ac7f', //NFI01 Notification for inspection,
-        '5eacef91e7179a42f172feea', //SH01 Stock History Report
-        '5edb2317e7179a6b6367d786', //PT01 Picking Ticket
-        '5ef4e9a67c213e6263a723f0', //WHPL01 WH Packing List
-        '5ef4e9d67c213e6263a7240e', //WHPN01 WH Packing Note
-        '5ef4ea197c213e6263a7241b', //WHSI01 WH Shipping Invoice
-        '5ef4ea597c213e6263a72425', //WHSM01 WH Shipping Mark
-    ];
-    return array.filter(function (element) {
-        return tpeOf.includes(element.doctypeId);
-    });
-}
-
-function findObj(array, search) {
-    if (!_.isEmpty(array) && search) {
-        return array.find((function(element) {
-            return _.isEqual(element._id, search);
-        }));
-    } else {
-        return {};
-    }
-}
-
-function doesMatch(search, value, type, isEqual) {
-    
-    if (!search) {
-        return true;
-    } else if (!value && search != 'any' && search != 'false' && search != '-1' && String(search).toUpperCase() != '=BLANK') {
-        return false;
-    } else {
-        switch(type) {
-            case 'Id':
-                return _.isEqual(search, value);
-            case 'String':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(String(value).toUpperCase(), String(search).toUpperCase());
-                } else {
-                    return String(value).toUpperCase().includes(String(search).toUpperCase());
-                }
-            case 'Date':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(TypeToString(value, 'date', getDateFormat(myLocale)), search);
-                } else {
-                    return TypeToString(value, 'date', getDateFormat(myLocale)).includes(search);
-                }
-            case 'Number':
-                if (search === '-1') {
-                    return !value;
-                } else if (search === '-2') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual( Intl.NumberFormat().format(value).toString(), Intl.NumberFormat().format(search).toString());
-                } else {
-                    return Intl.NumberFormat().format(value).toString().includes(Intl.NumberFormat().format(search).toString());
-                }
-            case 'Boolean':
-                if(search == 'any') {
-                    return true; //any or equal
-                } else if (search == 'true' && !!value) {
-                    return true; //true
-                } else if (search == 'false' && !value) {
-                    return true; //true
-                }else {
-                    return false;
-                }
-            case 'Select':
-                if(search == 'any' || _.isEqual(search, value)) {
-                    return true; //any or equal
-                } else {
-                    return false;
-                }
-            default: return true;
-        }
-    }
-}
-
-function findCustomField(fields, fieldId){
-    if (fields.items && fieldId) {
-        let found = fields.items.find(function (element) {
-            return element._id === fieldId;
-        });
-        if (found) {
-            return found.custom;
-        } else {
-            return ''
-        }
-    } else {
-        return ''
-    }
-}
-
-function generateFromTbls(ArrType, doctypeId) {
-    const found = ArrType.find(element => element._id === doctypeId);
-    return !_.isUndefined(found) ? found.fromTbls : [];
-}
+const typeOf = [
+    '5d1927121424114e3884ac7e', //ESR01 Expediting status report
+    '5d1927131424114e3884ac80', //PL01 Packing List
+    '5d1927141424114e3884ac84', //SM01 Shipping Mark
+    '5d1927131424114e3884ac81', //PN01 Packing Note
+    '5d1927141424114e3884ac83', //SI01 Shipping Invoice
+    '5d1927131424114e3884ac7f', //NFI01 Notification for inspection,
+    '5eacef91e7179a42f172feea', //SH01 Stock History Report
+    '5edb2317e7179a6b6367d786', //PT01 Picking Ticket
+    '5ef4e9a67c213e6263a723f0', //WHPL01 WH Packing List
+    '5ef4e9d67c213e6263a7240e', //WHPN01 WH Packing Note
+    '5ef4ea197c213e6263a7241b', //WHSI01 WH Shipping Invoice
+    '5ef4ea597c213e6263a72425', //WHSM01 WH Shipping Mark
+];
 
 class Documents extends React.Component {
     constructor(props) {
@@ -326,12 +157,9 @@ class Documents extends React.Component {
             newRowFocus:false,
             creatingNewRow: false,
             newRowColor: 'inherit',
-
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
-        // this.onFocusRow = this.onFocusRow.bind(this);
-        // this.onBlurRow = this.onBlurRow.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
         this.showModal = this.showModal.bind(this);
         this.hideModal = this.hideModal.bind(this);
@@ -350,7 +178,6 @@ class Documents extends React.Component {
         this.fileInput = React.createRef();
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
-        // this.generateFromTbls = this.generateFromTbls.bind(this);
     }
 
     componentDidMount() {
@@ -373,7 +200,7 @@ class Documents extends React.Component {
 
         if (docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
             this.setState({
-                selectedTemplate: arraySorted(docConf(docdefs.items), "name")[0]._id
+                selectedTemplate: arraySorted(docConf(docdefs.items, typeOf), "name")[0]._id
             });
         }
     }
@@ -424,7 +251,7 @@ class Documents extends React.Component {
         const { selectedTemplate } = this.state;
 
         if(docdefs != prevProps.docdefs && docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
-            this.setState({selectedTemplate: arraySorted(docConf(docdefs.items), "name")[0]._id});
+            this.setState({selectedTemplate: arraySorted(docConf(docdefs.items, typeOf), "name")[0]._id});
         }
 
         if (selectedTemplate != prevState.selectedTemplate) {
@@ -539,24 +366,6 @@ class Documents extends React.Component {
             });
         }
     }
-
-    // onFocusRow(event) {
-    //     event.preventDefault();
-    //     const { selectedTemplate, newRowFocus } = this.state;
-    //     if (selectedTemplate !='0' && event.currentTarget.dataset['type'] == undefined && newRowFocus == true){
-    //         this.cerateNewRow(event);
-    //     }
-    // }
-
-    // onBlurRow(event){
-    //     event.preventDefault()
-    //     if (event.currentTarget.dataset['type'] == 'newrow'){
-    //         this.setState({
-    //             ...this.state,
-    //             newRowFocus: true
-    //         });
-    //     }
-    // }
 
     toggleNewRow(event) {
         event.preventDefault()
@@ -1120,7 +929,7 @@ class Documents extends React.Component {
                         <select className="form-control" name="selectedTemplate" value={selectedTemplate} placeholder="Select Template..." onChange={this.handleChangeTemplate} style={{display:'inline-block', height: '30px', padding: '5px'}}>
                             <option key="0" value="0">Select document...</option>
                         {
-                            docdefs.items && arraySorted(docConf(docdefs.items), "name").map((p) =>  {        
+                            docdefs.items && arraySorted(docConf(docdefs.items, typeOf), "name").map((p) =>  {        
                                 return (
                                     <option 
                                         key={p._id}

@@ -17,10 +17,6 @@ import Modal from '../../../_components/modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Line from '../../../_components/chart/line';
 
-function logout() {
-    localStorage.removeItem('user');
-}
-
 class Performance extends React.Component {
     constructor(props) {
         super(props);

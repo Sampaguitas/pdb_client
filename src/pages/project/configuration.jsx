@@ -374,7 +374,6 @@ class Configuration extends React.Component {
                         submittedProject={submittedProject}
                         projectUpdating={projectUpdating}
                         projectDeleting={projectDeleting}
-                        
                     />
                 </div>
             </Layout>

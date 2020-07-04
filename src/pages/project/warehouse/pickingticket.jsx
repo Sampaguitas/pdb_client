@@ -199,24 +199,10 @@ function arraySorted(array, fieldOne, fieldTwo, fieldThree) {
     }
 }
 
-function docConf(array) {
-    const tpeOf = [
-        //'5d1927121424114e3884ac7e', //ESR01 Expediting status report
-        // '5d1927131424114e3884ac80', //PL01 Packing List
-        // '5d1927141424114e3884ac84', //SM01 Shipping Mark
-        // '5d1927131424114e3884ac81', //PN01 Packing Note
-        // '5d1927141424114e3884ac83', //SI01 Shipping Invoice
-        // '5d1927131424114e3884ac7f', //NFI1 Notification for Inspection
-        //'5eacef91e7179a42f172feea', //SH01 Stock History Report
-        '5edb2317e7179a6b6367d786', //PT01 Picking Ticket
-        //'5ef4e9a67c213e6263a723f0', //WHPL01 WH Packing List
-        //'5ef4e9d67c213e6263a7240e', //WHPN01 WH Packing Note
-        //'5ef4ea197c213e6263a7241b', //WHSI01 WH Shipping Invoice
-        //'5ef4ea597c213e6263a72425', //WHSM01 WH Shipping Mark
-    ];
+function docConf(array, typeOf) {
     if (array) {
         return array.filter(function (element) {
-            return tpeOf.includes(element.doctypeId);
+            return typeOf.includes(element.doctypeId);
         });
     }
 }
@@ -642,7 +628,7 @@ class PickingTicket extends React.Component {
             bodysForShow: getBodys(picktickets, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-            docList: arraySorted(docConf(docdefs.items), "name")
+            docList: arraySorted(docConf(docdefs.items, ['5edb2317e7179a6b6367d786']), "name")
         });
     }
 
@@ -670,7 +656,7 @@ class PickingTicket extends React.Component {
         }
 
         if (docdefs != prevProps.docdefs) {
-            this.setState({docList: arraySorted(docConf(docdefs.items), "name")});
+            this.setState({docList: arraySorted(docConf(docdefs.items, ['5edb2317e7179a6b6367d786']), "name")});
         }
 
     }

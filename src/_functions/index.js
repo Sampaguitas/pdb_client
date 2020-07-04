@@ -1,3 +1,4 @@
+import React from 'react';
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -26,6 +27,68 @@ export function getDateFormat(myLocale) {
     return tempDateFormat;
 }
 
+export function getLiteral(myLocale) {
+    let firstLiteral = myLocale.formatToParts().find(function (element) {
+      return element.type === 'literal';
+    });
+    if (firstLiteral) {
+      return firstLiteral.value;
+    } else {
+      return '/';
+    }
+};
+
+export function StirngToCache(fieldValue, myDateFormat) {
+    if (!!fieldValue) {
+        let separator = getLiteral(myLocale);
+        let cache = myDateFormat.replace('DD','00').replace('MM', '00').replace('YYYY', (new Date()).getFullYear()).split(separator);
+        let valueArray = fieldValue.split(separator);
+        return cache.reduce(function(acc, cur, idx) {
+            if (valueArray.length > idx) {
+              let curChars = cur.split("");
+                let valueChars = valueArray[idx].split("");
+              let tempArray = curChars.reduce(function(accChar, curChar, idxChar) {
+                  if (valueChars.length >= (curChars.length - idxChar)) {
+                    accChar += valueChars[valueChars.length - curChars.length + idxChar];
+                  } else {
+                    accChar += curChar;
+                  }
+                return accChar;
+              }, '')
+              acc.push(tempArray);
+            } else {
+              acc.push(cur);
+            }
+            return acc;
+          }, []).join(separator);
+    } else {
+        return fieldValue;
+    } 
+}
+
+export function StringToDate (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
+export function isValidFormat (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat, true).isValid();
+            default: return true;
+        }
+    } else {
+        return true;
+    }
+    
+}
+
 export function TypeToString (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
@@ -48,6 +111,8 @@ export function DateToString (fieldValue, fieldType, myDateFormat) {
         return '';
     }
 }
+
+
 
 export function doesMatch(search, value, type, isEqual) {
     
@@ -116,13 +181,25 @@ export function resolve(path, obj) {
     }, obj || self)
 }
 
-export function arraySorted(array, field) {
+export function arraySorted(array, fieldOne, fieldTwo, fieldThree, fieldFour) {
     if (array) {
         const newArray = array
         newArray.sort(function(a,b){
-            if (resolve(field, a) < resolve(field, b)) {
+            if (resolve(fieldOne, a) < resolve(fieldOne, b)) {
                 return -1;
-            } else if ((resolve(field, a) > resolve(field, b))) {
+            } else if (resolve(fieldOne, a) > resolve(fieldOne, b)) {
+                return 1;
+            } else if (fieldTwo && resolve(fieldTwo, a) < resolve(fieldTwo, b)) {
+                return -1;
+            } else if (fieldTwo && resolve(fieldTwo, a) > resolve(fieldTwo, b)) {
+                return 1;
+            } else if (fieldThree && resolve(fieldThree, a) < resolve(fieldThree, b)) {
+                return -1;
+            } else if (fieldThree && resolve(fieldThree, a) > resolve(fieldThree, b)) {
+                return 1;
+            } else if (fieldFour && resolve(fieldFour, a) < resolve(fieldFour, b)) {
+                return -1;
+            } else if (fieldFour && resolve(fieldFour, a) > resolve(fieldFour, b)) {
                 return 1;
             } else {
                 return 0;
@@ -130,4 +207,493 @@ export function arraySorted(array, field) {
         });
         return newArray;             
     }
+}
+
+export function arrayRemove(arr, value) {
+    return arr.filter(function(ele){
+        return ele != value;
+    });
+}
+
+export function docConf(array, typeOf) {
+    if (array) {
+        return array.filter(function (element) {
+            return typeOf.includes(element.doctypeId);
+        });
+    }
+}
+
+export function baseTen(number) {
+    return number.toString().length > 2 ? number : '0' + number;
+}
+
+export function leadingChar(string, char, length) {
+    return string.toString().length > length ? string : char.repeat(length - string.toString().length) + string;
+}
+
+export function findObj(array, search) {
+    if (!_.isEmpty(array) && search) {
+        return array.find((function(element) {
+            return _.isEqual(element._id, search);
+        }));
+    } else {
+        return {};
+    }
+}
+
+export function getInputType(dbFieldType) {
+    switch(dbFieldType) {
+        case 'Number': return 'number';
+        case 'Date': return 'date';
+        default: return 'text'
+    }
+}
+
+export function generateOptions(list) {
+    if (list) {
+        return list.map((element, index) => <option key={index} value={element._id}>{element.name}</option>);
+    }
+}
+
+export function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
+    
+    let tempArray = [];
+    let screens = [
+        '5cd2b642fd333616dc360b63', //Expediting
+        '5cd2b646fd333616dc360b70', //Expediting Splitwindow
+        '5cd2b642fd333616dc360b64', //Inspection
+        '5cd2b647fd333616dc360b71', //Inspection Splitwindow
+        '5cd2b643fd333616dc360b66', //Assign Transport
+        '5cd2b647fd333616dc360b72', //Assign Transport SplitWindow
+        '5cd2b643fd333616dc360b67', //Print Transportdocuments
+        '5cd2b642fd333616dc360b65', //Certificates
+        '5cd2b644fd333616dc360b69', //Suppliers
+        '5ea8eefb7c213e2096462a2c', //Stock Management
+        '5eb0f60ce7179a42f173de47', //Goods Receipt with PO
+        '5ea911747c213e2096462d79', //Goods Receipt with NFI
+        '5ea919727c213e2096462e3f', //Goods Receipt with PL
+        '5ed1e76e7c213e044cc01884', //Material Issue Record
+        '5ed1e7a67c213e044cc01888', //Material Issue Record Splitwindow
+        '5ee60fbb7c213e044cc480e4', //'WH Assign Transport'
+        '5ee60fd27c213e044cc480e7', //'WH Assign Transport SplitWindow'
+        '5ee60fe87c213e044cc480ea', //'WH Print Transportdocuments'
+    ];
+
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {        
+        
+        let displayIds = settingsDisplay.reduce(function(acc, cur) {
+            if (!!cur.isChecked) {
+                acc.push(cur._id);
+            }
+            return acc;
+        }, []);
+
+        if (!_.isEmpty(displayIds) && screens.includes(screenId)) {
+            tempArray = fieldnames.items.filter(function(element) {
+                return (_.isEqual(element.screenId, screenId) && !!element[forWhat] && displayIds.includes(element._id)); 
+            });
+        } else {
+            tempArray = fieldnames.items.filter(function(element) {
+                return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
+            });
+        }
+
+        if (!!tempArray) {
+            return tempArray.sort(function(a,b) {
+                return a[forWhat] - b[forWhat];
+            });
+        } 
+    }
+
+    return [];
+}
+
+
+export function initSettingsFilter(fieldnames, settings, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow && !!element.forSelect);
+        let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
+
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forSelect - b.forSelect;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                if (_.isUndefined(screenSettings) || _.isEmpty(screenSettings.params.filter)) {
+                    acc.push({
+                        _id: cur._id,
+                        name: cur.fields.name,
+                        custom: cur.fields.custom,
+                        value: '',
+                        type: cur.fields.type,
+                        isEqual: false
+                    });
+                } else {
+                    let found = screenSettings.params.filter.find(element => element._id === cur._id);
+                    if (_.isUndefined(found)) {
+                        acc.push({
+                            _id: cur._id,
+                            name: cur.fields.name,
+                            custom: cur.fields.custom,
+                            value: '',
+                            type: cur.fields.type,
+                            isEqual: false
+                        });
+                    } else {
+                        acc.push({
+                            _id: cur._id,
+                            name: cur.fields.name,
+                            custom: cur.fields.custom,
+                            value: found.value,
+                            type: cur.fields.type,
+                            isEqual: found.isEqual
+                        });
+                    }
+                }
+                return acc;
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
+export function initSettingsDisplay(fieldnames, settings, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow);
+        let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
+
+        if (!tempArray) {
+            return [];
+        } else {
+            tempArray.sort(function(a,b) {
+                return a.forShow - b.forShow;
+            });
+            return tempArray.reduce(function(acc, cur) {
+                if (_.isUndefined(screenSettings) || !screenSettings.params.display.includes(cur._id)) {
+                    acc.push({
+                        _id: cur._id,
+                        custom: cur.fields.custom,
+                        isChecked: true
+                    });
+                } else {
+                    acc.push({
+                        _id: cur._id,
+                        custom: cur.fields.custom,
+                        isChecked: false
+                    });
+                }
+                return acc;
+            }, []);
+        }
+    } else {
+        return [];
+    }
+}
+
+export function passSelectedIds(selectedIds) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1) {
+        return {};
+    } else {
+        return selectedIds[0];
+    }
+}
+
+export function passSelectedPo(selectedIds, pos) {
+    if (_.isEmpty(selectedIds) || selectedIds.length > 1 || _.isEmpty(pos.items)){
+        return {};
+    } else {
+        return pos.items.find(po => po._id === selectedIds[0].poId);
+    }
+}
+
+export function getScreenTbls (fieldnames, screenId) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+        return fieldnames.items.reduce(function (acc, cur) {
+            if(!acc.includes(cur.fields.fromTbl) && cur.screenId === screenId) {
+                acc.push(cur.fields.fromTbl)
+            }
+            return acc;
+        },[]);
+    } else {
+        return [];
+    }
+}
+
+export function getPackItemFields (screenHeaders) {
+    if (screenHeaders) {
+        let tempArray = [];
+        screenHeaders.reduce(function (acc, cur) {
+            if (cur.fields.fromTbl === 'packitem' && !acc.includes(cur.fields._id)) {
+                tempArray.push(cur.fields);
+                acc.push(cur.fields._id);
+            }
+            return acc;
+        },[]);
+        return tempArray;
+    } else {
+        return [];
+    }
+}
+
+export function hasPackingList(packItemFields) {
+    let tempResult = false;
+    if (packItemFields) {
+        packItemFields.map(function (packItemField) {
+            if (packItemField.name === 'plNr') {
+                tempResult = true;
+            }
+        });
+    }
+    return tempResult;
+}
+
+export function getObjectIds(collection, selectedIds) {
+    if (!_.isEmpty(selectedIds)) {
+        switch(collection) {
+            case 'po': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.poId)) {
+                    acc.push(curr.poId);
+                }
+                return acc;
+            }, []);
+            case 'sub': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.subId)) {
+                    acc.push(curr.subId);
+                }
+                return acc;
+            }, []);
+            case 'certificate': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.certificateId)) {
+                    acc.push(curr.certificateId);
+                }
+                return acc;
+            }, []);
+            case 'packitem': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.packitemId)) {
+                    acc.push(curr.packitemId);
+                }
+                return acc;
+            }, []);
+            case 'collipack': return selectedIds.reduce(function(acc, curr) {
+                if(!acc.includes(curr.collipackId)) {
+                    acc.push(curr.collipackId);
+                }
+                return acc;
+            }, []);
+            default: return [];
+        }
+    } else {
+        return [];
+    }
+}
+
+export function generateFromTbls(ArrType, doctypeId) {
+    const found = ArrType.find(element => element._id === doctypeId);
+    return !_.isUndefined(found) ? found.fromTbls : [];
+}
+
+export function screenSorted(array, sort) {
+    let tempArray = array.slice(0);
+    switch(sort.name) {
+        case 'custom':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? String(a.fields.custom).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? String(b.fields.custom).toUpperCase() : '';
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? String(a.fields.custom).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? String(b.fields.custom).toUpperCase() : '';
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        case 'forShow':
+        case 'forSelect':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let valueA = a[sort.name] || 0;
+                    let valueB = b[sort.name] || 0;
+                    return valueA - valueB;
+                });
+            } else {
+                return tempArray.sort(function (a, b){
+                    let valueA = a[sort.name] || 0;
+                    let valueB = b[sort.name] || 0;
+                    return valueB - valueA
+                });
+            }
+        case 'align':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.align) && !_.isNull(a.align) ? String(a.align).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.align) && !_.isNull(b.align) ? String(b.align).toUpperCase() : '';
+                    if (nameA < nameB) {
+                        return -1;
+                    } else if (nameA > nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = !_.isUndefined(a.align) && !_.isNull(a.align) ? String(a.align).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.align) && !_.isNull(b.align) ? String(b.align).toUpperCase() : '';
+                    if (nameA > nameB) {
+                        return -1;
+                    } else if (nameA < nameB) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+            }
+        case 'edit':
+            if (sort.isAscending) {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a.edit;
+                    let nameB = b.edit;
+                    if (nameA === nameB) {
+                        return 0;
+                    } else if (!!nameA) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                });
+            } else {
+                return tempArray.sort(function (a, b) {
+                    let nameA = a.edit;
+                    let nameB = b.edit;
+                    if (nameA === nameB) {
+                        return 0;
+                    } else if (!!nameA) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                });
+            }
+        default: return array;
+    }
+}
+
+export function sortCustom(array, headersForShow, sort) {
+    let found = headersForShow.find(element => element._id === sort.name);
+    if (!found) {
+        return array;
+    } else {
+        let tempArray = array.slice(0);
+        let fieldName = found.fields.name
+        switch(found.fields.type) {
+            case 'String':
+                if (sort.isAscending) {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = !_.isUndefined(fieldA.fieldValue) && !_.isNull(fieldA.fieldValue) ? String(fieldA.fieldValue).toUpperCase() : '';
+                            let valueB = !_.isUndefined(fieldB.fieldValue) && !_.isNull(fieldB.fieldValue) ?  String(fieldB.fieldValue).toUpperCase() : '';
+                            if (valueA < valueB) {
+                                return -1;
+                            } else if (valueA > valueB) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    });
+                } else {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = !_.isUndefined(fieldA.fieldValue) && !_.isNull(fieldA.fieldValue) ? String(fieldA.fieldValue).toUpperCase() : '';
+                            let valueB = !_.isUndefined(fieldB.fieldValue) && !_.isNull(fieldB.fieldValue) ?  String(fieldB.fieldValue).toUpperCase() : '';
+                            if (valueA > valueB) {
+                                return -1;
+                            } else if (valueA < valueB) {
+                                return 1;
+                            } else {
+                                return 0;
+                            }
+                        }
+                    });
+                }
+            case 'Number':
+                if (sort.isAscending) {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = fieldA.fieldValue || 0;
+                            let valueB = fieldB.fieldValue || 0;
+                            return valueA - valueB;
+                        }
+                    });
+                } else {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let valueA = fieldA.fieldValue || 0;
+                            let valueB = fieldB.fieldValue || 0;
+                            return valueB - valueA;
+                        }
+                    });
+                }
+            case 'Date':
+                if (sort.isAscending) {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let dateA = new Date(fieldA.fieldValue || 0);
+                            let dateB = new Date(fieldB.fieldValue || 0);
+                            return dateA - dateB;
+                        }
+                    });
+                } else {
+                    return tempArray.sort(function (a, b) {
+                        let fieldA = a.fields.find(element => element.fieldName === fieldName);
+                        let fieldB = b.fields.find(element => element.fieldName === fieldName);
+                        if (_.isUndefined(fieldA) || _.isUndefined(fieldB)) {
+                            return 0;
+                        } else {
+                            let dateA = new Date(fieldA.fieldValue || 0);
+                            let dateB = new Date(fieldB.fieldValue || 0);
+                            return dateB - dateA;
+                        }
+                    });
+                }
+            default: return array;
+        }
+    }   
 }
