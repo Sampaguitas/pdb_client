@@ -40,6 +40,8 @@
 - [X] Transition sub items on Item expand/collapse (side menu).
 - [X] Home Icon highlight on "/", main Item highlight on sub (side menu).
 - [ ] Description on collapsed Menu icon hover.
+### Refactor Code
+- [X] export functions (7,000 deletions).
 ### Wrap up
 - [ ] Add new Fields, Screens, Documents to the master template.
 - [ ] Back up database.
