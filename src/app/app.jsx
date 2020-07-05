@@ -19,9 +19,7 @@ import { Opco } from '../pages/home/opco.jsx';
 import { Project } from '../pages/home/project.jsx';
 import { Dashboard } from '../pages/project/dashboard.jsx';
 import { Duf } from '../pages/project/duf.jsx';
-import { Expediting } from '../pages/project/expediting/expediting.jsx';
-import { Overview } from '../pages/project/expediting/overview.jsx';
-import { Performance } from '../pages/project/expediting/performance.jsx';
+import { Expediting } from '../pages/project/expediting.jsx';
 import { Inspection } from '../pages/project/inspection/inspection.jsx';
 import { ReleaseData } from '../pages/project/inspection/releasedata.jsx';
 import { Certificates } from '../pages/project/inspection/certificates.jsx';
@@ -83,8 +81,6 @@ class App extends React.Component {
                         <PrivateRoute path="/dashboard" component={Dashboard} user={user}/>
                         <PrivateRoute path="/duf" component={Duf} user={user}/>
                         <PrivateRoute path="/expediting" component={Expediting} user={user}/>
-                        <PrivateRoute path="/overview" component={Overview} user={user}/>
-                        <PrivateRoute path="/performance" component={Performance} user={user}/>
                         <PrivateRoute path="/inspection" component={Inspection} user={user}/>
                         <PrivateRoute path="/releasedata" component={ReleaseData} user={user}/>
                         <PrivateRoute path="/certificates" component={Certificates} user={user}/>

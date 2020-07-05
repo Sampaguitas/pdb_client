@@ -298,7 +298,6 @@ class ProjectTable extends Component {
             this.filterName(screenBodys).map(screenBody => {
                 let tempCol = [];
                 screenBody.fields.map(function (field, index) {
-                    // if (field.objectId || field.parentId) {
                         tempCol.push(
                             <TableInput
                                 collection={field.collection}
@@ -315,9 +314,6 @@ class ProjectTable extends Component {
                                 refreshStore={refreshStore}
                             />
                         );                        
-                    // } else {
-                    //     tempCol.push(<td key={index}></td>) 
-                    // }
                 });
                 tempRows.push(
                     <tr key={screenBody._id}>
@@ -381,7 +377,6 @@ class ProjectTable extends Component {
                         localStorage.removeItem('user');
                         location.reload(true);
                     }
-                    // const error = (data && data.message) || responce.statusText;
                     this.setState({
                         ...this.state,
                         uploading: false,
@@ -459,12 +454,8 @@ class ProjectTable extends Component {
         } = this.props;
         
         const { 
-            header,
-            selectAllRows,
-            // showModalSettings, 
             showModalUpload,
             isEqual, 
-            tabs,
             fileName,
             responce,
             downloading,

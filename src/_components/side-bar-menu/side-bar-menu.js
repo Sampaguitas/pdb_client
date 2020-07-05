@@ -26,12 +26,7 @@ const home_menu = [
 const project_menu = [
     { id: 0, title: 'Dashboard', href: '/dashboard', icon: 'tachometer-alt' },
     { id: 1, title: 'Data Upload File (DUF)', href: '/duf', icon: 'upload', roles: ['isAdmin', 'isSuperAdmin'] },
-    { id: 2, title: 'Expediting', href: '/expediting', icon: 'stopwatch', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'], child:
-        [
-            { id: 0, title: 'Total Client PO Overview', href: '/overview', icon: 'table', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'] },
-            { id: 1, title: 'Performance Reports', href: '/performance', icon: 'chart-line', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'] },
-        ]
-    },
+    { id: 2, title: 'Expediting', href: '/expediting', icon: 'stopwatch', roles: ['isAdmin', 'isSuperAdmin', 'isExpediting'] },
     { id: 3, title: 'Inspection', href: '/inspection', icon: 'search', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'], child:
         [
             { id: 0, title: 'Inspection & Release data', href: '/releasedata', icon: 'clipboard-check', roles: ['isAdmin', 'isSuperAdmin', 'isInspection'] },
@@ -101,12 +96,9 @@ class SideBarMenu extends Component {
             case '/opco':
             case '/project':
                 return true;
-                break;
             case '/dashboard':
             case '/duf':
             case '/expediting':
-            case '/overview':
-            case '/performance':
             case '/inspection':
             case '/releasedata':
             case '/certificates':
@@ -114,7 +106,6 @@ class SideBarMenu extends Component {
             case '/transportdocs':
             case '/packingdetails':
             case '/warehouse':
-            // case '/goodsreceipt':
             case '/stockmanagement':
             case '/materialissuerecord':
             case '/pickingticket':
@@ -122,7 +113,6 @@ class SideBarMenu extends Component {
             case '/locations':
             case '/configuration': 
                 return false;
-                break
             default: true
         }
     }

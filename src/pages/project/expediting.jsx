@@ -5,7 +5,7 @@ import queryString from 'query-string';
 import config from 'config';
 import { saveAs } from 'file-saver';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { authHeader } from '../../../_helpers';
+import { authHeader } from '../../_helpers';
 import { 
     accessActions, 
     alertActions, 
@@ -16,7 +16,7 @@ import {
     projectActions,
     settingActions,
     sidemenuActions
-} from '../../../_actions';
+} from '../../_actions';
 import {
     arraySorted,
     baseTen,
@@ -37,14 +37,16 @@ import {
     passSelectedPo,
     getScreenTbls,
     getTblFields,
-    hasPackingList
-} from '../../../_functions';
-import Layout from '../../../_components/layout';
-import ProjectTable from '../../../_components/project-table/project-table';
-import TabFilter from '../../../_components/setting/tab-filter';
-import TabDisplay from '../../../_components/setting/tab-display';
-import Modal from '../../../_components/modal';
-import SplitLine from '../../../_components/split-line/split-sub';
+    hasPackingList,
+    arrayRemove
+} from '../../_functions';
+import Layout from '../../_components/layout';
+import LineCheck from '../../_components/line-check';
+import ProjectTable from '../../_components/project-table/project-table';
+import TabFilter from '../../_components/setting/tab-filter';
+import TabDisplay from '../../_components/setting/tab-display';
+import Modal from '../../_components/modal';
+import SplitLine from '../../_components/split-line/split-sub';
 import _ from 'lodash';
 import { __promisify__ } from 'glob';
 
@@ -389,7 +391,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
     }
 }
 
-class Overview extends React.Component {
+class Expediting extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -436,8 +438,16 @@ class Overview extends React.Component {
             showEditValues: false,
             showSplitLine: false,
             showGenerate: false,
+            showPr: false,
             showSettings: false,
-            menuItem: 'Expediting'
+            menuItem: 'Expediting',
+            //Progress Report
+            downloadingChart: false,
+            unit: 'value',
+            period: 'quarter',
+            clPo:'',
+            clPoRev: '',
+            lines: [],
         };
 
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -445,6 +455,7 @@ class Overview extends React.Component {
         this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
+        
         this.handleSplitLine = this.handleSplitLine.bind(this);
         this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.updateRequest = this.updateRequest.bind(this);
@@ -457,6 +468,7 @@ class Overview extends React.Component {
         this.toggleSplitLine = this.toggleSplitLine.bind(this);
         this.toggleEditValues = this.toggleEditValues.bind(this);
         this.toggleGenerate = this.toggleGenerate.bind(this);
+        this.togglePr = this.togglePr.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
         //Settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
@@ -467,6 +479,12 @@ class Overview extends React.Component {
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
+        //Progress Report
+        this.downloadLineChart = this.downloadLineChart.bind(this);
+        this.handleChangePr = this.handleChangePr.bind(this);
+        this.handleCheckLine = this.handleCheckLine.bind(this);
+        this.generateOptionClPo = this.generateOptionClPo.bind(this);
+        this.generateOptionclPoRev = this.generateOptionclPoRev.bind(this);
     }
 
     componentDidMount() {
@@ -990,7 +1008,6 @@ class Overview extends React.Component {
 
     handleDeleteRows(event) {
         event.preventDefault();
-        // const { dispatch } = this.props;
         const { selectedIds } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
@@ -1131,8 +1148,160 @@ class Overview extends React.Component {
         dispatch(sidemenuActions.toggle());
     }
 
+    downloadLineChart(event) {
+        event.preventDefault();
+        const { projectId, unit, period, clPo, clPoRev, lines } = this.state;
+        if (_.isEmpty(lines)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select at least one data set to display the graph.'
+                }
+            });
+        } else {
+            this.setState({
+                downloadingChart: true
+            }, () => {
+                const requestOptions = {
+                    method: 'GET',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                };
+                return fetch(`${config.apiUrl}/dashboard/downloadLineChart?projectId=${projectId}&unit=${unit}&period=${period}&clPo=${clPo}&clPoRev=${clPoRev}&lines=${lines}`, requestOptions)
+                .then(responce => {
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        }
+                        this.setState({
+                            showPr: false,
+                            downloadingChart: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: 'an error has occured'  
+                            }
+                        });
+                    } else {
+                        this.setState({
+                            showPr: false,
+                            downloadingChart: false
+                        }, () => responce.blob().then(blob => saveAs(blob, 'Chart.xlsx')));
+                    }
+                });
+            });
+        }
+    }
+
+    togglePr(event) {
+        event.preventDefault();
+        const { showPr } = this.state;
+        this.setState({
+            showPr: !showPr,
+            unit: 'value',
+            period: 'quarter',
+            clPo:'',
+            clPoRev: '',
+            lines: [],
+        });
+    }
+
+    handleChangePr(event) {
+        event.preventDefault();
+        const name =  event.target.name;
+        const value =  event.target.value;
+        if (name === 'clPo') {
+            this.setState({
+                clPoRev: '',
+                clPo: value
+            });
+        } else {
+            this.setState({
+                [name]: value
+            });
+        }
+    }
+
+    handleCheckLine(id) {
+        const { lines } = this.state;
+        if (lines.includes(id)) {
+            this.setState({
+                lines: arrayRemove(lines, id) 
+            });
+        } else {
+            this.setState({
+                lines: [...lines, id]
+            });
+        }
+    }
+
+    generateOptionClPo(pos) {
+        if (pos.items) {
+            let clPos = pos.items.reduce(function (acc, cur) {
+                if (!!cur.clPo && acc.indexOf(cur.clPo) === -1) {
+                    acc.push(cur.clPo)
+                }
+                return acc;
+            }, []);
+            if (!_.isEmpty(clPos)) {
+                let filteredPos = clPos.sort(function(a, b) {
+                    if (a < b) {
+                        return -1;
+                    } else if (a > b) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+                return filteredPos.map(function (po, index){
+                    return (
+                        <option
+                            key={index}
+                            value={po}>{po}
+                        </option>
+                    );
+                });
+            }
+        }
+    }
+
+    generateOptionclPoRev(pos, clPo) {
+        if (pos.items) {
+            let clPoRevs = pos.items.reduce(function (acc, cur) {
+                if (!!cur.clPoRev && acc.indexOf(cur.clPoRev) === -1 && (clPo ? cur.clPo === clPo : true)) {
+                    acc.push(cur.clPoRev)
+                }
+                return acc;
+            }, []);
+            if (!_.isEmpty(clPoRevs)) {
+                let filteredPoRevs = clPoRevs.sort(function(a, b) {
+                    if (a < b) {
+                        return -1;
+                    } else if (a > b) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                });
+                return filteredPoRevs.map(function (rev, index){
+                    return (
+                        <option
+                            key={index}
+                            value={rev}>{rev}
+                        </option>
+                    );
+                });
+            }
+        }
+    }
+
     render() {
         const { 
+            unit,
+            period,
+            clPo,
+            clPoRev,
+            lines,
+            downloadingChart,
             menuItem,
             projectId, 
             screen, 
@@ -1144,17 +1313,15 @@ class Overview extends React.Component {
             selectedType, 
             updateValue,
             docList,
-            //show modals
             showEditValues,
             showSplitLine,
             showGenerate,
+            showPr,
             showSettings,
-            //--------
             headersForShow,
             bodysForShow,
             splitHeadersForShow,
             splitHeadersForSelect,
-            //'-------------------'
             tabs,
             settingsFilter,
             settingsDisplay
@@ -1165,7 +1332,7 @@ class Overview extends React.Component {
 
         return (
             <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
-                {alert.message && !showSplitLine && !showSettings &&
+                {alert.message && !showSplitLine && !showSettings && !showPr &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1177,14 +1344,11 @@ class Overview extends React.Component {
                         <li className="breadcrumb-item">
                             <NavLink to={{ pathname: '/dashboard', search: '?id=' + projectId }} tag="a">Dashboard</NavLink>
                         </li>
-                        <li className="breadcrumb-item">
-                            <NavLink to={{ pathname: '/expediting', search: '?id=' + projectId }} tag="a">Expediting</NavLink>
-                        </li>
-                        <li className="breadcrumb-item active" aria-current="page">Total Client PO Overview:</li>
+                        <li className="breadcrumb-item active" aria-current="page">Expediting:</li>
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <div id="overview" className={ (alert.message && !showSplitLine && !showSettings) ? "main-section-alert" : "main-section"}>
+                <div id="overview" className={ (alert.message && !showSplitLine && !showSettings && !showPr) ? "main-section-alert" : "main-section"}>
                     <div className="action-row row">
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Split Line" onClick={event => this.toggleSplitLine(event)}>
                             <span><FontAwesomeIcon icon="page-break" className="fa mr-2"/>Split Line</span>
@@ -1194,6 +1358,9 @@ class Overview extends React.Component {
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Generate Expediting Status Report" onClick={event => this.toggleGenerate(event)}>
                             <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate ESR</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Generate Progress Report" onClick={event => this.togglePr(event)}>
+                            <span><FontAwesomeIcon icon="file-chart-line" className="fa mr-2"/>Generate PR</span>
                         </button>
                     </div>
                     <div className="body-section">
@@ -1308,6 +1475,150 @@ class Overview extends React.Component {
                         </form>                  
                     </div>
                 </Modal>
+                <Modal
+                    show={showPr}
+                    hideModal={this.togglePr}
+                    title="Generate Progress Report"
+                    size="modal-lg"
+                >
+                    {alert.message &&
+                        <div className={`alert ${alert.type}`}>{alert.message}
+                            <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                            </button>
+                        </div>
+                    }
+                    <div className="row" style={{height: "270px"}}>
+                            <div className="col-md-auto full-height">
+                                <div className="full-height" style={{padding: '10px', width: '200px'}}>
+                                    <LineCheck
+                                        key="0"
+                                        id="contract"
+                                        title="Contractual"
+                                        isChecked={lines.includes('contract')}
+                                        handleCheck={this.handleCheckLine}
+                                    />
+                                    <LineCheck
+                                        key="1"
+                                        id="rfiExp"
+                                        title="RFI Expected"
+                                        isChecked={lines.includes('rfiExp')}
+                                        handleCheck={this.handleCheckLine}
+                                    />
+                                    <LineCheck
+                                        key="2"
+                                        id="rfiAct"
+                                        title="RFI Actual"
+                                        isChecked={lines.includes('rfiAct')}
+                                        handleCheck={this.handleCheckLine}
+                                    />
+                                    <LineCheck
+                                        key="3"
+                                        id="released"
+                                        title="Released"
+                                        isChecked={lines.includes('released')}
+                                        handleCheck={this.handleCheckLine}
+                                    />
+                                    <LineCheck
+                                        key="4"
+                                        id="shipExp"
+                                        title="Shipment Expected"
+                                        isChecked={lines.includes('shipExp')}
+                                        handleCheck={this.handleCheckLine}
+                                    />
+                                    <LineCheck
+                                        key="5"
+                                        id="shipAct"
+                                        title="Shipment Actual"
+                                        isChecked={lines.includes('shipAct')}
+                                        handleCheck={this.handleCheckLine}
+                                    />
+                                    <LineCheck
+                                        key="6"
+                                        id="delExp"
+                                        title="Delivery Expected"
+                                        isChecked={lines.includes('delExp')}
+                                        handleCheck={this.handleCheckLine}
+                                    />
+                                    <LineCheck
+                                        key="7"
+                                        id="delAct"
+                                        title="Delivery Actual"
+                                        isChecked={lines.includes('delAct')}
+                                        handleCheck={this.handleCheckLine}
+                                    />
+                                </div>
+                            </div>
+                            <div className="col full-height">
+                                <div className="form-group">
+                                    <label htmlFor="clPo">Client Po</label>
+                                    <select
+                                        className="form-control"
+                                        id="clPo"
+                                        name="clPo"
+                                        value={clPo}
+                                        placeholder="Select field..."
+                                        onChange={this.handleChangePr}
+                                    >
+                                        <option key="0" value="">Select Po...</option>
+                                        {this.generateOptionClPo(pos)}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="clPoRev">Revision</label>
+                                    <select
+                                        className="form-control"
+                                        id="clPoRev"
+                                        name="clPoRev"
+                                        value={clPoRev}
+                                        placeholder="Select revision..."
+                                        onChange={this.handleChangePr}
+                                    >
+                                        <option key="0" value="">Select Revision...</option>
+                                        {this.generateOptionclPoRev(pos, clPo)}
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="unit">Unit</label>
+                                    <select
+                                        className="form-control"
+                                        id="unit"
+                                        name="unit"
+                                        value={unit}
+                                        onChange={this.handleChangePr}
+                                    >
+                                        <option key="0" value="value">Value</option>
+                                        <option key="1" value="pcs">Qty (Pcs)</option>
+                                        <option key="2" value="mtr">Qty (Mtr/Ft)</option>
+                                        <option key="3" value="weight">Weight (Kgs/Lbs)</option>
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="period">Period</label>
+                                    <select
+                                        className="form-control"
+                                        id="period"
+                                        name="period"
+                                        value={period}
+                                        onChange={this.handleChangePr}
+                                    >
+                                        <option key="0" value="day">Days</option>
+                                        <option key="1" value="week">Weeks</option>
+                                        <option key="2" value="fortnight">Fortnights</option>
+                                        <option key="3" value="month">Months</option>
+                                        <option key="4" value="quarter">Quarters</option>
+                                    </select>
+                                </div>
+                            </div>
+                    </div>
+                    <div className="text-right mt-4">
+                        <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.downloadLineChart(event)}>
+                            <span><FontAwesomeIcon icon={downloadingChart ? "spinner" : "file-excel"} className={downloadingChart ? "fa-pulse fa-forward fa mr-2" : "fa mr-2"}/>Generate</span>
+                        </button>
+                    </div> 
+                    
+                </Modal>
+
 
                 <Modal
                     show={showSettings}
@@ -1403,5 +1714,5 @@ function mapStateToProps(state) {
     };
 }
 
-const connectedOverview = connect(mapStateToProps)(Overview);
-export { connectedOverview as Overview };
+const connectedExpediting = connect(mapStateToProps)(Expediting);
+export { connectedExpediting as Expediting };

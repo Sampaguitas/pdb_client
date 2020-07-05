@@ -42,6 +42,7 @@
 - [ ] Description on collapsed Menu icon hover.
 ### Refactor Code
 - [X] export functions (7,000 deletions).
+- [X] remove performance report screen and add generate report button to expediting screen.
 ### Wrap up
 - [ ] Add new Fields, Screens, Documents to the master template.
 - [ ] Back up database.
