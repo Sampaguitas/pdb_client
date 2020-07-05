@@ -41,7 +41,7 @@
 - [X] Home Icon highlight on "/", main Item highlight on sub (side menu).
 - [ ] Description on collapsed Menu icon hover.
 ### Refactor Code
-- [X] export functions (7,000 deletions).
+- [X] export functions (3,679 additions and 10,799 deletions).
 - [X] remove performance report screen and add generate report button to expediting screen.
 ### Wrap up
 - [ ] Add new Fields, Screens, Documents to the master template.
