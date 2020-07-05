@@ -3,152 +3,17 @@ import TableSelectionRow from '../project-table/table-selection-row';
 import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SplitInput from './split-input';
-import moment from 'moment';
+import {
+    myLocale,
+    getInputType,
+    getDateFormat,
+    TypeToString,
+    isValidFormat,
+    DateToString,
+    StringToDate,
+    getLocName,
+} from '../../_functions';
 import _ from 'lodash';
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
-
-function getInputType(dbFieldType) {
-    switch(dbFieldType) {
-        case 'Number': return 'number';
-        case 'Date': return 'date';
-        default: return 'text'
-    }
-}
-
-function getLiteral(myLocale) {
-    let firstLiteral = myLocale.formatToParts().find(function (element) {
-      return element.type === 'literal';
-    });
-    if (firstLiteral) {
-      return firstLiteral.value;
-    } else {
-      return '/';
-    }
-};
-
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
-
-function TypeToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat));
-            case 'number': return String(new Intl.NumberFormat().format(fieldValue));
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function StirngToCache(fieldValue, myDateFormat) {
-    if (!!fieldValue) {
-        let separator = getLiteral(myLocale);
-        let cache = myDateFormat.replace('DD','00').replace('MM', '00').replace('YYYY', (new Date()).getFullYear()).split(separator);
-        let valueArray = fieldValue.split(separator);
-        return cache.reduce(function(acc, cur, idx) {
-            if (valueArray.length > idx) {
-              let curChars = cur.split("");
-                let valueChars = valueArray[idx].split("");
-              let tempArray = curChars.reduce(function(accChar, curChar, idxChar) {
-                  if (valueChars.length >= (curChars.length - idxChar)) {
-                    accChar += valueChars[valueChars.length - curChars.length + idxChar];
-                  } else {
-                    accChar += curChar;
-                  }
-                return accChar;
-              }, '')
-              acc.push(tempArray);
-            } else {
-              acc.push(cur);
-            }
-            return acc;
-          }, []).join(separator);
-    } else {
-        return fieldValue;
-    } 
-}
-
-function isValidFormat (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat, true).isValid();
-            default: return true;
-        }
-    } else {
-        return true;
-    }
-    
-}
-
-function StringToType (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-
-
-function DateToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat));
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function StringToDate (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function getScreenTbls (headersForSelect) {
-    if (!_.isUndefined(headersForSelect) && !_.isEmpty(headersForSelect)) {
-        return headersForSelect.reduce(function (acc, cur) {
-            if(!acc.includes(cur.fields.fromTbl)) {
-                acc.push(cur.fields.fromTbl)
-            }
-            return acc;
-        },[]);
-    } else {
-        return [];
-    }
-}
 
 function virtuals(whpackitems, uom) {
     let tempVirtuals = [];
@@ -165,19 +30,10 @@ function virtuals(whpackitems, uom) {
     return tempVirtuals;
 }
 
-function getLocName(location, area) {
-    return `${area.areaNr}/${location.hall}${location.row}-${leadingChar(location.col, '0', 3)}${!!location.height ? '-' + location.height : ''}`;
-}
-
-function leadingChar(string, char, length) {
-    return string.toString().length > length ? string : char.repeat(length - string.toString().length) + string;
-}
-
 function getBodys(selectedPickticket, selection, headersForSelect, selectedIds){
     let arrayBody = [];
     let arrayRow = [];
     let objectRow = {};
-    // let hasPackitems = getScreenTbls(headersForSelect).includes('packitem');
     let screenHeaders = headersForSelect;
     let pickitemId = selectedIds.pickitemId;
     let project = selection.project || { _id: '0', name: '', number: '' };
@@ -758,7 +614,6 @@ function getVirturalsQty(virtuals, tempUom) {
 }
 
 function getRemainingQty(selectedPickticket, selectedIds, bodysForSelect, selectedLine, virtuals) {
-    // let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(selectedPo.uom.toUpperCase()) ? 'mtrs' : 'pcs';
     let selectedPickitem = selectedPickticket.pickitems.find(pickitem => pickitem._id === selectedIds.pickitemId);
     let uom = _.isUndefined(selectedPickitem) ? 'pcs' : selectedPickitem.miritem.po.uom;
     let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(uom.toUpperCase()) ? 'mtrs' : 'pcs';

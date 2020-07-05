@@ -3,136 +3,16 @@ import TableSelectionRow from '../project-table/table-selection-row';
 import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SplitInput from './split-input';
-import moment from 'moment';
+import {
+    myLocale,
+    getInputType,
+    getDateFormat,
+    TypeToString,
+    isValidFormat,
+    DateToString,
+    StringToDate,
+} from '../../_functions';
 import _ from 'lodash';
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
-
-function getInputType(dbFieldType) {
-    switch(dbFieldType) {
-        case 'Number': return 'number';
-        case 'Date': return 'date';
-        default: return 'text'
-    }
-}
-
-function getLiteral(myLocale) {
-    let firstLiteral = myLocale.formatToParts().find(function (element) {
-      return element.type === 'literal';
-    });
-    if (firstLiteral) {
-      return firstLiteral.value;
-    } else {
-      return '/';
-    }
-};
-
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
-
-function TypeToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat));
-            case 'number': return String(new Intl.NumberFormat().format(fieldValue));
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function StirngToCache(fieldValue, myDateFormat) {
-    if (!!fieldValue) {
-        let separator = getLiteral(myLocale);
-        let cache = myDateFormat.replace('DD','00').replace('MM', '00').replace('YYYY', (new Date()).getFullYear()).split(separator);
-        let valueArray = fieldValue.split(separator);
-        return cache.reduce(function(acc, cur, idx) {
-            if (valueArray.length > idx) {
-              let curChars = cur.split("");
-                let valueChars = valueArray[idx].split("");
-              let tempArray = curChars.reduce(function(accChar, curChar, idxChar) {
-                  if (valueChars.length >= (curChars.length - idxChar)) {
-                    accChar += valueChars[valueChars.length - curChars.length + idxChar];
-                  } else {
-                    accChar += curChar;
-                  }
-                return accChar;
-              }, '')
-              acc.push(tempArray);
-            } else {
-              acc.push(cur);
-            }
-            return acc;
-          }, []).join(separator);
-    } else {
-        return fieldValue;
-    } 
-}
-
-function StringToType (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function isValidFormat (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat, true).isValid();
-            default: return true;
-        }
-    } else {
-        return true;
-    }
-}
-
-function DateToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat));
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function StringToDate (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
 
 function getScreenTbls (headersForSelect) {
     if (!_.isUndefined(headersForSelect) && !_.isEmpty(headersForSelect)) {
@@ -334,7 +214,6 @@ function getBodys(selectedPo, selection, headersForSelect, selectedIds){
     } else {
         return [];
     }
-    
 }
 
 function getFirstVirtual(selectedPo, screenBody, headersForShow) {

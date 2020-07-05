@@ -419,22 +419,6 @@ export function getScreenTbls (fieldnames, screenId) {
     }
 }
 
-// export function getPackItemFields (screenHeaders) {
-//     if (screenHeaders) {
-//         let tempArray = [];
-//         screenHeaders.reduce(function (acc, cur) {
-//             if (cur.fields.fromTbl === 'packitem' && !acc.includes(cur.fields._id)) {
-//                 tempArray.push(cur.fields);
-//                 acc.push(cur.fields._id);
-//             }
-//             return acc;
-//         },[]);
-//         return tempArray;
-//     } else {
-//         return [];
-//     }
-// }
-
 export function getTblFields (screenHeaders, fromTbl) {
     if (screenHeaders) {
         let tempArray = [];
