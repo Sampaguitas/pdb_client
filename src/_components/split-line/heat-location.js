@@ -6,54 +6,11 @@ import HeaderInput from '../project-table/header-input';
 import TableInput from '../project-table/table-input';
 import TableSelectionRow from '../project-table/table-selection-row';
 import TableSelectionAllRow from '../project-table/table-selection-all-row';
-import CheckBox from '../../_components/check-box';
-
-import moment from 'moment';
+import {
+    arrayRemove,
+    doesMatch,
+} from '../../_functions';
 import _ from 'lodash';
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
-
-function TypeToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
-
-function arrayRemove(arr, value) {
-
-    return arr.filter(function(ele){
-        return ele != value;
-    });
- 
-}
 
 function arraySorted(array, sort) {
     let tempArray = array.slice(0);
@@ -131,67 +88,6 @@ function arraySorted(array, sort) {
     }
 }
 
-function doesMatch(search, value, type, isEqual) {
-    
-    if (!search) {
-        return true;
-    } else if (!value && search != 'any' && search != 'false' && search != '-1' && String(search).toUpperCase() != '=BLANK') {
-        return false;
-    } else {
-        switch(type) {
-            case 'Id':
-                return _.isEqual(search, value);
-            case 'String':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(String(value).toUpperCase(), String(search).toUpperCase());
-                } else {
-                    return String(value).toUpperCase().includes(String(search).toUpperCase());
-                }
-            case 'Date':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(TypeToString(value, 'date', getDateFormat(myLocale)), search);
-                } else {
-                    return TypeToString(value, 'date', getDateFormat(myLocale)).includes(search);
-                }
-            case 'Number':
-                if (search === '-1') {
-                    return !value;
-                } else if (search === '-2') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual( Intl.NumberFormat().format(value).toString(), Intl.NumberFormat().format(search).toString());
-                } else {
-                    return Intl.NumberFormat().format(value).toString().includes(Intl.NumberFormat().format(search).toString());
-                }
-            case 'Boolean':
-                if(search == 'any') {
-                    return true; //any or equal
-                } else if (search == 'true' && !!value) {
-                    return true; //true
-                } else if (search == 'false' && !value) {
-                    return true; //true
-                }else {
-                    return false;
-                }
-            case 'Select':
-                if(search == 'any' || _.isEqual(search, value)) {
-                    return true; //any or equal
-                } else {
-                    return false;
-                }
-            default: return true;
-        }
-    }
-}
-
 function getPoCertificates(certificates, heatlocs, poId, locationId, projectId) {
     if (certificates.hasOwnProperty('items') && !_.isEmpty(certificates.items)) {
         let tempArray = [];
@@ -221,11 +117,7 @@ function getPoCertificates(certificates, heatlocs, poId, locationId, projectId) 
                 let locs = heatlocs.items.filter(element => _.isEqual(element.poId, temp.poId) && _.isEqual(element.cif, temp.cif) && _.isEqual(element.heatNr, temp.heatNr));
                 let locQty = locs.reduce(function(accLoc, curLoc) {
                     let inspQty = curLoc.inspQty || 0;
-                    // let pickQty = curLoc.heatpicks.reduce(function (accPick, curPick) {
-                    //     accPick = accPick + (curPick.inspQty || 0);
-                    //     return accPick;
-                    // }, 0);
-                    accLoc = accLoc + inspQty; // - pickQty;
+                    accLoc = accLoc + inspQty;
                     return accLoc;
                 }, 0);
                 temp.inspQty -= locQty;
@@ -294,7 +186,6 @@ class HeatLocation extends Component {
         this.poToggleSort = this.poToggleSort.bind(this);
         this.locToggleSort = this.locToggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
-        
         this.poToggleSelectAllRow = this.poToggleSelectAllRow.bind(this);
         this.locToggleSelectAllRow = this.locToggleSelectAllRow.bind(this);
         this.updatePoSelectedIds = this.updatePoSelectedIds.bind(this);
@@ -333,7 +224,6 @@ class HeatLocation extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // const { locCertificates } = this.state;
         const { certificates, heatlocs, poId, locationId, projectId } = this.props;
         if (heatlocs != prevProps.heatlocs) {
             this.setState({
@@ -517,7 +407,6 @@ class HeatLocation extends Component {
     }
 
     handleChangeHeader(event) {
-        // event.preventDefault();
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -587,7 +476,6 @@ class HeatLocation extends Component {
                             align="left"
                             fieldType="text"
                             textNoWrap={true}
-                            // key={certificate._id}
                             refreshStore={refreshCifs}
                         />
                         <TableInput
@@ -600,7 +488,6 @@ class HeatLocation extends Component {
                             align="left"
                             fieldType="text"
                             textNoWrap={true}
-                            // key={certificate._id}
                             refreshStore={refreshCifs}
                         />
                         <TableInput
@@ -613,7 +500,6 @@ class HeatLocation extends Component {
                             align="left"
                             fieldType="number"
                             textNoWrap={true}
-                            // key={certificate._id}
                             refreshStore={refreshCifs}
                         />
                     </tr>
@@ -686,7 +572,6 @@ class HeatLocation extends Component {
                             align="left"
                             fieldType="text"
                             textNoWrap={true}
-                            // key={certificate._id}
                             refreshStore={refresHeatLocs}
                         />
                         <TableInput
@@ -699,7 +584,6 @@ class HeatLocation extends Component {
                             align="left"
                             fieldType="text"
                             textNoWrap={true}
-                            // key={certificate._id}
                             refreshStore={refresHeatLocs}
                         />
                         <TableInput
@@ -712,7 +596,6 @@ class HeatLocation extends Component {
                             align="left"
                             fieldType="number"
                             textNoWrap={true}
-                            // key={certificate._id}
                             refreshStore={refresHeatLocs}
                         />
                     </tr>

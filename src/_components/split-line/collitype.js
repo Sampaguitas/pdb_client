@@ -8,53 +8,11 @@ import TableInput from '../project-table/table-input';
 import TableSelectionRow from '../project-table/table-selection-row';
 import NewRowCreate from '../project-table/new-row-create';
 import NewRowInput from '../project-table/new-row-input';
-
-import moment from 'moment';
+import {
+    arrayRemove,
+    doesMatch
+} from '../../_functions';
 import _ from 'lodash';
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
-
-function TypeToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
-
-function arrayRemove(arr, value) {
-
-    return arr.filter(function(ele){
-        return ele != value;
-    });
- 
-}
 
 function colliTypeSorted(array, sort) {
     let tempArray = array.slice(0);
@@ -106,67 +64,6 @@ function colliTypeSorted(array, sort) {
     }
 }
 
-function doesMatch(search, value, type, isEqual) {
-    
-    if (!search) {
-        return true;
-    } else if (!value && search != 'any' && search != 'false' && search != '-1' && String(search).toUpperCase() != '=BLANK') {
-        return false;
-    } else {
-        switch(type) {
-            case 'Id':
-                return _.isEqual(search, value);
-            case 'String':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(String(value).toUpperCase(), String(search).toUpperCase());
-                } else {
-                    return String(value).toUpperCase().includes(String(search).toUpperCase());
-                }
-            case 'Date':
-                if (String(search).toUpperCase() === '=BLANK') {
-                    return !value;
-                } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual(TypeToString(value, 'date', getDateFormat(myLocale)), search);
-                } else {
-                    return TypeToString(value, 'date', getDateFormat(myLocale)).includes(search);
-                }
-            case 'Number':
-                if (search === '-1') {
-                    return !value;
-                } else if (search === '-2') {
-                    return !!value;
-                } else if (isEqual) {
-                    return _.isEqual( Intl.NumberFormat().format(value).toString(), Intl.NumberFormat().format(search).toString());
-                } else {
-                    return Intl.NumberFormat().format(value).toString().includes(Intl.NumberFormat().format(search).toString());
-                }
-            case 'Boolean':
-                if(search == 'any') {
-                    return true; //any or equal
-                } else if (search == 'true' && !!value) {
-                    return true; //true
-                } else if (search == 'false' && !value) {
-                    return true; //true
-                }else {
-                    return false;
-                }
-            case 'Select':
-                if(search == 'any' || _.isEqual(search, value)) {
-                    return true; //any or equal
-                } else {
-                    return false;
-                }
-            default: return true;
-        }
-    }
-}
-
 class ColliType extends Component {
     constructor(props) {
         super(props);
@@ -201,18 +98,13 @@ class ColliType extends Component {
         this.toggleSort = this.toggleSort.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
-        
         this.handleAssign = this.handleAssign.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeNewRow = this.handleChangeNewRow.bind(this);
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
-
         this.cerateNewRow = this.cerateNewRow.bind(this);
-        // this.onFocusRow = this.onFocusRow.bind(this);
-        // this.onBlurRow = this.onBlurRow.bind(this);
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
-
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
         this.filterName = this.filterName.bind(this);
@@ -347,7 +239,6 @@ class ColliType extends Component {
     }
 
     handleChangeHeader(event) {
-        // event.preventDefault();
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -395,7 +286,6 @@ class ColliType extends Component {
             });
         } else {
             this.setState({
-                // ...this.state,
                 deleting: true
             }, () => {
                 const requestOptions = {
@@ -403,17 +293,14 @@ class ColliType extends Component {
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                     body: JSON.stringify({selectedIds: selectedRows})
                 };
-                // return fetch(`${config.apiUrl}/collitype/delete?id=${JSON.stringify(selectedRows)}`, requestOptions)
                 return fetch(`${config.apiUrl}/collitype/delete`, requestOptions)
                 .then( () => {
                     this.setState({
-                        // ...this.state,
                         deleting: false
                     }, refreshColliTypes);
                 })
                 .catch( err => {
                     this.setState({
-                        // ...this.state,
                         deleting: false
                     }, refreshColliTypes);
                 });
@@ -427,7 +314,6 @@ class ColliType extends Component {
         const { creatingNewRow, fieldName } = this.state;
         if(!creatingNewRow) {
             this.setState({
-                // ...this.state,
                 creatingNewRow: true
             }, () => {
                 const requestOptions = {
@@ -438,13 +324,11 @@ class ColliType extends Component {
                 return fetch(`${config.apiUrl}/collitype/create`, requestOptions)
                 .then( () => {
                     this.setState({
-                        // ...this.state,
                         creatingNewRow: false,
                         newRowColor: 'green'
                     }, () => {
                         setTimeout( () => {
                             this.setState({
-                                // ...this.state,
                                 newRowColor: 'inherit',
                                 newRow:false,
                                 fieldName:{},
@@ -455,13 +339,11 @@ class ColliType extends Component {
                 })
                 .catch( () => {
                     this.setState({
-                        // ...this.state,
                         creatingNewRow: false,
                         newRowColor: 'red'
                     }, () => {
                         setTimeout(() => {
                             this.setState({
-                                // ...this.state,
                                 newRowColor: 'inherit',
                                 newRow:false,
                                 fieldName:{},
