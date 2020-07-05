@@ -20,7 +20,9 @@
 - [ ] Goods returned modal.
 ### Shipping Transport Docs
 - [ ] MiddleWare pre/post hooks (to be fixed).
-- [ ] If inspection module disabled: relQty = splitQty (virtual); 
+- [ ] If inspection module disabled: relQty = splitQty (virtual);
+### Expediting
+- [X] remove performance report screen and add generate report button to expediting screen.
 ### Minutes of Meeting
 - [X] Goods receipt: alert-message if no remaining qty.
 - [X] Goods receipt: qty field disabled if multiple line selected.
@@ -40,10 +42,8 @@
 - [X] Transition sub items on Item expand/collapse (side menu).
 - [X] Home Icon highlight on "/", main Item highlight on sub (side menu).
 - [ ] Description on collapsed Menu icon hover.
-### Refactor Code
-- [X] export functions (3,679 additions and 10,799 deletions).
-- [X] remove performance report screen and add generate report button to expediting screen.
 ### Wrap up
+- [X] Refactor: 3,679 additions and 10,799 deletions.
 - [ ] Add new Fields, Screens, Documents to the master template.
 - [ ] Back up database.
 - [ ] Remove all projects eccept master template.
