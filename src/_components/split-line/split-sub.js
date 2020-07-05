@@ -63,96 +63,8 @@ function getBodys(selectedPo, selection, headersForSelect){
     let i = 1;
     if (!_.isEmpty(selectedPo) && selectedPo.subs) {
         selectedPo.subs.map(sub => {
-            if(!sub.isReturned) {
-                if (!_.isEmpty(sub.packitems) && hasPackitems) {
-                    virtuals(sub.packitems, selectedPo.uom, getTblFields(screenHeaders, 'packitem')).map(virtual => {
-                        arrayRow = [];
-                        screenHeaders.map(screenHeader => {
-                            switch(screenHeader.fields.fromTbl) {
-                                case 'po':
-                                    if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: project._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'po',
-                                            objectId: selectedPo._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: selectedPo[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    }
-                                    break;
-                                case 'sub':
-                                    if (screenHeader.fields.name === 'shippedQty') {
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: sub._id,
-                                            fieldName: 'shippedQty',
-                                            fieldValue: virtual.shippedQty,
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    } else {
-                                        arrayRow.push({
-                                            collection: 'sub',
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
-                                    }
-                                    break;
-                                case 'packitem':
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: virtual._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: virtual[screenHeader.fields.name].join(' | '),
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: 'text',
-                                        });
-                                    break;
-                                default: arrayRow.push({
-                                    collection: 'virtual',
-                                        objectId: '0',
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: '',
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                }); 
-                            }
-                        });
-                        objectRow  = {
-                            _id: i,
-                            tablesId: {
-                                poId: selectedPo._id,
-                                subId: sub._id,
-                                certificateId: '',
-                                packitemId: '',
-                                collipackId: ''
-                            },
-                            isPacked: true,
-                            fields: arrayRow
-                        };
-                        arrayBody.push(objectRow);
-                        i++;
-                    });
-                } else {
+            if (!_.isEmpty(sub.packitems) && hasPackitems) {
+                virtuals(sub.packitems, selectedPo.uom, getTblFields(screenHeaders, 'packitem')).map(virtual => {
                     arrayRow = [];
                     screenHeaders.map(screenHeader => {
                         switch(screenHeader.fields.fromTbl) {
@@ -180,15 +92,38 @@ function getBodys(selectedPo, selection, headersForSelect){
                                 }
                                 break;
                             case 'sub':
-                                arrayRow.push({
-                                    collection: 'sub',
-                                    objectId: sub._id,
-                                    fieldName: screenHeader.fields.name,
-                                    fieldValue: sub[screenHeader.fields.name],
-                                    disabled: screenHeader.edit,
-                                    align: screenHeader.align,
-                                    fieldType: getInputType(screenHeader.fields.type),
-                                });
+                                if (screenHeader.fields.name === 'shippedQty') {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: sub._id,
+                                        fieldName: 'shippedQty',
+                                        fieldValue: virtual.shippedQty,
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else {
+                                    arrayRow.push({
+                                        collection: 'sub',
+                                        objectId: sub._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: sub[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                }
+                                break;
+                            case 'packitem':
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: virtual._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: virtual[screenHeader.fields.name].join(' | '),
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: 'text',
+                                    });
                                 break;
                             default: arrayRow.push({
                                 collection: 'virtual',
@@ -210,12 +145,75 @@ function getBodys(selectedPo, selection, headersForSelect){
                             packitemId: '',
                             collipackId: ''
                         },
-                        isPacked: _.isEmpty(sub.packitems) ? false : true,
+                        isPacked: true,
                         fields: arrayRow
                     };
                     arrayBody.push(objectRow);
                     i++;
-                }
+                });
+            } else {
+                arrayRow = [];
+                screenHeaders.map(screenHeader => {
+                    switch(screenHeader.fields.fromTbl) {
+                        case 'po':
+                            if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                arrayRow.push({
+                                    collection: 'virtual',
+                                    objectId: project._id,
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                            } else {
+                                arrayRow.push({
+                                    collection: 'po',
+                                    objectId: selectedPo._id,
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: selectedPo[screenHeader.fields.name],
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                            }
+                            break;
+                        case 'sub':
+                            arrayRow.push({
+                                collection: 'sub',
+                                objectId: sub._id,
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: sub[screenHeader.fields.name],
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                            });
+                            break;
+                        default: arrayRow.push({
+                            collection: 'virtual',
+                                objectId: '0',
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: '',
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
+                        }); 
+                    }
+                });
+                objectRow  = {
+                    _id: i,
+                    tablesId: {
+                        poId: selectedPo._id,
+                        subId: sub._id,
+                        certificateId: '',
+                        packitemId: '',
+                        collipackId: ''
+                    },
+                    isPacked: _.isEmpty(sub.packitems) ? false : true,
+                    fields: arrayRow
+                };
+                arrayBody.push(objectRow);
+                i++;
             }
         });
         return arrayBody;
@@ -387,9 +385,7 @@ function getPoQty(selectedPo) {
 function getSubsQty(selectedPo) {
     if (selectedPo.hasOwnProperty('subs') && !_.isEmpty(selectedPo.subs)) {
         return selectedPo.subs.reduce(function(acc, curr) {
-            if (!curr.isReturned) {
-                acc += Number(curr.splitQty) || 0;
-            }
+            acc += Number(curr.splitQty) || 0;
             return acc;
         }, 0);
     } else {

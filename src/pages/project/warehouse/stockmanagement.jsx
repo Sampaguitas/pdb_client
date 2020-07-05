@@ -378,80 +378,79 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
     if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
         pos.items.map(po => {
             virtuals(transactions, po._id, 'poId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
-                    arrayRow = [];
-                    screenHeaders.map(screenHeader => {
-                        switch(screenHeader.fields.fromTbl) {
-                            case 'po':
-                                if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
-                                    arrayRow.push({
-                                        collection: 'virtual',
-                                        objectId: project._id,
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
-                                } else {
-                                    arrayRow.push({
-                                        collection: 'po',
-                                        objectId: po._id,
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: po[screenHeader.fields.name],
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                    });
-                                }
-                                break;
-                            case 'location':
+                arrayRow = [];
+                screenHeaders.map(screenHeader => {
+                    switch(screenHeader.fields.fromTbl) {
+                        case 'po':
+                            if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
                                 arrayRow.push({
                                     collection: 'virtual',
-                                    objectId: virtual._id,
+                                    objectId: project._id,
                                     fieldName: screenHeader.fields.name,
-                                    fieldValue: virtual[screenHeader.fields.name],
+                                    fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
                                 });
-                                break;
-                            default: arrayRow.push({
+                            } else {
+                                arrayRow.push({
+                                    collection: 'po',
+                                    objectId: po._id,
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: po[screenHeader.fields.name],
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                            }
+                            break;
+                        case 'location':
+                            arrayRow.push({
                                 collection: 'virtual',
-                                objectId: '0',
+                                objectId: virtual._id,
                                 fieldName: screenHeader.fields.name,
-                                fieldValue: '',
+                                fieldValue: virtual[screenHeader.fields.name],
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
                             });
-                        }
-                    });
+                            break;
+                        default: arrayRow.push({
+                            collection: 'virtual',
+                            objectId: '0',
+                            fieldName: screenHeader.fields.name,
+                            fieldValue: '',
+                            disabled: screenHeader.edit,
+                            align: screenHeader.align,
+                            fieldType: getInputType(screenHeader.fields.type),
+                        });
+                    }
+                });
 
-                    let qty = po.qty || 0;
-                    let returnedQty = po.subs.reduce(function(acc, cur) {
-                        if (!!cur.isReturned && !!cur.relQty) {
-                            acc += cur.relQty;
-                        }
-                        return acc;
-                    }, 0);
-                    let stockQty = virtual.stockQty || 0;
-                    
-                    objectRow  = {
-                        _id: i, 
-                        tablesId: { 
-                            poId: po._id,
-                            subId: '',
-                            certificateId: '',
-                            packitemId: '',
-                            collipackId: '',
-                            locationId: virtual.locationId,
-                        },
-                        fields: arrayRow,
-                        isRemaining: (qty + returnedQty) > stockQty,
-                    };
-                    arrayBody.push(objectRow);
-                    i++;
-                // }
+                let qty = po.qty || 0;
+                let returnedQty = po.subs.reduce(function(acc, cur) {
+                    if (!!cur.relQty) {
+                        acc += cur.relQty;
+                    }
+                    return acc;
+                }, 0);
+                let stockQty = virtual.stockQty || 0;
+                
+                objectRow  = {
+                    _id: i, 
+                    tablesId: { 
+                        poId: po._id,
+                        subId: '',
+                        certificateId: '',
+                        packitemId: '',
+                        collipackId: '',
+                        locationId: virtual.locationId,
+                    },
+                    fields: arrayRow,
+                    isRemaining: (qty + returnedQty) > stockQty,
+                };
+                arrayBody.push(objectRow);
+                i++;
             });
         });
         return arrayBody;

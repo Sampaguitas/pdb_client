@@ -17,7 +17,12 @@
 - [X] Assign Colli types & dimentions.
 - [X] Print Shipping Documents.
 ### Stock Management
-- [ ] Goods returned modal.
+- [X] Goods returned modal.
+- [X] Return schema (back end).
+- [ ] Return fields.
+- [X] Download goods return DUF.
+- [ ] Upload goods return DUF.
+- [ ] Goods recipt (goods return radio/table).
 ### Shipping Transport Docs
 - [ ] MiddleWare pre/post hooks (to be fixed).
 - [ ] If inspection module disabled: relQty = splitQty (virtual);
