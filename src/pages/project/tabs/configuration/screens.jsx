@@ -380,6 +380,7 @@ class Screens extends React.Component {
         
         const {
             custom,
+            creatingNewRow,
             forShow,
             forSelect,
             align,
@@ -416,6 +417,7 @@ class Screens extends React.Component {
             {_id: '5eb0f60ce7179a42f173de47', name: 'Goods Receipt with PO', fromTbls: ['po', 'location']},
             {_id: '5ea911747c213e2096462d79', name: 'Goods Receipt with NFI', fromTbls: ['po', 'sub', 'location']},
             {_id: '5ea919727c213e2096462e3f', name: 'Goods Receipt with PL', fromTbls: ['po', 'sub', 'packitem', 'location']},
+            {_id: '5f02b878e7179a221ee2c718', name: 'Goods Receipt with RET', fromTbls: ['po', 'return', 'location']},
             {_id: '5ed1e76e7c213e044cc01884', name: 'Material Issue Record', fromTbls: ['mir']},
             {_id: '5ed1e7a67c213e044cc01888', name: 'Material Issue Record Splitwindow', fromTbls: ['miritem', 'po']},
             {_id: '5ed8f4ce7c213e044cc1c1a9', name: 'Picking Ticket', fromTbls: ['mir', 'pickticket', 'location', 'po']},

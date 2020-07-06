@@ -239,7 +239,10 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                             subId: sub._id,
                                             certificateId: '',
                                             packitemId: packitem._id,
-                                            collipackId: '' 
+                                            collipackId: '',
+                                            returnId: '',
+                                            locationId: virtual.locationId,
+                                             
                                         },
                                         fields: arrayRow,
                                         isRemaining: qtyPacked > stockQty,
@@ -346,7 +349,9 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                                     subId: sub._id,
                                     certificateId: '',
                                     packitemId: '',
-                                    collipackId: '' 
+                                    collipackId: '',
+                                    returnId: '',
+                                    locationId: virtual.locationId,
                                 },
                                 fields: arrayRow,
                                 isRemaining: relQty > stockQty,
@@ -444,6 +449,7 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
                         certificateId: '',
                         packitemId: '',
                         collipackId: '',
+                        returnId: '',
                         locationId: virtual.locationId,
                     },
                     fields: arrayRow,
@@ -452,6 +458,111 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
                 arrayBody.push(objectRow);
                 i++;
             });
+        });
+        return arrayBody;
+    } else {
+        return [];
+    }
+}
+
+function getRetBodys (selection, pos, transactions, headersForShow) {
+    let arrayBody = [];
+    let arrayRow = [];
+    let objectRow = {};
+    let screenHeaders = headersForShow;
+    let project = selection.project || { _id: '0', name: '', number: '' };
+    let hasLocation = hasFieldName(getTblFields (screenHeaders, 'location'), 'location');
+    let hasArea = hasFieldName(getTblFields (screenHeaders, 'location'), 'area');
+    let hasWarehouse = hasFieldName(getTblFields (screenHeaders, 'location'), 'warehouse');
+    
+    let i = 1;
+    if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
+        pos.items.map(po => {
+            if (!_.isEmpty(po.returns)) {
+                po.returns.map(_return => {
+                    virtuals(transactions, _return._id, 'returnId', hasLocation, hasArea, hasWarehouse).map(function(virtual){
+                        arrayRow = [];
+                        screenHeaders.map(screenHeader => {
+                            switch(screenHeader.fields.fromTbl) {
+                                case 'po':
+                                    if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: project._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'po',
+                                            objectId: po._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    break;
+                                case 'return':
+                                    arrayRow.push({
+                                        collection: 'return',
+                                        objectId: _return._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: _return[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                    break;
+                                case 'location':
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: virtual._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: virtual[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                    break;
+                                default: arrayRow.push({
+                                    collection: 'virtual',
+                                    objectId: '0',
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: '',
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                            }
+                        });
+
+                        let qtyReturn = _return.qtyReturn || 0;
+                        let stockQty = virtual.stockQty || 0;
+                        
+                        objectRow  = {
+                            _id: i, 
+                            tablesId: { 
+                                poId: po._id,
+                                subId: '',
+                                certificateId: '',
+                                packitemId: '',
+                                collipackId: '',
+                                returnId: _return._id,
+                                locationId: virtual.locationId, 
+                            },
+                            fields: arrayRow,
+                            isRemaining: qtyReturn > stockQty,
+                        };
+                        arrayBody.push(objectRow);
+                        i++;
+                    });
+                });
+            }
         });
         return arrayBody;
     } else {
@@ -604,11 +715,13 @@ class StockManagement extends React.Component {
             headersPo: [],
             headersNfi: [],
             headersPl: [],
+            headersRet: [],
             //bodys
             bodysForShow: [],
             bodysPo: [],
             bodysNfi: [],
             bodysPl: [],
+            bodysRet: [],
             //settings
             settingsFilter: [],
             settingsDisplay: [],
@@ -635,6 +748,7 @@ class StockManagement extends React.Component {
             poScreenId: '5eb0f60ce7179a42f173de47', //Goods Receipt with PO
             nfiScreenId: '5ea911747c213e2096462d79', //Goods Receipt with NFI
             plScreenId: '5ea919727c213e2096462e3f', //Goods Receipt with PL
+            retScreenId: '5f02b878e7179a221ee2c718', //Goods Receipt with RET
             unlocked: false,
             screen: 'Stock Management',
             selectedIds: [],
@@ -652,6 +766,7 @@ class StockManagement extends React.Component {
             fileName: '',
             inputKey: Date.now(),
             responce:{},
+            isReturned: false,
             isUploadingGr: false,
             isDownloadingGr: false,
             isRemaining: true,
@@ -662,7 +777,7 @@ class StockManagement extends React.Component {
                 message:''
             },
             showGoodsReceipt: false,
-            showGoodsReturned: false,
+            showDufReturns: false,
             showTransfer: false,
             showCorrection: false,
             showHeat: false,
@@ -690,7 +805,8 @@ class StockManagement extends React.Component {
 
         //Toggle Modals
         this.toggleGoodsReceipt = this.toggleGoodsReceipt.bind(this);
-        this.toggleGoodsReturned = this.toggleGoodsReturned.bind(this);
+        this.toggleDufReturns = this.toggleDufReturns.bind(this);
+        this.toggleIsReturned = this.toggleIsReturned.bind(this);
         this.toggleTransfer = this.toggleTransfer.bind(this);
         this.toggleCorrection = this.toggleCorrection.bind(this);
         this.toggleHeat = this.toggleHeat.bind(this);
@@ -746,10 +862,12 @@ class StockManagement extends React.Component {
             poScreenId,
             nfiScreenId, 
             plScreenId, 
+            retScreenId,
             headersForShow,
             headersPo, 
             headersNfi, 
-            headersPl, 
+            headersPl,
+            headersRet,
             settingsDisplay 
         } = this.state;
 
@@ -802,10 +920,12 @@ class StockManagement extends React.Component {
             headersPo: getHeaders([], fieldnames, poScreenId, 'forShow'),
             headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
             headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
+            headersRet: getHeaders([], fieldnames, retScreenId, 'forShow'),
             bodysForShow: getBodysForShow (selection, pos, transactions, headersForShow),
             bodysPo: getPoBodys(selection, pos, transactions, headersPo),
             bodysNfi: getNfiBodys(selection, pos, transactions, headersNfi),
             bodysPl: getPlBodys(selection, pos, transactions, headersPl),
+            bodysRet: getRetBodys(selection, pos, transactions, headersRet),
             docList: arraySorted(docConf(docdefs.items, ['5eacef91e7179a42f172feea']), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
@@ -826,14 +946,17 @@ class StockManagement extends React.Component {
         } = this.props;
 
         const {
+            isReturned,
             headersForShow,
             headersPo,
             headersNfi,
             headersPl,
+            headersRet,
             screenId,
             poScreenId,
             nfiScreenId,
             plScreenId,
+            retScreenId,
             selectedField,
             selectedIdsGr,
             settingsDisplay,
@@ -862,6 +985,7 @@ class StockManagement extends React.Component {
                 headersPo: getHeaders([], fieldnames, poScreenId, 'forShow'),
                 headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
                 headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
+                headersRet: getHeaders([], fieldnames, retScreenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
             }); 
@@ -888,6 +1012,12 @@ class StockManagement extends React.Component {
         if (selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersPo != prevState.headersPo) {
             this.setState({
                 bodysPo: getPoBodys(selection, pos, transactions, headersPo),
+            });
+        }
+
+        if (selection != prevProps.selection || pos != prevProps.pos || transactions != prevProps.transactions || headersRet != prevState.headersRet) {
+            this.setState({
+                bodysRet: getRetBodys(selection, pos, transactions, headersRet),
             });
         }
 
@@ -1457,19 +1587,37 @@ class StockManagement extends React.Component {
             },
             showGoodsReceipt: !showGoodsReceipt,
             transQty: '',
+            selectedIdsGr: [],
             toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
             transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
         });
     }
 
-    toggleGoodsReturned(event) {
+    toggleDufReturns(event) {
         event.preventDefault();
-        const { showGoodsReturned } = this.state;
+        const { showDufReturns } = this.state;
         this.setState({
-            showGoodsReturned: !showGoodsReturned,
+            showDufReturns: !showDufReturns,
+            alert: {
+                type:'',
+                message:''
+            },
             inputKey: Date.now(),
             fileName: '',
             responce:{}
+        });
+    }
+
+    toggleIsReturned(event) {
+        event.preventDefault();
+        const { isReturned } = this.state;
+        this.setState({
+            alert: {
+                type:'',
+                message:''
+            },
+            isReturned: !isReturned,
+            selectedIdsGr: [],
         });
     }
 
@@ -1708,6 +1856,7 @@ class StockManagement extends React.Component {
             poScreenId,
             nfiScreenId,
             plScreenId,
+            retScreenId,
             selectedIds,
             selectedIdsGr, 
             unlocked,
@@ -1715,7 +1864,7 @@ class StockManagement extends React.Component {
             docList,
             //show modals
             showGoodsReceipt,
-            showGoodsReturned,
+            showDufReturns,
             showTransfer,
             showCorrection,
             showHeat,
@@ -1727,9 +1876,11 @@ class StockManagement extends React.Component {
             headersPo,
             headersNfi,
             headersPl,
+            headersRet,
             bodysPo,
             bodysNfi,
             bodysPl,
+            bodysRet,
             //'-------------------'
             tabs,
             settingsFilter,
@@ -1747,6 +1898,7 @@ class StockManagement extends React.Component {
             fileName,
             inputKey,
             responce,
+            isReturned,
             isUploadingGr,
             isDownloadingGr,
             isRemaining,
@@ -1759,24 +1911,29 @@ class StockManagement extends React.Component {
 
         class goodsReceiptObject {
             constructor() {
-                if (!!selection.project && !!selection.project.enableShipping) {
-                    this.title = "Goods Receipt with PL";
+                if (isReturned) {
+                    this.title = "Goods Receipt with Client Returns";
+                    this.qtyPlaceHolder = "Leave empty to receive balance Qty (returned - already in stock)...";
+                    this.screenHeaders = headersRet;
+                    this.screenBodys = bodysRet;
+                    this.screenId = retScreenId;
+                    this.myRoute = "goodsReceiptRet";
+                } else if (!!selection.project && !!selection.project.enableShipping) {
+                    this.title = "Goods Receipt with Packing List";
                     this.qtyPlaceHolder = "Leave empty to receive balance Qty (packed - already in stock)...";
                     this.screenHeaders = headersPl;
                     this.screenBodys = bodysPl;
                     this.screenId = plScreenId;
                     this.myRoute = "goodsReceiptPl";
-                }
-                else if (!!selection.project && !!selection.project.enableInspection) {
-                    this.title = "Goods Receipt with NFI";
+                } else if (!!selection.project && !!selection.project.enableInspection) {
+                    this.title = "Goods Receipt with Notification For Inspection";
                     this.qtyPlaceHolder = "Leave empty to receive balance Qty (released - already in stock)...";
                     this.screenHeaders = headersNfi;
                     this.screenBodys = bodysNfi;
                     this.screenId = nfiScreenId;
                     this.myRoute = "goodsReceiptNfi";
-                }
-                else {
-                    this.title = "Goods Receipt with PO";
+                } else {
+                    this.title = "Goods Receipt with Purchase Order";
                     this.qtyPlaceHolder = "Leave empty to receive balance Qty (purchased - already in stock)...";
                     this.screenHeaders =headersPo;
                     this.screenBodys = bodysPo;
@@ -1790,7 +1947,7 @@ class StockManagement extends React.Component {
         
         return (
             <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
-                {alert.message && !showGoodsReceipt && !showGoodsReturned && !showTransfer && !showCorrection &&
+                {alert.message && !showGoodsReceipt && !showDufReturns && !showTransfer && !showCorrection &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1809,13 +1966,17 @@ class StockManagement extends React.Component {
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <div id="stockManagement" className={ (alert.message && !showGoodsReceipt && !showGoodsReturned && !showTransfer && !showCorrection) ? "main-section-alert" : "main-section"}>
+                <div id="stockManagement" className={ (alert.message && !showGoodsReceipt && !showDufReturns && !showTransfer && !showCorrection) ? "main-section-alert" : "main-section"}>
                     <div className="action-row row">
-                        <button title={myGoodsReceipt.title} className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleGoodsReceipt}>
+                        <button
+                            title={isReturned ? "Goods Receipt with Client Returns" : (!!selection.project && !!selection.project.enableShipping) ? "Goods Receipt with Packing List" : (!!selection.project && !!selection.project.enableInspection) ? "Goods Receipt with NFI" : "Goods Receipt with PO"}
+                            className="btn btn-leeuwen-blue btn-lg mr-2"
+                            onClick={this.toggleGoodsReceipt}
+                        >
                             <span><FontAwesomeIcon icon="cubes" className="fa mr-2"/>Goods Receipt</span>
                         </button>
-                        <button title={myGoodsReceipt.title} className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleGoodsReturned}>
-                            <span><FontAwesomeIcon icon="undo-alt" className="fa mr-2"/>Goods Returned</span>
+                        <button title="DUF Client Returns" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleDufReturns}>
+                            <span><FontAwesomeIcon icon="upload" className="fa mr-2"/>DUF Returns</span>
                         </button>
                         <button title="Stock Transfer" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleTransfer}>
                             <span><FontAwesomeIcon icon="exchange" className="fa mr-2"/>Stock Transfer</span>
@@ -1885,12 +2046,43 @@ class StockManagement extends React.Component {
                         whOptions={generateOptions(whList)}
                         areaOptions={generateOptions(areaList)}
                         locOptions={generateOptions(locList)}
+                        toggleIsReturned={this.toggleIsReturned}
+                        isReturned={isReturned}
                     />
+                    {/* <GoodsReceipt
+                        alert={alert}
+                        screenHeaders={isReturned ? headersRet : (!!selection.project && !!selection.project.enableShipping) ? headersPl : (!!selection.project && !!selection.project.enableInspection) ? headersNfi : headersPo}
+                        screenBodys={isReturned ? bodysRet : (!!selection.project && !!selection.project.enableShipping) ? bodysPl : (!!selection.project && !!selection.project.enableInspection) ? bodysNfi : bodysPo}
+                        projectId={projectId}
+                        screenId={isReturned ? retScreenId : (!!selection.project && !!selection.project.enableShipping) ? plScreenId : (!!selection.project && !!selection.project.enableInspection) ? nfiScreenId : poScreenId}
+                        selectedIds={selectedIdsGr}
+                        updateSelectedIds={this.updateSelectedIdsGr}
+                        isRemaining={isRemaining}
+                        unlocked={false}
+                        handleClearAlert={this.handleClearAlert}
+                        refreshStore={this.refreshStore}
+                        settingsFilter={[]}
+                        handleGoodsReceipt={this.handleGoodsReceipt}
+                        isReceiving={isReceiving}
+                        myRoute={isReturned ? "goodsReceiptRet" : (!!selection.project && !!selection.project.enableShipping) ? "goodsReceiptPl" : (!!selection.project && !!selection.project.enableInspection) ? "goodsReceiptNfi" : "goodsReceiptPo"}
+                        handleChange={this.handleChange}
+                        transQty={transQty}
+                        qtyPlaceHolder={`Leave empty to receive balance Qty (${isReturned ? "returned" : (!!selection.project && !!selection.project.enableShipping) ? "packed" : (!!selection.project && !!selection.project.enableInspection) ? "released" : "purchased"} - already in stock)...`}
+                        toWarehouse={toWarehouse}
+                        toArea={toArea}
+                        toLocation={toLocation}
+                        transDate={transDate}
+                        whOptions={generateOptions(whList)}
+                        areaOptions={generateOptions(areaList)}
+                        locOptions={generateOptions(locList)}
+                        toggleIsReturned={this.toggleIsReturned}
+                        isReturned={isReturned}
+                    /> */}
                 </Modal>
                 <Modal
-                    show={showGoodsReturned}
-                    hideModal={this.toggleGoodsReturned}
-                    title="Goods Returned"
+                    show={showDufReturns}
+                    hideModal={this.toggleDufReturns}
+                    title="DUF Client Returns"
                     size="modal-xl"
                 >
                     <div className="col-12">

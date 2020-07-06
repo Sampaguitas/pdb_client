@@ -66,6 +66,20 @@ export function StirngToCache(fieldValue, myDateFormat) {
     } 
 }
 
+export function StringToType (fieldValue, fieldType, myDateFormat) {
+    if (fieldValue) {
+        switch (fieldType) {
+            case 'Date':
+            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
+            // case 'Number':
+            // case 'number': return Number(fieldValue);
+            default: return fieldValue;
+        }
+    } else {
+        return '';
+    }
+}
+
 export function StringToDate (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
@@ -274,6 +288,7 @@ export function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
         '5eb0f60ce7179a42f173de47', //Goods Receipt with PO
         '5ea911747c213e2096462d79', //Goods Receipt with NFI
         '5ea919727c213e2096462e3f', //Goods Receipt with PL
+        '5f02b878e7179a221ee2c718', //Goods Receipt with RET
         '5ed1e76e7c213e044cc01884', //Material Issue Record
         '5ed1e7a67c213e044cc01888', //Material Issue Record Splitwindow
         '5ee60fbb7c213e044cc480e4', //'WH Assign Transport'

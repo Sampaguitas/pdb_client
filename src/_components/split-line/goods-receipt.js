@@ -324,13 +324,20 @@ class GoodsReceipt extends Component {
             handleChange,
             whOptions,
             areaOptions,
-            locOptions
+            locOptions,
+            isReturned,
+            toggleIsReturned,
         } = this.props;
 
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
         return (
             <div>
-                <div className="ml-2 mt-2 mr-2">
+                <div className="ml-2 mr-2">
+                    <div className="text-right mb-3">
+                        <button className="btn btn-leeuwen-blue btn-lg" onClick={event => toggleIsReturned(event)}>
+                            <span><FontAwesomeIcon icon="eye" className="fa mr-2"/>{`${isReturned ? "Hide" : "Show"} Returns`}</span>
+                        </button>
+                    </div>
                     {alert.message && 
                         <div className={`alert ${alert.type} mb-3`}>{alert.message}
                             <button className="close" onClick={(event) => this.handleClearAlert(event)}>

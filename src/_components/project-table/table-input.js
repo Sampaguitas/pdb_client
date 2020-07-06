@@ -151,7 +151,7 @@ class TableInput extends Component{
                 const requestOptions = {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: `{"${fieldName}":"${encodeURI(StringToType (fieldValue, fieldType, getDateFormat(myLocale)))}"}` //encodeURI
+                    body: `{"${fieldName}":"${encodeURI(StringToType(fieldValue, fieldType, getDateFormat(myLocale)))}"}` //encodeURI
                 };
 
                 return fetch(`${config.apiUrl}/${collection}/update?id=${encodeURI(objectId)}&parentId=${encodeURI(parentId)}`, requestOptions)
