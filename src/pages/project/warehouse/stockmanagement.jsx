@@ -1587,7 +1587,6 @@ class StockManagement extends React.Component {
             },
             showGoodsReceipt: !showGoodsReceipt,
             transQty: '',
-            selectedIdsGr: [],
             toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
             transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
         });
@@ -1617,7 +1616,6 @@ class StockManagement extends React.Component {
                 message:''
             },
             isReturned: !isReturned,
-            selectedIdsGr: [],
         });
     }
 
@@ -2049,35 +2047,6 @@ class StockManagement extends React.Component {
                         toggleIsReturned={this.toggleIsReturned}
                         isReturned={isReturned}
                     />
-                    {/* <GoodsReceipt
-                        alert={alert}
-                        screenHeaders={isReturned ? headersRet : (!!selection.project && !!selection.project.enableShipping) ? headersPl : (!!selection.project && !!selection.project.enableInspection) ? headersNfi : headersPo}
-                        screenBodys={isReturned ? bodysRet : (!!selection.project && !!selection.project.enableShipping) ? bodysPl : (!!selection.project && !!selection.project.enableInspection) ? bodysNfi : bodysPo}
-                        projectId={projectId}
-                        screenId={isReturned ? retScreenId : (!!selection.project && !!selection.project.enableShipping) ? plScreenId : (!!selection.project && !!selection.project.enableInspection) ? nfiScreenId : poScreenId}
-                        selectedIds={selectedIdsGr}
-                        updateSelectedIds={this.updateSelectedIdsGr}
-                        isRemaining={isRemaining}
-                        unlocked={false}
-                        handleClearAlert={this.handleClearAlert}
-                        refreshStore={this.refreshStore}
-                        settingsFilter={[]}
-                        handleGoodsReceipt={this.handleGoodsReceipt}
-                        isReceiving={isReceiving}
-                        myRoute={isReturned ? "goodsReceiptRet" : (!!selection.project && !!selection.project.enableShipping) ? "goodsReceiptPl" : (!!selection.project && !!selection.project.enableInspection) ? "goodsReceiptNfi" : "goodsReceiptPo"}
-                        handleChange={this.handleChange}
-                        transQty={transQty}
-                        qtyPlaceHolder={`Leave empty to receive balance Qty (${isReturned ? "returned" : (!!selection.project && !!selection.project.enableShipping) ? "packed" : (!!selection.project && !!selection.project.enableInspection) ? "released" : "purchased"} - already in stock)...`}
-                        toWarehouse={toWarehouse}
-                        toArea={toArea}
-                        toLocation={toLocation}
-                        transDate={transDate}
-                        whOptions={generateOptions(whList)}
-                        areaOptions={generateOptions(areaList)}
-                        locOptions={generateOptions(locList)}
-                        toggleIsReturned={this.toggleIsReturned}
-                        isReturned={isReturned}
-                    /> */}
                 </Modal>
                 <Modal
                     show={showDufReturns}
