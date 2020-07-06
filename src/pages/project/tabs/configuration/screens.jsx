@@ -240,8 +240,10 @@ class Screens extends React.Component {
 
     handleDelete(event, selectedRows) {
         event.preventDefault();
-        const { refreshFieldnames } = this.props;
+        const { refreshFieldnames, handleSetAlert } = this.props;
         if(_.isEmpty(selectedRows)) {
+            handleSetAlert('alert-danger', 'Select line(s) to be deleted.');
+        } else {
             this.setState({
                 ...this.state,
                 deleting: true 

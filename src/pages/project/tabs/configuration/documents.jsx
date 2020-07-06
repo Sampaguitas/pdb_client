@@ -489,8 +489,10 @@ class Documents extends React.Component {
 
     handleDeleteDocFields(event, selectedRows) {
         event.preventDefault();
-        const { refreshDocfields } = this.props;
-        if(!_.isEmpty(selectedRows)) {
+        const { refreshDocfields, handleSetAlert } = this.props;
+        if(_.isEmpty(selectedRows)) {
+            handleSetAlert('alert-danger', 'Select line(s) to be deleted.');
+        } else {
             this.setState({
                 ...this.state,
                 deletingFields: true 
