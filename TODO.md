@@ -19,10 +19,11 @@
 ### Stock Management
 - [X] Goods returned modal.
 - [X] Return schema (back end).
-- [ ] Return fields.
+- [X] Return fields.
 - [X] Download goods return DUF.
-- [ ] Upload goods return DUF.
-- [ ] Goods recipt (goods return radio/table).
+- [X] Upload goods return DUF.
+- [X] Goods recipt (goods return radio/table).
+- [ ] show returns heats in certificate screen.
 ### Shipping Transport Docs
 - [ ] MiddleWare pre/post hooks (to be fixed).
 - [ ] If inspection module disabled: relQty = splitQty (virtual);
