@@ -23,7 +23,7 @@
 - [X] Download goods return DUF.
 - [X] Upload goods return DUF.
 - [X] Goods recipt (goods return radio/table).
-- [x] show returns heats in certificate screen.
+- [X] show returns heats in certificate screen.
 ### Shipping Transport Docs
 - [ ] MiddleWare pre/post hooks (to be fixed).
 - [ ] If inspection module disabled: relQty = splitQty (virtual);
