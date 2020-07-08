@@ -413,7 +413,7 @@ class Screens extends React.Component {
             {_id: '5cd2b643fd333616dc360b66', name: 'Assign Transport', fromTbls: ['po', 'sub', 'article', 'packitem', 'certificate']},
             {_id: '5cd2b647fd333616dc360b72', name: 'Assign Transport SplitWindow', fromTbls: ['po', 'sub', 'article', 'packitem']},
             {_id: '5cd2b643fd333616dc360b67', name: 'Print Transportdocuments', fromTbls: ['collipack']},
-            {_id: '5cd2b642fd333616dc360b65', name: 'Certificates', fromTbls: ['po', 'sub', 'certificate']},
+            {_id: '5cd2b642fd333616dc360b65', name: 'Certificates', fromTbls: ['po', 'sub', 'return', 'certificate']},
             {_id: '5cd2b644fd333616dc360b69', name: 'Suppliers', fromTbls: ['supplier']},
             {_id: '5ea8eefb7c213e2096462a2c', name: 'Stock Management', fromTbls: ['po', 'location']},
             {_id: '5eb0f60ce7179a42f173de47', name: 'Goods Receipt with PO', fromTbls: ['po', 'location']},

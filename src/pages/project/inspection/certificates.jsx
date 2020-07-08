@@ -152,6 +152,110 @@ function getBodys(selection, pos, headersForShow){
                             tablesId: { 
                                 poId: po._id,
                                 subId: sub._id,
+                                returnId: '',
+                                packitemId: '',
+                                collipackId: '',
+                                certificateId: virtual.certificateId,
+                                heatId: virtual.heatId
+                            },
+                            fields: arrayRow
+                        };
+                        arrayBody.push(objectRow);
+                        i++;
+                    });
+                });
+            }
+            if (po.returns) {
+                po.returns.map(_return => {
+                    virtuals(_return.heats).map(function(virtual){
+                        arrayRow = [];
+                        screenHeaders.map(screenHeader => {
+                            switch(screenHeader.fields.fromTbl) {
+                                case 'po':
+                                    if (['project', 'projectNr'].includes(screenHeader.fields.name)) {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: project._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: screenHeader.fields.name === 'project' ? project.name || '' : project.number || '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'po',
+                                            objectId: po._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: po[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    break;
+                                case 'sub': 
+                                    if (screenHeader.fields.name === 'heatNr') {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: virtual._id,
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: virtual[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: '0',
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    }
+                                    break;
+                                case 'return':
+                                    arrayRow.push({
+                                        collection: 'return',
+                                        objectId: _return._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: _return[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                    break;
+                                case 'certificate':
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: virtual._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: virtual[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                    break;
+                                default: arrayRow.push({
+                                    collection: 'virtual',
+                                    objectId: '0',
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: '',
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                            }
+                        });
+                        objectRow  = {
+                            _id: i, 
+                            tablesId: { 
+                                poId: po._id,
+                                subId: '',
+                                returnId: _return._id,
                                 packitemId: '',
                                 collipackId: '',
                                 certificateId: virtual.certificateId,
@@ -176,8 +280,11 @@ function getHeats(selectedIds, pos) {
         let selectedPo = pos.items.find(po => po._id === selectedIds[0].poId);
         if (!_.isUndefined(selectedPo)) {
             let selectedSub = selectedPo.subs.find(sub => sub._id === selectedIds[0].subId);
+            let selectedReturn = selectedPo.returns.find(_return => _return._id === selectedIds[0].returnId);
             if (!_.isUndefined(selectedSub)) {
                 return selectedSub.heats;
+            } else if (!_.isUndefined(selectedSub)) {
+                return selectedReturn.heats;
             }
         }
     }
@@ -868,6 +975,7 @@ class Certificates extends React.Component {
                         heats={heats}
                         poId={selectedIds.length === 1 ? selectedIds[0].poId : ''}
                         subId={selectedIds.length === 1 ? selectedIds[0].subId : ''}
+                        returnId={selectedIds.length === 1 ? selectedIds[0].returnId : ''}
                         projectId={projectId}
                     />
                 </Modal>
