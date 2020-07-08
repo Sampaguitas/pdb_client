@@ -16,7 +16,7 @@ import {
 } from '../../_functions';
 import _ from 'lodash';
 
-function certificateSorted(array, sort) {
+function heatSorted(array, sort) {
     let tempArray = array.slice(0);
     switch(sort.name) {
         case 'heatNr':
@@ -114,7 +114,7 @@ class Heat extends Component {
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
-        this.filterName = this.filterName.bind(this);
+        this.filterHeat = this.filterHeat.bind(this);
     }
 
     componentDidMount() {
@@ -209,8 +209,8 @@ class Heat extends Component {
 
     toggleSelectAllRow() {
         const { selectAllRows } = this.state;
-        const { certificates } = this.props;
-        if (certificates.items) {
+        const { heats } = this.props;
+        if (heats) {
             if (selectAllRows) {
                 this.setState({
                     selectedIds: [],
@@ -218,7 +218,7 @@ class Heat extends Component {
                 });
             } else {
                 this.setState({
-                    selectedIds: this.filterName(certificates.items).map(s => s._id),
+                    selectedIds: this.filterHeat(heats).map(s => s._id),
                     selectAllRows: true
                 });
             }         
@@ -457,7 +457,7 @@ class Heat extends Component {
         }
 
         if (heats) {
-            this.filterName(heats).map(heat => {
+            this.filterHeat(heats).map(heat => {
                 tempRows.push(
                     <tr key={heat._id}>
                         <TableSelectionRow
@@ -499,7 +499,7 @@ class Heat extends Component {
         }
     }
 
-    filterName(array){
+    filterHeat(array){
         const { 
             cif,
             heatNr,
@@ -507,7 +507,7 @@ class Heat extends Component {
         } = this.state;
 
         if (array) {
-            return certificateSorted(array, sort).filter(function (element) {
+            return heatSorted(array, sort).filter(function (element) {
                 return (doesMatch(cif, element.certificate.cif, 'String', false)
                 && doesMatch(heatNr, element.heatNr, 'String', false));
             });

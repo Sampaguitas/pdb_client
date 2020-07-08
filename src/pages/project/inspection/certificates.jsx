@@ -283,7 +283,7 @@ function getHeats(selectedIds, pos) {
             let selectedReturn = selectedPo.returns.find(_return => _return._id === selectedIds[0].returnId);
             if (!_.isUndefined(selectedSub)) {
                 return selectedSub.heats;
-            } else if (!_.isUndefined(selectedSub)) {
+            } else if (!_.isUndefined(selectedReturn)) {
                 return selectedReturn.heats;
             }
         }
