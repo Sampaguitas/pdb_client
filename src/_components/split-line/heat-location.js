@@ -93,11 +93,12 @@ function getPoCertificates(certificates, heatlocs, poId, locationId, projectId) 
         let tempArray = [];
         tempArray = certificates.items.reduce(function (acc, cur) {
             cur.heats.forEach(heat => {
-                if (heat.poId === poId) {
-                    let found = acc.find(element => element.cif === cur.cif && element.heatNr === heat.heatNr);
+                if (_.isEqual(heat.poId, poId)) {
+                    let found = acc.find(element => _.isEqual(element.cif, cur.cif) && _.isEqual(element.heatNr, heat.heatNr));
                     if (_.isUndefined(found)) {
                         acc.push({
-                            _id: cur._id,
+                            // _id: cur._id, (used to be certificate id)
+                            _id: heat._id, //(fixed now heat id)
                             cif: cur.cif,
                             heatNr: heat.heatNr,
                             inspQty: heat.inspQty,
