@@ -144,6 +144,7 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
     let objectRow = {};
     let screenHeaders = headersForShow;
     let project = selection.project || { _id: '0', name: '', number: '' };
+    let enableInspection = selection.project ? selection.project.enableInspection : false;
     let hasLocation = hasFieldName(getTblFields (screenHeaders, 'location'), 'location');
     let hasArea = hasFieldName(getTblFields (screenHeaders, 'location'), 'area');
     let hasWarehouse = hasFieldName(getTblFields (screenHeaders, 'location'), 'warehouse');
@@ -183,15 +184,37 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                                 }
                                                 break;
                                             case 'sub':
-                                                arrayRow.push({
-                                                    collection: 'sub',
-                                                    objectId: sub._id,
-                                                    fieldName: screenHeader.fields.name,
-                                                    fieldValue: sub[screenHeader.fields.name],
-                                                    disabled: screenHeader.edit,
-                                                    align: screenHeader.align,
-                                                    fieldType: getInputType(screenHeader.fields.type),
-                                                });
+                                                if (_.isEqual(screenHeader.fields.name,'shippedQty') || _.isEqual(screenHeader.fields.name,'heatNr')) {
+                                                    arrayRow.push({
+                                                        collection: 'virtual',
+                                                        objectId: '0',
+                                                        fieldName: screenHeader.fields.name,
+                                                        fieldValue: '',
+                                                        disabled: screenHeader.edit,
+                                                        align: screenHeader.align,
+                                                        fieldType: getInputType(screenHeader.fields.type),
+                                                    });
+                                                } else if (_.isEqual(screenHeader.fields.name, 'relQty') && !enableInspection){
+                                                    arrayRow.push({
+                                                        collection: 'virtual',
+                                                        objectId: sub._id,
+                                                        fieldName: 'splitQty',
+                                                        fieldValue: sub.splitQty,
+                                                        disabled: screenHeader.edit,
+                                                        align: screenHeader.align,
+                                                        fieldType: getInputType(screenHeader.fields.type),
+                                                    });
+                                                } else {
+                                                    arrayRow.push({
+                                                        collection: 'sub',
+                                                        objectId: sub._id,
+                                                        fieldName: screenHeader.fields.name,
+                                                        fieldValue: sub[screenHeader.fields.name],
+                                                        disabled: screenHeader.edit,
+                                                        align: screenHeader.align,
+                                                        fieldType: getInputType(screenHeader.fields.type),
+                                                    });
+                                                }
                                                 break;
                                             case 'packitem':
                                                 arrayRow.push({
@@ -306,15 +329,27 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                                         }
                                         break;
                                     case 'sub':
-                                        arrayRow.push({
-                                            collection: 'sub',
-                                            objectId: sub._id,
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: sub[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                        });
+                                        if (_.isEqual(screenHeader.fields.name,'shippedQty') || _.isEqual(screenHeader.fields.name,'heatNr')) {
+                                            arrayRow.push({
+                                                collection: 'virtual',
+                                                objectId: '0',
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: '',
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                        } else {
+                                            arrayRow.push({
+                                                collection: 'sub',
+                                                objectId: sub._id,
+                                                fieldName: screenHeader.fields.name,
+                                                fieldValue: sub[screenHeader.fields.name],
+                                                disabled: screenHeader.edit,
+                                                align: screenHeader.align,
+                                                fieldType: getInputType(screenHeader.fields.type),
+                                            });
+                                        }
                                         break;
                                     case 'location':
                                         arrayRow.push({

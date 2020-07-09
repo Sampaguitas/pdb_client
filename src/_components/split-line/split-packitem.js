@@ -30,16 +30,25 @@ function getScreenTbls (headersForSelect) {
 function virtuals(packitems, uom) {
     let tempVirtuals = [];
     let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(uom.toUpperCase()) ? 'mtrs' : 'pcs';
-    packitems.map(function (packitem){
-        let tempObject = packitem;
-        if (packitem[tempUom]) {
-            tempObject['relQty'] = packitem[tempUom];
+    return  tempVirtuals = packitems.reduce(function(acc, cur) {
+        if(cur[tempUom]) {
+            cur['shippedQty'] = cur[tempUom];   
         } else {
-            tempObject['relQty'] = '';
+            cur['shippedQty'] = '';  
         }
-        tempVirtuals.push(tempObject);
-    });
-    return tempVirtuals;
+        acc.push(cur);
+        return acc;
+    }, []);
+    // packitems.map(function (packitem){
+    //     let tempObject = packitem;
+    //     if (packitem[tempUom]) {
+    //         tempObject['relQty'] = packitem[tempUom];
+    //     } else {
+    //         tempObject['relQty'] = '';
+    //     }
+    //     tempVirtuals.push(tempObject);
+    // });
+    // return tempVirtuals;
 }
 
 function getBodys(selectedPo, selection, headersForSelect, selectedIds){
@@ -50,6 +59,7 @@ function getBodys(selectedPo, selection, headersForSelect, selectedIds){
     let screenHeaders = headersForSelect;
     let subId = selectedIds.subId;
     let project = selection.project || { _id: '0', name: '', number: '' };
+    let enableInspection = selection.project ? selection.project.enableInspection : false;
     
     let i = 1;
 
@@ -85,12 +95,22 @@ function getBodys(selectedPo, selection, headersForSelect, selectedIds){
                                     }
                                     break;
                                 case 'sub':
-                                    if (screenHeader.fields.name === 'relQty') {
+                                    if (screenHeader.fields.name === 'shippedQty') {
                                         arrayRow.push({
                                             collection: 'virtual',
-                                            objectId: '0',
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: packitem.relQty,
+                                            objectId: sub._id,
+                                            fieldName: 'shippedQty',
+                                            fieldValue: packitem.shippedQty || '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else if (_.isEqual(screenHeader.fields.name, 'relQty') && !enableInspection){
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: sub._id,
+                                            fieldName: 'splitQty',
+                                            fieldValue: sub.splitQty,
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
@@ -120,12 +140,12 @@ function getBodys(selectedPo, selection, headersForSelect, selectedIds){
                                     break;
                                 default: arrayRow.push({
                                     collection: 'virtual',
-                                        objectId: '0',
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: '',
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
+                                    objectId: '0',
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: '',
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
                                 }); 
                             }
                         });
@@ -172,15 +192,37 @@ function getBodys(selectedPo, selection, headersForSelect, selectedIds){
                                 }
                                 break;
                             case 'sub':
-                                arrayRow.push({
-                                    collection: 'sub',
-                                    objectId: sub._id,
-                                    fieldName: screenHeader.fields.name,
-                                    fieldValue: sub[screenHeader.fields.name],
-                                    disabled: screenHeader.edit,
-                                    align: screenHeader.align,
-                                    fieldType: getInputType(screenHeader.fields.type),
-                                });
+                                if (_.isEqual(screenHeader.fields.name, 'shippedQty') || _.isEqual(screenHeader.fields.name, 'heatNr')) {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: '0',
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: '',
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else if (_.isEqual(screenHeader.fields.name, 'relQty') && !enableInspection){
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: sub._id,
+                                        fieldName: 'splitQty',
+                                        fieldValue: sub.splitQty,
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else {
+                                    arrayRow.push({
+                                        collection: 'sub',
+                                        objectId: sub._id,
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: sub[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                }
                                 break;
                             default: arrayRow.push({
                                 collection: 'virtual',
@@ -378,11 +420,11 @@ function getSelecetionIds(bodysForSelect, selectedLine) {
     }
 }
 
-function getRelQty(selectedPo, selectedIds) {
+function getRelQty(selectedPo, selectedIds, enableInspection) {
     if (selectedPo.hasOwnProperty('subs') && !_.isEmpty(selectedPo.subs)) {
         let selectedSub = selectedPo.subs.find(sub => sub._id === selectedIds.subId);
         if (!_.isUndefined(selectedSub)) {
-            return Number(selectedSub.relQty) || 0;
+            return Number(enableInspection ? selectedSub.relQty : selectedSub.splitQty) || 0;
         }
     }
     return 0;
@@ -423,17 +465,18 @@ function getVirturalsQty(virtuals, tempUom) {
     }, 0);
 }
 
-function getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals) {
+function getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals, selection) {
+    let enableInspection = selection.project ? selection.project.enableInspection : false;
     let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(selectedPo.uom.toUpperCase()) ? 'mtrs' : 'pcs';
     let selectionIds = getSelecetionIds(bodysForSelect, selectedLine);
-    let relQty = getRelQty(selectedPo, selectedIds);
+    let relQty = getRelQty(selectedPo, selectedIds, enableInspection);
     let packitemsQty = getPackitemsQty(selectedPo, selectedIds, tempUom);
     let selectionQty = getSelectionQty(selectedPo, selectionIds, tempUom);
     let virturalsQty = getVirturalsQty(virtuals, tempUom);
-    console.log('relQty:', relQty);
-    console.log('packitemsQty:', packitemsQty);
-    console.log('selectionQty:', selectionQty);
-    console.log('virturalsQty:', virturalsQty);
+    // console.log('relQty:', relQty);
+    // console.log('packitemsQty:', packitemsQty);
+    // console.log('selectionQty:', selectionQty);
+    // console.log('virturalsQty:', virturalsQty);
     if (!packitemsQty) {
         return relQty - virturalsQty;
     } else {
@@ -744,9 +787,9 @@ class SplitLine extends Component {
     }
 
     handleSave(event) {
-        const { selectedPo, selectedIds, headersForShow, handleSplitLine } = this.props;
+        const { selectedPo, selectedIds, headersForShow, handleSplitLine, selection } = this.props;
         const { selectedLine, bodysForSelect, virtuals } = this.state;
-        let remainingQty = getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals);
+        let remainingQty = getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals, selection);
 
         let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(selectedPo.uom.toUpperCase()) ? 'mtrs' : 'pcs';
 
@@ -811,11 +854,11 @@ class SplitLine extends Component {
 
     handleNextLine(target) {
 
-        const { selectedPo, selectedIds, headersForShow } = this.props;
+        const { selectedPo, selectedIds, headersForShow, selection } = this.props;
         const { selectedLine, bodysForSelect, virtuals } = this.state;
         let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(selectedPo.uom.toUpperCase()) ? 'mtrs' : 'pcs';
 
-        let remainingQty = getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals);
+        let remainingQty = getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals, selection);
         
         if (target.name === tempUom && target.value != '' && remainingQty > 0 && !_.isEmpty(headersForShow)) {
             let tempObject = headersForShow.reduce(function (acc, curr){
@@ -867,10 +910,10 @@ class SplitLine extends Component {
 
     render() {
 
-        const { headersForShow, headersForSelect, selectedIds, selectedPo } = this.props;
+        const { headersForShow, headersForSelect, selectedIds, selectedPo, selection } = this.props;
         const { bodysForSelect, virtuals, forShowSelectedRows, forShowIsAll, selectedLine } =this.state;
 
-        let remainingQty = getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals);
+        let remainingQty = getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals, selection);
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
 
         return (

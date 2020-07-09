@@ -26,7 +26,8 @@
 - [X] show returns heats in certificate screen.
 ### Shipping Transport Docs
 - [ ] MiddleWare pre/post hooks (to be fixed).
-- [ ] If inspection module disabled: relQty = splitQty (virtual);
+- [X] If inspection module disabled: relQty = splitQty (virtual).
+- [X] Show relQty in split-window.
 ### Expediting
 - [X] remove performance report screen and add generate report button to expediting screen.
 ### Minutes of Meeting

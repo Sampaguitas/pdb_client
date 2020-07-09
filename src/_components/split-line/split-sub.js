@@ -59,7 +59,7 @@ function getBodys(selectedPo, selection, headersForSelect){
     let hasPackitems = getScreenTbls(headersForSelect).includes('packitem');
     let screenHeaders = headersForSelect;
     let project = selection.project || { _id: '0', name: '', number: '' };
-    
+    let enableInspection = selection.project ? selection.project.enableInspection : false;
     let i = 1;
     if (!_.isEmpty(selectedPo) && selectedPo.subs) {
         selectedPo.subs.map(sub => {
@@ -102,6 +102,26 @@ function getBodys(selectedPo, selection, headersForSelect){
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
                                     });
+                                } else if (screenHeader.fields.name === 'heatNr') {
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: '0',
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: '',
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
+                                } else if (_.isEqual(screenHeader.fields.name, 'relQty') && !enableInspection){
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: sub._id,
+                                        fieldName: 'splitQty',
+                                        fieldValue: sub.splitQty,
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                    });
                                 } else {
                                     arrayRow.push({
                                         collection: 'sub',
@@ -127,12 +147,12 @@ function getBodys(selectedPo, selection, headersForSelect){
                                 break;
                             default: arrayRow.push({
                                 collection: 'virtual',
-                                    objectId: '0',
-                                    fieldName: screenHeader.fields.name,
-                                    fieldValue: '',
-                                    disabled: screenHeader.edit,
-                                    align: screenHeader.align,
-                                    fieldType: getInputType(screenHeader.fields.type),
+                                objectId: '0',
+                                fieldName: screenHeader.fields.name,
+                                fieldValue: '',
+                                disabled: screenHeader.edit,
+                                align: screenHeader.align,
+                                fieldType: getInputType(screenHeader.fields.type),
                             }); 
                         }
                     });
@@ -179,24 +199,46 @@ function getBodys(selectedPo, selection, headersForSelect){
                             }
                             break;
                         case 'sub':
-                            arrayRow.push({
-                                collection: 'sub',
-                                objectId: sub._id,
-                                fieldName: screenHeader.fields.name,
-                                fieldValue: sub[screenHeader.fields.name],
-                                disabled: screenHeader.edit,
-                                align: screenHeader.align,
-                                fieldType: getInputType(screenHeader.fields.type),
-                            });
+                            if (screenHeader.fields.name === 'shippedQty' || screenHeader.fields.name === 'heatNr') {
+                                arrayRow.push({
+                                    collection: 'virtual',
+                                    objectId: '0',
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: '',
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                            } else if (_.isEqual(screenHeader.fields.name, 'relQty') && !enableInspection){
+                                arrayRow.push({
+                                    collection: 'virtual',
+                                    objectId: sub._id,
+                                    fieldName: 'splitQty',
+                                    fieldValue: sub.splitQty,
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                            } else {
+                                arrayRow.push({
+                                    collection: 'sub',
+                                    objectId: sub._id,
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: sub[screenHeader.fields.name],
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                });
+                            }
                             break;
                         default: arrayRow.push({
                             collection: 'virtual',
-                                objectId: '0',
-                                fieldName: screenHeader.fields.name,
-                                fieldValue: '',
-                                disabled: screenHeader.edit,
-                                align: screenHeader.align,
-                                fieldType: getInputType(screenHeader.fields.type),
+                            objectId: '0',
+                            fieldName: screenHeader.fields.name,
+                            fieldValue: '',
+                            disabled: screenHeader.edit,
+                            align: screenHeader.align,
+                            fieldType: getInputType(screenHeader.fields.type),
                         }); 
                     }
                 });

@@ -75,7 +75,7 @@ function getBodys(selection, pos, headersForShow){
         pos.items.map(po => {
             if (po.subs) {
                 po.subs.map(sub => {
-                    virtuals(sub.heats).map(function(virtual){
+                    virtuals(sub.heats).map(virtual => {
                         arrayRow = [];
                         screenHeaders.map(screenHeader => {
                             switch(screenHeader.fields.fromTbl) {
@@ -103,7 +103,17 @@ function getBodys(selection, pos, headersForShow){
                                     }
                                     break;
                                 case 'sub': 
-                                    if (screenHeader.fields.name === 'heatNr') {
+                                    if (screenHeader.fields.name === 'shippedQty') {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: '0',
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else if (screenHeader.fields.name === 'heatNr') {
                                         arrayRow.push({
                                             collection: 'virtual',
                                             objectId: virtual._id,
@@ -195,7 +205,17 @@ function getBodys(selection, pos, headersForShow){
                                     }
                                     break;
                                 case 'sub': 
-                                    if (screenHeader.fields.name === 'heatNr') {
+                                    if (screenHeader.fields.name === 'shippedQty') {
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: '0',
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: '',
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                        });
+                                    } else if (screenHeader.fields.name === 'heatNr') {
                                         arrayRow.push({
                                             collection: 'virtual',
                                             objectId: virtual._id,

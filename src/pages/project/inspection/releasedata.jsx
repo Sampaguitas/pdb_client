@@ -325,13 +325,13 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                     if (screenHeader.fields.name === 'shippedQty') {
                                         arrayRow.push({
                                             collection: 'virtual',
-                                            objectId: sub._id,
-                                            fieldName: 'shippedQty',
-                                            fieldValue: virtual.shippedQty || '',
+                                            objectId: '0',
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: '',
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
-                                        });
+                                        }); 
                                     } else if (screenHeader.fields.name === 'heatNr') {
                                         arrayRow.push({
                                             collection: 'virtual',
