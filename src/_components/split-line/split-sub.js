@@ -580,10 +580,6 @@ class SplitLine extends Component {
                     }
                 });
             } else {
-                // let screenBody = bodysForSelect.find(function (s) {
-                //     return s._id === selectedLine;
-                // });
-
                 let screenBody = selectedScreenBody(bodysForSelect, selectedLine);
 
                 if (!_.isUndefined(screenBody)) {

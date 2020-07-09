@@ -11,10 +11,10 @@ import {
     fieldnameActions,
     fieldActions,
     mirActions,
-    poActions,
     projectActions,
     settingActions,
-    sidemenuActions
+    sidemenuActions,
+    transactionActions,
 } from '../../../_actions';
 import {
     myLocale,
@@ -161,9 +161,8 @@ function getBodysForSelect(pos, selection, headersForSelect) {
     let screenHeaders = headersForSelect;
     let project = selection.project || { _id: '0', name: '', number: '' };
     let i = 1;
-    if (!_.isUndefined(pos) && pos.hasOwnProperty('items') && !_.isEmpty(pos.items)) {
-        
-        pos.items.map(po => {
+    if (!_.isEmpty(pos)) {
+        pos.map(po => {
             arrayRow = [];
             screenHeaders.map(screenHeader => {
                 switch(screenHeader.fields.fromTbl) {
@@ -223,10 +222,48 @@ function getBodysForSelect(pos, selection, headersForSelect) {
     }
 }
 
+function getPos(transactions, mirs, mirId) {
+    if (!_.isUndefined(transactions) && transactions.hasOwnProperty('items') && !_.isEmpty(transactions.items)) {
+        let selectedMir =  (!_.isUndefined(mirs) && mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) ? mirs.items.find(element => _.isEqual(element._id, mirId)) : undefined;
+        return transactions.items.reduce(function(acc, cur) {
+            let includesMiritem = !_.isUndefined(selectedMir) ? selectedMir.miritems.some(element => _.isEqual(element._id, mirId)) : false;
+            if (!includesMiritem) {
+                let found = acc.find(element => _.isEqual(element._id, cur.po._id));
+                if (!found) {
+                    let mirQty = 0;
+                    if (!_.isUndefined(mirs) && mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
+                        mirQty = mirs.items.reduce(function(accMir, curMir) {
+                            let mirItemsQty = curMir.miritems.reduce(function(accItem, curItem) {
+                                if (_.isEqual(curItem.poId, cur.po.Id)) {
+                                    let required = cur.qtyRequired || 0;
+                                    accItem += required
+                                }
+                                return accItem;
+                            }, 0);
+                            accMir += mirItemsQty;
+                            return accMir;
+                        }, 0);
+                    }
+                    let copyPo = cur.po;
+                    copyPo.stock = cur.transQty;
+                    copyPo.mirQty = mirQty;
+                    acc.push(copyPo);
+                } else {
+                    found.stock += cur.transQty;
+                }
+            }
+            return acc;
+        }, []);
+    } else {
+        return [];
+    }
+}
+
 class MirSplitwindow extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            pos: [],
             headersForShow: [],
             bodysForShow: [],
             headersForSelect: [],
@@ -278,6 +315,7 @@ class MirSplitwindow extends React.Component {
         this.handleChange = this.handleChange.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.refreshMir = this.refreshMir.bind(this);
+        this.refreshTransactions = this.refreshTransactions.bind(this);
         this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.handleModalTabClick = this.handleModalTabClick.bind(this);
         this.handleDeleteRows = this.handleDeleteRows.bind(this);
@@ -302,19 +340,18 @@ class MirSplitwindow extends React.Component {
             loadingFieldnames,
             loadingFields,
             loadingMirs,
-            loadingPos,
             loadingSelection,
             loadingSettings,
+            loadingTransactions,
             location,
-            //---------
             fieldnames,
             mirs,
-            pos,
             selection,
-            settings 
+            settings,
+            transactions
         } = this.props;
 
-        const { menuItem, screenId, headersForShow, headersForSelect, settingsDisplay } = this.state; //splitScreenId
+        const { menuItem, screenId, headersForShow, headersForSelect, settingsDisplay, pos } = this.state;
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
         dispatch(sidemenuActions.select(menuItem));
@@ -341,15 +378,16 @@ class MirSplitwindow extends React.Component {
             if (!loadingSelection) {
                 dispatch(projectActions.getById(projectId));
             }
-            if (!loadingPos) {
-                dispatch(poActions.getAll(projectId));
-            }
             if (!loadingSettings) {
                 dispatch(settingActions.getAll(projectId, userId));
+            }
+            if (!loadingTransactions) {
+                dispatch(transactionActions.getAll(projectId));
             }
         }
 
         this.setState({
+            pos: getPos(transactions, mirs, mirId),
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             headersForSelect: getHeaders([], fieldnames, screenId, 'forSelect'),
             bodysForShow: getBodysForShow(mirs, mirId, selection, headersForShow),
@@ -375,8 +413,12 @@ class MirSplitwindow extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { bodysForSelect, headersForShow, headersForSelect, mirId, screenId, settingsDisplay } = this.state; //splitScreenId,
-        const { fieldnames, mirs, pos, selection, settings} = this.props;
+        const { bodysForSelect, headersForShow, headersForSelect, mirId, screenId, settingsDisplay, pos } = this.state;
+        const { fieldnames, mirs, selection, settings, transactions} = this.props;
+
+        if (transactions != prevProps.transactions || mirs != prevProps.mirs) {
+            this.setState({ pos: getPos(transactions, mirs, mirId) });
+        }
 
         if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
             this.setState({
@@ -398,7 +440,7 @@ class MirSplitwindow extends React.Component {
             });
         }
 
-        if (pos != prevProps.pos || selection != prevProps.selection || headersForSelect != prevState.headersForSelect) {
+        if (pos != prevState.pos || selection != prevProps.selection || headersForSelect != prevState.headersForSelect) {
             this.setState({
                 bodysForSelect: getBodysForSelect(pos, selection, headersForSelect)
             });
@@ -569,6 +611,15 @@ class MirSplitwindow extends React.Component {
         }
     }
 
+    refreshTransactions() {
+        const { dispatch } = this.props;
+        const { projectId } = this.state;
+
+        if (projectId) {
+            dispatch(transactionActions.getAll(projectId));
+        }
+    }
+
     toggleUnlock(event) {
         event.preventDefault()
         const { unlocked } = this.state;
@@ -684,39 +735,56 @@ class MirSplitwindow extends React.Component {
 
     handleSplitLine(event, containsPo, qtyRequired, poId) {
         event.preventDefault();
-        const { creating, projectId, mirId } = this.state;
+        const { creating, projectId, mirId, pos } = this.state;
+        let selectedPo = pos.find(element => element._id === poId);
         if (!containsPo && !creating) {
-            this.setState({
-                creating: true
-            }, () => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        qtyRequired: qtyRequired,
-                        poId: poId,
-                        mirId: mirId,
-                        projectId: projectId
-                    })
-                };
-                return fetch(`${config.apiUrl}/miritem/create`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (responce.status === 401) {
-                            localStorage.removeItem('user');
-                            location.reload(true);;
-                    } else {
-                        this.setState({
-                            creating: false,
-                            showSplitLine: false,
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, this.refreshMir);
+            if (!_.isUndefined(selectedPo) && (qtyRequired > (selectedPo.stock - selectedPo.mirQty))) {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'You cannot add more units than remaining.'
                     }
-                }));
-            });
+                });
+            } else if (!qtyRequired || qtyRequired < 0) {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'Quantity required should be greater than 0.'
+                    }
+                });
+            } else {
+                this.setState({
+                    creating: true
+                }, () => {
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            qtyRequired: qtyRequired,
+                            poId: poId,
+                            mirId: mirId,
+                            projectId: projectId
+                        })
+                    };
+                    return fetch(`${config.apiUrl}/miritem/create`, requestOptions)
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
+                        if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);;
+                        } else {
+                            this.setState({
+                                creating: false,
+                                showSplitLine: false,
+                                alert: {
+                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                    message: data.message
+                                }
+                            }, this.refreshMir);
+                        }
+                    }));
+                }); 
+            }
         }
     }
 
@@ -770,21 +838,19 @@ class MirSplitwindow extends React.Component {
             unlocked, 
             showSplitLine,
             showSettings,
-            //--------
             headersForShow,
             bodysForShow,
             headersForSelect,
             bodysForSelect,
-            //---------------
             mir,
             creating,
-            //'-------------------'
             tabs,
             settingsFilter,
-            settingsDisplay
+            settingsDisplay,
+            pos
         } = this.state;
 
-        const { accesses, fieldnames, fields, pos, selection, sidemenu } = this.props;
+        const { accesses, fieldnames, fields, selection, sidemenu } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
 
         return (
@@ -926,14 +992,14 @@ class MirSplitwindow extends React.Component {
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, fieldnames, fields, mirs, pos, selection, settings, sidemenu } = state;
+    const { accesses, alert, fieldnames, fields, mirs, selection, settings, sidemenu, transactions } = state;
     const { loadingAccesses } = accesses;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
     const { loadingMirs } = mirs;
-    const { loadingPos } = pos;
     const { loadingSelection } = selection;
     const { loadingSettings } = settings;
+    const { loadingTransactions } = transactions;
 
     
     return {
@@ -945,14 +1011,14 @@ function mapStateToProps(state) {
         loadingFieldnames,
         loadingFields,
         loadingMirs,
-        loadingPos,
         loadingSelection,
         loadingSettings,
+        loadingTransactions,
         mirs,
-        pos,
         selection,
         settings,
-        sidemenu
+        sidemenu,
+        transactions
     };
 }
 

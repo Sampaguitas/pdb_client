@@ -20,7 +20,8 @@ class SplitLine extends Component {
                 isAscending: true,
             },
             isEqual: false,
-            qtyRequired: '',
+            qtyRequired: 0,
+            qtyRemaining: 0,
             selectedLine: '',
             containsPo: false,
             alert: {
@@ -40,7 +41,31 @@ class SplitLine extends Component {
 
     componentDidUpdate(prevProps, prevState) {
         let { mir, pos } = this.props;
-        let { selectedLine, containsPo } = this.state;
+        let { selectedLine, containsPo, qtyRequired, qtyRemaining } = this.state;
+
+        if (selectedLine != prevState.selectedLine) {
+            this.setState({
+                alert: {
+                    type: '',
+                    message: ''
+                }
+            });
+        }
+
+        if (selectedLine != prevState.selectedLine || pos != prevProps.pos) {
+            let selectedPo = pos.find(element => element._id === selectedLine);
+            if (!_.isUndefined(selectedPo)) {
+                this.setState({
+                    qtyRequired: selectedPo.stock - selectedPo.mirQty,
+                    qtyRemaining: selectedPo.stock - selectedPo.mirQty 
+                });
+            } else {
+                this.setState({
+                    qtyRequired: 0,
+                    qtyRemaining: 0,
+                });
+            }
+        }
 
         if (selectedLine != prevState.selectedLine || mir != prevProps.mir) {
             if (!!selectedLine && mir.miritems.some(element => element.poId === selectedLine)) {
@@ -58,29 +83,20 @@ class SplitLine extends Component {
                         message: 'This line has already been added, MIR cannot contain twice the same item!'
                     }
                 });
-            } else {
+            }
+        }
+
+        if (qtyRequired != prevState.qtyRequired || qtyRemaining != prevState.qtyRemaining) {
+            if (qtyRequired > qtyRemaining) {
                 this.setState({
                     alert: {
-                        type: '',
-                        message: ''
+                        type: 'alert-warning',
+                        message: !qtyRemaining ? 'No units remaining!' : `There is only ${qtyRemaining} units remaining!`
                     }
                 });
             }
         }
 
-
-        if (selectedLine != prevState.selectedLine || pos != prevProps.pos) {
-            let selectedPo = pos.items.find(element => element._id === selectedLine);
-            if (!_.isUndefined(selectedPo)) {
-                this.setState({
-                    qtyRequired: selectedPo.qty
-                });
-            } else {
-                this.setState({
-                    qtyRequired: ''
-                });
-            }
-        }
     }
 
 
@@ -231,7 +247,7 @@ class SplitLine extends Component {
     render() {
 
         const { creating, screenHeaders, screenBodys, handleSplitLine } = this.props;
-        const { containsPo, qtyRequired, selectedLine } = this.state;
+        const { containsPo, qtyRequired, selectedLine, qtyRemaining } = this.state;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
 
         return (
@@ -244,6 +260,17 @@ class SplitLine extends Component {
                             </button>
                         </div>
                     }
+                    <div className="col text-right mb-2">
+                        <strong>
+                            Remaining Qty:
+                            <span
+                                style={qtyRemaining > 0 ? {color: 'green'} : {color: '#A8052C'}}
+                                className="ml-1"
+                            >
+                                {qtyRemaining}
+                            </span>
+                        </strong>
+                    </div>
                     <div style={{borderStyle: 'solid', borderWidth: '2px', borderColor: '#ddd', height: '400px'}}>
                         <div className="table-responsive custom-table-container">
                             <table className="table table-bordered table-sm table-hover text-nowrap" id="forSelect">
@@ -257,7 +284,7 @@ class SplitLine extends Component {
                         </div>
                     </div>
                     <div className="mt-4">
-                        <form onSubmit={event => handleSplitLine(event, containsPo, qtyRequired, selectedLine )}>
+                        <form onSubmit={event => handleSplitLine(event, containsPo, qtyRequired, selectedLine)}>
                             <div className="form-group">
                                 <div className="input-group">
                                     <div className="input-group-prepend">

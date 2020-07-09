@@ -38,7 +38,7 @@
 - [X] Inputs type date: validation formats (autofill year, allow single digit day/month).
 - [X] Qty picked: calculated from heats quantities.
 - [X] Typos: Tcicket, whant.
-- [ ] Select Order Line: only available in stock (mir);
+- [X] Select Order Line: only available in stock (mir);
 - [ ] Mir: isProcessed = true when all picktickets are closed and qtyPicked = qtyRequired.
 - [X] Prevent users from creating two items if double click on create new row / add button.
 ### Styling
