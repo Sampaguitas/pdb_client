@@ -51,9 +51,12 @@
 - [ ] Description on collapsed Menu icon hover.
 ### Wrap up
 - [X] Refactor: 3,679 additions and 10,799 deletions.
-#### Master Template Fields
 - [X] Add new fields to master template,
-#### Master Template Screens
+- [ ] Back up database,
+- [ ] Remove all projects eccept master template,
+- [ ] README.md: How to set up pdb_server/database (Github),
+- [ ] Finalise Manual,
+**Setup Master Template Screens**
 - [X] Assign transport documents,
 - [X] Assign transport splitwindow,
 - [X] Certificates,
@@ -70,14 +73,10 @@
 - [X] Picking ticket,
 - [X] Picking ticket splitwindow,
 - [X] Print transport documents,
-- [ ] Stock management,
-- [ ] Suppliers,
-- [ ] WH Assign transport documents,
-- [ ] WH Assign transport splitwindow,
-- [ ] WH Print transport documents,
-#### Master Template Documents
-- [ ] Screens, Documents to the master template.
-- [ ] Back up database.
-- [ ] Remove all projects eccept master template.
-- [ ] README.md: How to set up pdb_server/database (Github).
-- [ ] Finalise Manual.
+- [X] Stock management,
+- [X] Suppliers,
+- [X] WH Assign transport documents,
+- [X] WH Assign transport splitwindow,
+- [X] WH Print transport documents,
+**Setup Master Template Documents**
+- [ ] ...
