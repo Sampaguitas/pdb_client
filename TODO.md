@@ -56,6 +56,7 @@
 - [ ] Remove all projects eccept master template,
 - [ ] README.md: How to set up pdb_server/database (Github),
 - [ ] Finalise Manual,
+
 **Setup Master Template Screens**
 - [X] Assign transport documents,
 - [X] Assign transport splitwindow,
@@ -78,5 +79,6 @@
 - [X] WH Assign transport documents,
 - [X] WH Assign transport splitwindow,
 - [X] WH Print transport documents,
+
 **Setup Master Template Documents**
 - [ ] ...
