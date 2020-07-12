@@ -51,7 +51,32 @@
 - [ ] Description on collapsed Menu icon hover.
 ### Wrap up
 - [X] Refactor: 3,679 additions and 10,799 deletions.
-- [ ] Add new Fields, Screens, Documents to the master template.
+#### Master Template Fields
+- [X] Add new fields to master template,
+#### Master Template Screens
+- [X] Assign transport documents,
+- [X] Assign transport splitwindow,
+- [X] Certificates,
+- [X] Expediting,
+- [X] Expediting splitwindow,
+- [X] Goods receipt with NFI,
+- [X] Goods receipt with PL,
+- [X] Goods receipt with PO,
+- [X] Goods receipt with RET,
+- [ ] Inspection,
+- [ ] Inspection splitwindow,
+- [ ] Material issue record,
+- [ ] Material issue record splitwindow,
+- [ ] Picking ticket,
+- [ ] Picking ticket splitwindow,
+- [ ] Print transport documents,
+- [ ] Stock management,
+- [ ] Suppliers,
+- [ ] WH Assign transport documents,
+- [ ] WH Assign transport splitwindow,
+- [ ] WH Print transport documents,
+#### Master Template Documents
+- [ ] Screens, Documents to the master template.
 - [ ] Back up database.
 - [ ] Remove all projects eccept master template.
 - [ ] README.md: How to set up pdb_server/database (Github).
