@@ -94,6 +94,9 @@ To deploy your Git repository on Heroku, click on the following link and follow 
 * [node.js](https://nodejs.org/en/) - JavaScript runtime
 * [npm](https://www.npmjs.com) - Dependency Management
 * [react](reactjs.org) - The web framework used
+* [redux](https://redux.js.org/) - Predictable container for application state
+
+this application contains 282 files and 64,720 lines of code.
 
 ## Contributing
 
