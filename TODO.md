@@ -81,4 +81,7 @@
 - [X] WH Print transport documents,
 
 **Setup Master Template Documents**
-- [ ] ...
+- [X] ESR,
+- [X] NFI,
+- [X] Packing List,
+- [ ] Picking Ticket,
