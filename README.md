@@ -51,7 +51,7 @@ This web application has been developed for [Van Leeuwen Pipe and Tube Group](ht
 * [approvals](APPROVAL.md)
 * [to do list](TODO.md)
 
-The application can be access via the following link: [https://pdb-client.herokuapp.com/](https://pdb-client.herokuapp.com/)
+The application can be accessed via the following link: [https://pdb-client.herokuapp.com/](https://pdb-client.herokuapp.com/)
 
 ## Getting Started
 
