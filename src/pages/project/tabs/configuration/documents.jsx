@@ -517,32 +517,34 @@ class Documents extends React.Component {
         event.preventDefault();
         const { refreshDocdefs, handleSetAlert } = this.props;
         if (id != '0') {
-            this.setState({
-                ...this.state,
-                deletingDocDef: true 
-            }, () => {
-                const requestOptions = {
-                    method: 'DELETE',
-                    headers: { ...authHeader()},
-                };
-                return fetch(`${config.apiUrl}/docdef/delete?id=${id}`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (responce.status === 401) {
-                            localStorage.removeItem('user');
-                            location.reload(true);
-                    } else {
-                        this.setState({
-                            ...this.state,
-                            deletingDocDef: false,
-                            selectedTemplate: '0',
-                            fileName: '',
-                            inputKey: Date.now()
-                            
-                        }, handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs));
-                    }
-                }));
-            });
+            if (confirm('This document will permanetily be deleted. Would like to proceed?')) {
+                this.setState({
+                    ...this.state,
+                    deletingDocDef: true 
+                }, () => {
+                    const requestOptions = {
+                        method: 'DELETE',
+                        headers: { ...authHeader()},
+                    };
+                    return fetch(`${config.apiUrl}/docdef/delete?id=${id}`, requestOptions)
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
+                        if (responce.status === 401) {
+                                localStorage.removeItem('user');
+                                location.reload(true);
+                        } else {
+                            this.setState({
+                                ...this.state,
+                                deletingDocDef: false,
+                                selectedTemplate: '0',
+                                fileName: '',
+                                inputKey: Date.now()
+                                
+                            }, handleSetAlert(responce.status === 200 ? 'alert-success' : 'alert-danger', data.message, refreshDocdefs));
+                        }
+                    }));
+                });
+            }
         }
     }
  
