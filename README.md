@@ -20,7 +20,7 @@ The Project Database (PDB) is divided into 4 interconected modules: Expediting, 
 
 2. Flexibility:
 
-   The screen tables have been designed to be has convinient as an excel file: User can fully customise them, decide which fields should be displayed, rename them or create new ones. They can apply filters, sort the table and navigate between cells using their keyboard or mouse just as they would in excel. The data can be updated directly in the table cells, However it is also possible to download a raw extract of and preform a bulk update after modifying the data in excel. Reports can also be fully customised as per client or project requirements. 
+   The screen tables have been designed to be as convinient as an excel file: User can fully customise them, decide which fields should be displayed, rename them or create new ones. They can apply filters, sort the table and navigate between cells using their keyboard or mouse just as they would in excel. The data can be updated directly in the table cells, However it is also possible to download a raw extract of and preform a bulk update after modifying the data in excel. Reports can also be fully customised as per client or project requirements. 
 
 3. Time Efficiency:
 
