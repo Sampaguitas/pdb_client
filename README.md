@@ -59,25 +59,9 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-You will need to install nodejs and gitbash:
+You will need to install [nodejs](https://nodejs.org/en/) and [gitbash](https://git-scm.com/downloads),
 
-nodejs:
-
-```
-https://nodejs.org/en/
-```
-
-gitbash:
-
-```
-https://git-scm.com/downloads
-```
-
-Make sure that you have already cloned the back end of this app:
-
-```
-https://github.com/Sampaguitas/pdb_server
-```
+Make sure that you have already cloned the back end of this app: [https://github.com/Sampaguitas/pdb_server](https://github.com/Sampaguitas/pdb_server).
 
 ### Installing
 
