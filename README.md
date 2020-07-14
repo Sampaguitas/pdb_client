@@ -94,6 +94,17 @@ Run the app:
 ```
 $ npm run dev
 ```
+If everithing whent well, you should see the following logs in your terminal:
+
+![alt text](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/setup/bundling.png "boundling")
+
+Now clear the git info with the following command:
+
+```
+git init
+```
+
+And push your application to a new Git repo... 
 
 ## Deployment
 
