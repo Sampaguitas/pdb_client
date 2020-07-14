@@ -229,8 +229,8 @@ class Home extends React.Component {
 
     withoutProjectMaster(projects){
         return this.filterName(projects).filter(function (project){
-            return true;
-            // return (!doesMatch('999999', project.number, 'Number', false));
+            // return true;
+            return (!doesMatch('999999', project.number, 'Number', false));
         });
     }
 
