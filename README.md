@@ -108,7 +108,7 @@ And push your application to a new Git repo...
 
 ## Deployment
 
-While setting up the back_end, we have created a pipeline in Heroku and two applications.
+While setting up the back_end, we have created a pipeline in Heroku and two applications:
 
 ![alt text](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/setup/staging.png "staging")
 
