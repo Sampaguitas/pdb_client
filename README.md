@@ -76,6 +76,18 @@ Install all dependencies:
 ```
 $ npm install
 ```
+In your webpack.config.js file, under externals: change 'https://pdb-server.herokuapp.com' with the address your back_end application.
+
+this will allow your front_end to make API calls to your back_end application once deployed.
+
+```
+externals: {
+   config: JSON.stringify({
+      apiUrl: process.env.NODE_ENV === 'dev' ? 'http://localhost:5000' : 'https://pdb-server.herokuapp.com',
+      version: require('./package.json').version
+   })
+},
+```
 
 Run the app:
 
