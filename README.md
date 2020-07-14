@@ -96,7 +96,7 @@ To deploy your Git repository on Heroku, click on the following link and follow 
 * [react](reactjs.org) - The web framework used
 * [redux](https://redux.js.org/) - Predictable container for application state
 
-This application contains 282 files and 64,720 lines of code.
+This application contains 282 files and 64,720 lines of code (98,162 including back_end).
 
 ## Contributing
 
