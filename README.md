@@ -108,9 +108,15 @@ And push your application to a new Git repo...
 
 ## Deployment
 
-To deploy your Git repository on Heroku, click on the following link and follow the instructions: 
+While setting up the back_end, we have created a pipeline in Heroku and two applications.
 
-[https://devcenter.heroku.com/articles/git](https://devcenter.heroku.com/articles/git)
+![alt text](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/setup/staging.png "staging")
+
+Click on your front_end application and under the deploy tab, click on use github (then link it to your git repo):
+
+![alt text](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/setup/use+github.png "use github")
+
+We do not have config vars to be set for the front_end application.
 
 ## Built With
 
