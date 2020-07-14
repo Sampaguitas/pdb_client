@@ -55,6 +55,6 @@
 - [X] Setup Master Template Screens,
 - [X] Setup Master Template Documents,
 - [X] Back up database,
-- [ ] Remove all projects eccept master template,
+- [X] Remove all projects eccept master template,
 - [X] README.md: How to set up pdb_server/database (Github),
 - [ ] Finalise Manual,
