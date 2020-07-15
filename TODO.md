@@ -30,6 +30,9 @@
 - [X] Show relQty in split-window.
 ### Expediting
 - [X] remove performance report screen and add generate report button to expediting screen.
+### Custom Table
+- [X] Spinner on Download for Upload,
+- [ ] Take Upload out of the custom table,
 ### Minutes of Meeting
 - [X] Goods receipt: alert-message if no remaining qty.
 - [X] Goods receipt: qty field disabled if multiple line selected.

@@ -279,7 +279,8 @@ class PtSplitwindow extends React.Component {
             showSettings: false,
             showHeat: false,
             processing: false,
-            menuItem: 'Warehouse'
+            menuItem: 'Warehouse',
+            downloadingTable: false
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -615,17 +616,39 @@ class PtSplitwindow extends React.Component {
                 }
             });
         } else if (projectId && screenId && screen) {
-            var currentDate = new Date();
-            var date = currentDate.getDate();
-            var month = currentDate.getMonth();
-            var year = currentDate.getFullYear();
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                body: JSON.stringify({selectedIds: selectedIds})
-            };
-            return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
-            .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+            this.setState({
+                downloadingTable: true
+            }, () => {
+                var currentDate = new Date();
+                var date = currentDate.getDate();
+                var month = currentDate.getMonth();
+                var year = currentDate.getFullYear();
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedIds})
+                };
+                return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
+                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+                .then(responce => {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    } else if (responce.status === 400) {
+                        this.setState({
+                            downloadingTable: false,
+                            alert: {
+                                type: 'alert-danger',
+                                message: 'an error has occured'  
+                            }
+                        });
+                    } else {
+                        this.setState({
+                            downloadingTable: false
+                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
+                    }
+                });
+            });
         }
     }
 
@@ -801,7 +824,8 @@ class PtSplitwindow extends React.Component {
             processing,
             tabs,
             settingsFilter,
-            settingsDisplay
+            settingsDisplay,
+            downloadingTable
         } = this.state;
 
         const { accesses, fieldnames, fields, heatlocs, heatpicks, selection, sidemenu } = this.props;
@@ -856,6 +880,7 @@ class PtSplitwindow extends React.Component {
                                 updateSelectedIds = {this.updateSelectedIds}
                                 toggleUnlock={this.toggleUnlock}
                                 downloadTable={this.downloadTable}
+                                downloadingTable={downloadingTable}
                                 unlocked={unlocked}
                                 screen={screen}
                                 fieldnames={fieldnames}

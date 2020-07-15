@@ -445,6 +445,7 @@ class ProjectTable extends Component {
             handleDeleteRows,
             toggleUnlock,
             downloadTable,
+            downloadingTable,
             screenId,
             screenHeaders, 
             screenBodys, 
@@ -482,7 +483,7 @@ class ProjectTable extends Component {
                         <span><FontAwesomeIcon icon={unlocked ? "unlock" : "lock"} className="fas fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title="Download" onClick={event => downloadTable(event)} style={{width: '40px', height: '40px'}}>
-                        <span><FontAwesomeIcon icon="download" className="fas fa-2x"/></span>
+                        <span><FontAwesomeIcon icon={downloadingTable ? "spinner" : "download"} className={downloadingTable ? "fa-pulse fa-fw fa-2x": "fas fa-2x"}/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title="Upload" onClick={event => this.toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
