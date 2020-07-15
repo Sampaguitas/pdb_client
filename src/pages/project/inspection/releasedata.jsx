@@ -521,7 +521,7 @@ class ReleaseData extends React.Component {
             showGenerate: false,
             showSettings: false,
             menuItem: 'Inspection',
-            downloadingTable: true                   
+            downloadingTable: false                   
         };
 
         this.handleClearAlert = this.handleClearAlert.bind(this);
