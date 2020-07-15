@@ -25,7 +25,7 @@
 - [X] Goods recipt (goods return radio/table).
 - [X] show returns heats in certificate screen.
 ### Shipping Transport Docs
-- [ ] MiddleWare pre/post hooks (to be fixed).
+- [X] MiddleWare pre/post hooks (to be fixed).
 - [X] If inspection module disabled: relQty = splitQty (virtual).
 - [X] Show relQty in split-window.
 ### Expediting
