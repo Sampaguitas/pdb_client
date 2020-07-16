@@ -515,6 +515,15 @@ ol.breadcrumb {
    vertical-align: top;
  }
 
+ .btn-header-col {
+  text-align: right;
+   background-color: red;
+   height: 27px;
+   width: 1px;
+   padding:0px;
+   margin: 0px;
+ }
+
 .no-select {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */

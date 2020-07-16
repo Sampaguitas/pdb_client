@@ -36,6 +36,21 @@ class HeaderInput extends Component{
                         maxLength={maxLength || 524288}
                     />
                 </div>
+                <div
+                    role="button"
+                    style={{
+                        position: 'absolute',
+                        top: '0px',
+                        bottom: '0px',
+                        right: '0px',
+                        width:'3px',
+                        height: 'auto',
+                        zIndex: '2',
+                        cursor: 'col-resize'
+                    }}
+                >
+
+                </div>
             </th>
         );
     }

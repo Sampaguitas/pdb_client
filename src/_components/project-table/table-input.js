@@ -242,7 +242,10 @@ class TableInput extends Component{
                     width: `${width ? width : 'auto'}`,
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'normal'}`,
                     padding: isSelected ? '0px': '5px',
-                    cursor: isSelected ? 'auto' : 'pointer'
+                    cursor: isSelected ? 'auto' : 'pointer',
+                    textOverflow: 'ellipsis',
+                    overflow: 'hidden',
+                    // maxWidth: 0
                 }}
                 className={tdClasses}
                 align={align ? align : 'left'}
