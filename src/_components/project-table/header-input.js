@@ -1,12 +1,21 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { NonceProvider } from 'react-select';
 
 class HeaderInput extends Component{
+    constructor(props) {
+        super(props);
+        this.state = {
+            // width: '700px !important'
+        }
+    }
+    
+    
 
     render() {
         
-        const { type, title, name, value, onChange, width, textNoWrap, sort, toggleSort, maxLength } = this.props;
-        
+        const { type, title, name, value, width, onChange, textNoWrap, sort, toggleSort, maxLength } = this.props;
+        // const width = this.props.width ? this.props.width : this.state.width;
         return (
             <th style={{width: `${width ? width : 'auto'}`, whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`, padding: '0px' }}>
                 <div role="button" className="btn-header" onClick={event => toggleSort(event, name)}>
