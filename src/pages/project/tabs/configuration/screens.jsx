@@ -6,7 +6,8 @@ import {
     arrayRemove,
     arraySorted,
     screenSorted,
-    generateFromTbls
+    generateFromTbls,
+    copyObject
 } from '../../../../_functions';
 import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
 import HeaderInput from '../../../../_components/project-table/header-input';
@@ -52,6 +53,7 @@ class Screens extends React.Component {
             creatingNewRow: false,
             //creating new row
             newRowColor: 'inherit',
+            colsWidth: {}
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
@@ -63,6 +65,8 @@ class Screens extends React.Component {
         this.handleChangeScreen = this.handleChangeScreen.bind(this);
         this.filterName = this.filterName.bind(this);
         this.generateScreensOptions = this.generateScreensOptions.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -370,6 +374,32 @@ class Screens extends React.Component {
         return tempArray;
     }
 
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
+    }
+
     render() {
         const {
             fieldnames,
@@ -396,7 +426,8 @@ class Screens extends React.Component {
             fieldName,
             newRow,
             newRowColor,
-            deleting
+            deleting,
+            colsWidth
         } = this.state;
 
         const arrAlign = [
@@ -479,6 +510,10 @@ class Screens extends React.Component {
                                         width="calc(45% - 30px)"
                                         sort={sort}
                                         toggleSort={this.toggleSort}
+                                        index="0"
+                                        colDoubleClick={this.colDoubleClick}
+                                        setColWidth={this.setColWidth}
+                                        colsWidth={colsWidth}
                                     />
                                     <HeaderInput
                                         type="number"
@@ -489,6 +524,10 @@ class Screens extends React.Component {
                                         width ="15%"
                                         sort={sort}
                                         toggleSort={this.toggleSort}
+                                        index="1"
+                                        colDoubleClick={this.colDoubleClick}
+                                        setColWidth={this.setColWidth}
+                                        colsWidth={colsWidth}
                                     />                                
                                     <HeaderInput
                                         type="number"
@@ -499,6 +538,10 @@ class Screens extends React.Component {
                                         width ="15%"
                                         sort={sort}
                                         toggleSort={this.toggleSort}
+                                        index="2"
+                                        colDoubleClick={this.colDoubleClick}
+                                        setColWidth={this.setColWidth}
+                                        colsWidth={colsWidth}
                                     />                                 
                                     <HeaderSelect
                                         title="Location"
@@ -510,6 +553,10 @@ class Screens extends React.Component {
                                         width ="15%"
                                         sort={sort}
                                         toggleSort={this.toggleSort}
+                                        index="3"
+                                        colDoubleClick={this.colDoubleClick}
+                                        setColWidth={this.setColWidth}
+                                        colsWidth={colsWidth}
                                     />                         
                                     <HeaderCheckBox 
                                         title="Disable"
@@ -519,6 +566,10 @@ class Screens extends React.Component {
                                         width ="10%"
                                         sort={sort}
                                         toggleSort={this.toggleSort}
+                                        index="4"
+                                        colDoubleClick={this.colDoubleClick}
+                                        setColWidth={this.setColWidth}
+                                        colsWidth={colsWidth}
                                     />
                                 </tr>
                             </thead>
@@ -537,6 +588,8 @@ class Screens extends React.Component {
                                             fromTbls={generateFromTbls(screens, selectedScreen)}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            index="0"
+                                            colsWidth={colsWidth}
                                         />
                                         <NewRowInput
                                             fieldType="number"
@@ -544,6 +597,8 @@ class Screens extends React.Component {
                                             fieldValue={fieldName.forShow}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            index="1"
+                                            colsWidth={colsWidth}
 
                                         />
                                         <NewRowInput
@@ -552,6 +607,8 @@ class Screens extends React.Component {
                                             fieldValue={fieldName.forSelect}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            index="2"
+                                            colsWidth={colsWidth}
                                         />                                      
                                         <NewRowSelect 
                                             fieldName="align"
@@ -561,12 +618,16 @@ class Screens extends React.Component {
                                             fromTbls={[]}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            index="3"
+                                            colsWidth={colsWidth}
                                         />
                                         <NewRowCheckBox
                                             name="edit"
                                             checked={fieldName.edit}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            index="4"
+                                            colsWidth={colsWidth}
                                         />
                                     </tr>                               
                                 }
@@ -587,6 +648,8 @@ class Screens extends React.Component {
                                             optionText="custom"
                                             fromTbls={generateFromTbls(screens, selectedScreen)}
                                             refreshStore={refreshFieldnames}
+                                            index="0"
+                                            colsWidth={colsWidth}
                                         />
                                         <TableInput 
                                             collection="fieldname"
@@ -595,6 +658,8 @@ class Screens extends React.Component {
                                             fieldValue={s.forShow}
                                             fieldType="number"
                                             refreshStore={refreshFieldnames}
+                                            index="1"
+                                            colsWidth={colsWidth}
                                         />
                                         <TableInput 
                                             collection="fieldname"
@@ -603,6 +668,8 @@ class Screens extends React.Component {
                                             fieldValue={s.forSelect}
                                             fieldType="number"
                                             refreshStore={refreshFieldnames}
+                                            index="2"
+                                            colsWidth={colsWidth}
                                         />
                                         <TableSelect 
                                             collection="fieldname"
@@ -613,6 +680,8 @@ class Screens extends React.Component {
                                             optionText="name"
                                             fromTbls={[]}
                                             refreshStore={refreshFieldnames}
+                                            index="3"
+                                            colsWidth={colsWidth}
                                         />
                                         <TableCheckBox 
                                             collection="fieldname"
@@ -621,6 +690,8 @@ class Screens extends React.Component {
                                             fieldValue={s.edit}
                                             fieldType="checkbox"
                                             refreshStore={refreshFieldnames}
+                                            index="4"
+                                            colsWidth={colsWidth}
                                         />
                                     </tr>
                                 )}

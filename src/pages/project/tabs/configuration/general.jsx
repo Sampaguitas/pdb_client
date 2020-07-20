@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     doesMatch,
     arraySorted,
+    copyObject
 } from '../../../../_functions';
 import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
 import HeaderInput from '../../../../_components/project-table/header-input';
@@ -102,6 +103,7 @@ class General extends React.Component {
                 name: '',
                 isAscending: true,
             },
+            colsWidth: {}
         };
         this.toggleSort = this.toggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
@@ -111,6 +113,8 @@ class General extends React.Component {
         this.accessibleArray = this.accessibleArray.bind(this);
         this.handleIsRole = this.handleIsRole.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -320,7 +324,33 @@ class General extends React.Component {
         if (event.which === 13 /* prevent form submit on key Enter */) {
           event.preventDefault();
         }
-    }    
+    }
+
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
+    }
 
     render() {
 
@@ -350,7 +380,8 @@ class General extends React.Component {
             isShipping,
             isWarehouse,
             isConfiguration,
-            sort
+            sort,
+            colsWidth
         } = this.state;  
 
         const { projectUsers } = this.state.project;
@@ -371,6 +402,10 @@ class General extends React.Component {
                                             width ="10%"
                                             sort={sort}
                                             toggleSort={this.toggleSort}
+                                            index="0"
+                                            colDoubleClick={this.colDoubleClick}
+                                            setColWidth={this.setColWidth}
+                                            colsWidth={colsWidth}
                                         />                                            
                                         <HeaderInput
                                             type="text"
@@ -381,6 +416,10 @@ class General extends React.Component {
                                             width ="40%"
                                             sort={sort}
                                             toggleSort={this.toggleSort}
+                                            index="1"
+                                            colDoubleClick={this.colDoubleClick}
+                                            setColWidth={this.setColWidth}
+                                            colsWidth={colsWidth}
                                         />                                             
                                         <HeaderCheckBox 
                                             title="Expediting"
@@ -390,6 +429,10 @@ class General extends React.Component {
                                             width ="10%"
                                             sort={sort}
                                             toggleSort={this.toggleSort}
+                                            index="2"
+                                            colDoubleClick={this.colDoubleClick}
+                                            setColWidth={this.setColWidth}
+                                            colsWidth={colsWidth}
                                         />                                            
                                         <HeaderCheckBox 
                                             title="Inspection"
@@ -399,6 +442,10 @@ class General extends React.Component {
                                             width ="10%"
                                             sort={sort}
                                             toggleSort={this.toggleSort}
+                                            index="3"
+                                            colDoubleClick={this.colDoubleClick}
+                                            setColWidth={this.setColWidth}
+                                            colsWidth={colsWidth}
                                         /> 
                                         <HeaderCheckBox 
                                             title="Shipping"
@@ -408,6 +455,10 @@ class General extends React.Component {
                                             width ="10%"
                                             sort={sort}
                                             toggleSort={this.toggleSort}
+                                            index="4"
+                                            colDoubleClick={this.colDoubleClick}
+                                            setColWidth={this.setColWidth}
+                                            colsWidth={colsWidth}
                                         /> 
                                         <HeaderCheckBox 
                                             title="Warehouse"
@@ -417,6 +468,10 @@ class General extends React.Component {
                                             width ="10%"
                                             sort={sort}
                                             toggleSort={this.toggleSort}
+                                            index="5"
+                                            colDoubleClick={this.colDoubleClick}
+                                            setColWidth={this.setColWidth}
+                                            colsWidth={colsWidth}
                                         />
                                         <HeaderCheckBox 
                                             title="Config"
@@ -426,6 +481,10 @@ class General extends React.Component {
                                             width ="10%"
                                             sort={sort}
                                             toggleSort={this.toggleSort}
+                                            index="6"
+                                            colDoubleClick={this.colDoubleClick}
+                                            setColWidth={this.setColWidth}
+                                            colsWidth={colsWidth}
                                         />
                                     </tr>
                                 </thead>

@@ -804,3 +804,17 @@ export function getTableIds(selectedRows, screenBodys) {
          };
     }
 }
+
+export function copyObject(mainObj) {
+    if (!!mainObj && !_.isEmpty(mainObj)) {
+        let objCopy = {};
+        let key;
+    
+        for (key in mainObj) {
+            objCopy[key] = mainObj[key];
+        }
+        return objCopy;
+    } else {
+        return {};
+    }
+}

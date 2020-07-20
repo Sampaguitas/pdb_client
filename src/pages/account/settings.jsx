@@ -15,6 +15,7 @@ import {
   sidemenuActions,
   userActions 
 } from "../../_actions";
+import { copyObject } from '../../_functions';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableCheckBoxAdmin from "../../_components/project-table/table-check-box-admin";
 import TableCheckBoxSuperAdmin from "../../_components/project-table/table-check-box-spadmin";
@@ -283,6 +284,7 @@ class Settings extends React.Component {
       submitted: false,
       show: false,
       menuItem: '',
+      colsWidth: {},
       
     };
     this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -298,6 +300,8 @@ class Settings extends React.Component {
     this.checkBoxDisabled = this.checkBoxDisabled.bind(this);
     this.onKeyPress = this.onKeyPress.bind(this);
     this.toggleCollapse = this.toggleCollapse.bind(this);
+    this.colDoubleClick = this.colDoubleClick.bind(this);
+    this.setColWidth = this.setColWidth.bind(this);
   }
 
   componentDidMount() {
@@ -507,8 +511,34 @@ class Settings extends React.Component {
     dispatch(sidemenuActions.toggle());
   }
 
+  colDoubleClick(event, index) {
+    event.preventDefault();
+    const { colsWidth } = this.state;
+    if (colsWidth.hasOwnProperty(index)) {
+        let tempArray = copyObject(colsWidth);
+        delete tempArray[index];
+        this.setState({ colsWidth: tempArray });
+    } else {
+        this.setState({
+            colsWidth: {
+                [index]: 0
+            }
+        });
+    }
+  }
+
+  setColWidth(index, width) {
+      const { colsWidth } = this.state;
+      this.setState({
+          colsWidth: {
+              ...colsWidth,
+              [index]: width
+          }
+      });
+  }
+
   render() {
-    const { menuItem, user, userName, name, opco, region, isAdmin, isSuperAdmin, sort, submitted } = this.state;
+    const { menuItem, user, userName, name, opco, region, isAdmin, isSuperAdmin, sort, submitted, colsWidth } = this.state;
     const { alert, sidemenu, opcos, registering, users, userUpdating, userDeleting } = this.props;
 
     return (
@@ -548,7 +578,11 @@ class Settings extends React.Component {
                           onChange={this.handleChangeHeader}
                           width="10%"
                           sort={sort}
-                          toggleSort={this.toggleSort} 
+                          toggleSort={this.toggleSort}
+                          index="0"
+                          colDoubleClick={this.colDoubleClick}
+                          setColWidth={this.setColWidth}
+                          colsWidth={colsWidth}
                       />
                       <HeaderInput
                           type="text"
@@ -558,7 +592,11 @@ class Settings extends React.Component {
                           onChange={this.handleChangeHeader}
                           width="30%"
                           sort={sort}
-                          toggleSort={this.toggleSort} 
+                          toggleSort={this.toggleSort}
+                          index="1"
+                          colDoubleClick={this.colDoubleClick}
+                          setColWidth={this.setColWidth}
+                          colsWidth={colsWidth}
                       />
                       <HeaderInput
                           type="text"
@@ -568,7 +606,11 @@ class Settings extends React.Component {
                           onChange={this.handleChangeHeader}
                           width="30%"
                           sort={sort}
-                          toggleSort={this.toggleSort} 
+                          toggleSort={this.toggleSort}
+                          index="2"
+                          colDoubleClick={this.colDoubleClick}
+                          setColWidth={this.setColWidth}
+                          colsWidth={colsWidth}
                       />
                       <HeaderInput
                           type="text"
@@ -578,7 +620,11 @@ class Settings extends React.Component {
                           onChange={this.handleChangeHeader}
                           width="10%"
                           sort={sort}
-                          toggleSort={this.toggleSort} 
+                          toggleSort={this.toggleSort}
+                          index="3"
+                          colDoubleClick={this.colDoubleClick}
+                          setColWidth={this.setColWidth}
+                          colsWidth={colsWidth}
                       />
                       <HeaderCheckBox
                           title="Admin"

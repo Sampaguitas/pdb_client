@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     arrayRemove,
     doesMatch,
+    copyObject
 } from '../../_functions';
 import _ from 'lodash';
 
@@ -122,7 +123,8 @@ class Warehouse extends Component {
             alert: {
                 type: '',
                 message: ''
-            }
+            },
+            colsWidth: {}
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSelectAllWh = this.toggleSelectAllWh.bind(this);
@@ -144,6 +146,8 @@ class Warehouse extends Component {
         this.updateSelectedWh = this.updateSelectedWh.bind(this);
         this.updateSelectedArea = this.updateSelectedArea.bind(this);
         this.filterName = this.filterName.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -663,17 +667,31 @@ class Warehouse extends Component {
         }
     }
 
-    // filterAreas(array) {
-    //     const { header, sortArea } = this.state;
-    //     if (array) {
-    //         return arraySorted(array, sortArea).filter(function (object) {
-    //             return (doesMatch(header.areaNr, object.number, 'String', false)
-    //             && doesMatch(header.area, object.name, 'String', false));
-    //         });
-    //     } else {
-    //         return [];
-    //     }
-    // }
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
+    }
 
     render() {
 
@@ -700,7 +718,8 @@ class Warehouse extends Component {
             deletingWh,
             deletingAreas,
             creatingNewArea,
-            creatingNewWh
+            creatingNewWh,
+            colsWidth
         } = this.state;
 
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
@@ -749,6 +768,10 @@ class Warehouse extends Component {
                                             onChange={this.handleChangeHeader}
                                             sort={sortWh}
                                             toggleSort={this.toggleSortWh}
+                                            index="0"
+                                            colDoubleClick={this.colDoubleClick}
+                                            setColWidth={this.setColWidth}
+                                            colsWidth={colsWidth}
                                         />
                                     </tr>
                                 </thead>
@@ -769,6 +792,8 @@ class Warehouse extends Component {
                                                 fieldValue={warehouse.warehouse}
                                                 onChange={event => this.handleChangeNewWh(event)}
                                                 color={newWhColor}
+                                                index="0"
+                                                colsWidth={colsWidth}
                                             />
                                         </tr>
                                     }
@@ -787,6 +812,8 @@ class Warehouse extends Component {
                                                 fieldValue={w.warehouse}
                                                 fieldType="text"
                                                 refreshStore={refreshStore}
+                                                index="0"
+                                                colsWidth={colsWidth}
                                             />
                                         </tr>
                                     )}
@@ -843,6 +870,10 @@ class Warehouse extends Component {
                                             sort={sortArea}
                                             toggleSort={this.toggleSortArea}
                                             width='20%'
+                                            index="1"
+                                            colDoubleClick={this.colDoubleClick}
+                                            setColWidth={this.setColWidth}
+                                            colsWidth={colsWidth}
                                         />
                                         <HeaderInput
                                             type="text"
@@ -853,6 +884,10 @@ class Warehouse extends Component {
                                             sort={sortArea}
                                             toggleSort={this.toggleSortArea}
                                             width='calc(30px - 20%)'
+                                            index="2"
+                                            colDoubleClick={this.colDoubleClick}
+                                            setColWidth={this.setColWidth}
+                                            colsWidth={colsWidth}
                                         />
                                     </tr>
                                 </thead>
@@ -874,6 +909,8 @@ class Warehouse extends Component {
                                                 onChange={event => this.handleChangeNewArea(event)}
                                                 color={newAreaColor}
                                                 maxLength={1}
+                                                index="1"
+                                                colsWidth={colsWidth}
                                             />
                                             <NewRowInput
                                                 fieldType="text"
@@ -881,6 +918,8 @@ class Warehouse extends Component {
                                                 fieldValue={area.area}
                                                 onChange={event => this.handleChangeNewArea(event)}
                                                 color={newAreaColor}
+                                                index="2"
+                                                colsWidth={colsWidth}
                                             />
                                         </tr>
                                     }
@@ -899,6 +938,8 @@ class Warehouse extends Component {
                                                 fieldValue={a.areaNr}
                                                 fieldType="text"
                                                 refreshStore={refreshStore}
+                                                index="1"
+                                                colsWidth={colsWidth}
                                             />
                                             <TableInput 
                                                 collection="area"
@@ -907,6 +948,8 @@ class Warehouse extends Component {
                                                 fieldValue={a.area}
                                                 fieldType="text"
                                                 refreshStore={refreshStore}
+                                                index="2"
+                                                colsWidth={colsWidth}
                                             />
                                         </tr>
                                     )}

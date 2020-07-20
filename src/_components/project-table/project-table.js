@@ -5,7 +5,8 @@ import {
     arrayRemove,
     sortCustom,
     doesMatch,
-    getTableIds
+    getTableIds,
+    copyObject
 } from '../../_functions';
 import HeaderInput from '../../_components/project-table/header-input';
 import TableInput from '../../_components/project-table/table-input';
@@ -36,7 +37,8 @@ class ProjectTable extends Component {
             alert: {
                 type:'',
                 message:''
-            }
+            },
+            colsWidth: {}
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -55,6 +57,8 @@ class ProjectTable extends Component {
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
         this.generateRejectionRows = this.generateRejectionRows.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -261,10 +265,10 @@ class ProjectTable extends Component {
     }
 
     generateHeader(screenHeaders) {
-        const {header, sort, selectAllRows} = this.state;
+        const {header, sort, selectAllRows, colsWidth} = this.state;
         const tempInputArray = []
         
-        screenHeaders.map(screenHeader => {
+        screenHeaders.map((screenHeader, screenHeaderIndex) => {
             tempInputArray.push(
                 <HeaderInput
                     type={screenHeader.fields.type === 'Number' ? 'number' : 'text' }
@@ -275,6 +279,10 @@ class ProjectTable extends Component {
                     key={screenHeader._id}
                     sort={sort}
                     toggleSort={this.toggleSort}
+                    index={screenHeaderIndex}
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />
             );
         });
@@ -292,7 +300,7 @@ class ProjectTable extends Component {
 
     generateBody(screenBodys) {
         const { unlocked, refreshStore } = this.props;
-        const { selectAllRows, selectedRows } = this.state;
+        const { selectAllRows, selectedRows, colsWidth } = this.state;
         let tempRows = [];
         if (screenBodys) {
             this.filterName(screenBodys).map(screenBody => {
@@ -312,6 +320,8 @@ class ProjectTable extends Component {
                                 textNoWrap={true}
                                 key={index}
                                 refreshStore={refreshStore}
+                                index={index}
+                                colsWidth={colsWidth}
                             />
                         );                        
                 });
@@ -436,6 +446,32 @@ class ProjectTable extends Component {
                 </tr>
             );
         }
+    }
+
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
     }
 
     render() {

@@ -8,7 +8,8 @@ import TableSelectionRow from '../project-table/table-selection-row';
 import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import {
     arrayRemove,
-    doesMatch
+    doesMatch,
+    copyObject
 } from '../../_functions';
 import _ from 'lodash';
 
@@ -164,6 +165,7 @@ class HeatPick extends Component {
             },
             isDeleting: false,
             isCreating: false,
+            colsWidth: {}
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.pickToggleSort = this.pickToggleSort.bind(this);
@@ -177,6 +179,8 @@ class HeatPick extends Component {
         this.AssignCertificates = this.AssignCertificates.bind(this);
         this.pickfilterName = this.pickfilterName.bind(this);
         this.locfilterName = this.locfilterName.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -402,7 +406,7 @@ class HeatPick extends Component {
     }
 
     generateLocHeader() {
-        const { locCif, locHeatNr, locInspQty, locSelectAllRows, locSort } = this.state;
+        const { locCif, locHeatNr, locInspQty, locSelectAllRows, locSort, colsWidth } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -417,6 +421,10 @@ class HeatPick extends Component {
                     onChange={this.handleChangeHeader}
                     sort={locSort}
                     toggleSort={this.locToggleSort}
+                    index="0"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />
                 <HeaderInput
                     type="text"
@@ -426,6 +434,10 @@ class HeatPick extends Component {
                     onChange={this.handleChangeHeader}
                     sort={locSort}
                     toggleSort={this.locToggleSort}
+                    index="1"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />
                 <HeaderInput
                     type="number"
@@ -435,6 +447,10 @@ class HeatPick extends Component {
                     onChange={this.handleChangeHeader}
                     sort={locSort}
                     toggleSort={this.locToggleSort}
+                    index="2"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />                       
             </tr>
         );
@@ -442,7 +458,7 @@ class HeatPick extends Component {
 
     generateLocBody() {
         const { refresHeatLocs } = this.props;
-        const { locSelectedIds, locSelectAllRows, locCertificates } = this.state;
+        const { locSelectedIds, locSelectAllRows, locCertificates, colsWidth } = this.state;
         let tempRows = [];
         if (locCertificates) {
             this.locfilterName(locCertificates).map( (certificate, index) => {
@@ -465,6 +481,8 @@ class HeatPick extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             refreshStore={refresHeatLocs}
+                            index="0"
+                            colsWidth={colsWidth}
                         />
                         <TableInput
                             collection="virtual"
@@ -477,6 +495,8 @@ class HeatPick extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             refreshStore={refresHeatLocs}
+                            index="1"
+                            colsWidth={colsWidth}
                         />
                         <TableInput
                             collection="virtual"
@@ -489,6 +509,8 @@ class HeatPick extends Component {
                             fieldType="number"
                             textNoWrap={true}
                             refreshStore={refresHeatLocs}
+                            index="2"
+                            colsWidth={colsWidth}
                         />
                     </tr>
                 );
@@ -498,7 +520,7 @@ class HeatPick extends Component {
     }
 
     generatePickHeader() {
-        const { pickCif, pickHeatNr, pickInspQty, pickSelectAllRows, pickSort } = this.state;
+        const { pickCif, pickHeatNr, pickInspQty, pickSelectAllRows, pickSort, colsWidth } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -513,6 +535,10 @@ class HeatPick extends Component {
                     onChange={this.handleChangeHeader}
                     sort={pickSort}
                     toggleSort={this.pickToggleSort}
+                    index="3"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />
                 <HeaderInput
                     type="text"
@@ -522,6 +548,10 @@ class HeatPick extends Component {
                     onChange={this.handleChangeHeader}
                     sort={pickSort}
                     toggleSort={this.pickToggleSort}
+                    index="4"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />
                 <HeaderInput
                     type="number"
@@ -531,6 +561,10 @@ class HeatPick extends Component {
                     onChange={this.handleChangeHeader}
                     sort={pickSort}
                     toggleSort={this.pickToggleSort}
+                    index="5"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />                       
             </tr>
         );
@@ -561,6 +595,8 @@ class HeatPick extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             refreshStore={refreshHeatPicks}
+                            index="3"
+                            colsWidth={colsWidth}
                         />
                         <TableInput
                             collection="virtual"
@@ -573,6 +609,8 @@ class HeatPick extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             refreshStore={refreshHeatPicks}
+                            index="4"
+                            colsWidth={colsWidth}
                         />
                         <TableInput
                             collection="heatpick"
@@ -585,6 +623,8 @@ class HeatPick extends Component {
                             fieldType="number"
                             textNoWrap={true}
                             refreshStore={refreshHeatPicks}
+                            index="5"
+                            colsWidth={colsWidth}
                         />
                     </tr>
                 );
@@ -722,6 +762,32 @@ class HeatPick extends Component {
         } else {
             return [];
         }
+    }
+
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
     }
     
     render() {

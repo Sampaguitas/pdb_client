@@ -7,6 +7,7 @@ import {
     TypeToString,
     sortCustom,
     doesMatch,
+    copyObject
 } from '../../_functions';
 import _ from 'lodash';
 
@@ -27,7 +28,8 @@ class SplitLine extends Component {
             alert: {
                 type: '',
                 message: ''
-            }
+            },
+            colsWidth: {}
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -37,6 +39,8 @@ class SplitLine extends Component {
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
         this.handleClickLine = this.handleClickLine.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -98,7 +102,6 @@ class SplitLine extends Component {
         }
 
     }
-
 
     handleClearAlert(event){
         const { handleClearAlert } = this.props;
@@ -179,10 +182,10 @@ class SplitLine extends Component {
     }
 
     generateHeader(screenHeaders) {
-        const {header, sort} = this.state;
+        const {header, sort, colsWidth} = this.state;
         const tempInputArray = [];
         if (!_.isEmpty(screenHeaders)) {
-            screenHeaders.map(screenHeader => {
+            screenHeaders.map((screenHeader, screenHeaderIndex) => {
                 tempInputArray.push(
                     <HeaderInput
                         type={screenHeader.fields.type === 'Number' ? 'number' : 'text' }
@@ -193,6 +196,10 @@ class SplitLine extends Component {
                         key={screenHeader._id}
                         sort={sort}
                         toggleSort={this.toggleSort}
+                        index={screenHeaderIndex}
+                        colDoubleClick={this.colDoubleClick}
+                        setColWidth={this.setColWidth}
+                        colsWidth={colsWidth}
                     />
                 );
             });
@@ -242,6 +249,32 @@ class SplitLine extends Component {
         } else {
             this.setState({ selectedLine: screenBody.tablesId.poId });
         }
+    }
+
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
     }
 
     render() {

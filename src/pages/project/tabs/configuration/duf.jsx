@@ -4,7 +4,8 @@ import { authHeader } from '../../../../_helpers';
 import {
     doesMatch,
     arrayRemove,
-    screenSorted
+    screenSorted,
+    copyObject
 } from '../../../../_functions'
 import HeaderInput from '../../../../_components/project-table/header-input';
 import NewRowCreate from '../../../../_components/project-table/new-row-create';
@@ -40,6 +41,7 @@ class Duf extends React.Component {
             newRowFocus:false,
             creatingNewRow: false,
             newRowColor: 'inherit',
+            colsWidth: {}
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
@@ -49,6 +51,8 @@ class Duf extends React.Component {
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.filterName = this.filterName.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -321,6 +325,32 @@ class Duf extends React.Component {
         }
     }
 
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
+    }
+
     render() {
 
         const {
@@ -340,7 +370,8 @@ class Duf extends React.Component {
             fieldName,
             newRow,
             newRowColor,
-            creatingNewRow
+            creatingNewRow,
+            colsWidth
         } = this.state;
 
         return ( 
@@ -372,6 +403,10 @@ class Duf extends React.Component {
                                         width="calc(15% - 30px)"
                                         sort={sort}
                                         toggleSort={this.toggleSort}
+                                        index="0"
+                                        colDoubleClick={this.colDoubleClick}
+                                        setColWidth={this.setColWidth}
+                                        colsWidth={colsWidth}
                                     />                                
                                     <HeaderInput
                                         type="text"
@@ -382,6 +417,10 @@ class Duf extends React.Component {
                                         width="85%"
                                         sort={sort}
                                         toggleSort={this.toggleSort}
+                                        index="1"
+                                        colDoubleClick={this.colDoubleClick}
+                                        setColWidth={this.setColWidth}
+                                        colsWidth={colsWidth}
                                     />                
                                 </tr>
                             </thead>
@@ -398,6 +437,8 @@ class Duf extends React.Component {
                                             fieldValue={fieldName.forShow}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            index="0"
+                                            colsWidth={colsWidth}
                                         />
                                         <NewRowSelect 
                                             fieldName="fieldId"
@@ -407,6 +448,8 @@ class Duf extends React.Component {
                                             fromTbls={['po', 'sub']}
                                             onChange={event => this.handleChangeNewRow(event)}
                                             color={newRowColor}
+                                            index="1"
+                                            colsWidth={colsWidth}
                                         />
                                     </tr>                            
                                 }
@@ -429,6 +472,8 @@ class Duf extends React.Component {
                                             fieldValue={s.forShow}
                                             fieldType="number"
                                             refreshStore={refreshFieldnames}
+                                            index="0"
+                                            colsWidth={colsWidth}
                                         />
                                         <TableSelect 
                                             collection="fieldname"
@@ -438,7 +483,9 @@ class Duf extends React.Component {
                                             options={fields.items}
                                             optionText="custom"
                                             fromTbls={['po', 'sub']}
-                                            refreshStore={refreshFieldnames}                              
+                                            refreshStore={refreshFieldnames}
+                                            index="1"
+                                            colsWidth={colsWidth}                         
                                         />
                                     </tr>
                                 )}

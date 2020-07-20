@@ -10,7 +10,8 @@ import NewRowCreate from '../project-table/new-row-create';
 import CifNewRowInput from '../project-table/cif-new-row-input';
 import {
     arrayRemove,
-    doesMatch
+    doesMatch,
+    copyObject
 } from '../../_functions';
 import _ from 'lodash';
 
@@ -68,7 +69,8 @@ class Certificate extends Component {
             alert: {
                 type:'',
                 message:''
-            }
+            },
+            colsWidth: {}
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
@@ -83,6 +85,8 @@ class Certificate extends Component {
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
         this.filterName = this.filterName.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -339,10 +343,8 @@ class Certificate extends Component {
         }       
     }
 
-
-
     generateHeader() {
-        const { cif, selectAllRows, sort } = this.state;
+        const { cif, selectAllRows, sort, colsWidth } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -357,6 +359,10 @@ class Certificate extends Component {
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
+                    index="0"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />                         
             </tr>
         );
@@ -433,6 +439,32 @@ class Certificate extends Component {
         } else {
             return [];
         }
+    }
+
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
     }
 
     render() {

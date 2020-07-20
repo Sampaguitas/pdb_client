@@ -6,7 +6,8 @@ import {
     arrayRemove,
     sortCustom,
     getInputType,
-    getHeaders
+    getHeaders,
+    copyObject
 } from '../../../../_functions';
 import HeaderInput from '../../../../_components/project-table/header-input';
 import NewRowCreate from '../../../../_components/project-table/new-row-create';
@@ -94,26 +95,24 @@ class Suppliers extends React.Component {
             newRowFocus:false,
             creatingNewRow: false,
             newRowColor: 'inherit',
+            colsWidth: {}
         }
         // this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
         this.handleChangeRow = this.handleChangeRow.bind(this);
-
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
-        
         this.generateHeader = this.generateHeader.bind(this);
         this.generateNewRow = this.generateNewRow.bind(this);
         this.generateBody = this.generateBody.bind(this);
-
         this.cerateNewRow = this.cerateNewRow.bind(this);
-        
         this.toggleNewRow = this.toggleNewRow.bind(this);
-        
         this.filterName = this.filterName.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     };
     
     componentDidMount() {
@@ -340,10 +339,10 @@ class Suppliers extends React.Component {
     }
 
     generateHeader(screenHeaders) {
-        const {header, selectAllRows, sort} = this.state;
+        const {header, selectAllRows, sort, colsWidth} = this.state;
         if (!_.isEmpty(screenHeaders)) {
             const tempInputArray = [];
-            screenHeaders.map(screenHeader => {
+            screenHeaders.map((screenHeader, screenHeaderIndex) => {
                 tempInputArray.push(
                     <HeaderInput
                         type={screenHeader.fields.type === 'Number' ? 'number' : 'text' }
@@ -354,6 +353,10 @@ class Suppliers extends React.Component {
                         key={screenHeader._id}
                         sort={sort}
                         toggleSort={this.toggleSort}
+                        index={screenHeaderIndex}
+                        colDoubleClick={this.colDoubleClick}
+                        setColWidth={this.setColWidth}
+                        colsWidth={colsWidth}
                     />
                 );
             });
@@ -475,7 +478,7 @@ class Suppliers extends React.Component {
 
     generateBody(screenBodys) {
         const { refreshSuppliers } = this.props;
-        const { selectedRows, selectAllRows, unlocked, headersForShow } = this.state;
+        const { selectedRows, selectAllRows, unlocked, headersForShow, colsWidth } = this.state;
         if (!_.isEmpty(screenBodys) && !_.isEmpty(headersForShow)) {
             let tempRows = [];
             this.filterName(screenBodys).map(screenBody => {
@@ -495,6 +498,8 @@ class Suppliers extends React.Component {
                                 textNoWrap={true}
                                 key={index}
                                 refreshStore={refreshSuppliers}
+                                index={index}
+                                colsWidth={colsWidth}
                             />
                         );                        
                     } else {
@@ -519,6 +524,32 @@ class Suppliers extends React.Component {
             });
             return tempRows;
         }
+    }
+
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
     }
 
     render() {

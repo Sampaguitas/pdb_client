@@ -18,7 +18,7 @@ import {
     userActions 
 } from '../../_actions';
 import { history } from '../../_helpers';
-import { arraySorted, doesMatch } from '../../_functions';
+import { arraySorted, doesMatch, copyObject } from '../../_functions';
 import TableCheckBoxRole from '../../_components/project-table/table-check-box-role';
 import Input from '../../_components/input';
 import Select from '../../_components/select';
@@ -120,7 +120,8 @@ class Project extends React.Component {
                 isAscending: true,
             },
             submitted: false,
-            menuItem: 'Add project'
+            menuItem: 'Add project',
+            colsWidth: {}
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -133,6 +134,8 @@ class Project extends React.Component {
         this.gotoPage = this.gotoPage.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
     componentDidMount() {
         const { dispatch, users } = this.props;
@@ -332,9 +335,35 @@ class Project extends React.Component {
         dispatch(sidemenuActions.toggle());
     }
 
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
+    }
+
     render() {
         const { alert, currencies, erps, projectCreating, opcos, projects, sidemenu, users } = this.props;
-        const { menuItem, project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, sort, submitted } = this.state; //loaded
+        const { menuItem, project, userName, name, isExpediting, isInspection, isShipping, isWarehouse, isConfiguration, sort, submitted, colsWidth } = this.state; //loaded
         const { projectUsers } = this.state.project;
         return (
             <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
@@ -369,6 +398,10 @@ class Project extends React.Component {
                                                 width="10%"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="0"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -378,7 +411,11 @@ class Project extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 width="40%"
                                                 sort={sort}
-                                                toggleSort={this.toggleSort} 
+                                                toggleSort={this.toggleSort}
+                                                index="1"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderCheckBox
                                                 title="Expediting"
@@ -388,6 +425,7 @@ class Project extends React.Component {
                                                 width="10%"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="2"
                                             />
                                             <HeaderCheckBox
                                                 title="Inspection"

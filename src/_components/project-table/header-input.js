@@ -1,25 +1,50 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NonceProvider } from 'react-select';
+import $ from 'jquery';
 
 class HeaderInput extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            // width: '700px !important'
+            clientXStart: 0,
+            parentWidth: 0,
+
         }
+        this.onDragStart = this.onDragStart.bind(this);
+        this.onDragEnd = this.onDragEnd.bind(this);
     }
-    
-    
+
+    onDragStart(event) {
+        this.setState({
+            clientXStart: event.clientX,
+            parentWidth: event.target.parentElement.offsetWidth
+        });
+    }
+
+    onDragEnd(event) {
+        const { index, setColWidth } = this.props;
+        const { clientXStart, parentWidth } = this.state;
+        let distanceX = event.clientX - clientXStart;
+        setColWidth(index, Math.max(parentWidth + distanceX, 10))
+    }
 
     render() {
         
-        const { type, title, name, value, width, onChange, textNoWrap, sort, toggleSort, maxLength } = this.props;
+        const { type, title, name, value, width, onChange, textNoWrap, sort, toggleSort, maxLength, index, colsWidth, colDoubleClick } = this.props;
         // const width = this.props.width ? this.props.width : this.state.width;
         return (
             <th style={{width: `${width ? width : 'auto'}`, whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`, padding: '0px' }}>
                 <div role="button" className="btn-header" onClick={event => toggleSort(event, name)}>
-                    <span className="btn-header-title no-select">
+                    <span
+                        className="btn-header-title no-select"
+                        style={{
+                            textOverflow: 'ellipsis',
+                            overflow: 'hidden', 
+                            minWidth: !colsWidth.hasOwnProperty(index) ? '10px' : (!!colsWidth[index] ? `${colsWidth[index]}px` : 0),
+                            maxWidth: !colsWidth.hasOwnProperty(index) ? '75px' : (!!colsWidth[index] ? `${colsWidth[index]}px` : 'none')
+                        }}
+                    >
                         {title}
                     </span>
                     <span className="btn-header-icon">
@@ -46,6 +71,7 @@ class HeaderInput extends Component{
                     />
                 </div>
                 <div
+                    id="draggable-column"
                     role="button"
                     style={{
                         position: 'absolute',
@@ -57,6 +83,10 @@ class HeaderInput extends Component{
                         zIndex: '2',
                         cursor: 'col-resize'
                     }}
+                    draggable
+                    onDragStart={event => this.onDragStart(event)}
+                    onDragEnd={event => this.onDragEnd(event)}
+                    onDoubleClick={event => colDoubleClick(event, index)}
                 >
 
                 </div>

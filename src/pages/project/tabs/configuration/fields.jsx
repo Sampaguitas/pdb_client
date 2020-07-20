@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import {
     doesMatch,
+    copyObject
 } from '../../../../_functions';
 import HeaderInput from '../../../../_components/project-table/header-input';
 import TableInput from '../../../../_components/project-table/table-input'
@@ -57,6 +58,7 @@ class Fields extends React.Component {
             },
             loaded: false,
             show: false,
+            colsWidth: {}
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
@@ -64,6 +66,8 @@ class Fields extends React.Component {
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -199,7 +203,7 @@ class Fields extends React.Component {
     }
 
     generateHeader() {
-        const { fromTbl, name, type, custom, sort } = this.state;
+        const { fromTbl, name, type, custom, sort, colsWidth } = this.state;
         return (
             <tr>
                 <HeaderInput
@@ -210,6 +214,10 @@ class Fields extends React.Component {
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
+                    index="0"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />
                 <HeaderInput
                     type="text"
@@ -219,6 +227,10 @@ class Fields extends React.Component {
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
+                    index="1"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />                                
                 <HeaderInput
                     type="text"
@@ -228,6 +240,10 @@ class Fields extends React.Component {
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
+                    index="2"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
 
                 />                                    
                 <HeaderInput
@@ -238,12 +254,17 @@ class Fields extends React.Component {
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
+                    index="3"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />                                      
             </tr>
         );
     }
 
     generateBody(fields) {
+        const { colsWidth } = this.state;
         const { refreshFields } = this.props;
         let tempRows = [];
 
@@ -261,6 +282,8 @@ class Fields extends React.Component {
                                 align='left'
                                 fieldType="text"
                                 refreshStore={refreshFields}
+                                index="0"
+                                colsWidth={colsWidth}
                             />
                             <TableInput 
                                 collection='virtual'
@@ -271,6 +294,8 @@ class Fields extends React.Component {
                                 align='left'
                                 fieldType="text"
                                 refreshStore={refreshFields}
+                                index="1"
+                                colsWidth={colsWidth}
                             />
                             <TableInput 
                                 collection='virtual'
@@ -281,6 +306,8 @@ class Fields extends React.Component {
                                 align='left'
                                 fieldType="text"
                                 refreshStore={refreshFields}
+                                index="2"
+                                colsWidth={colsWidth}
                             />
                             <TableInput 
                                 collection="field"
@@ -291,6 +318,8 @@ class Fields extends React.Component {
                                 align='left'
                                 fieldType="text"
                                 refreshStore={refreshFields}
+                                index="3"
+                                colsWidth={colsWidth}
                             />
                         </tr>
                     );
@@ -298,6 +327,32 @@ class Fields extends React.Component {
             });
             return tempRows;
         }
+    }
+
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
     }
 
     render() {

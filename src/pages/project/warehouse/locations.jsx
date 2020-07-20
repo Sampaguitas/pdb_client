@@ -16,6 +16,7 @@ import {
     arrayRemove,
     leadingChar,
     doesMatch,
+    copyObject
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
 import HeaderInput from '../../../_components/project-table/header-input';
@@ -156,7 +157,8 @@ class Locations extends React.Component {
                 type: '',
                 message: ''
             },
-            menuItem: 'Warehouse'
+            menuItem: 'Warehouse',
+            colsWidth: {}
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
@@ -179,6 +181,8 @@ class Locations extends React.Component {
         this.handleDownloadFile = this.handleDownloadFile.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
         this.dufInput = React.createRef();
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -648,6 +652,32 @@ class Locations extends React.Component {
         dispatch(sidemenuActions.toggle());
     }
 
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
+    }
+
     render() {
         const { accesses, selection, warehouses, sidemenu } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
@@ -674,6 +704,7 @@ class Locations extends React.Component {
             responce,
             creatingLocation,
             deletingLocations,
+            colsWidth
         } = this.state;
 
         const arrTc = [
@@ -742,6 +773,10 @@ class Locations extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="0"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -751,6 +786,10 @@ class Locations extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="1"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -760,6 +799,10 @@ class Locations extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="2"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -769,6 +812,10 @@ class Locations extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="3"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -778,6 +825,10 @@ class Locations extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="4"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -787,6 +838,10 @@ class Locations extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="5"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -796,6 +851,10 @@ class Locations extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="6"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderSelect
                                                 title="TC"
@@ -806,6 +865,10 @@ class Locations extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="7"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             /> 
                                             <HeaderInput
                                                 type="text"
@@ -815,6 +878,10 @@ class Locations extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="8"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                         </tr>
                                     </thead>
@@ -836,6 +903,8 @@ class Locations extends React.Component {
                                                     refreshStore={this.refreshStore}
                                                     align="left"
                                                     disabled={true}
+                                                    index="0"
+                                                    colsWidth={colsWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -846,6 +915,8 @@ class Locations extends React.Component {
                                                     refreshStore={this.refreshStore}
                                                     align="left"
                                                     disabled={true}
+                                                    index="1"
+                                                    colsWidth={colsWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -856,6 +927,8 @@ class Locations extends React.Component {
                                                     refreshStore={this.refreshStore}
                                                     align="left"
                                                     disabled={true}
+                                                    index="2"
+                                                    colsWidth={colsWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -866,6 +939,8 @@ class Locations extends React.Component {
                                                     refreshStore={this.refreshStore}
                                                     align="right"
                                                     disabled={true}
+                                                    index="3"
+                                                    colsWidth={colsWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -876,6 +951,8 @@ class Locations extends React.Component {
                                                     refreshStore={this.refreshStore}
                                                     align="right"
                                                     disabled={true}
+                                                    index="4"
+                                                    colsWidth={colsWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -886,6 +963,8 @@ class Locations extends React.Component {
                                                     refreshStore={this.refreshStore}
                                                     align="right"
                                                     disabled={true}
+                                                    index="5"
+                                                    colsWidth={colsWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -896,6 +975,8 @@ class Locations extends React.Component {
                                                     refreshStore={this.refreshStore}
                                                     align="right"
                                                     disabled={true}
+                                                    index="6"
+                                                    colsWidth={colsWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -906,6 +987,8 @@ class Locations extends React.Component {
                                                     refreshStore={this.refreshStore}
                                                     align="center"
                                                     disabled={true}
+                                                    index="7"
+                                                    colsWidth={colsWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -916,6 +999,8 @@ class Locations extends React.Component {
                                                     refreshStore={this.refreshStore}
                                                     align="left"
                                                     disabled={true}
+                                                    index="8"
+                                                    colsWidth={colsWidth}
                                                 />
                                             </tr>
                                         )}

@@ -215,7 +215,9 @@ class TableInput extends Component{
             textNoWrap,
             unlocked,
             width,
-            maxLength
+            maxLength,
+            colsWidth,
+            index
         } = this.props;
 
         const {
@@ -223,7 +225,7 @@ class TableInput extends Component{
             isEditing,
             isSelected,
             fieldValue,
-            fieldType
+            fieldType,
         } = this.state;
 
         const tdClasses = classNames(
@@ -240,11 +242,14 @@ class TableInput extends Component{
                 style={{
                     color: isSelected ? 'inherit' : disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color,
                     width: `${width ? width : 'auto'}`,
+                    // width: width ? width : ((!!expandedCols.hasOwnProperty(index) && expandedCols[index] != 0) ? `${expandedCols[index]}px` : 'auto'),
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'normal'}`,
                     padding: isSelected ? '0px': '5px',
                     cursor: isSelected ? 'auto' : 'pointer',
                     textOverflow: 'ellipsis',
                     overflow: 'hidden',
+                    minWidth: !colsWidth.hasOwnProperty(index) ? '10px' : (!!colsWidth[index] ? `${colsWidth[index]}px` : 0),
+                    maxWidth: !colsWidth.hasOwnProperty(index) ? '75px' : (!!colsWidth[index] ? `${colsWidth[index]}px` : 'none')
                     // maxWidth: 0
                 }}
                 className={tdClasses}

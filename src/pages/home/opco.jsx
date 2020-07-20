@@ -18,7 +18,7 @@ import {
     sidemenuActions,
     supplierActions,
 } from '../../_actions';
-import { arraySorted, doesMatch } from '../../_functions';
+import { arraySorted, doesMatch, copyObject } from '../../_functions';
 import Modal from "../../_components/modal";
 import Input from '../../_components/input';
 import Layout from '../../_components/layout';
@@ -106,7 +106,8 @@ class Opco extends React.Component {
             },
             submitted: false,
             show: false,
-            menuItem: 'Add operation company'
+            menuItem: 'Add operation company',
+            colsWidth: {}
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -120,6 +121,8 @@ class Opco extends React.Component {
         this.handleDeletOpco = this.handleDeletOpco.bind(this);
         this.onKeyPress = this.onKeyPress.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -318,9 +321,35 @@ class Opco extends React.Component {
         dispatch(sidemenuActions.toggle());
     }
 
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
+    }
+
     render() {
         const { alert, locales, opcoCreating, opcoUpdating, opcoDeleting, opcos , regions, sidemenu } = this.props;
-        const { menuItem, opco, show, code, name, city, country, region, sort, submitted } = this.state;
+        const { menuItem, opco, show, code, name, city, country, region, sort, submitted, colsWidth } = this.state;
         return (
             <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && 
@@ -359,6 +388,10 @@ class Opco extends React.Component {
                                                 width="15%"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="0"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -368,7 +401,11 @@ class Opco extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 width="40%"
                                                 sort={sort}
-                                                toggleSort={this.toggleSort} 
+                                                toggleSort={this.toggleSort}
+                                                index="1"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -379,6 +416,10 @@ class Opco extends React.Component {
                                                 width="15%"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="2"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -389,6 +430,10 @@ class Opco extends React.Component {
                                                 width="15%"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="3"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -398,7 +443,11 @@ class Opco extends React.Component {
                                                 onChange={this.handleChangeHeader}
                                                 width="15%"
                                                 sort={sort}
-                                                toggleSort={this.toggleSort} 
+                                                toggleSort={this.toggleSort}
+                                                index="4"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                         </tr>
                                     </thead>

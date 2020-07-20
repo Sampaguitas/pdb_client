@@ -12,7 +12,8 @@ import NewRowInput from '../project-table/new-row-input';
 import NewRowSelect from '../project-table/new-row-select';
 import {
     arrayRemove,
-    doesMatch
+    doesMatch,
+    copyObject
 } from '../../_functions';
 import _ from 'lodash';
 
@@ -100,7 +101,8 @@ class Heat extends Component {
             alert: {
                 type:'',
                 message:''
-            }
+            },
+            colsWidth: {}
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
@@ -115,6 +117,8 @@ class Heat extends Component {
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
         this.filterHeat = this.filterHeat.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -375,7 +379,7 @@ class Heat extends Component {
     }
 
     generateHeader() {
-        const { cif, heatNr, inspQty, selectAllRows, sort } = this.state;
+        const { cif, heatNr, inspQty, selectAllRows, sort, colsWidth } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -390,6 +394,10 @@ class Heat extends Component {
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
+                    index="0"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 /> 
                 <HeaderInput
                     type="text"
@@ -399,6 +407,10 @@ class Heat extends Component {
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
+                    index="1"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />
                 <HeaderInput
                     type="number"
@@ -408,6 +420,10 @@ class Heat extends Component {
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
+                    index="2"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />                         
             </tr>
         );
@@ -415,7 +431,7 @@ class Heat extends Component {
 
     generateBody(heats) {
         const { refreshPos, certificates } = this.props;
-        const { selectedIds, selectAllRows, newRow, newHeat, newRowColor, creatingNewRow } = this.state;
+        const { selectedIds, selectAllRows, newRow, newHeat, newRowColor, creatingNewRow, colsWidth } = this.state;
         let tempRows = [];
         
         if (newRow) {
@@ -437,6 +453,8 @@ class Heat extends Component {
                         fromTbls={[]}
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
+                        index="0"
+                        colsWidth={colsWidth}
                     />
                     <NewRowInput
                         fieldType="text"
@@ -444,6 +462,8 @@ class Heat extends Component {
                         fieldValue={newHeat.heatNr}
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
+                        index="1"
+                        colsWidth={colsWidth}
                     />
                     <NewRowInput
                         fieldType="number"
@@ -451,6 +471,8 @@ class Heat extends Component {
                         fieldValue={newHeat.inspQty}
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
+                        index="2"
+                        colsWidth={colsWidth}
                     />
                 </tr>
             );
@@ -475,6 +497,8 @@ class Heat extends Component {
                             optionText="cif"
                             fromTbls={[]}
                             refreshStore={refreshPos}
+                            index="0"
+                            colsWidth={colsWidth}
                         />
                         <TableInput
                             collection="heat"
@@ -483,6 +507,8 @@ class Heat extends Component {
                             fieldValue={heat.heatNr}
                             fieldType="text"
                             refreshStore={refreshPos}
+                            index="1"
+                            colsWidth={colsWidth}
                         />
                         <TableInput
                             collection="heat"
@@ -491,6 +517,8 @@ class Heat extends Component {
                             fieldValue={heat.inspQty}
                             fieldType="number"
                             refreshStore={refreshPos}
+                            index="2"
+                            colsWidth={colsWidth}
                         />
                     </tr>
                 );
@@ -514,6 +542,32 @@ class Heat extends Component {
         } else {
             return [];
         }
+    }
+
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
     }
 
     render() {

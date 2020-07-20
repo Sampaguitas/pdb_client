@@ -14,7 +14,7 @@ import {
     supplierActions,
 } from '../../_actions';
 import { history } from '../../_helpers';
-import { doesMatch } from '../../_functions';
+import { doesMatch, copyObject } from '../../_functions';
 import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeaderInput from '../../_components/project-table/header-input';
@@ -132,7 +132,8 @@ class Home extends React.Component {
                 isAscending: true,
             },
             loaded: false,
-            menuItem: 'Home'
+            menuItem: 'Home',
+            colsWidth: {}
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -142,6 +143,8 @@ class Home extends React.Component {
         this.gotoProject = this.gotoProject.bind(this);
         this.withoutProjectMaster = this.withoutProjectMaster.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -239,8 +242,34 @@ class Home extends React.Component {
         dispatch(sidemenuActions.toggle());
     }
 
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
+    }
+
     render() {
-        const { menuItem, number, name, opco, erp, sort } = this.state;
+        const { menuItem, number, name, opco, erp, sort, colsWidth } = this.state;
         const { alert, projects, sidemenu } = this.props;
         return (
             <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
@@ -277,6 +306,10 @@ class Home extends React.Component {
                                                 width="10%"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="0"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                                 
                                             />
                                             <HeaderInput
@@ -288,6 +321,10 @@ class Home extends React.Component {
                                                 width="40%"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="1"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -298,6 +335,10 @@ class Home extends React.Component {
                                                 width="40%"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="2"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -308,6 +349,10 @@ class Home extends React.Component {
                                                 width="10%"
                                                 sort={sort}
                                                 toggleSort={this.toggleSort}
+                                                index="3"
+                                                colDoubleClick={this.colDoubleClick}
+                                                setColWidth={this.setColWidth}
+                                                colsWidth={colsWidth}
                                             />
                                         </tr>
                                     </thead>

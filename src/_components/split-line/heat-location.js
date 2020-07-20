@@ -9,6 +9,7 @@ import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import {
     arrayRemove,
     doesMatch,
+    copyObject
 } from '../../_functions';
 import _ from 'lodash';
 
@@ -182,6 +183,7 @@ class HeatLocation extends Component {
             },
             isDeleting: false,
             isCreating: false,
+            colsWidth: {}
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.poToggleSort = this.poToggleSort.bind(this);
@@ -195,6 +197,8 @@ class HeatLocation extends Component {
         this.AssignCertificates = this.AssignCertificates.bind(this);
         this.pofilterName = this.pofilterName.bind(this);
         this.locfilterName = this.locfilterName.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -415,7 +419,7 @@ class HeatLocation extends Component {
     }
 
     generatePoHeader() {
-        const { poCif, poHeatNr, poInspQty, poSelectAllRows, poSort } = this.state;
+        const { poCif, poHeatNr, poInspQty, poSelectAllRows, poSort, colsWidth } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -430,6 +434,10 @@ class HeatLocation extends Component {
                     onChange={this.handleChangeHeader}
                     sort={poSort}
                     toggleSort={this.poToggleSort}
+                    index="0"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />
                 <HeaderInput
                     type="text"
@@ -439,6 +447,10 @@ class HeatLocation extends Component {
                     onChange={this.handleChangeHeader}
                     sort={poSort}
                     toggleSort={this.poToggleSort}
+                    index="1"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />
                 <HeaderInput
                     type="number"
@@ -448,6 +460,10 @@ class HeatLocation extends Component {
                     onChange={this.handleChangeHeader}
                     sort={poSort}
                     toggleSort={this.poToggleSort}
+                    index="2"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />                       
             </tr>
         );
@@ -455,7 +471,7 @@ class HeatLocation extends Component {
 
     generatePoBody() {
         const { refreshCifs } = this.props;
-        const { poSelectedIds, poSelectAllRows, poCertificates } = this.state;
+        const { poSelectedIds, poSelectAllRows, poCertificates, colsWidth } = this.state;
         let tempRows = [];
         if (poCertificates) {
             this.pofilterName(poCertificates).map( (certificate, index) => {
@@ -478,6 +494,8 @@ class HeatLocation extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             refreshStore={refreshCifs}
+                            index="0"
+                            colsWidth={colsWidth}
                         />
                         <TableInput
                             collection="virtual"
@@ -490,6 +508,8 @@ class HeatLocation extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             refreshStore={refreshCifs}
+                            index="1"
+                            colsWidth={colsWidth}
                         />
                         <TableInput
                             collection="virtual"
@@ -502,6 +522,8 @@ class HeatLocation extends Component {
                             fieldType="number"
                             textNoWrap={true}
                             refreshStore={refreshCifs}
+                            index="2"
+                            colsWidth={colsWidth}
                         />
                     </tr>
                 );
@@ -511,7 +533,7 @@ class HeatLocation extends Component {
     }
 
     generateLocHeader() {
-        const { locCif, locHeatNr, locInspQty, locSelectAllRows, locSort } = this.state;
+        const { locCif, locHeatNr, locInspQty, locSelectAllRows, locSort, colsWidth } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -526,6 +548,10 @@ class HeatLocation extends Component {
                     onChange={this.handleChangeHeader}
                     sort={locSort}
                     toggleSort={this.locToggleSort}
+                    index="3"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />
                 <HeaderInput
                     type="text"
@@ -535,6 +561,10 @@ class HeatLocation extends Component {
                     onChange={this.handleChangeHeader}
                     sort={locSort}
                     toggleSort={this.locToggleSort}
+                    index="4"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />
                 <HeaderInput
                     type="number"
@@ -544,6 +574,10 @@ class HeatLocation extends Component {
                     onChange={this.handleChangeHeader}
                     sort={locSort}
                     toggleSort={this.locToggleSort}
+                    index="5"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    colsWidth={colsWidth}
                 />                       
             </tr>
         );
@@ -551,7 +585,7 @@ class HeatLocation extends Component {
 
     generateLocBody() {
         const { refresHeatLocs } = this.props;
-        const { locSelectedIds, locSelectAllRows, locCertificates } = this.state;
+        const { locSelectedIds, locSelectAllRows, locCertificates, colsWidth } = this.state;
         let tempRows = [];
         if (locCertificates) {
             this.locfilterName(locCertificates).map( (certificate, index) => {
@@ -574,6 +608,8 @@ class HeatLocation extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             refreshStore={refresHeatLocs}
+                            index="3"
+                            colsWidth={colsWidth}
                         />
                         <TableInput
                             collection="virtual"
@@ -586,6 +622,8 @@ class HeatLocation extends Component {
                             fieldType="text"
                             textNoWrap={true}
                             refreshStore={refresHeatLocs}
+                            index="4"
+                            colsWidth={colsWidth}
                         />
                         <TableInput
                             collection="heatloc"
@@ -598,6 +636,8 @@ class HeatLocation extends Component {
                             fieldType="number"
                             textNoWrap={true}
                             refreshStore={refresHeatLocs}
+                            index="5"
+                            colsWidth={colsWidth}
                         />
                     </tr>
                 );
@@ -734,6 +774,32 @@ class HeatLocation extends Component {
         } else {
             return [];
         }
+    }
+
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { colsWidth } = this.state;
+        if (colsWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(colsWidth);
+            delete tempArray[index];
+            this.setState({ colsWidth: tempArray });
+        } else {
+            this.setState({
+                colsWidth: {
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { colsWidth } = this.state;
+        this.setState({
+            colsWidth: {
+                ...colsWidth,
+                [index]: width
+            }
+        });
     }
     
 
