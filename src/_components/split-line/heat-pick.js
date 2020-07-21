@@ -165,7 +165,7 @@ class HeatPick extends Component {
             },
             isDeleting: false,
             isCreating: false,
-            colsWidth: {}
+            settingsColWidth: {}
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.pickToggleSort = this.pickToggleSort.bind(this);
@@ -406,7 +406,7 @@ class HeatPick extends Component {
     }
 
     generateLocHeader() {
-        const { locCif, locHeatNr, locInspQty, locSelectAllRows, locSort, colsWidth } = this.state;
+        const { locCif, locHeatNr, locInspQty, locSelectAllRows, locSort, settingsColWidth } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -424,7 +424,7 @@ class HeatPick extends Component {
                     index="0"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />
                 <HeaderInput
                     type="text"
@@ -437,7 +437,7 @@ class HeatPick extends Component {
                     index="1"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />
                 <HeaderInput
                     type="number"
@@ -450,7 +450,7 @@ class HeatPick extends Component {
                     index="2"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />                       
             </tr>
         );
@@ -458,7 +458,7 @@ class HeatPick extends Component {
 
     generateLocBody() {
         const { refresHeatLocs } = this.props;
-        const { locSelectedIds, locSelectAllRows, locCertificates, colsWidth } = this.state;
+        const { locSelectedIds, locSelectAllRows, locCertificates, settingsColWidth } = this.state;
         let tempRows = [];
         if (locCertificates) {
             this.locfilterName(locCertificates).map( (certificate, index) => {
@@ -482,7 +482,7 @@ class HeatPick extends Component {
                             textNoWrap={true}
                             refreshStore={refresHeatLocs}
                             index="0"
-                            colsWidth={colsWidth}
+                            settingsColWidth={settingsColWidth}
                         />
                         <TableInput
                             collection="virtual"
@@ -496,7 +496,7 @@ class HeatPick extends Component {
                             textNoWrap={true}
                             refreshStore={refresHeatLocs}
                             index="1"
-                            colsWidth={colsWidth}
+                            settingsColWidth={settingsColWidth}
                         />
                         <TableInput
                             collection="virtual"
@@ -510,7 +510,7 @@ class HeatPick extends Component {
                             textNoWrap={true}
                             refreshStore={refresHeatLocs}
                             index="2"
-                            colsWidth={colsWidth}
+                            settingsColWidth={settingsColWidth}
                         />
                     </tr>
                 );
@@ -520,7 +520,7 @@ class HeatPick extends Component {
     }
 
     generatePickHeader() {
-        const { pickCif, pickHeatNr, pickInspQty, pickSelectAllRows, pickSort, colsWidth } = this.state;
+        const { pickCif, pickHeatNr, pickInspQty, pickSelectAllRows, pickSort, settingsColWidth } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -538,7 +538,7 @@ class HeatPick extends Component {
                     index="3"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />
                 <HeaderInput
                     type="text"
@@ -551,7 +551,7 @@ class HeatPick extends Component {
                     index="4"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />
                 <HeaderInput
                     type="number"
@@ -564,7 +564,7 @@ class HeatPick extends Component {
                     index="5"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />                       
             </tr>
         );
@@ -596,7 +596,7 @@ class HeatPick extends Component {
                             textNoWrap={true}
                             refreshStore={refreshHeatPicks}
                             index="3"
-                            colsWidth={colsWidth}
+                            settingsColWidth={settingsColWidth}
                         />
                         <TableInput
                             collection="virtual"
@@ -610,7 +610,7 @@ class HeatPick extends Component {
                             textNoWrap={true}
                             refreshStore={refreshHeatPicks}
                             index="4"
-                            colsWidth={colsWidth}
+                            settingsColWidth={settingsColWidth}
                         />
                         <TableInput
                             collection="heatpick"
@@ -624,7 +624,7 @@ class HeatPick extends Component {
                             textNoWrap={true}
                             refreshStore={refreshHeatPicks}
                             index="5"
-                            colsWidth={colsWidth}
+                            settingsColWidth={settingsColWidth}
                         />
                     </tr>
                 );
@@ -766,15 +766,15 @@ class HeatPick extends Component {
 
     colDoubleClick(event, index) {
         event.preventDefault();
-        const { colsWidth } = this.state;
-        if (colsWidth.hasOwnProperty(index)) {
-            let tempArray = copyObject(colsWidth);
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
             delete tempArray[index];
-            this.setState({ colsWidth: tempArray });
+            this.setState({ settingsColWidth: tempArray });
         } else {
             this.setState({
-                colsWidth: {
-                    ...colsWidth,
+                settingsColWidth: {
+                    ...settingsColWidth,
                     [index]: 0
                 }
             });
@@ -782,10 +782,10 @@ class HeatPick extends Component {
     }
 
     setColWidth(index, width) {
-        const { colsWidth } = this.state;
+        const { settingsColWidth } = this.state;
         this.setState({
-            colsWidth: {
-                ...colsWidth,
+            settingsColWidth: {
+                ...settingsColWidth,
                 [index]: width
             }
         });

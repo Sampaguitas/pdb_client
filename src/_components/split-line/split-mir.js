@@ -29,7 +29,7 @@ class SplitLine extends Component {
                 type: '',
                 message: ''
             },
-            colsWidth: {}
+            settingsColWidth: {}
         }
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -182,7 +182,7 @@ class SplitLine extends Component {
     }
 
     generateHeader(screenHeaders) {
-        const {header, sort, colsWidth} = this.state;
+        const {header, sort, settingsColWidth} = this.state;
         const tempInputArray = [];
         if (!_.isEmpty(screenHeaders)) {
             screenHeaders.map((screenHeader, screenHeaderIndex) => {
@@ -199,7 +199,7 @@ class SplitLine extends Component {
                         index={screenHeaderIndex}
                         colDoubleClick={this.colDoubleClick}
                         setColWidth={this.setColWidth}
-                        colsWidth={colsWidth}
+                        settingsColWidth={settingsColWidth}
                     />
                 );
             });
@@ -253,15 +253,15 @@ class SplitLine extends Component {
 
     colDoubleClick(event, index) {
         event.preventDefault();
-        const { colsWidth } = this.state;
-        if (colsWidth.hasOwnProperty(index)) {
-            let tempArray = copyObject(colsWidth);
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
             delete tempArray[index];
-            this.setState({ colsWidth: tempArray });
+            this.setState({ settingsColWidth: tempArray });
         } else {
             this.setState({
-                colsWidth: {
-                    ...colsWidth,
+                settingsColWidth: {
+                    ...settingsColWidth,
                     [index]: 0
                 }
             });
@@ -269,10 +269,10 @@ class SplitLine extends Component {
     }
 
     setColWidth(index, width) {
-        const { colsWidth } = this.state;
+        const { settingsColWidth } = this.state;
         this.setState({
-            colsWidth: {
-                ...colsWidth,
+            settingsColWidth: {
+                ...settingsColWidth,
                 [index]: width
             }
         });

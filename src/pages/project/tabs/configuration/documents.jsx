@@ -158,7 +158,7 @@ class Documents extends React.Component {
             newRowFocus:false,
             creatingNewRow: false,
             newRowColor: 'inherit',
-            colsWidth: {}
+            settingsColWidth: {}
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
@@ -861,15 +861,15 @@ class Documents extends React.Component {
 
     colDoubleClick(event, index) {
         event.preventDefault();
-        const { colsWidth } = this.state;
-        if (colsWidth.hasOwnProperty(index)) {
-            let tempArray = copyObject(colsWidth);
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
             delete tempArray[index];
-            this.setState({ colsWidth: tempArray });
+            this.setState({ settingsColWidth: tempArray });
         } else {
             this.setState({
-                colsWidth: {
-                    ...colsWidth,
+                settingsColWidth: {
+                    ...settingsColWidth,
                     [index]: 0
                 }
             });
@@ -877,10 +877,10 @@ class Documents extends React.Component {
     }
 
     setColWidth(index, width) {
-        const { colsWidth } = this.state;
+        const { settingsColWidth } = this.state;
         this.setState({
-            colsWidth: {
-                ...colsWidth,
+            settingsColWidth: {
+                ...settingsColWidth,
                 [index]: width
             }
         });
@@ -927,7 +927,7 @@ class Documents extends React.Component {
             newRow,
             docField,
             newRowColor,
-            colsWidth
+            settingsColWidth
         } = this.state;
 
         const ArrLocation = [
@@ -1057,7 +1057,7 @@ class Documents extends React.Component {
                                                 index="0"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />                                        
                                         }
                                         <HeaderSelect
@@ -1073,7 +1073,7 @@ class Documents extends React.Component {
                                             index="1"
                                             colDoubleClick={this.colDoubleClick}
                                             setColWidth={this.setColWidth}
-                                            colsWidth={colsWidth}                                  
+                                            settingsColWidth={settingsColWidth}                                  
                                         />
                                         <HeaderInput
                                             type="number"
@@ -1087,7 +1087,7 @@ class Documents extends React.Component {
                                             index="2"
                                             colDoubleClick={this.colDoubleClick}
                                             setColWidth={this.setColWidth}
-                                            colsWidth={colsWidth}
+                                            settingsColWidth={settingsColWidth}
                                         />
                                         <HeaderInput
                                             type="number"
@@ -1101,7 +1101,7 @@ class Documents extends React.Component {
                                             index="3"
                                             colDoubleClick={this.colDoubleClick}
                                             setColWidth={this.setColWidth}
-                                            colsWidth={colsWidth}
+                                            settingsColWidth={settingsColWidth}
                                         />
                                         <HeaderInput
                                             type="text"
@@ -1115,7 +1115,7 @@ class Documents extends React.Component {
                                             index="4"
                                             colDoubleClick={this.colDoubleClick}
                                             setColWidth={this.setColWidth}
-                                            colsWidth={colsWidth}
+                                            settingsColWidth={settingsColWidth}
                                         />
                                         <HeaderInput
                                             type="text"
@@ -1129,7 +1129,7 @@ class Documents extends React.Component {
                                             index="5"
                                             colDoubleClick={this.colDoubleClick}
                                             setColWidth={this.setColWidth}
-                                            colsWidth={colsWidth}
+                                            settingsColWidth={settingsColWidth}
                                         />
                                     </tr>
                                 </thead>
@@ -1150,7 +1150,7 @@ class Documents extends React.Component {
                                                     onChange={event => this.handleChangeNewRow(event)}
                                                     color={newRowColor}
                                                     index="0"
-                                                    colsWidth={colsWidth}
+                                                    settingsColWidth={settingsColWidth}
                                                 />
                                             }
                                             <NewRowSelect 
@@ -1162,7 +1162,7 @@ class Documents extends React.Component {
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
                                                 index="1"
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />                                        
                                             <NewRowInput
                                                 fieldType="number"
@@ -1171,7 +1171,7 @@ class Documents extends React.Component {
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
                                                 index="2"
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />                                        
                                             <NewRowInput
                                                 fieldType="number"
@@ -1180,7 +1180,7 @@ class Documents extends React.Component {
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
                                                 index="3"
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />                                         
                                             <NewRowSelect 
                                                 fieldName="fieldId"
@@ -1192,7 +1192,7 @@ class Documents extends React.Component {
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
                                                 index="4"
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />                                        
                                             <NewRowInput
                                                 fieldType="text"
@@ -1201,7 +1201,7 @@ class Documents extends React.Component {
                                                 onChange={event => this.handleChangeNewRow(event)}
                                                 color={newRowColor}
                                                 index="5"
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />                                         
                                         </tr>                                
                                     }
@@ -1228,7 +1228,7 @@ class Documents extends React.Component {
                                                     fromTbls={[]}
                                                     refreshStore={refreshDocfields}
                                                     index="0"
-                                                    colsWidth={colsWidth}
+                                                    settingsColWidth={settingsColWidth}
                                                 />
                                             }
                                             <TableSelect 
@@ -1241,7 +1241,7 @@ class Documents extends React.Component {
                                                 fromTbls={[]}
                                                 refreshStore={refreshDocfields}
                                                 index="1"
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <TableInput 
                                                 collection="docfield"
@@ -1251,7 +1251,7 @@ class Documents extends React.Component {
                                                 fieldType="number"
                                                 refreshStore={refreshDocfields}
                                                 index="2"
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <TableInput 
                                                 collection="docfield"
@@ -1261,7 +1261,7 @@ class Documents extends React.Component {
                                                 fieldType="number"
                                                 refreshStore={refreshDocfields}
                                                 index="3"
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <TableSelect 
                                                 collection="docfield"
@@ -1274,7 +1274,7 @@ class Documents extends React.Component {
                                                 isFieldName={true}
                                                 refreshStore={refreshDocfields}
                                                 index="4"
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <TableInput 
                                                 collection="docfield"
@@ -1284,7 +1284,7 @@ class Documents extends React.Component {
                                                 fieldType="text"
                                                 refreshStore={refreshDocfields}
                                                 index="5"
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                         </tr>
                                     )}

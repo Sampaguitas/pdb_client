@@ -133,7 +133,7 @@ class Home extends React.Component {
             },
             loaded: false,
             menuItem: 'Home',
-            colsWidth: {}
+            settingsColWidth: {}
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -244,15 +244,15 @@ class Home extends React.Component {
 
     colDoubleClick(event, index) {
         event.preventDefault();
-        const { colsWidth } = this.state;
-        if (colsWidth.hasOwnProperty(index)) {
-            let tempArray = copyObject(colsWidth);
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
             delete tempArray[index];
-            this.setState({ colsWidth: tempArray });
+            this.setState({ settingsColWidth: tempArray });
         } else {
             this.setState({
-                colsWidth: {
-                    ...colsWidth,
+                settingsColWidth: {
+                    ...settingsColWidth,
                     [index]: 0
                 }
             });
@@ -260,17 +260,17 @@ class Home extends React.Component {
     }
 
     setColWidth(index, width) {
-        const { colsWidth } = this.state;
+        const { settingsColWidth } = this.state;
         this.setState({
-            colsWidth: {
-                ...colsWidth,
+            settingsColWidth: {
+                ...settingsColWidth,
                 [index]: width
             }
         });
     }
 
     render() {
-        const { menuItem, number, name, opco, erp, sort, colsWidth } = this.state;
+        const { menuItem, number, name, opco, erp, sort, settingsColWidth } = this.state;
         const { alert, projects, sidemenu } = this.props;
         return (
             <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
@@ -310,7 +310,7 @@ class Home extends React.Component {
                                                 index="0"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                                 
                                             />
                                             <HeaderInput
@@ -325,7 +325,7 @@ class Home extends React.Component {
                                                 index="1"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -339,7 +339,7 @@ class Home extends React.Component {
                                                 index="2"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -353,7 +353,7 @@ class Home extends React.Component {
                                                 index="3"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                         </tr>
                                     </thead>

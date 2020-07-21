@@ -58,7 +58,7 @@ class Fields extends React.Component {
             },
             loaded: false,
             show: false,
-            colsWidth: {}
+            settingsColWidth: {}
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
@@ -203,7 +203,7 @@ class Fields extends React.Component {
     }
 
     generateHeader() {
-        const { fromTbl, name, type, custom, sort, colsWidth } = this.state;
+        const { fromTbl, name, type, custom, sort, settingsColWidth } = this.state;
         return (
             <tr>
                 <HeaderInput
@@ -217,7 +217,7 @@ class Fields extends React.Component {
                     index="0"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />
                 <HeaderInput
                     type="text"
@@ -230,7 +230,7 @@ class Fields extends React.Component {
                     index="1"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />                                
                 <HeaderInput
                     type="text"
@@ -243,7 +243,7 @@ class Fields extends React.Component {
                     index="2"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
 
                 />                                    
                 <HeaderInput
@@ -257,14 +257,14 @@ class Fields extends React.Component {
                     index="3"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />                                      
             </tr>
         );
     }
 
     generateBody(fields) {
-        const { colsWidth } = this.state;
+        const { settingsColWidth } = this.state;
         const { refreshFields } = this.props;
         let tempRows = [];
 
@@ -283,7 +283,7 @@ class Fields extends React.Component {
                                 fieldType="text"
                                 refreshStore={refreshFields}
                                 index="0"
-                                colsWidth={colsWidth}
+                                settingsColWidth={settingsColWidth}
                             />
                             <TableInput 
                                 collection='virtual'
@@ -295,7 +295,7 @@ class Fields extends React.Component {
                                 fieldType="text"
                                 refreshStore={refreshFields}
                                 index="1"
-                                colsWidth={colsWidth}
+                                settingsColWidth={settingsColWidth}
                             />
                             <TableInput 
                                 collection='virtual'
@@ -307,7 +307,7 @@ class Fields extends React.Component {
                                 fieldType="text"
                                 refreshStore={refreshFields}
                                 index="2"
-                                colsWidth={colsWidth}
+                                settingsColWidth={settingsColWidth}
                             />
                             <TableInput 
                                 collection="field"
@@ -319,7 +319,7 @@ class Fields extends React.Component {
                                 fieldType="text"
                                 refreshStore={refreshFields}
                                 index="3"
-                                colsWidth={colsWidth}
+                                settingsColWidth={settingsColWidth}
                             />
                         </tr>
                     );
@@ -331,15 +331,15 @@ class Fields extends React.Component {
 
     colDoubleClick(event, index) {
         event.preventDefault();
-        const { colsWidth } = this.state;
-        if (colsWidth.hasOwnProperty(index)) {
-            let tempArray = copyObject(colsWidth);
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
             delete tempArray[index];
-            this.setState({ colsWidth: tempArray });
+            this.setState({ settingsColWidth: tempArray });
         } else {
             this.setState({
-                colsWidth: {
-                    ...colsWidth,
+                settingsColWidth: {
+                    ...settingsColWidth,
                     [index]: 0
                 }
             });
@@ -347,10 +347,10 @@ class Fields extends React.Component {
     }
 
     setColWidth(index, width) {
-        const { colsWidth } = this.state;
+        const { settingsColWidth } = this.state;
         this.setState({
-            colsWidth: {
-                ...colsWidth,
+            settingsColWidth: {
+                ...settingsColWidth,
                 [index]: width
             }
         });

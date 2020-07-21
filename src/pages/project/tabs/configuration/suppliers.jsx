@@ -95,7 +95,7 @@ class Suppliers extends React.Component {
             newRowFocus:false,
             creatingNewRow: false,
             newRowColor: 'inherit',
-            colsWidth: {}
+            settingsColWidth: {}
         }
         // this.updateSelectedIds = this.updateSelectedIds.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
@@ -339,7 +339,7 @@ class Suppliers extends React.Component {
     }
 
     generateHeader(screenHeaders) {
-        const {header, selectAllRows, sort, colsWidth} = this.state;
+        const {header, selectAllRows, sort, settingsColWidth} = this.state;
         if (!_.isEmpty(screenHeaders)) {
             const tempInputArray = [];
             screenHeaders.map((screenHeader, screenHeaderIndex) => {
@@ -356,7 +356,7 @@ class Suppliers extends React.Component {
                         index={screenHeaderIndex}
                         colDoubleClick={this.colDoubleClick}
                         setColWidth={this.setColWidth}
-                        colsWidth={colsWidth}
+                        settingsColWidth={settingsColWidth}
                     />
                 );
             });
@@ -478,7 +478,7 @@ class Suppliers extends React.Component {
 
     generateBody(screenBodys) {
         const { refreshSuppliers } = this.props;
-        const { selectedRows, selectAllRows, unlocked, headersForShow, colsWidth } = this.state;
+        const { selectedRows, selectAllRows, unlocked, headersForShow, settingsColWidth } = this.state;
         if (!_.isEmpty(screenBodys) && !_.isEmpty(headersForShow)) {
             let tempRows = [];
             this.filterName(screenBodys).map(screenBody => {
@@ -499,7 +499,7 @@ class Suppliers extends React.Component {
                                 key={index}
                                 refreshStore={refreshSuppliers}
                                 index={index}
-                                colsWidth={colsWidth}
+                                settingsColWidth={settingsColWidth}
                             />
                         );                        
                     } else {
@@ -528,15 +528,15 @@ class Suppliers extends React.Component {
 
     colDoubleClick(event, index) {
         event.preventDefault();
-        const { colsWidth } = this.state;
-        if (colsWidth.hasOwnProperty(index)) {
-            let tempArray = copyObject(colsWidth);
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
             delete tempArray[index];
-            this.setState({ colsWidth: tempArray });
+            this.setState({ settingsColWidth: tempArray });
         } else {
             this.setState({
-                colsWidth: {
-                    ...colsWidth,
+                settingsColWidth: {
+                    ...settingsColWidth,
                     [index]: 0
                 }
             });
@@ -544,10 +544,10 @@ class Suppliers extends React.Component {
     }
 
     setColWidth(index, width) {
-        const { colsWidth } = this.state;
+        const { settingsColWidth } = this.state;
         this.setState({
-            colsWidth: {
-                ...colsWidth,
+            settingsColWidth: {
+                ...settingsColWidth,
                 [index]: width
             }
         });

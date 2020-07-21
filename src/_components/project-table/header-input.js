@@ -31,7 +31,7 @@ class HeaderInput extends Component{
 
     render() {
         
-        const { type, title, name, value, width, onChange, textNoWrap, sort, toggleSort, maxLength, index, colsWidth, colDoubleClick } = this.props;
+        const { type, title, name, value, width, onChange, textNoWrap, sort, toggleSort, maxLength, index, settingsColWidth, colDoubleClick } = this.props;
         // const width = this.props.width ? this.props.width : this.state.width;
         return (
             <th 
@@ -47,8 +47,8 @@ class HeaderInput extends Component{
                         style={{
                             textOverflow: 'ellipsis',
                             overflow: 'hidden', 
-                            minWidth: !colsWidth.hasOwnProperty(index) ? 0 : (!!colsWidth[index] ? `${colsWidth[index]}px` : '10px'),
-                            maxWidth: !colsWidth.hasOwnProperty(index) ? 'none' : (!!colsWidth[index] ? `${colsWidth[index]}px` : '35px')
+                            minWidth: !settingsColWidth.hasOwnProperty(index) ? 0 : (!!settingsColWidth[index] ? `${settingsColWidth[index]}px` : '10px'),
+                            maxWidth: !settingsColWidth.hasOwnProperty(index) ? 'none' : (!!settingsColWidth[index] ? `${settingsColWidth[index]}px` : '35px')
                         }}
                     >
                         {title}

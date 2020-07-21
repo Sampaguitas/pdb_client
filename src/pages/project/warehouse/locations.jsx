@@ -158,7 +158,7 @@ class Locations extends React.Component {
                 message: ''
             },
             menuItem: 'Warehouse',
-            colsWidth: {}
+            settingsColWidth: {}
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
@@ -654,15 +654,15 @@ class Locations extends React.Component {
 
     colDoubleClick(event, index) {
         event.preventDefault();
-        const { colsWidth } = this.state;
-        if (colsWidth.hasOwnProperty(index)) {
-            let tempArray = copyObject(colsWidth);
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
             delete tempArray[index];
-            this.setState({ colsWidth: tempArray });
+            this.setState({ settingsColWidth: tempArray });
         } else {
             this.setState({
-                colsWidth: {
-                    ...colsWidth,
+                settingsColWidth: {
+                    ...settingsColWidth,
                     [index]: 0
                 }
             });
@@ -670,10 +670,10 @@ class Locations extends React.Component {
     }
 
     setColWidth(index, width) {
-        const { colsWidth } = this.state;
+        const { settingsColWidth } = this.state;
         this.setState({
-            colsWidth: {
-                ...colsWidth,
+            settingsColWidth: {
+                ...settingsColWidth,
                 [index]: width
             }
         });
@@ -705,7 +705,7 @@ class Locations extends React.Component {
             responce,
             creatingLocation,
             deletingLocations,
-            colsWidth
+            settingsColWidth
         } = this.state;
 
         const arrTc = [
@@ -777,7 +777,7 @@ class Locations extends React.Component {
                                                 index="0"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -790,7 +790,7 @@ class Locations extends React.Component {
                                                 index="1"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -803,7 +803,7 @@ class Locations extends React.Component {
                                                 index="2"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -816,7 +816,7 @@ class Locations extends React.Component {
                                                 index="3"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -829,7 +829,7 @@ class Locations extends React.Component {
                                                 index="4"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -842,7 +842,7 @@ class Locations extends React.Component {
                                                 index="5"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -855,7 +855,7 @@ class Locations extends React.Component {
                                                 index="6"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderSelect
                                                 title="TC"
@@ -869,7 +869,7 @@ class Locations extends React.Component {
                                                 index="7"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             /> 
                                             <HeaderInput
                                                 type="text"
@@ -882,7 +882,7 @@ class Locations extends React.Component {
                                                 index="8"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                         </tr>
                                     </thead>
@@ -905,7 +905,7 @@ class Locations extends React.Component {
                                                     align="left"
                                                     disabled={true}
                                                     index="0"
-                                                    colsWidth={colsWidth}
+                                                    settingsColWidth={settingsColWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -917,7 +917,7 @@ class Locations extends React.Component {
                                                     align="left"
                                                     disabled={true}
                                                     index="1"
-                                                    colsWidth={colsWidth}
+                                                    settingsColWidth={settingsColWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -929,7 +929,7 @@ class Locations extends React.Component {
                                                     align="left"
                                                     disabled={true}
                                                     index="2"
-                                                    colsWidth={colsWidth}
+                                                    settingsColWidth={settingsColWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -941,7 +941,7 @@ class Locations extends React.Component {
                                                     align="right"
                                                     disabled={true}
                                                     index="3"
-                                                    colsWidth={colsWidth}
+                                                    settingsColWidth={settingsColWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -953,7 +953,7 @@ class Locations extends React.Component {
                                                     align="right"
                                                     disabled={true}
                                                     index="4"
-                                                    colsWidth={colsWidth}
+                                                    settingsColWidth={settingsColWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -965,7 +965,7 @@ class Locations extends React.Component {
                                                     align="right"
                                                     disabled={true}
                                                     index="5"
-                                                    colsWidth={colsWidth}
+                                                    settingsColWidth={settingsColWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -977,7 +977,7 @@ class Locations extends React.Component {
                                                     align="right"
                                                     disabled={true}
                                                     index="6"
-                                                    colsWidth={colsWidth}
+                                                    settingsColWidth={settingsColWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -989,7 +989,7 @@ class Locations extends React.Component {
                                                     align="center"
                                                     disabled={true}
                                                     index="7"
-                                                    colsWidth={colsWidth}
+                                                    settingsColWidth={settingsColWidth}
                                                 />
                                                 <TableInput 
                                                     collection="virtual"
@@ -1001,7 +1001,7 @@ class Locations extends React.Component {
                                                     align="left"
                                                     disabled={true}
                                                     index="8"
-                                                    colsWidth={colsWidth}
+                                                    settingsColWidth={settingsColWidth}
                                                 />
                                             </tr>
                                         )}

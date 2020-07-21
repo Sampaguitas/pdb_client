@@ -38,7 +38,7 @@ class ProjectTable extends Component {
                 type:'',
                 message:''
             },
-            colsWidth: {}
+            settingsColWidth: {}
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -265,7 +265,7 @@ class ProjectTable extends Component {
     }
 
     generateHeader(screenHeaders) {
-        const {header, sort, selectAllRows, colsWidth} = this.state;
+        const {header, sort, selectAllRows, settingsColWidth} = this.state;
         const tempInputArray = []
         
         screenHeaders.map((screenHeader, screenHeaderIndex) => {
@@ -282,7 +282,7 @@ class ProjectTable extends Component {
                     index={screenHeaderIndex}
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />
             );
         });
@@ -300,7 +300,7 @@ class ProjectTable extends Component {
 
     generateBody(screenBodys) {
         const { unlocked, refreshStore } = this.props;
-        const { selectAllRows, selectedRows, colsWidth } = this.state;
+        const { selectAllRows, selectedRows, settingsColWidth } = this.state;
         let tempRows = [];
         if (screenBodys) {
             this.filterName(screenBodys).map(screenBody => {
@@ -321,7 +321,7 @@ class ProjectTable extends Component {
                                 key={index}
                                 refreshStore={refreshStore}
                                 index={index}
-                                colsWidth={colsWidth}
+                                settingsColWidth={settingsColWidth}
                             />
                         );                        
                 });
@@ -450,15 +450,15 @@ class ProjectTable extends Component {
 
     colDoubleClick(event, index) {
         event.preventDefault();
-        const { colsWidth } = this.state;
-        if (colsWidth.hasOwnProperty(index)) {
-            let tempArray = copyObject(colsWidth);
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
             delete tempArray[index];
-            this.setState({ colsWidth: tempArray });
+            this.setState({ settingsColWidth: tempArray });
         } else {
             this.setState({
-                colsWidth: {
-                    ...colsWidth,
+                settingsColWidth: {
+                    ...settingsColWidth,
                     [index]: 0
                 }
             });
@@ -466,10 +466,10 @@ class ProjectTable extends Component {
     }
 
     setColWidth(index, width) {
-        const { colsWidth } = this.state;
+        const { settingsColWidth } = this.state;
         this.setState({
-            colsWidth: {
-                ...colsWidth,
+            settingsColWidth: {
+                ...settingsColWidth,
                 [index]: width
             }
         });

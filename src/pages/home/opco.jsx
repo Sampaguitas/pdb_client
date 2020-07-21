@@ -107,7 +107,7 @@ class Opco extends React.Component {
             submitted: false,
             show: false,
             menuItem: 'Add operation company',
-            colsWidth: {}
+            settingsColWidth: {}
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -323,15 +323,15 @@ class Opco extends React.Component {
 
     colDoubleClick(event, index) {
         event.preventDefault();
-        const { colsWidth } = this.state;
-        if (colsWidth.hasOwnProperty(index)) {
-            let tempArray = copyObject(colsWidth);
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
             delete tempArray[index];
-            this.setState({ colsWidth: tempArray });
+            this.setState({ settingsColWidth: tempArray });
         } else {
             this.setState({
-                colsWidth: {
-                    ...colsWidth,
+                settingsColWidth: {
+                    ...settingsColWidth,
                     [index]: 0
                 }
             });
@@ -339,10 +339,10 @@ class Opco extends React.Component {
     }
 
     setColWidth(index, width) {
-        const { colsWidth } = this.state;
+        const { settingsColWidth } = this.state;
         this.setState({
-            colsWidth: {
-                ...colsWidth,
+            settingsColWidth: {
+                ...settingsColWidth,
                 [index]: width
             }
         });
@@ -350,7 +350,7 @@ class Opco extends React.Component {
 
     render() {
         const { alert, locales, opcoCreating, opcoUpdating, opcoDeleting, opcos , regions, sidemenu } = this.props;
-        const { menuItem, opco, show, code, name, city, country, region, sort, submitted, colsWidth } = this.state;
+        const { menuItem, opco, show, code, name, city, country, region, sort, submitted, settingsColWidth } = this.state;
         return (
             <Layout sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
                 {alert.message && 
@@ -392,7 +392,7 @@ class Opco extends React.Component {
                                                 index="0"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -406,7 +406,7 @@ class Opco extends React.Component {
                                                 index="1"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -420,7 +420,7 @@ class Opco extends React.Component {
                                                 index="2"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -434,7 +434,7 @@ class Opco extends React.Component {
                                                 index="3"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                             <HeaderInput
                                                 type="text"
@@ -448,7 +448,7 @@ class Opco extends React.Component {
                                                 index="4"
                                                 colDoubleClick={this.colDoubleClick}
                                                 setColWidth={this.setColWidth}
-                                                colsWidth={colsWidth}
+                                                settingsColWidth={settingsColWidth}
                                             />
                                         </tr>
                                     </thead>

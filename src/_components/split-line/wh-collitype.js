@@ -95,7 +95,7 @@ class ColliType extends Component {
                 type:'',
                 message:''
             },
-            colsWidth: {}
+            settingsColWidth: {}
         }
         this.toggleSort = this.toggleSort.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
@@ -386,7 +386,7 @@ class ColliType extends Component {
 
 
     generateHeader() {
-        const { type, length, width, height, pkWeight, selectAllRows, sort, colsWidth } = this.state;
+        const { type, length, width, height, pkWeight, selectAllRows, sort, settingsColWidth } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -404,7 +404,7 @@ class ColliType extends Component {
                     index="0"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />
                 <HeaderInput
                     type="number"
@@ -417,7 +417,7 @@ class ColliType extends Component {
                     index="1"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />                                
                 <HeaderInput
                     type="number"
@@ -430,7 +430,7 @@ class ColliType extends Component {
                     index="2"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
 
                 />                                    
                 <HeaderInput
@@ -444,7 +444,7 @@ class ColliType extends Component {
                     index="3"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />
                 <HeaderInput
                     type="number"
@@ -457,7 +457,7 @@ class ColliType extends Component {
                     index="4"
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
-                    colsWidth={colsWidth}
+                    settingsColWidth={settingsColWidth}
                 />                            
             </tr>
         );
@@ -465,7 +465,7 @@ class ColliType extends Component {
 
     generateBody(collitypes) {
         const { refreshColliTypes } = this.props;
-        const { selectedRows, selectAllRows, newRow, fieldName, newRowColor, creatingNewRow, colsWidth } = this.state;
+        const { selectedRows, selectAllRows, newRow, fieldName, newRowColor, creatingNewRow, settingsColWidth } = this.state;
         let tempRows = [];
         
         if (newRow) {
@@ -482,7 +482,7 @@ class ColliType extends Component {
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
                         index="0"
-                        colsWidth={colsWidth}
+                        settingsColWidth={settingsColWidth}
                     />
                     <NewRowInput
                         fieldType="number"
@@ -491,7 +491,7 @@ class ColliType extends Component {
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
                         index="1"
-                        colsWidth={colsWidth}
+                        settingsColWidth={settingsColWidth}
                     />
                     <NewRowInput
                         fieldType="number"
@@ -500,7 +500,7 @@ class ColliType extends Component {
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
                         index="2"
-                        colsWidth={colsWidth}
+                        settingsColWidth={settingsColWidth}
                     />
                     <NewRowInput
                         fieldType="number"
@@ -509,7 +509,7 @@ class ColliType extends Component {
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
                         index="3"
-                        colsWidth={colsWidth}
+                        settingsColWidth={settingsColWidth}
                     />
                     <NewRowInput
                         fieldType="number"
@@ -518,7 +518,7 @@ class ColliType extends Component {
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
                         index="4"
-                        colsWidth={colsWidth}
+                        settingsColWidth={settingsColWidth}
                     />
                 </tr>
             );
@@ -545,7 +545,7 @@ class ColliType extends Component {
                             fieldType="text"
                             refreshStore={refreshColliTypes}
                             index="0"
-                            colsWidth={colsWidth}
+                            settingsColWidth={settingsColWidth}
                         />
                         <TableInput
                             collection="collitype"
@@ -557,7 +557,7 @@ class ColliType extends Component {
                             fieldType="number"
                             refreshStore={refreshColliTypes}
                             index="1"
-                            colsWidth={colsWidth}
+                            settingsColWidth={settingsColWidth}
                         />
                         <TableInput
                             collection="collitype"
@@ -569,7 +569,7 @@ class ColliType extends Component {
                             fieldType="number"
                             refreshStore={refreshColliTypes}
                             index="2"
-                            colsWidth={colsWidth}
+                            settingsColWidth={settingsColWidth}
                         />
                         <TableInput
                             collection="collitype"
@@ -581,7 +581,7 @@ class ColliType extends Component {
                             fieldType="number"
                             refreshStore={refreshColliTypes}
                             index="3"
-                            colsWidth={colsWidth}
+                            settingsColWidth={settingsColWidth}
                         />
                         <TableInput
                             collection="collitype"
@@ -593,7 +593,7 @@ class ColliType extends Component {
                             fieldType="number"
                             refreshStore={refreshColliTypes}
                             index="4"
-                            colsWidth={colsWidth}
+                            settingsColWidth={settingsColWidth}
                         />
                     </tr>
                 );
@@ -628,15 +628,15 @@ class ColliType extends Component {
 
     colDoubleClick(event, index) {
         event.preventDefault();
-        const { colsWidth } = this.state;
-        if (colsWidth.hasOwnProperty(index)) {
-            let tempArray = copyObject(colsWidth);
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
             delete tempArray[index];
-            this.setState({ colsWidth: tempArray });
+            this.setState({ settingsColWidth: tempArray });
         } else {
             this.setState({
-                colsWidth: {
-                    ...colsWidth,
+                settingsColWidth: {
+                    ...settingsColWidth,
                     [index]: 0
                 }
             });
@@ -644,10 +644,10 @@ class ColliType extends Component {
     }
 
     setColWidth(index, width) {
-        const { colsWidth } = this.state;
+        const { settingsColWidth } = this.state;
         this.setState({
-            colsWidth: {
-                ...colsWidth,
+            settingsColWidth: {
+                ...settingsColWidth,
                 [index]: width
             }
         });
