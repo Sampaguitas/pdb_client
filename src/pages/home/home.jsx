@@ -295,7 +295,7 @@ class Home extends React.Component {
                     <div className="body-section">   
                         <div className="row ml-1 mr-1 full-height" style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd'}}>
                             <div className="table-responsive custom-table-container" >
-                                <table className="table table-hover table-bordered table-sm text-nowrap">
+                                <table className="table table-hover table-bordered table-sm">
                                     <thead>
                                         <tr>
                                             <HeaderInput
@@ -360,66 +360,10 @@ class Home extends React.Component {
                                     <tbody className="full-height">
                                         {projects.items && this.withoutProjectMaster(projects.items).map((project) =>
                                             <tr key={project._id} style={{cursor: 'pointer'}} onClick={(event) => this.handleOnclick(event, project)}>
-                                                <td
-                                                    style={{
-                                                        width: 'auto',
-                                                        whiteSpace:'nowrap',
-                                                        padding: '5px',
-                                                        textOverflow: 'ellipsis',
-                                                        overflow: 'hidden',
-                                                        minWidth: !colsWidth.hasOwnProperty('0') ? 0 : (!!colsWidth['0'] ? `${colsWidth['0']}px` : '10px'),
-                                                        maxWidth: !colsWidth.hasOwnProperty('0') ? 'none' : (!!colsWidth['0'] ? `${colsWidth['0']}px` : '35px')
-                                                    }}
-                                                    className="table-cell"
-                                                    // className="no-select"
-                                                >
-                                                    <span>{project.number}</span>
-                                                </td>
-                                                <td
-                                                    style={{
-                                                        width: 'auto',
-                                                        whiteSpace:'nowrap',
-                                                        padding: '5px',
-                                                        textOverflow: 'ellipsis',
-                                                        overflow: 'hidden',
-                                                        minWidth: !colsWidth.hasOwnProperty('1') ? 0 : (!!colsWidth['1'] ? `${colsWidth['1']}px` : '10px'),
-                                                        maxWidth: !colsWidth.hasOwnProperty('1') ? 'none' : (!!colsWidth['1'] ? `${colsWidth['1']}px` : '35px')
-                                                    }}
-                                                    className="table-cell"
-                                                    // className="no-select"
-                                                >
-                                                    <span>{project.name}</span>
-                                                </td>
-                                                <td
-                                                    style={{
-                                                        width: 'auto',
-                                                        whiteSpace:'nowrap',
-                                                        padding: '5px',
-                                                        textOverflow: 'ellipsis',
-                                                        overflow: 'hidden',
-                                                        minWidth: !colsWidth.hasOwnProperty('2') ? 0 : (!!colsWidth['2'] ? `${colsWidth['2']}px` : '10px'),
-                                                        maxWidth: !colsWidth.hasOwnProperty('2') ? 'none' : (!!colsWidth['2'] ? `${colsWidth['2']}px` : '35px')
-                                                    }}
-                                                    className="table-cell"
-                                                    // className="no-select"
-                                                >
-                                                    <span>{project.opco.name}</span>
-                                                </td>
-                                                <td
-                                                    style={{
-                                                        width: 'auto',
-                                                        whiteSpace:'nowrap',
-                                                        padding: '5px',
-                                                        textOverflow: 'ellipsis',
-                                                        overflow: 'hidden',
-                                                        minWidth: !colsWidth.hasOwnProperty('3') ? 0 : (!!colsWidth['3'] ? `${colsWidth['3']}px` : '10px'),
-                                                        maxWidth: !colsWidth.hasOwnProperty('3') ? 'none' : (!!colsWidth['3'] ? `${colsWidth['3']}px` : '35px')
-                                                    }}
-                                                    className="table-cell"
-                                                    // className="no-select"
-                                                >
-                                                    <span>{project.erp.name}</span>
-                                                </td>
+                                                <td className="no-select">{project.number}</td>
+                                                <td className="no-select">{project.name}</td>
+                                                <td className="no-select">{project.opco.name}</td>
+                                                <td className="no-select">{project.erp.name}</td>
                                             </tr>
                                         )}
                                     </tbody>

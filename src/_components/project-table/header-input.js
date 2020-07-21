@@ -34,7 +34,13 @@ class HeaderInput extends Component{
         const { type, title, name, value, width, onChange, textNoWrap, sort, toggleSort, maxLength, index, colsWidth, colDoubleClick } = this.props;
         // const width = this.props.width ? this.props.width : this.state.width;
         return (
-            <th style={{width: `${width ? width : 'auto'}`, whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`, padding: '0px' }}>
+            <th 
+                style={{
+                    width: `${width ? width : 'auto'}`,
+                    whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
+                    padding: '0px'
+                }}
+            >
                 <div role="button" className="btn-header" onClick={event => toggleSort(event, name)}>
                     <span
                         className="btn-header-title no-select"
