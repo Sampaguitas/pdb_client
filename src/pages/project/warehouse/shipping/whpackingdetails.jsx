@@ -33,7 +33,8 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
-    getPlList
+    getPlList,
+    copyObject
 } from '../../../../_functions';
 import Layout from '../../../../_components/layout';
 import ProjectTable from '../../../../_components/project-table/project-table';
@@ -149,6 +150,7 @@ class WhPackingDetails extends React.Component {
             bodysForShow: [],
             settingsFilter: [],
             settingsDisplay: [],
+            settingsColWidth: {},
             tabs: [
                 {
                     index: 0, 
@@ -225,6 +227,8 @@ class WhPackingDetails extends React.Component {
         this.handleRestoreSettings = this.handleRestoreSettings.bind(this);
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -1016,6 +1020,33 @@ class WhPackingDetails extends React.Component {
         dispatch(sidemenuActions.toggle());
     }
 
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
+            delete tempArray[index];
+            this.setState({ settingsColWidth: tempArray });
+        } else {
+            this.setState({
+                settingsColWidth: {
+                    ...settingsColWidth,
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { settingsColWidth } = this.state;
+        this.setState({
+            settingsColWidth: {
+                ...settingsColWidth,
+                [index]: width
+            }
+        });
+    }
+
     render() {
         const { 
             menuItem,
@@ -1049,7 +1080,8 @@ class WhPackingDetails extends React.Component {
             tabs,
             settingsFilter,
             settingsDisplay,
-            downloadingTable
+            downloadingTable,
+            settingsColWidth
         }= this.state;
 
         const { accesses, docdefs, fieldnames, fields, whcollipacks, collitypes, selection, sidemenu } = this.props;
@@ -1113,6 +1145,9 @@ class WhPackingDetails extends React.Component {
                                 refreshStore={this.refreshStore}
                                 handleDeleteRows = {this.handleDeleteRows}
                                 settingsFilter = {settingsFilter}
+                                settingsColWidth={settingsColWidth}
+                                colDoubleClick={this.colDoubleClick}
+                                setColWidth={this.setColWidth}
                             />
                         }
                     </div>

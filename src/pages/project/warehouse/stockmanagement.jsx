@@ -40,6 +40,7 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
+    copyObject
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
@@ -760,6 +761,7 @@ class StockManagement extends React.Component {
             //settings
             settingsFilter: [],
             settingsDisplay: [],
+            settingsColWidth: {},
             tabs: [
                 {
                     index: 0, 
@@ -864,6 +866,8 @@ class StockManagement extends React.Component {
         this.handleFileChange = this.handleFileChange.bind(this);
         this.generateRejectionRows = this.generateRejectionRows.bind(this);
         this.handleDownloadFile = this.handleDownloadFile.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
         this.dufInput = React.createRef();
     }
 
@@ -1903,6 +1907,33 @@ class StockManagement extends React.Component {
         dispatch(sidemenuActions.toggle());
     }
 
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
+            delete tempArray[index];
+            this.setState({ settingsColWidth: tempArray });
+        } else {
+            this.setState({
+                settingsColWidth: {
+                    ...settingsColWidth,
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { settingsColWidth } = this.state;
+        this.setState({
+            settingsColWidth: {
+                ...settingsColWidth,
+                [index]: width
+            }
+        });
+    }
+
     render() {
         const { 
             menuItem,
@@ -1960,7 +1991,8 @@ class StockManagement extends React.Component {
             isRemaining,
             isReceiving,
             isDownloadingFile,
-            downloadingTable
+            downloadingTable,
+            settingsColWidth
         } = this.state;
 
         const { accesses, certificates, fields, fieldnames, heatlocs, pos, selection, sidemenu, warehouses } = this.props;
@@ -2068,6 +2100,9 @@ class StockManagement extends React.Component {
                                 refreshStore={this.refreshStore}
                                 handleDeleteRows = {this.handleDeleteRows}
                                 settingsFilter = {settingsFilter}
+                                settingsColWidth={settingsColWidth}
+                                colDoubleClick={this.colDoubleClick}
+                                setColWidth={this.setColWidth}
                             />
                         }
                     </div>

@@ -6,7 +6,6 @@ import {
     sortCustom,
     doesMatch,
     getTableIds,
-    copyObject
 } from '../../_functions';
 import HeaderInput from '../../_components/project-table/header-input';
 import TableInput from '../../_components/project-table/table-input';
@@ -38,7 +37,7 @@ class ProjectTable extends Component {
                 type:'',
                 message:''
             },
-            settingsColWidth: {}
+            // settingsColWidth: {}
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -57,8 +56,8 @@ class ProjectTable extends Component {
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
         this.generateRejectionRows = this.generateRejectionRows.bind(this);
-        this.colDoubleClick = this.colDoubleClick.bind(this);
-        this.setColWidth = this.setColWidth.bind(this);
+        // this.colDoubleClick = this.colDoubleClick.bind(this);
+        // this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -265,7 +264,8 @@ class ProjectTable extends Component {
     }
 
     generateHeader(screenHeaders) {
-        const {header, sort, selectAllRows, settingsColWidth} = this.state;
+        const { colDoubleClick, setColWidth, settingsColWidth} = this.props;
+        const {header, sort, selectAllRows} = this.state;
         const tempInputArray = []
         
         screenHeaders.map((screenHeader, screenHeaderIndex) => {
@@ -280,8 +280,10 @@ class ProjectTable extends Component {
                     sort={sort}
                     toggleSort={this.toggleSort}
                     index={screenHeaderIndex}
-                    colDoubleClick={this.colDoubleClick}
-                    setColWidth={this.setColWidth}
+                    // colDoubleClick={this.colDoubleClick}
+                    // setColWidth={this.setColWidth}
+                    colDoubleClick={colDoubleClick}
+                    setColWidth={setColWidth}
                     settingsColWidth={settingsColWidth}
                 />
             );
@@ -299,8 +301,8 @@ class ProjectTable extends Component {
     }
 
     generateBody(screenBodys) {
-        const { unlocked, refreshStore } = this.props;
-        const { selectAllRows, selectedRows, settingsColWidth } = this.state;
+        const { unlocked, refreshStore, settingsColWidth } = this.props;
+        const { selectAllRows, selectedRows } = this.state;
         let tempRows = [];
         if (screenBodys) {
             this.filterName(screenBodys).map(screenBody => {
@@ -448,32 +450,32 @@ class ProjectTable extends Component {
         }
     }
 
-    colDoubleClick(event, index) {
-        event.preventDefault();
-        const { settingsColWidth } = this.state;
-        if (settingsColWidth.hasOwnProperty(index)) {
-            let tempArray = copyObject(settingsColWidth);
-            delete tempArray[index];
-            this.setState({ settingsColWidth: tempArray });
-        } else {
-            this.setState({
-                settingsColWidth: {
-                    ...settingsColWidth,
-                    [index]: 0
-                }
-            });
-        }
-    }
+    // colDoubleClick(event, index) {
+    //     event.preventDefault();
+    //     const { settingsColWidth } = this.state;
+    //     if (settingsColWidth.hasOwnProperty(index)) {
+    //         let tempArray = copyObject(settingsColWidth);
+    //         delete tempArray[index];
+    //         this.setState({ settingsColWidth: tempArray });
+    //     } else {
+    //         this.setState({
+    //             settingsColWidth: {
+    //                 ...settingsColWidth,
+    //                 [index]: 0
+    //             }
+    //         });
+    //     }
+    // }
 
-    setColWidth(index, width) {
-        const { settingsColWidth } = this.state;
-        this.setState({
-            settingsColWidth: {
-                ...settingsColWidth,
-                [index]: width
-            }
-        });
-    }
+    // setColWidth(index, width) {
+    //     const { settingsColWidth } = this.state;
+    //     this.setState({
+    //         settingsColWidth: {
+    //             ...settingsColWidth,
+    //             [index]: width
+    //         }
+    //     });
+    // }
 
     render() {
 
@@ -488,7 +490,6 @@ class ProjectTable extends Component {
             screenBodys, 
             unlocked,
             refreshStore,
-            
         } = this.props;
         
         const { 

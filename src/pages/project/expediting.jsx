@@ -38,7 +38,8 @@ import {
     getScreenTbls,
     getTblFields,
     hasPackingList,
-    arrayRemove
+    arrayRemove,
+    copyObject
 } from '../../_functions';
 import Layout from '../../_components/layout';
 import LineCheck from '../../_components/line-check';
@@ -430,6 +431,7 @@ class Expediting extends React.Component {
             splitHeadersForSelect:[],
             settingsFilter: [],
             settingsDisplay: [],
+            settingsColWidth: {},
             tabs: [
                 {
                     index: 0, 
@@ -515,6 +517,8 @@ class Expediting extends React.Component {
         this.handleCheckLine = this.handleCheckLine.bind(this);
         this.generateOptionClPo = this.generateOptionClPo.bind(this);
         this.generateOptionclPoRev = this.generateOptionclPoRev.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -1346,6 +1350,33 @@ class Expediting extends React.Component {
         }
     }
 
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
+            delete tempArray[index];
+            this.setState({ settingsColWidth: tempArray });
+        } else {
+            this.setState({
+                settingsColWidth: {
+                    ...settingsColWidth,
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { settingsColWidth } = this.state;
+        this.setState({
+            settingsColWidth: {
+                ...settingsColWidth,
+                [index]: width
+            }
+        });
+    }
+
     render() {
         const { 
             unit,
@@ -1377,7 +1408,8 @@ class Expediting extends React.Component {
             splitHeadersForSelect,
             tabs,
             settingsFilter,
-            settingsDisplay
+            settingsDisplay,
+            settingsColWidth
         } = this.state;
 
         const { accesses, fieldnames, fields, pos, selection, sidemenu } = this.props;
@@ -1434,8 +1466,11 @@ class Expediting extends React.Component {
                                 fields={fields}
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
-                                handleDeleteRows = {this.handleDeleteRows}
-                                settingsFilter = {settingsFilter}
+                                handleDeleteRows={this.handleDeleteRows}
+                                settingsFilter={settingsFilter}
+                                settingsColWidth={settingsColWidth}
+                                colDoubleClick={this.colDoubleClick}
+                                setColWidth={this.setColWidth}
                             />
                         }
                     </div>

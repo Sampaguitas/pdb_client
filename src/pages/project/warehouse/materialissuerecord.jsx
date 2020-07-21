@@ -28,6 +28,7 @@ import {
     getHeaders,
     initSettingsFilter,
     initSettingsDisplay,
+    copyObject
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
@@ -147,6 +148,7 @@ class MaterialIssueRecord extends React.Component {
             bodysForShow: [],
             settingsFilter: [],
             settingsDisplay: [],
+            settingsColWidth: {},
             tabs: [
                 {
                     index: 0, 
@@ -214,6 +216,8 @@ class MaterialIssueRecord extends React.Component {
         this.handleSaveSettings = this.handleSaveSettings.bind(this);
         this.generateLogRows = this.generateLogRows.bind(this);
         this.toggleCollapse = this.toggleCollapse.bind(this);
+        this.colDoubleClick = this.colDoubleClick.bind(this);
+        this.setColWidth = this.setColWidth.bind(this);
         
     }
 
@@ -837,6 +841,33 @@ class MaterialIssueRecord extends React.Component {
         dispatch(sidemenuActions.toggle());
     }
 
+    colDoubleClick(event, index) {
+        event.preventDefault();
+        const { settingsColWidth } = this.state;
+        if (settingsColWidth.hasOwnProperty(index)) {
+            let tempArray = copyObject(settingsColWidth);
+            delete tempArray[index];
+            this.setState({ settingsColWidth: tempArray });
+        } else {
+            this.setState({
+                settingsColWidth: {
+                    ...settingsColWidth,
+                    [index]: 0
+                }
+            });
+        }
+    }
+
+    setColWidth(index, width) {
+        const { settingsColWidth } = this.state;
+        this.setState({
+            settingsColWidth: {
+                ...settingsColWidth,
+                [index]: width
+            }
+        });
+    }
+
     render() {
 
         const { 
@@ -862,7 +893,8 @@ class MaterialIssueRecord extends React.Component {
             tabs,
             settingsFilter,
             settingsDisplay,
-            downloadingTable
+            downloadingTable,
+            settingsColWidth
         } = this.state;
 
         const { accesses, fieldnames, fields, warehouses, selection, sidemenu } = this.props;
@@ -921,6 +953,9 @@ class MaterialIssueRecord extends React.Component {
                                 refreshStore={this.refreshStore}
                                 handleDeleteRows = {this.handleDeleteRows}
                                 settingsFilter = {settingsFilter}
+                                settingsColWidth={settingsColWidth}
+                                colDoubleClick={this.colDoubleClick}
+                                setColWidth={this.setColWidth}
                             />
                         }
                     </div>
