@@ -32,7 +32,6 @@ class HeaderInput extends Component{
     render() {
         
         const { type, title, name, value, width, onChange, textNoWrap, sort, toggleSort, maxLength, index, settingsColWidth, colDoubleClick } = this.props;
-        // const width = this.props.width ? this.props.width : this.state.width;
         return (
             <th 
                 style={{

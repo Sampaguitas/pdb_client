@@ -27,6 +27,7 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsColWidth,
     copyObject
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
@@ -68,6 +69,7 @@ function getBodys(picktickets, headersForShow) {
                                 disabled: true,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         } else {
                             arrayRow.push({
@@ -78,6 +80,7 @@ function getBodys(picktickets, headersForShow) {
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         }
                         break;
@@ -91,6 +94,7 @@ function getBodys(picktickets, headersForShow) {
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         } else {
                             arrayRow.push({
@@ -101,6 +105,7 @@ function getBodys(picktickets, headersForShow) {
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         }
                         break;
@@ -114,6 +119,7 @@ function getBodys(picktickets, headersForShow) {
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         } else {
                             arrayRow.push({
@@ -124,6 +130,7 @@ function getBodys(picktickets, headersForShow) {
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         }
                         break;
@@ -135,6 +142,7 @@ function getBodys(picktickets, headersForShow) {
                         disabled: screenHeader.edit,
                         align: screenHeader.align,
                         fieldType: getInputType(screenHeader.fields.type),
+                        screenheaderId: screenHeader._id
                     }); 
                 }
             });
@@ -280,6 +288,7 @@ class PickingTicket extends React.Component {
             bodysForShow: getBodys(picktickets, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId),
             docList: arraySorted(docConf(docdefs.items, ['5edb2317e7179a6b6367d786']), "name")
         });
     }
@@ -288,14 +297,23 @@ class PickingTicket extends React.Component {
         const { headersForShow, screenId, settingsDisplay } = this.state; //splitScreenId,
         const { docdefs, fields, fieldnames, selection, settings, picktickets } = this.props;
 
-        if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
+        if (fieldnames != prevProps.fieldnames){
             this.setState({
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
             });
         }
 
-        if (settingsDisplay != prevState.settingsDisplay || fieldnames != prevProps.fieldnames) {
+        if (settings != prevProps.settings){
+            this.setState({
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
+            });
+        }
+
+        if (settingsDisplay != prevState.settingsDisplay) {
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')
             });
@@ -393,7 +411,7 @@ class PickingTicket extends React.Component {
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -412,7 +430,8 @@ class PickingTicket extends React.Component {
                         acc.push(cur._id);
                     }
                     return acc;
-                }, [])
+                }, []),
+                colWidth: settingsColWidth
             }
             const requestOptions = {
                 method: 'PUT',

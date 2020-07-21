@@ -24,6 +24,7 @@ import {
     getLocName,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsColWidth,
     copyObject
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
@@ -71,6 +72,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                         disabled: true,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                 } else {
                                     arrayRow.push({
@@ -81,6 +83,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                         disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                 }
                                 break;
@@ -93,6 +96,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                     disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 });
                                 break;
                             case 'miritem':
@@ -104,6 +108,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                     disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 });
                                 break;
                             case 'po':
@@ -116,6 +121,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                         disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                 } else {
                                     arrayRow.push({
@@ -126,6 +132,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                         disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                 }
                                 break;
@@ -139,6 +146,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                         disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                 } else if (screenHeader.fields.name === 'warehouse') {
                                     arrayRow.push({
@@ -149,6 +157,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                         disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                 } else if (screenHeader.fields.name === 'location') {
                                     arrayRow.push({
@@ -159,6 +168,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                         disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     }); 
                                 } else {
                                     arrayRow.push({
@@ -169,6 +179,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                         disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     }); 
                                 }
                                 break;
@@ -182,6 +193,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                         disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                 } else {
                                     arrayRow.push({
@@ -192,6 +204,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                         disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                 }
                                 break;
@@ -203,6 +216,7 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                                 disabled: pickticket.isProcessed ? true : screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             }); 
                         }
                     });
@@ -372,7 +386,8 @@ class PtSplitwindow extends React.Component {
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodysForShow(picktickets, pickticketId, selection, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId)
         }, () => {
             if (picktickets.hasOwnProperty('items') && !_.isEmpty(picktickets.items)) {
                 let found = picktickets.items.find(element => _.isEqual(element._id, pickticketId));
@@ -398,12 +413,21 @@ class PtSplitwindow extends React.Component {
 
         if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
             this.setState({
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
             });
         }
 
-        if (settingsDisplay != prevState.settingsDisplay || fieldnames != prevProps.fieldnames) {
+        if (settings != prevProps.settings){
+            this.setState({
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
+            });
+        }
+
+        if (settingsDisplay != prevState.settingsDisplay) {
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             });
@@ -512,7 +536,7 @@ class PtSplitwindow extends React.Component {
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -531,7 +555,8 @@ class PtSplitwindow extends React.Component {
                         acc.push(cur._id);
                     }
                     return acc;
-                }, [])
+                }, []),
+                colWidth: settingsColWidth
             }
             const requestOptions = {
                 method: 'PUT',

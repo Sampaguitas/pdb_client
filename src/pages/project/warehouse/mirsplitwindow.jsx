@@ -25,6 +25,7 @@ import {
     getHeaders,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsColWidth,
     copyObject
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
@@ -71,6 +72,7 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -81,6 +83,7 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -93,6 +96,7 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break;
                                 case 'po':
@@ -105,6 +109,7 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -115,6 +120,7 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -126,6 +132,7 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 }); 
                             }
                         });
@@ -177,6 +184,7 @@ function getBodysForSelect(pos, selection, headersForSelect) {
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         } else {
                             arrayRow.push({
@@ -187,6 +195,7 @@ function getBodysForSelect(pos, selection, headersForSelect) {
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         }
                         break;
@@ -198,6 +207,7 @@ function getBodysForSelect(pos, selection, headersForSelect) {
                         disabled: screenHeader.edit,
                         align: screenHeader.align,
                         fieldType: getInputType(screenHeader.fields.type),
+                        screenheaderId: screenHeader._id
                     }); 
                 }
             });
@@ -398,7 +408,8 @@ class MirSplitwindow extends React.Component {
             bodysForShow: getBodysForShow(mirs, mirId, selection, headersForShow),
             bodysForSelect: getBodysForSelect(pos, selection, headersForSelect),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId)
         }, () => {
             if (mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
                 let found = mirs.items.find(element => _.isEqual(element._id, mirId));
@@ -425,17 +436,26 @@ class MirSplitwindow extends React.Component {
             this.setState({ pos: getPos(transactions, mirs, mirId) });
         }
 
-        if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
+        if (fieldnames != prevProps.fieldnames){
             this.setState({
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+                headersForSelect: getHeaders([], fieldnames, screenId, 'forSelect'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
             });
         }
 
-        if (settingsDisplay != prevState.settingsDisplay || fieldnames != prevProps.fieldnames) {
+        if (settings != prevProps.settings){
+            this.setState({
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
+            });
+        }
+
+        if (settingsDisplay != prevState.settingsDisplay) {
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-                headersForSelect: getHeaders([], fieldnames, screenId, 'forSelect')
             });
         }
 
@@ -546,7 +566,7 @@ class MirSplitwindow extends React.Component {
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -565,7 +585,8 @@ class MirSplitwindow extends React.Component {
                         acc.push(cur._id);
                     }
                     return acc;
-                }, [])
+                }, []),
+                colWidth: settingsColWidth
             }
             const requestOptions = {
                 method: 'PUT',

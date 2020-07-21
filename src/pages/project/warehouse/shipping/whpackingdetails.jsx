@@ -33,6 +33,7 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsColWidth,
     getPlList,
     copyObject
 } from '../../../../_functions';
@@ -72,6 +73,7 @@ function getBodys(whcollipacks, headersForShow){
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         } else {
                             arrayRow.push({
@@ -82,6 +84,7 @@ function getBodys(whcollipacks, headersForShow){
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         }
                         break;
@@ -93,6 +96,7 @@ function getBodys(whcollipacks, headersForShow){
                         disabled: screenHeader.edit,
                         align: screenHeader.align,
                         fieldType: getInputType(screenHeader.fields.type),
+                        screenheaderId: screenHeader._id
                     }); 
                 }
             });
@@ -292,7 +296,8 @@ class WhPackingDetails extends React.Component {
             plList: getPlList(whcollipacks),
             docList: arraySorted(docConf(docdefs.items, typeOf), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId)
         });
     }
 
@@ -339,7 +344,8 @@ class WhPackingDetails extends React.Component {
         if (settings != prevProps.settings) {
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
             });
         }
 
@@ -425,7 +431,7 @@ class WhPackingDetails extends React.Component {
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -444,7 +450,8 @@ class WhPackingDetails extends React.Component {
                         acc.push(cur._id);
                     }
                     return acc;
-                }, [])
+                }, []),
+                colWidth: settingsColWidth
             }
             const requestOptions = {
                 method: 'PUT',

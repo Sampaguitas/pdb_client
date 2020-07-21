@@ -24,7 +24,6 @@ class TableInput extends Component{
             color: '#0070C0',
             isEditing: false,
             isSelected: false,
-            // disabled: false
         }
         this.onChange = this.onChange.bind(this);
         this.onBlur = this.onBlur.bind(this);
@@ -242,7 +241,6 @@ class TableInput extends Component{
                 style={{
                     color: isSelected ? 'inherit' : disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color,
                     width: `${width ? width : 'auto'}`,
-                    // width: width ? width : ((!!expandedCols.hasOwnProperty(index) && expandedCols[index] != 0) ? `${expandedCols[index]}px` : 'auto'),
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'normal'}`,
                     padding: isSelected ? '0px': '5px',
                     cursor: isSelected ? 'auto' : 'pointer',
@@ -250,7 +248,6 @@ class TableInput extends Component{
                     overflow: 'hidden',
                     minWidth: !settingsColWidth.hasOwnProperty(index) ? 0 : (!!settingsColWidth[index] ? `${settingsColWidth[index]}px` : '10px'),
                     maxWidth: !settingsColWidth.hasOwnProperty(index) ? 'none' : (!!settingsColWidth[index] ? `${settingsColWidth[index]}px` : '35px')
-                    // maxWidth: 0
                 }}
                 className={tdClasses}
                 align={align ? align : 'left'}

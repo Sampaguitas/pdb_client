@@ -40,6 +40,7 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsColWidth,
     copyObject
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
@@ -171,6 +172,7 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                                         disabled: screenHeader.edit,
                                                         align: screenHeader.align,
                                                         fieldType: getInputType(screenHeader.fields.type),
+                                                        screenheaderId: screenHeader._id
                                                     });
                                                 } else {
                                                     arrayRow.push({
@@ -181,6 +183,7 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                                         disabled: screenHeader.edit,
                                                         align: screenHeader.align,
                                                         fieldType: getInputType(screenHeader.fields.type),
+                                                        screenheaderId: screenHeader._id
                                                     });
                                                 }
                                                 break;
@@ -194,6 +197,7 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                                         disabled: screenHeader.edit,
                                                         align: screenHeader.align,
                                                         fieldType: getInputType(screenHeader.fields.type),
+                                                        screenheaderId: screenHeader._id
                                                     });
                                                 } else if (_.isEqual(screenHeader.fields.name, 'relQty') && !enableInspection){
                                                     arrayRow.push({
@@ -204,6 +208,7 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                                         disabled: screenHeader.edit,
                                                         align: screenHeader.align,
                                                         fieldType: getInputType(screenHeader.fields.type),
+                                                        screenheaderId: screenHeader._id
                                                     });
                                                 } else {
                                                     arrayRow.push({
@@ -214,6 +219,7 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                                         disabled: screenHeader.edit,
                                                         align: screenHeader.align,
                                                         fieldType: getInputType(screenHeader.fields.type),
+                                                        screenheaderId: screenHeader._id
                                                     });
                                                 }
                                                 break;
@@ -227,6 +233,7 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                                     disabled: screenHeader.edit,
                                                     align: screenHeader.align,
                                                     fieldType: getInputType(screenHeader.fields.type),
+                                                    screenheaderId: screenHeader._id
                                                 });
                                                 break;
                                             case 'location':
@@ -238,6 +245,7 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                                     disabled: screenHeader.edit,
                                                     align: screenHeader.align,
                                                     fieldType: getInputType(screenHeader.fields.type),
+                                                    screenheaderId: screenHeader._id
                                                 });
                                                 break;
                                             default: arrayRow.push({
@@ -248,6 +256,7 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         }
                                     });
@@ -316,6 +325,7 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else {
                                             arrayRow.push({
@@ -326,6 +336,7 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         }
                                         break;
@@ -339,6 +350,7 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else {
                                             arrayRow.push({
@@ -349,6 +361,7 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         }
                                         break;
@@ -361,6 +374,7 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                         break;
                                     default: arrayRow.push({
@@ -371,6 +385,7 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                 }
                             });
@@ -432,6 +447,7 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 });
                             } else {
                                 arrayRow.push({
@@ -442,6 +458,7 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 });
                             }
                             break;
@@ -454,6 +471,7 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                             break;
                         default: arrayRow.push({
@@ -464,6 +482,7 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
                             disabled: screenHeader.edit,
                             align: screenHeader.align,
                             fieldType: getInputType(screenHeader.fields.type),
+                            screenheaderId: screenHeader._id
                         });
                     }
                 });
@@ -530,6 +549,7 @@ function getRetBodys (selection, pos, transactions, headersForShow) {
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -540,6 +560,7 @@ function getRetBodys (selection, pos, transactions, headersForShow) {
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -552,6 +573,7 @@ function getRetBodys (selection, pos, transactions, headersForShow) {
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break;
                                 case 'location':
@@ -563,6 +585,7 @@ function getRetBodys (selection, pos, transactions, headersForShow) {
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break;
                                 default: arrayRow.push({
@@ -573,6 +596,7 @@ function getRetBodys (selection, pos, transactions, headersForShow) {
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 });
                             }
                         });
@@ -634,6 +658,7 @@ function getBodysForShow (selection, pos, transactions, headersForShow) {
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                 } else {
                                     arrayRow.push({
@@ -644,6 +669,7 @@ function getBodysForShow (selection, pos, transactions, headersForShow) {
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                 }
                                 break;
@@ -656,6 +682,7 @@ function getBodysForShow (selection, pos, transactions, headersForShow) {
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 });
                                 break;
                             default: arrayRow.push({
@@ -666,6 +693,7 @@ function getBodysForShow (selection, pos, transactions, headersForShow) {
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         }
                     });
@@ -968,7 +996,8 @@ class StockManagement extends React.Component {
             bodysRet: getRetBodys(selection, pos, transactions, headersRet),
             docList: arraySorted(docConf(docdefs.items, ['5eacef91e7179a42f172feea']), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId)
         });
     }
 
@@ -1072,7 +1101,8 @@ class StockManagement extends React.Component {
         if (settings != prevProps.settings) {
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
             });
         }
 
@@ -1200,7 +1230,7 @@ class StockManagement extends React.Component {
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -1219,7 +1249,8 @@ class StockManagement extends React.Component {
                         acc.push(cur._id);
                     }
                     return acc;
-                }, [])
+                }, []),
+                colWidth: settingsColWidth
             }
             const requestOptions = {
                 method: 'PUT',

@@ -29,6 +29,7 @@ import {
     getLocName,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsColWidth,
     copyObject
 } from '../../../../_functions';
 import Layout from '../../../../_components/layout';
@@ -73,6 +74,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                         break;
                                     case 'pickitem':
@@ -84,6 +86,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                         break;
                                     case 'miritem':
@@ -95,6 +98,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                         break;
                                     case 'po':
@@ -107,6 +111,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else {
                                             arrayRow.push({
@@ -117,6 +122,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         }
                                         break;
@@ -130,6 +136,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else if (screenHeader.fields.name === 'warehouse') {
                                             arrayRow.push({
@@ -140,6 +147,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else if (screenHeader.fields.name === 'location') {
                                             arrayRow.push({
@@ -150,6 +158,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             }); 
                                         } else {
                                             arrayRow.push({
@@ -160,6 +169,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             }); 
                                         }
                                         break;
@@ -173,6 +183,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                         break;
                                     case 'mir':
@@ -185,6 +196,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else {
                                             arrayRow.push({
@@ -195,6 +207,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         }
                                         break;
@@ -206,6 +219,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                     });
                                 }
                             });
@@ -242,6 +256,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break;
                                 case 'pickitem':
@@ -253,6 +268,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break;
                                 case 'miritem':
@@ -264,6 +280,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break;
                                 case 'po':
@@ -276,6 +293,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -286,6 +304,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -299,6 +318,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else if (screenHeader.fields.name === 'warehouse') {
                                         arrayRow.push({
@@ -309,6 +329,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else if (screenHeader.fields.name === 'location') {
                                         arrayRow.push({
@@ -319,6 +340,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         }); 
                                     } else {
                                         arrayRow.push({
@@ -329,6 +351,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         }); 
                                     }
                                     break;
@@ -342,6 +365,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break;
                                 case 'mir':
@@ -354,6 +378,7 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -364,17 +389,19 @@ function getBodys(fieldnames, selection, picktickets, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
                                 default: arrayRow.push({
                                     collection: 'virtual',
-                                        objectId: '0',
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: '',
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
+                                    objectId: '0',
+                                    fieldName: screenHeader.fields.name,
+                                    fieldValue: '',
+                                    disabled: screenHeader.edit,
+                                    align: screenHeader.align,
+                                    fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 });
                             }
                         });
@@ -566,7 +593,8 @@ class WhTransportDocuments extends React.Component {
             splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
             splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId)
         });
     }
 
@@ -587,14 +615,15 @@ class WhTransportDocuments extends React.Component {
             }
         }
 
-        if (fieldnames != prevProps.fieldnames  || settings != prevProps.settings){
+        if (settings != prevProps.settings){
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
             }); 
         }
 
-        if (settingsDisplay != prevState.settingsDisplay || fieldnames != prevProps.fieldnames) {
+        if (settingsDisplay != prevState.settingsDisplay) {
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             });
@@ -602,6 +631,9 @@ class WhTransportDocuments extends React.Component {
 
         if (fieldnames != prevProps.fieldnames) {
             this.setState({
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
                 splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
                 splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
             })
@@ -694,7 +726,7 @@ class WhTransportDocuments extends React.Component {
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -713,7 +745,8 @@ class WhTransportDocuments extends React.Component {
                         acc.push(cur._id);
                     }
                     return acc;
-                }, [])
+                }, []),
+                colWidth: settingsColWidth
             }
             const requestOptions = {
                 method: 'PUT',

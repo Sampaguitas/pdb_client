@@ -33,6 +33,7 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsColWidth,
     passSelectedIds,
     passSelectedPo,
     getScreenTbls,
@@ -191,6 +192,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else {
                                             arrayRow.push({
@@ -201,6 +203,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         }
                                         break;
@@ -214,6 +217,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else if (screenHeader.fields.name === 'heatNr') {
                                             arrayRow.push({
@@ -224,6 +228,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else if (_.isEqual(screenHeader.fields.name, 'relQty') && !enableInspection){
                                             arrayRow.push({
@@ -234,6 +239,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else {
                                             arrayRow.push({
@@ -244,6 +250,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         }
                                         break;
@@ -256,6 +263,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                         break
                                     case 'packitem':
@@ -268,6 +276,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else {
                                             arrayRow.push({
@@ -278,6 +287,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: 'text',
+                                                screenheaderId: screenHeader._id
                                             });
                                         }
                                         break;
@@ -289,6 +299,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     }); 
                                 }
                             });
@@ -301,7 +312,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                     packitemId: '',
                                     collipackId: ''
                                 },
-                                fields: arrayRow
+                                fields: arrayRow,
                             };
                             arrayBody.push(objectRow);
                             i++;
@@ -320,6 +331,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -330,6 +342,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -343,6 +356,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else if (screenHeader.fields.name === 'heatNr') {
                                         arrayRow.push({
@@ -353,6 +367,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else if (_.isEqual(screenHeader.fields.name, 'relQty') && !enableInspection){
                                         arrayRow.push({
@@ -363,6 +378,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -373,6 +389,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -385,6 +402,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break
                                 default: arrayRow.push({
@@ -395,6 +413,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 }); 
                             }
                         });
@@ -407,7 +426,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                 packitemId: '',
                                 collipackId: ''
                             },
-                            fields: arrayRow
+                            fields: arrayRow,
                         };
                         arrayBody.push(objectRow);
                         i++;
@@ -532,7 +551,6 @@ class Expediting extends React.Component {
             loadingSelection,
             loadingSettings,
             location,
-            //---------
             fieldnames,
             pos,
             docdefs,
@@ -577,7 +595,8 @@ class Expediting extends React.Component {
             splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
             docList: arraySorted(docConf(docdefs.items, ['5d1927121424114e3884ac7e']), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId)
         });
     }
 
@@ -597,14 +616,23 @@ class Expediting extends React.Component {
             }
         }
 
-        if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
+        // if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
+        //     this.setState({
+        //         settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+        //         settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+        //         settingsColWidth: initSettingsColWidth(settings, screenId)
+        //     }); 
+        // }
+
+        if (settings != prevProps.settings) {
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
-            }); 
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
+            });
         }
 
-        if (settingsDisplay != prevState.settingsDisplay || fieldnames != prevProps.fieldnames) {
+        if (settingsDisplay != prevState.settingsDisplay) {
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')
             });
@@ -612,6 +640,9 @@ class Expediting extends React.Component {
 
         if (fieldnames != prevProps.fieldnames) {
             this.setState({
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
                 splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
                 splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
             });
@@ -709,7 +740,7 @@ class Expediting extends React.Component {
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -728,7 +759,8 @@ class Expediting extends React.Component {
                         acc.push(cur._id);
                     }
                     return acc;
-                }, [])
+                }, []),
+                colWidth: settingsColWidth
             }
             const requestOptions = {
                 method: 'PUT',

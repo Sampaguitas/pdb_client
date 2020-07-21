@@ -28,6 +28,7 @@ import {
     getHeaders,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsColWidth,
     copyObject
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
@@ -70,6 +71,7 @@ function getBodys(mirs, headersForShow) {
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         } else {
                             arrayRow.push({
@@ -80,6 +82,7 @@ function getBodys(mirs, headersForShow) {
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         }
                         break;
@@ -91,6 +94,7 @@ function getBodys(mirs, headersForShow) {
                         disabled: screenHeader.edit,
                         align: screenHeader.align,
                         fieldType: getInputType(screenHeader.fields.type),
+                        screenheaderId: screenHeader._id
                     }); 
                 }
             });
@@ -272,7 +276,8 @@ class MaterialIssueRecord extends React.Component {
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(mirs, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId)
         });
     }
 
@@ -280,14 +285,23 @@ class MaterialIssueRecord extends React.Component {
         const { headersForShow, screenId, settingsDisplay } = this.state; //splitScreenId,
         const { fields, fieldnames, selection, settings, mirs } = this.props;
 
-        if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
+        if (fieldnames != prevProps.fieldnames){
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             });
         }
 
-        if (settingsDisplay != prevState.settingsDisplay || fieldnames != prevProps.fieldnames) {
+        if (settings != prevProps.settings){
+            this.setState({
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
+            });
+        }
+
+        if (settingsDisplay != prevState.settingsDisplay) {
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')
             });
@@ -381,7 +395,7 @@ class MaterialIssueRecord extends React.Component {
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -400,7 +414,8 @@ class MaterialIssueRecord extends React.Component {
                         acc.push(cur._id);
                     }
                     return acc;
-                }, [])
+                }, []),
+                colWidth: settingsColWidth
             }
             const requestOptions = {
                 method: 'PUT',

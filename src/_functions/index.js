@@ -405,6 +405,19 @@ export function initSettingsDisplay(fieldnames, settings, screenId) {
     }
 }
 
+export function initSettingsColWidth(settings, screenId) {
+    if (!_.isUndefined(settings) && settings.hasOwnProperty('items') && !_.isEmpty(settings.items)) {
+        let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
+        if (!_.isUndefined(screenSettings) && screenSettings.params.hasOwnProperty('colWidth')) {
+            return screenSettings.params.colWidth || {};
+        } else {
+            return {};
+        }
+    } else {
+        return {};
+    }
+}
+
 export function passSelectedIds(selectedIds) {
     if (_.isEmpty(selectedIds) || selectedIds.length > 1) {
         return {};

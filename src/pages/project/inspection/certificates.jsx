@@ -22,6 +22,7 @@ import {
     getHeaders,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsColWidth,
     copyObject
 } from '../../../_functions';
 import Layout from '../../../_components/layout';
@@ -90,6 +91,7 @@ function getBodys(selection, pos, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -100,6 +102,7 @@ function getBodys(selection, pos, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -113,6 +116,7 @@ function getBodys(selection, pos, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else if (screenHeader.fields.name === 'heatNr') {
                                         arrayRow.push({
@@ -123,6 +127,7 @@ function getBodys(selection, pos, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -133,6 +138,7 @@ function getBodys(selection, pos, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -145,6 +151,7 @@ function getBodys(selection, pos, headersForShow){
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break;
                                 default: arrayRow.push({
@@ -155,6 +162,7 @@ function getBodys(selection, pos, headersForShow){
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 });
                             }
                         });
@@ -192,6 +200,7 @@ function getBodys(selection, pos, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -202,6 +211,7 @@ function getBodys(selection, pos, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -215,6 +225,7 @@ function getBodys(selection, pos, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else if (screenHeader.fields.name === 'heatNr') {
                                         arrayRow.push({
@@ -225,6 +236,7 @@ function getBodys(selection, pos, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -235,6 +247,7 @@ function getBodys(selection, pos, headersForShow){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -247,6 +260,7 @@ function getBodys(selection, pos, headersForShow){
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break;
                                 case 'certificate':
@@ -258,6 +272,7 @@ function getBodys(selection, pos, headersForShow){
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break;
                                 default: arrayRow.push({
@@ -268,6 +283,7 @@ function getBodys(selection, pos, headersForShow){
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 });
                             }
                         });
@@ -439,7 +455,8 @@ class Certificates extends React.Component {
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(selection, pos, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId)
         });
     }
 
@@ -482,7 +499,8 @@ class Certificates extends React.Component {
         if (settings != prevProps.settings) {
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
             });
         }
         
@@ -574,7 +592,7 @@ class Certificates extends React.Component {
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -593,7 +611,8 @@ class Certificates extends React.Component {
                         acc.push(cur._id);
                     }
                     return acc;
-                }, [])
+                }, []),
+                colWidth: settingsColWidth
             }
             const requestOptions = {
                 method: 'PUT',

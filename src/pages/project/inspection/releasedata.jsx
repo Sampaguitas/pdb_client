@@ -38,6 +38,7 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsColWidth,
     getTblFields, // -> check this one
     copyObject
 } from '../../../_functions';
@@ -190,6 +191,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else {
                                             arrayRow.push({
@@ -200,6 +202,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         }
                                         break;
@@ -213,6 +216,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else if (screenHeader.fields.name === 'heatNr') {
                                             arrayRow.push({
@@ -223,6 +227,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else {
                                             arrayRow.push({
@@ -233,6 +238,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         }
                                         break;
@@ -245,6 +251,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                         break
                                     case 'packitem':
@@ -257,6 +264,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
+                                                screenheaderId: screenHeader._id
                                             });
                                         } else {
                                             arrayRow.push({
@@ -267,6 +275,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: 'text',
+                                                screenheaderId: screenHeader._id
                                             });
                                         }
                                         break;
@@ -278,6 +287,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                     });
                                 }
                             });
@@ -309,6 +319,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -319,6 +330,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -332,6 +344,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         }); 
                                     } else if (screenHeader.fields.name === 'heatNr') {
                                         arrayRow.push({
@@ -342,6 +355,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     } else {
                                         arrayRow.push({
@@ -352,6 +366,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
                                         });
                                     }
                                     break;
@@ -364,6 +379,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                         disabled: screenHeader.edit,
                                         align: screenHeader.align,
                                         fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
                                     });
                                     break
                                 default: arrayRow.push({
@@ -374,6 +390,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                     disabled: screenHeader.edit,
                                     align: screenHeader.align,
                                     fieldType: getInputType(screenHeader.fields.type),
+                                    screenheaderId: screenHeader._id
                                 }); 
                             }
                         });
@@ -624,7 +641,8 @@ class ReleaseData extends React.Component {
             locationList: getLocationList(suppliers),
             docList: arraySorted(docConf(docdefs.items, ['5d1927131424114e3884ac7f']), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId)
         });
 
     }
@@ -646,10 +664,11 @@ class ReleaseData extends React.Component {
             }
         }
 
-        if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
+        if (settings != prevProps.settings){
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
             }); 
         }
 
@@ -661,6 +680,8 @@ class ReleaseData extends React.Component {
 
         if (fieldnames != prevProps.fieldnames) {
             this.setState({
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
                 splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
                 splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
             })
@@ -765,7 +786,7 @@ class ReleaseData extends React.Component {
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -784,7 +805,8 @@ class ReleaseData extends React.Component {
                         acc.push(cur._id);
                     }
                     return acc;
-                }, [])
+                }, []),
+                colWidth: settingsColWidth
             }
             const requestOptions = {
                 method: 'PUT',

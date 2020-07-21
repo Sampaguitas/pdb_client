@@ -37,7 +37,6 @@ class ProjectTable extends Component {
                 type:'',
                 message:''
             },
-            // settingsColWidth: {}
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -56,8 +55,6 @@ class ProjectTable extends Component {
         this.handleUploadFile = this.handleUploadFile.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
         this.generateRejectionRows = this.generateRejectionRows.bind(this);
-        // this.colDoubleClick = this.colDoubleClick.bind(this);
-        // this.setColWidth = this.setColWidth.bind(this);
     }
 
     componentDidMount() {
@@ -170,7 +167,6 @@ class ProjectTable extends Component {
             tmpObj[index] = ''
         });
         this.setState({
-            // ...this.state,
             header: tmpObj,
             sort: {
                 name: '',
@@ -180,13 +176,11 @@ class ProjectTable extends Component {
     }
 
     handleChangeHeader(event) {
-        // event.preventDefault();
         const target = event.target;
         const name = target.name;
         const { header } = this.state;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         this.setState({
-            // ...this.state,
             header:{
                 ...header,
                 [name]: value
@@ -268,7 +262,7 @@ class ProjectTable extends Component {
         const {header, sort, selectAllRows} = this.state;
         const tempInputArray = []
         
-        screenHeaders.map((screenHeader, screenHeaderIndex) => {
+        screenHeaders.map(screenHeader => {
             tempInputArray.push(
                 <HeaderInput
                     type={screenHeader.fields.type === 'Number' ? 'number' : 'text' }
@@ -279,9 +273,7 @@ class ProjectTable extends Component {
                     key={screenHeader._id}
                     sort={sort}
                     toggleSort={this.toggleSort}
-                    index={screenHeaderIndex}
-                    // colDoubleClick={this.colDoubleClick}
-                    // setColWidth={this.setColWidth}
+                    index={screenHeader._id}
                     colDoubleClick={colDoubleClick}
                     setColWidth={setColWidth}
                     settingsColWidth={settingsColWidth}
@@ -322,7 +314,7 @@ class ProjectTable extends Component {
                                 textNoWrap={true}
                                 key={index}
                                 refreshStore={refreshStore}
-                                index={index}
+                                index={field.screenheaderId}
                                 settingsColWidth={settingsColWidth}
                             />
                         );                        
@@ -449,33 +441,6 @@ class ProjectTable extends Component {
             );
         }
     }
-
-    // colDoubleClick(event, index) {
-    //     event.preventDefault();
-    //     const { settingsColWidth } = this.state;
-    //     if (settingsColWidth.hasOwnProperty(index)) {
-    //         let tempArray = copyObject(settingsColWidth);
-    //         delete tempArray[index];
-    //         this.setState({ settingsColWidth: tempArray });
-    //     } else {
-    //         this.setState({
-    //             settingsColWidth: {
-    //                 ...settingsColWidth,
-    //                 [index]: 0
-    //             }
-    //         });
-    //     }
-    // }
-
-    // setColWidth(index, width) {
-    //     const { settingsColWidth } = this.state;
-    //     this.setState({
-    //         settingsColWidth: {
-    //             ...settingsColWidth,
-    //             [index]: width
-    //         }
-    //     });
-    // }
 
     render() {
 

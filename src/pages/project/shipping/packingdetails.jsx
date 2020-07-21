@@ -33,6 +33,7 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsColWidth,
     getPlList,
     copyObject
 } from '../../../_functions';
@@ -66,6 +67,7 @@ function getBodys(collipacks, headersForShow){
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         } else {
                             arrayRow.push({
@@ -76,6 +78,7 @@ function getBodys(collipacks, headersForShow){
                                 disabled: screenHeader.edit,
                                 align: screenHeader.align,
                                 fieldType: getInputType(screenHeader.fields.type),
+                                screenheaderId: screenHeader._id
                             });
                         }
                         break;
@@ -87,6 +90,7 @@ function getBodys(collipacks, headersForShow){
                         disabled: screenHeader.edit,
                         align: screenHeader.align,
                         fieldType: getInputType(screenHeader.fields.type),
+                        screenheaderId: screenHeader._id
                     }); 
                 }
             });
@@ -286,7 +290,8 @@ class PackingDetails extends React.Component {
             plList: getPlList(collipacks),
             docList: arraySorted(docConf(docdefs.items, ['5d1927131424114e3884ac80', '5d1927141424114e3884ac84', '5d1927131424114e3884ac81', '5d1927141424114e3884ac83']), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId)
         });
     }
 
@@ -306,7 +311,7 @@ class PackingDetails extends React.Component {
             }
         }
 
-        if (screenId != prevState.screenId || fieldnames != prevProps.fieldnames){
+        if (fieldnames != prevProps.fieldnames){
             this.setState({
                 headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
@@ -333,7 +338,8 @@ class PackingDetails extends React.Component {
         if (settings != prevProps.settings) {
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
             });
         }
 
@@ -419,7 +425,7 @@ class PackingDetails extends React.Component {
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -438,7 +444,8 @@ class PackingDetails extends React.Component {
                         acc.push(cur._id);
                     }
                     return acc;
-                }, [])
+                }, []),
+                colWidth: settingsColWidth
             }
             const requestOptions = {
                 method: 'PUT',
