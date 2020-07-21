@@ -29,6 +29,7 @@ import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
+import TabWidth from '../../../_components/setting/tab-width';
 import Modal from '../../../_components/modal';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Certificate from '../../../_components/split-line/certificate';
@@ -350,9 +351,17 @@ class Certificates extends React.Component {
                 {
                     index: 1, 
                     id: 'display',
-                    label: 'Display', 
+                    label: 'Display',
                     component: TabDisplay, 
                     active: false, 
+                    isLoaded: false
+                },
+                {
+                    index: 2,
+                    id: 'width',
+                    label: 'Width',
+                    component: TabWidth,
+                    active: false,
                     isLoaded: false
                 }
             ],
@@ -937,7 +946,7 @@ class Certificates extends React.Component {
             this.setState({
                 settingsColWidth: {
                     ...settingsColWidth,
-                    [index]: 0
+                    [index]: 10
                 }
             });
         }
@@ -1115,6 +1124,8 @@ class Certificates extends React.Component {
                                         tab={tab}
                                         settingsFilter={settingsFilter}
                                         settingsDisplay={settingsDisplay}
+                                        settingsColWidth={settingsColWidth}
+                                        screenHeaders={headersForShow}
                                         handleInputSettings={this.handleInputSettings}
                                         handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}

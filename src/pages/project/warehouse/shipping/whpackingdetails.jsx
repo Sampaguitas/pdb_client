@@ -41,6 +41,7 @@ import Layout from '../../../../_components/layout';
 import ProjectTable from '../../../../_components/project-table/project-table';
 import TabFilter from '../../../../_components/setting/tab-filter';
 import TabDisplay from '../../../../_components/setting/tab-display';
+import TabWidth from '../../../../_components/setting/tab-width';
 import Modal from '../../../../_components/modal';
 import ColliType from '../../../../_components/split-line/wh-collitype';
 
@@ -170,6 +171,14 @@ class WhPackingDetails extends React.Component {
                     label: 'Display',
                     component: TabDisplay, 
                     active: false, 
+                    isLoaded: false
+                },
+                {
+                    index: 2,
+                    id: 'width',
+                    label: 'Width',
+                    component: TabWidth,
+                    active: false,
                     isLoaded: false
                 }
             ],
@@ -1038,7 +1047,7 @@ class WhPackingDetails extends React.Component {
             this.setState({
                 settingsColWidth: {
                     ...settingsColWidth,
-                    [index]: 0
+                    [index]: 10
                 }
             });
         }
@@ -1299,6 +1308,8 @@ class WhPackingDetails extends React.Component {
                                         tab={tab}
                                         settingsFilter={settingsFilter}
                                         settingsDisplay={settingsDisplay}
+                                        settingsColWidth={settingsColWidth}
+                                        screenHeaders={headersForShow}
                                         handleInputSettings={this.handleInputSettings}
                                         handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}

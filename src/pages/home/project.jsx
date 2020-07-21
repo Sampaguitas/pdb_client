@@ -346,7 +346,7 @@ class Project extends React.Component {
             this.setState({
                 settingsColWidth: {
                     ...settingsColWidth,
-                    [index]: 0
+                    [index]: 10
                 }
             });
         }

@@ -47,6 +47,7 @@ import Layout from '../../../_components/layout';
 import ProjectTable from '../../../_components/project-table/project-table';
 import TabFilter from '../../../_components/setting/tab-filter';
 import TabDisplay from '../../../_components/setting/tab-display';
+import TabWidth from '../../../_components/setting/tab-width';
 import Modal from '../../../_components/modal';
 import GoodsReceipt from '../../../_components/split-line/goods-receipt';
 import HeatLocation from '../../../_components/split-line/heat-location';
@@ -805,6 +806,14 @@ class StockManagement extends React.Component {
                     label: 'Display',
                     component: TabDisplay, 
                     active: false, 
+                    isLoaded: false
+                },
+                {
+                    index: 2,
+                    id: 'width',
+                    label: 'Width',
+                    component: TabWidth,
+                    active: false,
                     isLoaded: false
                 }
             ],
@@ -1949,7 +1958,7 @@ class StockManagement extends React.Component {
             this.setState({
                 settingsColWidth: {
                     ...settingsColWidth,
-                    [index]: 0
+                    [index]: 10
                 }
             });
         }
@@ -2502,6 +2511,8 @@ class StockManagement extends React.Component {
                                         tab={tab}
                                         settingsFilter={settingsFilter}
                                         settingsDisplay={settingsDisplay}
+                                        settingsColWidth={settingsColWidth}
+                                        screenHeaders={headersForShow}
                                         handleInputSettings={this.handleInputSettings}
                                         handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}

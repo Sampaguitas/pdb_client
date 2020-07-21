@@ -328,7 +328,7 @@ class GoodsReceipt extends Component {
             this.setState({
                 settingsColWidth: {
                     ...settingsColWidth,
-                    [index]: 0
+                    [index]: 10
                 }
             });
         }
