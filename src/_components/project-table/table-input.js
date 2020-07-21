@@ -248,8 +248,8 @@ class TableInput extends Component{
                     cursor: isSelected ? 'auto' : 'pointer',
                     textOverflow: 'ellipsis',
                     overflow: 'hidden',
-                    minWidth: !colsWidth.hasOwnProperty(index) ? '10px' : (!!colsWidth[index] ? `${colsWidth[index]}px` : 0),
-                    maxWidth: !colsWidth.hasOwnProperty(index) ? '75px' : (!!colsWidth[index] ? `${colsWidth[index]}px` : 'none')
+                    minWidth: !colsWidth.hasOwnProperty(index) ? 0 : (!!colsWidth[index] ? `${colsWidth[index]}px` : '10px'),
+                    maxWidth: !colsWidth.hasOwnProperty(index) ? 'none' : (!!colsWidth[index] ? `${colsWidth[index]}px` : '35px')
                     // maxWidth: 0
                 }}
                 className={tdClasses}

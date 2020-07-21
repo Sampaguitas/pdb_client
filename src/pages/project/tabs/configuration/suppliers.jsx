@@ -536,6 +536,7 @@ class Suppliers extends React.Component {
         } else {
             this.setState({
                 colsWidth: {
+                    ...colsWidth,
                     [index]: 0
                 }
             });

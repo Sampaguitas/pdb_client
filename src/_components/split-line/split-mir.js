@@ -261,6 +261,7 @@ class SplitLine extends Component {
         } else {
             this.setState({
                 colsWidth: {
+                    ...colsWidth,
                     [index]: 0
                 }
             });
