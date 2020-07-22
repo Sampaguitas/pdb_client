@@ -210,7 +210,8 @@ class WhPackingDetails extends React.Component {
             showGenerate: false,
             showSettings: false,
             menuItem: 'Warehouse',
-            downloadingTable: false
+            downloadingTable: false,
+            settingSaving: false
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -1110,7 +1111,8 @@ class WhPackingDetails extends React.Component {
             settingsFilter,
             settingsDisplay,
             downloadingTable,
-            settingsColWidth
+            settingsColWidth,
+            settingSaving
         }= this.state;
 
         const { accesses, docdefs, fieldnames, fields, whcollipacks, collitypes, selection, sidemenu } = this.props;
@@ -1339,7 +1341,7 @@ class WhPackingDetails extends React.Component {
                             <span><FontAwesomeIcon icon="undo-alt" className="fa mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg mr-2" onClick={this.handleSaveSettings}>
-                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save</span>
+                            <span><FontAwesomeIcon icon={settingSaving ? "spinner" : "save" } className={settingSaving ? "fa-pulse fa-fw fa nr-2" : "fa mr-2"}/>Save</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
                             <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>

@@ -329,7 +329,8 @@ class MirSplitwindow extends React.Component {
             showSettings: false,
             creating: false,
             menuItem: 'Warehouse',
-            downloadingTable: false
+            downloadingTable: false,
+            settingSaving
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -946,7 +947,8 @@ class MirSplitwindow extends React.Component {
             settingsDisplay,
             pos,
             downloadingTable,
-            settingsColWidth
+            settingsColWidth,
+            settingSaving
         } = this.state;
 
         const { accesses, fieldnames, fields, selection, sidemenu } = this.props;
@@ -1085,7 +1087,7 @@ class MirSplitwindow extends React.Component {
                             <span><FontAwesomeIcon icon="undo-alt" className="fa mr-2"/>Restore</span>
                         </button>
                         <button className="btn btn-leeuwen btn-lg mr-2" onClick={this.handleSaveSettings}>
-                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save</span>
+                            <span><FontAwesomeIcon icon={settingSaving ? "spinner" : "save" } className={settingSaving ? "fa-pulse fa-fw fa nr-2" : "fa mr-2"}/>Save</span>
                         </button>
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
                             <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
