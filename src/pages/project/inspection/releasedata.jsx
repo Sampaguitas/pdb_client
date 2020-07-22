@@ -1052,7 +1052,7 @@ class ReleaseData extends React.Component {
     handleUpdateNFI(event) {
         event.preventDefault();
         const { dispatch, fieldnames, pos } = this.props;
-        const { projectId, selectedIds, inputNfi, rfiDateAct, unlocked } = this.state;
+        const { projectId, selectedIds, inputNfi, rfiDateAct, unlocked, screenId } = this.state;
         if (_.isEmpty(selectedIds)) {
             this.setState({
                 ...this.state,
@@ -1090,9 +1090,7 @@ class ReleaseData extends React.Component {
                 dispatch(fieldActions.getAll(projectId));
             }
         } else {
-            let found = fieldnames.items.find( function (f) {
-                return f.fields.name === 'nfi';
-            });
+            let found = fieldnames.items.find(f => f.fields.name === 'nfi' && f.screenId === screenId);
 
             if (found.edit && !unlocked){
                 this.setState({
@@ -1231,7 +1229,7 @@ class ReleaseData extends React.Component {
     handleUpdateValue(event, isErase) {
         event.preventDefault();
         const { dispatch, fieldnames } = this.props;
-        const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue} = this.state;
+        const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue, screenId} = this.state;
         if (!selectedField) {
             this.setState({
                 ...this.state,
@@ -1272,9 +1270,7 @@ class ReleaseData extends React.Component {
                 dispatch(fieldActions.getAll(projectId));
             }
         } else {
-            let found = fieldnames.items.find( function (f) {
-                return f.fields._id === selectedField;
-            });
+            let found = fieldnames.items.find(f => f.fields._id === selectedField && f.screenId === screenId);
 
             if (found.edit && !unlocked) {
                 this.setState({

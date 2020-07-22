@@ -3,7 +3,7 @@ import moment from 'moment';
 import _ from 'lodash';
 
 export const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-export const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
+export const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit', timeZone: 'UTC'})
 export const myLocale = Intl.DateTimeFormat(locale, options);
 
 export function getDateFormat(myLocale) {
@@ -84,6 +84,7 @@ export function StringToDate (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'Date':
+                // case 'date': return moment.utc(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
             case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
             default: return fieldValue;
         }

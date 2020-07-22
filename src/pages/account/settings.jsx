@@ -15,7 +15,11 @@ import {
   sidemenuActions,
   userActions 
 } from "../../_actions";
-import { copyObject } from '../../_functions';
+import { 
+  doesMatch,
+  arraySorted,
+  copyObject
+} from '../../_functions';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import TableCheckBoxAdmin from "../../_components/project-table/table-check-box-admin";
 import TableCheckBoxSuperAdmin from "../../_components/project-table/table-check-box-spadmin";
@@ -27,58 +31,6 @@ import HeaderInput from '../../_components/project-table/header-input';
 import HeaderCheckBox from '../../_components/project-table/header-check-box';
 import moment from 'moment';
 import _ from 'lodash';
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
-
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
-
-function TypeToString (fieldValue, fieldType, myDateFormat) {
-    if (fieldValue) {
-        switch (fieldType) {
-            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
-            default: return fieldValue;
-        }
-    } else {
-        return '';
-    }
-}
-
-function arraySorted(array, field) {
-  if (array) {
-      const newArray = array
-      newArray.sort(function(a,b){
-          if (a[field] < b[field]) {
-              return -1;
-          }
-          if (a[field] > b[field]) {
-              return 1;
-          }
-          return 0;
-      });
-      return newArray;
-  }
-}
 
 function settingSorted(array, sort) {
   let tempArray = array.slice(0);
@@ -193,67 +145,6 @@ function settingSorted(array, sort) {
   }
 }
 
-function doesMatch(search, value, type, isEqual) {
-    
-  if (!search) {
-      return true;
-  } else if (!value && search != 'any' && search != 'false' && search != '-1' && String(search).toUpperCase() != '=BLANK') {
-      return false;
-  } else {
-      switch(type) {
-          case 'Id':
-              return _.isEqual(search, value);
-          case 'String':
-              if (String(search).toUpperCase() === '=BLANK') {
-                  return !value;
-              } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                  return !!value;
-              } else if (isEqual) {
-                  return _.isEqual(String(value).toUpperCase(), String(search).toUpperCase());
-              } else {
-                  return String(value).toUpperCase().includes(String(search).toUpperCase());
-              }
-          case 'Date':
-              if (String(search).toUpperCase() === '=BLANK') {
-                  return !value;
-              } else if (String(search).toUpperCase() === '=NOTBLANK') {
-                  return !!value;
-              } else if (isEqual) {
-                  return _.isEqual(TypeToString(value, 'date', getDateFormat(myLocale)), search);
-              } else {
-                  return TypeToString(value, 'date', getDateFormat(myLocale)).includes(search);
-              }
-          case 'Number':
-              if (search === '-1') {
-                  return !value;
-              } else if (search === '-2') {
-                  return !!value;
-              } else if (isEqual) {
-                  return _.isEqual( Intl.NumberFormat().format(value).toString(), Intl.NumberFormat().format(search).toString());
-              } else {
-                  return Intl.NumberFormat().format(value).toString().includes(Intl.NumberFormat().format(search).toString());
-              }
-          case 'Boolean':
-              if(search == 'any') {
-                  return true; //any or equal
-              } else if (search == 'true' && !!value) {
-                  return true; //true
-              } else if (search == 'false' && !value) {
-                  return true; //true
-              }else {
-                  return false;
-              }
-          case 'Select':
-              if(search == 'any' || _.isEqual(search, value)) {
-                  return true; //any or equal
-              } else {
-                  return false;
-              }
-          default: return true;
-      }
-  }
-}
-
 function canClick(found, currentUser) {
   if (currentUser.isSuperAdmin) {
     return true;
@@ -263,7 +154,6 @@ function canClick(found, currentUser) {
     return false;
   }
 }
-
 
 class Settings extends React.Component {
   constructor(props) {

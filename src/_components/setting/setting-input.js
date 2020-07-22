@@ -1,30 +1,10 @@
 import React, { Component } from 'react';
+import {
+    myLocale,
+    getDateFormat,
+
+} from '../../_functions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-const myLocale = Intl.DateTimeFormat(locale, options);
-
-function getDateFormat(myLocale) {
-    let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
-        switch(element.type) {
-            case 'month': 
-                tempDateFormat = tempDateFormat + 'MM';
-                break;
-            case 'literal': 
-                tempDateFormat = tempDateFormat + element.value;
-                break;
-            case 'day': 
-                tempDateFormat = tempDateFormat + 'DD';
-                break;
-            case 'year': 
-                tempDateFormat = tempDateFormat + 'YYYY';
-                break;
-        }
-    });
-    return tempDateFormat;
-}
 
 class SettingInput extends Component {
     constructor(props) {
@@ -33,12 +13,6 @@ class SettingInput extends Component {
         this.onChange = this.onChange.bind(this);
     }
 
-    // componentWillMount() {
-    //     const { value } = this.props;
-    //     this.setState({
-    //         value: value
-    //     });
-    // }
     componentDidMount() {
         const { value } = this.props;
         this.setState({

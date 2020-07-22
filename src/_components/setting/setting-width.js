@@ -1,44 +1,12 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-// const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-// const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
-// const myLocale = Intl.DateTimeFormat(locale, options);
-
-// function getDateFormat(myLocale) {
-//     let tempDateFormat = ''
-//     myLocale.formatToParts().map(function (element) {
-//         switch(element.type) {
-//             case 'month': 
-//                 tempDateFormat = tempDateFormat + 'MM';
-//                 break;
-//             case 'literal': 
-//                 tempDateFormat = tempDateFormat + element.value;
-//                 break;
-//             case 'day': 
-//                 tempDateFormat = tempDateFormat + 'DD';
-//                 break;
-//             case 'year': 
-//                 tempDateFormat = tempDateFormat + 'YYYY';
-//                 break;
-//         }
-//     });
-//     return tempDateFormat;
-// }
-
 class SettingWidth extends Component {
     constructor(props) {
         super(props);
         this.state = { value: '' };
-        // this.onChange = this.onChange.bind(this);
     }
 
-    // componentWillMount() {
-    //     const { value } = this.props;
-    //     this.setState({
-    //         value: value
-    //     });
-    // }
     componentDidMount() {
         const { value } = this.props;
         this.setState({
@@ -52,17 +20,7 @@ class SettingWidth extends Component {
         if (prevProps.value != value) {
             this.setState({ value: value });
         }
-
-        // if (prevProps.isEqual != isEqual) {
-        //     this.setState({ isEqual: isEqual });
-        // }
     }
-
-    // onChange(event) {
-    //     const { id, handleInputSettings } = this.props;
-    //     const { value } = event.target;
-    //     this.setState({ value: value }, () => handleInputSettings(id, value));
-    // }
 
     render(){
 

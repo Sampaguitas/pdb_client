@@ -665,7 +665,7 @@ class PackingDetails extends React.Component {
     handleUpdateValue(event, isErase) {
         event.preventDefault();
         const { dispatch, fieldnames } = this.props;
-        const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue, editingValue, erasingValue} = this.state;
+        const { selectedField, selectedType, selectedIds, projectId, unlocked, updateValue, editingValue, erasingValue, screenId} = this.state;
         if (!editingValue && !erasingValue) {
             if (!selectedField) {
                 this.setState({
@@ -695,9 +695,8 @@ class PackingDetails extends React.Component {
                     dispatch(fieldActions.getAll(projectId));
                 }
             } else {
-                let found = fieldnames.items.find( function (f) {
-                    return f.fields._id === selectedField;
-                });
+                let found = fieldnames.items.find(f => f.fields._id === selectedField && f.screenId === screenId);
+                
                 if (found.edit && !unlocked) {
                     this.setState({
                         showEditValues: false,
