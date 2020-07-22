@@ -429,7 +429,8 @@ class TransportDocuments extends React.Component {
             showSplitLine: false,
             menuItem: 'Shipping',
             downloadingTable: false,
-            settingSaving: false        
+            settingSaving: false,
+            assigningPl: false       
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -938,53 +939,48 @@ class TransportDocuments extends React.Component {
                     }
                 });
             } else if (!selectionHasData(selectedIds, pos, 'plNr') || confirm('Existing PL number(s) found! Do you want to replace them?')) {
-                const requestOptions = {
-                    method: 'PUT',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        collection: found.fields.fromTbl,
-                        fieldName: found.fields.name,
-                        fieldValue: encodeURI(inputPl),
-                        selectedIds: selectedIds
-                    })
-                };
-                return fetch(`${config.apiUrl}/extract/update`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (!responce.ok) {
+                this.setState({
+                    assigningPl: true,
+                }, () => {
+                    const requestOptions = {
+                        method: 'PUT',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            collection: found.fields.fromTbl,
+                            fieldName: found.fields.name,
+                            fieldValue: encodeURI(inputPl),
+                            selectedIds: selectedIds
+                        })
+                    };
+                    return fetch(`${config.apiUrl}/extract/update`, requestOptions)
+                    .then(responce => responce.text().then(text => {
+                        const data = text && JSON.parse(text);
                         if (responce.status === 401) {
-                            localStorage.removeItem('user');
-                            location.reload(true);
+                                localStorage.removeItem('user');
+                                location.reload(true);
+                        } else {
+                            this.setState({
+                                inputPl: '',
+                                showAssignPl: false,
+                                assigningPl: false,
+                                alert: {
+                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                    message: data.message
+                                }
+                            }, this.refreshStore);
                         }
-                        this.setState({
-                            inputPl: '',
-                            showAssignPl: false,
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, this.refreshStore);
-                    } else {
-                        this.setState({
-                            inputPl: '',
-                            showAssignPl: false,
-                            alert: {
-                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                message: data.message
-                            }
-                        }, this.refreshStore);
-                    }
+                    }));
+                    // .catch( () => {
+                    //     this.setState({
+                    //         inputPl: '',
+                    //         showAssignPl: false,
+                    //         alert: {
+                    //             type: 'alert-danger',
+                    //             message: 'Field could not be updated.'
+                    //         }
+                    //     }, this.refreshStore);
+                    // }));
                 })
-                .catch( () => {
-                    this.setState({
-                        inputPl: '',
-                        showAssignPl: false,
-                        alert: {
-                            type: 'alert-danger',
-                            message: 'Field could not be updated.'
-                        }
-                    }, this.refreshStore);
-                }));
             } else {
                 this.setState({
                     inputPl: '',
@@ -1470,7 +1466,8 @@ class TransportDocuments extends React.Component {
             settingsDisplay,
             downloadingTable,
             settingsColWidth,
-            settingSaving
+            settingSaving,
+            assigningPl
         }= this.state;
 
         const { accesses, fieldnames, fields, pos, selection, sidemenu } = this.props;
@@ -1638,7 +1635,7 @@ class TransportDocuments extends React.Component {
                             </div>
                             <div className="text-right">
                                 <button type="submit" className="btn btn-leeuwen-blue btn-lg">
-                                    <span><FontAwesomeIcon icon="hand-point-right" className="fa mr-2"/>Assign</span>
+                                    <span><FontAwesomeIcon icon={assigningPl ? "spinner" : "hand-point-right"} className={assigningPl ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Assign</span>
                                 </button>
                             </div>
                         </form>                 
