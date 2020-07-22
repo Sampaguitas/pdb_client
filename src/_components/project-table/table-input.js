@@ -24,6 +24,7 @@ class TableInput extends Component{
             color: '#0070C0',
             isEditing: false,
             isSelected: false,
+            beforeSelectWidth: 0
         }
         this.onChange = this.onChange.bind(this);
         this.onBlur = this.onBlur.bind(this);
@@ -110,10 +111,11 @@ class TableInput extends Component{
     onClick() {
         const { disabled, unlocked } = this.props;
         const { isSelected, fieldValue, fieldType } = this.state;
+        // console.log('offsetWidth:', this.refs.td.offsetWidth);
         if(!isSelected) {
-            this.setState({...this.state, isSelected: true}, () => setTimeout( () => this.refs.input.select(), 1));
+            this.setState({...this.state, isSelected: true, beforeSelectWidth: this.refs.td.offsetWidth}, () => setTimeout( () => this.refs.input.select(), 1));
         } else {
-            this.setState({...this.state, isEditing: true }, () => setTimeout( () => this.refs.input.focus(), 1));
+            this.setState({...this.state, isEditing: true, beforeSelectWidth: this.refs.td.offsetWidth}, () => setTimeout( () => this.refs.input.focus(), 1));
         }
     }
 
@@ -225,6 +227,7 @@ class TableInput extends Component{
             isSelected,
             fieldValue,
             fieldType,
+            beforeSelectWidth,
         } = this.state;
 
         const tdClasses = classNames(
@@ -237,6 +240,7 @@ class TableInput extends Component{
 
         return (
             <td
+                ref='td'
                 onClick={() => this.onClick()}
                 style={{
                     color: isSelected ? 'inherit' : disabled ? unlocked ? color!='#0070C0' ? color : '#A8052C' : 'inherit' : color,
@@ -246,8 +250,8 @@ class TableInput extends Component{
                     cursor: isSelected ? 'auto' : 'pointer',
                     textOverflow: 'ellipsis',
                     overflow: 'hidden',
-                    minWidth: !settingsColWidth.hasOwnProperty(index) ? 0 : (!!settingsColWidth[index] ? `${settingsColWidth[index]}px` : '10px'),
-                    maxWidth: !settingsColWidth.hasOwnProperty(index) ? 'none' : (!!settingsColWidth[index] ? `${settingsColWidth[index]}px` : '35px')
+                    minWidth: (isSelected || isEditing) ? `${beforeSelectWidth}px` : (!settingsColWidth.hasOwnProperty(index) ? 0 : (!!settingsColWidth[index] ? `${settingsColWidth[index]}px` : '10px')),
+                    maxWidth: (isSelected || isEditing) ? `${beforeSelectWidth}px` : (!settingsColWidth.hasOwnProperty(index) ? 'none' : (!!settingsColWidth[index] ? `${settingsColWidth[index]}px` : '35px'))
                 }}
                 className={tdClasses}
                 align={align ? align : 'left'}
