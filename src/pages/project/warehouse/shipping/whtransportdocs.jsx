@@ -1218,7 +1218,7 @@ class WhTransportDocuments extends React.Component {
         } else {
             let found = fieldnames.items.find(f => f.fields._id === selectedField && f.screenId === screenId);
 
-            if (!found.edit && !unlocked) {
+            if (found.edit && !unlocked) {
                 this.setState({
                     updateValue: '',
                     showEditValues: false,
