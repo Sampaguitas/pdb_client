@@ -431,6 +431,7 @@ class WhCertificates extends React.Component {
         this.toggleCollapse = this.toggleCollapse.bind(this);
         this.colDoubleClick = this.colDoubleClick.bind(this);
         this.setColWidth = this.setColWidth.bind(this);
+        this.clearWidth = this.clearWidth.bind(this);
     }
 
     componentDidMount() {
@@ -984,6 +985,18 @@ class WhCertificates extends React.Component {
         });
     }
 
+    clearWidth(event, ...indexes) {
+        event.preventDefault();
+        const { settingsColWidth } = this.state;
+        if (!_.isEmpty(indexes)) {
+            let tempArray = copyObject(settingsColWidth);
+            indexes.map(index=> delete tempArray[index]);
+            this.setState({settingsColWidth: tempArray});
+        } else {
+            this.setState({settingsColWidth: {} })
+        }
+    }
+
     render() {
         const { 
             menuItem,
@@ -1143,6 +1156,7 @@ class WhCertificates extends React.Component {
                                         settingsDisplay={settingsDisplay}
                                         settingsColWidth={settingsColWidth}
                                         screenHeaders={headersForShow}
+                                        clearWidth={this.clearWidth}
                                         handleInputSettings={this.handleInputSettings}
                                         handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}

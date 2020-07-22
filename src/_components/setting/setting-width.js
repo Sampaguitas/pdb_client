@@ -66,7 +66,7 @@ class SettingWidth extends Component {
 
     render(){
 
-        const { id, name, title, } = this.props;
+        const { id, name, title, clearWidth } = this.props;
         const { value } = this.state;
 
         return (
@@ -84,7 +84,7 @@ class SettingWidth extends Component {
                         <button
                             className="btn btn-outline-leeuwen-blue"
                             title="Clear"
-                            // onClick={event => handleIsEqualSettings(event, id)}
+                            onClick={event => clearWidth(event, name)}
                             style={{width: '40px'}}
                         >
                             <span><FontAwesomeIcon icon="trash-alt" className="far fa-2x"/></span>

@@ -3,7 +3,7 @@ import SettingWidth from './setting-width';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
-function generateLayout(screenHeaders, settingsColWidth) {
+function generateLayout(screenHeaders, settingsColWidth, clearWidth) {
     let tempArray = [];
     if (!_.isEmpty(screenHeaders)) {
         screenHeaders.map((screenHeader, index) => {
@@ -15,6 +15,7 @@ function generateLayout(screenHeaders, settingsColWidth) {
                         name={screenHeader._id}
                         title={screenHeader.fields.custom}
                         value={settingsColWidth[screenHeader._id]}
+                        clearWidth={clearWidth}
                         // handleInputSettings={handleInputSettings}
                         // handleIsEqualSettings={handleIsEqualSettings}
                     />
@@ -41,7 +42,6 @@ function generateLayout(screenHeaders, settingsColWidth) {
             </div>
         );
     }
-    
 }
 
 class TabWidth extends Component{
@@ -57,19 +57,19 @@ class TabWidth extends Component{
     }
 
     render() {
-        const { screenHeaders, settingsColWidth } = this.props;
+        const { screenHeaders, settingsColWidth, clearWidth } = this.props;
         return (
             <div>
                 <div className="row modal-btn-links mb-3">
                     <button
                         className="btn btn btn-link mr-2"
                         style={{fontSize: '12.5px'}}
-                        // onClick={event => this.handleClear(event)}
+                        onClick={event => clearWidth(event)}
                     >
                         Clear All
                     </button>
                 </div>
-                {generateLayout(screenHeaders, settingsColWidth)}
+                {generateLayout(screenHeaders, settingsColWidth, clearWidth)}
             </div>
 
         );
