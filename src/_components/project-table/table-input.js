@@ -4,7 +4,8 @@ import { authHeader } from '../../_helpers';
 import _ from 'lodash';
 import classNames from 'classnames';
 import {
-    myLocale,
+    locale,
+    options,
     getDateFormat,
     DateToString,
     StringToType,
@@ -50,7 +51,7 @@ class TableInput extends Component{
             objectId: objectId,
             parentId: parentId, //<--------parentId
             fieldName: fieldName,
-            fieldValue: DateToString (fieldValue, fieldType, getDateFormat(myLocale)),
+            fieldValue: DateToString (fieldValue, fieldType, getDateFormat()),
             fieldType: fieldType,
         });  
     }
@@ -72,7 +73,7 @@ class TableInput extends Component{
                 objectId: objectId,
                 parentId: parentId, //<--------parentId
                 fieldName: fieldName,
-                fieldValue: DateToString (fieldValue, fieldType, getDateFormat(myLocale)),
+                fieldValue: DateToString (fieldValue, fieldType, getDateFormat()),
                 fieldType: fieldType,
                 isEditing: false,
                 isSelected: false,
@@ -134,17 +135,17 @@ class TableInput extends Component{
 
         if ((!!unlocked || !disabled) && !!collection && (!!objectId || !!parentId) && !!fieldName) {
 
-            if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale)) || collection === 'virtual') {
+            if (!isValidFormat(fieldValue, fieldType, getDateFormat()) || collection === 'virtual') {
                 //goes red for one second and inherit
                 this.setState({
                     ...this.state, 
                     isEditing: false,
                     isSelected: false,
-                    color: _.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
-                    fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
+                    color: _.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat())) ? '#0070C0' : 'red',
+                    fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat()) : '',
                 }, () => setTimeout( () => this.setState({ ...this.state, color: '#0070C0', }), 1000));
 
-            } else if (_.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)))){
+            } else if (_.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat()))){
                 //inherit
                 this.setState({ ...this.state, isEditing: false, isSelected: false, color: '#0070C0' });
 
@@ -152,7 +153,7 @@ class TableInput extends Component{
                 const requestOptions = {
                     method: 'PUT',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: `{"${fieldName}":"${encodeURI(StringToType(fieldValue, fieldType, getDateFormat(myLocale)))}"}` //encodeURI
+                    body: `{"${fieldName}":"${encodeURI(StringToType(fieldValue, fieldType, getDateFormat()))}"}` //encodeURI
                 };
 
                 return fetch(`${config.apiUrl}/${collection}/update?id=${encodeURI(objectId)}&parentId=${encodeURI(parentId)}`, requestOptions)
@@ -169,8 +170,8 @@ class TableInput extends Component{
                             ...this.state, 
                             isEditing: false,
                             isSelected: false,
-                            color: _.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
-                            fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
+                            color: _.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat())) ? '#0070C0' : 'red',
+                            fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat()) : '',
                         }, () => setTimeout( () => this.setState({ ...this.state, color: '#0070C0', }), 1000));
                     } else {
                         this.setState({ ...this.state, isEditing: false, isSelected: false }, refreshStore)
@@ -183,7 +184,7 @@ class TableInput extends Component{
                         isEditing: false,
                         isSelected: false,
                         color: 'red',
-                        fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
+                        fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat()) : '',
                     }, () => setTimeout( () => this.setState({ ...this.state, color: '#0070C0' }), 1000))
                 });
             }
@@ -194,8 +195,8 @@ class TableInput extends Component{
                 ...this.state, 
                 isEditing: false,
                 isSelected: false,
-                color: _.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale))) ? '#0070C0' : 'red',
-                fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat(myLocale)) : '',
+                color: _.isEqual(fieldValue, DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat())) ? '#0070C0' : 'red',
+                fieldValue: this.props.fieldValue ? DateToString (this.props.fieldValue, this.props.fieldType, getDateFormat()) : '',
             }, () => setTimeout( () => this.setState({...this.state, color: '#0070C0'}), 1000));
         
         }
@@ -266,7 +267,7 @@ class TableInput extends Component{
                         onChange={this.onChange}
                         onBlur={event => this.onBlur(event)}
                         onKeyDown={event => this.onKeyDown(event)}
-                        placeholder={fieldType === 'date' ? getDateFormat(myLocale) : ''}
+                        placeholder={fieldType === 'date' ? getDateFormat() : ''}
                         maxLength={maxLength || 524288}
                     />
                 :

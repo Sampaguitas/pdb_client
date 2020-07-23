@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
 import {
-    myLocale,
     getDateFormat,
 } from '../../_functions';
 
@@ -66,10 +65,6 @@ class SplitInput extends Component{
         switch(fieldType){
             case "number":
                 return (fieldValue == '' || _.isUndefined(fieldValue)) ? '' : new Intl.NumberFormat().format(fieldValue);
-            //     break;
-            // case "date":
-            //     return fieldValue ? new Intl.DateTimeFormat().format(new Date(fieldValue)) : '';
-            //     break;
             default: return fieldValue; //decodeURI
         }
     }
@@ -116,7 +111,7 @@ class SplitInput extends Component{
                         onChange={event => this.onChange(event)}
                         onBlur={this.onBlur}
                         onKeyDown={event => this.onKeyDown(event)}
-                        placeholder={fieldType === 'date' ? getDateFormat(myLocale) : ''}
+                        placeholder={fieldType === 'date' ? getDateFormat() : ''}
                     />
                 :
                     <span>{this.formatText(fieldValue, fieldType)}</span>

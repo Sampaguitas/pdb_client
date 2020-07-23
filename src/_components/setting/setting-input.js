@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import {
-    myLocale,
     getDateFormat,
 
 } from '../../_functions';
@@ -51,7 +50,7 @@ class SettingInput extends Component {
                         name={name}
                         value={value}
                         type={type === 'Number' ? 'number' : 'text'}
-                        placeholder={type === 'Date' ? getDateFormat(myLocale) : ''}
+                        placeholder={type === 'Date' ? getDateFormat() : ''}
                         onChange={this.onChange}
                     />
                     <div className="input-group-append">

@@ -17,7 +17,6 @@ import {
     transactionActions,
 } from '../../../_actions';
 import {
-    myLocale,
     getDateFormat,
     DateToString,
     baseTen,
@@ -976,7 +975,7 @@ class MirSplitwindow extends React.Component {
                         </li>
                         <span className="ml-3 project-title">
                             {selection.project ?
-                                `${selection.project.name} - MIR: ${mir.mir} - Received: ${DateToString(mir.dateReceived, 'date', getDateFormat(myLocale))} / Expected: ${DateToString(mir.dateExpected, 'date', getDateFormat(myLocale))}`
+                                `${selection.project.name} - MIR: ${mir.mir} - Received: ${DateToString(mir.dateReceived, 'date', getDateFormat())} / Expected: ${DateToString(mir.dateExpected, 'date', getDateFormat())}`
                             :
                                 <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw"/>
                             }

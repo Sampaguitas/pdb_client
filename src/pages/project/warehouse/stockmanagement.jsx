@@ -23,7 +23,6 @@ import {
 } from '../../../_actions';
 import {
     locale,
-    myLocale,
     leadingChar,
     getDateFormat,
     TypeToString,
@@ -1402,7 +1401,7 @@ class StockManagement extends React.Component {
                         message: 'Select line(s) to be received.'
                     }
                 });
-            } else if (!isValidFormat(transDate, 'date', getDateFormat(myLocale))) {
+            } else if (!isValidFormat(transDate, 'date', getDateFormat())) {
                 this.setState({
                     alert: {
                         type: 'alert-danger',
@@ -1418,7 +1417,7 @@ class StockManagement extends React.Component {
                         selectedIdsGr: selectedIdsGr,
                         toLocation: toLocation,
                         transQty: transQty,
-                        transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat(myLocale))),
+                        transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat())),
                     })
                 };
                 return fetch(`${config.apiUrl}/transaction/${route}?projectId=${projectId}`, requestOptions)
@@ -1450,7 +1449,7 @@ class StockManagement extends React.Component {
                     message: 'Please select one line only.'
                 }
             });
-        } else if (!isValidFormat(transDate, 'date', getDateFormat(myLocale))) {
+        } else if (!isValidFormat(transDate, 'date', getDateFormat())) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
@@ -1467,7 +1466,7 @@ class StockManagement extends React.Component {
                     fromLocation: selectedIds[0].locationId,
                     toLocation: toLocation,
                     transQty: transQty,
-                    transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat(myLocale))),
+                    transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat())),
                 })
             };
             return fetch(`${config.apiUrl}/transaction/transfer?projectId=${projectId}`, requestOptions)
@@ -1498,7 +1497,7 @@ class StockManagement extends React.Component {
                     message: 'Please select one line only.'
                 }
             });
-        } else if (!isValidFormat(transDate, 'date', getDateFormat(myLocale))) {
+        } else if (!isValidFormat(transDate, 'date', getDateFormat())) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
@@ -1514,7 +1513,7 @@ class StockManagement extends React.Component {
                     poId: selectedIds[0].poId,
                     locationId: selectedIds[0].locationId,
                     transQty: transQty,
-                    transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat(myLocale))),
+                    transDate: encodeURI(StringToDate (transDate, 'date', getDateFormat())),
                 })
             };
             return fetch(`${config.apiUrl}/transaction/correction?projectId=${projectId}`, requestOptions)
@@ -1656,7 +1655,7 @@ class StockManagement extends React.Component {
                 });
             } else {
                 let lastTransaction = tranSelection[tranSelection.length - 1];
-                if (confirm(`You are about to undo the last transaction: "${lastTransaction.transComment}" dated ${DateToString(lastTransaction.transDate, 'date', getDateFormat(myLocale))}. Are you sure you would like to preceed?`)) {
+                if (confirm(`You are about to undo the last transaction: "${lastTransaction.transComment}" dated ${DateToString(lastTransaction.transDate, 'date', getDateFormat())}. Are you sure you would like to preceed?`)) {
                     const requestOptions = {
                         method: 'DELETE',
                         headers: { ...authHeader(), 'Content-Type': 'application/json' },
@@ -1692,7 +1691,7 @@ class StockManagement extends React.Component {
             showGoodsReceipt: !showGoodsReceipt,
             transQty: '',
             toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
-            transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
+            transDate: TypeToString(new Date(), 'Date', getDateFormat())
         });
     }
 
@@ -1742,7 +1741,7 @@ class StockManagement extends React.Component {
                 showTransfer: !showTransfer,
                 transQty: '',
                 toWarehouse: !_.isEmpty(whList) ? whList[0]._id : '',
-                transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
+                transDate: TypeToString(new Date(), 'Date', getDateFormat())
             });
         }
     }
@@ -1765,7 +1764,7 @@ class StockManagement extends React.Component {
                 },
                 showCorrection: !showCorrection,
                 transQty: '',
-                transDate: TypeToString(new Date(), 'Date', getDateFormat(myLocale))
+                transDate: TypeToString(new Date(), 'Date', getDateFormat())
             });
         }
     }
@@ -2371,7 +2370,7 @@ class StockManagement extends React.Component {
                                             name="transDate"
                                             value={transDate}
                                             onChange={this.handleChange}
-                                            placeholder={getDateFormat(myLocale)}
+                                            placeholder={getDateFormat()}
                                             required
                                         />
                                     </div>
@@ -2428,7 +2427,7 @@ class StockManagement extends React.Component {
                                             name="transDate"
                                             value={transDate}
                                             onChange={this.handleChange}
-                                            placeholder={getDateFormat(myLocale)}
+                                            placeholder={getDateFormat()}
                                             required
                                         />
                                     </div>

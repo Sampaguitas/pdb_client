@@ -20,7 +20,6 @@ import {
 } from '../../../_actions';
 import {
     locale,
-    myLocale,
     leadingChar,
     getDateFormat,
     StringToDate,
@@ -711,7 +710,7 @@ class PackingDetails extends React.Component {
                     let fieldValue = isErase ? '' : updateValue;
                     let fieldType = selectedType;
     
-                    if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+                    if (!isValidFormat(fieldValue, fieldType, getDateFormat())) {
                         this.setState({
                             ...this.state,
                             showEditValues: false,
@@ -731,7 +730,7 @@ class PackingDetails extends React.Component {
                                 body: JSON.stringify({
                                     collection: collection,
                                     fieldName: fieldName,
-                                    fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                                    fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat())),
                                     selectedIds: selectedIds
                                 })
                             };
@@ -1223,7 +1222,7 @@ class PackingDetails extends React.Component {
                                 name="updateValue"
                                 value={updateValue}
                                 onChange={this.handleChange}
-                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                                placeholder={selectedType === 'date' ? getDateFormat() : ''}
                             />
                         </div>
                         <div className="text-right">

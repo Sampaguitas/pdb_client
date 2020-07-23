@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import classNames from 'classnames';
 import {
-    myLocale,
     getDateFormat,
 } from '../../_functions';
 
@@ -107,7 +106,7 @@ class NewRowInput extends Component{
                         onChange={onChange}
                         onBlur={this.onBlur}
                         onKeyDown={event => this.onKeyDown(event)}
-                        placeholder={fieldType === 'date' ? getDateFormat(myLocale) : ''}
+                        placeholder={fieldType === 'date' ? getDateFormat() : ''}
                         maxLength={maxLength || 524288}
                     />
                 :

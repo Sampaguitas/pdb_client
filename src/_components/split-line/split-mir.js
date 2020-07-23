@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeaderInput from '../project-table/header-input';
 import {
-    myLocale,
     getDateFormat,
     TypeToString,
     sortCustom,
@@ -219,7 +218,7 @@ class SplitLine extends Component {
                             <td
                                 key={index}
                                 align={field.align ? field.align : 'left'}>
-                                {TypeToString(field.fieldValue, field.fieldType, getDateFormat(myLocale))}
+                                {TypeToString(field.fieldValue, field.fieldType, getDateFormat())}
                             </td>
                         );
                     } else {

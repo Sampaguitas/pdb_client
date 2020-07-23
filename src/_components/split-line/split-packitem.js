@@ -4,7 +4,6 @@ import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SplitInput from './split-input';
 import {
-    myLocale,
     getInputType,
     getDateFormat,
     TypeToString,
@@ -265,11 +264,11 @@ function getFirstVirtual(selectedPo, screenBody, headersForShow) {
         
         return headersForShow.reduce(function (acc, curr){
             if (curr.fields.fromTbl === 'po') {
-                acc[curr.fields.name] = DateToString(selectedPo[curr.fields.name], getInputType(curr.fields.type), getDateFormat(myLocale));
+                acc[curr.fields.name] = DateToString(selectedPo[curr.fields.name], getInputType(curr.fields.type), getDateFormat());
             } else if (curr.fields.fromTbl === 'sub'){
-                acc[curr.fields.name] = DateToString(selectedSub[curr.fields.name], getInputType(curr.fields.type), getDateFormat(myLocale));
+                acc[curr.fields.name] = DateToString(selectedSub[curr.fields.name], getInputType(curr.fields.type), getDateFormat());
             } else if (curr.fields.fromTbl === 'packitem' && !_.isUndefined(selectedPackitem)){
-                acc[curr.fields.name] = DateToString(selectedPackitem[curr.fields.name], getInputType(curr.fields.type), getDateFormat(myLocale));
+                acc[curr.fields.name] = DateToString(selectedPackitem[curr.fields.name], getInputType(curr.fields.type), getDateFormat());
             } else {
                 acc[curr.fields.name] = '';
             }
@@ -306,7 +305,7 @@ function generateBodyForSelect(screenBodys, selectedLine, selectedIds, handleCli
                 if (field.objectId) {
                     tempCol.push(
                         <td key={index}>
-                            {TypeToString(field.fieldValue, field.fieldType, getDateFormat(myLocale))}
+                            {TypeToString(field.fieldValue, field.fieldType, getDateFormat())}
                         </td>
                     );
                 } else {
@@ -488,7 +487,7 @@ function isValidArray(virtuals, headersForShow) {
     return virtuals.reduce(function (acc, curr) {
         if (acc) {
             return headersForShow.every(h => {
-                return isValidFormat(curr[h.fields.name], getInputType(h.fields.type), getDateFormat(myLocale))
+                return isValidFormat(curr[h.fields.name], getInputType(h.fields.type), getDateFormat())
             });
         } else {
             return acc;
@@ -503,7 +502,7 @@ function formatArray(virtuals, headersForShow) {
         
         headersForShow.map(function (h) {
             if (h.fields.fromTbl === 'packitem'){
-                tempObject[h.fields.name] = StringToDate (curr[h.fields.name], getInputType(h.fields.type), getDateFormat(myLocale));
+                tempObject[h.fields.name] = StringToDate (curr[h.fields.name], getInputType(h.fields.type), getDateFormat());
             }
         });
 

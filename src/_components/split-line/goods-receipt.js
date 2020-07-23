@@ -5,7 +5,6 @@ import TableInput from '../project-table/table-input';
 import TableSelectionRow from '../project-table/table-selection-row';
 import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import {
-    myLocale,
     getDateFormat,
     arrayRemove,
     sortCustom,
@@ -478,7 +477,7 @@ class GoodsReceipt extends Component {
                                         name="transDate"
                                         value={transDate}
                                         onChange={handleChange}
-                                        placeholder={getDateFormat(myLocale)}
+                                        placeholder={getDateFormat()}
                                         required
                                     />
                                 </div>

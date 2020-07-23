@@ -16,7 +16,6 @@ import {
     sidemenuActions
 } from '../../../_actions';
 import {
-    myLocale,
     getDateFormat,
     passSelectedIds,
     passSelectedPo,
@@ -1151,7 +1150,7 @@ class TransportDocuments extends React.Component {
                 let fieldName = found.fields.name;
                 let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
-                if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+                if (!isValidFormat(fieldValue, fieldType, getDateFormat())) {
                     this.setState({
                         updateValue: '',
                         showEditValues: false,
@@ -1167,7 +1166,7 @@ class TransportDocuments extends React.Component {
                         body: JSON.stringify({
                             collection: collection,
                             fieldName: fieldName,
-                            fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                            fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat())),
                             selectedIds: selectedIds
                         })
                     };
@@ -1577,7 +1576,7 @@ class TransportDocuments extends React.Component {
                                 name="updateValue"
                                 value={updateValue}
                                 onChange={this.handleChange}
-                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                                placeholder={selectedType === 'date' ? getDateFormat() : ''}
                             />
                         </div>
                         <div className="text-right">

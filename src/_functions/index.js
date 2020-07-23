@@ -3,12 +3,13 @@ import moment from 'moment';
 import _ from 'lodash';
 
 export const locale = Intl.DateTimeFormat().resolvedOptions().locale;
-export const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit', timeZone: 'UTC'})
-export const myLocale = Intl.DateTimeFormat(locale, options);
+// export const options = Intl.DateTimeFormat(locale, {'year': 'numeric', 'month': '2-digit', day: '2-digit'})
+export const options = {'year': 'numeric', 'month': '2-digit', day: '2-digit', timeZone: 'GMT'};
+// export const myLocale = Intl.DateTimeFormat(locale, options);
 
-export function getDateFormat(myLocale) {
+export function getDateFormat() {
     let tempDateFormat = ''
-    myLocale.formatToParts().map(function (element) {
+    Intl.DateTimeFormat(locale, options).formatToParts().map(function (element) {
         switch(element.type) {
             case 'month': 
                 tempDateFormat = tempDateFormat + 'MM';
@@ -27,8 +28,8 @@ export function getDateFormat(myLocale) {
     return tempDateFormat;
 }
 
-export function getLiteral(myLocale) {
-    let firstLiteral = myLocale.formatToParts().find(function (element) {
+export function getLiteral() {
+    let firstLiteral = Intl.DateTimeFormat(locale, options).formatToParts().find(function (element) {
       return element.type === 'literal';
     });
     if (firstLiteral) {
@@ -40,7 +41,7 @@ export function getLiteral(myLocale) {
 
 export function StirngToCache(fieldValue, myDateFormat) {
     if (!!fieldValue) {
-        let separator = getLiteral(myLocale);
+        let separator = getLiteral();
         let cache = myDateFormat.replace('DD','00').replace('MM', '00').replace('YYYY', (new Date()).getFullYear()).split(separator);
         let valueArray = fieldValue.split(separator);
         return cache.reduce(function(acc, cur, idx) {
@@ -70,7 +71,7 @@ export function StringToType (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'Date':
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
+            case 'date': return moment.utc(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
             // case 'Number':
             // case 'number': return Number(fieldValue);
             default: return fieldValue;
@@ -84,8 +85,7 @@ export function StringToDate (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'Date':
-                // case 'date': return moment.utc(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
+            case 'date': return moment.utc(StirngToCache(fieldValue, myDateFormat), myDateFormat).toDate();
             default: return fieldValue;
         }
     } else {
@@ -97,7 +97,7 @@ export function isValidFormat (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'Date':
-            case 'date': return moment(StirngToCache(fieldValue, myDateFormat), myDateFormat, true).isValid();
+            case 'date': return moment.utc(StirngToCache(fieldValue, myDateFormat), myDateFormat, true).isValid();
             default: return true;
         }
     } else {
@@ -110,7 +110,7 @@ export function TypeToString (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'Date':
-            case 'date': return String(moment(fieldValue).format(myDateFormat));
+            case 'date': return String(moment.utc(fieldValue).format(myDateFormat));
             case 'Number':
             case 'number': return String(new Intl.NumberFormat().format(fieldValue));
             default: return fieldValue;
@@ -124,7 +124,7 @@ export function DateToString (fieldValue, fieldType, myDateFormat) {
     if (fieldValue) {
         switch (fieldType) {
             case 'Date':
-            case 'date': return String(moment(fieldValue).format(myDateFormat)); 
+            case 'date': return String(moment.utc(fieldValue).format(myDateFormat)); 
             default: return fieldValue;
         }
     } else {
@@ -158,9 +158,9 @@ export function doesMatch(search, value, type, isEqual) {
                 } else if (String(search).toUpperCase() === '=NOTBLANK') {
                     return !!value;
                 } else if (isEqual) {
-                    return _.isEqual(DateToString(value, 'date', getDateFormat(myLocale)), search);
+                    return _.isEqual(DateToString(value, 'date', getDateFormat()), search);
                 } else {
-                    return DateToString(value, 'date', getDateFormat(myLocale)).includes(search);
+                    return DateToString(value, 'date', getDateFormat()).includes(search);
                 }
             case 'Number':
                 if (search === '-1') {

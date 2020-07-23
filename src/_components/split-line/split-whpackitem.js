@@ -4,7 +4,6 @@ import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SplitInput from './split-input';
 import {
-    myLocale,
     getInputType,
     getDateFormat,
     TypeToString,
@@ -384,33 +383,33 @@ function getFirstVirtual(selectedPickticket, screenBody, headersForShow) {
         
         return headersForShow.reduce(function (acc, cur){
             if (cur.fields.fromTbl === 'pickticket') {
-                acc[cur.fields.name] = DateToString(selectedPickticket[cur.fields.name], getInputType(cur.fields.type), getDateFormat(myLocale));
+                acc[cur.fields.name] = DateToString(selectedPickticket[cur.fields.name], getInputType(cur.fields.type), getDateFormat());
             } else if (cur.fields.fromTbl === 'pickitem'){
-                acc[cur.fields.name] = DateToString(selectedPickitem[cur.fields.name], getInputType(cur.fields.type), getDateFormat(myLocale));
+                acc[cur.fields.name] = DateToString(selectedPickitem[cur.fields.name], getInputType(cur.fields.type), getDateFormat());
             } else if (cur.fields.fromTbl === 'miritem'){
-                acc[cur.fields.name] = DateToString(selectedPickitem.miritem[cur.fields.name], getInputType(cur.fields.type), getDateFormat(myLocale));
+                acc[cur.fields.name] = DateToString(selectedPickitem.miritem[cur.fields.name], getInputType(cur.fields.type), getDateFormat());
             } else if (cur.fields.fromTbl === 'location'){
                 if (cur.fields.name === 'area') {
-                    acc[cur.fields.name] = DateToString(selectedPickitem.location.area.area, getInputType(cur.fields.type), getDateFormat(myLocale));
+                    acc[cur.fields.name] = DateToString(selectedPickitem.location.area.area, getInputType(cur.fields.type), getDateFormat());
                 } else if (cur.fields.name === 'warehouse') {
-                    acc[cur.fields.name] = DateToString(selectedPickticket.warehouse.name, getInputType(cur.fields.type), getDateFormat(myLocale));
+                    acc[cur.fields.name] = DateToString(selectedPickticket.warehouse.name, getInputType(cur.fields.type), getDateFormat());
                 } else if (cur.fields.name === 'location') {
-                    acc[cur.fields.name] = DateToString(getLocName(selectedPickitem.location, selectedPickitem.location.area), getInputType(cur.fields.type), getDateFormat(myLocale));
+                    acc[cur.fields.name] = DateToString(getLocName(selectedPickitem.location, selectedPickitem.location.area), getInputType(cur.fields.type), getDateFormat());
                 } else {
                     acc[cur.fields.name] = '';
                 }
-                acc[cur.fields.name] = DateToString(selectedPickitem.miritem[cur.fields.name], getInputType(cur.fields.type), getDateFormat(myLocale));
+                acc[cur.fields.name] = DateToString(selectedPickitem.miritem[cur.fields.name], getInputType(cur.fields.type), getDateFormat());
             } else if (cur.fields.fromTbl === 'po'){
                 if (['project', 'projectNr'].includes(cur.fields.name)) {
-                    acc[cur.fields.name] = DateToString(cur.fields.name === 'project' ? project.name : project.number, getInputType(cur.fields.type), getDateFormat(myLocale));
+                    acc[cur.fields.name] = DateToString(cur.fields.name === 'project' ? project.name : project.number, getInputType(cur.fields.type), getDateFormat());
                 } else {
-                    acc[cur.fields.name] = DateToString(selectedPickitem.miritem.po[cur.fields.name], getInputType(cur.fields.type), getDateFormat(myLocale));
+                    acc[cur.fields.name] = DateToString(selectedPickitem.miritem.po[cur.fields.name], getInputType(cur.fields.type), getDateFormat());
                 }
             } else if (cur.fields.fromTbl === 'packitem' && !_.isUndefined(selectedWhpackitem)){
-                acc[cur.fields.name] = DateToString(selectedWhpackitem[cur.fields.name], getInputType(cur.fields.type), getDateFormat(myLocale));
+                acc[cur.fields.name] = DateToString(selectedWhpackitem[cur.fields.name], getInputType(cur.fields.type), getDateFormat());
             } else if (cur.fields.fromTbl === 'mir'){
                 if (!['itemCount', 'mirWeight'].includes(cur.fields.name)) {
-                    acc[cur.fields.name] = DateToString(selectedPickticket.mir[cur.fields.name], getInputType(cur.fields.type), getDateFormat(myLocale));
+                    acc[cur.fields.name] = DateToString(selectedPickticket.mir[cur.fields.name], getInputType(cur.fields.type), getDateFormat());
                 } else {
                     acc[cur.fields.name] = '';
                 }
@@ -450,7 +449,7 @@ function generateBodyForSelect(screenBodys, selectedLine, selectedIds, handleCli
                 if (field.objectId) {
                     tempCol.push(
                         <td key={index}>
-                            {TypeToString(field.fieldValue, field.fieldType, getDateFormat(myLocale))}
+                            {TypeToString(field.fieldValue, field.fieldType, getDateFormat())}
                         </td>
                     );
                 } else {
@@ -633,7 +632,7 @@ function isValidArray(virtuals, headersForShow) {
     return virtuals.reduce(function (acc, cur) {
         if (acc) {
             return headersForShow.every(h => {
-                return isValidFormat(cur[h.fields.name], getInputType(h.fields.type), getDateFormat(myLocale))
+                return isValidFormat(cur[h.fields.name], getInputType(h.fields.type), getDateFormat())
             });
         } else {
             return acc;
@@ -648,7 +647,7 @@ function formatArray(virtuals, headersForShow) {
         
         headersForShow.map(function (h) {
             if (h.fields.fromTbl === 'packitem'){
-                tempObject[h.fields.name] = StringToDate (cur[h.fields.name], getInputType(h.fields.type), getDateFormat(myLocale));
+                tempObject[h.fields.name] = StringToDate (cur[h.fields.name], getInputType(h.fields.type), getDateFormat());
             }
         });
 

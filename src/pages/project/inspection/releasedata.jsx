@@ -20,7 +20,6 @@ import {
 } from '../../../_actions';
 import {
     locale,
-    myLocale,
     getDateFormat,
     passSelectedIds,
     passSelectedPo,
@@ -67,7 +66,7 @@ function virtuals(packitems, uom, packItemFields) {
                             tempObject['plNr'] = cur['plNr'];
                             tempObject['_id'] = cur['plNr'];
                         } else {
-                            tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                            tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat())];
                         }               
                     });
                     tempVirtuals.push(tempObject);
@@ -78,8 +77,8 @@ function virtuals(packitems, uom, packItemFields) {
                     let tempVirtual = tempVirtuals.find(element => element.plNr === cur.plNr);            
                     tempVirtual['shippedQty'] += cur[tempUom];
                     packItemFields.map(function (packItemField) {
-                        if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
-                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                        if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat()))) {
+                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat()));
                         }               
                     });
                 }
@@ -90,7 +89,7 @@ function virtuals(packitems, uom, packItemFields) {
                     if (packItemField.name === 'plNr') {
                         tempObject['plNr'] = ''
                     } else {
-                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat())];
                     }
                 });
                 tempVirtuals.push(tempObject);
@@ -98,8 +97,8 @@ function virtuals(packitems, uom, packItemFields) {
             } else {
                 let tempVirtual = tempVirtuals.find(element => element._id === '0');
                 packItemFields.map(function (packItemField) {
-                    if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
-                        tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                    if (packItemField.name != 'plNr' && !tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat()))) {
+                        tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat()));
                     }               
                 });
             }
@@ -112,7 +111,7 @@ function virtuals(packitems, uom, packItemFields) {
                     let tempObject = {_id: '1'}
                     tempObject['shippedQty'] = cur[tempUom];
                     packItemFields.map(function (packItemField) {
-                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat())];
                     });
                     tempVirtuals.push(tempObject);
                     acc.push('1');
@@ -120,8 +119,8 @@ function virtuals(packitems, uom, packItemFields) {
                     let tempVirtual = tempVirtuals.find(element => element._id === '1');
                     tempVirtual['shippedQty'] += cur[tempUom];
                     packItemFields.map(function (packItemField) {
-                        if (!tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
-                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                        if (!tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat()))) {
+                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat()));
                         }
                     });
                 }
@@ -129,15 +128,15 @@ function virtuals(packitems, uom, packItemFields) {
                 if (!acc.includes('0')) {
                     let tempObject = {_id: '0'}
                     packItemFields.map(function (packItemField) {
-                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale))];
+                        tempObject[packItemField.name] = [TypeToString(cur[packItemField.name], packItemField.type, getDateFormat())];
                     });
                     tempVirtuals.push(tempObject);
                     acc.push('0');
                 } else {
                     let tempVirtual = tempVirtuals.find(element => element._id === '0');
                     packItemFields.map(function (packItemField) {
-                        if (!tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
-                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                        if (!tempVirtual[packItemField.name].includes(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat()))) {
+                            tempVirtual[packItemField.name].push(TypeToString(cur[packItemField.name], packItemField.type, getDateFormat()));
                         }
                     });
                 }
@@ -1111,7 +1110,7 @@ class ReleaseData extends React.Component {
                         collection: 'sub',
                         fieldName: 'nfi',
                         fieldValue: encodeURI(inputNfi),
-                        rfiDateAct: encodeURI(StringToDate (rfiDateAct, 'date', getDateFormat(myLocale))),
+                        rfiDateAct: encodeURI(StringToDate (rfiDateAct, 'date', getDateFormat())),
                         selectedIds: selectedIds
                     })
                 };
@@ -1177,7 +1176,7 @@ class ReleaseData extends React.Component {
             body: JSON.stringify({
                 collection: collection,
                 fieldName: fieldName,
-                fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat(myLocale))),
+                fieldValue: encodeURI(StringToDate (fieldValue, fieldType, getDateFormat())),
                 selectedIds: selectedIds
             })
         };
@@ -1290,7 +1289,7 @@ class ReleaseData extends React.Component {
                 let fieldValue = isErase ? '' : updateValue;
                 let fieldType = selectedType;
 
-                if (!isValidFormat(fieldValue, fieldType, getDateFormat(myLocale))) {
+                if (!isValidFormat(fieldValue, fieldType, getDateFormat())) {
                     this.setState({
                         ...this.state,
                         selectedField: '',
@@ -1673,7 +1672,7 @@ class ReleaseData extends React.Component {
                                 name="updateValue"
                                 value={updateValue}
                                 onChange={this.handleChange}
-                                placeholder={selectedType === 'date' ? getDateFormat(myLocale) : ''}
+                                placeholder={selectedType === 'date' ? getDateFormat() : ''}
                             />
                         </div>
                         <div className="text-right">
@@ -1731,7 +1730,7 @@ class ReleaseData extends React.Component {
                                         name="rfiDateAct"
                                         value={rfiDateAct}
                                         onChange={this.handleChange}
-                                        placeholder={getDateFormat(myLocale)}
+                                        placeholder={getDateFormat()}
                                     />
                                 </div>
                             </div>

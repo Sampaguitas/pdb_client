@@ -4,7 +4,6 @@ import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SplitInput from './split-input';
 import {
-    myLocale,
     getInputType,
     getDateFormat,
     TypeToString,
@@ -41,9 +40,9 @@ function virtuals(packitems, uom, packItemFields) {
             }
             packItemFields.map(function (packItemField) {
                 if (!tempObject.hasOwnProperty(packItemField.name)) {
-                    tempObject[packItemField.name] = [TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale))]
-                } else if(!tempObject[packItemField.name].includes(TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale)))) {
-                    tempObject[packItemField.name].push(TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat(myLocale)));
+                    tempObject[packItemField.name] = [TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat())]
+                } else if(!tempObject[packItemField.name].includes(TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat()))) {
+                    tempObject[packItemField.name].push(TypeToString(packitem[packItemField.name], packItemField.type, getDateFormat()));
                 }
             });
         }
@@ -270,9 +269,9 @@ function getFirstVirtual(selectedPo, screenBody, headersForShow) {
         let selectedSub = selectedPo.subs.find(sub => sub._id === screenBody.tablesId.subId);
         return headersForShow.reduce(function (acc, curr){
             if (curr.fields.fromTbl === 'po') {
-                acc[curr.fields.name] = DateToString(selectedPo[curr.fields.name], getInputType(curr.fields.type), getDateFormat(myLocale));
+                acc[curr.fields.name] = DateToString(selectedPo[curr.fields.name], getInputType(curr.fields.type), getDateFormat());
             } else if (curr.fields.fromTbl === 'sub'){
-                acc[curr.fields.name] = DateToString(selectedSub[curr.fields.name], getInputType(curr.fields.type), getDateFormat(myLocale));
+                acc[curr.fields.name] = DateToString(selectedSub[curr.fields.name], getInputType(curr.fields.type), getDateFormat());
             } else {
                 acc[curr.fields.name] = '';
             }
@@ -311,7 +310,7 @@ function generateBodyForSelect(screenBodys, selectedLine, selectedIds, handleCli
                         <td
                             key={index}
                             align={field.align ? field.align : 'left'}>
-                            {TypeToString(field.fieldValue, field.fieldType, getDateFormat(myLocale))}
+                            {TypeToString(field.fieldValue, field.fieldType, getDateFormat())}
                         </td>
                     );
                 } else {
@@ -463,7 +462,7 @@ function isValidArray(virtuals, headersForShow) {
     return virtuals.reduce(function (acc, curr) {
         if (acc) {
             return headersForShow.every(h => {
-                return isValidFormat(curr[h.fields.name], getInputType(h.fields.type), getDateFormat(myLocale))
+                return isValidFormat(curr[h.fields.name], getInputType(h.fields.type), getDateFormat())
             });
         } else {
             return acc;
@@ -478,7 +477,7 @@ function formatArray(virtuals, headersForShow) {
         
         headersForShow.map(function (h) {
             if (h.fields.fromTbl === 'sub'){
-                tempObject[h.fields.name] = StringToDate (curr[h.fields.name], getInputType(h.fields.type), getDateFormat(myLocale));
+                tempObject[h.fields.name] = StringToDate (curr[h.fields.name], getInputType(h.fields.type), getDateFormat());
             }
         });
 

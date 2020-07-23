@@ -18,7 +18,6 @@ import {
     warehouseActions,
 } from '../../../_actions';
 import {
-    myLocale,
     getDateFormat,
     StringToDate,
     isValidFormat,
@@ -677,14 +676,14 @@ class MaterialIssueRecord extends React.Component {
                     message: 'All fields are required.'
                 }
             });
-        } else if (!isValidFormat(newMir.dateReceived, 'date', getDateFormat(myLocale))) {
+        } else if (!isValidFormat(newMir.dateReceived, 'date', getDateFormat())) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
                     message: 'Date Received: Not a valid date format.'
                 }
             });
-        } else if (!isValidFormat(newMir.dateExpected, 'date', getDateFormat(myLocale))) {
+        } else if (!isValidFormat(newMir.dateExpected, 'date', getDateFormat())) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
@@ -693,8 +692,8 @@ class MaterialIssueRecord extends React.Component {
             });
         } else {
             //fix on date format
-            let dateReceived = StringToDate(newMir.dateReceived, 'date', getDateFormat(myLocale));
-            let dateExpected = StringToDate(newMir.dateExpected, 'date', getDateFormat(myLocale));
+            let dateReceived = StringToDate(newMir.dateReceived, 'date', getDateFormat());
+            let dateExpected = StringToDate(newMir.dateExpected, 'date', getDateFormat());
             
             this.setState({
                 ...this.state,
@@ -1087,7 +1086,7 @@ class MaterialIssueRecord extends React.Component {
                                     name="dateReceived"
                                     value={newMir.dateReceived}
                                     onChange={this.handleChangeNewMir}
-                                    placeholder={getDateFormat(myLocale)}
+                                    placeholder={getDateFormat()}
                                     required
                                 />
                             </div>
@@ -1099,7 +1098,7 @@ class MaterialIssueRecord extends React.Component {
                                     name="dateExpected"
                                     value={newMir.dateExpected}
                                     onChange={this.handleChangeNewMir}
-                                    placeholder={getDateFormat(myLocale)}
+                                    placeholder={getDateFormat()}
                                     required
                                 />
                             </div>
