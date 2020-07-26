@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-class NewRowCreate extends Component {
+export class NewRowCreate extends Component {
     render(){
         const {onClick, creatingNewRow} = this.props
         return (
@@ -33,4 +33,4 @@ class NewRowCreate extends Component {
     }
 };
 
-export default NewRowCreate;
+// export default NewRowCreate;

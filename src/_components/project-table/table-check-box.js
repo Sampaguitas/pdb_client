@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './table-check-box.css'
 import classNames from 'classnames';
 
-class TableCheckBox extends Component {
+export class TableCheckBox extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -179,15 +179,15 @@ class TableCheckBox extends Component {
         );
     }
 };
-TableCheckBox.propTypes = {
-    fieldName: propTypes.string.isRequired,
-    fieldValue:propTypes.oneOfType([
-        propTypes.string,
-        propTypes.number,
-        propTypes.bool,
-        propTypes.instanceOf(Date),
-    ])
+// TableCheckBox.propTypes = {
+//     fieldName: propTypes.string.isRequired,
+//     fieldValue:propTypes.oneOfType([
+//         propTypes.string,
+//         propTypes.number,
+//         propTypes.bool,
+//         propTypes.instanceOf(Date),
+//     ])
 
-};
+// };
 
-export default TableCheckBox;
+// export default TableCheckBox;

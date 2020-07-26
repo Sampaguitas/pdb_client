@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
-import SettingWidth from './setting-width';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { SettingWidth } from './setting-width';
 import _ from 'lodash';
 
 function generateLayout(screenHeaders, settingsColWidth, clearWidth) {
@@ -16,8 +15,6 @@ function generateLayout(screenHeaders, settingsColWidth, clearWidth) {
                         title={screenHeader.fields.custom}
                         value={settingsColWidth[screenHeader._id]}
                         clearWidth={clearWidth}
-                        // handleInputSettings={handleInputSettings}
-                        // handleIsEqualSettings={handleIsEqualSettings}
                     />
                 );
             }
@@ -44,7 +41,7 @@ function generateLayout(screenHeaders, settingsColWidth, clearWidth) {
     }
 }
 
-class TabWidth extends Component{
+export class TabWidth extends Component{
     constructor(props) {
         super(props);
         this.handleClear = this.handleClear.bind(this);
@@ -76,4 +73,4 @@ class TabWidth extends Component{
     }
 }
 
-export default TabWidth;
+// export default TabWidth;

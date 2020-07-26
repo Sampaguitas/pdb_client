@@ -4,8 +4,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { authHeader } from '../../../_helpers';
-import { history } from '../../../_helpers';
+import { authHeader, history } from '../../../_helpers';
 import { 
     accessActions, 
     alertActions,  
@@ -30,13 +29,9 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
-import Layout from '../../../_components/layout';
-import ProjectTable from '../../../_components/project-table/project-table';
-import TabFilter from '../../../_components/setting/tab-filter';
-import TabDisplay from '../../../_components/setting/tab-display';
-import TabWidth from '../../../_components/setting/tab-width';
-import WarehouseCheck from '../../../_components/warehouse-check';
-import Modal from '../../../_components/modal';
+import { ProjectTable } from '../../../_components/project-table';
+import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
+import { Layout, Modal, WarehouseCheck } from '../../../_components';
 import _ from 'lodash';
 import { __promisify__ } from 'glob';
 

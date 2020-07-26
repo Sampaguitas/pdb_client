@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import {
     getDateFormat,
-
 } from '../../_functions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-class SettingInput extends Component {
+export class SettingInput extends Component {
     constructor(props) {
         super(props);
         this.state = { value: '' };
@@ -70,4 +69,4 @@ class SettingInput extends Component {
     }
 }
 
-export default SettingInput;
+// export default SettingInput;

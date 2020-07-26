@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-import TableSelectionRow from '../project-table/table-selection-row';
-import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import SplitInput from './split-input';
 import {
     getInputType,
     getDateFormat,
@@ -11,6 +8,8 @@ import {
     DateToString,
     StringToDate,
 } from '../../_functions';
+import { TableSelectionAllRow, TableSelectionRow } from '../project-table';
+import SplitInput from './split-input';
 import _ from 'lodash';
 
 function getScreenTbls (headersForSelect) {
@@ -38,16 +37,6 @@ function virtuals(packitems, uom) {
         acc.push(cur);
         return acc;
     }, []);
-    // packitems.map(function (packitem){
-    //     let tempObject = packitem;
-    //     if (packitem[tempUom]) {
-    //         tempObject['relQty'] = packitem[tempUom];
-    //     } else {
-    //         tempObject['relQty'] = '';
-    //     }
-    //     tempVirtuals.push(tempObject);
-    // });
-    // return tempVirtuals;
 }
 
 function getBodys(selectedPo, selection, headersForSelect, selectedIds){
@@ -521,7 +510,7 @@ function selectedScreenBody(bodysForSelect, selectedLine) {
     });
 }
 
-class SplitLine extends Component {
+export class SplitPackItem extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -988,4 +977,4 @@ class SplitLine extends Component {
         );
     }
 }
-export default SplitLine;
+// export default SplitPackItem;

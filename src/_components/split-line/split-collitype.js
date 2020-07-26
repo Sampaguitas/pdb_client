@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
 import { authHeader } from '../../_helpers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import HeaderInput from '../project-table/header-input';
-import TableSelectionAllRow from '../project-table/table-selection-all-row';
-import TableInput from '../project-table/table-input';
-import TableSelectionRow from '../project-table/table-selection-row';
-import NewRowCreate from '../project-table/new-row-create';
-import NewRowInput from '../project-table/new-row-input';
 import {
     arrayRemove,
     doesMatch,
     copyObject
 } from '../../_functions';
+import {
+    HeaderInput,
+    NewRowCreate,
+    NewRowInput,
+    TableInput,
+    TableSelectionAllRow,
+    TableSelectionRow
+} from '../project-table';
 import _ from 'lodash';
 
 function colliTypeSorted(array, sort) {
@@ -65,7 +67,7 @@ function colliTypeSorted(array, sort) {
     }
 }
 
-class ColliType extends Component {
+export class SplitColliType extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -243,7 +245,6 @@ class ColliType extends Component {
     }
 
     handleChangeHeader(event) {
-        // event.preventDefault();
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -291,7 +292,6 @@ class ColliType extends Component {
             });
         } else {
             this.setState({
-                // ...this.state,
                 deleting: true
             }, () => {
                 const requestOptions = {
@@ -299,17 +299,14 @@ class ColliType extends Component {
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                     body: JSON.stringify({selectedIds: selectedRows})
                 };
-                // return fetch(`${config.apiUrl}/collitype/delete?id=${JSON.stringify(selectedRows)}`, requestOptions)
                 return fetch(`${config.apiUrl}/collitype/delete`, requestOptions)
                 .then( () => {
                     this.setState({
-                        // ...this.state,
                         deleting: false
                     }, refreshColliTypes);
                 })
                 .catch( err => {
                     this.setState({
-                        // ...this.state,
                         deleting: false
                     }, refreshColliTypes);
                 });
@@ -321,9 +318,8 @@ class ColliType extends Component {
         event.preventDefault();
         const { refreshColliTypes } = this.props;
         const { creatingNewRow, fieldName } = this.state;
-        if (!creatingNewRow) {
+        if(!creatingNewRow) {
             this.setState({
-                // ...this.state,
                 creatingNewRow: true
             }, () => {
                 const requestOptions = {
@@ -334,13 +330,11 @@ class ColliType extends Component {
                 return fetch(`${config.apiUrl}/collitype/create`, requestOptions)
                 .then( () => {
                     this.setState({
-                        // ...this.state,
                         creatingNewRow: false,
                         newRowColor: 'green'
                     }, () => {
                         setTimeout( () => {
                             this.setState({
-                                // ...this.state,
                                 newRowColor: 'inherit',
                                 newRow:false,
                                 fieldName:{},
@@ -351,13 +345,11 @@ class ColliType extends Component {
                 })
                 .catch( () => {
                     this.setState({
-                        // ...this.state,
                         creatingNewRow: false,
                         newRowColor: 'red'
                     }, () => {
                         setTimeout(() => {
                             this.setState({
-                                // ...this.state,
                                 newRowColor: 'inherit',
                                 newRow:false,
                                 fieldName:{},
@@ -382,8 +374,6 @@ class ColliType extends Component {
             });
         }       
     }
-
-
 
     generateHeader() {
         const { type, length, width, height, pkWeight, selectAllRows, sort, settingsColWidth } = this.state;
@@ -702,4 +692,4 @@ class ColliType extends Component {
         );
     }
 }
-export default ColliType;
+// export default SplitColliType;

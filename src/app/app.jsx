@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { history } from '../_helpers';
 import { alertActions } from '../_actions';
 // pages
-import { PrivateRoute } from '../_components';
+import { PrivateRoute } from '../_components/routes';
 import { Home } from '../pages/home/home.jsx';
 
 import { NotFound } from '../pages/account/notfound.jsx';

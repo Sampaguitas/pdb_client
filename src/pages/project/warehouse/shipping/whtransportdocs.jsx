@@ -31,13 +31,10 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../../_functions';
-import Layout from '../../../../_components/layout';
-import ProjectTable from '../../../../_components/project-table/project-table';
-import TabFilter from '../../../../_components/setting/tab-filter';
-import TabDisplay from '../../../../_components/setting/tab-display';
-import TabWidth from '../../../../_components/setting/tab-width';
-import Modal from '../../../../_components/modal';
-import SplitLine from '../../../../_components/split-line/split-whpackitem';
+import { ProjectTable } from '../../../../_components/project-table';
+import { TabDisplay, TabFilter, TabWidth } from '../../../../_components/setting';
+import { SplitWhPackItem } from '../../../../_components/split-line/split-whpackitem';
+import { Layout, Modal } from '../../../../_components';
 import _ from 'lodash';
 
 function passSelectedPickticket(selectedIds, picktickets) {
@@ -1619,7 +1616,7 @@ class WhTransportDocuments extends React.Component {
                     title="Split Line"
                     size="modal-xl"
                 >
-                    <SplitLine 
+                    <SplitWhPackItem 
                         headersForSelect={splitHeadersForSelect}
                         headersForShow={splitHeadersForShow}
                         selection={selection}

@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './line-check.css';
 import _ from 'lodash';
 
-class LineCheck extends Component {
+export class LineCheck extends Component {
     constructor(props) {
         super(props);
         this.state = { isChecked: false };
@@ -55,4 +55,4 @@ class LineCheck extends Component {
     }
 }
 
-export default LineCheck;
+// export default LineCheck;

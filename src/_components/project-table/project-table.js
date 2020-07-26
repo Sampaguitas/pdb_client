@@ -7,15 +7,17 @@ import {
     doesMatch,
     getTableIds,
 } from '../../_functions';
-import HeaderInput from '../../_components/project-table/header-input';
-import TableInput from '../../_components/project-table/table-input';
-import Modal from "../../_components/modal";
-import TableSelectionRow from '../../_components/project-table/table-selection-row';
-import TableSelectionAllRow from '../../_components/project-table/table-selection-all-row';
+import {
+    HeaderInput,
+    TableInput,
+    TableSelectionAllRow,
+    TableSelectionRow
+} from '../../_components/project-table';
+import { Modal } from "../../_components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 
-class ProjectTable extends Component {
+export class ProjectTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -589,4 +591,4 @@ class ProjectTable extends Component {
     }
 }
 
-export default ProjectTable;
+// export default ProjectTable;

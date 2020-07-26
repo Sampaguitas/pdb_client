@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './table-selection-all-row.css'
 
-class TableSelectionAllRow extends Component {
+export class TableSelectionAllRow extends Component {
     render(){
         const {
             checked,
@@ -59,4 +59,4 @@ class TableSelectionAllRow extends Component {
     }
 };
 
-export default TableSelectionAllRow;
+// export default TableSelectionAllRow;

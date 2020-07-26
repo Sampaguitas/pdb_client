@@ -11,7 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import _ from 'lodash';
 import classNames from 'classnames';
 
-class CifInput extends Component{
+export class CifInput extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -430,4 +430,4 @@ class CifInput extends Component{
     }
 }
 
-export default CifInput;
+// export default CifInput;

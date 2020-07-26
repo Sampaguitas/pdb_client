@@ -4,19 +4,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './setting-check.css';
 import _ from 'lodash';
 
-class SettingCheck extends Component {
+export class SettingCheck extends Component {
     constructor(props) {
         super(props);
         this.state = { isChecked: false };
         this.onChange = this.onChange.bind(this);
     }
-
-    // componentWillMount() {
-    //     const { isChecked } = this.props;
-    //     this.setState({
-    //         isChecked: isChecked
-    //     });
-    // }
+    
     componentDidMount() {
         const { isChecked } = this.props;
         this.setState({
@@ -61,4 +55,4 @@ class SettingCheck extends Component {
     }
 }
 
-export default SettingCheck;
+// export default SettingCheck;

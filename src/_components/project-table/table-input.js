@@ -12,7 +12,7 @@ import {
     isValidFormat,
 } from '../../_functions';
 
-class TableInput extends Component{
+export class TableInput extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -279,4 +279,4 @@ class TableInput extends Component{
     }
 }
 
-export default TableInput;
+// export default TableInput;

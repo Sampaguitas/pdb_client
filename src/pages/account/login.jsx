@@ -15,12 +15,11 @@ import {
   sidemenuActions,
   userActions 
 } from "../../_actions";
-import Layout from "../../_components/layout";
-import InputIcon from "../../_components/input-icon";
+import { InputIcon, Layout } from "../../_components";
 import logo from "../../_assets/logo.svg";
 import pdb from "../../_assets/pdb.svg";
 
-class Login extends React.Component {
+class Login extends Component {
   constructor(props) {
     super(props);
     this.props.dispatch(userActions.logout());

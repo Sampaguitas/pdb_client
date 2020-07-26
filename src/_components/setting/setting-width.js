@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-class SettingWidth extends Component {
+export class SettingWidth extends Component {
     constructor(props) {
         super(props);
         this.state = { value: '' };
@@ -55,4 +55,4 @@ class SettingWidth extends Component {
     }
 }
 
-export default SettingWidth;
+// export default SettingWidth;

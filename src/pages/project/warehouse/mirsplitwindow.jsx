@@ -27,13 +27,10 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
-import Layout from '../../../_components/layout';
-import ProjectTable from '../../../_components/project-table/project-table';
-import TabFilter from '../../../_components/setting/tab-filter';
-import TabDisplay from '../../../_components/setting/tab-display';
-import TabWidth from '../../../_components/setting/tab-width';
-import SplitLine from '../../../_components/split-line/split-mir';
-import Modal from '../../../_components/modal';
+import { ProjectTable } from '../../../_components/project-table';
+import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
+import { Layout, Modal } from '../../../_components';
+import { SplitMir } from '../../../_components/split-line';
 import _ from 'lodash';
 import { __promisify__ } from 'glob';
 
@@ -1021,7 +1018,7 @@ class MirSplitwindow extends React.Component {
                     title="Order Lines"
                     size="modal-xl"
                 >
-                    <SplitLine 
+                    <SplitMir 
                         screenHeaders={headersForSelect}
                         screenBodys={bodysForSelect}
                         mir={mir}

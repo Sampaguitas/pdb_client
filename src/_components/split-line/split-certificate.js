@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
 import { authHeader } from '../../_helpers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import HeaderInput from '../project-table/header-input';
-import TableSelectionAllRow from '../project-table/table-selection-all-row';
-import CifInput from '../project-table/cif-input';
-import TableSelectionRow from '../project-table/table-selection-row';
-import NewRowCreate from '../project-table/new-row-create';
-import CifNewRowInput from '../project-table/cif-new-row-input';
 import {
     arrayRemove,
     doesMatch,
     copyObject
 } from '../../_functions';
+import {
+    CifInput,
+    CifNewRowInput,
+    HeaderInput,
+    NewRowCreate,
+    TableSelectionAllRow,
+    TableSelectionRow
+} from '../project-table';
 import _ from 'lodash';
 
 function certificateSorted(array, sort) {
@@ -48,7 +50,7 @@ function certificateSorted(array, sort) {
     }
 }
 
-class Certificate extends Component {
+export class SplitCertificate extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -515,4 +517,4 @@ class Certificate extends Component {
         );
     }
 }
-export default Certificate;
+// export default SplitCertificate;

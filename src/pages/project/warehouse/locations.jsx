@@ -18,14 +18,15 @@ import {
     doesMatch,
     copyObject
 } from '../../../_functions';
-import Layout from '../../../_components/layout';
-import HeaderInput from '../../../_components/project-table/header-input';
-import HeaderSelect from '../../../_components/project-table/header-select';
-import TableInput from '../../../_components/project-table/table-input';
-import TableSelectionRow from '../../../_components/project-table/table-selection-row';
-import TableSelectionAllRow from '../../../_components/project-table/table-selection-all-row';
-import Modal from '../../../_components/modal';
-import Warehouse from '../../../_components/split-line/warehouse';
+import {
+    HeaderInput,
+    HeaderSelect,
+    TableInput,
+    TableSelectionAllRow,
+    TableSelectionRow
+} from '../../../_components/project-table';
+import { SplitWarehouse } from '../../../_components/split-line';
+import { Layout, Modal } from '../../../_components';
 
 function locationSorted(array, sort) {
     let tempArray = array.slice(0);
@@ -1018,7 +1019,7 @@ class Locations extends React.Component {
                     title="Add Warehouses"
                     size="modal-lg"
                 >
-                    <Warehouse 
+                    <SplitWarehouse 
                         alert={alert}
                         projectId={projectId}
                         warehouses={warehouses}

@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
-import TableSelectionRow from '../project-table/table-selection-row';
-import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import SplitInput from './split-input';
 import {
     getInputType,
     getDateFormat,
@@ -12,6 +9,11 @@ import {
     StringToDate,
     getLocName,
 } from '../../_functions';
+import {
+    TableSelectionAllRow,
+    TableSelectionRow
+} from '../project-table';
+import SplitInput from './split-input';
 import _ from 'lodash';
 
 function virtuals(whpackitems, uom) {
@@ -666,7 +668,7 @@ function selectedScreenBody(bodysForSelect, selectedLine) {
     });
 }
 
-class SplitLine extends Component {
+export class SplitWhPackItem extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -1137,4 +1139,4 @@ class SplitLine extends Component {
         );
     }
 }
-export default SplitLine;
+// export default SplitWhPackItem;

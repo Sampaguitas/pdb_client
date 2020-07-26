@@ -1,16 +1,8 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    doesMatch,
-    arraySorted,
-    copyObject
-} from '../../../../_functions';
-import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
-import HeaderInput from '../../../../_components/project-table/header-input';
-import Input from '../../../../_components/input';
-import Select from '../../../../_components/select';
-import TableCheckBoxRole from '../../../../_components/project-table/table-check-box-role';
-import CheckBox from '../../../../_components/check-box';
+import { doesMatch, arraySorted, copyObject } from '../../../../_functions';
+import { HeaderCheckBox, HeaderInput, TableCheckBoxRole } from '../../../../_components/project-table';
+import { CheckBox, Input, Select } from '../../../../_components';
 import _ from 'lodash';
 
 function userSorted(array, sort) {

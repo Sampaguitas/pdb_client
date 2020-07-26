@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './new-row-check-box.css'
 
-class NewRowCheckBox extends Component {
+export class NewRowCheckBox extends Component {
     render(){
         
         const {
@@ -63,4 +63,4 @@ class NewRowCheckBox extends Component {
     }
 };
 
-export default NewRowCheckBox;
+// export default NewRowCheckBox;

@@ -2,8 +2,8 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import config from 'config';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import config from 'config';
 import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
@@ -32,13 +32,10 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
-import Layout from '../../../_components/layout';
-import ProjectTable from '../../../_components/project-table/project-table';
-import TabFilter from '../../../_components/setting/tab-filter';
-import TabDisplay from '../../../_components/setting/tab-display';
-import TabWidth from '../../../_components/setting/tab-width';
-import Modal from '../../../_components/modal';
-import SplitLine from '../../../_components/split-line/split-packitem';
+import { ProjectTable } from '../../../_components/project-table';
+import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
+import { SplitPackItem } from '../../../_components/split-line';
+import { Layout, Modal } from '../../../_components';
 import _ from 'lodash';
 
 function getBodys(fieldnames, selection, pos, headersForShow, screenId){
@@ -1537,7 +1534,7 @@ class TransportDocuments extends React.Component {
                     title="Split Line"
                     size="modal-xl"
                 >
-                    <SplitLine 
+                    <SplitPackItem 
                         headersForSelect={splitHeadersForSelect}
                         headersForShow={splitHeadersForShow}
                         selection={selection}

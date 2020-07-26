@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     accessActions,
     alertActions,
@@ -20,8 +21,9 @@ import {
     sidemenuActions,
     userActions,
 } from '../../_actions';
-import Layout from '../../_components/layout';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    Layout
+} from '../../_components';
 import _ from 'lodash';
 
 function isRole(accesses, user, role) {

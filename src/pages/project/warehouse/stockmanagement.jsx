@@ -42,16 +42,11 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
-import Layout from '../../../_components/layout';
-import ProjectTable from '../../../_components/project-table/project-table';
-import TabFilter from '../../../_components/setting/tab-filter';
-import TabDisplay from '../../../_components/setting/tab-display';
-import TabWidth from '../../../_components/setting/tab-width';
-import Modal from '../../../_components/modal';
-import GoodsReceipt from '../../../_components/split-line/goods-receipt';
-import HeatLocation from '../../../_components/split-line/heat-location';
+import { ProjectTable } from '../../../_components/project-table';
+import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
+import {SplitGoodsReceipt, SplitHeatLocation} from '../../../_components/split-line';
+import { Layout, Modal } from '../../../_components';
 import _ from 'lodash';
-// import { th } from 'date-fns/locale';
 
 function hasFieldName(tblFields, fieldName) {
     let tempResult = false;
@@ -2167,7 +2162,7 @@ class StockManagement extends React.Component {
                     title={myGoodsReceipt.title}
                     size="modal-xl"
                 >
-                    <GoodsReceipt
+                    <SplitGoodsReceipt
                         alert={alert}
                         screenHeaders={myGoodsReceipt.screenHeaders}
                         screenBodys={myGoodsReceipt.screenBodys}
@@ -2447,7 +2442,7 @@ class StockManagement extends React.Component {
                     title="Change/Add Heat numbers"
                     size="modal-xl"
                 >
-                    <HeatLocation
+                    <SplitHeatLocation
                         alert={alert}
                         handleClearAlert={this.handleClearAlert}
                         toggleHeat={this.toggleHeat}

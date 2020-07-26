@@ -12,7 +12,7 @@ function logout() {
     localStorage.removeItem('user');
 }
 
-class TableCheckBoxAdmin extends Component {
+export class TableCheckBoxAdmin extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -117,9 +117,9 @@ class TableCheckBoxAdmin extends Component {
         );
     }
 };
-TableCheckBoxAdmin.propTypes = {
-    id:propTypes.string.isRequired,
-    checked:propTypes.bool.isRequired
-};
+// TableCheckBoxAdmin.propTypes = {
+//     id:propTypes.string.isRequired,
+//     checked:propTypes.bool.isRequired
+// };
 
-export default TableCheckBoxAdmin;
+// export default TableCheckBoxAdmin;

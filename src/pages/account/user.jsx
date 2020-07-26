@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     accessActions,
     collitypeActions,
@@ -14,14 +15,10 @@ import {
     supplierActions,
     userActions 
 } from '../../_actions';
-import { authHeader } from '../../_helpers';
-import config from 'config';
-//Components
-import Input from '../../_components/input';
-import Select from '../../_components/select';
-import Layout from '../../_components/layout';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import {
+    Input,
+    Layout
+} from '../../_components';
 
 class User extends React.Component {
     constructor(props){

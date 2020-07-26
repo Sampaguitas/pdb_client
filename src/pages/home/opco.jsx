@@ -19,11 +19,8 @@ import {
     supplierActions,
 } from '../../_actions';
 import { arraySorted, doesMatch, copyObject } from '../../_functions';
-import Modal from "../../_components/modal";
-import Input from '../../_components/input';
-import Layout from '../../_components/layout';
-import Select from '../../_components/select';
-import HeaderInput from '../../_components/project-table/header-input';
+import { HeaderInput } from '../../_components/project-table';
+import { Input, Layout, Modal, Select } from '../../_components';
 import _ from 'lodash';
 
 

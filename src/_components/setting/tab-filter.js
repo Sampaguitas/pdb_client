@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-import SettingInput from './setting-input';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import { SettingInput } from './setting-input';
 
 function getInputType(dbFieldType) {
     switch(dbFieldType) {
@@ -10,7 +8,6 @@ function getInputType(dbFieldType) {
         default: return 'text'
     }
 }
-
 
 function generateLayout(settingsFilter, handleInputSettings, handleIsEqualSettings) {
     let tempArray = [];
@@ -42,7 +39,7 @@ function generateLayout(settingsFilter, handleInputSettings, handleIsEqualSettin
     );
 }
 
-class TabFilter extends Component{
+export class TabFilter extends Component{
     constructor(props) {
         super(props);
         this.handleClear = this.handleClear.bind(this);
@@ -74,4 +71,4 @@ class TabFilter extends Component{
     }
 }
 
-export default TabFilter;
+// export default TabFilter;

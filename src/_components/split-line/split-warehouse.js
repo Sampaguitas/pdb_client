@@ -1,18 +1,20 @@
 import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
 import { authHeader } from '../../_helpers';
-import HeaderInput from '../project-table/header-input';
-import NewRowCreate from '../project-table/new-row-create';
-import NewRowInput from '../project-table/new-row-input';
-import TableSelectionRow from '../project-table/table-selection-row';
-import TableInput from '../project-table/table-input';
-import TableSelectionAllRow from '../project-table/table-selection-all-row';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     arrayRemove,
     doesMatch,
     copyObject
 } from '../../_functions';
+import {
+    HeaderInput,
+    NewRowCreate,
+    NewRowInput,
+    TableInput,
+    TableSelectionAllRow,
+    TableSelectionRow
+} from '../project-table';
 import _ from 'lodash';
 
 function arraySorted(array, sort) {
@@ -86,7 +88,7 @@ function getAreas(warehouses, selectedWh) {
     return arrayBody;
 }
 
-class Warehouse extends Component {
+export class SplitWarehouse extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -968,4 +970,4 @@ class Warehouse extends Component {
         );
     }
 }
-export default Warehouse;
+// export default SplitWarehouse;

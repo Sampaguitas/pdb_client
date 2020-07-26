@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 
-class Modal extends React.Component {
+export class Modal extends React.Component {
   render() {
     if(!this.props.show){
         return null;
@@ -33,4 +33,4 @@ class Modal extends React.Component {
 //   children: PropTypes.node
 // };
 
-export default Modal;
+// export default Modal;

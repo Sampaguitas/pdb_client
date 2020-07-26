@@ -1,1 +1,1 @@
-export * from './header-bar-menu';
+export { HeaderBarMenu } from './header-bar-menu';

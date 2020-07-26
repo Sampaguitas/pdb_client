@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
@@ -26,15 +27,11 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
-import Layout from '../../../_components/layout';
-import ProjectTable from '../../../_components/project-table/project-table';
-import TabFilter from '../../../_components/setting/tab-filter';
-import TabDisplay from '../../../_components/setting/tab-display';
-import TabWidth from '../../../_components/setting/tab-width';
-import Modal from '../../../_components/modal';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Certificate from '../../../_components/split-line/certificate';
-import Heat from '../../../_components/split-line/heat';
+import { ProjectTable } from '../../../_components/project-table';
+import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
+import { SplitHeat } from '../../../_components/split-line';
+import { Layout, Modal } from '../../../_components';
+
 
 function virtuals(heats) {
     let tempVirtuals = [];
@@ -1106,7 +1103,7 @@ class WhCertificates extends React.Component {
                     title="Add/Edit Heat Numbers"
                     size="modal-lg"
                 >
-                    <Heat
+                    <SplitHeat
                         alert={alert}
                         handleClearAlert={this.handleClearAlert}
                         refreshPos={this.refreshPos}

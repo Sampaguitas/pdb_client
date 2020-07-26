@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import propTypes from 'prop-types';
+// import propTypes from 'prop-types';
 
-class Input extends Component{
+export class Input extends Component{
     render() {
         return(
             <div className={'form-group' + (this.props.inline ? ' row' : '') + (this.props.submitted && this.props.required && !this.props.value ? ' has-error' : '')}>
@@ -31,18 +31,18 @@ class Input extends Component{
     }
 }
 
-Input.propTypes = {
-    type: propTypes.oneOf(['text', 'number', 'email', 'tel','password']).isRequired,
-    title: propTypes.string.isRequired,
-    name: propTypes.string.isRequired,
-    onChange: propTypes.func.isRequired,
-    value:propTypes.oneOfType([
-        propTypes.string,
-        propTypes.number,
-    ]),
-    placeholder:propTypes.string,
-    inline: propTypes.bool,
-    required: propTypes.bool
-};
+// Input.propTypes = {
+//     type: propTypes.oneOf(['text', 'number', 'email', 'tel','password']).isRequired,
+//     title: propTypes.string.isRequired,
+//     name: propTypes.string.isRequired,
+//     onChange: propTypes.func.isRequired,
+//     value:propTypes.oneOfType([
+//         propTypes.string,
+//         propTypes.number,
+//     ]),
+//     placeholder:propTypes.string,
+//     inline: propTypes.bool,
+//     required: propTypes.bool
+// };
 
-export default Input;
+// export default Input;

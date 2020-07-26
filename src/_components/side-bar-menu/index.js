@@ -1,5 +1,5 @@
-export * from './item';
+export { Item } from './item';
 export * from './mixin';
-export * from './mobile-item';
-export * from './side-bar-menu';
-export * from './sub-item';
+export { MobileItem } from './mobile-item';
+export { SideBarMenu } from './side-bar-menu';
+export { SubItem } from './sub-item';

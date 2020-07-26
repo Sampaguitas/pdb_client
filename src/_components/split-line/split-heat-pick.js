@@ -1,16 +1,9 @@
 import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
 import { authHeader } from '../../_helpers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import HeaderInput from '../project-table/header-input';
-import TableInput from '../project-table/table-input';
-import TableSelectionRow from '../project-table/table-selection-row';
-import TableSelectionAllRow from '../project-table/table-selection-all-row';
-import {
-    arrayRemove,
-    doesMatch,
-    copyObject
-} from '../../_functions';
+import { arrayRemove, doesMatch, copyObject } from '../../_functions';
+import { HeaderInput, TableInput, TableSelectionAllRow, TableSelectionRow } from '../project-table';
 import _ from 'lodash';
 
 function arraySorted(array, sort) {
@@ -135,7 +128,7 @@ function getPickCertificates(heatpicks, pickitemId) {
     }
 }
 
-class HeatPick extends Component {
+export class SplitHeatPick extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -866,4 +859,4 @@ class HeatPick extends Component {
         );
     }
 }
-export default HeatPick;
+// export default SplitHeatPick;

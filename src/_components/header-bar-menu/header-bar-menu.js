@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 // Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-
 function isLoggedIn() {
     return localStorage.getItem("user") !== null;
 }

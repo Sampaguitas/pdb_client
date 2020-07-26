@@ -36,13 +36,10 @@ import {
     getPlList,
     copyObject
 } from '../../../../_functions';
-import Layout from '../../../../_components/layout';
-import ProjectTable from '../../../../_components/project-table/project-table';
-import TabFilter from '../../../../_components/setting/tab-filter';
-import TabDisplay from '../../../../_components/setting/tab-display';
-import TabWidth from '../../../../_components/setting/tab-width';
-import Modal from '../../../../_components/modal';
-import ColliType from '../../../../_components/split-line/wh-collitype';
+import { ProjectTable } from '../../../../_components/project-table';
+import { TabDisplay, TabFilter, TabWidth } from '../../../../_components/setting';
+import { SplitWhColliType } from '../../../../_components/split-line/split-whcollitype';
+import { Layout, Modal } from '../../../../_components';
 
 const typeOf = [
     '5ef4e9a67c213e6263a723f0', //WHPL01 WH Packing List
@@ -1229,7 +1226,7 @@ class WhPackingDetails extends React.Component {
                     title="Assign Colli Type"
                     size="modal-xl"
                 >
-                    <ColliType 
+                    <SplitWhColliType 
                         collitypes={collitypes}
                         refreshColliTypes={this.refreshColliTypes}
                         projectId={projectId}

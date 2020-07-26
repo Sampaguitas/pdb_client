@@ -1,7 +1,7 @@
 import React from 'react';
-import { connect } from 'react-redux';
 import config from 'config';
 import { saveAs } from 'file-saver';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../../_helpers';
 import {
     arrayRemove,
@@ -12,20 +12,23 @@ import {
     generateFromTbls,
     copyObject
 } from '../../../../_functions'
-import Modal from "../../../../_components/modal";
-import Input from '../../../../_components/input';
-import CheckBox from '../../../../_components/check-box';
-import Select from '../../../../_components/select';
-import HeaderInput from '../../../../_components/project-table/header-input';
-import HeaderSelect from '../../../../_components/project-table/header-select';
-import NewRowCreate from '../../../../_components/project-table/new-row-create';
-import NewRowInput from '../../../../_components/project-table/new-row-input';
-import NewRowSelect from '../../../../_components/project-table/new-row-select';
-import TableInput from '../../../../_components/project-table/table-input';
-import TableSelect from '../../../../_components/project-table/table-select';
-import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
-import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+    HeaderInput,
+    HeaderSelect,
+    NewRowCreate,
+    NewRowInput,
+    NewRowSelect,
+    TableInput,
+    TableSelect,
+    TableSelectionAllRow,
+    TableSelectionRow
+} from '../../../../_components/project-table';
+import { 
+    CheckBox, 
+    Input, 
+    Modal, 
+    Select 
+} from '../../../../_components';
 import _ from 'lodash';
 
 function docSorted(array, sort) {

@@ -32,7 +32,7 @@ function arraySorted(array, field, fromTbls) {
     }
 }
 
-class NewRowSelect extends Component{
+export class NewRowSelect extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -150,4 +150,4 @@ class NewRowSelect extends Component{
     }
 }
 
-export default NewRowSelect;
+// export default NewRowSelect;

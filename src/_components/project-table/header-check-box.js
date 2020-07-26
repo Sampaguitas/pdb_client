@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-class HeaderCheckBox extends Component{
+export class HeaderCheckBox extends Component{
 
     render() {
         const { title, name, value, onChange, width, textNoWrap, sort, toggleSort } = this.props;
@@ -43,4 +43,4 @@ class HeaderCheckBox extends Component{
     }
 }
 
-export default HeaderCheckBox;
+// export default HeaderCheckBox;

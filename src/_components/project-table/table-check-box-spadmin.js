@@ -11,7 +11,7 @@ function logout() {
     // remove user from local storage to log user out
     localStorage.removeItem('user');
 }
-class TableCheckBoxSuperAdmin extends Component {
+export class TableCheckBoxSuperAdmin extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -121,5 +121,3 @@ TableCheckBoxSuperAdmin.propTypes = {
     id:propTypes.string.isRequired,
     checked:propTypes.bool.isRequired
 };
-
-export default TableCheckBoxSuperAdmin;

@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import HeaderInput from '../project-table/header-input';
-import TableInput from '../project-table/table-input';
-import TableSelectionRow from '../project-table/table-selection-row';
-import TableSelectionAllRow from '../project-table/table-selection-all-row';
 import {
     getDateFormat,
     arrayRemove,
@@ -12,9 +8,15 @@ import {
     getTableIds,
     copyObject
 } from '../../_functions';
+import {
+    HeaderInput,
+    TableInput,
+    TableSelectionAllRow,
+    TableSelectionRow
+} from '../project-table';
 import _ from 'lodash';
 
-class GoodsReceipt extends Component {
+export class SplitGoodsReceipt extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -494,4 +496,4 @@ class GoodsReceipt extends Component {
         );
     }
 }
-export default GoodsReceipt;
+// export default SplitGoodsReceipt;

@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from 'react-router-dom';
 import { connect } from "react-redux";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
   accessActions,
   collitypeActions,
@@ -15,21 +16,9 @@ import {
   sidemenuActions,
   userActions 
 } from "../../_actions";
-import { 
-  doesMatch,
-  arraySorted,
-  copyObject
-} from '../../_functions';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import TableCheckBoxAdmin from "../../_components/project-table/table-check-box-admin";
-import TableCheckBoxSuperAdmin from "../../_components/project-table/table-check-box-spadmin";
-import Modal from "../../_components/modal";
-import Input from "../../_components/input";
-import Select from '../../_components/select';
-import Layout from "../../_components/layout";
-import HeaderInput from '../../_components/project-table/header-input';
-import HeaderCheckBox from '../../_components/project-table/header-check-box';
-import moment from 'moment';
+import { doesMatch, arraySorted, copyObject } from '../../_functions';
+import { HeaderCheckBox, HeaderInput, TableCheckBoxAdmin, TableCheckBoxSuperAdmin } from "../../_components/project-table";
+import { Input, Layout, Modal, Select } from "../../_components";
 import _ from 'lodash';
 
 function settingSorted(array, sort) {

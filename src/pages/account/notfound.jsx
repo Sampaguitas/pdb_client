@@ -13,11 +13,11 @@ import {
   userActions, 
   sidemenuActions
 } from "../../_actions";
-import Layout from '../../_components/layout';
+import {  Layout } from '../../_components';
 import logo from "../../_assets/logo.svg";
 import pdb from "../../_assets/pdb.svg";
 
-class NotFound extends React.Component {
+class NotFound extends Component {
   constructor(props) {
     super(props);
     this.state = {

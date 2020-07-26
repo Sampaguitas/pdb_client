@@ -1,8 +1,5 @@
 import React, {Component} from 'react';
-import SettingCheck from './setting-check';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-
+import { SettingCheck } from './setting-check';
 
 function generateLayout(settingsDisplay, handleCheckSettings) {
     let tempArray = [];
@@ -28,7 +25,7 @@ function generateLayout(settingsDisplay, handleCheckSettings) {
     );
 }
 
-class TabDisplay extends Component{
+export class TabDisplay extends Component{
     constructor(props) {
         super(props);
         this.handleCheckAll = this.handleCheckAll.bind(this);
@@ -67,4 +64,4 @@ class TabDisplay extends Component{
     }
 }
 
-export default TabDisplay;
+// export default TabDisplay;

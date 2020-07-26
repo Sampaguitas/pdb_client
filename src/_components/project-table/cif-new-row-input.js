@@ -4,7 +4,7 @@ import {
     getDateFormat,
 } from '../../_functions';
 
-class CifNewRowInput extends Component{
+export class CifNewRowInput extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -120,4 +120,4 @@ class CifNewRowInput extends Component{
     }
 }
 
-export default CifNewRowInput;
+// export default CifNewRowInput;

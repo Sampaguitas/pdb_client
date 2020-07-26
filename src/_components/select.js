@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import propTypes from 'prop-types';
+// import propTypes from 'prop-types';
 
-class Select extends Component {
+export class Select extends Component {
     render() {
         return (
             <div className={'form-group' + (this.props.inline ? ' row' : '') + (this.props.submitted && this.props.required && !this.props.value ? ' has-error' : '')}>
@@ -37,15 +37,15 @@ class Select extends Component {
     }
 }
 
-Select.propTypes = {
-    title: propTypes.string.isRequired,
-    name: propTypes.string.isRequired,
-    // options: propTypes.array.isRequired,
-    value: propTypes.string,
-    placeholder: propTypes.string,
-    onChange: propTypes.func.isRequired,
-    inline: propTypes.bool,
-    required: propTypes.bool
-};
+// Select.propTypes = {
+//     title: propTypes.string.isRequired,
+//     name: propTypes.string.isRequired,
+//     // options: propTypes.array.isRequired,
+//     value: propTypes.string,
+//     placeholder: propTypes.string,
+//     onChange: propTypes.func.isRequired,
+//     inline: propTypes.bool,
+//     required: propTypes.bool
+// };
 
-export default Select;
+// export default Select;

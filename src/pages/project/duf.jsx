@@ -3,10 +3,10 @@ import config from 'config';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
-import { accessActions, alertActions, projectActions, sidemenuActions } from '../../_actions';
-import Layout from '../../_components/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../_helpers';
+import { accessActions, alertActions, projectActions, sidemenuActions } from '../../_actions';
+import { Layout } from '../../_components';
 import _ from 'lodash';
 
 class Duf extends React.Component {

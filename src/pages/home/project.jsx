@@ -1,6 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { history } from '../../_helpers';
 import { 
     accessActions,
     collitypeActions,
@@ -17,16 +19,9 @@ import {
     supplierActions,
     userActions 
 } from '../../_actions';
-import { history } from '../../_helpers';
 import { arraySorted, doesMatch, copyObject } from '../../_functions';
-import TableCheckBoxRole from '../../_components/project-table/table-check-box-role';
-import Input from '../../_components/input';
-import Select from '../../_components/select';
-import Layout from '../../_components/layout';
-import CheckBox from '../../_components/check-box';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import HeaderInput from '../../_components/project-table/header-input';
-import HeaderCheckBox from '../../_components/project-table/header-check-box';
+import { HeaderCheckBox, HeaderInput, TableCheckBoxRole } from '../../_components/project-table';
+import { CheckBox, Input, Layout, Select } from '../../_components';
 import _ from 'lodash';
 
 function userSorted(array, sort) {

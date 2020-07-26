@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import HeaderInput from '../project-table/header-input';
 import {
+    HeaderInput,
     getDateFormat,
     TypeToString,
     sortCustom,
@@ -9,8 +9,7 @@ import {
     copyObject
 } from '../../_functions';
 import _ from 'lodash';
-
-class SplitLine extends Component {
+export class SplitMir extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -346,4 +345,4 @@ class SplitLine extends Component {
         );
     }
 }
-export default SplitLine;
+// export default SplitMir;

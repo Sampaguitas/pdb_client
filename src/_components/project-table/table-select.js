@@ -35,7 +35,7 @@ function arraySorted(array, field, fromTbls) {
     }
 }
 
-class TableSelect extends Component{
+export class TableSelect extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -274,4 +274,4 @@ TableSelect.propTypes = {
     ])
 };
 
-export default TableSelect;
+// export default TableSelect;

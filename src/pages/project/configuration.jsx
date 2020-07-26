@@ -20,7 +20,9 @@ import {
     userActions  
 } from '../../_actions';
 import { authHeader, history } from '../../_helpers';
-import Layout from '../../_components/layout';
+import {
+    Layout
+} from '../../_components';
 import Tabs from '../../_components/tabs/tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import General from './tabs/configuration/general';

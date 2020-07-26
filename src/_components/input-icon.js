@@ -1,8 +1,8 @@
 import React from 'react';
-import propTypes from 'prop-types';
+// import propTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
-const InputIcon = (props) => (
+export const InputIcon = (props) => (
     <div className={'form-group' + (props.submitted && !props.value ? ' has-error' : '')}>
         <div className="input-group input-group-lg">
             <div className="input-group-prepend">
@@ -26,16 +26,16 @@ const InputIcon = (props) => (
     </div>
 );
 
-InputIcon.propTypes = {
-    type: propTypes.oneOf(['text', 'number', 'email', 'password']).isRequired,
-    title: propTypes.string.isRequired,
-    name: propTypes.string.isRequired,
-    onChange: propTypes.func.isRequired,
-    value: propTypes.oneOfType([
-        propTypes.string,
-        propTypes.number,
-    ]).isRequired,
-    placeholder: propTypes.string,
-};
+// InputIcon.propTypes = {
+//     type: propTypes.oneOf(['text', 'number', 'email', 'password']).isRequired,
+//     title: propTypes.string.isRequired,
+//     name: propTypes.string.isRequired,
+//     onChange: propTypes.func.isRequired,
+//     value: propTypes.oneOfType([
+//         propTypes.string,
+//         propTypes.number,
+//     ]).isRequired,
+//     placeholder: propTypes.string,
+// };
 
-export default InputIcon;
+// export default InputIcon;

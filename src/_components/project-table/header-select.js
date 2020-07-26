@@ -4,7 +4,7 @@ import {
     arraySorted,
 } from '../../_functions';
 
-class HeaderSelect extends Component{
+export class HeaderSelect extends Component{
 
     render() {
         const { title, name, value, options, optionText, onChange, width, textNoWrap, sort, toggleSort } = this.props;
@@ -52,4 +52,4 @@ class HeaderSelect extends Component{
     }
 }
 
-export default HeaderSelect;
+// export default HeaderSelect;

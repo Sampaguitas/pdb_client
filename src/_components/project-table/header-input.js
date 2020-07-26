@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { NonceProvider } from 'react-select';
 import $ from 'jquery';
 
-class HeaderInput extends Component{
+export class HeaderInput extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -100,4 +100,4 @@ class HeaderInput extends Component{
     }
 }
 
-export default HeaderInput;
+// export default HeaderInput;

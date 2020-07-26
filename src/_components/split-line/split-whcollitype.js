@@ -1,26 +1,26 @@
 import React, { Component } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
 import { authHeader } from '../../_helpers';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import HeaderInput from '../project-table/header-input';
-import TableSelectionAllRow from '../project-table/table-selection-all-row';
-import TableInput from '../project-table/table-input';
-import TableSelect from '../project-table/table-select';
-import TableSelectionRow from '../project-table/table-selection-row';
-import NewRowCreate from '../project-table/new-row-create';
-import NewRowInput from '../project-table/new-row-input';
-import NewRowSelect from '../project-table/new-row-select';
 import {
     arrayRemove,
     doesMatch,
     copyObject
 } from '../../_functions';
+import {
+    HeaderInput,
+    NewRowCreate,
+    NewRowInput,
+    TableInput,
+    TableSelectionAllRow,
+    TableSelectionRow
+} from '../project-table';
 import _ from 'lodash';
 
-function heatSorted(array, sort) {
+function colliTypeSorted(array, sort) {
     let tempArray = array.slice(0);
     switch(sort.name) {
-        case 'heatNr':
+        case 'type':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
                     let nameA = !_.isUndefined(a[sort.name]) && !_.isNull(a[sort.name]) ? String(a[sort.name]).toUpperCase() : '';
@@ -46,50 +46,45 @@ function heatSorted(array, sort) {
                     }
                 });
             }
-        case 'cif':
+        case 'length':
+        case 'width':
+        case 'height':
+        case 'pkWeight':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.certificate.cif) && !_.isNull(a.certificate.cif) ? String(a.certificate.cif).toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.certificate.cif) && !_.isNull(b.certificate.cif) ? String(b.certificate.cif).toUpperCase() : '';
-                    if (nameA < nameB) {
-                        return -1;
-                    } else if (nameA > nameB) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
+                    let valueA = a[sort.name] || 0;
+                    let valueB = b[sort.name] || 0;
+                    return valueA - valueB;
                 });
             } else {
-                return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.certificate.cif) && !_.isNull(a.certificate.cif) ? String(a.certificate.cif).toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.certificate.cif) && !_.isNull(b.certificate.cif) ? String(b.certificate.cif).toUpperCase() : '';
-                    if (nameA > nameB) {
-                        return -1;
-                    } else if (nameA < nameB) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
+                return tempArray.sort(function (a, b){
+                    let valueA = a[sort.name] || 0;
+                    let valueB = b[sort.name] || 0;
+                    return valueB - valueA
                 });
             }
         default: return array;
     }
 }
 
-class Heat extends Component {
+export class SplitWhColliType extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            cif: '',
-            heatNr: '',
-            inspQty: '',
-            selectedIds: [],
+            type: '',
+            length: '',
+            width: '',
+            height: '',
+            pkWeight: '',
+            selectedRows: [],
             selectAllRows: false,
             newRow: false,
-            newHeat:{
-                heatNr: '',
-                inspQty: '',
-                certificateId: '',
+            fieldName:{
+                type: '',
+                length: '',
+                width: '',
+                height: '',
+                pkWeight: ''
             },
             newRowFocus:false,
             creatingNewRow: false,
@@ -107,16 +102,16 @@ class Heat extends Component {
         this.toggleSort = this.toggleSort.bind(this);
         this.toggleNewRow = this.toggleNewRow.bind(this);
         this.toggleSelectAllRow = this.toggleSelectAllRow.bind(this);
+        this.handleAssign = this.handleAssign.bind(this);
         this.handleChangeHeader = this.handleChangeHeader.bind(this);
-        this.setAlert = this.setAlert.bind(this);
         this.handleChangeNewRow = this.handleChangeNewRow.bind(this);
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.cerateNewRow = this.cerateNewRow.bind(this);
-        this.updateSelectedIds = this.updateSelectedIds.bind(this);
+        this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
-        this.filterHeat = this.filterHeat.bind(this);
+        this.filterName = this.filterName.bind(this);
         this.colDoubleClick = this.colDoubleClick.bind(this);
         this.setColWidth = this.setColWidth.bind(this);
     }
@@ -124,15 +119,16 @@ class Heat extends Component {
     componentDidMount() {
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
-        const tableHeat = document.getElementById('heatTable');
-        tableHeat.addEventListener('keydown', (e) => { 
+        const tableCollitype = document.getElementById('collitype');
+        tableCollitype.addEventListener('keydown', (e) => { 
             if(arrowKeys.some((k) => { return e.keyCode === k }) && nodes.some((n) => { return document.activeElement.nodeName.toUpperCase() === n })) {
-                return this.keyHandler(e);
+                return this.keyHandlerCollitype(e);
             }
         });
     }
 
-    keyHandler(e) {
+    keyHandlerCollitype(e) {
+
         let target = e.target;
         let colIndex = target.parentElement.cellIndex;               
         let rowIndex = target.parentElement.parentElement.rowIndex;
@@ -204,32 +200,52 @@ class Heat extends Component {
         const { newRow } = this.state;
         this.setState({
             newRow: !newRow,
-            newHeat:{
-                heatNr: '',
-                certificateId: ''
+            fieldName:{
+                type: '',
+                length: '',
+                width: '',
+                height: '',
+                pkWeight: ''
             }
         });
     }
 
     toggleSelectAllRow() {
         const { selectAllRows } = this.state;
-        const { heats } = this.props;
-        if (heats) {
+        const { collitypes } = this.props;
+        if (collitypes.items) {
             if (selectAllRows) {
                 this.setState({
-                    selectedIds: [],
+                    selectedRows: [],
                     selectAllRows: false
                 });
             } else {
                 this.setState({
-                    selectedIds: this.filterHeat(heats).map(s => s._id),
+                    selectedRows: this.filterName(collitypes.items).map(s => s._id),
                     selectAllRows: true
                 });
             }         
         }
     }
 
+    handleAssign(event) {
+        event.preventDefault();
+        const { selectedRows } = this.state;
+        const { assignColliType } = this.props;
+        if (selectedRows.length != 1) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select one line.'
+                }
+            });
+        } else {
+            assignColliType(selectedRows[0]);
+        }
+    }
+
     handleChangeHeader(event) {
+        // event.preventDefault();
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
@@ -237,39 +253,26 @@ class Heat extends Component {
     }
 
     handleChangeNewRow(event){
-        const { projectId, poId, subId, returnId } = this.props;
-        const { newHeat } = this.state;
+        const { projectId } = this.props;
+        const { fieldName } = this.state;
         const target = event.target;
         const name = target.name;
         const value = target.type === 'checkbox' ? target.checked : target.value;
         if (projectId) {
             this.setState({
                 ...this.state,
-                newHeat: {
-                    ...newHeat,
+                fieldName: {
+                    ...fieldName,
                     [name]: value,
-                    poId: poId,
-                    subId: subId,
-                    returnId: returnId,
                     projectId: projectId
                 }
             });
         } 
     }
-
-    setAlert(type, message) {
-        this.setState({
-            alert: {
-                type: type,
-                message: message
-            }
-        })
-
-    }
     
     handleClearAlert(event){
         const { handleClearAlert } = this.props;
-        event.preventDefault();
+        event.preventDefault;
         this.setState({ 
             alert: {
                 type:'',
@@ -278,10 +281,10 @@ class Heat extends Component {
         }, handleClearAlert(event));
     }
 
-    handleDelete(event, selectedIds) {
+    handleDelete(event, selectedRows) {
         event.preventDefault();
-        const { refreshPos } = this.props;
-        if(_.isEmpty(selectedIds)) {
+        const { refreshColliTypes } = this.props;
+        if(_.isEmpty(selectedRows)) {
             this.setState({
                 alert: {
                     type: 'alert-danger',
@@ -290,96 +293,102 @@ class Heat extends Component {
             });
         } else {
             this.setState({
+                // ...this.state,
                 deleting: true
             }, () => {
                 const requestOptions = {
                     method: 'DELETE',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIds: selectedIds})
+                    body: JSON.stringify({selectedIds: selectedRows})
                 };
-                return fetch(`${config.apiUrl}/heat/delete`, requestOptions)
-                .then(responce => responce.text().then(text => {
-                    const data = text && JSON.parse(text);
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    }
+                // return fetch(`${config.apiUrl}/collitype/delete?id=${JSON.stringify(selectedRows)}`, requestOptions)
+                return fetch(`${config.apiUrl}/collitype/delete`, requestOptions)
+                .then( () => {
                     this.setState({
-                        ...this.state,
-                        deleting: false,
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, refreshPos);
-                }));
+                        // ...this.state,
+                        deleting: false
+                    }, refreshColliTypes);
+                })
+                .catch( err => {
+                    this.setState({
+                        // ...this.state,
+                        deleting: false
+                    }, refreshColliTypes);
+                });
             });
         }
     }
 
     cerateNewRow(event) {
         event.preventDefault();
-        const { refreshPos } = this.props;
-        const { creatingNewRow, newHeat } = this.state;
+        const { refreshColliTypes } = this.props;
+        const { creatingNewRow, fieldName } = this.state;
         if (!creatingNewRow) {
             this.setState({
+                // ...this.state,
                 creatingNewRow: true
             }, () => {
                 const requestOptions = {
                     method: 'POST',
                     headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    body: JSON.stringify(newHeat)
+                    body: JSON.stringify(fieldName)
                 };
-                return fetch(`${config.apiUrl}/heat/create`, requestOptions)
+                return fetch(`${config.apiUrl}/collitype/create`, requestOptions)
                 .then( () => {
                     this.setState({
+                        // ...this.state,
                         creatingNewRow: false,
                         newRowColor: 'green'
                     }, () => {
                         setTimeout( () => {
                             this.setState({
+                                // ...this.state,
                                 newRowColor: 'inherit',
                                 newRow:false,
-                                newHeat:{},
+                                fieldName:{},
                                 newRowFocus: false
-                            }, refreshPos);
+                            }, refreshColliTypes);
                         }, 1000);                                
                     });
                 })
                 .catch( () => {
                     this.setState({
+                        // ...this.state,
                         creatingNewRow: false,
                         newRowColor: 'red'
                     }, () => {
                         setTimeout(() => {
                             this.setState({
+                                // ...this.state,
                                 newRowColor: 'inherit',
                                 newRow:false,
-                                newHeat:{},
+                                fieldName:{},
                                 newRowFocus: false                                    
-                            }, refreshPos);
+                            }, refreshColliTypes);
                         }, 1000);                                                      
                     });
                 });
             });
-        } 
+        }
     }
 
-    updateSelectedIds(id) {
-        const { selectedIds } = this.state;
-        if (selectedIds.includes(id)) {
+    updateSelectedRows(id) {
+        const { selectedRows } = this.state;
+        if (selectedRows.includes(id)) {
             this.setState({
-                selectedIds: arrayRemove(selectedIds, id)
+                selectedRows: arrayRemove(selectedRows, id)
             });
         } else {
             this.setState({
-                selectedIds: [...selectedIds, id]
+                selectedRows: [...selectedRows, id]
             });
         }       
     }
 
+
+
     generateHeader() {
-        const { cif, heatNr, inspQty, selectAllRows, sort, settingsColWidth } = this.state;
+        const { type, length, width, height, pkWeight, selectAllRows, sort, settingsColWidth } = this.state;
         return (
             <tr>
                 <TableSelectionAllRow
@@ -388,9 +397,9 @@ class Heat extends Component {
                 />
                 <HeaderInput
                     type="text"
-                    title="CIF"
-                    name="cif"
-                    value={cif}
+                    title="Type"
+                    name="type"
+                    value={type}
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
@@ -398,12 +407,12 @@ class Heat extends Component {
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
                     settingsColWidth={settingsColWidth}
-                /> 
+                />
                 <HeaderInput
-                    type="text"
-                    title="Heat Nr"
-                    name="heatNr"
-                    value={heatNr}
+                    type="number"
+                    title="Length"
+                    name="length"
+                    value={length}
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
@@ -411,12 +420,12 @@ class Heat extends Component {
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
                     settingsColWidth={settingsColWidth}
-                />
+                />                                
                 <HeaderInput
                     type="number"
-                    title="Insp Qty"
-                    name="inspQty"
-                    value={inspQty}
+                    title="Width"
+                    name="width"
+                    value={width}
                     onChange={this.handleChangeHeader}
                     sort={sort}
                     toggleSort={this.toggleSort}
@@ -424,42 +433,63 @@ class Heat extends Component {
                     colDoubleClick={this.colDoubleClick}
                     setColWidth={this.setColWidth}
                     settingsColWidth={settingsColWidth}
-                />                         
+
+                />                                    
+                <HeaderInput
+                    type="number"
+                    title="Height"
+                    name="height"
+                    value={height}
+                    onChange={this.handleChangeHeader}
+                    sort={sort}
+                    toggleSort={this.toggleSort}
+                    index="3"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    settingsColWidth={settingsColWidth}
+                />
+                <HeaderInput
+                    type="number"
+                    title="pkWeight"
+                    name="pkWeight"
+                    value={pkWeight}
+                    onChange={this.handleChangeHeader}
+                    sort={sort}
+                    toggleSort={this.toggleSort}
+                    index="4"
+                    colDoubleClick={this.colDoubleClick}
+                    setColWidth={this.setColWidth}
+                    settingsColWidth={settingsColWidth}
+                />                            
             </tr>
         );
     }
 
-    generateBody(heats) {
-        const { refreshPos, certificates } = this.props;
-        const { selectedIds, selectAllRows, newRow, newHeat, newRowColor, creatingNewRow, settingsColWidth } = this.state;
+    generateBody(collitypes) {
+        const { refreshColliTypes } = this.props;
+        const { selectedRows, selectAllRows, newRow, fieldName, newRowColor, creatingNewRow, settingsColWidth } = this.state;
         let tempRows = [];
         
         if (newRow) {
             tempRows.push(
-                <tr
-                    // onBlur={this.onBlurRow}
-                    // onFocus={this.onFocusRow}
-                    data-type="newrow"
-                >
+                <tr data-type="newrow">
                     <NewRowCreate
                         onClick={event => this.cerateNewRow(event)}
                         creatingNewRow={creatingNewRow}
                     />
-                    <NewRowSelect
-                        fieldName="certificateId"
-                        fieldValue={newHeat.certificateId}
-                        options={certificates.items}
-                        optionText="cif"
-                        fromTbls={[]}
+                    <NewRowInput
+                        fieldType="text"
+                        fieldName="type"
+                        fieldValue={fieldName.type}
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
                         index="0"
                         settingsColWidth={settingsColWidth}
                     />
                     <NewRowInput
-                        fieldType="text"
-                        fieldName="heatNr"
-                        fieldValue={newHeat.heatNr}
+                        fieldType="number"
+                        fieldName="length"
+                        fieldValue={fieldName.length}
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
                         index="1"
@@ -467,57 +497,104 @@ class Heat extends Component {
                     />
                     <NewRowInput
                         fieldType="number"
-                        fieldName="inspQty"
-                        fieldValue={newHeat.inspQty}
+                        fieldName="width"
+                        fieldValue={fieldName.width}
                         onChange={event => this.handleChangeNewRow(event)}
                         color={newRowColor}
                         index="2"
                         settingsColWidth={settingsColWidth}
                     />
+                    <NewRowInput
+                        fieldType="number"
+                        fieldName="height"
+                        fieldValue={fieldName.height}
+                        onChange={event => this.handleChangeNewRow(event)}
+                        color={newRowColor}
+                        index="3"
+                        settingsColWidth={settingsColWidth}
+                    />
+                    <NewRowInput
+                        fieldType="number"
+                        fieldName="pkWeight"
+                        fieldValue={fieldName.pkWeight}
+                        onChange={event => this.handleChangeNewRow(event)}
+                        color={newRowColor}
+                        index="4"
+                        settingsColWidth={settingsColWidth}
+                    />
                 </tr>
             );
+            
         }
 
-        if (heats) {
-            this.filterHeat(heats).map(heat => {
+        if (collitypes.items) {
+            this.filterName(collitypes.items).map(collitype => {
                 tempRows.push(
-                    <tr key={heat._id}>
+                    <tr key={collitype._id}>
                         <TableSelectionRow
-                            id={heat._id}
+                            id={collitype._id}
                             selectAllRows={selectAllRows}
-                            selectedRows={selectedIds}
-                            callback={this.updateSelectedIds}
+                            selectedRows={selectedRows}
+                            callback={this.updateSelectedRows}
                         />
-                        <TableSelect
-                            collection="heat"
-                            objectId={heat._id}
-                            fieldName="certificateId"
-                            fieldValue={heat.certificateId}
-                            options={certificates.items}
-                            optionText="cif"
-                            fromTbls={[]}
-                            refreshStore={refreshPos}
+                        <TableInput
+                            collection="collitype"
+                            objectId={collitype._id}
+                            fieldName="type"
+                            fieldValue={collitype.type}
+                            disabled={false}
+                            align="left"
+                            fieldType="text"
+                            refreshStore={refreshColliTypes}
                             index="0"
                             settingsColWidth={settingsColWidth}
                         />
                         <TableInput
-                            collection="heat"
-                            objectId={heat._id}
-                            fieldName="heatNr"
-                            fieldValue={heat.heatNr}
-                            fieldType="text"
-                            refreshStore={refreshPos}
+                            collection="collitype"
+                            objectId={collitype._id}
+                            fieldName="length"
+                            fieldValue={collitype.length}
+                            disabled={false}
+                            align="left"
+                            fieldType="number"
+                            refreshStore={refreshColliTypes}
                             index="1"
                             settingsColWidth={settingsColWidth}
                         />
                         <TableInput
-                            collection="heat"
-                            objectId={heat._id}
-                            fieldName="inspQty"
-                            fieldValue={heat.inspQty}
+                            collection="collitype"
+                            objectId={collitype._id}
+                            fieldName="width"
+                            fieldValue={collitype.width}
+                            disabled={false}
+                            align="left"
                             fieldType="number"
-                            refreshStore={refreshPos}
+                            refreshStore={refreshColliTypes}
                             index="2"
+                            settingsColWidth={settingsColWidth}
+                        />
+                        <TableInput
+                            collection="collitype"
+                            objectId={collitype._id}
+                            fieldName="height"
+                            fieldValue={collitype.height}
+                            disabled={false}
+                            align="left"
+                            fieldType="number"
+                            refreshStore={refreshColliTypes}
+                            index="3"
+                            settingsColWidth={settingsColWidth}
+                        />
+                        <TableInput
+                            collection="collitype"
+                            objectId={collitype._id}
+                            fieldName="pkWeight"
+                            fieldValue={collitype.pkWeight}
+                            disabled={false}
+                            align="left"
+                            fieldType="number"
+                            refreshStore={refreshColliTypes}
+                            index="4"
                             settingsColWidth={settingsColWidth}
                         />
                     </tr>
@@ -527,17 +604,24 @@ class Heat extends Component {
         }
     }
 
-    filterHeat(array){
+    filterName(array){
         const { 
-            cif,
-            heatNr,
+            type,
+            length,
+            width,
+            height,
+            pkWeight,
             sort
         } = this.state;
 
         if (array) {
-            return heatSorted(array, sort).filter(function (element) {
-                return (doesMatch(cif, element.certificate.cif, 'String', false)
-                && doesMatch(heatNr, element.heatNr, 'String', false));
+            return colliTypeSorted(array, sort).filter(function (element) {
+                return (doesMatch(type, element.type, 'String', false)
+                    && doesMatch(length, element.length, 'Number', false)
+                    && doesMatch(width, element.width, 'Number', false)
+                    && doesMatch(height, element.height, 'Number', false)
+                    && doesMatch(pkWeight, element.pkWeight, 'Number', false)
+                );
             });
         } else {
             return [];
@@ -572,45 +656,47 @@ class Heat extends Component {
     }
 
     render() {
-        const { selectedIds, deleting, creatingNewRow } = this.state;
-        const { heats, toggleHeat } = this.props;
+        const { selectedRows, deleting, creatingNewRow } = this.state;
+        const { collitypes, assigning } = this.props;
         const alert = this.state.alert.message ? this.state.alert : this.props.alert;
         return (
             <div>
                 <div className="ml-2 mr-2">
                     {alert.message && 
-                        <div className={`alert ${alert.type} mt-2`}>{alert.message}
+                        <div className={`alert ${alert.type} mt-3`}>{alert.message}
                             <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                                 <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
                             </button>
                         </div>
                     }
-                    <div className={`row ${alert.message ? "mt-1" : "mt-2"} mb-2`}>
+                    <div className={`row ${alert.message ? "mt-1" : "mt-5"} mb-2`}>
+                        <div className="col"> 
+                            <h3>Select Colli Type</h3>
+                        </div>
                         <div className="col text-right">
-                            <button title="Add Heat Nr"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewRow}>
+                            <button title="Add Collitype"className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleNewRow}>
                                 <span><FontAwesomeIcon icon={creatingNewRow ? "spinner" : "plus"} className={creatingNewRow ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Add</span>
                             </button>
-                            <button title="Delete Heat(s)"className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedIds)}>
+                            <button title="Delete Collitype(s)"className="btn btn-leeuwen btn-lg" onClick={event => this.handleDelete(event, selectedRows)}>
                                 <span><FontAwesomeIcon icon={deleting ? "spinner" : "trash-alt"} className={deleting ? "fa-pulse fa fa-fw mr-2" : "fa mr-2"}/>Delete</span>
                             </button>
                         </div>
                     </div>
                     <div style={{borderStyle: 'solid', borderWidth: '1px', borderColor: '#ddd', height: '400px'}}>
                         <div className="table-responsive custom-table-container custom-table-container__fixed-row" >
-                            <table className="table table-bordered table-sm text-nowrap table-striped" id="heatTable">
+                            <table className="table table-bordered table-sm text-nowrap table-striped" id="collitype">
                                 <thead>
                                     {this.generateHeader()}
                                 </thead>
                                 <tbody>
-                                    {this.generateBody(heats)}
+                                    {this.generateBody(collitypes)}
                                 </tbody>
                             </table>
                         </div>
                     </div>
-
                     <div className="text-right mt-2">
-                        <button className="btn btn-leeuwen-blue btn-lg" onClick={event => toggleHeat(event)}>
-                            <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
+                        <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleAssign(event)}>
+                            <span><FontAwesomeIcon icon={assigning ? "spinner" : "hand-point-right"} className={assigning ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Assign</span>
                         </button>
                     </div>
                 </div>
@@ -618,4 +704,4 @@ class Heat extends Component {
         );
     }
 }
-export default Heat;
+// export default SplitWhColliType;

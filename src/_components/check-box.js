@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import propTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './check-box.css'
 
-class CheckBox extends Component {
+export class CheckBox extends Component {
     render(){
         return (
             <div className="mb-3" style={{lineHeight: '1.5', fontSize: '1.25rem'}}>
@@ -27,4 +26,4 @@ class CheckBox extends Component {
     }
 }
 
-export default CheckBox;
+// export default CheckBox;

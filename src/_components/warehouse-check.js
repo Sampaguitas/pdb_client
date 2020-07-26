@@ -1,22 +1,15 @@
 import React, { Component } from 'react'
-import propTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './warehouse-check.css';
 import _ from 'lodash';
 
-class WarehouseCheck extends Component {
+export class WarehouseCheck extends Component {
     constructor(props) {
         super(props);
         this.state = { isChecked: false };
         this.onChange = this.onChange.bind(this);
     }
 
-    // componentWillMount() {
-    //     const { isChecked } = this.props;
-    //     this.setState({
-    //         isChecked: isChecked
-    //     });
-    // }
     componentDidMount() {
         const { isChecked } = this.props;
         this.setState({
@@ -61,4 +54,4 @@ class WarehouseCheck extends Component {
     }
 }
 
-export default WarehouseCheck;
+// export default WarehouseCheck;

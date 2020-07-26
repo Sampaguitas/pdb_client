@@ -1,6 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { history } from '../../_helpers';
 import { 
     accessActions,
     collitypeActions,
@@ -13,11 +15,16 @@ import {
     sidemenuActions,
     supplierActions,
 } from '../../_actions';
-import { history } from '../../_helpers';
-import { doesMatch, copyObject } from '../../_functions';
-import Layout from '../../_components/layout';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import HeaderInput from '../../_components/project-table/header-input';
+import {
+    doesMatch,
+    copyObject
+} from '../../_functions';
+import {
+    HeaderInput
+} from '../../_components/project-table';
+import {
+    Layout
+} from '../../_components';
 import _ from 'lodash';
 
 function projectSorted(array, sort) {

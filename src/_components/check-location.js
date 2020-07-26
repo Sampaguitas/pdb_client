@@ -1,9 +1,8 @@
 import React, { Component } from 'react'
-import propTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './check-location.css'
 
-class CheckLocation extends Component {
+export class CheckLocation extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -38,4 +37,4 @@ class CheckLocation extends Component {
     }
 }
 
-export default CheckLocation;
+// export default CheckLocation;
