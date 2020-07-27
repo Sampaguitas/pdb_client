@@ -1492,7 +1492,6 @@ class Expediting extends React.Component {
                                 toggleUnlock={this.toggleUnlock}
                                 downloadTable={this.downloadTable}
                                 downloadingTable={downloadingTable}
-                                deletingRows={deletingRows}
                                 unlocked={unlocked}
                                 screen={screen}
                                 fieldnames={fieldnames}
@@ -1500,6 +1499,7 @@ class Expediting extends React.Component {
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 handleDeleteRows={this.handleDeleteRows}
+                                deletingRows={deletingRows}
                                 settingsFilter={settingsFilter}
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}

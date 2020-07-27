@@ -193,7 +193,8 @@ class MaterialIssueRecord extends React.Component {
             showCreatePt: false,
             menuItem: 'Warehouse',
             downloadingTable: false,
-            settingSaving: false
+            settingSaving: false,
+            deletingRows: false
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -581,7 +582,7 @@ class MaterialIssueRecord extends React.Component {
         } else if (confirm('For the Selected line(s) all MIR details, MIR Items and picking lists shall be deleted. Are you sure you want to proceed?')){
             this.setState({
                 ...this.state,
-                deleting: true
+                deletingRows: true
             }, () => {
                 const requestOptions = {
                     method: 'DELETE',
@@ -596,7 +597,7 @@ class MaterialIssueRecord extends React.Component {
                             location.reload(true);
                     } else {
                         this.setState({
-                            deleting: false,
+                            deletingRows: false,
                             alert: {
                                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                 message: data.message
@@ -926,7 +927,8 @@ class MaterialIssueRecord extends React.Component {
             settingsDisplay,
             downloadingTable,
             settingsColWidth,
-            settingSaving
+            settingSaving,
+            deletingRows
         } = this.state;
 
         const { accesses, fieldnames, fields, warehouses, selection, sidemenu } = this.props;
@@ -984,6 +986,7 @@ class MaterialIssueRecord extends React.Component {
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 handleDeleteRows = {this.handleDeleteRows}
+                                deletingRows={deletingRows}
                                 settingsFilter = {settingsFilter}
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}
