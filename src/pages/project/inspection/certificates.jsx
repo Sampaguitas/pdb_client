@@ -377,6 +377,7 @@ class Certificates extends React.Component {
             menuItem: 'Inspection',
             downloadingTable: false,
             settingSaving: false,
+            deletingRows: false
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -988,6 +989,7 @@ class Certificates extends React.Component {
             showSettings,
             isDownloading,
             downloadingTable,
+            deletingRows,
             //--------
             headersForShow,
             bodysForShow,
@@ -1054,6 +1056,7 @@ class Certificates extends React.Component {
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 handleDeleteRows = {this.handleDeleteRows}
+                                deletingRows={deletingRows}
                                 settingsFilter = {settingsFilter}
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}

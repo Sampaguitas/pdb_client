@@ -201,7 +201,8 @@ class PackingDetails extends React.Component {
             showSettings: false,
             menuItem: 'Shipping',
             downloadingTable: false,
-            settingSaving: false
+            settingSaving: false,
+            deletingRows: false
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -1123,7 +1124,8 @@ class PackingDetails extends React.Component {
             settingsDisplay,
             downloadingTable,
             settingsColWidth,
-            settingSaving
+            settingSaving,
+            deletingRows
         }= this.state;
 
         const { accesses, docdefs, fieldnames, fields, collipacks, collitypes, selection, sidemenu } = this.props;
@@ -1183,6 +1185,7 @@ class PackingDetails extends React.Component {
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 handleDeleteRows = {this.handleDeleteRows}
+                                deletingRows={deletingRows}
                                 settingsFilter = {settingsFilter}
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}

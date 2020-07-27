@@ -498,6 +498,7 @@ class Expediting extends React.Component {
             //Progress Report
             downloadingChart: false,
             downloadingTable: false,
+            deletingRows: false,////////
             settingSaving: false,
             unit: 'value',
             period: 'quarter',
@@ -621,14 +622,6 @@ class Expediting extends React.Component {
                 });
             }
         }
-
-        // if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
-        //     this.setState({
-        //         settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-        //         settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-        //         settingsColWidth: initSettingsColWidth(settings, screenId)
-        //     }); 
-        // }
 
         if (settings != prevProps.settings) {
             this.setState({
@@ -1109,42 +1102,31 @@ class Expediting extends React.Component {
                 }
             });
         } else if (confirm('For the Selected line(s) all sub details, certificates and packing details shall be deleted. Are you sure you want to proceed?')){
-            const requestOptions = {
-                method: 'DELETE',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify({ selectedIds: selectedIds })
-            };
-            return fetch(`${config.apiUrl}/sub/delete`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (!responce.ok) {
+            this.setState({
+                deletingRows: true
+            }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ selectedIds: selectedIds })
+                };
+                return fetch(`${config.apiUrl}/sub/delete`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
                     if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            deletingRows: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
                     }
-                    this.setState({
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
-                } else {
-                    this.setState({
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
-                }
+                }));
             })
-            .catch( () => {
-                this.setState({
-                    alert: {
-                        type: 'alert-danger',
-                        message: 'Line(s) could not be deleted.'
-                    }
-                }, this.refreshStore);
-            }));
         }
     }
 
@@ -1434,6 +1416,7 @@ class Expediting extends React.Component {
             lines,
             downloadingChart,
             downloadingTable,
+            deletingRows,
             menuItem,
             projectId, 
             screen, 
@@ -1509,6 +1492,7 @@ class Expediting extends React.Component {
                                 toggleUnlock={this.toggleUnlock}
                                 downloadTable={this.downloadTable}
                                 downloadingTable={downloadingTable}
+                                deletingRows={deletingRows}
                                 unlocked={unlocked}
                                 screen={screen}
                                 fieldnames={fieldnames}

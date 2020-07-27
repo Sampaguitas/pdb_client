@@ -449,6 +449,7 @@ export class ProjectTable extends Component {
         const { 
             toggleSettings,
             handleDeleteRows,
+            deletingRows,
             toggleUnlock,
             downloadTable,
             downloadingTable,
@@ -494,7 +495,7 @@ export class ProjectTable extends Component {
                         <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title={screenId == '5ea8eefb7c213e2096462a2c' ? "Undo Transaction": "Delete Line(s)"} onClick={handleDeleteRows} style={{width: '40px', height: '40px'}}>
-                        <span><FontAwesomeIcon icon="trash-alt" className="fas fa-2x"/></span>
+                        <span><FontAwesomeIcon icon={deletingRows ? "spinner" : "trash-alt"} className={deletingRows ? "fa-pulse fa-fw fa-2x": "fas fa-2x"}/></span>
                     </button>
                 </div>
 
