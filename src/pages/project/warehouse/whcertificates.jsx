@@ -401,7 +401,8 @@ class WhCertificates extends React.Component {
             showSettings: false,
             menuItem: 'Warehouse',
             downloadingTable: false,
-            settingSaving: false
+            settingSaving: false,
+            deletingRows: false
 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
@@ -1015,7 +1016,8 @@ class WhCertificates extends React.Component {
             settingsDisplay,
             downloadingTable,
             settingsColWidth,
-            settingSaving
+            settingSaving,
+            deletingRows
         }= this.state;
         
         const { accesses, certificates, fieldnames, fields, pos, selection, sidemenu } = this.props;
@@ -1071,8 +1073,9 @@ class WhCertificates extends React.Component {
                                 fields={fields}
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
-                                handleDeleteRows = {this.handleDeleteRows}
-                                settingsFilter = {settingsFilter}
+                                handleDeleteRows={this.handleDeleteRows}
+                                deletingRows={deletingRows}
+                                settingsFilter={settingsFilter}
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}
                                 setColWidth={this.setColWidth}

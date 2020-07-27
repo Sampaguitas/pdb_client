@@ -326,7 +326,8 @@ class MirSplitwindow extends React.Component {
             creating: false,
             menuItem: 'Warehouse',
             downloadingTable: false,
-            settingSaving
+            settingSaving: false,
+            deletingRows: false
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -737,7 +738,7 @@ class MirSplitwindow extends React.Component {
         } else if (confirm('For the Selected line(s) all items details and picking lists shall be deleted. Are you sure you want to proceed?')){
             this.setState({
                 ...this.state,
-                deleting: true
+                deletingRows: true
             }, () => {
                 const requestOptions = {
                     method: 'DELETE',
@@ -752,7 +753,7 @@ class MirSplitwindow extends React.Component {
                             location.reload(true);
                     } else {
                         this.setState({
-                            deleting: false,
+                            deletingRows: false,
                             alert: {
                                 type: responce.status === 200 ? 'alert-success' : 'alert-danger',
                                 message: data.message
@@ -944,7 +945,8 @@ class MirSplitwindow extends React.Component {
             pos,
             downloadingTable,
             settingsColWidth,
-            settingSaving
+            settingSaving,
+            deletingRows
         } = this.state;
 
         const { accesses, fieldnames, fields, selection, sidemenu } = this.props;
@@ -1004,6 +1006,7 @@ class MirSplitwindow extends React.Component {
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 handleDeleteRows = {this.handleDeleteRows}
+                                deletingRows={deletingRows}
                                 settingsFilter = {settingsFilter}
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}

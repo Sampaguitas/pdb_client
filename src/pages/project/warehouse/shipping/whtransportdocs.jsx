@@ -516,7 +516,8 @@ class WhTransportDocuments extends React.Component {
             showSplitLine: false,
             menuItem: 'Warehouse',
             downloadingTable: false,
-            settingSaving: false   
+            settingSaving: false,
+            deletingRows: false  
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -1301,42 +1302,31 @@ class WhTransportDocuments extends React.Component {
                 }
             });
         } else if (confirm('Selected line(s) will be permanently deleted! would you like to proceed?')){
-            const requestOptions = {
-                method: 'DELETE',
-                headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                body: JSON.stringify({ selectedIds: selectedIds })
-            };
-            return fetch(`${config.apiUrl}/whpackitem/delete`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (!responce.ok) {
+            this.setState({
+                deletingRows: true
+            }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ selectedIds: selectedIds })
+                };
+                return fetch(`${config.apiUrl}/whpackitem/delete`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
                     if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            deletingRows: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
                     }
-                    this.setState({
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
-                } else {
-                    this.setState({
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore);
-                }
-            })
-            .catch( () => {
-                this.setState({
-                    alert: {
-                        type: 'alert-danger',
-                        message: 'Line(s) could not be deleted.'
-                    }
-                }, this.refreshStore);
-            }));
+                }));
+            });
         }
     }
 
@@ -1537,7 +1527,8 @@ class WhTransportDocuments extends React.Component {
             settingsDisplay,
             downloadingTable,
             settingsColWidth,
-            settingSaving
+            settingSaving,
+            deletingRows
         }= this.state;
 
         const { accesses, fieldnames, fields, picktickets, selection, sidemenu } = this.props;
@@ -1601,6 +1592,7 @@ class WhTransportDocuments extends React.Component {
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 handleDeleteRows={this.handleDeleteRows}
+                                deletingRows={deletingRows}
                                 settingsFilter={settingsFilter}
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}

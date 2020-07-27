@@ -302,7 +302,8 @@ class PtSplitwindow extends React.Component {
             processing: false,
             menuItem: 'Warehouse',
             downloadingTable: false,
-            settingSaving: false
+            settingSaving: false,
+            deletingRows: false
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -902,7 +903,8 @@ class PtSplitwindow extends React.Component {
             settingsDisplay,
             downloadingTable,
             settingsColWidth,
-            settingSaving
+            settingSaving,
+            deletingRows
         } = this.state;
 
         const { accesses, fieldnames, fields, heatlocs, heatpicks, selection, sidemenu } = this.props;
@@ -965,6 +967,7 @@ class PtSplitwindow extends React.Component {
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
                                 handleDeleteRows = {this.handleDeleteRows}
+                                deletingRows={deletingRows}
                                 settingsFilter = {settingsFilter}
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}

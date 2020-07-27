@@ -853,7 +853,8 @@ class StockManagement extends React.Component {
             showSettings: false,
             menuItem: 'Warehouse',
             downloadingTable: false,
-            settingSaving: false 
+            settingSaving: false,
+            deletingRows: false 
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -1651,25 +1652,30 @@ class StockManagement extends React.Component {
             } else {
                 let lastTransaction = tranSelection[tranSelection.length - 1];
                 if (confirm(`You are about to undo the last transaction: "${lastTransaction.transComment}" dated ${DateToString(lastTransaction.transDate, 'date', getDateFormat())}. Are you sure you would like to preceed?`)) {
-                    const requestOptions = {
-                        method: 'DELETE',
-                        headers: { ...authHeader(), 'Content-Type': 'application/json' },
-                    };
-                    return fetch(`${config.apiUrl}/transaction/delete?id=${lastTransaction._id}`, requestOptions)
-                    .then(responce => responce.text().then(text => {
-                        const data = text && JSON.parse(text);
-                        if (responce.status === 401) {
-                                localStorage.removeItem('user');
-                                location.reload(true);
-                        } else {
-                            this.setState({
-                                alert: {
-                                    type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                                    message: data.message
-                                }
-                            }, this.refreshStore);
-                        }
-                    }));
+                    this.setState({
+                        deletingRows: true
+                    }, () => {
+                        const requestOptions = {
+                            method: 'DELETE',
+                            headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                        };
+                        return fetch(`${config.apiUrl}/transaction/delete?id=${lastTransaction._id}`, requestOptions)
+                        .then(responce => responce.text().then(text => {
+                            const data = text && JSON.parse(text);
+                            if (responce.status === 401) {
+                                    localStorage.removeItem('user');
+                                    location.reload(true);
+                            } else {
+                                this.setState({
+                                    deletingRows: false,
+                                    alert: {
+                                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                        message: data.message
+                                    }
+                                }, this.refreshStore);
+                            }
+                        }));
+                    });
                 }
             }
         }
@@ -2041,7 +2047,8 @@ class StockManagement extends React.Component {
             isDownloadingFile,
             downloadingTable,
             settingsColWidth,
-            settingSaving
+            settingSaving,
+            deletingRows
         } = this.state;
 
         const { accesses, certificates, fields, fieldnames, heatlocs, pos, selection, sidemenu, warehouses } = this.props;
@@ -2147,8 +2154,9 @@ class StockManagement extends React.Component {
                                 fields={fields}
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
-                                handleDeleteRows = {this.handleDeleteRows}
-                                settingsFilter = {settingsFilter}
+                                handleDeleteRows={this.handleDeleteRows}
+                                deletingRows={deletingRows}
+                                settingsFilter={settingsFilter}
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}
                                 setColWidth={this.setColWidth}

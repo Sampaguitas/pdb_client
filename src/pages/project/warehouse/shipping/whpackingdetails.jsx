@@ -207,7 +207,8 @@ class WhPackingDetails extends React.Component {
             showSettings: false,
             menuItem: 'Warehouse',
             downloadingTable: false,
-            settingSaving: false
+            settingSaving: false,
+            deletingRows: false
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -1107,7 +1108,8 @@ class WhPackingDetails extends React.Component {
             settingsDisplay,
             downloadingTable,
             settingsColWidth,
-            settingSaving
+            settingSaving,
+            deletingRows
         }= this.state;
 
         const { accesses, docdefs, fieldnames, fields, whcollipacks, collitypes, selection, sidemenu } = this.props;
@@ -1169,7 +1171,8 @@ class WhPackingDetails extends React.Component {
                                 fields={fields}
                                 toggleSettings={this.toggleSettings}
                                 refreshStore={this.refreshStore}
-                                handleDeleteRows = {this.handleDeleteRows}
+                                handleDeleteRows={this.handleDeleteRows}
+                                deletingRows={deletingRows}
                                 settingsFilter = {settingsFilter}
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}
