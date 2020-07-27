@@ -9,6 +9,7 @@
 - [ ] Finalise Manual,
 
 ### Connection to SAP
-- [ ] [Install MongoDB Community Edition on Windows](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/),
-- [ ] set up new user in mLab,
-- [ ] scheduled mongoimport scripts (for CSV files),
+- [ ] [Install MongoDB Community Edition on VL servers](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-windows/),
+- [X] set up VL user in mLab,
+- [ ] write mongoimports command lines (for CSV files),
+- [ ] schedule mongoimport on VL servers,
