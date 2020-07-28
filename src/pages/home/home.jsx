@@ -126,6 +126,15 @@ function projectSorted(array, sort) {
     }
 }
 
+function checkSpAdmin() {
+    let user = localStorage.getItem("user");
+    if (!_.isNull(user)) {
+        return JSON.parse(user).isSuperAdmin || false;
+    } else {
+        return false
+    }
+}
+
 class Home extends React.Component {
     constructor(props) {
         super(props);
@@ -140,7 +149,8 @@ class Home extends React.Component {
             },
             loaded: false,
             menuItem: 'Home',
-            settingsColWidth: {}
+            settingsColWidth: {},
+            isSuperAdmin: false
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleSort = this.toggleSort.bind(this);
@@ -170,6 +180,9 @@ class Home extends React.Component {
         // Get Projects
         dispatch(projectActions.getAll());
         dispatch(sidemenuActions.select(menuItem));
+        this.setState({
+            isSuperAdmin: checkSpAdmin()
+        });
     }
 
     handleClearAlert(event){
@@ -238,9 +251,10 @@ class Home extends React.Component {
     }
 
     withoutProjectMaster(projects){
+        const { isSuperAdmin } = this.state;
         return this.filterName(projects).filter(function (project){
-            // return true;
-            return (!doesMatch('999999', project.number, 'Number', false));
+            return isSuperAdmin ? true : !doesMatch('999999', project.number, 'Number', false);
+            // return (!doesMatch('999999', project.number, 'Number', false));
         });
     }
 
