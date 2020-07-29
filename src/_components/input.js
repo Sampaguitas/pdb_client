@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import propTypes from 'prop-types';
 
 export class Input extends Component{
     render() {
@@ -30,19 +29,5 @@ export class Input extends Component{
         );
     }
 }
-
-// Input.propTypes = {
-//     type: propTypes.oneOf(['text', 'number', 'email', 'tel','password']).isRequired,
-//     title: propTypes.string.isRequired,
-//     name: propTypes.string.isRequired,
-//     onChange: propTypes.func.isRequired,
-//     value:propTypes.oneOfType([
-//         propTypes.string,
-//         propTypes.number,
-//     ]),
-//     placeholder:propTypes.string,
-//     inline: propTypes.bool,
-//     required: propTypes.bool
-// };
 
 // export default Input;

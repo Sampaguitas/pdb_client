@@ -1,7 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import propTypes from 'prop-types';
-import { userActions } from '../../_actions';
 import config from 'config';
 import { authHeader } from '../../_helpers';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

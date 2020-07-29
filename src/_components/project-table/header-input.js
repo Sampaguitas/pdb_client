@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { NonceProvider } from 'react-select';
-import $ from 'jquery';
 
 class HeaderInput extends Component{
     constructor(props) {

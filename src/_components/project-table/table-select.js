@@ -1,12 +1,9 @@
 import React, { Component } from 'react';
 import config from 'config';
 import { authHeader } from '../../_helpers';
-import propTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
-import {
-    resolve
-} from '../../_functions';
+import { resolve } from '../../_functions';
 
 function arraySorted(array, field, fromTbls) {
     if (array) {

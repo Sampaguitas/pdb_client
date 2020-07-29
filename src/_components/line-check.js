@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import propTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './line-check.css';
 import _ from 'lodash';

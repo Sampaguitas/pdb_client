@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import config from 'config';
 import { authHeader } from '../../_helpers';
-import propTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './table-check-box.css'
 import classNames from 'classnames';
