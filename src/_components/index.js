@@ -2,7 +2,7 @@
 // export * from './project-table';
 // export * from './setting';
 // export * from './side-bar-menu';
-// export * from './split-line';
+// export * from '.';
 // export * from './tabs';
 export { CheckBox } from './check-box';
 export { CheckLocation } from './check-location';

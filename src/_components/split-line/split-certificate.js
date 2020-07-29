@@ -7,14 +7,12 @@ import {
     doesMatch,
     copyObject
 } from '../../_functions';
-import {
-    CifInput,
-    CifNewRowInput,
-    HeaderInput,
-    NewRowCreate,
-    TableSelectionAllRow,
-    TableSelectionRow
-} from '../project-table';
+import CifInput from '../project-table/cif-input';
+import CifNewRowInput from '../project-table/cif-new-row-input';
+import HeaderInput from '../project-table/header-input';
+import NewRowCreate from '../project-table/new-row-create';
+import TableSelectionAllRow from '../project-table/table-selection-all-row';
+import TableSelectionRow from '../project-table/table-selection-row';
 import _ from 'lodash';
 
 function certificateSorted(array, sort) {
@@ -50,7 +48,7 @@ function certificateSorted(array, sort) {
     }
 }
 
-export class SplitCertificate extends Component {
+class SplitCertificate extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -517,4 +515,4 @@ export class SplitCertificate extends Component {
         );
     }
 }
-// export default SplitCertificate;
+export default SplitCertificate;

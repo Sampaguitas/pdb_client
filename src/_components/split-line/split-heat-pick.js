@@ -3,7 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
 import { authHeader } from '../../_helpers';
 import { arrayRemove, doesMatch, copyObject } from '../../_functions';
-import { HeaderInput, TableInput, TableSelectionAllRow, TableSelectionRow } from '../project-table';
+import HeaderInput from '../project-table/header-input';
+import TableInput from '../project-table/table-input';
+import TableSelectionAllRow from '../project-table/table-selection-all-row';
+import TableSelectionRow from '../project-table/table-selection-row';
 import _ from 'lodash';
 
 function arraySorted(array, sort) {
@@ -128,7 +131,7 @@ function getPickCertificates(heatpicks, pickitemId) {
     }
 }
 
-export class SplitHeatPick extends Component {
+class SplitHeatPick extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -859,4 +862,4 @@ export class SplitHeatPick extends Component {
         );
     }
 }
-// export default SplitHeatPick;
+export default SplitHeatPick;

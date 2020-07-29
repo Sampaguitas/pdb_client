@@ -27,10 +27,10 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
-import { ProjectTable } from '../../../_components/project-table';
+import ProjectTable from '../../../_components/project-table/project-table';
 import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
 import { Layout, Modal } from '../../../_components';
-import { SplitMir } from '../../../_components/split-line';
+import SplitMir from '../../../_components/split-line/split-mir';
 import _ from 'lodash';
 import { __promisify__ } from 'glob';
 

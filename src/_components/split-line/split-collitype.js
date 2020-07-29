@@ -7,14 +7,12 @@ import {
     doesMatch,
     copyObject
 } from '../../_functions';
-import {
-    HeaderInput,
-    NewRowCreate,
-    NewRowInput,
-    TableInput,
-    TableSelectionAllRow,
-    TableSelectionRow
-} from '../project-table';
+import HeaderInput from '../project-table/header-input';
+import NewRowCreate from '../project-table/new-row-create';
+import NewRowInput from '../project-table/new-row-input';
+import TableInput from '../project-table/table-input';
+import TableSelectionAllRow from '../project-table/table-selection-all-row';
+import TableSelectionRow from '../project-table/table-selection-row';
 import _ from 'lodash';
 
 function colliTypeSorted(array, sort) {
@@ -67,7 +65,7 @@ function colliTypeSorted(array, sort) {
     }
 }
 
-export class SplitColliType extends Component {
+class SplitColliType extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -692,4 +690,4 @@ export class SplitColliType extends Component {
         );
     }
 }
-// export default SplitColliType;
+export default SplitColliType;

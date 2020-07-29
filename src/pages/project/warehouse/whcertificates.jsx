@@ -27,9 +27,9 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
-import { ProjectTable } from '../../../_components/project-table';
+import ProjectTable from '../../../_components/project-table/project-table';
 import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
-import { SplitHeat } from '../../../_components/split-line';
+import SplitHeat from '../../../_components/split-line/split-heat';
 import { Layout, Modal } from '../../../_components';
 
 

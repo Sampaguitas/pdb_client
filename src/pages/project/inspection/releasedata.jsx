@@ -41,9 +41,9 @@ import {
     getTblFields, // -> check this one
     copyObject
 } from '../../../_functions';
-import { ProjectTable } from '../../../_components/project-table';
+import ProjectTable from '../../../_components/project-table/project-table';
 import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
-import { SplitSub } from '../../../_components/split-line';
+import SplitSub from '../../../_components/split-line/split-sub';
 import { CheckLocation, Layout, Modal } from '../../../_components';
 
 import _ from 'lodash';

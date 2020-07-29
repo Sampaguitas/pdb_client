@@ -36,9 +36,9 @@ import {
     getPlList,
     copyObject
 } from '../../../_functions';
-import { ProjectTable } from '../../../_components/project-table';
+import ProjectTable from '../../../_components/project-table/project-table';
 import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
-import { SplitColliType } from '../../../_components/split-line';
+import SplitColliType from '../../../_components/split-line/split-collitype';
 import { Layout, Modal } from '../../../_components';
 import _ from 'lodash';
 

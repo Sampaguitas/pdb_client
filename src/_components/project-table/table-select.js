@@ -35,7 +35,7 @@ function arraySorted(array, field, fromTbls) {
     }
 }
 
-export class TableSelect extends Component{
+class TableSelect extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -264,14 +264,4 @@ export class TableSelect extends Component{
     }
 }
 
-TableSelect.propTypes = {
-    fieldName: propTypes.string.isRequired,
-    fieldValue:propTypes.oneOfType([
-        propTypes.string,
-        propTypes.number,
-        propTypes.bool,
-        propTypes.instanceOf(Date),
-    ])
-};
-
-// export default TableSelect;
+export default TableSelect;

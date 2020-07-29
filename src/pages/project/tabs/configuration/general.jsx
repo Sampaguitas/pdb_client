@@ -1,7 +1,9 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { doesMatch, arraySorted, copyObject } from '../../../../_functions';
-import { HeaderCheckBox, HeaderInput, TableCheckBoxRole } from '../../../../_components/project-table';
+import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
+import HeaderInput from '../../../../_components/project-table/header-input';
+import TableCheckBoxRole from '../../../../_components/project-table/table-check-box-role';
 import { CheckBox, Input, Select } from '../../../../_components';
 import _ from 'lodash';
 

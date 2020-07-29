@@ -27,8 +27,9 @@ import {
     copyObject
 } from '../../../_functions';
 import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
-import { ProjectTable } from '../../../_components/project-table';
-import { SplitCertificate, SplitHeat } from '../../../_components/split-line';
+import ProjectTable from '../../../_components/project-table/project-table';
+import SplitCertificate from '../../../_components/split-line/split-certificate';
+import SplitHeat from '../../../_components/split-line/split-heat';
 import { Layout, Modal } from '../../../_components';
 
 function virtuals(heats) {

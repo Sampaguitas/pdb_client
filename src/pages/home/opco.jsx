@@ -19,7 +19,7 @@ import {
     supplierActions,
 } from '../../_actions';
 import { arraySorted, doesMatch, copyObject } from '../../_functions';
-import { HeaderInput } from '../../_components/project-table';
+import HeaderInput from '../../_components/project-table/header-input';
 import { Input, Layout, Modal, Select } from '../../_components';
 import _ from 'lodash';
 

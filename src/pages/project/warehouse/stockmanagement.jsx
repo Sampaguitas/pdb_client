@@ -42,9 +42,10 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
-import { ProjectTable } from '../../../_components/project-table';
+import ProjectTable from '../../../_components/project-table/project-table';
 import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
-import {SplitGoodsReceipt, SplitHeatLocation} from '../../../_components/split-line';
+import SplitGoodsReceipt from '../../../_components/split-line/split-goods-receipt';
+import SplitHeatLocation from '../../../_components/split-line/split-heat-location';
 import { Layout, Modal } from '../../../_components';
 import _ from 'lodash';
 

@@ -9,7 +9,8 @@ import {
     copyObject
 } from '../../_functions';
 import _ from 'lodash';
-export class SplitMir extends Component {
+
+class SplitMir extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -345,4 +346,4 @@ export class SplitMir extends Component {
         );
     }
 }
-// export default SplitMir;
+export default SplitMir;

@@ -4,10 +4,8 @@ import {
     doesMatch,
     copyObject
 } from '../../../../_functions';
-import { 
-    HeaderInput,
-    TableInput 
-} from '../../../../_components/project-table'
+import HeaderInput from '../../../../_components/project-table/header-input';
+import TableInput from '../../../../_components/project-table/table-input';
 import _ from 'lodash';
 
 function fieldSorted(array, sort) {

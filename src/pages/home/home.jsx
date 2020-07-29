@@ -19,9 +19,7 @@ import {
     doesMatch,
     copyObject
 } from '../../_functions';
-import {
-    HeaderInput
-} from '../../_components/project-table';
+import HeaderInput from '../../_components/project-table/header-input';
 import {
     Layout
 } from '../../_components';

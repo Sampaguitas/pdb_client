@@ -18,14 +18,12 @@ import {
     doesMatch,
     copyObject
 } from '../../../_functions';
-import {
-    HeaderInput,
-    HeaderSelect,
-    TableInput,
-    TableSelectionAllRow,
-    TableSelectionRow
-} from '../../../_components/project-table';
-import { SplitWarehouse } from '../../../_components/split-line';
+import HeaderInput from '../../../_components/project-table/header-input';
+import HeaderSelect from '../../../_components/project-table/header-select';
+import TableInput from '../../../_components/project-table/table-input';
+import TableSelectionAllRow from '../../../_components/project-table/table-selection-all-row';
+import TableSelectionRow from '../../../_components/project-table/table-selection-row';
+import SplitWarehouse from '../../../_components/split-line/split-warehouse';
 import { Layout, Modal } from '../../../_components';
 
 function locationSorted(array, sort) {

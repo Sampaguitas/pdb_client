@@ -1,5 +1,6 @@
 import React from 'react';
 import config from 'config';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../../_helpers';
 import {
     doesMatch,
@@ -7,17 +8,14 @@ import {
     screenSorted,
     copyObject
 } from '../../../../_functions'
-import {
-    HeaderInput,
-    NewRowCreate,
-    NewRowInput,
-    NewRowSelect,
-    TableInput,
-    TableSelect,
-    TableSelectionAllRow,
-    TableSelectionRow
-} from '../../../../_components/project-table';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import HeaderInput from '../../../../_components/project-table/header-input';
+import NewRowCreate from '../../../../_components/project-table/new-row-create';
+import NewRowInput from '../../../../_components/project-table/new-row-input';
+import NewRowSelect from '../../../../_components/project-table/new-row-select';
+import TableInput from '../../../../_components/project-table/table-input';
+import TableSelect from '../../../../_components/project-table/table-select';
+import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
+import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
 import _ from 'lodash';
 
 class Duf extends React.Component {

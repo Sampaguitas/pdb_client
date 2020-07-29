@@ -4,7 +4,7 @@ import {
     getDateFormat,
 } from '../../_functions';
 
-export class NewRowInput extends Component{
+class NewRowInput extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -117,4 +117,4 @@ export class NewRowInput extends Component{
     }
 }
 
-// export default NewRowInput;
+export default NewRowInput;

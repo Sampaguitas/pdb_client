@@ -31,9 +31,9 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../../_functions';
-import { ProjectTable } from '../../../../_components/project-table';
+import ProjectTable from '../../../../_components/project-table/project-table';
 import { TabDisplay, TabFilter, TabWidth } from '../../../../_components/setting';
-import { SplitWhPackItem } from '../../../../_components/split-line/split-whpackitem';
+import SplitWhPackItem from '../../../../_components/split-line/split-whpackitem';
 import { Layout, Modal } from '../../../../_components';
 import _ from 'lodash';
 

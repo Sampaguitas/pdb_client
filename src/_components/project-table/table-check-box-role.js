@@ -3,7 +3,7 @@ import propTypes from 'prop-types';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './table-check-box-role.css'
 
-export class TableCheckBoxRole extends Component {
+class TableCheckBoxRole extends Component {
     render(){
         const {id, checked, onChange, disabled } = this.props;
         return (
@@ -48,12 +48,5 @@ export class TableCheckBoxRole extends Component {
         );
     }
 };
-// TableCheckBoxRole.propTypes = {
-//     id:propTypes.string.isRequired,
-//     checked:propTypes.bool.isRequired
-// };
 
-// export default TableCheckBoxRole;
-
-
-//<i class="fal fa-square"></i>
+export default TableCheckBoxRole;

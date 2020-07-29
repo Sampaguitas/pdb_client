@@ -7,7 +7,7 @@ export { NewRowCheckBox }  from './new-row-check-box';
 export { NewRowCreate }  from './new-row-create';
 export { NewRowInput }  from './new-row-input';
 export { NewRowSelect }  from './new-row-select';
-export *  from './project-table';
+// export *  from './project-table';
 export { TableCheckBox }  from './table-check-box';
 export { TableCheckBoxAdmin }  from './table-check-box-admin';
 export { TableCheckBoxRole }  from './table-check-box-role';

@@ -8,7 +8,8 @@ import {
     DateToString,
     StringToDate,
 } from '../../_functions';
-import { TableSelectionAllRow, TableSelectionRow } from '../project-table';
+import TableSelectionAllRow from '../project-table/table-selection-all-row';
+import TableSelectionRow from '../project-table/table-selection-row';
 import SplitInput from './split-input';
 import _ from 'lodash';
 
@@ -510,7 +511,7 @@ function selectedScreenBody(bodysForSelect, selectedLine) {
     });
 }
 
-export class SplitPackItem extends Component {
+class SplitPackItem extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -977,4 +978,4 @@ export class SplitPackItem extends Component {
         );
     }
 }
-// export default SplitPackItem;
+export default SplitPackItem;

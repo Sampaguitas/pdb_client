@@ -27,9 +27,9 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
-import { ProjectTable } from '../../../_components/project-table';
+import ProjectTable from '../../../_components/project-table/project-table';
 import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
-import { SplitHeatPick } from '../../../_components/split-line';
+import SplitHeatPick from '../../../_components/split-line/split-heat-pick';
 import { Layout, Modal } from '../../../_components';
 import _ from 'lodash';
 import { __promisify__ } from 'glob';

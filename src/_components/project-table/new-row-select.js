@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import _ from 'lodash';
 import classNames from 'classnames';
-import {
-    resolve,
-} from '../../_functions';
+import { resolve } from '../../_functions';
 
 function arraySorted(array, field, fromTbls) {
     if (array) {
@@ -32,7 +30,7 @@ function arraySorted(array, field, fromTbls) {
     }
 }
 
-export class NewRowSelect extends Component{
+class NewRowSelect extends Component{
     constructor(props) {
         super(props);
         this.state = {
@@ -150,4 +148,4 @@ export class NewRowSelect extends Component{
     }
 }
 
-// export default NewRowSelect;
+export default NewRowSelect;

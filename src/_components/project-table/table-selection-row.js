@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './table-selection-row.css'
 
-export class TableSelectionRow extends Component {
+class TableSelectionRow extends Component {
 
     constructor(props) {
         super(props);
@@ -85,11 +85,11 @@ export class TableSelectionRow extends Component {
                             verticalAlign: 'middle',
                             cursor: 'pointer'
                         }}
-                    /> {/*#ededed*/}
+                    />
                 </label>
             </th>
         );
     }
 };
 
-// export default TableSelectionRow;
+export default TableSelectionRow;

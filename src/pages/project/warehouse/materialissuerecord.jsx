@@ -29,7 +29,7 @@ import {
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
-import { ProjectTable } from '../../../_components/project-table';
+import ProjectTable from '../../../_components/project-table/project-table';
 import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
 import { Layout, Modal, WarehouseCheck } from '../../../_components';
 import _ from 'lodash';

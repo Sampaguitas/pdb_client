@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import './table-selection-all-row.css'
 
-export class TableSelectionAllRow extends Component {
+class TableSelectionAllRow extends Component {
     render(){
         const {
             checked,
@@ -52,11 +52,11 @@ export class TableSelectionAllRow extends Component {
                             verticalAlign: 'middle',
                             cursor: 'pointer'
                         }}
-                    /> {/*#ededed*/}
+                    />
                 </label>
             </th>
         );
     }
 };
 
-// export default TableSelectionAllRow;
+export default TableSelectionAllRow;

@@ -1,5 +1,6 @@
 import React from 'react';
 import config from 'config';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../../_helpers';
 import {
     doesMatch,
@@ -9,21 +10,18 @@ import {
     generateFromTbls,
     copyObject
 } from '../../../../_functions';
-import {
-    HeaderCheckBox,
-    HeaderInput,
-    HeaderSelect,
-    NewRowCheckBox,
-    NewRowCreate,
-    NewRowInput,
-    NewRowSelect,
-    TableCheckBox,
-    TableInput,
-    TableSelect,
-    TableSelectionAllRow,
-    TableSelectionRow
-} from '../../../../_components/project-table';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
+import HeaderInput from '../../../../_components/project-table/header-input';
+import HeaderSelect from '../../../../_components/project-table/header-select';
+import NewRowCheckBox from '../../../../_components/project-table/new-row-check-box';
+import NewRowCreate from '../../../../_components/project-table/new-row-create';
+import NewRowInput from '../../../../_components/project-table/new-row-input';
+import NewRowSelect from '../../../../_components/project-table/new-row-select';
+import TableCheckBox from '../../../../_components/project-table/table-check-box';
+import TableInput from '../../../../_components/project-table/table-input';
+import TableSelect from '../../../../_components/project-table/table-select';
+import TableSelectionAllRow from '../../../../_components/project-table/table-selection-all-row';
+import TableSelectionRow from '../../../../_components/project-table/table-selection-row';
 import _ from 'lodash';
 
 class Screens extends React.Component {
