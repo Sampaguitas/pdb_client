@@ -321,6 +321,7 @@ class SplitHeat extends Component {
         event.preventDefault();
         const { refreshPos } = this.props;
         const { creatingNewRow, newHeat } = this.state;
+        console.log('newHeat:', newHeat);
         if (!creatingNewRow) {
             this.setState({
                 creatingNewRow: true
@@ -436,7 +437,7 @@ class SplitHeat extends Component {
         
         if (newRow) {
             tempRows.push(
-                <tr
+                <tr key="0"
                     // onBlur={this.onBlurRow}
                     // onFocus={this.onFocusRow}
                     data-type="newrow"

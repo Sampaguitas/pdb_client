@@ -5,7 +5,7 @@ import { authHeader } from '../../_helpers';
 import {
     arrayRemove,
     doesMatch,
-    copyObject
+    copyObject,
 } from '../../_functions';
 import CifInput from '../project-table/cif-input';
 import CifNewRowInput from '../project-table/cif-new-row-input';
@@ -375,7 +375,7 @@ class SplitCertificate extends Component {
         
         if (newRow) {
             tempRows.push(
-                <tr
+                <tr key="0"
                     // onBlur={this.onBlurRow}
                     // onFocus={this.onFocusRow}
                     data-type="newrow"
