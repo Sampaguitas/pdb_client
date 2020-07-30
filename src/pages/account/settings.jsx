@@ -17,7 +17,10 @@ import {
   userActions 
 } from "../../_actions";
 import { doesMatch, arraySorted, copyObject } from '../../_functions';
-import { HeaderCheckBox, HeaderInput, TableCheckBoxAdmin, TableCheckBoxSuperAdmin } from "../../_components/project-table";
+import HeaderCheckBox from "../../_components/project-table/header-check-box";
+import HeaderInput from "../../_components/project-table/header-input";
+import TableCheckBoxAdmin from "../../_components/project-table/table-check-box-admin";
+import TableCheckBoxSuperAdmin from "../../_components/project-table/table-check-box-spadmin";
 import { Input, Layout, Modal, Select } from "../../_components";
 import _ from 'lodash';
 
