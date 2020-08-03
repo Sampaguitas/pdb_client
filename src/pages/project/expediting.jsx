@@ -500,6 +500,7 @@ class Expediting extends React.Component {
             downloadingTable: false,
             deletingRows: false,////////
             settingSaving: false,
+            generatingFile: false,
             unit: 'value',
             period: 'quarter',
             clPo:'',
@@ -873,13 +874,35 @@ class Expediting extends React.Component {
         if (docdefs && selectedTemplate) {
             let obj = findObj(docdefs.items, selectedTemplate);
             if (obj) {
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIds: selectedIds})
-                };
-            return fetch(`${config.apiUrl}/template/generateEsr?id=${selectedTemplate}&locale=${locale}`, requestOptions)
-                .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
+                this.setState({
+                    generatingFile: true
+                }, () => {
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                        body: JSON.stringify({selectedIds: selectedIds})
+                    };
+                    return fetch(`${config.apiUrl}/template/generateEsr?id=${selectedTemplate}&locale=${locale}`, requestOptions)
+                // .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
+                    .then(responce => {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        } else if (responce.status === 400) {
+                            this.setState({
+                                generatingFile: false,
+                                alert: {
+                                    type: 'alert-danger',
+                                    message: 'an error has occured'  
+                                }
+                            });
+                        } else {
+                            this.setState({
+                                generatingFile: false
+                            }, () => responce.blob().then(blob => saveAs(blob, obj.field)));
+                        }
+                    });
+                });
             }
         }
     }
@@ -1441,7 +1464,8 @@ class Expediting extends React.Component {
             settingsFilter,
             settingsDisplay,
             settingsColWidth,
-            settingSaving
+            settingSaving,
+            generatingFile
         } = this.state;
 
         const { accesses, fieldnames, fields, pos, selection, sidemenu } = this.props;
@@ -1591,7 +1615,7 @@ class Expediting extends React.Component {
                             </div>
                             <div className="text-right">
                                 <button type="submit" className="btn btn-success btn-lg">
-                                    <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate</span>
+                                    <span><FontAwesomeIcon icon={generatingFile ? "spinner" : "file-excel"} className={generatingFile ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Generate</span>
                                 </button>
                             </div>
                         </form>                  
