@@ -270,7 +270,8 @@ class SplitCertificate extends Component {
                         location.reload(true);
                     }
                     this.setState({
-                        ...this.state,
+                        selectedIds: [],
+                        selectAllRows: false,
                         deleting: false,
                         alert: {
                             type: responce.status === 200 ? 'alert-success' : 'alert-danger',
