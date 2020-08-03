@@ -475,7 +475,7 @@ class ProjectTable extends Component {
             <div className="full-height">
                 <div className="btn-group-vertical pull-right" style={{marginLeft: '5px'}}>
                     <button className="btn btn-outline-leeuwen-blue" title="Configs" onClick={event => toggleSettings(event)} style={{width: '40px', height: '40px'}}> 
-                        <span><FontAwesomeIcon icon="cog" className="fas fa-2x"/></span>
+                        <span><FontAwesomeIcon icon="cog" className="fa fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title="Refresh" onClick={refreshStore} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="sync-alt" className="far fa-2x"/></span>
@@ -487,16 +487,16 @@ class ProjectTable extends Component {
                         <span><FontAwesomeIcon icon={isEqual ? 'equals' : 'brackets-curly'} className="far fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title="Unlock Cells" onClick={event => toggleUnlock(event)} style={{width: '40px', height: '40px'}}>
-                        <span><FontAwesomeIcon icon={unlocked ? "unlock" : "lock"} className="fas fa-2x"/></span>
+                        <span><FontAwesomeIcon icon={unlocked ? "unlock" : "lock"} className="fa fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title="Download" onClick={event => downloadTable(event)} style={{width: '40px', height: '40px'}}>
-                        <span><FontAwesomeIcon icon={downloadingTable ? "spinner" : "download"} className={downloadingTable ? "fa-pulse fa-fw fa-2x": "fas fa-2x"}/></span>
+                        <span><FontAwesomeIcon icon={downloadingTable ? "spinner" : "download"} className={downloadingTable ? "fa-pulse fa-fw fa-2x": "fa fa-2x"}/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title="Upload" onClick={event => toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>
-                        <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
+                        <span><FontAwesomeIcon icon="upload" className="fa fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title={screenId == '5ea8eefb7c213e2096462a2c' ? "Undo Transaction": "Delete Line(s)"} onClick={handleDeleteRows} style={{width: '40px', height: '40px'}}>
-                        <span><FontAwesomeIcon icon={deletingRows ? "spinner" : "trash-alt"} className={deletingRows ? "fa-pulse fa-fw fa-2x": "fas fa-2x"}/></span>
+                        <span><FontAwesomeIcon icon={deletingRows ? "spinner" : "trash-alt"} className={deletingRows ? "fa-pulse fa-fw fa-2x": "fa fa-2x"}/></span>
                     </button>
                 </div>
 

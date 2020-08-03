@@ -39,8 +39,6 @@ import { WhPackingDetails } from '../pages/project/warehouse/shipping/whpackingd
 import { Locations } from '../pages/project/warehouse/locations.jsx';
 import { Configuration } from '../pages/project/configuration.jsx';
 
-
-
 // Styles
 import '../_styles/custom-bootsrap.scss';
 import '../_styles/main.css';
@@ -51,7 +49,7 @@ import { fas } from '@fortawesome/pro-solid-svg-icons';
 import { far } from '@fortawesome/pro-regular-svg-icons';
 import { fal } from '@fortawesome/pro-light-svg-icons';
 
-library.add(fas, far, fal)
+library.add(fas, far, fal);
 
 
 class App extends React.Component {

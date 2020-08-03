@@ -16,7 +16,7 @@ class NewRowCreate extends Component {
             <div onClick={onClick}>
                 <FontAwesomeIcon
                     icon={creatingNewRow ? "spinner" :"plus"}
-                    className={creatingNewRow ? "fa-pulse fa-fw fa-lg" : "fas fa-lg"}
+                    className={creatingNewRow ? "fa-pulse fa-fw fa-lg" : "fa fa-lg"}
                     style={{
                         color: '#adb5bd',
                         padding: 'auto',
