@@ -157,22 +157,6 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
         pos.items.map(po => {
             if (po.subs) {
                 po.subs.map(sub => {
-                    let certificate = sub.heats.reduce(function (acc, cur) {
-                        if (!acc.heatNr.split(' | ').includes(cur.heatNr)) {
-                            acc.heatNr = !acc.heatNr ? cur.heatNr : `${acc.heatNr} | ${cur.heatNr}`
-                        }
-                        if (!acc.cif.split(' | ').includes(cur.certificate.cif)) {
-                            acc.cif = !acc.cif ? cur.certificate.cif : `${acc.cif} | ${cur.certificate.cif}`
-                        }
-                        if (!acc.inspQty.split(' | ').includes(String(cur.inspQty))) {
-                            acc.inspQty = !acc.inspQty ? String(cur.inspQty) : `${acc.inspQty} | ${String(cur.inspQty)}`
-                        }
-                        return acc;
-                    }, {
-                        heatNr: '',
-                        cif: '',
-                        inspQty: ''
-                    });
                     if (!_.isEmpty(sub.packitems) && hasPackitems) {
                         virtuals(sub.packitems, po.uom, getTblFields(screenHeaders, 'packitem')).map(virtual => {
                             arrayRow = [];
@@ -220,12 +204,12 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 collection: 'virtual',
                                                 objectId: '0',
                                                 fieldName: screenHeader.fields.name,
-                                                fieldValue: certificate[screenHeader.fields.name],
+                                                fieldValue: '',
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
                                                 screenheaderId: screenHeader._id
-                                            });
+                                            }); 
                                         } else if (_.isEqual(screenHeader.fields.name, 'relQty') && !enableInspection){
                                             arrayRow.push({
                                                 collection: 'virtual',
@@ -250,18 +234,6 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             });
                                         }
                                         break;
-                                    case 'certificate':
-                                        arrayRow.push({
-                                            collection: 'virtual',
-                                            objectId: '0',
-                                            fieldName: screenHeader.fields.name,
-                                            fieldValue: certificate[screenHeader.fields.name],
-                                            disabled: screenHeader.edit,
-                                            align: screenHeader.align,
-                                            fieldType: getInputType(screenHeader.fields.type),
-                                            screenheaderId: screenHeader._id
-                                        });
-                                        break
                                     case 'packitem':
                                         if (screenHeader.fields.name === 'plNr') {
                                             arrayRow.push({
@@ -304,9 +276,6 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                 tablesId: {
                                     poId: po._id,
                                     subId: sub._id,
-                                    certificateId: '',
-                                    packitemId: '',
-                                    collipackId: ''
                                 },
                                 fields: arrayRow,
                             };
@@ -359,12 +328,12 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             collection: 'virtual',
                                             objectId: '0',
                                             fieldName: screenHeader.fields.name,
-                                            fieldValue: certificate[screenHeader.fields.name],
+                                            fieldValue: '',
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
                                             screenheaderId: screenHeader._id
-                                        });
+                                        }); 
                                     } else if (_.isEqual(screenHeader.fields.name, 'relQty') && !enableInspection){
                                         arrayRow.push({
                                             collection: 'virtual',
@@ -389,18 +358,6 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                         });
                                     }
                                     break;
-                                case 'certificate':
-                                    arrayRow.push({
-                                        collection: 'virtual',
-                                        objectId: '0',
-                                        fieldName: screenHeader.fields.name,
-                                        fieldValue: certificate[screenHeader.fields.name],
-                                        disabled: screenHeader.edit,
-                                        align: screenHeader.align,
-                                        fieldType: getInputType(screenHeader.fields.type),
-                                        screenheaderId: screenHeader._id
-                                    });
-                                    break
                                 default: arrayRow.push({
                                     collection: 'virtual',
                                     objectId: '0',
@@ -418,9 +375,6 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                             tablesId: {
                                 poId: po._id,
                                 subId: sub._id,
-                                certificateId: '',
-                                packitemId: '',
-                                collipackId: ''
                             },
                             fields: arrayRow,
                         };
@@ -556,7 +510,7 @@ class Expediting extends React.Component {
         this.fileInput = React.createRef();
         this.onKeyPress = this.onKeyPress.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
-        this.handleUploadFile = this.handleUploadFile.bind(this);
+        this.uploadTable = this.uploadTable.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
         this.generateRejectionRows = this.generateRejectionRows.bind(this);
     }
@@ -822,53 +776,6 @@ class Expediting extends React.Component {
             unlocked: !unlocked
         }, () => {
         });
-    }
-
-    downloadTable(event){
-        event.preventDefault();
-        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
-        if (_.isEmpty(selectedIds)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select line(s) to be downloaded.'
-                }
-            });
-        } else if (projectId && screenId && screen) {
-            this.setState({
-                downloadingTable: true
-            }, () => {
-                var currentDate = new Date();
-                var date = currentDate.getDate();
-                var month = currentDate.getMonth();
-                var year = currentDate.getFullYear();
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIds: selectedIds})
-                };
-                return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
-                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
-                .then(responce => {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    } else if (responce.status === 400) {
-                        this.setState({
-                            downloadingTable: false,
-                            alert: {
-                                type: 'alert-danger',
-                                message: 'an error has occured'  
-                            }
-                        });
-                    } else {
-                        this.setState({
-                            downloadingTable: false
-                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
-                    }
-                });
-            });
-        }
     }
 
     handleChange(event) {
@@ -1465,7 +1372,54 @@ class Expediting extends React.Component {
         });
     }
 
-    handleUploadFile(event){
+    downloadTable(event){
+        event.preventDefault();
+        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be downloaded.'
+                }
+            });
+        } else if (projectId && screenId && screen) {
+            this.setState({
+                downloadingTable: true
+            }, () => {
+                var currentDate = new Date();
+                var date = currentDate.getDate();
+                var month = currentDate.getMonth();
+                var year = currentDate.getFullYear();
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedIds})
+                };
+                return fetch(`${config.apiUrl}/extract/downloadExp?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
+                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+                .then(responce => {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    } else if (responce.status === 400) {
+                        this.setState({
+                            downloadingTable: false,
+                            alert: {
+                                type: 'alert-danger',
+                                message: 'an error has occured'  
+                            }
+                        });
+                    } else {
+                        this.setState({
+                            downloadingTable: false
+                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
+                    }
+                });
+            });
+        }
+    }
+
+    uploadTable(event){
         event.preventDefault();
         const { fileName, projectId, screenId } = this.state
         if(this.fileInput.current.files[0] && projectId && screenId && fileName) {
@@ -1479,7 +1433,7 @@ class Expediting extends React.Component {
                 headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
                 body: data
             }
-            return fetch(`${config.apiUrl}/extract/upload`, requestOptions)
+            return fetch(`${config.apiUrl}/extract/uploadExp`, requestOptions)
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
                 if (!responce.ok) {
@@ -1970,7 +1924,7 @@ class Expediting extends React.Component {
                                 <form
                                     className="col-12"
                                     encType="multipart/form-data"
-                                    onSubmit={this.handleUploadFile}
+                                    onSubmit={this.uploadTable}
                                     onKeyPress={this.onKeyPress}
                                     style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
                                 >
