@@ -218,7 +218,13 @@ class PickingTicket extends React.Component {
             menuItem: 'Warehouse',
             downloadingTable: false,
             settingSaving: false,
-            deletingRows: false
+            deletingRows: false,
+            //upload file
+            showModalUpload: false,
+            fileName: '',
+            inputKey: Date.now(),
+            uploading: false,
+            responce:{},
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
@@ -244,6 +250,13 @@ class PickingTicket extends React.Component {
         this.colDoubleClick = this.colDoubleClick.bind(this);
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
+        //Upload File
+        this.fileInput = React.createRef();
+        this.onKeyPress = this.onKeyPress.bind(this);
+        this.toggleModalUpload = this.toggleModalUpload.bind(this);
+        this.handleUploadFile = this.handleUploadFile.bind(this);
+        this.handleFileChange = this.handleFileChange.bind(this);
+        this.generateRejectionRows = this.generateRejectionRows.bind(this);
     }
 
     componentDidMount() {
@@ -780,6 +793,111 @@ class PickingTicket extends React.Component {
         }
     }
 
+    onKeyPress(event) {
+        if (event.which === 13 /* prevent form submit on key Enter */) {
+          event.preventDefault();
+        }
+    }
+
+    toggleModalUpload() {
+        const { showModalUpload } = this.state;
+        this.setState({
+            ...this.state,
+            showModalUpload: !showModalUpload,
+            fileName: '',
+            inputKey: Date.now(),
+            uploading: false,
+            responce:{},
+            alert: {
+                type:'',
+                message:''
+            }
+        });
+    }
+
+    handleUploadFile(event){
+        event.preventDefault();
+        const { fileName, projectId, screenId } = this.state
+        if(this.fileInput.current.files[0] && projectId && screenId && fileName) {
+            this.setState({...this.state, uploading: true});
+            var data = new FormData()
+            data.append('file', this.fileInput.current.files[0]);
+            data.append('projectId', projectId);
+            data.append('screenId', screenId);
+            const requestOptions = {
+                method: 'POST',
+                headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
+                body: data
+            }
+            return fetch(`${config.apiUrl}/extract/upload`, requestOptions)
+            .then(responce => responce.text().then(text => {
+                const data = text && JSON.parse(text);
+                if (!responce.ok) {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    }
+                    this.setState({
+                        ...this.state,
+                        uploading: false,
+                        responce: {
+                            rejections: data.rejections,
+                            nProcessed: data.nProcessed,
+                            nRejected: data.nRejected,
+                            nEdited: data.nEdited
+                        },
+                        alert: {
+                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                            message: data.message
+                        }
+                    }, this.refreshStore());
+                } else {
+                    this.setState({
+                        ...this.state,
+                        uploading: false,
+                        responce: {
+                            rejections: data.rejections,
+                            nProcessed: data.nProcessed,
+                            nRejected: data.nRejected,
+                            nEdited: data.nEdited
+                        },
+                    }, this.refreshStore());
+                }
+            }));            
+        }        
+    }
+
+    handleFileChange(event){
+        if(event.target.files.length > 0) {
+            this.setState({
+                ...this.state,
+                fileName: event.target.files[0].name
+            });
+        }
+    }
+
+    generateRejectionRows(responce){
+        let temp =[]
+        if (!_.isEmpty(responce.rejections)) {
+            responce.rejections.map(function(r, index) {
+                temp.push(
+                <tr key={index}>
+                    <td>{r.row}</td>
+                    <td>{r.reason}</td>
+                </tr>   
+                );
+            });
+            return (temp);
+        } else {
+            return (
+                <tr>
+                    <td></td>
+                    <td></td>
+                </tr>
+            );
+        }
+    }
+
     render() {
 
         const { 
@@ -802,7 +920,12 @@ class PickingTicket extends React.Component {
             downloadingTable,
             settingsColWidth,
             settingSaving,
-            deletingRows
+            deletingRows,
+            //---------upload------
+            showModalUpload,
+            fileName,
+            uploading,
+            responce,
         } = this.state;
 
         const { accesses, fieldnames, fields, selection, sidemenu } = this.props;
@@ -810,7 +933,7 @@ class PickingTicket extends React.Component {
 
         return (
             <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
-                {alert.message && !showSettings &&
+                {alert.message && !showSettings && !showModalUpload &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -829,7 +952,7 @@ class PickingTicket extends React.Component {
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <div id="calloff" className={ (alert.message && !showSettings) ? "main-section-alert" : "main-section"}>
+                <div id="calloff" className={ (alert.message && !showSettings && !showModalUpload) ? "main-section-alert" : "main-section"}>
                     <div className="action-row row">
                         <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Generate Picking Ticket" onClick={this.toggleGenerate}>
                             <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate Ticket</span>
@@ -862,6 +985,8 @@ class PickingTicket extends React.Component {
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}
                                 setColWidth={this.setColWidth}
+                                //upload file
+                                toggleModalUpload={this.toggleModalUpload}
                             />
                         }
                     </div>
@@ -954,6 +1079,80 @@ class PickingTicket extends React.Component {
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={this.toggleSettings}>
                             <span><FontAwesomeIcon icon="times" className="fa mr-2"/>Close</span>
                         </button>
+                    </div>
+                </Modal>
+                <Modal
+                    show={showModalUpload}
+                    hideModal={this.toggleModalUpload}
+                    title="Upload File"
+                    size="modal-xl"
+                >
+                    <div className="col-12">
+                            {alert.message && 
+                                <div className={`alert ${alert.type}`}>{alert.message}
+                                    <button className="close" onClick={(event) => this.handleClearAlert(event)}>
+                                        <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
+                                    </button>
+                                </div>
+                            }
+                            <div className="action-row row ml-1 mb-3 mr-1" >
+                                <form
+                                    className="col-12"
+                                    encType="multipart/form-data"
+                                    onSubmit={this.handleUploadFile}
+                                    onKeyPress={this.onKeyPress}
+                                    style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
+                                >
+
+                                    <div className="input-group">
+                                        <div className="input-group-prepend">
+                                            <span className="input-group-text">Select File:</span>
+                                            <input
+                                                type="file"
+                                                name="fileInput"
+                                                id="fileInput"
+                                                ref={this.fileInput}
+                                                className="custom-file-input"
+                                                style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
+                                                onChange={this.handleFileChange}
+                                                key={this.state.inputKey}
+                                            />
+                                        </div>
+                                        <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
+                                        <div className="input-group-append">
+                                            <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
+                                                <span><FontAwesomeIcon icon={uploading ? 'spinner' : 'upload'} className={uploading ? 'fa-pulse fa-lg fa-fw' : 'fa-lg mr-2'}/>Upload</span>
+                                            </button> 
+                                        </div>       
+                                    </div>
+                                </form>
+                            </div>
+                        {!_.isEmpty(responce) &&
+                            <div className="ml-1 mr-1">
+                                <div className="form-group table-resonsive">
+                                    <strong>Total Processed:</strong> {responce.nProcessed}<br />
+                                    <strong>Total Records Edited:</strong> {responce.nEdited}<br />
+                                    <strong>Total Records Rejected:</strong> {responce.nRejected}<br />
+                                    <hr />
+                                </div>
+                                {!_.isEmpty(responce.rejections) &&
+                                    <div className="rejections">
+                                        <h3>Rejections</h3>
+                                            <table className="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th style={{width: '10%'}}>Row</th>
+                                                        <th style={{width: '90%'}}>Reason</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    {this.generateRejectionRows(responce)}
+                                                </tbody>
+                                            </table>
+                                    </div>
+                                }
+                            </div>
+                        }
                     </div>
                 </Modal>
             </Layout>

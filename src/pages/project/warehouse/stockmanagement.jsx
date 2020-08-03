@@ -904,6 +904,8 @@ class StockManagement extends React.Component {
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
         this.dufInput = React.createRef();
+        //Upload File
+        this.toggleModalUpload = this.toggleModalUpload.bind(this);
     }
 
     componentDidMount() {
@@ -1989,6 +1991,15 @@ class StockManagement extends React.Component {
         }
     }
 
+    toggleModalUpload() {
+        this.setState({
+            alert: {
+                type:'alert-warning',
+                message:'This functionality is not available on this screen.'
+            }
+        });
+    }
+
     render() {
         const { 
             menuItem,
@@ -2049,7 +2060,7 @@ class StockManagement extends React.Component {
             downloadingTable,
             settingsColWidth,
             settingSaving,
-            deletingRows
+            deletingRows,
         } = this.state;
 
         const { accesses, certificates, fields, fieldnames, heatlocs, pos, selection, sidemenu, warehouses } = this.props;
@@ -2161,6 +2172,8 @@ class StockManagement extends React.Component {
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}
                                 setColWidth={this.setColWidth}
+                                //upload file
+                                toggleModalUpload={this.toggleModalUpload}
                             />
                         }
                     </div>
@@ -2554,7 +2567,6 @@ class StockManagement extends React.Component {
                         </button>
                     </div>
                 </Modal>
-                
             </Layout>
         );
     }

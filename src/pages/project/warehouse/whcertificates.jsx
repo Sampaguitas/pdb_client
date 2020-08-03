@@ -29,6 +29,7 @@ import {
 } from '../../../_functions';
 import ProjectTable from '../../../_components/project-table/project-table';
 import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
+import SplitCertificate from '../../../_components/split-line/split-certificate';
 import SplitHeat from '../../../_components/split-line/split-heat';
 import { Layout, Modal } from '../../../_components';
 
@@ -431,6 +432,8 @@ class WhCertificates extends React.Component {
         this.colDoubleClick = this.colDoubleClick.bind(this);
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
+        //Upload File
+        this.toggleModalUpload = this.toggleModalUpload.bind(this);
     }
 
     componentDidMount() {
@@ -996,6 +999,15 @@ class WhCertificates extends React.Component {
         }
     }
 
+    toggleModalUpload() {
+        this.setState({
+            alert: {
+                type:'alert-warning',
+                message:'This functionality is not available on this screen.'
+            }
+        });
+    }
+
     render() {
         const { 
             menuItem,
@@ -1079,6 +1091,8 @@ class WhCertificates extends React.Component {
                                 settingsColWidth={settingsColWidth}
                                 colDoubleClick={this.colDoubleClick}
                                 setColWidth={this.setColWidth}
+                                //upload file
+                                toggleModalUpload={this.toggleModalUpload}
                             />
                         }
                     </div>
@@ -1090,7 +1104,7 @@ class WhCertificates extends React.Component {
                     title="Add/Edit Certificates"
                     size="modal-lg"
                 >
-                    <Certificate 
+                    <SplitCertificate 
                         alert={alert}
                         handleClearAlert={this.handleClearAlert}
                         certificates={certificates}

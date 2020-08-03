@@ -27,12 +27,12 @@ class ProjectTable extends Component {
             selectedRows: [],
             selectAllRows: false,
             isEqual: false,
-            showModalUpload: false,
-            fileName: '',
-            inputKey: Date.now(),
-            uploading: false,
-            downloading: false,
-            responce:{},
+            // showModalUpload: false,
+            // fileName: '',
+            // inputKey: Date.now(),
+            // uploading: false,
+            // downloading: false,
+            // responce:{},
             alert: {
                 type:'',
                 message:''
@@ -48,13 +48,14 @@ class ProjectTable extends Component {
         this.updateSelectedRows = this.updateSelectedRows.bind(this);
         this.generateHeader = this.generateHeader.bind(this);
         this.generateBody = this.generateBody.bind(this);
-        this.toggleModalUpload = this.toggleModalUpload.bind(this);
         this.keyHandler = this.keyHandler.bind(this);
-        this.onKeyPress = this.onKeyPress.bind(this);
-        this.fileInput = React.createRef();
-        this.handleUploadFile = this.handleUploadFile.bind(this);
-        this.handleFileChange = this.handleFileChange.bind(this);
-        this.generateRejectionRows = this.generateRejectionRows.bind(this);
+        
+        // this.fileInput = React.createRef();
+        // this.onKeyPress = this.onKeyPress.bind(this);
+        // this.toggleModalUpload = this.toggleModalUpload.bind(this);
+        // this.handleUploadFile = this.handleUploadFile.bind(this);
+        // this.handleFileChange = this.handleFileChange.bind(this);
+        // this.generateRejectionRows = this.generateRejectionRows.bind(this);
     }
 
     componentDidMount() {
@@ -335,112 +336,112 @@ class ProjectTable extends Component {
         return tempRows;
     }
 
-    toggleModalUpload() {
-        const { showModalUpload } = this.state;
-        this.setState({
-            ...this.state,
-            showModalUpload: !showModalUpload,
-            fileName: '',
-            inputKey: Date.now(),
-            uploading: false,
-            downloading: false,
-            responce:{},
-            alert: {
-                type:'',
-                message:''
-            }
-        });
-    }
+    // toggleModalUpload() {
+    //     const { showModalUpload } = this.state;
+    //     this.setState({
+    //         ...this.state,
+    //         showModalUpload: !showModalUpload,
+    //         fileName: '',
+    //         inputKey: Date.now(),
+    //         uploading: false,
+    //         downloading: false,
+    //         responce:{},
+    //         alert: {
+    //             type:'',
+    //             message:''
+    //         }
+    //     });
+    // }
 
-    onKeyPress(event) {
-        if (event.which === 13 /* prevent form submit on key Enter */) {
-          event.preventDefault();
-        }
-    }
+    // onKeyPress(event) {
+    //     if (event.which === 13 /* prevent form submit on key Enter */) {
+    //       event.preventDefault();
+    //     }
+    // }
 
-    handleUploadFile(event){
-        event.preventDefault();
-        const { fileName } = this.state
-        const { projectId, screenId, refreshStore } = this.props;
-        if(this.fileInput.current.files[0] && projectId && screenId && fileName) {
-            this.setState({...this.state, uploading: true});
-            var data = new FormData()
-            data.append('file', this.fileInput.current.files[0]);
-            data.append('projectId', projectId);
-            data.append('screenId', screenId);
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
-                body: data
-            }
-            return fetch(`${config.apiUrl}/extract/upload`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (!responce.ok) {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    }
-                    this.setState({
-                        ...this.state,
-                        uploading: false,
-                        responce: {
-                            rejections: data.rejections,
-                            nProcessed: data.nProcessed,
-                            nRejected: data.nRejected,
-                            nEdited: data.nEdited
-                        },
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, refreshStore);
-                } else {
-                    this.setState({
-                        ...this.state,
-                        uploading: false,
-                        responce: {
-                            rejections: data.rejections,
-                            nProcessed: data.nProcessed,
-                            nRejected: data.nRejected,
-                            nEdited: data.nEdited
-                        },
-                    }, refreshStore);
-                }
-            }));            
-        }        
-    }
+    // handleUploadFile(event){
+    //     event.preventDefault();
+    //     const { fileName } = this.state
+    //     const { projectId, screenId, refreshStore } = this.props;
+    //     if(this.fileInput.current.files[0] && projectId && screenId && fileName) {
+    //         this.setState({...this.state, uploading: true});
+    //         var data = new FormData()
+    //         data.append('file', this.fileInput.current.files[0]);
+    //         data.append('projectId', projectId);
+    //         data.append('screenId', screenId);
+    //         const requestOptions = {
+    //             method: 'POST',
+    //             headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
+    //             body: data
+    //         }
+    //         return fetch(`${config.apiUrl}/extract/upload`, requestOptions)
+    //         .then(responce => responce.text().then(text => {
+    //             const data = text && JSON.parse(text);
+    //             if (!responce.ok) {
+    //                 if (responce.status === 401) {
+    //                     localStorage.removeItem('user');
+    //                     location.reload(true);
+    //                 }
+    //                 this.setState({
+    //                     ...this.state,
+    //                     uploading: false,
+    //                     responce: {
+    //                         rejections: data.rejections,
+    //                         nProcessed: data.nProcessed,
+    //                         nRejected: data.nRejected,
+    //                         nEdited: data.nEdited
+    //                     },
+    //                     alert: {
+    //                         type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+    //                         message: data.message
+    //                     }
+    //                 }, refreshStore);
+    //             } else {
+    //                 this.setState({
+    //                     ...this.state,
+    //                     uploading: false,
+    //                     responce: {
+    //                         rejections: data.rejections,
+    //                         nProcessed: data.nProcessed,
+    //                         nRejected: data.nRejected,
+    //                         nEdited: data.nEdited
+    //                     },
+    //                 }, refreshStore);
+    //             }
+    //         }));            
+    //     }        
+    // }
 
-    handleFileChange(event){
-        if(event.target.files.length > 0) {
-            this.setState({
-                ...this.state,
-                fileName: event.target.files[0].name
-            });
-        }
-    }
+    // handleFileChange(event){
+    //     if(event.target.files.length > 0) {
+    //         this.setState({
+    //             ...this.state,
+    //             fileName: event.target.files[0].name
+    //         });
+    //     }
+    // }
 
-    generateRejectionRows(responce){
-        let temp =[]
-        if (!_.isEmpty(responce.rejections)) {
-            responce.rejections.map(function(r, index) {
-                temp.push(
-                <tr key={index}>
-                    <td>{r.row}</td>
-                    <td>{r.reason}</td>
-                </tr>   
-                );
-            });
-            return (temp);
-        } else {
-            return (
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-            );
-        }
-    }
+    // generateRejectionRows(responce){
+    //     let temp =[]
+    //     if (!_.isEmpty(responce.rejections)) {
+    //         responce.rejections.map(function(r, index) {
+    //             temp.push(
+    //             <tr key={index}>
+    //                 <td>{r.row}</td>
+    //                 <td>{r.reason}</td>
+    //             </tr>   
+    //             );
+    //         });
+    //         return (temp);
+    //     } else {
+    //         return (
+    //             <tr>
+    //                 <td></td>
+    //                 <td></td>
+    //             </tr>
+    //         );
+    //     }
+    // }
 
     render() {
 
@@ -456,15 +457,17 @@ class ProjectTable extends Component {
             screenBodys, 
             unlocked,
             refreshStore,
+            //---------upload------
+            toggleModalUpload,
         } = this.props;
         
         const { 
-            showModalUpload,
-            isEqual, 
-            fileName,
-            responce,
-            downloading,
-            uploading,
+            // showModalUpload,
+            // fileName,
+            // responce,
+            // uploading,
+            isEqual,            
+            // downloading,
             alert
         } = this.state;
 
@@ -489,7 +492,7 @@ class ProjectTable extends Component {
                     <button className="btn btn-outline-leeuwen-blue" title="Download" onClick={event => downloadTable(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon={downloadingTable ? "spinner" : "download"} className={downloadingTable ? "fa-pulse fa-fw fa-2x": "fas fa-2x"}/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" title="Upload" onClick={event => this.toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>
+                    <button className="btn btn-outline-leeuwen-blue" title="Upload" onClick={event => toggleModalUpload(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="upload" className="fas fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title={screenId == '5ea8eefb7c213e2096462a2c' ? "Undo Transaction": "Delete Line(s)"} onClick={handleDeleteRows} style={{width: '40px', height: '40px'}}>
@@ -510,7 +513,7 @@ class ProjectTable extends Component {
                     </div>
                 </div>
 
-                <Modal
+                {/* <Modal
                     show={showModalUpload}
                     hideModal={this.toggleModalUpload}
                     title="Upload File"
@@ -524,7 +527,7 @@ class ProjectTable extends Component {
                                     </button>
                                 </div>
                             }
-                            <div className="action-row row ml-1 mb-3 mr-1" > {/* style={{height: '34px'}} */}
+                            <div className="action-row row ml-1 mb-3 mr-1" >
                                 <form
                                     className="col-12"
                                     encType="multipart/form-data"
@@ -535,7 +538,7 @@ class ProjectTable extends Component {
 
                                     <div className="input-group">
                                         <div className="input-group-prepend">
-                                            <span className="input-group-text">Select File:</span> {/*  style={{width: '95px'}} */}
+                                            <span className="input-group-text">Select File:</span>
                                             <input
                                                 type="file"
                                                 name="fileInput"
@@ -583,7 +586,7 @@ class ProjectTable extends Component {
                             </div>
                         }
                     </div>
-                </Modal>
+                </Modal> */}
                 
             </div>
         );
