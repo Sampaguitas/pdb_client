@@ -408,7 +408,6 @@ class WhCertificates extends React.Component {
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
-        this.downloadTable = this.downloadTable.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.refreshCifs = this.refreshCifs.bind(this);
         this.refreshPos = this.refreshPos.bind(this);
@@ -433,6 +432,7 @@ class WhCertificates extends React.Component {
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
         //Upload File
+        this.downloadTable = this.downloadTable.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
     }
 
@@ -715,53 +715,6 @@ class WhCertificates extends React.Component {
         });
     }
 
-    downloadTable(event){
-        event.preventDefault();
-        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
-        if (_.isEmpty(selectedIds)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select line(s) to be downloaded.'
-                }
-            });
-        } else if (projectId && screenId && screen) {
-            this.setState({
-                downloadingTable: true
-            }, () => {
-                var currentDate = new Date();
-                var date = currentDate.getDate();
-                var month = currentDate.getMonth();
-                var year = currentDate.getFullYear();
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIds: selectedIds})
-                };
-                return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
-                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
-                .then(responce => {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    } else if (responce.status === 400) {
-                        this.setState({
-                            downloadingTable: false,
-                            alert: {
-                                type: 'alert-danger',
-                                message: 'an error has occured'  
-                            }
-                        });
-                    } else {
-                        this.setState({
-                            downloadingTable: false
-                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
-                    }
-                });
-            });
-        }
-    }
-
     handleChange(event) {
         event.preventDefault();
         const name =  event.target.name;
@@ -1006,6 +959,53 @@ class WhCertificates extends React.Component {
                 message:'This functionality is not available on this screen.'
             }
         });
+    }
+
+    downloadTable(event){
+        event.preventDefault();
+        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be downloaded.'
+                }
+            });
+        } else if (projectId && screenId && screen) {
+            this.setState({
+                downloadingTable: true
+            }, () => {
+                var currentDate = new Date();
+                var date = currentDate.getDate();
+                var month = currentDate.getMonth();
+                var year = currentDate.getFullYear();
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedIds})
+                };
+                return fetch(`${config.apiUrl}/extract/downloadInspCert?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
+                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+                .then(responce => {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    } else if (responce.status === 400) {
+                        this.setState({
+                            downloadingTable: false,
+                            alert: {
+                                type: 'alert-danger',
+                                message: 'an error has occured'  
+                            }
+                        });
+                    } else {
+                        this.setState({
+                            downloadingTable: false
+                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
+                    }
+                });
+            });
+        }
     }
 
     render() {
