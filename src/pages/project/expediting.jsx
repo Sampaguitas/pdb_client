@@ -1183,7 +1183,7 @@ class Expediting extends React.Component {
                     method: 'GET',
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                 };
-                return fetch(`${config.apiUrl}/chart/download?projectId=${projectId}&unit=${unit}&period=${period}&clPo=${clPo}&clPoRev=${clPoRev}&lines=${lines}`, requestOptions)
+                return fetch(`${config.apiUrl}/chart/download?projectId=${projectId}&unit=${unit}&period=${period}&clPo=${clPo}&clPoRev=${clPoRev}&lines=${lines}&locale=${locale}`, requestOptions)
                 .then(responce => {
                     if (!responce.ok) {
                         if (responce.status === 401) {
