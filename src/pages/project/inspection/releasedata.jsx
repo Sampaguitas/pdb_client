@@ -293,9 +293,6 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                 tablesId: { 
                                     poId: po._id,
                                     subId: sub._id,
-                                    certificateId: '',
-                                    packitemId: '',
-                                    collipackId: '' 
                                 },
                                 fields: arrayRow
                             };
@@ -395,10 +392,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                             _id: i, 
                             tablesId: { 
                                 poId: po._id,
-                                subId: sub._id,
-                                certificateId: '',
-                                packitemId: '',
-                                collipackId: '' 
+                                subId: sub._id, 
                             },
                             fields: arrayRow
                         };
@@ -558,7 +552,6 @@ class ReleaseData extends React.Component {
 
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
-        this.downloadTable = this.downloadTable.bind(this);
         this.handleChange=this.handleChange.bind(this);
         this.toggleLocation=this.toggleLocation.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
@@ -594,7 +587,8 @@ class ReleaseData extends React.Component {
         this.fileInput = React.createRef();
         this.onKeyPress = this.onKeyPress.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
-        this.handleUploadFile = this.handleUploadFile.bind(this);
+        this.downloadTable = this.downloadTable.bind(this);
+        this.uploadTable = this.uploadTable.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
         this.generateRejectionRows = this.generateRejectionRows.bind(this);
     }
@@ -876,53 +870,6 @@ class ReleaseData extends React.Component {
             unlocked: !unlocked
         }, () => {
         });
-    }
-
-    downloadTable(event){
-        event.preventDefault();
-        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
-        if (_.isEmpty(selectedIds)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select line(s) to be downloaded.'
-                }
-            });
-        } else if (projectId && screenId && screen) {
-            this.setState({
-                downloadingTable: true
-            }, () => {
-                var currentDate = new Date();
-                var date = currentDate.getDate();
-                var month = currentDate.getMonth();
-                var year = currentDate.getFullYear();
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIds: selectedIds})
-                };
-                return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
-                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
-                .then(responce => {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    } else if (responce.status === 400) {
-                        this.setState({
-                            downloadingTable: false,
-                            alert: {
-                                type: 'alert-danger',
-                                message: 'an error has occured'  
-                            }
-                        });
-                    } else {
-                        this.setState({
-                            downloadingTable: false
-                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
-                    }
-                });
-            });
-        }
     }
 
     handleChange(event) {
@@ -1539,7 +1486,54 @@ class ReleaseData extends React.Component {
         });
     }
 
-    handleUploadFile(event){
+    downloadTable(event){
+        event.preventDefault();
+        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be downloaded.'
+                }
+            });
+        } else if (projectId && screenId && screen) {
+            this.setState({
+                downloadingTable: true
+            }, () => {
+                var currentDate = new Date();
+                var date = currentDate.getDate();
+                var month = currentDate.getMonth();
+                var year = currentDate.getFullYear();
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedIds})
+                };
+                return fetch(`${config.apiUrl}/extract/downloadInspRel?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
+                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+                .then(responce => {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    } else if (responce.status === 400) {
+                        this.setState({
+                            downloadingTable: false,
+                            alert: {
+                                type: 'alert-danger',
+                                message: 'an error has occured'  
+                            }
+                        });
+                    } else {
+                        this.setState({
+                            downloadingTable: false
+                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
+                    }
+                });
+            });
+        }
+    }
+
+    uploadTable(event){
         event.preventDefault();
         const { fileName, projectId, screenId } = this.state
         if(this.fileInput.current.files[0] && projectId && screenId && fileName) {
@@ -1553,7 +1547,7 @@ class ReleaseData extends React.Component {
                 headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
                 body: data
             }
-            return fetch(`${config.apiUrl}/extract/upload`, requestOptions)
+            return fetch(`${config.apiUrl}/extract/uploadInspRel`, requestOptions)
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
                 if (!responce.ok) {
@@ -1998,7 +1992,7 @@ class ReleaseData extends React.Component {
                                 <form
                                     className="col-12"
                                     encType="multipart/form-data"
-                                    onSubmit={this.handleUploadFile}
+                                    onSubmit={this.uploadTable}
                                     onKeyPress={this.onKeyPress}
                                     style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
                                 >

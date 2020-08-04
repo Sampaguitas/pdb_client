@@ -470,7 +470,6 @@ class Expediting extends React.Component {
 
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
-        this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleGenerateFile = this.handleGenerateFile.bind(this);
         
@@ -510,6 +509,7 @@ class Expediting extends React.Component {
         this.fileInput = React.createRef();
         this.onKeyPress = this.onKeyPress.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
+        this.downloadTable = this.downloadTable.bind(this);
         this.uploadTable = this.uploadTable.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
         this.generateRejectionRows = this.generateRejectionRows.bind(this);

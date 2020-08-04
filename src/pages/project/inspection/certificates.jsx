@@ -170,8 +170,6 @@ function getBodys(selection, pos, headersForShow){
                                 poId: po._id,
                                 subId: sub._id,
                                 returnId: '',
-                                packitemId: '',
-                                collipackId: '',
                                 certificateId: virtual.certificateId,
                                 heatId: virtual.heatId
                             },
@@ -291,8 +289,6 @@ function getBodys(selection, pos, headersForShow){
                                 poId: po._id,
                                 subId: '',
                                 returnId: _return._id,
-                                packitemId: '',
-                                collipackId: '',
                                 certificateId: virtual.certificateId,
                                 heatId: virtual.heatId
                             },
@@ -380,17 +376,9 @@ class Certificates extends React.Component {
             settingSaving: false,
             deletingRows: false,
             //upload file
-            showModalUpload: false,
-            fileName: '',
-            inputKey: Date.now(),
-            uploading: false,
-            responce:{},
-
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
-        this.downloadTable = this.downloadTable.bind(this);
-        // this.handleUpdateValue = this.handleUpdateValue.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.refreshCifs = this.refreshCifs.bind(this);
         this.refreshPos = this.refreshPos.bind(this);
@@ -401,7 +389,6 @@ class Certificates extends React.Component {
         this.toggleCif = this.toggleCif.bind(this);
         this.toggleHeat = this.toggleHeat.bind(this);
         this.toggleSettings = this.toggleSettings.bind(this);
-        // this.downloadCif = this.downloadCif.bind(this);
         this.handleDownloadCif = this.handleDownloadCif.bind(this);
         //settings
         this.handleInputSettings = this.handleInputSettings.bind(this);
@@ -416,12 +403,8 @@ class Certificates extends React.Component {
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
         //Upload File
-        this.fileInput = React.createRef();
-        this.onKeyPress = this.onKeyPress.bind(this);
+        this.downloadTable = this.downloadTable.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
-        this.handleUploadFile = this.handleUploadFile.bind(this);
-        this.handleFileChange = this.handleFileChange.bind(this);
-        this.generateRejectionRows = this.generateRejectionRows.bind(this);
     }
 
     componentDidMount() {
@@ -703,53 +686,6 @@ class Certificates extends React.Component {
         });
     }
 
-    downloadTable(event){
-        event.preventDefault();
-        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
-        if (_.isEmpty(selectedIds)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select line(s) to be downloaded.'
-                }
-            });
-        } else if (projectId && screenId && screen) {
-            this.setState({
-                downloadingTable: true
-            }, () => {
-                var currentDate = new Date();
-                var date = currentDate.getDate();
-                var month = currentDate.getMonth();
-                var year = currentDate.getFullYear();
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIds: selectedIds})
-                };
-                return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
-                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
-                .then(responce => {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    } else if (responce.status === 400) {
-                        this.setState({
-                            downloadingTable: false,
-                            alert: {
-                                type: 'alert-danger',
-                                message: 'an error has occured'  
-                            }
-                        });
-                    } else {
-                        this.setState({
-                            downloadingTable: false
-                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
-                    }
-                });
-            });
-        }
-    }
-
     handleChange(event) {
         event.preventDefault();
         const name =  event.target.name;
@@ -987,108 +923,59 @@ class Certificates extends React.Component {
         }
     }
 
-    onKeyPress(event) {
-        if (event.which === 13 /* prevent form submit on key Enter */) {
-          event.preventDefault();
-        }
-    }
-
     toggleModalUpload() {
-        const { showModalUpload } = this.state;
         this.setState({
-            ...this.state,
-            showModalUpload: !showModalUpload,
-            fileName: '',
-            inputKey: Date.now(),
-            uploading: false,
-            responce:{},
             alert: {
-                type:'',
-                message:''
+                type:'alert-warning',
+                message:'This functionality is not available on this screen.'
             }
         });
     }
 
-    handleUploadFile(event){
+    downloadTable(event){
         event.preventDefault();
-        const { fileName, projectId, screenId } = this.state
-        if(this.fileInput.current.files[0] && projectId && screenId && fileName) {
-            this.setState({...this.state, uploading: true});
-            var data = new FormData()
-            data.append('file', this.fileInput.current.files[0]);
-            data.append('projectId', projectId);
-            data.append('screenId', screenId);
-            const requestOptions = {
-                method: 'POST',
-                headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
-                body: data
-            }
-            return fetch(`${config.apiUrl}/extract/upload`, requestOptions)
-            .then(responce => responce.text().then(text => {
-                const data = text && JSON.parse(text);
-                if (!responce.ok) {
+        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be downloaded.'
+                }
+            });
+        } else if (projectId && screenId && screen) {
+            this.setState({
+                downloadingTable: true
+            }, () => {
+                var currentDate = new Date();
+                var date = currentDate.getDate();
+                var month = currentDate.getMonth();
+                var year = currentDate.getFullYear();
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedIds})
+                };
+                return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
+                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+                .then(responce => {
                     if (responce.status === 401) {
                         localStorage.removeItem('user');
                         location.reload(true);
+                    } else if (responce.status === 400) {
+                        this.setState({
+                            downloadingTable: false,
+                            alert: {
+                                type: 'alert-danger',
+                                message: 'an error has occured'  
+                            }
+                        });
+                    } else {
+                        this.setState({
+                            downloadingTable: false
+                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
                     }
-                    this.setState({
-                        ...this.state,
-                        uploading: false,
-                        responce: {
-                            rejections: data.rejections,
-                            nProcessed: data.nProcessed,
-                            nRejected: data.nRejected,
-                            nEdited: data.nEdited
-                        },
-                        alert: {
-                            type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                            message: data.message
-                        }
-                    }, this.refreshStore());
-                } else {
-                    this.setState({
-                        ...this.state,
-                        uploading: false,
-                        responce: {
-                            rejections: data.rejections,
-                            nProcessed: data.nProcessed,
-                            nRejected: data.nRejected,
-                            nEdited: data.nEdited
-                        },
-                    }, this.refreshStore());
-                }
-            }));            
-        }        
-    }
-
-    handleFileChange(event){
-        if(event.target.files.length > 0) {
-            this.setState({
-                ...this.state,
-                fileName: event.target.files[0].name
+                });
             });
-        }
-    }
-
-    generateRejectionRows(responce){
-        let temp =[]
-        if (!_.isEmpty(responce.rejections)) {
-            responce.rejections.map(function(r, index) {
-                temp.push(
-                <tr key={index}>
-                    <td>{r.row}</td>
-                    <td>{r.reason}</td>
-                </tr>   
-                );
-            });
-            return (temp);
-        } else {
-            return (
-                <tr>
-                    <td></td>
-                    <td></td>
-                </tr>
-            );
         }
     }
 
@@ -1120,17 +1007,13 @@ class Certificates extends React.Component {
             settingsColWidth,
             settingSaving,
             //---------upload------
-            showModalUpload,
-            fileName,
-            uploading,
-            responce,
         }= this.state;
         
         const { accesses, certificates, fieldnames, fields, pos, selection, sidemenu } = this.props;
         const alert = this.state.alert ? this.state.alert : this.props.alert;
         return (
             <Layout accesses={accesses} selection={selection} sidemenu={sidemenu} toggleCollapse={this.toggleCollapse} menuItem={menuItem}>
-                {alert.message && !showSettings && !showCif && !showModalUpload &&
+                {alert.message && !showSettings && !showCif &&
                     <div className={`alert ${alert.type}`}>{alert.message}
                         <button className="close" onClick={(event) => this.handleClearAlert(event)}>
                             <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
@@ -1149,7 +1032,7 @@ class Certificates extends React.Component {
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
-                <div id="certificates" className={ (alert.message && !showSettings && !showCif && !showModalUpload) ? "main-section-alert" : "main-section"}>
+                <div id="certificates" className={ (alert.message && !showSettings && !showCif) ? "main-section-alert" : "main-section"}>
                     <div className="action-row row">
                         <button title="Add/Edit Certificates" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.toggleCif}>
                             <span><FontAwesomeIcon icon="edit" className="fa mr-2"/>Certificates</span>
@@ -1289,81 +1172,6 @@ class Certificates extends React.Component {
                         </button>
                     </div>
                 </Modal>
-                <Modal
-                    show={showModalUpload}
-                    hideModal={this.toggleModalUpload}
-                    title="Upload File"
-                    size="modal-xl"
-                >
-                    <div className="col-12">
-                            {alert.message && 
-                                <div className={`alert ${alert.type}`}>{alert.message}
-                                    <button className="close" onClick={(event) => this.handleClearAlert(event)}>
-                                        <span aria-hidden="true"><FontAwesomeIcon icon="times"/></span>
-                                    </button>
-                                </div>
-                            }
-                            <div className="action-row row ml-1 mb-3 mr-1" >
-                                <form
-                                    className="col-12"
-                                    encType="multipart/form-data"
-                                    onSubmit={this.handleUploadFile}
-                                    onKeyPress={this.onKeyPress}
-                                    style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
-                                >
-
-                                    <div className="input-group">
-                                        <div className="input-group-prepend">
-                                            <span className="input-group-text">Select File:</span>
-                                            <input
-                                                type="file"
-                                                name="fileInput"
-                                                id="fileInput"
-                                                ref={this.fileInput}
-                                                className="custom-file-input"
-                                                style={{opacity: 0, position: 'absolute', pointerEvents: 'none', width: '1px'}}
-                                                onChange={this.handleFileChange}
-                                                key={this.state.inputKey}
-                                            />
-                                        </div>
-                                        <label type="text" className="form-control text-left" htmlFor="fileInput" style={{display:'inline-block', padding: '7px'}}>{fileName ? fileName : 'Choose file...'}</label>
-                                        <div className="input-group-append">
-                                            <button type="submit" className="btn btn-outline-leeuwen-blue btn-lg">
-                                                <span><FontAwesomeIcon icon={uploading ? 'spinner' : 'upload'} className={uploading ? 'fa-pulse fa-lg fa-fw' : 'fa-lg mr-2'}/>Upload</span>
-                                            </button> 
-                                        </div>       
-                                    </div>
-                                </form>
-                            </div>
-                        {!_.isEmpty(responce) &&
-                            <div className="ml-1 mr-1">
-                                <div className="form-group table-resonsive">
-                                    <strong>Total Processed:</strong> {responce.nProcessed}<br />
-                                    <strong>Total Records Edited:</strong> {responce.nEdited}<br />
-                                    <strong>Total Records Rejected:</strong> {responce.nRejected}<br />
-                                    <hr />
-                                </div>
-                                {!_.isEmpty(responce.rejections) &&
-                                    <div className="rejections">
-                                        <h3>Rejections</h3>
-                                            <table className="table table-sm">
-                                                <thead>
-                                                    <tr>
-                                                        <th style={{width: '10%'}}>Row</th>
-                                                        <th style={{width: '90%'}}>Reason</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    {this.generateRejectionRows(responce)}
-                                                </tbody>
-                                            </table>
-                                    </div>
-                                }
-                            </div>
-                        }
-                    </div>
-                </Modal>
-
             </Layout>
         );
     }
