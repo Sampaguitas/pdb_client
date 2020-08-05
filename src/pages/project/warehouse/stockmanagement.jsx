@@ -266,9 +266,7 @@ function getPlBodys (selection, pos, transactions, headersForShow) {
                                         tablesId: { 
                                             poId: po._id,
                                             subId: sub._id,
-                                            certificateId: '',
                                             packitemId: packitem._id,
-                                            collipackId: '',
                                             returnId: '',
                                             locationId: virtual.locationId,
                                              
@@ -394,9 +392,7 @@ function getNfiBodys (selection, pos, transactions, headersForShow) {
                                 tablesId: { 
                                     poId: po._id,
                                     subId: sub._id,
-                                    certificateId: '',
                                     packitemId: '',
-                                    collipackId: '',
                                     returnId: '',
                                     locationId: virtual.locationId,
                                 },
@@ -497,9 +493,7 @@ function getPoBodys (selection, pos, transactions, headersForShow) {
                     tablesId: { 
                         poId: po._id,
                         subId: '',
-                        certificateId: '',
                         packitemId: '',
-                        collipackId: '',
                         returnId: '',
                         locationId: virtual.locationId,
                     },
@@ -605,9 +599,7 @@ function getRetBodys (selection, pos, transactions, headersForShow) {
                             tablesId: { 
                                 poId: po._id,
                                 subId: '',
-                                certificateId: '',
                                 packitemId: '',
-                                collipackId: '',
                                 returnId: _return._id,
                                 locationId: virtual.locationId, 
                             },
@@ -698,10 +690,6 @@ function getBodysForShow (selection, pos, transactions, headersForShow) {
                         _id: i, 
                         tablesId: { 
                             poId: po._id,
-                            subId: '',
-                            certificateId: '',
-                            packitemId: '',
-                            collipackId: '',
                             locationId: virtual.locationId,
                         },
                         fields: arrayRow
@@ -859,7 +847,6 @@ class StockManagement extends React.Component {
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
-        this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleGoodsReceipt = this.handleGoodsReceipt.bind(this);
         this.handleStockTransfer = this.handleStockTransfer.bind(this);
@@ -905,6 +892,7 @@ class StockManagement extends React.Component {
         this.clearWidth = this.clearWidth.bind(this);
         this.dufInput = React.createRef();
         //Upload File
+        this.downloadTable = this.downloadTable.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
     }
 
@@ -1330,53 +1318,6 @@ class StockManagement extends React.Component {
         this.setState({
             unlocked: !unlocked
         });
-    }
-
-    downloadTable(event){
-        event.preventDefault();
-        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
-        if (_.isEmpty(selectedIds)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select line(s) to be downloaded.'
-                }
-            });
-        } else if (projectId && screenId && screen) {
-            this.setState({
-                downloadingTable: true
-            }, () => {
-                var currentDate = new Date();
-                var date = currentDate.getDate();
-                var month = currentDate.getMonth();
-                var year = currentDate.getFullYear();
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIds: selectedIds})
-                };
-                return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
-                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
-                .then(responce => {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    } else if (responce.status === 400) {
-                        this.setState({
-                            downloadingTable: false,
-                            alert: {
-                                type: 'alert-danger',
-                                message: 'an error has occured'  
-                            }
-                        });
-                    } else {
-                        this.setState({
-                            downloadingTable: false
-                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
-                    }
-                });
-            });
-        }
     }
 
     handleChange(event) {
@@ -1988,6 +1929,53 @@ class StockManagement extends React.Component {
             this.setState({settingsColWidth: tempArray});
         } else {
             this.setState({settingsColWidth: {} })
+        }
+    }
+
+    downloadTable(event){
+        event.preventDefault();
+        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be downloaded.'
+                }
+            });
+        } else if (projectId && screenId && screen) {
+            this.setState({
+                downloadingTable: true
+            }, () => {
+                var currentDate = new Date();
+                var date = currentDate.getDate();
+                var month = currentDate.getMonth();
+                var year = currentDate.getFullYear();
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedIds})
+                };
+                return fetch(`${config.apiUrl}/extract/downloadStockMana?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
+                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+                .then(responce => {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    } else if (responce.status === 400) {
+                        this.setState({
+                            downloadingTable: false,
+                            alert: {
+                                type: 'alert-danger',
+                                message: 'an error has occured'  
+                            }
+                        });
+                    } else {
+                        this.setState({
+                            downloadingTable: false
+                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
+                    }
+                });
+            });
         }
     }
 

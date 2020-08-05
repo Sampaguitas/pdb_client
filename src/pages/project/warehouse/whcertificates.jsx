@@ -184,8 +184,6 @@ function getBodys(selection, pos, headersForShow){
                                 poId: po._id,
                                 subId: sub._id,
                                 returnId: '',
-                                packitemId: '',
-                                collipackId: '',
                                 certificateId: virtual.certificateId,
                                 heatId: virtual.heatId
                             },
@@ -316,8 +314,6 @@ function getBodys(selection, pos, headersForShow){
                                 poId: po._id,
                                 subId: '',
                                 returnId: _return._id,
-                                packitemId: '',
-                                collipackId: '',
                                 certificateId: virtual.certificateId,
                                 heatId: virtual.heatId
                             },
