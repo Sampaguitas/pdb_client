@@ -1462,7 +1462,7 @@ class TransportDocuments extends React.Component {
                 headers: { ...authHeader()}, //, 'Content-Type': 'application/json'
                 body: data
             }
-            return fetch(`${config.apiUrl}/extract/upload`, requestOptions)
+            return fetch(`${config.apiUrl}/extract/uploadTransDocs`, requestOptions)
             .then(responce => responce.text().then(text => {
                 const data = text && JSON.parse(text);
                 if (!responce.ok) {
