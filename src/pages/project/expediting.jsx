@@ -157,6 +157,22 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
         pos.items.map(po => {
             if (po.subs) {
                 po.subs.map(sub => {
+                    let certificate = sub.heats.reduce(function (acc, cur) {
+                        if (!acc.heatNr.split(' | ').includes(cur.heatNr)) {
+                            acc.heatNr = !acc.heatNr ? cur.heatNr : `${acc.heatNr} | ${cur.heatNr}`
+                        }
+                        if (!acc.cif.split(' | ').includes(cur.certificate.cif)) {
+                            acc.cif = !acc.cif ? cur.certificate.cif : `${acc.cif} | ${cur.certificate.cif}`
+                        }
+                        if (!acc.inspQty.split(' | ').includes(String(cur.inspQty))) {
+                            acc.inspQty = !acc.inspQty ? String(cur.inspQty) : `${acc.inspQty} | ${String(cur.inspQty)}`
+                        }
+                        return acc;
+                    }, {
+                        heatNr: '',
+                        cif: '',
+                        inspQty: ''
+                    });
                     if (!_.isEmpty(sub.packitems) && hasPackitems) {
                         virtuals(sub.packitems, po.uom, getTblFields(screenHeaders, 'packitem')).map(virtual => {
                             arrayRow = [];
@@ -204,12 +220,12 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                                 collection: 'virtual',
                                                 objectId: '0',
                                                 fieldName: screenHeader.fields.name,
-                                                fieldValue: '',
+                                                fieldValue: certificate[screenHeader.fields.name],
                                                 disabled: screenHeader.edit,
                                                 align: screenHeader.align,
                                                 fieldType: getInputType(screenHeader.fields.type),
                                                 screenheaderId: screenHeader._id
-                                            }); 
+                                            });
                                         } else if (_.isEqual(screenHeader.fields.name, 'relQty') && !enableInspection){
                                             arrayRow.push({
                                                 collection: 'virtual',
@@ -234,6 +250,18 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             });
                                         }
                                         break;
+                                    case 'certificate':
+                                        arrayRow.push({
+                                            collection: 'virtual',
+                                            objectId: '0',
+                                            fieldName: screenHeader.fields.name,
+                                            fieldValue: certificate[screenHeader.fields.name],
+                                            disabled: screenHeader.edit,
+                                            align: screenHeader.align,
+                                            fieldType: getInputType(screenHeader.fields.type),
+                                            screenheaderId: screenHeader._id
+                                        });
+                                        break
                                     case 'packitem':
                                         if (screenHeader.fields.name === 'plNr') {
                                             arrayRow.push({
@@ -328,7 +356,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                             collection: 'virtual',
                                             objectId: '0',
                                             fieldName: screenHeader.fields.name,
-                                            fieldValue: '',
+                                            fieldValue: certificate[screenHeader.fields.name],
                                             disabled: screenHeader.edit,
                                             align: screenHeader.align,
                                             fieldType: getInputType(screenHeader.fields.type),
@@ -358,6 +386,18 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                         });
                                     }
                                     break;
+                                case 'certificate':
+                                    arrayRow.push({
+                                        collection: 'virtual',
+                                        objectId: '0',
+                                        fieldName: screenHeader.fields.name,
+                                        fieldValue: certificate[screenHeader.fields.name],
+                                        disabled: screenHeader.edit,
+                                        align: screenHeader.align,
+                                        fieldType: getInputType(screenHeader.fields.type),
+                                        screenheaderId: screenHeader._id
+                                    });
+                                    break
                                 default: arrayRow.push({
                                     collection: 'virtual',
                                     objectId: '0',

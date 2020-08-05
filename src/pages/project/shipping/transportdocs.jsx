@@ -187,9 +187,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                 tablesId: { 
                                     poId: po._id,
                                     subId: sub._id,
-                                    certificateId: '',
-                                    packitemId: packitem._id,
-                                    collipackId: '' 
+                                    packitemId: packitem._id, 
                                 },
                                 fields: arrayRow
                             };
@@ -314,9 +312,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                             tablesId: { 
                                 poId: po._id,
                                 subId: sub._id,
-                                certificateId: '',
                                 packitemId: '',
-                                collipackId: '' 
                             },
                             fields: arrayRow
                         };
