@@ -16,6 +16,7 @@ import {
     sidemenuActions
 } from '../../../_actions';
 import {
+    locale,
     getDateFormat,
     passSelectedIds,
     passSelectedPo,
