@@ -923,7 +923,7 @@ class MirSplitwindow extends React.Component {
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                     body: JSON.stringify({selectedIds: selectedIds})
                 };
-                return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
+                return fetch(`${config.apiUrl}/extract/downloadMirSplit?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
                 // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
                 .then(responce => {
                     if (responce.status === 401) {
