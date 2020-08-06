@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-    HeaderInput,
+    // HeaderInput,
     getDateFormat,
     TypeToString,
     sortCustom,
     doesMatch,
     copyObject
 } from '../../_functions';
+import HeaderInput from '../project-table/header-input';
 import _ from 'lodash';
 
 class SplitMir extends Component {

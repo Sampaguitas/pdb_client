@@ -137,10 +137,6 @@ function getBodysForShow(mirs, mirId, selection, headersForShow) {
                             _id: i,
                             tablesId: {
                                 poId: miritem.po._id,
-                                subId: '',
-                                certificateId: '',
-                                packitemId: '',
-                                collipackId: '',
                                 mirId: mir._id,
                                 miritemId: miritem._id
                             },
@@ -212,12 +208,6 @@ function getBodysForSelect(pos, selection, headersForSelect) {
                 _id: i,
                 tablesId: {
                     poId: po._id,
-                    subId: '',
-                    certificateId: '',
-                    packitemId: '',
-                    collipackId: '',
-                    mirId: '',
-                    miritemId: '',
                 },
                 fields: arrayRow
             };
