@@ -221,10 +221,6 @@ function getBodysForShow(picktickets, pickticketId, selection, headersForShow) {
                         _id: i,
                         tablesId: {
                             poId: pickitem.miritem.po._id,
-                            subId: '',
-                            certificateId: '',
-                            packitemId: '',
-                            collipackId: '',
                             locationId: pickitem.location._id,
                             mirId: pickticket.mir._id,
                             miritemId: pickitem.miritem._id,
@@ -313,7 +309,6 @@ class PtSplitwindow extends React.Component {
         };
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
-        this.downloadTable = this.downloadTable.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
         this.refresHeatLocs = this.refresHeatLocs.bind(this);
@@ -341,7 +336,8 @@ class PtSplitwindow extends React.Component {
         this.fileInput = React.createRef();
         this.onKeyPress = this.onKeyPress.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
-        this.handleUploadFile = this.handleUploadFile.bind(this);
+        this.downloadTable = this.downloadTable.bind(this);
+        this.uploadTable = this.uploadTable.bind(this);
         this.handleFileChange = this.handleFileChange.bind(this);
         this.generateRejectionRows = this.generateRejectionRows.bind(this);
     }
@@ -655,53 +651,6 @@ class PtSplitwindow extends React.Component {
         });
     }
 
-    downloadTable(event){
-        event.preventDefault();
-        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
-        if (_.isEmpty(selectedIds)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select line(s) to be downloaded.'
-                }
-            });
-        } else if (projectId && screenId && screen) {
-            this.setState({
-                downloadingTable: true
-            }, () => {
-                var currentDate = new Date();
-                var date = currentDate.getDate();
-                var month = currentDate.getMonth();
-                var year = currentDate.getFullYear();
-                const requestOptions = {
-                    method: 'POST',
-                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                    body: JSON.stringify({selectedIds: selectedIds})
-                };
-                return fetch(`${config.apiUrl}/extract/download?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
-                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
-                .then(responce => {
-                    if (responce.status === 401) {
-                        localStorage.removeItem('user');
-                        location.reload(true);
-                    } else if (responce.status === 400) {
-                        this.setState({
-                            downloadingTable: false,
-                            alert: {
-                                type: 'alert-danger',
-                                message: 'an error has occured'  
-                            }
-                        });
-                    } else {
-                        this.setState({
-                            downloadingTable: false
-                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
-                    }
-                });
-            });
-        }
-    }
-
     handleChange(event) {
         event.preventDefault();
         const name =  event.target.name;
@@ -918,7 +867,54 @@ class PtSplitwindow extends React.Component {
         });
     }
 
-    handleUploadFile(event){
+    downloadTable(event){
+        event.preventDefault();
+        const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                alert: {
+                    type: 'alert-danger',
+                    message: 'Select line(s) to be downloaded.'
+                }
+            });
+        } else if (projectId && screenId && screen) {
+            this.setState({
+                downloadingTable: true
+            }, () => {
+                var currentDate = new Date();
+                var date = currentDate.getDate();
+                var month = currentDate.getMonth();
+                var year = currentDate.getFullYear();
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({selectedIds: selectedIds})
+                };
+                return fetch(`${config.apiUrl}/extract/downloadPickItem?projectId=${projectId}&screenId=${screenId}&unlocked=${unlocked}`, requestOptions)
+                // .then(res => res.blob()).then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`));
+                .then(responce => {
+                    if (responce.status === 401) {
+                        localStorage.removeItem('user');
+                        location.reload(true);
+                    } else if (responce.status === 400) {
+                        this.setState({
+                            downloadingTable: false,
+                            alert: {
+                                type: 'alert-danger',
+                                message: 'an error has occured'  
+                            }
+                        });
+                    } else {
+                        this.setState({
+                            downloadingTable: false
+                        }, () => responce.blob().then(blob => saveAs(blob, `DOWNLOAD_${screen}_${year}_${baseTen(month+1)}_${date}.xlsx`)));
+                    }
+                });
+            });
+        }
+    }
+
+    uploadTable(event){
         event.preventDefault();
         const { fileName, projectId, screenId } = this.state
         if(this.fileInput.current.files[0] && projectId && screenId && fileName) {
@@ -1201,7 +1197,7 @@ class PtSplitwindow extends React.Component {
                                 <form
                                     className="col-12"
                                     encType="multipart/form-data"
-                                    onSubmit={this.handleUploadFile}
+                                    onSubmit={this.uploadTable}
                                     onKeyPress={this.onKeyPress}
                                     style={{marginLeft:'0px', marginRight: '0px', paddingLeft: '0px', paddingRight: '0px'}}
                                 >
