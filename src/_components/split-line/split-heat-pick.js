@@ -568,7 +568,7 @@ class SplitHeatPick extends Component {
 
     generatePickBody() {
         const { refreshHeatPicks, isProcessed } = this.props;
-        const { pickSelectedIds, pickSelectAllRows, pickCertificates } = this.state;
+        const { pickSelectedIds, pickSelectAllRows, pickCertificates, settingsColWidth } = this.state;
         let tempRows = [];
         if (pickCertificates) {
             this.pickfilterName(pickCertificates).map( (certificate, index) => {
