@@ -1384,10 +1384,10 @@ class ReleaseData extends React.Component {
         const { showGenerate, docList, nfiList, locationList } = this.state;
         this.setState({
             ...this.state,
-            selectedTemplate: (!showGenerate  && docList) ? docList[0]._id : '',
-            inputNfi: (!showGenerate  && nfiList) ? nfiList[0]._id : '',
+            selectedTemplate: (!showGenerate  && !_.isEmpty(docList)) ? docList[0]._id : '',
+            inputNfi: (!showGenerate  && !_.isEmpty(nfiList)) ? nfiList[0]._id : '',
             showLocation: true,
-            selectedLocation: (!showGenerate  && locationList) ? locationList[0]._id : '',
+            selectedLocation: (!showGenerate  && !_.isEmpty(locationList)) ? locationList[0]._id : '',
             alert: {
                 type:'',
                 message:''
