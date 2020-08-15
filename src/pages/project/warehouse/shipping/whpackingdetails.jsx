@@ -962,8 +962,8 @@ class WhPackingDetails extends React.Component {
         const { showGenerate, plList, docList } = this.state;
         this.setState({
             ...this.state,
-            selectedPl: (!showGenerate  && plList) ? plList[0]._id : '',
-            selectedTemplate: (!showGenerate  && docList) ? docList[0]._id : '',
+            selectedPl: (!showGenerate  && !_.isEmpty(plList)) ? plList[0]._id : '',
+            selectedTemplate: (!showGenerate  && !_.isEmpty(docList)) ? docList[0]._id : '',
             alert: {
                 type:'',
                 message:''

@@ -400,7 +400,7 @@ class Locations extends React.Component {
                                 tc: 'C',
                                 type: '',
                                 areaId: !_.isEmpty(areas) ? areas[0]._id : '',
-                                warehouseId: warehouses.items ? warehouses.items[0]._id : ''
+                                warehouseId: warehouses.hasOwnProperty('items') && !_.isEmpty(warehouse.items) ? warehouses.items[0]._id : ''
                             },
                             alert: {
                                 type: responce.status === 200 ? '' : 'alert-danger',
@@ -479,7 +479,7 @@ class Locations extends React.Component {
                 tc: 'C',
                 type: '',
                 areaId: !_.isEmpty(areas) ? areas[0]._id : '',
-                warehouseId: warehouses.items ? warehouses.items[0]._id : ''
+                warehouseId: warehouses.hasOwnProperty('items') && !_.isEmpty(warehouses.items) ? warehouses.items[0]._id : ''
             }
         });
     }

@@ -204,8 +204,9 @@ class Documents extends React.Component {
         });
 
         if (docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
+            let tempSorted = arraySorted(docConf(docdefs.items, typeOf), "name");
             this.setState({
-                selectedTemplate: arraySorted(docConf(docdefs.items, typeOf), "name")[0]._id
+                selectedTemplate: !_.isEmpty(tempSorted) ? tempSorted[0]._id : '0'
             });
         }
     }
@@ -256,7 +257,10 @@ class Documents extends React.Component {
         const { selectedTemplate } = this.state;
 
         if(docdefs != prevProps.docdefs && docdefs.hasOwnProperty('items') && !_.isEmpty(docdefs.items) && selectedTemplate === '0') {
-            this.setState({selectedTemplate: arraySorted(docConf(docdefs.items, typeOf), "name")[0]._id});
+            let tempSorted = arraySorted(docConf(docdefs.items, typeOf), "name");
+            this.setState({
+                selectedTemplate: !_.isEmpty(tempSorted) ? tempSorted[0]._id : '0'
+            });
         }
 
         if (selectedTemplate != prevState.selectedTemplate) {

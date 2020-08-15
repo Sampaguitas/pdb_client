@@ -1747,7 +1747,7 @@ class StockManagement extends React.Component {
             });
         } else {
             this.setState({
-                selectedTemplate: (!showGenerate  && docList) ? docList[0]._id : '',
+                selectedTemplate: (!showGenerate  && !_.isEmpty(docList)) ? docList[0]._id : '',
                 alert: {
                     type:'',
                     message:''
