@@ -50,6 +50,7 @@ This web application has been developed for [Van Leeuwen Pipe and Tube Group](ht
 * [planning](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Planning+Rev16.pdf)
 * [approvals](APPROVAL.md)
 * [to do list](TODO.md)
+* [manual](https://vanleeuwenpublic.s3.eu-west-3.amazonaws.com/proposal/Manual.pdf)
 
 The application can be accessed via the following link: [https://pdb-client.herokuapp.com/](https://pdb-client.herokuapp.com/)
 

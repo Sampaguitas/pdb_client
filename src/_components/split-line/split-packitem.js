@@ -462,10 +462,7 @@ function getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, 
     let packitemsQty = getPackitemsQty(selectedPo, selectedIds, tempUom);
     let selectionQty = getSelectionQty(selectedPo, selectionIds, tempUom);
     let virturalsQty = getVirturalsQty(virtuals, tempUom);
-    // console.log('relQty:', relQty);
-    // console.log('packitemsQty:', packitemsQty);
-    // console.log('selectionQty:', selectionQty);
-    // console.log('virturalsQty:', virturalsQty);
+    
     if (!packitemsQty) {
         return relQty - virturalsQty;
     } else {
