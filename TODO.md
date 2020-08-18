@@ -18,6 +18,6 @@
 
 ### Add headers to test certs
 - [X] save AWS.S3 stream to fs,
-- [ ] add header with hummus-recipe,
+- [X] add header with hummus-recipe,
 - [X] file.stream.pipe(res),
 - [ ] front-end: customise header in configs.
