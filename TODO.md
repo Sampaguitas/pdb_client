@@ -13,7 +13,7 @@
 - [X] execute mongoimport without mongoDB install on VL servers(mongoimport.exe),
 - [X] write vbScript file to populate Article file from SAP imports (mkArticle.vbs)
 - [X] write mongoimport command line (Article.bat)
-- [ ] schedule svScript on to run daily VL servers,
+- [ ] schedule mkArticle.vbs on to run daily VL servers,
 
 
 ### Add headers to test certs
