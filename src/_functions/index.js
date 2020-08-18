@@ -323,7 +323,7 @@ export function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
 
 
 export function initSettingsFilter(fieldnames, settings, screenId) {
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
+    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items) && !_.isUndefined(settings) && settings.hasOwnProperty('items') && !_.isEmpty(settings.items)) {
         let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow && !!element.forSelect);
         let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
 
