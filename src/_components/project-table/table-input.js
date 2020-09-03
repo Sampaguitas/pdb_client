@@ -66,7 +66,7 @@ class TableInput extends Component{
             fieldType,
         } = this.props;
 
-        if(fieldValue != prevProps.fieldValue) {
+        if(fieldName != prevProps.fieldName || fieldValue != prevProps.fieldValue) {
 
             this.setState({
                 collection: collection,
