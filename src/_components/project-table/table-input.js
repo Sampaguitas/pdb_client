@@ -16,10 +16,10 @@ class TableInput extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            collection: '',
-            objectId: '',
-            parentId: '', //<--------parentId
-            fieldName: '',
+            // collection: '',
+            // objectId: '',
+            // parentId: '', //<--------parentId
+            // fieldName: '',
             fieldValue: '',
             // fieldType: '',
             color: '#0070C0',
@@ -38,19 +38,19 @@ class TableInput extends Component{
     
     componentDidMount(){
         const { 
-            collection,
-            objectId,
-            parentId,
-            fieldName,
+            // collection,
+            // objectId,
+            // parentId,
+            // fieldName,
             fieldValue,
             fieldType,
         } = this.props;
 
         this.setState({
-            collection: collection,
-            objectId: objectId,
-            parentId: parentId, //<--------parentId
-            fieldName: fieldName,
+            // collection: collection,
+            // objectId: objectId,
+            // parentId: parentId, //<--------parentId
+            // fieldName: fieldName,
             fieldValue: DateToString (fieldValue, fieldType, getDateFormat()),
             // fieldType: fieldType,
         });  
@@ -59,9 +59,9 @@ class TableInput extends Component{
     componentDidUpdate(prevProps, prevState) {
         const { 
             collection,
-            objectId,
-            parentId,
-            fieldName,
+            // objectId,
+            // parentId,
+            // fieldName,
             fieldValue,
             fieldType,
         } = this.props;
@@ -69,10 +69,10 @@ class TableInput extends Component{
         if(fieldValue != prevProps.fieldValue) {
 
             this.setState({
-                collection: collection,
-                objectId: objectId,
-                parentId: parentId, //<--------parentId
-                fieldName: fieldName,
+                // collection: collection,
+                // objectId: objectId,
+                // parentId: parentId, //<--------parentId
+                // fieldName: fieldName,
                 fieldValue: DateToString (fieldValue, fieldType, getDateFormat()),
                 // fieldType: fieldType,
                 isEditing: false,
@@ -129,8 +129,8 @@ class TableInput extends Component{
     }
 
     callBack(){
-        const { disabled, unlocked, refreshStore, fieldType } = this.props; 
-        const { collection, objectId, parentId, fieldName, fieldValue } = this.state; //fieldType
+        const { disabled, unlocked, refreshStore, collection, objectId, parentId, fieldName, fieldType } = this.props; 
+        const { fieldValue } = this.state; //fieldType collection objectId parentId fieldName
 
         if ((!!unlocked || !disabled) && !!collection && (!!objectId || !!parentId) && !!fieldName) {
 
