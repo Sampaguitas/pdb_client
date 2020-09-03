@@ -21,7 +21,7 @@ class TableInput extends Component{
             parentId: '', //<--------parentId
             fieldName: '',
             fieldValue: '',
-            fieldType: '',
+            // fieldType: '',
             color: '#0070C0',
             isEditing: false,
             isSelected: false,
@@ -52,7 +52,7 @@ class TableInput extends Component{
             parentId: parentId, //<--------parentId
             fieldName: fieldName,
             fieldValue: DateToString (fieldValue, fieldType, getDateFormat()),
-            fieldType: fieldType,
+            // fieldType: fieldType,
         });  
     }
 
@@ -66,7 +66,7 @@ class TableInput extends Component{
             fieldType,
         } = this.props;
 
-        if(fieldName != prevProps.fieldName || fieldValue != prevProps.fieldValue) {
+        if(fieldValue != prevProps.fieldValue) {
 
             this.setState({
                 collection: collection,
@@ -74,7 +74,7 @@ class TableInput extends Component{
                 parentId: parentId, //<--------parentId
                 fieldName: fieldName,
                 fieldValue: DateToString (fieldValue, fieldType, getDateFormat()),
-                fieldType: fieldType,
+                // fieldType: fieldType,
                 isEditing: false,
                 isSelected: false,
                 color: 'green',
@@ -110,8 +110,7 @@ class TableInput extends Component{
     }
 
     onClick() {
-        const { disabled, unlocked } = this.props;
-        const { isSelected, fieldValue, fieldType } = this.state;
+        const { isSelected } = this.state; //fieldType
         // console.log('offsetWidth:', this.refs.td.offsetWidth);
         if(!isSelected) {
             this.setState({...this.state, isSelected: true, beforeSelectWidth: this.refs.td.offsetWidth}, () => setTimeout( () => this.refs.input.select(), 1));
@@ -130,8 +129,8 @@ class TableInput extends Component{
     }
 
     callBack(){
-        const { disabled, unlocked, refreshStore } = this.props;
-        const { collection, objectId, parentId, fieldName, fieldValue, fieldType } = this.state;
+        const { disabled, unlocked, refreshStore, fieldType } = this.props; 
+        const { collection, objectId, parentId, fieldName, fieldValue } = this.state; //fieldType
 
         if ((!!unlocked || !disabled) && !!collection && (!!objectId || !!parentId) && !!fieldName) {
 
@@ -219,7 +218,8 @@ class TableInput extends Component{
             width,
             maxLength,
             settingsColWidth,
-            index
+            index,
+            fieldType
         } = this.props;
 
         const {
@@ -227,7 +227,7 @@ class TableInput extends Component{
             isEditing,
             isSelected,
             fieldValue,
-            fieldType,
+            // fieldType,
             beforeSelectWidth,
         } = this.state;
 
