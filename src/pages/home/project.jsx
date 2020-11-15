@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { history } from '../../_helpers';
 import { 
+    alertActions,
     accessActions,
     collitypeActions,
     currencyActions,
