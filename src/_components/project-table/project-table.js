@@ -480,11 +480,11 @@ class ProjectTable extends Component {
                     <button className="btn btn-outline-leeuwen-blue" title="Refresh" onClick={refreshStore} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon="sync-alt" className="far fa-2x"/></span>
                     </button>
-                    <button className="btn btn-outline-leeuwen-blue" title="Clear Filters" onClick={event => this.resetHeaders(event)} style={{width: '40px', height: '40px'}}>
-                        <span><FontAwesomeIcon icon="filter" className="far fa-2x"/></span>
-                    </button>
                     <button className="btn btn-outline-leeuwen-blue" title={isEqual ? 'Equal (Filters)' : 'Contain (Filters)'} onClick={event => this.toggleEqual(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon={isEqual ? 'equals' : 'brackets-curly'} className="far fa-2x"/></span>
+                    </button>
+                    <button className="btn btn-outline-leeuwen-blue" title="Clear Filters" onClick={event => this.resetHeaders(event)} style={{width: '40px', height: '40px'}}>
+                        <span><FontAwesomeIcon icon="filter" className="far fa-2x"/></span>
                     </button>
                     <button className="btn btn-outline-leeuwen-blue" title="Unlock Cells" onClick={event => toggleUnlock(event)} style={{width: '40px', height: '40px'}}>
                         <span><FontAwesomeIcon icon={unlocked ? "unlock" : "lock"} className="fa fa-2x"/></span>
