@@ -2107,7 +2107,7 @@ class StockManagement extends React.Component {
                         <li className="breadcrumb-item">
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
-                        <li className="breadcrumb-item active" aria-current="page">Stock management:</li>
+                        <li className="breadcrumb-item active" aria-current="page">Goods receipt & Stockmanagement:</li>
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
