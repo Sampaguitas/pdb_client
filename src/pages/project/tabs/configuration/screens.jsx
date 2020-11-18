@@ -362,7 +362,7 @@ class Screens extends React.Component {
     generateScreensOptions(screens) {
         let tempArray=[]
         if (screens) {
-            arraySorted(screens, "name").map((screen) =>  {        
+            screens.map((screen) =>  {        
                 tempArray.push (
                     <option 
                         key={screen._id}
@@ -438,28 +438,32 @@ class Screens extends React.Component {
         ]
 
         const screens = [
-            {_id: '5cd2b642fd333616dc360b63', name: 'Expediting', fromTbls: ['po', 'sub', 'packitem', 'certificate']},
-            {_id: '5cd2b646fd333616dc360b70', name: 'Expediting Splitwindow', fromTbls: ['po', 'sub']},
-            {_id: '5cd2b642fd333616dc360b64', name: 'Inspection', fromTbls: ['po', 'sub', 'packitem', 'certificate']},
-            {_id: '5cd2b647fd333616dc360b71', name: 'Inspection Splitwindow', fromTbls: ['po', 'sub', 'certificate']},
-            {_id: '5cd2b643fd333616dc360b66', name: 'Assign Transport', fromTbls: ['po', 'sub', 'article', 'packitem', 'certificate']},
-            {_id: '5cd2b647fd333616dc360b72', name: 'Assign Transport SplitWindow', fromTbls: ['po', 'sub', 'article', 'packitem']},
-            {_id: '5cd2b643fd333616dc360b67', name: 'Print Transportdocuments', fromTbls: ['collipack']},
-            {_id: '5cd2b642fd333616dc360b65', name: 'Certificates', fromTbls: ['po', 'sub', 'return', 'certificate']},
-            {_id: '5cd2b644fd333616dc360b69', name: 'Suppliers', fromTbls: ['supplier']},
-            {_id: '5ea8eefb7c213e2096462a2c', name: 'Stock Management', fromTbls: ['po', 'location']},
-            {_id: '5eb0f60ce7179a42f173de47', name: 'Goods Receipt with PO', fromTbls: ['po', 'location']},
-            {_id: '5ea911747c213e2096462d79', name: 'Goods Receipt with NFI', fromTbls: ['po', 'sub', 'location']},
-            {_id: '5ea919727c213e2096462e3f', name: 'Goods Receipt with PL', fromTbls: ['po', 'sub', 'packitem', 'location']},
-            {_id: '5f02b878e7179a221ee2c718', name: 'Goods Receipt with RET', fromTbls: ['po', 'return', 'location']},
-            {_id: '5ed1e76e7c213e044cc01884', name: 'Material Issue Record', fromTbls: ['mir']},
-            {_id: '5ed1e7a67c213e044cc01888', name: 'Material Issue Record Splitwindow', fromTbls: ['miritem', 'po']},
-            {_id: '5ed8f4ce7c213e044cc1c1a9', name: 'Picking Ticket', fromTbls: ['mir', 'pickticket', 'location', 'po']},
-            {_id: '5ed8f4f37c213e044cc1c1af', name: 'Picking Ticket Splitwindow', fromTbls: ['area', 'location', 'mir', 'miritem', 'pickitem', 'po']},
+            {_id: '5cd2b642fd333616dc360b63', name: 'Expediting - Expediting', fromTbls: ['po', 'sub', 'packitem', 'certificate']},
+            {_id: '5cd2b646fd333616dc360b70', name: 'Expediting - Expediting Splitwindow', fromTbls: ['po', 'sub']},
+            
+            {_id: '5cd2b642fd333616dc360b64', name: 'Inspection - Inspection & Release data', fromTbls: ['po', 'sub', 'packitem', 'certificate']}, //Inspection
+            {_id: '5cd2b647fd333616dc360b71', name: 'Inspection - Inspection & Release data Splitwindow', fromTbls: ['po', 'sub', 'certificate']}, //Inspection Splitwindow
+            {_id: '5cd2b642fd333616dc360b65', name: 'Inspection - Certificates', fromTbls: ['po', 'sub', 'return', 'certificate']}, //Certificates
+            
+            {_id: '5cd2b643fd333616dc360b66', name: 'Shipping - Prepare transport docs', fromTbls: ['po', 'sub', 'article', 'packitem', 'certificate']}, //Assign Transport
+            {_id: '5cd2b647fd333616dc360b72', name: 'Shipping - Prepare transport docs SplitWindow', fromTbls: ['po', 'sub', 'article', 'packitem']}, //Assign Transport SplitWindow
+            {_id: '5cd2b643fd333616dc360b67', name: 'Shipping - Complete packing details', fromTbls: ['collipack']}, //Print Transportdocuments
+            
+            {_id: '5ea8eefb7c213e2096462a2c', name: 'Warehouse - Stock Management - Stock Management', fromTbls: ['po', 'location']}, //Stock Management
+            {_id: '5eb0f60ce7179a42f173de47', name: 'Warehouse - Stock Management - Goods Receipt with PO', fromTbls: ['po', 'location']}, //Goods Receipt with PO
+            {_id: '5ea911747c213e2096462d79', name: 'Warehouse - Stock Management - Goods Receipt with NFI', fromTbls: ['po', 'sub', 'location']}, //Goods Receipt with NFI
+            {_id: '5ea919727c213e2096462e3f', name: 'Warehouse - Stock Management - Goods Receipt with PL', fromTbls: ['po', 'sub', 'packitem', 'location']}, //Goods Receipt with PL
+            {_id: '5f02b878e7179a221ee2c718', name: 'Warehouse - Stock Management - Goods Receipt with RET', fromTbls: ['po', 'return', 'location']}, //Goods Receipt with RET
+            {_id: '5ed1e76e7c213e044cc01884', name: 'Warehouse - Material Issue Record - Material Issue Record', fromTbls: ['mir']}, //Material Issue Record
+            {_id: '5ed1e7a67c213e044cc01888', name: 'Warehouse - Material Issue Record - Material Issue Record Splitwindow', fromTbls: ['miritem', 'po']}, //Material Issue Record Splitwindow
+            {_id: '5ed8f4ce7c213e044cc1c1a9', name: 'Warehouse - Picking Ticket - Picking Ticket', fromTbls: ['mir', 'pickticket', 'location', 'po']}, //Picking Ticket
+            {_id: '5ed8f4f37c213e044cc1c1af', name: 'Warehouse - Picking Ticket - Picking Ticket Splitwindow', fromTbls: ['area', 'location', 'mir', 'miritem', 'pickitem', 'po']}, //Picking Ticket Splitwindow
+            {_id: '5ee60fbb7c213e044cc480e4', name: 'Warehouse - Shipping - Prepare transport docs', fromTbls: ['article', 'location', 'mir', 'miritem', 'po', 'packitem', 'pickitem', 'pickticket', 'certificate']}, //WH Assign Transport
+            {_id: '5ee60fd27c213e044cc480e7', name: 'Warehouse - Shipping - Prepare transport docs SplitWindow', fromTbls: ['article', 'location', 'mir', 'miritem', 'po', 'packitem', 'pickitem', 'pickticket']}, //WH Assign Transport SplitWindow
+            {_id: '5ee60fe87c213e044cc480ea', name: 'Warehouse - Shipping - Complete packing details', fromTbls: ['collipack']}, //WH Print Transportdocuments
+            
+            {_id: '5cd2b644fd333616dc360b69', name: 'Configuration - Suppliers', fromTbls: ['supplier']},
 
-            {_id: '5ee60fbb7c213e044cc480e4', name: 'WH Assign Transport', fromTbls: ['article', 'location', 'mir', 'miritem', 'po', 'packitem', 'pickitem', 'pickticket', 'certificate']},
-            {_id: '5ee60fd27c213e044cc480e7', name: 'WH Assign Transport SplitWindow', fromTbls: ['article', 'location', 'mir', 'miritem', 'po', 'packitem', 'pickitem', 'pickticket']},
-            {_id: '5ee60fe87c213e044cc480ea', name: 'WH Print Transportdocuments', fromTbls: ['collipack']},
             // {_id: '5cd2b643fd333616dc360b68', name: 'Data Upload File', fromTbls: ['packitem', 'collipack']}, //what is this screen Dave?
             // {_id: '5cd2b644fd333616dc360b6a', name: 'Delete Items', fromTbls: []}, //what is this screen Dave?
             // {_id: '5cd2b644fd333616dc360b6b', name: 'Projects', fromTbls: []}, //main screen no need to customise
