@@ -807,7 +807,7 @@ class StockManagement extends React.Component {
             plScreenId: '5ea919727c213e2096462e3f', //Goods Receipt with PL
             retScreenId: '5f02b878e7179a221ee2c718', //Goods Receipt with RET
             unlocked: false,
-            screen: 'Stock Management',
+            screen: 'Goods receipt & Stockmanagement',
             selectedIds: [],
             selectedIdsGr: [],
             selectedTemplate: '',
