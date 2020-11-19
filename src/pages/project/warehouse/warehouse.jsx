@@ -102,7 +102,7 @@ class Warehouse extends React.Component {
                                         className="fa-5x mb-3" 
                                         name="forklift"
                                     />
-                                    <h3>Goods receipt & Stockmanagement</h3>
+                                    <h3>Goods receipt & Stock management</h3>
                                 </div>
                             </div>
                         </NavLink>

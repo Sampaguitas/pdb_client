@@ -807,7 +807,7 @@ class StockManagement extends React.Component {
             plScreenId: '5ea919727c213e2096462e3f', //Goods Receipt with PL
             retScreenId: '5f02b878e7179a221ee2c718', //Goods Receipt with RET
             unlocked: false,
-            screen: 'Goods receipt & Stockmanagement',
+            screen: 'Goods receipt & Stock management',
             selectedIds: [],
             selectedIdsGr: [],
             selectedTemplate: '',
@@ -2107,7 +2107,7 @@ class StockManagement extends React.Component {
                         <li className="breadcrumb-item">
                             <NavLink to={{ pathname: '/warehouse', search: '?id=' + projectId }} tag="a">Warehouse</NavLink>
                         </li>
-                        <li className="breadcrumb-item active" aria-current="page">Goods receipt & Stockmanagement:</li>
+                        <li className="breadcrumb-item active" aria-current="page">Goods receipt & Stock management:</li>
                         <span className="ml-3 project-title">{selection.project ? selection.project.name : <FontAwesomeIcon icon="spinner" className="fa-pulse fa fa-fw" />}</span>
                     </ol>
                 </nav>
