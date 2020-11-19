@@ -253,6 +253,29 @@ h5 {
 
   /* //////////// Modal ////////////*/
 
+.modal {
+  display: block;
+  overflow-y: auto;
+}
+
+.modal-dialog {
+  position: relative;
+  left: 50%;
+  transform: translate(-50%);
+  max-width: 500px;
+  margin: .5rem;
+}
+
+.modal-header {
+  background:#A8052C; /*#c00a2b */
+  color: white;
+  cursor: move;
+}
+
+.modal-header .close, .modal-header .close:hover {
+  color: #fff;
+}
+
 .modal-link {
   display: inline-block;
   margin-left: 5px;
@@ -263,67 +286,54 @@ h5 {
   opacity: 1;
 }
 
-  .modal-dialog {
-    max-width: 500px;
-  }
+.modal-dialog {
+  max-width: 500px;
+}
 
-  .modal-xl {
-    max-width: 1140px !important;
-  }
+.modal-xl {
+  max-width: 1140px !important;
+}
 
-  .modal-lg {
-    max-width: 800px !important;
-  }
+.modal-lg {
+  max-width: 800px !important;
+}
 
-  .modal-sm {
-    max-width: 300px !important;
-  }
+.modal-sm {
+  max-width: 300px !important;
+}
 
-  .modal-header {
-    background:#A8052C; /*#c00a2b */
-    color: white;
-  }
-  
-  .modal-header .close, .modal-header .close:hover {
-    color: #fff;
-  }
+.no-padding {
+  padding: 0;
+}
+.no-padding .list-group-item {
+  border: 0 !important;
+  border-radius: 0 !important;
+}
+.padding {
+  padding-top: 15px;
+}
+.col-md-3 {
+  margin-bottom: 15px;
+}
 
-  .no-padding {
-    padding: 0;
-  }
-  .no-padding .list-group-item {
-    border: 0 !important;
-    border-radius: 0 !important;
-  }
-  .padding {
-    padding-top: 15px;
-  }
-  .col-md-3 {
-    margin-bottom: 15px;
-  }
-  
-  .list-group-item {
-    cursor: pointer;
-  }
+.list-group-item {
+  cursor: pointer;
+}
 
-  /* .input-group-text {
-    font-weight: 400 !important;
-  } */
+/* .input-group-text {
+  font-weight: 400 !important;
+} */
 
-  .input-group>label, .input-group>select {
-    font-weight: 400 !important;
-  }
-
-
-
-
+.input-group>label, .input-group>select {
+  font-weight: 400 !important;
+}
 
   /* //////////// Header Bar Menu ////////////*/
 
-  .header-button {
-    margin-left: 10px;
-    height: 40px;
-    width: 40px;
+.header-button {
+  margin-left: 10px;
+  height: 40px;
+  width: 40px;
 }
 .navbar {
     padding-left: 15px;

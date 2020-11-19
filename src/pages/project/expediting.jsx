@@ -613,6 +613,7 @@ class Expediting extends React.Component {
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId)
         });
+
     }
 
     componentDidUpdate(prevProps, prevState) {

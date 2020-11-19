@@ -86,7 +86,7 @@ class HeaderInput extends Component{
                         zIndex: '2',
                         cursor: 'col-resize'
                     }}
-                    draggable
+                    draggable="true"
                     onDragStart={event => this.onDragStart(event)}
                     onDragEnd={event => this.onDragEnd(event)}
                     onDoubleClick={event => colDoubleClick(event, index)}
