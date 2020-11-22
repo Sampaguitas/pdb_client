@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
+import arrayMove from'array-move';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../_helpers';
 import { 
@@ -325,6 +326,7 @@ class MirSplitwindow extends React.Component {
             uploading: false,
             responce:{},
         };
+        this.moveScreenHeaders = this.moveScreenHeaders.bind(this);
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -495,6 +497,11 @@ class MirSplitwindow extends React.Component {
                 });
             }
         }
+    }
+
+    moveScreenHeaders(formPosition, toPosition) {
+        const { headersForShow } = this.state;
+        this.setState({headersForShow: arrayMove(headersForShow, formPosition, toPosition)});
     }
 
     handleClearAlert(event){
@@ -1103,6 +1110,7 @@ class MirSplitwindow extends React.Component {
                     <div className="body-section">
                         {fieldnames.items && 
                             <ProjectTable
+                                moveScreenHeaders={this.moveScreenHeaders}
                                 screenHeaders={headersForShow}
                                 screenBodys={bodysForShow}
                                 projectId={projectId}

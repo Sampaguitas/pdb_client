@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import { saveAs } from 'file-saver';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
+import arrayMove from'array-move';
 import { authHeader } from '../../_helpers';
 import { 
     accessActions, 
@@ -507,7 +508,7 @@ class Expediting extends React.Component {
             uploading: false,
             responce:{},
         };
-
+        this.moveScreenHeaders = this.moveScreenHeaders.bind(this);
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -666,6 +667,11 @@ class Expediting extends React.Component {
             this.setState({docList: arraySorted(docConf(docdefs.items, ['5d1927121424114e3884ac7e']), "name")});
         }
 
+    }
+
+    moveScreenHeaders(formPosition, toPosition) {
+        const { headersForShow } = this.state;
+        this.setState({headersForShow: arrayMove(headersForShow, formPosition, toPosition)});
     }
 
     handleClearAlert(event){
@@ -1625,6 +1631,7 @@ class Expediting extends React.Component {
                     <div className="body-section">
                         {fieldnames.items && 
                             <ProjectTable
+                                moveScreenHeaders={this.moveScreenHeaders}
                                 screenHeaders={headersForShow}
                                 screenBodys={bodysForShow}
                                 projectId={projectId}

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
+import classNames from 'classnames';
 class HeaderInput extends Component{
     constructor(props) {
         super(props);
@@ -28,17 +28,27 @@ class HeaderInput extends Component{
     }
 
     render() {
+
         
-        const { type, title, name, value, width, onChange, textNoWrap, sort, toggleSort, maxLength, index, settingsColWidth, colDoubleClick } = this.props;
+        const { id, dragenterId, type, title, name, value, width, onChange, textNoWrap, sort, toggleSort, maxLength, index, settingsColWidth, colDoubleClick } = this.props;
+        
         return (
-            <th 
+            <th
+                id={id}
+                className="dropzone"
+                draggable={id != undefined ? "true" : "false"}
                 style={{
                     width: `${width ? width : 'auto'}`,
                     whiteSpace: `${textNoWrap ? 'nowrap' : 'auto'}`,
-                    padding: '0px'
+                    padding: '0px',
+                    background: `${dragenterId == id && id != undefined && dragenterId != undefined ?  '#C0C0C0' : ''}`
                 }}
             >
-                <div role="button" className="btn-header" onClick={event => toggleSort(event, name)}>
+                <div
+                    role="button"
+                    className="btn-header"
+                    onClick={event => toggleSort(event, name)}
+                    >
                     <span
                         className="btn-header-title no-select"
                         style={{
@@ -74,7 +84,6 @@ class HeaderInput extends Component{
                     />
                 </div>
                 <div
-                    id="draggable-column"
                     role="button"
                     style={{
                         position: 'absolute',

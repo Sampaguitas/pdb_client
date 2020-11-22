@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import queryString from 'query-string';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
+import arrayMove from'array-move';
 import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
@@ -432,6 +433,7 @@ class TransportDocuments extends React.Component {
             uploading: false,
             responce:{},    
         };
+        this.moveScreenHeaders = this.moveScreenHeaders.bind(this);
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -580,6 +582,11 @@ class TransportDocuments extends React.Component {
                 bodysForShow: getBodys(fieldnames, selection, pos, headersForShow, screenId),
             });
         }
+    }
+
+    moveScreenHeaders(formPosition, toPosition) {
+        const { headersForShow } = this.state;
+        this.setState({headersForShow: arrayMove(headersForShow, formPosition, toPosition)});
     }
 
     handleClearAlert(event){
@@ -1614,6 +1621,7 @@ class TransportDocuments extends React.Component {
                     <div className="body-section">
                         {selection && selection.project && 
                             <ProjectTable
+                                moveScreenHeaders={this.moveScreenHeaders}
                                 screenHeaders={headersForShow}
                                 screenBodys={bodysForShow}
                                 projectId={projectId}
