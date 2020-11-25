@@ -25,11 +25,12 @@ import {
     getHeaders,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsPosition,
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
 import ProjectTable from '../../../_components/project-table/project-table';
-import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
+import { TabDisplay, TabFilter, TabWidth, TabPosition } from '../../../_components/setting';
 import { Layout, Modal } from '../../../_components';
 import SplitMir from '../../../_components/split-line/split-mir';
 import _ from 'lodash';
@@ -270,6 +271,7 @@ class MirSplitwindow extends React.Component {
             settingsFilter: [],
             settingsDisplay: [],
             settingsColWidth: {},
+            settingsPosition: [],
             tabs: [
                 {
                     index: 0, 
@@ -294,7 +296,15 @@ class MirSplitwindow extends React.Component {
                     component: TabWidth,
                     active: false,
                     isLoaded: false
-                }
+                },
+                {
+                    index: 3,
+                    id: 'position',
+                    label: 'Position',
+                    component: TabPosition,
+                    active: false,
+                    isLoaded: false
+                },
             ],
             projectId:'',
             mirId: '',
@@ -351,6 +361,7 @@ class MirSplitwindow extends React.Component {
         this.colDoubleClick = this.colDoubleClick.bind(this);
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
+        this.resetPosition = this.resetPosition.bind(this);
         //Upload File
         this.fileInput = React.createRef();
         this.onKeyPress = this.onKeyPress.bind(this);
@@ -379,7 +390,7 @@ class MirSplitwindow extends React.Component {
             transactions
         } = this.props;
 
-        const { menuItem, screenId, headersForShow, headersForSelect, settingsDisplay, pos } = this.state;
+        const { menuItem, screenId, headersForShow, headersForSelect, settingsDisplay, settingsPosition, pos } = this.state;
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
         dispatch(sidemenuActions.select(menuItem));
@@ -416,12 +427,13 @@ class MirSplitwindow extends React.Component {
 
         this.setState({
             pos: getPos(transactions, mirs, mirId),
-            headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-            headersForSelect: getHeaders([], fieldnames, screenId, 'forSelect'),
+            headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodysForShow(mirs, mirId, selection, headersForShow),
+            headersForSelect: getHeaders([], [], fieldnames, screenId, 'forSelect'),
             bodysForSelect: getBodysForSelect(pos, selection, headersForSelect),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId)
         }, () => {
             if (mirs.hasOwnProperty('items') && !_.isEmpty(mirs.items)) {
@@ -442,33 +454,35 @@ class MirSplitwindow extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { bodysForSelect, headersForShow, headersForSelect, mirId, screenId, settingsDisplay, pos } = this.state;
+        const { bodysForSelect, headersForShow, headersForSelect, mirId, screenId, settingsDisplay, settingsPosition, pos } = this.state;
         const { fieldnames, mirs, selection, settings, transactions} = this.props;
 
         if (transactions != prevProps.transactions || mirs != prevProps.mirs) {
             this.setState({ pos: getPos(transactions, mirs, mirId) });
         }
 
-        if (fieldnames != prevProps.fieldnames){
-            this.setState({
-                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-                headersForSelect: getHeaders([], fieldnames, screenId, 'forSelect'),
-                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
-            });
-        }
-
         if (settings != prevProps.settings){
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
                 settingsColWidth: initSettingsColWidth(settings, screenId)
             });
         }
 
-        if (settingsDisplay != prevState.settingsDisplay) {
+        if (settingsDisplay != prevState.settingsDisplay || settingsPosition != prevState.settingsPosition) {
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+                headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
+            });
+        }
+
+        if (fieldnames != prevProps.fieldnames){
+            this.setState({
+                headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
+                headersForSelect: getHeaders([], [], fieldnames, screenId, 'forSelect'),
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsPosition: initSettingsPosition(fieldnames, settings, screenId)
             });
         }
 
@@ -500,8 +514,10 @@ class MirSplitwindow extends React.Component {
     }
 
     moveScreenHeaders(formPosition, toPosition) {
-        const { headersForShow } = this.state;
-        this.setState({headersForShow: arrayMove(headersForShow, formPosition, toPosition)});
+        const { settingsPosition } = this.state;
+        this.setState({
+            settingsPosition: arrayMove(settingsPosition, formPosition, toPosition)
+        });
     }
 
     handleClearAlert(event){
@@ -549,26 +565,26 @@ class MirSplitwindow extends React.Component {
 
     handleCheckSettings(id) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, screenId } = this.state;
+        const { settingsDisplay, settingsPosition, screenId } = this.state;
         let tempArray = settingsDisplay;
         let found = tempArray.find(element => element._id === id);
         if(!!found) {
             found.isChecked = !found.isChecked;
             this.setState({
                 settingsDisplay: tempArray,
-                headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+                headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
             });
         }
     }
 
     handleCheckSettingsAll(bool) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, screenId } = this.state;
+        const { settingsDisplay, settingsPosition, screenId } = this.state;
         let tempArray = settingsDisplay;
         tempArray.map(element => element.isChecked = bool);
         this.setState({
             settingsDisplay: tempArray,
-            headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+            headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
         });
     }
 
@@ -578,13 +594,15 @@ class MirSplitwindow extends React.Component {
         const { screenId } = this.state;
         this.setState({
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId),
         });
     }
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsPosition, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -604,6 +622,7 @@ class MirSplitwindow extends React.Component {
                     }
                     return acc;
                 }, []),
+                position: settingsPosition,
                 colWidth: settingsColWidth
             }
             const requestOptions = {
@@ -883,6 +902,13 @@ class MirSplitwindow extends React.Component {
         } else {
             this.setState({settingsColWidth: {} })
         }
+    }
+
+    resetPosition(event) {
+        event.preventDefault();
+        const { fieldnames } = this.props;
+        const { screenId } = this.state;
+        this.setState({ settingsPosition: initSettingsPosition(fieldnames, undefined, screenId) });
     }
 
     onKeyPress(event) {
@@ -1165,7 +1191,7 @@ class MirSplitwindow extends React.Component {
                         <ul className="nav nav-tabs">
                         {tabs.map((tab) => 
                             <li className={tab.active ? 'nav-item active' : 'nav-item'} key={tab.index}>
-                                <a className="nav-link" href={'#'+ tab.id} data-toggle="tab" onClick={event => this.handleModalTabClick(event,tab)} id={tab.id + '-tab'} aria-controls={tab.id} role="tab">
+                                <a className="nav-link" href={'#'+ tab.id} data-toggle="tab" onClick={event => this.handleModalTabClick(event,tab)} id={tab.id + '-tab'} aria-controls={tab.id} role="tab" draggable="false">
                                     {tab.label}
                                 </a>
                             </li>                        
@@ -1194,6 +1220,7 @@ class MirSplitwindow extends React.Component {
                                         settingsColWidth={settingsColWidth}
                                         screenHeaders={headersForShow}
                                         clearWidth={this.clearWidth}
+                                        resetPosition={this.resetPosition}
                                         handleInputSettings={this.handleInputSettings}
                                         handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}

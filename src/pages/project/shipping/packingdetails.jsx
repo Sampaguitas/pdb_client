@@ -34,12 +34,13 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsPosition,
     initSettingsColWidth,
     getPlList,
     copyObject
 } from '../../../_functions';
 import ProjectTable from '../../../_components/project-table/project-table';
-import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
+import { TabDisplay, TabFilter, TabWidth, TabPosition } from '../../../_components/setting';
 import SplitColliType from '../../../_components/split-line/split-collitype';
 import { Layout, Modal } from '../../../_components';
 import _ from 'lodash';
@@ -144,6 +145,7 @@ class PackingDetails extends React.Component {
             settingsFilter: [],
             settingsDisplay: [],
             settingsColWidth: {},
+            settingsPosition: [],
             tabs: [
                 {
                     index: 0, 
@@ -168,7 +170,15 @@ class PackingDetails extends React.Component {
                     component: TabWidth,
                     active: false,
                     isLoaded: false
-                }
+                },
+                {
+                    index: 3,
+                    id: 'position',
+                    label: 'Position',
+                    component: TabPosition,
+                    active: false,
+                    isLoaded: false
+                },
             ],
             projectId:'',
             screenId: '5cd2b643fd333616dc360b67', //packing details
@@ -239,6 +249,7 @@ class PackingDetails extends React.Component {
         this.colDoubleClick = this.colDoubleClick.bind(this);
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
+        this.resetPosition = this.resetPosition.bind(this);
         //Upload File
         this.fileInput = React.createRef();
         this.onKeyPress = this.onKeyPress.bind(this);
@@ -269,7 +280,7 @@ class PackingDetails extends React.Component {
             settings
         } = this.props;
 
-        const { menuItem, screenId, headersForShow, settingsDisplay } = this.state;
+        const { menuItem, screenId, headersForShow, settingsDisplay, settingsPosition } = this.state;
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
         dispatch(sidemenuActions.select(menuItem));
@@ -305,18 +316,19 @@ class PackingDetails extends React.Component {
         }
 
         this.setState({
-            headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+            headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(collipacks, headersForShow),
             plList: getPlList(collipacks),
             docList: arraySorted(docConf(docdefs.items, ['5d1927131424114e3884ac80', '5d1927141424114e3884ac84', '5d1927131424114e3884ac81', '5d1927141424114e3884ac83']), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId)
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, screenId, selectedField, settingsDisplay } = this.state;
+        const { headersForShow, screenId, selectedField, settingsDisplay, settingsPosition } = this.state;
         const { fields, fieldnames, docdefs, collipacks, settings } = this.props;
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
@@ -331,11 +343,25 @@ class PackingDetails extends React.Component {
             }
         }
 
+        if (settings != prevProps.settings) {
+            this.setState({
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
+            });
+        }
+
+        if (settingsDisplay != prevState.settingsDisplay || settingsPosition != prevState.settingsPosition) {
+            this.setState({headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow')});
+        }
+
         if (fieldnames != prevProps.fieldnames){
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+                headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             });
         }
 
@@ -351,23 +377,13 @@ class PackingDetails extends React.Component {
             this.setState({docList: arraySorted(docConf(docdefs.items, ['5d1927131424114e3884ac80', '5d1927141424114e3884ac84', '5d1927131424114e3884ac81', '5d1927141424114e3884ac83']), "name")});
         }
 
-        if (settingsDisplay != prevState.settingsDisplay) {
-            this.setState({headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')});
-        }
-
-        if (settings != prevProps.settings) {
-            this.setState({
-                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-                settingsColWidth: initSettingsColWidth(settings, screenId)
-            });
-        }
-
     }
 
     moveScreenHeaders(formPosition, toPosition) {
-        const { headersForShow } = this.state;
-        this.setState({headersForShow: arrayMove(headersForShow, formPosition, toPosition)});
+        const { settingsPosition } = this.state;
+        this.setState({
+            settingsPosition: arrayMove(settingsPosition, formPosition, toPosition)
+        });
     }
 
     handleClearAlert(event){
@@ -415,26 +431,26 @@ class PackingDetails extends React.Component {
 
     handleCheckSettings(id) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, screenId } = this.state;
+        const { settingsDisplay, settingsPosition, screenId } = this.state;
         let tempArray = settingsDisplay;
         let found = tempArray.find(element => element._id === id);
         if(!!found) {
             found.isChecked = !found.isChecked;
             this.setState({
                 settingsDisplay: tempArray,
-                headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+                headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
             });
         }
     }
 
     handleCheckSettingsAll(bool) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, screenId } = this.state;
+        const { settingsDisplay, settingsPosition, screenId } = this.state;
         let tempArray = settingsDisplay;
         tempArray.map(element => element.isChecked = bool);
         this.setState({
             settingsDisplay: tempArray,
-            headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+            headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
         });
     }
 
@@ -444,13 +460,15 @@ class PackingDetails extends React.Component {
         const { screenId } = this.state;
         this.setState({
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId),
         });
     }
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsPosition, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -470,6 +488,7 @@ class PackingDetails extends React.Component {
                     }
                     return acc;
                 }, []),
+                position: settingsPosition,
                 colWidth: settingsColWidth
             }
             const requestOptions = {
@@ -1059,6 +1078,13 @@ class PackingDetails extends React.Component {
         }
     }
 
+    resetPosition(event) {
+        event.preventDefault();
+        const { fieldnames } = this.props;
+        const { screenId } = this.state;
+        this.setState({ settingsPosition: initSettingsPosition(fieldnames, undefined, screenId) });
+    }
+
     onKeyPress(event) {
         if (event.which === 13 /* prevent form submit on key Enter */) {
           event.preventDefault();
@@ -1439,7 +1465,7 @@ class PackingDetails extends React.Component {
                         <ul className="nav nav-tabs">
                         {tabs.map((tab) => 
                             <li className={tab.active ? 'nav-item active' : 'nav-item'} key={tab.index}>
-                                <a className="nav-link" href={'#'+ tab.id} data-toggle="tab" onClick={event => this.handleModalTabClick(event,tab)} id={tab.id + '-tab'} aria-controls={tab.id} role="tab">
+                                <a className="nav-link" href={'#'+ tab.id} data-toggle="tab" onClick={event => this.handleModalTabClick(event,tab)} id={tab.id + '-tab'} aria-controls={tab.id} role="tab" draggable="false">
                                     {tab.label}
                                 </a>
                             </li>                        
@@ -1468,6 +1494,7 @@ class PackingDetails extends React.Component {
                                         settingsColWidth={settingsColWidth}
                                         screenHeaders={headersForShow}
                                         clearWidth={this.clearWidth}
+                                        resetPosition={this.resetPosition}
                                         handleInputSettings={this.handleInputSettings}
                                         handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}

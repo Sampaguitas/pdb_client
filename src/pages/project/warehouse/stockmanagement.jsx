@@ -40,11 +40,12 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
+    initSettingsPosition,
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
 import ProjectTable from '../../../_components/project-table/project-table';
-import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
+import { TabDisplay, TabFilter, TabWidth, TabPosition } from '../../../_components/setting';
 import SplitGoodsReceipt from '../../../_components/split-line/split-goods-receipt';
 import SplitHeatLocation from '../../../_components/split-line/split-heat-location';
 import { Layout, Modal } from '../../../_components';
@@ -775,6 +776,7 @@ class StockManagement extends React.Component {
             settingsFilter: [],
             settingsDisplay: [],
             settingsColWidth: {},
+            settingsPosition: [],
             tabs: [
                 {
                     index: 0, 
@@ -799,7 +801,15 @@ class StockManagement extends React.Component {
                     component: TabWidth,
                     active: false,
                     isLoaded: false
-                }
+                },
+                {
+                    index: 3,
+                    id: 'position',
+                    label: 'Position',
+                    component: TabPosition,
+                    active: false,
+                    isLoaded: false
+                },
             ],
             projectId:'',
             screenId: '5ea8eefb7c213e2096462a2c', //Stock Management
@@ -892,6 +902,7 @@ class StockManagement extends React.Component {
         this.colDoubleClick = this.colDoubleClick.bind(this);
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
+        this.resetPosition = this.resetPosition.bind(this);
         this.dufInput = React.createRef();
         //Upload File
         this.downloadTable = this.downloadTable.bind(this);
@@ -935,7 +946,8 @@ class StockManagement extends React.Component {
             headersNfi, 
             headersPl,
             headersRet,
-            settingsDisplay 
+            settingsDisplay,
+            settingsPosition
         } = this.state;
 
         var qs = queryString.parse(location.search);
@@ -983,11 +995,11 @@ class StockManagement extends React.Component {
         }
 
         this.setState({
-            headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-            headersPo: getHeaders([], fieldnames, poScreenId, 'forShow'),
-            headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
-            headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
-            headersRet: getHeaders([], fieldnames, retScreenId, 'forShow'),
+            headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
+            headersPo: getHeaders([], [], fieldnames, poScreenId, 'forShow'),
+            headersNfi: getHeaders([], [], fieldnames, nfiScreenId, 'forShow'),
+            headersPl: getHeaders([], [], fieldnames, plScreenId, 'forShow'),
+            headersRet: getHeaders([], [], fieldnames, retScreenId, 'forShow'),
             bodysForShow: getBodysForShow (selection, pos, transactions, headersForShow),
             bodysPo: getPoBodys(selection, pos, transactions, headersPo),
             bodysNfi: getNfiBodys(selection, pos, transactions, headersNfi),
@@ -996,6 +1008,7 @@ class StockManagement extends React.Component {
             docList: arraySorted(docConf(docdefs.items, ['5eacef91e7179a42f172feea']), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId)
         });
     }
@@ -1028,6 +1041,7 @@ class StockManagement extends React.Component {
             selectedField,
             selectedIdsGr,
             settingsDisplay,
+            settingsPosition,
             toWarehouse,
             toArea,
             whList,
@@ -1047,15 +1061,29 @@ class StockManagement extends React.Component {
             }
         }
 
+        if (settings != prevProps.settings) {
+            this.setState({
+                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
+                settingsColWidth: initSettingsColWidth(settings, screenId)
+            });
+        }
+
+        if (settingsDisplay != prevState.settingsDisplay || settingsPosition != prevState.settingsPosition) {
+            this.setState({headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow')});
+        }
+
         if (fieldnames != prevProps.fieldnames){
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
-                headersPo: getHeaders([], fieldnames, poScreenId, 'forShow'),
-                headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
-                headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
-                headersRet: getHeaders([], fieldnames, retScreenId, 'forShow'),
+                headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
+                headersPo: getHeaders([], [], fieldnames, poScreenId, 'forShow'),
+                headersNfi: getHeaders([], [], fieldnames, nfiScreenId, 'forShow'),
+                headersPl: getHeaders([], [], fieldnames, plScreenId, 'forShow'),
+                headersRet: getHeaders([], [], fieldnames, retScreenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             }); 
         }
 
@@ -1091,18 +1119,6 @@ class StockManagement extends React.Component {
 
         if (docdefs != prevProps.docdefs) {
             this.setState({docList: arraySorted(docConf(docdefs.items, ['5eacef91e7179a42f172feea']), "name")});
-        }
-
-        if (settingsDisplay != prevState.settingsDisplay) {
-            this.setState({headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')});
-        }
-
-        if (settings != prevProps.settings) {
-            this.setState({
-                settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-                settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-                settingsColWidth: initSettingsColWidth(settings, screenId)
-            });
         }
 
         if (warehouses != prevProps.warehouses) {
@@ -1149,8 +1165,10 @@ class StockManagement extends React.Component {
     }
 
     moveScreenHeaders(formPosition, toPosition) {
-        const { headersForShow } = this.state;
-        this.setState({headersForShow: arrayMove(headersForShow, formPosition, toPosition)});
+        const { settingsPosition } = this.state;
+        this.setState({
+            settingsPosition: arrayMove(settingsPosition, formPosition, toPosition)
+        });
     }
 
     handleClearAlert(event){
@@ -1198,26 +1216,26 @@ class StockManagement extends React.Component {
 
     handleCheckSettings(id) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, screenId } = this.state;
+        const { settingsDisplay, settingsPosition, screenId } = this.state;
         let tempArray = settingsDisplay;
         let found = tempArray.find(element => element._id === id);
         if(!!found) {
             found.isChecked = !found.isChecked;
             this.setState({
                 settingsDisplay: tempArray,
-                headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+                headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
             });
         }
     }
 
     handleCheckSettingsAll(bool) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, screenId } = this.state;
+        const { settingsDisplay, settingsPosition, screenId } = this.state;
         let tempArray = settingsDisplay;
         tempArray.map(element => element.isChecked = bool);
         this.setState({
             settingsDisplay: tempArray,
-            headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
+            headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
         });
     }
 
@@ -1227,13 +1245,15 @@ class StockManagement extends React.Component {
         const { screenId } = this.state;
         this.setState({
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
-            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId)
+            settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
+            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
+            settingsColWidth: initSettingsColWidth(settings, screenId),
         });
     }
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsPosition, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -1253,6 +1273,7 @@ class StockManagement extends React.Component {
                     }
                     return acc;
                 }, []),
+                position: settingsPosition,
                 colWidth: settingsColWidth
             }
             const requestOptions = {
@@ -1938,6 +1959,13 @@ class StockManagement extends React.Component {
         }
     }
 
+    resetPosition(event) {
+        event.preventDefault();
+        const { fieldnames } = this.props;
+        const { screenId } = this.state;
+        this.setState({ settingsPosition: initSettingsPosition(fieldnames, undefined, screenId) });
+    }
+
     downloadTable(event){
         event.preventDefault();
         const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
@@ -2511,7 +2539,7 @@ class StockManagement extends React.Component {
                         <ul className="nav nav-tabs">
                         {tabs.map((tab) => 
                             <li className={tab.active ? 'nav-item active' : 'nav-item'} key={tab.index}>
-                                <a className="nav-link" href={'#'+ tab.id} data-toggle="tab" onClick={event => this.handleModalTabClick(event,tab)} id={tab.id + '-tab'} aria-controls={tab.id} role="tab">
+                                <a className="nav-link" href={'#'+ tab.id} data-toggle="tab" onClick={event => this.handleModalTabClick(event,tab)} id={tab.id + '-tab'} aria-controls={tab.id} role="tab" draggable="false">
                                     {tab.label}
                                 </a>
                             </li>                        
@@ -2540,6 +2568,7 @@ class StockManagement extends React.Component {
                                         settingsColWidth={settingsColWidth}
                                         screenHeaders={headersForShow}
                                         clearWidth={this.clearWidth}
+                                        resetPosition={this.resetPosition}
                                         handleInputSettings={this.handleInputSettings}
                                         handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}

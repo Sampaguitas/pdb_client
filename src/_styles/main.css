@@ -269,7 +269,6 @@ h5 {
 .modal-header {
   background:#A8052C; /*#c00a2b */
   color: white;
-  cursor: move;
 }
 
 .modal-header .close, .modal-header .close:hover {
