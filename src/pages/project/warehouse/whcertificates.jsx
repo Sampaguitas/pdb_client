@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
-import arrayMove from'array-move';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../_helpers';
 import { 
@@ -25,12 +24,11 @@ import {
     getHeaders,
     initSettingsFilter,
     initSettingsDisplay,
-    initSettingsPosition,
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
 import ProjectTable from '../../../_components/project-table/project-table';
-import { TabDisplay, TabFilter, TabWidth, TabPosition } from '../../../_components/setting';
+import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
 import SplitCertificate from '../../../_components/split-line/split-certificate';
 import SplitHeat from '../../../_components/split-line/split-heat';
 import { Layout, Modal } from '../../../_components';
@@ -359,7 +357,6 @@ class WhCertificates extends React.Component {
             settingsFilter: [],
             settingsDisplay: [],
             settingsColWidth: {},
-            settingsPosition: [],
             tabs: [
                 {
                     index: 0, 
@@ -384,15 +381,7 @@ class WhCertificates extends React.Component {
                     component: TabWidth,
                     active: false,
                     isLoaded: false
-                },
-                {
-                    index: 3,
-                    id: 'position',
-                    label: 'Position',
-                    component: TabPosition,
-                    active: false,
-                    isLoaded: false
-                },
+                }
             ],
             projectId:'',
             screenId: '5cd2b642fd333616dc360b65', //Certificates
@@ -413,7 +402,6 @@ class WhCertificates extends React.Component {
             deletingRows: false
 
         };
-        this.moveScreenHeaders = this.moveScreenHeaders.bind(this);
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
@@ -439,7 +427,6 @@ class WhCertificates extends React.Component {
         this.colDoubleClick = this.colDoubleClick.bind(this);
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
-        this.resetPosition = this.resetPosition.bind(this);
         //Upload File
         this.downloadTable = this.downloadTable.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
@@ -464,7 +451,7 @@ class WhCertificates extends React.Component {
             settings
         } = this.props;
 
-        const { menuItem, screenId, headersForShow, settingsDisplay, settingsPosition } = this.state;
+        const { menuItem, screenId, headersForShow, settingsDisplay } = this.state;
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
         dispatch(sidemenuActions.select(menuItem));
@@ -495,17 +482,16 @@ class WhCertificates extends React.Component {
         }
 
         this.setState({
-            headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
+            headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(selection, pos, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId)
         });
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, screenId, selectedField, settingsDisplay, settingsPosition, selectedIds } = this.state;
+        const { headersForShow, screenId, selectedField, settingsDisplay, selectedIds } = this.state;
         const { fields, fieldnames, selection, settings, pos } = this.props;
         
         if (selectedField != prevState.selectedField && selectedField != '0') {
@@ -525,23 +511,21 @@ class WhCertificates extends React.Component {
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
                 settingsColWidth: initSettingsColWidth(settings, screenId)
             });
         }
 
-        if (settingsDisplay != prevState.settingsDisplay  || settingsPosition != prevState.settingsPosition) {
+        if (settingsDisplay != prevState.settingsDisplay) {
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow')
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')
             });
         }
 
         if (fieldnames != prevProps.fieldnames) {
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             });
         }
 
@@ -557,13 +541,6 @@ class WhCertificates extends React.Component {
             });
         }
 
-    }
-
-    moveScreenHeaders(formPosition, toPosition) {
-        const { settingsPosition } = this.state;
-        this.setState({
-            settingsPosition: arrayMove(settingsPosition, formPosition, toPosition)
-        });
     }
 
     handleClearAlert(event){
@@ -611,26 +588,26 @@ class WhCertificates extends React.Component {
 
     handleCheckSettings(id) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, settingsPosition, screenId } = this.state;
+        const { settingsDisplay, screenId } = this.state;
         let tempArray = settingsDisplay;
         let found = tempArray.find(element => element._id === id);
         if(!!found) {
             found.isChecked = !found.isChecked;
             this.setState({
                 settingsDisplay: tempArray,
-                headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
+                headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
             });
         }
     }
 
     handleCheckSettingsAll(bool) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, settingsPosition, screenId } = this.state;
+        const { settingsDisplay, screenId } = this.state;
         let tempArray = settingsDisplay;
         tempArray.map(element => element.isChecked = bool);
         this.setState({
             settingsDisplay: tempArray,
-            headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
+            headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
         });
     }
 
@@ -641,14 +618,13 @@ class WhCertificates extends React.Component {
         this.setState({
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId),
         });
     }
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay, settingsPosition, settingsColWidth  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -668,7 +644,6 @@ class WhCertificates extends React.Component {
                     }
                     return acc;
                 }, []),
-                position: settingsPosition,
                 colWidth: settingsColWidth
             }
             const requestOptions = {
@@ -963,13 +938,6 @@ class WhCertificates extends React.Component {
         });
     }
 
-    resetPosition(event) {
-        event.preventDefault();
-        const { fieldnames } = this.props;
-        const { screenId } = this.state;
-        this.setState({ settingsPosition: initSettingsPosition(fieldnames, undefined, screenId) });
-    }
-
     clearWidth(event, ...indexes) {
         event.preventDefault();
         const { settingsColWidth } = this.state;
@@ -1100,7 +1068,6 @@ class WhCertificates extends React.Component {
                     <div className="body-section">
                         {selection && selection.project && 
                             <ProjectTable
-                                moveScreenHeaders={this.moveScreenHeaders}
                                 screenHeaders={headersForShow}
                                 screenBodys={bodysForShow}
                                 projectId={projectId}
@@ -1204,7 +1171,6 @@ class WhCertificates extends React.Component {
                                         settingsColWidth={settingsColWidth}
                                         screenHeaders={headersForShow}
                                         clearWidth={this.clearWidth}
-                                        resetPosition={this.resetPosition}
                                         handleInputSettings={this.handleInputSettings}
                                         handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}

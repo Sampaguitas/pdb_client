@@ -5,7 +5,6 @@ import queryString from 'query-string';
 import { saveAs } from 'file-saver';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import config from 'config';
-import arrayMove from'array-move';
 import { authHeader } from '../../_helpers';
 import { 
     accessActions, 
@@ -33,7 +32,6 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
-    initSettingsPosition,
     initSettingsColWidth,
     passSelectedIds,
     passSelectedPo,
@@ -43,7 +41,7 @@ import {
     arrayRemove,
     copyObject
 } from '../../_functions';
-import { TabDisplay, TabFilter, TabWidth, TabPosition } from '../../_components/setting';
+import { TabDisplay, TabFilter, TabWidth } from '../../_components/setting';
 import ProjectTable from '../../_components/project-table/project-table';
 import SplitSub from '../../_components/split-line/split-sub';
 import { Layout, LineCheck, Modal } from '../../_components';
@@ -443,7 +441,6 @@ class Expediting extends React.Component {
             settingsFilter: [],
             settingsDisplay: [],
             settingsColWidth: {},
-            settingsPosition: [],
             tabs: [
                 {
                     index: 0, 
@@ -468,15 +465,7 @@ class Expediting extends React.Component {
                     component: TabWidth,
                     active: false,
                     isLoaded: false
-                },
-                {
-                    index: 3,
-                    id: 'position',
-                    label: 'Position',
-                    component: TabPosition,
-                    active: false,
-                    isLoaded: false
-                },
+                }
             ],
             projectId:'',
             screenId: '5cd2b642fd333616dc360b63', //Expediting
@@ -518,7 +507,6 @@ class Expediting extends React.Component {
             uploading: false,
             responce:{},
         };
-        this.moveScreenHeaders = this.moveScreenHeaders.bind(this);
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -556,7 +544,6 @@ class Expediting extends React.Component {
         this.colDoubleClick = this.colDoubleClick.bind(this);
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
-        this.resetPosition = this.resetPosition.bind(this);
         //Upload File
         this.fileInput = React.createRef();
         this.onKeyPress = this.onKeyPress.bind(this);
@@ -585,7 +572,7 @@ class Expediting extends React.Component {
             settings
         } = this.props;
 
-        const { menuItem, screenId, splitScreenId, headersForShow, settingsDisplay, settingsPosition } = this.state;
+        const { menuItem, screenId, splitScreenId, headersForShow, settingsDisplay } = this.state;
         dispatch(sidemenuActions.select(menuItem));
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
@@ -616,21 +603,20 @@ class Expediting extends React.Component {
         }
 
         this.setState({
-            headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
+            headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(fieldnames, selection, pos, headersForShow, screenId),
-            splitHeadersForShow: getHeaders([], [], fieldnames, splitScreenId, 'forShow'),
-            splitHeadersForSelect: getHeaders([], [], fieldnames, splitScreenId, 'forSelect'),
+            splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
+            splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
             docList: arraySorted(docConf(docdefs.items, ['5d1927121424114e3884ac7e']), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId)
         });
 
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, screenId, splitScreenId, selectedField, settingsDisplay, settingsPosition } = this.state;
+        const { headersForShow, screenId, splitScreenId, selectedField, settingsDisplay } = this.state;
         const { fields, fieldnames, selection, settings, pos, docdefs } = this.props;
         
         if (selectedField != prevState.selectedField && selectedField != '0') {
@@ -649,25 +635,24 @@ class Expediting extends React.Component {
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
                 settingsColWidth: initSettingsColWidth(settings, screenId)
             });
         }
 
-        if (settingsDisplay != prevState.settingsDisplay || settingsPosition != prevState.settingsPosition) {
+        if (settingsDisplay != prevState.settingsDisplay) {
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow')
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')
+                
             });
         }
 
         if (fieldnames != prevProps.fieldnames) {
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
-                splitHeadersForShow: getHeaders([], [], fieldnames, splitScreenId, 'forShow'),
-                splitHeadersForSelect: getHeaders([], [], fieldnames, splitScreenId, 'forSelect'),
+                splitHeadersForShow: getHeaders([], fieldnames, splitScreenId, 'forShow'),
+                splitHeadersForSelect: getHeaders([], fieldnames, splitScreenId, 'forSelect'),
             });
         }
 
@@ -681,13 +666,6 @@ class Expediting extends React.Component {
             this.setState({docList: arraySorted(docConf(docdefs.items, ['5d1927121424114e3884ac7e']), "name")});
         }
 
-    }
-
-    moveScreenHeaders(formPosition, toPosition) {
-        const { settingsPosition } = this.state;
-        this.setState({
-            settingsPosition: arrayMove(settingsPosition, formPosition, toPosition)
-        });
     }
 
     handleClearAlert(event){
@@ -735,26 +713,26 @@ class Expediting extends React.Component {
 
     handleCheckSettings(id) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, settingsPosition, screenId } = this.state;
+        const { settingsDisplay, screenId } = this.state;
         let tempArray = settingsDisplay;
         let found = tempArray.find(element => element._id === id);
         if(!!found) {
             found.isChecked = !found.isChecked;
             this.setState({
                 settingsDisplay: tempArray,
-                headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
+                headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
             });
         }
     }
 
     handleCheckSettingsAll(bool) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, settingsPosition, screenId } = this.state;
+        const { settingsDisplay, screenId } = this.state;
         let tempArray = settingsDisplay;
         tempArray.map(element => element.isChecked = bool);
         this.setState({
             settingsDisplay: tempArray,
-            headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
+            headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
         });
     }
 
@@ -765,14 +743,13 @@ class Expediting extends React.Component {
         this.setState({
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId),
         });
     }
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay, settingsPosition, settingsColWidth  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -792,7 +769,6 @@ class Expediting extends React.Component {
                     }
                     return acc;
                 }, []),
-                position: settingsPosition,
                 colWidth: settingsColWidth
             }
             const requestOptions = {
@@ -1416,13 +1392,6 @@ class Expediting extends React.Component {
         }
     }
 
-    resetPosition(event) {
-        event.preventDefault();
-        const { fieldnames } = this.props;
-        const { screenId } = this.state;
-        this.setState({ settingsPosition: initSettingsPosition(fieldnames, undefined, screenId) });
-    }
-
     onKeyPress(event) {
         if (event.which === 13 /* prevent form submit on key Enter */) {
           event.preventDefault();
@@ -1657,7 +1626,6 @@ class Expediting extends React.Component {
                     <div className="body-section">
                         {fieldnames.items && 
                             <ProjectTable
-                                moveScreenHeaders={this.moveScreenHeaders}
                                 screenHeaders={headersForShow}
                                 screenBodys={bodysForShow}
                                 projectId={projectId}
@@ -1958,7 +1926,6 @@ class Expediting extends React.Component {
                                         settingsColWidth={settingsColWidth}
                                         screenHeaders={headersForShow}
                                         clearWidth={this.clearWidth}
-                                        resetPosition={this.resetPosition}
                                         handleInputSettings={this.handleInputSettings}
                                         handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}

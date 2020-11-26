@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
-import arrayMove from'array-move';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../_helpers';
 import { 
@@ -25,12 +24,11 @@ import {
     getLocName,
     initSettingsFilter,
     initSettingsDisplay,
-    initSettingsPosition,
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
 import ProjectTable from '../../../_components/project-table/project-table';
-import { TabDisplay, TabFilter, TabWidth, TabPosition } from '../../../_components/setting';
+import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
 import SplitHeatPick from '../../../_components/split-line/split-heat-pick';
 import { Layout, Modal } from '../../../_components';
 import _ from 'lodash';
@@ -251,7 +249,6 @@ class PtSplitwindow extends React.Component {
             settingsFilter: [],
             settingsDisplay: [],
             settingsColWidth: {},
-            settingsPosition: [],
             tabs: [
                 {
                     index: 0, 
@@ -276,15 +273,7 @@ class PtSplitwindow extends React.Component {
                     component: TabWidth,
                     active: false,
                     isLoaded: false
-                },
-                {
-                    index: 3,
-                    id: 'position',
-                    label: 'Position',
-                    component: TabPosition,
-                    active: false,
-                    isLoaded: false
-                },
+                }
             ],
             projectId:'',
             pickticketId: '',
@@ -318,7 +307,6 @@ class PtSplitwindow extends React.Component {
             uploading: false,
             responce:{},
         };
-        this.moveScreenHeaders = this.moveScreenHeaders.bind(this);
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -344,7 +332,6 @@ class PtSplitwindow extends React.Component {
         this.colDoubleClick = this.colDoubleClick.bind(this);
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
-        this.resetPosition = this.resetPosition.bind(this);
         //Upload File
         this.fileInput = React.createRef();
         this.onKeyPress = this.onKeyPress.bind(this);
@@ -375,7 +362,7 @@ class PtSplitwindow extends React.Component {
             settings 
         } = this.props;
 
-        const { menuItem, screenId, headersForShow, settingsDisplay, settingsPosition } = this.state; //splitScreenId
+        const { menuItem, screenId, headersForShow, settingsDisplay } = this.state; //splitScreenId
         var qs = queryString.parse(location.search);
         let userId = JSON.parse(localStorage.getItem('user')).id;
         let projectId = qs.id;
@@ -413,11 +400,10 @@ class PtSplitwindow extends React.Component {
         }
 
         this.setState({
-            headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
+            headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodysForShow(picktickets, pickticketId, selection, headersForShow),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId)
         }, () => {
             if (picktickets.hasOwnProperty('items') && !_.isEmpty(picktickets.items)) {
@@ -439,30 +425,28 @@ class PtSplitwindow extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        const { headersForShow, pickticketId, screenId, settingsDisplay, settingsPosition } = this.state; //splitScreenId,
+        const { headersForShow, pickticketId, screenId, settingsDisplay } = this.state; //splitScreenId,
         const { fieldnames, picktickets, selection, settings} = this.props;
 
         if (settings != prevProps.settings){
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
                 settingsColWidth: initSettingsColWidth(settings, screenId)
             });
         }
 
-        if (settingsDisplay != prevState.settingsDisplay || settingsPosition != prevState.settingsPosition) {
+        if (settingsDisplay != prevState.settingsDisplay) {
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             });
         }
 
         if (fieldnames != prevProps.fieldnames || settings != prevProps.settings){
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             });
         }
 
@@ -489,13 +473,6 @@ class PtSplitwindow extends React.Component {
                 });
             }  
         }
-    }
-
-    moveScreenHeaders(formPosition, toPosition) {
-        const { settingsPosition } = this.state;
-        this.setState({
-            settingsPosition: arrayMove(settingsPosition, formPosition, toPosition)
-        });
     }
 
     handleClearAlert(event){
@@ -543,26 +520,26 @@ class PtSplitwindow extends React.Component {
 
     handleCheckSettings(id) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, settingsPosition, screenId } = this.state;
+        const { settingsDisplay, screenId } = this.state;
         let tempArray = settingsDisplay;
         let found = tempArray.find(element => element._id === id);
         if(!!found) {
             found.isChecked = !found.isChecked;
             this.setState({
                 settingsDisplay: tempArray,
-                headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
+                headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
             });
         }
     }
 
     handleCheckSettingsAll(bool) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, settingsPosition, screenId } = this.state;
+        const { settingsDisplay, screenId } = this.state;
         let tempArray = settingsDisplay;
         tempArray.map(element => element.isChecked = bool);
         this.setState({
             settingsDisplay: tempArray,
-            headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
+            headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
         });
     }
 
@@ -573,14 +550,13 @@ class PtSplitwindow extends React.Component {
         this.setState({
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId),
         });
     }
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay, settingsPosition, settingsColWidth  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -600,7 +576,6 @@ class PtSplitwindow extends React.Component {
                     }
                     return acc;
                 }, []),
-                position: settingsPosition,
                 colWidth: settingsColWidth
             }
             const requestOptions = {
@@ -873,13 +848,6 @@ class PtSplitwindow extends React.Component {
         }
     }
 
-    resetPosition(event) {
-        event.preventDefault();
-        const { fieldnames } = this.props;
-        const { screenId } = this.state;
-        this.setState({ settingsPosition: initSettingsPosition(fieldnames, undefined, screenId) });
-    }
-
     onKeyPress(event) {
         if (event.which === 13 /* prevent form submit on key Enter */) {
           event.preventDefault();
@@ -1105,7 +1073,6 @@ class PtSplitwindow extends React.Component {
                     <div className="body-section">
                         {fieldnames.items && 
                             <ProjectTable
-                                moveScreenHeaders={this.moveScreenHeaders}
                                 screenHeaders={headersForShow}
                                 screenBodys={bodysForShow}
                                 projectId={projectId}
@@ -1193,7 +1160,6 @@ class PtSplitwindow extends React.Component {
                                         settingsColWidth={settingsColWidth}
                                         screenHeaders={headersForShow}
                                         clearWidth={this.clearWidth}
-                                        resetPosition={this.resetPosition}
                                         handleInputSettings={this.handleInputSettings}
                                         handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}

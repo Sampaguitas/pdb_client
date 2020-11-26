@@ -273,7 +273,7 @@ export function generateOptions(list) {
     }
 }
 
-export function getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, forWhat) {
+export function getHeaders(settingsDisplay, fieldnames, screenId, forWhat) {
     let tempArray = [];
     let screens = [
         '5cd2b642fd333616dc360b63', //Expediting
@@ -296,16 +296,13 @@ export function getHeaders(settingsDisplay, settingsPosition, fieldnames, screen
         '5ee60fd27c213e044cc480e7', //'WH Assign Transport SplitWindow'
         '5ee60fe87c213e044cc480ea', //'WH Print Transportdocuments'
     ];
-    
     if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        
         let displayIds = settingsDisplay.reduce(function(acc, cur) {
             if (!!cur.isChecked) {
                 acc.push(cur._id);
             }
             return acc;
         }, []);
-
         if (!_.isEmpty(displayIds) && screens.includes(screenId)) {
             tempArray = fieldnames.items.filter(function(element) {
                 return (_.isEqual(element.screenId, screenId) && !!element[forWhat] && displayIds.includes(element._id)); 
@@ -315,20 +312,11 @@ export function getHeaders(settingsDisplay, settingsPosition, fieldnames, screen
                 return (_.isEqual(element.screenId, screenId) && !!element[forWhat]); 
             });
         }
-
-        if (!!tempArray && !!_.isEmpty(settingsPosition)) {
+        if (!!tempArray) {
             return tempArray.sort(function(a,b) {
                 return a[forWhat] - b[forWhat];
             });
-        } else if (!!tempArray && !_.isEmpty(settingsPosition)) {
-            return settingsPosition.reduce(function(acc, cur) {
-                let found = tempArray.find(element => _.isEqual(element._id, cur));
-                if (!_.isUndefined(found)) {
-                    acc.push(found);
-                }
-                return acc;
-            }, []);
-        }
+        } 
     }
     return [];
 }
@@ -413,31 +401,6 @@ export function initSettingsDisplay(fieldnames, settings, screenId) {
                         isChecked: false
                     });
                 }
-                return acc;
-            }, []);
-        }
-    } else {
-        return [];
-    }
-}
-
-export function initSettingsPosition(fieldnames, settings, screenId) {
-    
-    if (!_.isUndefined(fieldnames) && fieldnames.hasOwnProperty('items') && !_.isEmpty(fieldnames.items)) {
-        let tempArray = fieldnames.items.filter(element => _.isEqual(element.screenId, screenId) && !!element.forShow);
-        if (!_.isUndefined(settings) && settings.hasOwnProperty('items') && !_.isEmpty(settings.items)) {
-            let screenSettings = settings.items.find(element => _.isEqual(element.screenId, screenId));
-            if (!_.isUndefined(screenSettings) && screenSettings.params.hasOwnProperty('position')) {
-                return screenSettings.params.position || [];
-            } else {
-                return tempArray.reduce(function(acc, cur) {
-                    acc.push(cur._id);
-                    return acc;
-                }, []);
-            }
-        } else {
-            return tempArray.reduce(function(acc, cur) {
-                acc.push(cur._id);
                 return acc;
             }, []);
         }

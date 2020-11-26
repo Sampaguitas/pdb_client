@@ -24,8 +24,6 @@ class ProjectTable extends Component {
                 name: '',
                 isAscending: true,
             },
-            draggedId: undefined,
-            dragenterId: undefined,
             selectedRows: [],
             selectAllRows: false,
             isEqual: false,
@@ -49,10 +47,6 @@ class ProjectTable extends Component {
     }
 
     componentDidMount() {
-        const { moveScreenHeaders } = this.props;
-        var that = this;
-        let dragged;
-        let dropped;
         const arrowKeys = [9, 13, 37, 38, 39, 40]; //tab, enter, left, up, right, down
         const nodes = ["INPUT", "SELECT", "SPAN"];
         const table = document.getElementById('myProjectTable');
@@ -62,56 +56,6 @@ class ProjectTable extends Component {
                 return this.keyHandler(e);
             }
         });
-
-        table.addEventListener("dragstart", function(event) {
-            if ( event.target.className == "dropzone" ) {
-                // store a ref. on the dragged elem
-                dragged = event.target;
-                that.setState({
-                    draggedId: event.target.id,
-                }, () => event.target.style.opacity = .5);
-                // make it half transparent
-            }
-        }, false);
-
-        table.addEventListener("dragend", function( event ) {
-            // reset the transparency
-            event.target.style.opacity = "";
-        }, false);
-
-        table.addEventListener("dragover", function( event ) {
-            // prevent default to allow drop
-            event.preventDefault();
-        }, false);
-
-        table.addEventListener("dragenter", function( event ) {
-            // highlight potential drop target when the draggable element enters it
-            if ( event.target.classList.contains("dropzone") && that.state.dragenterId != event.target.id) {
-                that.setState({dragenterId: event.target.id});
-            } else if (event.target.parentElement.classList.contains("dropzone") && that.state.dragenterId != event.target.parentElement.id) {
-                that.setState({dragenterId: event.target.parentElement.id});
-            } else if (event.target.parentElement.parentElement.classList.contains("dropzone") && that.state.dragenterId != event.target.parentElement.parentElement.id) {
-                that.setState({dragenterId: event.target.parentElement.parentElement.id});
-            } else {
-                that.setState({dragenterId: undefined});
-            }
-        }, false);
-
-        table.addEventListener("dragleave", function( event ) {
-            event.preventDefault();
-            // reset background of potential drop target when the draggable element leaves it
-        }, false);
-
-        table.addEventListener("drop", function( event ) {
-            // prevent default action (open as link for some elements)
-            event.preventDefault();
-            //reset dragenterId
-            if (that.state.draggedId && that.state.dragenterId) {
-                moveScreenHeaders(that.state.draggedId, that.state.dragenterId);
-            } 
-            that.setState({draggedId: undefined, dragenterId: undefined});
-          
-        }, false);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -309,14 +253,13 @@ class ProjectTable extends Component {
 
     generateHeader(screenHeaders) {
         const { colDoubleClick, setColWidth, settingsColWidth} = this.props;
-        const {header, sort, selectAllRows, dragenterId} = this.state;
+        const {header, sort, selectAllRows} = this.state;
         const tempInputArray = []
         
         screenHeaders.map((screenHeader, index) => {
             tempInputArray.push(
                 <HeaderInput
                     id={index}
-                    dragenterId={dragenterId}
                     type={screenHeader.fields.type === 'Number' ? 'number' : 'text' }
                     title={screenHeader.fields.custom}
                     name={screenHeader._id}
@@ -346,7 +289,7 @@ class ProjectTable extends Component {
 
     generateBody(screenBodys) {
         const { unlocked, refreshStore, settingsColWidth } = this.props;
-        const { selectAllRows, selectedRows, dragenterId } = this.state;
+        const { selectAllRows, selectedRows } = this.state;
         let tempRows = [];
         if (screenBodys) {
             this.filterName(screenBodys).map(screenBody => {
@@ -355,7 +298,6 @@ class ProjectTable extends Component {
                         tempCol.push(
                             <TableInput
                                 id={index}
-                                dragenterId={dragenterId}
                                 collection={field.collection}
                                 objectId={field.objectId}
                                 parentId={field.parentId}

@@ -75,7 +75,7 @@ class Suppliers extends React.Component {
             //overview
             headersForShow: [],
             bodysForShow: [],
-            screenId: '5cd2b644fd333616dc360b69',
+            screenId: '5cd2b644fd333616dc360b69', //5cd2b644fd333616dc360b69
             unlocked: false,
             screen: 'supplier',
             // selectedIds: [],

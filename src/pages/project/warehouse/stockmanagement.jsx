@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import { connect } from 'react-redux';
 import queryString from 'query-string';
 import config from 'config';
-import arrayMove from'array-move';
 import { saveAs } from 'file-saver';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { authHeader } from '../../../_helpers';
@@ -40,12 +39,11 @@ import {
     generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
-    initSettingsPosition,
     initSettingsColWidth,
     copyObject
 } from '../../../_functions';
 import ProjectTable from '../../../_components/project-table/project-table';
-import { TabDisplay, TabFilter, TabWidth, TabPosition } from '../../../_components/setting';
+import { TabDisplay, TabFilter, TabWidth } from '../../../_components/setting';
 import SplitGoodsReceipt from '../../../_components/split-line/split-goods-receipt';
 import SplitHeatLocation from '../../../_components/split-line/split-heat-location';
 import { Layout, Modal } from '../../../_components';
@@ -776,7 +774,6 @@ class StockManagement extends React.Component {
             settingsFilter: [],
             settingsDisplay: [],
             settingsColWidth: {},
-            settingsPosition: [],
             tabs: [
                 {
                     index: 0, 
@@ -801,15 +798,7 @@ class StockManagement extends React.Component {
                     component: TabWidth,
                     active: false,
                     isLoaded: false
-                },
-                {
-                    index: 3,
-                    id: 'position',
-                    label: 'Position',
-                    component: TabPosition,
-                    active: false,
-                    isLoaded: false
-                },
+                }
             ],
             projectId:'',
             screenId: '5ea8eefb7c213e2096462a2c', //Stock Management
@@ -856,7 +845,6 @@ class StockManagement extends React.Component {
             settingSaving: false,
             deletingRows: false 
         };
-        this.moveScreenHeaders = this.moveScreenHeaders.bind(this);
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.handleChange = this.handleChange.bind(this);
@@ -902,7 +890,6 @@ class StockManagement extends React.Component {
         this.colDoubleClick = this.colDoubleClick.bind(this);
         this.setColWidth = this.setColWidth.bind(this);
         this.clearWidth = this.clearWidth.bind(this);
-        this.resetPosition = this.resetPosition.bind(this);
         this.dufInput = React.createRef();
         //Upload File
         this.downloadTable = this.downloadTable.bind(this);
@@ -947,7 +934,6 @@ class StockManagement extends React.Component {
             headersPl,
             headersRet,
             settingsDisplay,
-            settingsPosition
         } = this.state;
 
         var qs = queryString.parse(location.search);
@@ -995,11 +981,11 @@ class StockManagement extends React.Component {
         }
 
         this.setState({
-            headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
-            headersPo: getHeaders([], [], fieldnames, poScreenId, 'forShow'),
-            headersNfi: getHeaders([], [], fieldnames, nfiScreenId, 'forShow'),
-            headersPl: getHeaders([], [], fieldnames, plScreenId, 'forShow'),
-            headersRet: getHeaders([], [], fieldnames, retScreenId, 'forShow'),
+            headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+            headersPo: getHeaders([], fieldnames, poScreenId, 'forShow'),
+            headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
+            headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
+            headersRet: getHeaders([], fieldnames, retScreenId, 'forShow'),
             bodysForShow: getBodysForShow (selection, pos, transactions, headersForShow),
             bodysPo: getPoBodys(selection, pos, transactions, headersPo),
             bodysNfi: getNfiBodys(selection, pos, transactions, headersNfi),
@@ -1008,7 +994,6 @@ class StockManagement extends React.Component {
             docList: arraySorted(docConf(docdefs.items, ['5eacef91e7179a42f172feea']), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId)
         });
     }
@@ -1041,7 +1026,6 @@ class StockManagement extends React.Component {
             selectedField,
             selectedIdsGr,
             settingsDisplay,
-            settingsPosition,
             toWarehouse,
             toArea,
             whList,
@@ -1065,25 +1049,23 @@ class StockManagement extends React.Component {
             this.setState({
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
                 settingsColWidth: initSettingsColWidth(settings, screenId)
             });
         }
 
-        if (settingsDisplay != prevState.settingsDisplay || settingsPosition != prevState.settingsPosition) {
-            this.setState({headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow')});
+        if (settingsDisplay != prevState.settingsDisplay) {
+            this.setState({headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow')});
         }
 
         if (fieldnames != prevProps.fieldnames){
             this.setState({
-                headersForShow: getHeaders(settingsDisplay, settingsPosition, fieldnames, screenId, 'forShow'),
-                headersPo: getHeaders([], [], fieldnames, poScreenId, 'forShow'),
-                headersNfi: getHeaders([], [], fieldnames, nfiScreenId, 'forShow'),
-                headersPl: getHeaders([], [], fieldnames, plScreenId, 'forShow'),
-                headersRet: getHeaders([], [], fieldnames, retScreenId, 'forShow'),
+                headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
+                headersPo: getHeaders([], fieldnames, poScreenId, 'forShow'),
+                headersNfi: getHeaders([], fieldnames, nfiScreenId, 'forShow'),
+                headersPl: getHeaders([], fieldnames, plScreenId, 'forShow'),
+                headersRet: getHeaders([], fieldnames, retScreenId, 'forShow'),
                 settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
                 settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-                settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             }); 
         }
 
@@ -1164,13 +1146,6 @@ class StockManagement extends React.Component {
         }
     }
 
-    moveScreenHeaders(formPosition, toPosition) {
-        const { settingsPosition } = this.state;
-        this.setState({
-            settingsPosition: arrayMove(settingsPosition, formPosition, toPosition)
-        });
-    }
-
     handleClearAlert(event){
         event.preventDefault();
         const { dispatch } = this.props;
@@ -1216,26 +1191,26 @@ class StockManagement extends React.Component {
 
     handleCheckSettings(id) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, settingsPosition, screenId } = this.state;
+        const { settingsDisplay, screenId } = this.state;
         let tempArray = settingsDisplay;
         let found = tempArray.find(element => element._id === id);
         if(!!found) {
             found.isChecked = !found.isChecked;
             this.setState({
                 settingsDisplay: tempArray,
-                headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
+                headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
             });
         }
     }
 
     handleCheckSettingsAll(bool) {
         const { fieldnames } = this.props;
-        const { settingsDisplay, settingsPosition, screenId } = this.state;
+        const { settingsDisplay, screenId } = this.state;
         let tempArray = settingsDisplay;
         tempArray.map(element => element.isChecked = bool);
         this.setState({
             settingsDisplay: tempArray,
-            headersForShow: getHeaders(tempArray, settingsPosition, fieldnames, screenId, 'forShow')
+            headersForShow: getHeaders(tempArray, fieldnames, screenId, 'forShow')
         });
     }
 
@@ -1246,14 +1221,13 @@ class StockManagement extends React.Component {
         this.setState({
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
-            settingsPosition: initSettingsPosition(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId),
         });
     }
 
     handleSaveSettings(event) {
         event.preventDefault();
-        const { projectId, screenId, settingsFilter, settingsDisplay, settingsPosition, settingsColWidth  } = this.state;
+        const { projectId, screenId, settingsFilter, settingsDisplay, settingsColWidth  } = this.state;
         let userId = JSON.parse(localStorage.getItem('user')).id;
         this.setState({settingSaving: true}, () => {
             let params = {
@@ -1273,7 +1247,6 @@ class StockManagement extends React.Component {
                     }
                     return acc;
                 }, []),
-                position: settingsPosition,
                 colWidth: settingsColWidth
             }
             const requestOptions = {
@@ -1959,13 +1932,6 @@ class StockManagement extends React.Component {
         }
     }
 
-    resetPosition(event) {
-        event.preventDefault();
-        const { fieldnames } = this.props;
-        const { screenId } = this.state;
-        this.setState({ settingsPosition: initSettingsPosition(fieldnames, undefined, screenId) });
-    }
-
     downloadTable(event){
         event.preventDefault();
         const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
@@ -2173,7 +2139,6 @@ class StockManagement extends React.Component {
                     <div className="body-section">
                         {fieldnames.items &&
                             <ProjectTable
-                                moveScreenHeaders={this.moveScreenHeaders}
                                 screenHeaders={headersForShow}
                                 screenBodys={bodysForShow}
                                 projectId={projectId}
@@ -2568,7 +2533,6 @@ class StockManagement extends React.Component {
                                         settingsColWidth={settingsColWidth}
                                         screenHeaders={headersForShow}
                                         clearWidth={this.clearWidth}
-                                        resetPosition={this.resetPosition}
                                         handleInputSettings={this.handleInputSettings}
                                         handleIsEqualSettings={this.handleIsEqualSettings}
                                         handleClearInputSettings={this.handleClearInputSettings}

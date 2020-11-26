@@ -212,7 +212,6 @@ class TableInput extends Component{
     render() {
         const {
             id,
-            dragenterId,
             align,
             disabled,
             textNoWrap,
@@ -235,7 +234,6 @@ class TableInput extends Component{
 
         const tdClasses = classNames(
             'table-cell',
-            'dropzone',
             {
                 isEditing: isEditing,
                 isSelected: isSelected
@@ -257,7 +255,6 @@ class TableInput extends Component{
                     overflow: 'hidden',
                     minWidth: (isSelected || isEditing) ? `${beforeSelectWidth}px` : (!settingsColWidth.hasOwnProperty(index) ? 0 : (!!settingsColWidth[index] ? `${settingsColWidth[index]}px` : '10px')),
                     maxWidth: (isSelected || isEditing) ? `${beforeSelectWidth}px` : (!settingsColWidth.hasOwnProperty(index) ? 'none' : (!!settingsColWidth[index] ? `${settingsColWidth[index]}px` : '35px')),
-                    background: `${dragenterId == id  && id != undefined  && dragenterId != undefined ?  '#C0C0C0' : ''}`
                 }}
                 className={tdClasses}
                 align={align ? align : 'left'}
