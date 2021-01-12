@@ -773,42 +773,40 @@ class SplitPackItem extends Component {
     }
 
     handleSave(event) {
-        const { selectedPo, selectedIds, headersForShow, handleSplitLine, selection } = this.props;
+        const { selectedPo, selectedIds, headersForShow, handleSplitLine, selection, splitting } = this.props;
         const { selectedLine, bodysForSelect, virtuals } = this.state;
-        let remainingQty = getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals, selection);
-
-        let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(selectedPo.uom.toUpperCase()) ? 'mtrs' : 'pcs';
-
-        let screenBody = selectedScreenBody(bodysForSelect, selectedLine);
-        
-
-        if (_.isEmpty(virtuals)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'No lines to be saved.'
-                }
-            });
-        } else if (!virtuals.every(curr => Number(curr[tempUom]) > 0)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Split Quantities should be greater than 0.'
-                }
-            });
-        } else if (!isValidArray(virtuals, headersForShow)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Some dates are not properly formated.'
-                }
-            });
-        } else if (remainingQty != 0) {
-            if (confirm(`${remainingQty} ${selectedPo.uom} remaining, would you like to proceed?`)){
+        if (!splitting) {
+            let remainingQty = getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals, selection);
+            let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(selectedPo.uom.toUpperCase()) ? 'mtrs' : 'pcs';
+            let screenBody = selectedScreenBody(bodysForSelect, selectedLine);
+            if (_.isEmpty(virtuals)) {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'No lines to be saved.'
+                    }
+                });
+            } else if (!virtuals.every(curr => Number(curr[tempUom]) > 0)) {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'Split Quantities should be greater than 0.'
+                    }
+                });
+            } else if (!isValidArray(virtuals, headersForShow)) {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'Some dates are not properly formated.'
+                    }
+                });
+            } else if (remainingQty != 0) {
+                if (confirm(`${remainingQty} ${selectedPo.uom} remaining, would you like to proceed?`)){
+                    handleSplitLine(event, getSelecetionIds(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));
+                }   
+            } else {
                 handleSplitLine(event, getSelecetionIds(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));
-            }   
-        } else {
-            handleSplitLine(event, getSelecetionIds(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));
+            }
         }
     }
 
@@ -896,7 +894,7 @@ class SplitPackItem extends Component {
 
     render() {
 
-        const { headersForShow, headersForSelect, selectedIds, selectedPo, selection } = this.props;
+        const { headersForShow, headersForSelect, selectedIds, selectedPo, selection, splitting } = this.props;
         const { bodysForSelect, virtuals, forShowSelectedRows, forShowIsAll, selectedLine } =this.state;
 
         let remainingQty = getRemainingQty(selectedPo, selectedIds, bodysForSelect, selectedLine, virtuals, selection);
@@ -967,7 +965,7 @@ class SplitPackItem extends Component {
                     </div>
                     <div className="text-right mt-2">
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleSave(event)}>
-                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save Changes</span>
+                            <span><FontAwesomeIcon icon={splitting ? "spinner" : "save"} className={splitting ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Save Changes</span>
                         </button>
                     </div>
                 </div>

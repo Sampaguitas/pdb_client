@@ -931,43 +931,45 @@ class SplitWhPackItem extends Component {
     }
 
     handleSave(event) {
-        const { selectedPickticket, selectedIds, headersForShow, handleSplitLine } = this.props;
+        const { selectedPickticket, selectedIds, headersForShow, handleSplitLine, splitting } = this.props;
         const { selectedLine, bodysForSelect, virtuals } = this.state;
-        let remainingQty = getRemainingQty(selectedPickticket, selectedIds, bodysForSelect, selectedLine, virtuals);
-        let selectedPickitem = selectedPickticket.pickitems.find(pickitem => pickitem._id === selectedIds.pickitemId);
-        let uom = _.isUndefined(selectedPickitem) ? 'pcs' : selectedPickitem.miritem.po.uom;
-        let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(uom.toUpperCase()) ? 'mtrs' : 'pcs';
-
-        let screenBody = selectedScreenBody(bodysForSelect, selectedLine);
-        
-
-        if (_.isEmpty(virtuals)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'No lines to be saved.'
-                }
-            });
-        } else if (!virtuals.every(cur => Number(cur[tempUom]) > 0)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Split Quantities should be greater than 0.'
-                }
-            });
-        } else if (!isValidArray(virtuals, headersForShow)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Some dates are not properly formated.'
-                }
-            });
-        } else if (remainingQty != 0) {
-            if (confirm(`${remainingQty} ${uom} remaining, would you like to proceed?`)){
+        if (!splitting) {
+            let remainingQty = getRemainingQty(selectedPickticket, selectedIds, bodysForSelect, selectedLine, virtuals);
+            let selectedPickitem = selectedPickticket.pickitems.find(pickitem => pickitem._id === selectedIds.pickitemId);
+            let uom = _.isUndefined(selectedPickitem) ? 'pcs' : selectedPickitem.miritem.po.uom;
+            let tempUom = ['M', 'MT', 'MTR', 'MTRS', 'F', 'FT', 'FEET', 'LM'].includes(uom.toUpperCase()) ? 'mtrs' : 'pcs';
+    
+            let screenBody = selectedScreenBody(bodysForSelect, selectedLine);
+            
+    
+            if (_.isEmpty(virtuals)) {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'No lines to be saved.'
+                    }
+                });
+            } else if (!virtuals.every(cur => Number(cur[tempUom]) > 0)) {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'Split Quantities should be greater than 0.'
+                    }
+                });
+            } else if (!isValidArray(virtuals, headersForShow)) {
+                this.setState({
+                    alert: {
+                        type: 'alert-danger',
+                        message: 'Some dates are not properly formated.'
+                    }
+                });
+            } else if (remainingQty != 0) {
+                if (confirm(`${remainingQty} ${uom} remaining, would you like to proceed?`)){
+                    handleSplitLine(event, getSelecetionIds(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));
+                }   
+            } else {
                 handleSplitLine(event, getSelecetionIds(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));
-            }   
-        } else {
-            handleSplitLine(event, getSelecetionIds(bodysForSelect, selectedLine), formatArray(virtuals, headersForShow));
+            }
         }
     }
 
@@ -1058,7 +1060,7 @@ class SplitWhPackItem extends Component {
 
     render() {
 
-        const { headersForShow, headersForSelect, selectedIds, selectedPickticket } = this.props;
+        const { headersForShow, headersForSelect, selectedIds, selectedPickticket, splitting } = this.props;
         const { bodysForSelect, virtuals, forShowSelectedRows, forShowIsAll, selectedLine } =this.state;
 
         let remainingQty = getRemainingQty(selectedPickticket, selectedIds, bodysForSelect, selectedLine, virtuals);
@@ -1129,7 +1131,7 @@ class SplitWhPackItem extends Component {
                     </div>
                     <div className="text-right mt-2">
                         <button className="btn btn-leeuwen-blue btn-lg" onClick={event => this.handleSave(event)}>
-                            <span><FontAwesomeIcon icon="save" className="fa mr-2"/>Save Changes</span>
+                            <span><FontAwesomeIcon icon={splitting ? "spinner" : "save"} className={splitting ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Save Changes</span>
                         </button>
                     </div>
                 </div>

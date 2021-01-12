@@ -534,6 +534,7 @@ class ReleaseData extends React.Component {
             },
             //-----modals-----
             showSplitLine: false,
+            splitting: false,
             showEditValues: false,
             showAssignNfi: false,
             showGenerate: false,
@@ -909,36 +910,45 @@ class ReleaseData extends React.Component {
 
     handleSplitLine(event, subId, virtuals) {
         event.preventDefault();
-        const requestOptions = {
-            method: 'PUT',
-            headers: { ...authHeader(), 'Content-Type': 'application/json'},
-            body: JSON.stringify({virtuals: virtuals})
-        }
-        return fetch(`${config.apiUrl}/split/sub?subId=${subId}`, requestOptions)
-        .then(responce => responce.text().then(text => {
-            const data = text && JSON.parse(text);
-            if (!responce.ok) {
-                if (responce.status === 401) {
-                    localStorage.removeItem('user');
-                    location.reload(true);
+        const { splitting } = this.state;
+        if (!splitting) {
+            this.setState({
+                splitting: true
+            }, () => {
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({virtuals: virtuals})
                 }
-                this.setState({
-                    // showSplitLine: false,
-                    alert: {
-                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                        message: data.message
+                return fetch(`${config.apiUrl}/split/sub?subId=${subId}`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        }
+                        this.setState({
+                            showSplitLine: false,
+                            splitting: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    } else {
+                        this.setState({
+                            showSplitLine: false,
+                            alert: {
+                                splitting: false,
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
                     }
-                }, this.refreshStore);
-            } else {
-                this.setState({
-                    // showSplitLine: false,
-                    alert: {
-                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                        message: data.message
-                    }
-                }, this.refreshStore);
-            }
-        }));
+                }));
+            });
+        }
     }
 
     selectedFieldOptions(fieldnames, fields) {
@@ -1619,6 +1629,7 @@ class ReleaseData extends React.Component {
 
     render() {
         const { 
+            splitting,
             menuItem,
             projectId, 
             screen, 
@@ -1747,7 +1758,7 @@ class ReleaseData extends React.Component {
                         alert={alert}
                         handleClearAlert={this.handleClearAlert}
                         handleSplitLine={this.handleSplitLine}
-
+                        splitting={splitting}
                     />
                 </Modal>
 

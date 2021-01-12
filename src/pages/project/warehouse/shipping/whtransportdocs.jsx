@@ -514,6 +514,7 @@ class WhTransportDocuments extends React.Component {
             showAssignPl: false,
             showAssignColli: false,
             showSplitLine: false,
+            splitting: false,
             menuItem: 'Warehouse',
             downloadingTable: false,
             settingSaving: false,
@@ -830,34 +831,46 @@ class WhTransportDocuments extends React.Component {
 
     handleSplitLine(event, selectionIds, virtuals) {
         event.preventDefault();
-        const requestOptions = {
-            method: 'PUT',
-            headers: { ...authHeader(), 'Content-Type': 'application/json'},
-            body: JSON.stringify({virtuals: virtuals})
-        }
-        return fetch(`${config.apiUrl}/split/whpackitem?pickitemId=${selectionIds.pickitemId}&whpackitemId=${selectionIds.whpackitemId}`, requestOptions)
-        .then(responce => responce.text().then(text => {
-            const data = text && JSON.parse(text);
-            if (!responce.ok) {
-                if (responce.status === 401) {
-                    localStorage.removeItem('user');
-                    location.reload(true);
+        const { splitting } = this.state;
+        if (!splitting) {
+            this.setState({
+                splitting: true
+            }, () => {
+                const requestOptions = {
+                    method: 'PUT',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                    body: JSON.stringify({virtuals: virtuals})
                 }
-                this.setState({
-                    alert: {
-                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                        message: data.message
+                return fetch(`${config.apiUrl}/split/whpackitem?pickitemId=${selectionIds.pickitemId}&whpackitemId=${selectionIds.whpackitemId}`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (!responce.ok) {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        }
+                        this.setState({
+                            showSplitLine: false,
+                            splitting: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    } else {
+                        this.setState({
+                            showSplitLine: false,
+                            splitting: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
                     }
-                }, this.refreshStore);
-            } else {
-                this.setState({
-                    alert: {
-                        type: responce.status === 200 ? 'alert-success' : 'alert-danger',
-                        message: data.message
-                    }
-                }, this.refreshStore);
-            }
-        }));
+                }));
+            });
+            
+        }
     }
 
     selectedFieldOptions(fieldnames, fields) {
@@ -1617,6 +1630,7 @@ class WhTransportDocuments extends React.Component {
 
     render() {
         const { 
+            splitting,
             menuItem,
             projectId, 
             screen, 
@@ -1743,6 +1757,7 @@ class WhTransportDocuments extends React.Component {
                         alert={alert}
                         handleClearAlert={this.handleClearAlert}
                         handleSplitLine={this.handleSplitLine}
+                        splitting={splitting}
 
                     />
                 </Modal>
