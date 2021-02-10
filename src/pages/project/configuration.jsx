@@ -255,6 +255,7 @@ class Configuration extends React.Component {
 
     handleDeleteProject(event, id) {
         event.preventDefault();
+        const { dispatch } = this.props;
         if (id && confirm('Project will be permanantly deleted, would you like to proceed?')) {
             this.setState({projectDeleting: true})
             const requestOptions = {
