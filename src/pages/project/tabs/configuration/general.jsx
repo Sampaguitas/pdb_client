@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { doesMatch, arraySorted, copyObject } from '../../../../_functions';
+import { doesMatch, arraySorted, copyObject, isAdmin } from '../../../../_functions';
 import HeaderCheckBox from '../../../../_components/project-table/header-check-box';
 import HeaderInput from '../../../../_components/project-table/header-input';
 import TableCheckBoxRole from '../../../../_components/project-table/table-check-box-role';
@@ -601,10 +601,10 @@ class General extends React.Component {
                                     {project.id &&
                                         <div className="col-12 text-right p-0">
                                             <div>
-                                                <button className="btn btn-leeuwen btn-lg mr-2" onClick={event => handleDeleteProject(event, project.id)}>
+                                                <button className="btn btn-leeuwen btn-lg mr-2" onClick={event => handleDeleteProject(event, project.id)} disabled={isAdmin() ? false : true}>
                                                     <span><FontAwesomeIcon icon={projectDeleting ? "spinner" : "trash-alt"} className={projectDeleting ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Delete</span>
                                                 </button>
-                                                <button type="submit" className="btn btn-leeuwen-blue btn-lg">
+                                                <button type="submit" className="btn btn-leeuwen-blue btn-lg" disabled={isAdmin() ? false : true}>
                                                     <span><FontAwesomeIcon icon={projectUpdating ? "spinner" : "edit"} className={projectUpdating ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Update</span>
                                                 </button>
                                             </div>

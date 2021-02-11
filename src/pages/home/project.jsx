@@ -20,7 +20,7 @@ import {
     supplierActions,
     userActions 
 } from '../../_actions';
-import { arraySorted, doesMatch, copyObject } from '../../_functions';
+import { arraySorted, doesMatch, copyObject, isAdmin } from '../../_functions';
 import HeaderCheckBox from '../../_components/project-table/header-check-box';
 import HeaderInput from '../../_components/project-table/header-input';
 import TableCheckBoxRole from '../../_components/project-table/table-check-box-role';
@@ -592,7 +592,7 @@ class Project extends React.Component {
                                             onChange={this.handleChange}
                                         />
                                     </div>
-                                    <button type="submit" className="btn btn-leeuwen-blue btn-full btn-lg">
+                                    <button type="submit" className="btn btn-leeuwen-blue btn-full btn-lg" disabled={isAdmin() ? false : true}>
                                         <span><FontAwesomeIcon icon={projectCreating ? "spinner" : "plus"} className={projectCreating ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Create</span>
                                     </button>
                                 </form>                                

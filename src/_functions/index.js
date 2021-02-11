@@ -835,3 +835,11 @@ export function copyObject(mainObj) {
         return {};
     }
 }
+
+export function isLoggedIn() {
+    return localStorage.getItem("user") !== null;
+}
+
+export function isAdmin() {
+    return isLoggedIn() && !!JSON.parse(localStorage.getItem("user")).isAdmin || !!JSON.parse(localStorage.getItem("user")).isSuperAdmin;
+}

@@ -18,7 +18,8 @@ import {
 } from '../../_actions';
 import {
     doesMatch,
-    copyObject
+    copyObject,
+    isAdmin
 } from '../../_functions';
 import HeaderInput from '../../_components/project-table/header-input';
 import {
@@ -308,7 +309,7 @@ class Home extends React.Component {
                 </nav>
                 <div id="overview" className={alert.message ? "main-section-alert" : "main-section"}> 
                     <div className="action-row row"> 
-                            <button title="Create Project" className="btn btn-leeuwen-blue btn-lg" onClick={this.gotoProject}> {/* action: 30px, */}
+                            <button title="Create Project" className="btn btn-leeuwen-blue btn-lg" onClick={this.gotoProject} disabled={isAdmin ? false : true}>
                                 <span><FontAwesomeIcon icon="plus" className="fa mr-2"/>Create Project</span>
                             </button>
                     </div>

@@ -2,17 +2,19 @@ import React, { Component } from 'react';
 import { NavLink } from 'react-router-dom';
 // Icons
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { isLoggedIn, isAdmin } from "../../_functions";
 
-function isLoggedIn() {
-    return localStorage.getItem("user") !== null;
-}
+// function isLoggedIn() {
+//     return localStorage.getItem("user") !== null;
+// }
 class HeaderBarMenu extends Component {
 
     render() {
-        var isAdmin = false;
-        try{
-            isAdmin = JSON.parse(localStorage.getItem("user")).isAdmin;
-        } catch(e){}
+        // var isAdmin = false;
+        // try{
+        //     isAdmin = JSON.parse(localStorage.getItem("user")).isAdmin || JSON.parse(localStorage.getItem("user")).isSuperAdmin;
+        // } catch(e){}
+
         const { sidemenu } = this.props;
         return (
             <div>
@@ -30,7 +32,7 @@ class HeaderBarMenu extends Component {
                                         </button>
                                     </NavLink>
                                     <NavLink to="/settings">
-                                        <button className={isAdmin ? "btn btn-outline-leeuwen-blue btn-round header-button" : "hidden"} title="Settings">
+                                        <button className={isAdmin() ? "btn btn-outline-leeuwen-blue btn-round header-button" : "hidden"} title="Settings">
                                             <span><FontAwesomeIcon icon="cog" className="fa-2x"/></span>
                                         </button>
                                     </NavLink>
