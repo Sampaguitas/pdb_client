@@ -78,8 +78,8 @@ function docSorted(array, sort) {
         case 'custom':
             if (sort.isAscending) {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? String(a.fields.custom).toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? String(b.fields.custom).toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.fields) && !_.isNull(a.fields) && !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? String(a.fields.custom).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.fields) && !_.isNull(b.fields) && !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? String(b.fields.custom).toUpperCase() : '';
                     if (nameA < nameB) {
                         return -1;
                     } else if (nameA > nameB) {
@@ -90,8 +90,8 @@ function docSorted(array, sort) {
                 });
             } else {
                 return tempArray.sort(function (a, b) {
-                    let nameA = !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? String(a.fields.custom).toUpperCase() : '';
-                    let nameB = !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? String(b.fields.custom).toUpperCase() : '';
+                    let nameA = !_.isUndefined(a.fields) && !_.isNull(a.fields) && !_.isUndefined(a.fields.custom) && !_.isNull(a.fields.custom) ? String(a.fields.custom).toUpperCase() : '';
+                    let nameB = !_.isUndefined(b.fields) && !_.isNull(b.fields) && !_.isUndefined(b.fields.custom) && !_.isNull(b.fields.custom) ? String(b.fields.custom).toUpperCase() : '';
                     if (nameA > nameB) {
                         return -1;
                     } else if (nameA < nameB) {
