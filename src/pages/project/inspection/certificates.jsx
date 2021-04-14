@@ -8,6 +8,7 @@ import { authHeader } from '../../../_helpers';
 import { 
     accessActions, 
     alertActions,
+    docdefActions,
     certificateActions,
     fieldnameActions,
     fieldActions,
@@ -19,8 +20,10 @@ import {
 import {
     baseTen,
     arraySorted,
+    docConf,
     getInputType,
     getHeaders,
+    generateOptions,
     initSettingsFilter,
     initSettingsDisplay,
     initSettingsColWidth,
@@ -363,11 +366,14 @@ class Certificates extends React.Component {
             unlocked: false,
             screen: 'certificates',
             selectedIds: [],
+            selectedTemplate: '',
+            docList: [],
             alert: {
                 type:'',
                 message:''
             },
             //-----modals-----
+            showGenerate: false,
             showCif: false,
             showHeat: false,
             showSettings: false,
@@ -375,8 +381,10 @@ class Certificates extends React.Component {
             downloadingTable: false,
             settingSaving: false,
             deletingRows: false,
+            generatingFile: false,
             //upload file
         };
+        this.handleChange = this.handleChange.bind(this);
         this.handleClearAlert = this.handleClearAlert.bind(this);
         this.toggleUnlock = this.toggleUnlock.bind(this);
         this.refreshStore = this.refreshStore.bind(this);
@@ -405,12 +413,16 @@ class Certificates extends React.Component {
         //Upload File
         this.downloadTable = this.downloadTable.bind(this);
         this.toggleModalUpload = this.toggleModalUpload.bind(this);
+        //Generate File
+        this.toggleGenerate = this.toggleGenerate.bind(this);
+        this.handleGenerateFile = this.handleGenerateFile.bind(this);
     }
 
     componentDidMount() {
         const { 
             dispatch,
             loadingAccesses,
+            loadingDocdefs,
             loadingCertificates,
             loadingFieldnames,
             loadingFields,
@@ -436,6 +448,9 @@ class Certificates extends React.Component {
             if (!loadingAccesses) {
                 dispatch(accessActions.getAll(qs.id));
             }
+            if (!loadingDocdefs) {
+                dispatch(docdefActions.getAll(qs.id));
+            }
             if (!loadingCertificates) {
                 dispatch(certificateActions.getAll(qs.id));
             }
@@ -459,6 +474,7 @@ class Certificates extends React.Component {
         this.setState({
             headersForShow: getHeaders(settingsDisplay, fieldnames, screenId, 'forShow'),
             bodysForShow: getBodys(selection, pos, headersForShow),
+            docList: arraySorted(docConf(docdefs.items, ['6076c553827af545d02057e3']), "name"),
             settingsFilter: initSettingsFilter(fieldnames, settings, screenId),
             settingsDisplay: initSettingsDisplay(fieldnames, settings, screenId),
             settingsColWidth: initSettingsColWidth(settings, screenId)
@@ -467,7 +483,7 @@ class Certificates extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         const { headersForShow, screenId, selectedField, settingsDisplay, selectedIds } = this.state;
-        const { fields, fieldnames, selection, settings, pos } = this.props;
+        const { fields, fieldnames, selection, settings, pos, docdefs } = this.props;
         if (selectedField != prevState.selectedField && selectedField != '0') {
             let found = fields.items.find(function (f) {
                 return f._id === selectedField;
@@ -513,6 +529,10 @@ class Certificates extends React.Component {
             this.setState({
                 heats: getHeats(selectedIds, pos)
             });
+        }
+
+        if (docdefs != prevProps.docdefs) {
+            this.setState({docList: arraySorted(docConf(docdefs.items, ['6076c553827af545d02057e3']), "name")});
         }
 
     }
@@ -770,6 +790,68 @@ class Certificates extends React.Component {
         }
     }
 
+    toggleGenerate(event) {
+        event.preventDefault();
+        const { showGenerate, docList, selectedIds } = this.state;
+        if (!showGenerate && _.isEmpty(selectedIds)) {
+            this.setState({
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to be displayed in the ESR.'
+                }
+            });
+        } else {
+            this.setState({
+                selectedTemplate: (!showGenerate  && !_.isEmpty(docList)) ? docList[0]._id : '',
+                alert: {
+                    type:'',
+                    message:''
+                },
+                showGenerate: !showGenerate,
+            });
+        }
+    }
+
+    handleGenerateFile(event) {
+        event.preventDefault();
+        const { docdefs } = this.props;
+        const { selectedTemplate, selectedIds } = this.state;
+        if (docdefs && selectedTemplate) {
+            let obj = findObj(docdefs.items, selectedTemplate);
+            if (obj) {
+                this.setState({
+                    generatingFile: true
+                }, () => {
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: { ...authHeader(), 'Content-Type': 'application/json'},
+                        body: JSON.stringify({selectedIds: selectedIds})
+                    };
+                    return fetch(`${config.apiUrl}/template/generateTr?id=${selectedTemplate}&locale=${locale}`, requestOptions)
+                // .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
+                    .then(responce => {
+                        if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                        } else if (responce.status === 400) {
+                            this.setState({
+                                generatingFile: false,
+                                alert: {
+                                    type: 'alert-danger',
+                                    message: 'an error has occured'  
+                                }
+                            });
+                        } else {
+                            this.setState({
+                                generatingFile: false
+                            }, () => responce.blob().then(blob => saveAs(blob, obj.field)));
+                        }
+                    });
+                });
+            }
+        }
+    }
+
     toggleSettings(event) {
         event.preventDefault();
         const { showSettings } = this.state;
@@ -988,12 +1070,15 @@ class Certificates extends React.Component {
             screenId,
             selectedIds,
             unlocked,
+            selectedTemplate,
             selectedField,
             selectedType, 
             updateValue,
+            docList,
             showCif,
             showHeat,
             showSettings,
+            showGenerate,
             isDownloading,
             downloadingTable,
             deletingRows,
@@ -1008,6 +1093,7 @@ class Certificates extends React.Component {
             settingsColWidth,
             settingSaving,
             //---------upload------
+            generatingFile
         }= this.state;
         
         const { accesses, certificates, fieldnames, fields, pos, selection, sidemenu } = this.props;
@@ -1043,6 +1129,9 @@ class Certificates extends React.Component {
                         </button>
                         <button title="Download Certificate" className="btn btn-leeuwen-blue btn-lg mr-2" onClick={this.handleDownloadCif}>
                             <span><FontAwesomeIcon icon={isDownloading ? "spinner" : "file-pdf"} className={isDownloading ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Download CIF(s)</span>
+                        </button>
+                        <button className="btn btn-leeuwen-blue btn-lg mr-2" title="Generate Traceability Report" onClick={event => this.toggleGenerate(event)}>
+                            <span><FontAwesomeIcon icon="file-excel" className="fa mr-2"/>Generate TR</span>
                         </button>
                     </div>
                     <div className="body-section">
@@ -1173,14 +1262,44 @@ class Certificates extends React.Component {
                         </button>
                     </div>
                 </Modal>
+                <Modal
+                    show={showGenerate}
+                    hideModal={this.toggleGenerate}
+                    title="Generate Document"
+                >
+                    <div className="col-12">
+                        <form onSubmit={event => this.handleGenerateFile(event)}>
+                            <div className="form-group">
+                                <label htmlFor="selectedTemplate">Select Document</label>
+                                <select
+                                    className="form-control"
+                                    name="selectedTemplate"
+                                    value={selectedTemplate}
+                                    placeholder="Select document..."
+                                    onChange={this.handleChange}
+                                    required
+                                >
+                                    <option key="0" value="">Select document...</option>
+                                    {generateOptions(docList)}
+                                </select>
+                            </div>
+                            <div className="text-right">
+                                <button type="submit" className="btn btn-success btn-lg">
+                                    <span><FontAwesomeIcon icon={generatingFile ? "spinner" : "file-excel"} className={generatingFile ? "fa-pulse fa-fw fa mr-2" : "fa mr-2"}/>Generate</span>
+                                </button>
+                            </div>
+                        </form>                  
+                    </div>
+                </Modal>
             </Layout>
         );
     }
 }
 
 function mapStateToProps(state) {
-    const { accesses, alert, certificates, fieldnames, fields, pos, selection, settings, sidemenu } = state;
+    const { accesses, alert, docdefs, certificates, fieldnames, fields, pos, selection, settings, sidemenu } = state;
     const { loadingAccesses } = accesses;
+    const { loadingDocdefs } = docdefs;
     const { loadingCertificates } = certificates;
     const { loadingFieldnames } = fieldnames;
     const { loadingFields } = fields;
@@ -1191,10 +1310,12 @@ function mapStateToProps(state) {
     return {
         accesses,
         alert,
+        docdefs,
         certificates,
         fieldnames,
         fields,
         loadingAccesses,
+        loadingDocdefs,
         loadingCertificates,
         loadingFieldnames,
         loadingFields,

@@ -118,6 +118,7 @@ const typeOf = [
     '5ef4e9d67c213e6263a7240e', //WHPN01 WH Packing Note
     '5ef4ea197c213e6263a7241b', //WHSI01 WH Shipping Invoice
     '5ef4ea597c213e6263a72425', //WHSM01 WH Shipping Mark
+    '6076c553827af545d02057e3', //TR01 Traceability Report
 ];
 
 class Documents extends React.Component {
@@ -958,6 +959,7 @@ class Documents extends React.Component {
             {_id: '5ef4e9d67c213e6263a7240e', code: 'WHPN01', name: 'WH Packing Note', fromTbls:['article', 'po', 'sub', 'collipack', 'packitem', 'certificate']},
             {_id: '5ef4ea197c213e6263a7241b', code: 'WHSI01', name: 'WH Shipping Invoice', fromTbls:['storedproc', 'article', 'po', 'sub', 'collipack', 'packitem', 'certificate']},
             {_id: '5ef4ea597c213e6263a72425', code: 'WHSM01', name: 'WH Shipping Mark', fromTbls:['po', 'sub', 'collipack', 'packitem', 'certificate']},
+            {_id: '6076c553827af545d02057e3', code: 'TR01', name: 'Traceability Report', fromTbls:['po', 'sub', 'certificate', 'return']},
         ]
 
         return (
