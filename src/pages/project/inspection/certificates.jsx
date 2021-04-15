@@ -825,9 +825,9 @@ class Certificates extends React.Component {
                     generatingFile: true
                 }, () => {
                     const requestOptions = {
-                        method: 'GET',
+                        method: 'POST',
                         headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                        // body: JSON.stringify({selectedIds: selectedIds})
+                        body: JSON.stringify({selectedIds: selectedIds})
                     };
                     return fetch(`${config.apiUrl}/template/generateTr?id=${selectedTemplate}&locale=${locale}`, requestOptions)
                 // .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
