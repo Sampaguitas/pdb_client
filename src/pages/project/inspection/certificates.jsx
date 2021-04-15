@@ -795,14 +795,14 @@ class Certificates extends React.Component {
     toggleGenerate(event) {
         event.preventDefault();
         const { showGenerate, docList, selectedIds } = this.state;
-        if (!showGenerate && _.isEmpty(selectedIds)) {
-            this.setState({
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be displayed in the ESR.'
-                }
-            });
-        } else {
+        // if (!showGenerate && _.isEmpty(selectedIds)) {
+        //     this.setState({
+        //         alert: {
+        //             type:'alert-danger',
+        //             message:'Select line(s) to be displayed in the ESR.'
+        //         }
+        //     });
+        // } else {
             this.setState({
                 selectedTemplate: (!showGenerate  && !_.isEmpty(docList)) ? docList[0]._id : '',
                 alert: {
@@ -811,7 +811,7 @@ class Certificates extends React.Component {
                 },
                 showGenerate: !showGenerate,
             });
-        }
+        // }
     }
 
     handleGenerateFile(event) {
@@ -825,9 +825,9 @@ class Certificates extends React.Component {
                     generatingFile: true
                 }, () => {
                     const requestOptions = {
-                        method: 'POST',
+                        method: 'GET',
                         headers: { ...authHeader(), 'Content-Type': 'application/json'},
-                        body: JSON.stringify({selectedIds: selectedIds})
+                        // body: JSON.stringify({selectedIds: selectedIds})
                     };
                     return fetch(`${config.apiUrl}/template/generateTr?id=${selectedTemplate}&locale=${locale}`, requestOptions)
                 // .then(res => res.blob()).then(blob => saveAs(blob, obj.field));
