@@ -18,9 +18,11 @@ import {
     sidemenuActions
 } from '../../../_actions';
 import {
+    locale,
     baseTen,
     arraySorted,
     docConf,
+    findObj,
     getInputType,
     getHeaders,
     generateOptions,
