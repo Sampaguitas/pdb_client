@@ -1173,14 +1173,14 @@ class Expediting extends React.Component {
     toggleGenerate(event) {
         event.preventDefault();
         const { showGenerate, docList, selectedIds } = this.state;
-        if (!showGenerate && _.isEmpty(selectedIds)) {
-            this.setState({
-                alert: {
-                    type:'alert-danger',
-                    message:'Select line(s) to be displayed in the ESR.'
-                }
-            });
-        } else {
+        // if (!showGenerate && _.isEmpty(selectedIds)) {
+        //     this.setState({
+        //         alert: {
+        //             type:'alert-danger',
+        //             message:'Select line(s) to be displayed in the ESR.'
+        //         }
+        //     });
+        // } else {
             this.setState({
                 selectedTemplate: (!showGenerate  && !_.isEmpty(docList)) ? docList[0]._id : '',
                 alert: {
@@ -1189,7 +1189,7 @@ class Expediting extends React.Component {
                 },
                 showGenerate: !showGenerate,
             });
-        }
+        // }
     }
 
     toggleSettings(event) {
