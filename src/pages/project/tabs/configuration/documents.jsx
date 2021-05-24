@@ -187,7 +187,7 @@ class Documents extends React.Component {
     }
 
     componentDidMount() {
-        const { docdefs, refreshFields, refreshDocfields, refreshDocdefs,  } = this.props;
+        const { docdefs, refreshFields, refreshDocfields, refreshDocdefs  } = this.props;
         const { selectedTemplate } = this.state;
         
         //refreshStore
@@ -698,7 +698,7 @@ class Documents extends React.Component {
 
     handleDownloadFile(event) {
         event.preventDefault();
-        const { selection, docdefs } = this.props;
+        const { selection, docdefs, handleSetAlert, refreshDocdefs } = this.props;
         const { selectedTemplate, fileName } = this.state;
         if (selection.project && docdefs.items && selectedTemplate != "0" && fileName) {
             this.setState({
