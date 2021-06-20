@@ -304,6 +304,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                 tablesId: {
                                     poId: po._id,
                                     subId: sub._id,
+                                    projectId: po.projectId //------------new projectId
                                 },
                                 fields: arrayRow,
                             };
@@ -415,6 +416,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                             tablesId: {
                                 poId: po._id,
                                 subId: sub._id,
+                                projectId: po.projectId //------------new projectId
                             },
                             fields: arrayRow,
                         };

@@ -162,7 +162,8 @@ function getBodys(selectedPo, selection, headersForSelect){
                             subId: sub._id,
                             certificateId: '',
                             packitemId: '',
-                            collipackId: ''
+                            collipackId: '',
+                            projectId: selectedPo.projectId //------------new projectId
                         },
                         isPacked: true,
                         fields: arrayRow
@@ -248,7 +249,8 @@ function getBodys(selectedPo, selection, headersForSelect){
                         subId: sub._id,
                         certificateId: '',
                         packitemId: '',
-                        collipackId: ''
+                        collipackId: '',
+                        projectId: selectedPo.projectId //------------new projectId
                     },
                     isPacked: _.isEmpty(sub.packitems) ? false : true,
                     fields: arrayRow

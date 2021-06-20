@@ -188,7 +188,8 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                 tablesId: { 
                                     poId: po._id,
                                     subId: sub._id,
-                                    packitemId: packitem._id, 
+                                    packitemId: packitem._id,
+                                    projectId: po.projectId //------------new projectId 
                                 },
                                 fields: arrayRow
                             };
@@ -314,6 +315,7 @@ function getBodys(fieldnames, selection, pos, headersForShow, screenId){
                                 poId: po._id,
                                 subId: sub._id,
                                 packitemId: '',
+                                projectId: po.projectId //------------new projectId
                             },
                             fields: arrayRow
                         };
@@ -749,7 +751,7 @@ class TransportDocuments extends React.Component {
                     headers: { ...authHeader(), 'Content-Type': 'application/json'},
                     body: JSON.stringify({virtuals: virtuals})
                 }
-                return fetch(`${config.apiUrl}/split/packitem?subId=${selectionIds.subId}&packitemId=${selectionIds.packitemId}`, requestOptions)
+                return fetch(`${config.apiUrl}/split/packitem?projectId=${selectionIds.projectId}&poId=${selectionIds.poId}&subId=${selectionIds.subId}&packitemId=${selectionIds.packitemId}`, requestOptions)
                 .then(responce => responce.text().then(text => {
                     const data = text && JSON.parse(text);
                     if (!responce.ok) {

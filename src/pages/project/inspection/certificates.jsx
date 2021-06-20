@@ -176,7 +176,8 @@ function getBodys(selection, pos, headersForShow){
                                 subId: sub._id,
                                 returnId: '',
                                 certificateId: virtual.certificateId,
-                                heatId: virtual.heatId
+                                heatId: virtual.heatId,
+                                projectId: po.projectId //------------new projectId
                             },
                             fields: arrayRow
                         };
@@ -295,7 +296,8 @@ function getBodys(selection, pos, headersForShow){
                                 subId: '',
                                 returnId: _return._id,
                                 certificateId: virtual.certificateId,
-                                heatId: virtual.heatId
+                                heatId: virtual.heatId,
+                                projectId: po.projectId //------------new projectId
                             },
                             fields: arrayRow
                         };
