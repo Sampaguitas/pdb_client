@@ -917,12 +917,47 @@ class PackingDetails extends React.Component {
 
     handleDeleteRows(event) {
         event.preventDefault;
-        this.setState({
-            alert: {
-                type:'alert-danger',
-                message:'Collis cannot be deleted from this screen, go to transport documents and remove colli Nrs from packitems.'
-            }
-        });
+        // this.setState({
+        //     alert: {
+        //         type:'alert-danger',
+        //         message:'Collis cannot be deleted from this screen, go to transport documents and remove colli Nrs from packitems.'
+        //     }
+        // });
+        const { selectedIds } = this.state;
+        if (_.isEmpty(selectedIds)) {
+            this.setState({
+                alert: {
+                    type:'alert-danger',
+                    message:'Select line(s) to be deleted.'
+                }
+            });
+        } else if (confirm('Selected collis will be permanently deleted! would you like to proceed?.')){
+            this.setState({
+                deletingRows: true
+            }, () => {
+                const requestOptions = {
+                    method: 'DELETE',
+                    headers: { ...authHeader(), 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ selectedIds: selectedIds })
+                };
+                return fetch(`${config.apiUrl}/collipack/delete`, requestOptions)
+                .then(responce => responce.text().then(text => {
+                    const data = text && JSON.parse(text);
+                    if (responce.status === 401) {
+                            localStorage.removeItem('user');
+                            location.reload(true);
+                    } else {
+                        this.setState({
+                            deletingRows: false,
+                            alert: {
+                                type: responce.status === 200 ? 'alert-success' : 'alert-danger',
+                                message: data.message
+                            }
+                        }, this.refreshStore);
+                    }
+                }));
+            })
+        }
     }
 
     toggleEditValues(event) {
