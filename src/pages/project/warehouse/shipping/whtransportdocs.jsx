@@ -1501,14 +1501,7 @@ class WhTransportDocuments extends React.Component {
     downloadTable(event){
         event.preventDefault();
         const { projectId, screenId, screen, selectedIds, unlocked } = this.state;
-        if (_.isEmpty(selectedIds)) {
-            this.setState({
-                alert: {
-                    type: 'alert-danger',
-                    message: 'Select line(s) to be downloaded.'
-                }
-            });
-        } else if (projectId && screenId && screen) {
+        if (projectId && screenId && screen) {
             this.setState({
                 downloadingTable: true
             }, () => {
